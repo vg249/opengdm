@@ -137,13 +137,15 @@ public class HDF5Interface {
         }
 
         //Coallate genotype files
-        String genoFile=tempFolder+"markerList.genotype";
+        String genoFile=tempFolder+"genotypes";
 
         logDebug("MarkerList", "Accumulating markers into final genotype file");
+
         if(genoFileString.length() == 0){
             ErrorLogger.logError("HDF5Interface","No genotype data to extract");
             return null;
         }
+
         String genotypePartFileIdentifier=genoFileString.toString();
 
         if(markerFast) {

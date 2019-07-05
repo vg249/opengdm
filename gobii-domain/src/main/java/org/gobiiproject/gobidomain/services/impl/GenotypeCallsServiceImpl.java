@@ -50,118 +50,13 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         DnaRunDTO dnarun = null;
 
-        Integer startDatasetId = null;
-        Integer markerIdLimit = null;
 
         try {
 
             dnarun = dnarunService.getDnaRunById(dnarunId);
 
-            List<Integer> dnarunDatasets = dnarun.getVariantSetIds();
+            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(dnarun, pageToken, pageSize);
 
-            Collections.sort(dnarunDatasets);
-
-            Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
-
-            Map<String, ArrayList<String>> sampleHdf5IndexMap = new HashMap<>();
-
-
-            if(pageToken != null) {
-
-                String[] pageTokenSplit = pageToken.split("-", 2);
-
-                if (pageTokenSplit.length == 2) {
-                    try {
-                        startDatasetId = Integer.parseInt(Arrays.asList(pageTokenSplit).get(0));
-                        markerIdLimit = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
-                    } catch (Exception e) {
-                        markerIdLimit = null;
-                        startDatasetId = null;
-                    }
-                }
-            }
-
-            sampleHdf5IndexMap.put(dnarun.getVariantSetIds().get(0).toString(),
-                    new ArrayList<>());
-
-            sampleHdf5IndexMap.get(
-                    dnarun.getVariantSetIds().get(0).toString()).add(
-                    dnarun.getDatasetDnarunIndex().get(
-                            dnarun.getVariantSetIds().get(0).toString()).toString());
-
-            List<GenotypeCallsMarkerMetadataDTO> genotypeMarkerMetadata = new ArrayList<>();
-
-            Integer startIndex = 0;
-
-            if(startDatasetId != null) {
-                startIndex = dnarunDatasets.indexOf(startDatasetId);
-            }
-
-            for(int i = startIndex; i < dnarunDatasets.size(); i++) {
-
-                Integer datasetId = dnarunDatasets.get(i);
-
-                genotypeMarkerMetadata = dtoMapGenotypeCalls.getMarkerMetaDataList(datasetId,
-                        markerIdLimit, pageSize);
-
-                for(GenotypeCallsMarkerMetadataDTO marker : genotypeMarkerMetadata) {
-
-                    GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
-
-                    genotypeCall.setCallSetDbId(dnarun.getCallSetDbId());
-                    genotypeCall.setCallSetName(dnarun.getCallSetName());
-                    genotypeCall.setVariantDbId(marker.getMarkerId());
-                    genotypeCall.setVariantName(marker.getMarkerName());
-                    genotypeCall.setVariantSetDbId(datasetId);
-
-                    if(markerHdf5IndexMap.containsKey(
-                            datasetId.toString())) {
-
-                        markerHdf5IndexMap.get(
-                                datasetId.toString()).add(
-                                marker.getHdf5MarkerIdx());
-
-                    }
-                    else {
-                        markerHdf5IndexMap.put(
-                                datasetId.toString(),
-                                new ArrayList<>());
-                        markerHdf5IndexMap.get(
-                                datasetId.toString()).add(
-                                marker.getHdf5MarkerIdx());
-                    }
-                    returnVal.add(genotypeCall);
-                }
-                if(genotypeMarkerMetadata.size() >= pageSize) {
-                    break;
-                }
-                else {
-                    pageSize -= genotypeMarkerMetadata.size();
-                }
-            }
-
-            HDF5Interface.setPathToHDF5Files("/data/gobii_bundle/crops/arbitrary-id-0/hdf5/");
-
-            HDF5Interface.getHDF5GenoFromSampleList(
-                    true, "/data/gobii_bundle/crops/arbitrary-id-0/files/error.txt",
-                    "/data/gobii_bundle/crops/arbitrary-id-0/files/", markerHdf5IndexMap,
-                    sampleHdf5IndexMap);
-
-            FileInputStream fstream = new FileInputStream(
-                    "/data/gobii_bundle/crops/arbitrary-id-0/files/markerList.genotype");
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-            String strLine;
-            int i = 0;
-
-            while ((strLine = br.readLine()) != null)   {
-                returnVal.get(i).setGenotype(new HashMap<>());
-                returnVal.get(i).getGenotype().put("string_value", strLine);
-                i++;
-            }
-
-            fstream.close();
 
         }
         catch (GobiiException gE) {

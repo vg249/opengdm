@@ -14,4 +14,6 @@ public interface DtoMapGenotypeCalls {
             Integer pageToken,
             Integer pageSize) throws GobiiDtoMappingException;
 
+    List<GenotypeCallsDTO> getGenotypeCallsList(DnaRunDTO dnarun, String pageToken, Integer pageSize);
+
 }

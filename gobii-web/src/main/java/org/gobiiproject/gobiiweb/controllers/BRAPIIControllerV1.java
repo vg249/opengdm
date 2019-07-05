@@ -1030,7 +1030,7 @@ public class BRAPIIControllerV1 {
             }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_GENOTYPE_CALLS,
+                    RestResourceId.GOBII_DNARUN,
                     RestMethodType.GET);
 
             if(maxPageSize == null) {

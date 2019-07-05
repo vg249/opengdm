@@ -33,23 +33,27 @@ public class ConfigSupplement {
     public DataSourceSelector dataSourceMulti() throws Exception {
 
         DataSourceSelector returnVal = new DataSourceSelector();
+
         returnVal.setCurrentRequest(currentRequest);
 
         String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
 
         ConfigSettings configSettings = new ConfigSettings(configFileLocation);
 
-        HDF5Interface.setPathToHDF5(configSettings.getHdf5RelativePath());
+        HDF5Interface.setPathToHDF5(configSettings.gethdf5ExePath());
 
         Map<Object,Object> targetDataSources = new HashMap<>();
+
         for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
             ServerConfig currentPostGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
+
             DriverManagerDataSource currentDataSource = new DriverManagerDataSource();
 
             currentDataSource.setDriverClassName("org.postgresql.Driver");
 
             String url = HelperFunctions.getJdbcConnectionString(currentPostGresConfig);
+
             currentDataSource.setUrl(url);
             currentDataSource.setUsername(currentPostGresConfig.getUserName());
             currentDataSource.setPassword(currentPostGresConfig.getPassword());
