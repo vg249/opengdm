@@ -98,7 +98,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
      * @return
      */
     public List<GenotypeCallsDTO> getGenotypeCallsList(
-            DnaRunDTO dnarun, String pageToken, Integer pageSize) {
+            DnaRunDTO dnarun, String pageToken,
+            Integer pageSize, String outputDirPath) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
@@ -230,6 +231,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             Map<String, ArrayList<String>> markerHdf5IndexMap,
             Map<String, ArrayList<String>> sampleHdf5IndexMap)  throws Exception {
 
+        String tempFolder = UUID.randomUUID().toString();
 
         HDF5Interface.setPathToHDF5Files("/data/gobii_bundle/crops/arbitrary-id-0/hdf5/");
 

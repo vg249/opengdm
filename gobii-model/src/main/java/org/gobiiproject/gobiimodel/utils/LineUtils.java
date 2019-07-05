@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Phil on 4/4/2016.
@@ -33,6 +34,23 @@ public class LineUtils {
         }
 
         return returnVal;
+    }
+
+    public static String concatAsDirectoryPath(List<String> pathList) {
+        String concatedPath = "";
+        for(String path : pathList) {
+
+            if (path != null) {
+                if (path.charAt(0) != PATH_TERMINATOR) {
+                    concatedPath = PATH_TERMINATOR + path;
+                }
+
+                if(concatedPath.charAt(concatedPath.length() - 1) == PATH_TERMINATOR) {
+                    concatedPath = concatedPath.substring(0, concatedPath.length() -1);
+                }
+            }
+        }
+        return LineUtils.terminateDirectoryPath(concatedPath);
     }
 
 }

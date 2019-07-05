@@ -50,13 +50,15 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         DnaRunDTO dnarun = null;
 
-
         try {
 
             dnarun = dnarunService.getDnaRunById(dnarunId);
 
-            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(dnarun, pageToken, pageSize);
+            String outputDirPath = "";
 
+            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(
+                    dnarun, pageToken,
+                    pageSize, outputDirPath);
 
         }
         catch (GobiiException gE) {
