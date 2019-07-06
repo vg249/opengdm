@@ -1029,6 +1029,8 @@ public class BRAPIIControllerV1 {
                         "Invalid dna run Id");
             }
 
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_DNARUN,
                     RestMethodType.GET);

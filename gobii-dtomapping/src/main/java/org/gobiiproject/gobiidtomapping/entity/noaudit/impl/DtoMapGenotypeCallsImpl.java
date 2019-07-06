@@ -233,7 +233,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        HDF5Interface.setPathToHDF5Files("/data/gobii_bundle/crops/arbitrary-id-0/hdf5/");
+        HDF5Interface hdf5Interface = new HDF5Interface();
+
+
 
         HDF5Interface.getHDF5GenoFromSampleList(
                 true, "/data/gobii_bundle/crops/arbitrary-id-0/files/error.txt",
