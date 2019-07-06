@@ -192,25 +192,25 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 }
             }
 
-            File genotypCallsFile = new File(
-                    this.readHdf5GenotypesByDataset(markerHdf5IndexMap, sampleHdf5IndexMap));
+            //File genotypCallsFile = new File(
+            //        this.readHdf5GenotypesByDataset(markerHdf5IndexMap, sampleHdf5IndexMap));
 
 
-            FileInputStream fstream = new FileInputStream(genotypCallsFile);
+            //FileInputStream fstream = new FileInputStream(genotypCallsFile);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            //BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-            int i = 0;
+            //int i = 0;
 
-            String strLine;
+            //String strLine;
 
-            while ((strLine = br.readLine()) != null) {
-                returnVal.get(i).setGenotype(new HashMap<>());
-                returnVal.get(i).getGenotype().put("string_value", strLine);
-                i++;
-            }
+            //while ((strLine = br.readLine()) != null) {
+            //    returnVal.get(i).setGenotype(new HashMap<>());
+            //    returnVal.get(i).getGenotype().put("string_value", strLine);
+            //    i++;
+            //}
 
-                fstream.close();
+            //    fstream.close();
         }
         catch(GobiiException ge) {
             throw ge;
@@ -233,11 +233,11 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        HDF5Interface hdf5Interface = new HDF5Interface();
+        HDF5Interface hdf5Interface = new HDF5Interface("");
 
 
 
-        HDF5Interface.getHDF5GenoFromSampleList(
+        hdf5Interface.getHDF5Genotypes(
                 true, "/data/gobii_bundle/crops/arbitrary-id-0/files/error.txt",
                 "/data/gobii_bundle/crops/arbitrary-id-0/files/", markerHdf5IndexMap,
                 sampleHdf5IndexMap);

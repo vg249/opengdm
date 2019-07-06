@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb.spring;
 
+import ch.qos.logback.classic.pattern.ClassNameOnlyAbbreviator;
 import org.gobiiproject.gobiidao.hdf5.HDF5Interface;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
@@ -28,6 +29,12 @@ public class ConfigSupplement {
 
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
 
+    private ConfigSettings configSettings;
+
+    public ConfigSupplement() {
+        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+        this.configSettings = new ConfigSettings(configFileLocation);
+    }
 
     @Bean(name="dataSourceMulti")
     public DataSourceSelector dataSourceMulti() throws Exception {
@@ -36,16 +43,12 @@ public class ConfigSupplement {
 
         returnVal.setCurrentRequest(currentRequest);
 
-        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-
-        ConfigSettings configSettings = new ConfigSettings(configFileLocation);
-
-        HDF5Interface.setPathToHDF5(configSettings.gethdf5ExePath());
 
         Map<Object,Object> targetDataSources = new HashMap<>();
 
-        for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
+        for (GobiiCropConfig currentGobiiCropConfig : this.configSettings.getActiveCropConfigs()) {
 
+            //Sets Postgres settings
             ServerConfig currentPostGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
 
             DriverManagerDataSource currentDataSource = new DriverManagerDataSource();
@@ -60,12 +63,32 @@ public class ConfigSupplement {
 
             targetDataSources.put(currentGobiiCropConfig.getGobiiCropType(),currentDataSource);
 
+            //Sets HDF5 Settings.
+            //HDF5Interface.setPathToHDF5Files(
+            //        currentGobiiCropConfig.getGobiiCropType(), "");
+
+
         } // iterate crop configs
 
         returnVal.setTargetDataSources(targetDataSources);
 
         return returnVal;
 
+    }
+
+    @Bean(name="pathToHdf5Exe")
+    public String PathToHdf5Executables() {
+        return this.configSettings.get
+    }
+
+    @Bean(name="extractorOutputPath")
+    public String Hdf5FilesPath() {
+
+        HDF5Interface.setPathToHDF5(this.configSettings.gethdf5ExePath());
+
+
+
+        return "";
     }
 
 

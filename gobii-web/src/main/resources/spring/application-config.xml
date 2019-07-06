@@ -1068,5 +1068,8 @@
 
     <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
 
+    <bean id="hdf5Interface" class="org.gobiiproject.gobiidao.hdf5.HDF5Interface">
+        <constructor-arg ref="extractorOutputPath"/>
+    </bean>
 
 </beans>
