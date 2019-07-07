@@ -26,15 +26,15 @@ public class GenotypeCallsDnarunMetadataDTO extends DTOBase{
     @Override
     public void setId(Integer id) { this.dnarunId = null; }
 
-    public Integer getMarkerId() { return this.dnarunId; }
+    public Integer getDnarunId() { return this.dnarunId; }
 
     @GobiiEntityColumn(columnName = "dnarun_id")
-    public void setCallSetDbId(Integer id) { this.dnarunId = id; }
+    public void setDnarunId(Integer id) { this.dnarunId = id; }
 
-    public String getMarkerName() { return this.dnarunName; }
+    public String getDnarunName() { return this.dnarunName; }
 
     @GobiiEntityColumn(columnName = "dnarun_name")
-    public void setMarkerName(String dnarunName) { this.dnarunName = dnarunName; }
+    public void setDnarunName(String dnarunName) { this.dnarunName = dnarunName; }
 
 
     public String getHdf5MarkerIdx() {

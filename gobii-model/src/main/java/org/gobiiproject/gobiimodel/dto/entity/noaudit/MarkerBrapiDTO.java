@@ -55,7 +55,6 @@ public class MarkerBrapiDTO extends DTOBase {
     @GobiiEntityParam(paramName = "variantType")
     public String getVariantType() { return this.variantType; }
 
-    @GobiiEntityColumn(columnName = "variant_type")
     public void setVariantType(String variantType) { this.variantType = variantType; }
 
     @GobiiEntityParam(paramName = "referenceName")

@@ -1142,6 +1142,101 @@ public class BRAPIIControllerV1 {
 
     }
 
+    /**
+     * Returns the list of genotypes calls in a given Marker id.
+     * It fetches calls in all the datasets where the marker_id is present.
+     * The calls is paged.
+     *
+     * @param variantDbId - Marker run Id.
+     * @param pageSize - Size of the page to fetched.
+     * @param pageToken - Page token to fetch the page. User will get the pageToken
+     *                       from the nextPageToken parameter in the previous response.
+     *
+     * @return BrApi Response entity with list of genotypes calls for given dnarun id.
+     * TODO: Add page number parameter to comply BrApi standards.
+     */
+    @ApiOperation(
+            value = "List genotype calls",
+            notes = "List of all the genotype calls in a given Dna run identified by Marker run Id",
+            tags = {"Variants"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Calls")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getCallsByVariant(
+            @ApiParam(value = "Id for dna run to be fetched")
+            @PathVariable(value="variantDbId") String variantDbId,
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used." +
+                    "If pageNumber is specified pageToken will be ignored. " +
+                    "pageToken can be used to sequentially get pages faster. " +
+                    "When an invalid pageToken is given the page will start from beginning.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            HttpServletRequest request) throws Exception {
+
+        Integer variantDbIdInt;
+
+        try {
+
+            try {
+                variantDbIdInt = Integer.parseInt(variantDbId);
+            } catch (Exception e) {
+                throw new GobiiException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Invalid dna run Id");
+            }
+
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_DNARUN,
+                    RestMethodType.GET);
+
+            if(maxPageSize == null) {
+                //As per brapi initial standards
+                maxPageSize = 10000;
+            }
+
+            if (pageSize == null || pageSize > maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByMarkerId(
+                    variantDbIdInt, pageToken, pageSize);
+
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
+
+            if (genotypeCallsList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                if (genotypeCallsList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantDbId().toString()
+                    );
+                }
+            }
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage());
+        }
+    }
 
 
 

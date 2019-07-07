@@ -100,7 +100,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
-        DnaRunDTO dnarun = null;
 
         MarkerBrapiDTO marker = null;
 
@@ -111,7 +110,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             String outputDirPath = "";
 
             returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(
-                    dnarun, pageToken,
+                    marker, pageToken,
                     pageSize, outputDirPath);
 
         }
