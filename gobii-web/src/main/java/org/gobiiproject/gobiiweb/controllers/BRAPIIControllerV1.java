@@ -11,6 +11,7 @@ import io.swagger.annotations.*;
 import io.swagger.v3.oas.annotations.extensions.Extensions;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.GenotypeCallsService;
+import org.gobiiproject.gobidomain.services.MarkerBrapiService;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
@@ -41,6 +42,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -162,6 +164,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private DnaRunService dnaRunService = null;
+
+    @Autowired
+    private MarkerBrapiService markerBrapiService = null;
 
     @Autowired
     private GenotypeCallsService genotypeCallsService = null;
@@ -1067,6 +1072,70 @@ public class BRAPIIControllerV1 {
                     GobiiValidationStatusType.UNKNOWN,
                     "Internal Server Error" + e.getMessage());
         }
+    }
+
+    @RequestMapping(value="/variants", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getVariants(
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        try {
+
+            Integer pageToken = null;
+
+            if (pageTokenParam != null) {
+                try {
+                    pageToken = Integer.parseInt(pageTokenParam);
+                } catch (Exception e) {
+                    throw new GobiiException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid Page Token"
+                    );
+                }
+            }
+
+            MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_MARKERS,
+                    RestMethodType.GET
+            );
+
+            if (maxPageSize == null) {
+                maxPageSize = 1000;
+            }
+
+            if (pageSize == null || pageSize >  maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageSize, markerBrapiDTOFilter);
+
+            BrApiMasterPayload<List<MarkerBrapiDTO>> payload = new BrApiMasterPayload<>(markerList);
+
+            if (markerList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(markerList.size());
+                if (markerList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            markerList.get(markerList.size() -1).getVariantDbId().toString()
+                    );
+                }
+            }
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage()
+            );
+        }
+
     }
 
 
