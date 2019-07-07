@@ -45,6 +45,7 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
 
             returnVal = (List<MarkerBrapiDTO>) dtoListQueryColl.getList(
                     ListSqlId.QUERY_ID_MARKER_ALL_BRAPI,
+                    null,
                     sqlParams
             );
 

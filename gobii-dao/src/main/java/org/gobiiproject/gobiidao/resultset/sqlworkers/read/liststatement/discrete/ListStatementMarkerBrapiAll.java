@@ -104,7 +104,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 "FROM \n" +
                     "marker, reference r\n" +
                 "WHERE \n" +
-                    "marker.reference_id = r.reference_id" +
+                    "marker.reference_id = r.reference_id " +
                 pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);

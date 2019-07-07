@@ -87,14 +87,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     /**
      * Gets the genotype calls from all datasets for given markerId.
-     * @param dnarunId - markerId given by user.
+     * @param markerId - markerId given by user.
      * @param pageToken - String token with datasetId and markerId combination of last page's last element.
      *                  If unspecified, first page will be extracted.
      * @param pageSize - Page size to extract. If not specified default page size.
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
+    public List<GenotypeCallsDTO> getGenotypeCallsByMarkerId(
             Integer markerId, String pageToken,
             Integer pageSize) {
 

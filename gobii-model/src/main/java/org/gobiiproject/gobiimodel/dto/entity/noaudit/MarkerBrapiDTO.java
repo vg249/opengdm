@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by VCalaminos on 7/3/2019.
@@ -15,7 +16,7 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType"
+        "id", "allowedProcessTypes", "entityNameType", "datasetMarkerIndex"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MarkerBrapiDTO extends DTOBase {
@@ -25,6 +26,7 @@ public class MarkerBrapiDTO extends DTOBase {
     private List<Integer> variantSetDbIds = new ArrayList<>();
     private String variantType;
     private String referenceName;
+    private Map<String, Object> datasetMarkerIndex;
 
     @Override
     public Integer getId() { return this.variantDbId; }
@@ -61,5 +63,14 @@ public class MarkerBrapiDTO extends DTOBase {
 
     @GobiiEntityColumn(columnName = "reference_name")
     public void setReferenceName(String referenceName) { this.referenceName = referenceName; }
+
+    @GobiiEntityColumn(columnName = "dataset_marker_idx")
+    public void setDatasetMarkerIndex(Map<String, Object> datasetMarkerIndex) {
+        this.datasetMarkerIndex = datasetMarkerIndex;
+    }
+
+    public Map<String, Object> getDatasetMarkerIndex() {
+        return this.datasetMarkerIndex;
+    }
 
 }
