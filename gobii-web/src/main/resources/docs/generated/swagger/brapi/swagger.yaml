@@ -14,6 +14,7 @@ host: "cbsugobiixvm11.biohpc.cornell.edu:8081"
 basePath: "/gobii-dev/brapi"
 tags:
 - name: "Callsets"
+- name: "Variants"
 schemes:
 - "http"
 paths:
@@ -96,6 +97,60 @@ paths:
       operationId: "getCallsByCallset"
       parameters:
       - name: "callSetDbId"
+        in: "path"
+        description: "Id for dna run to be fetched"
+        required: true
+        type: "string"
+      - name: "pageToken"
+        in: "query"
+        description: "Page Token to fetch a page. nextPageToken form previous page's\
+          \ meta data should be used.If pageNumber is specified pageToken will be\
+          \ ignored. pageToken can be used to sequentially get pages faster. When\
+          \ an invalid pageToken is given the page will start from beginning."
+        required: false
+        type: "string"
+      - name: "pageSize"
+        in: "query"
+        description: "Size of the page to be fetched. Default is 1000. Maximum page\
+          \ size is 1000"
+        required: false
+        type: "integer"
+        format: "int32"
+      - name: "X-Auth-Token"
+        in: "header"
+        description: "Authentication Token"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+      x-summary: "Calls"
+  /brapi/v1/variants:
+    get:
+      operationId: "getVariants"
+      parameters:
+      - name: "pageToken"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "pageSize"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /brapi/v1/variants/{variantDbId}/calls:
+    get:
+      tags:
+      - "Variants"
+      summary: "List genotype calls"
+      description: "List of all the genotype calls in a given Dna run identified by\
+        \ Marker run Id"
+      operationId: "getCallsByVariant"
+      parameters:
+      - name: "variantDbId"
         in: "path"
         description: "Id for dna run to be fetched"
         required: true
