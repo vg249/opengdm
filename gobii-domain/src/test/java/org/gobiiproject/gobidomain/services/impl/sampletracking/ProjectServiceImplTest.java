@@ -29,7 +29,8 @@ public class ProjectServiceImplTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        UserContextLoader userContextLoader = new UserContextLoader();
+        UserContextLoader userContextLoader = new UserContextLoader(
+                "classpath:/spring/test-config.xml");
         userContextLoader.loadUser("USER_READER");
     }
 

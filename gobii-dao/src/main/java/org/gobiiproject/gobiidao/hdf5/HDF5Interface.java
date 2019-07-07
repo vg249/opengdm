@@ -1,99 +1,82 @@
 package org.gobiiproject.gobiidao.hdf5;
 
-import com.sun.xml.internal.ws.api.policy.PolicyResolver;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
+import javax.sound.sampled.Line;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logDebug;
 
 /**
- * A repository of methods designed to interface with HDF5 files, both in the creation and in the execution of 
+ * Interface to extract genotypes from HDF5.
  */
 public class HDF5Interface {
 
+    private String pathToHDF5;
 
-    private static String pathToHDF5;
-    private static String pathToHDF5Files;
+    private AbstractHdf5ProcessPathSelector hdf5ProcessingPathSelector;
 
-
-    public static String getPathToHDF5() {
-        return pathToHDF5;
+    public HDF5Interface(String pathToHDF5, AbstractHdf5ProcessPathSelector hdf5ProcessPathSelector) {
+        this.pathToHDF5 = pathToHDF5;
+        this.hdf5ProcessingPathSelector = hdf5ProcessPathSelector;
     }
 
-    public static void setPathToHDF5(String pathToHDF5) {
-        HDF5Interface.pathToHDF5 = pathToHDF5;
+    public String getPathToHDF5() {
+        return this.pathToHDF5;
     }
 
-    public static String getPathToHDF5Files() {
-        return pathToHDF5Files;
+    public void setPathToHDF5(String pathToHDF5) {
+        this.pathToHDF5 = pathToHDF5;
     }
 
-    public static void setPathToHDF5Files(String pathToHDF5Files) {
-        HDF5Interface.pathToHDF5Files = pathToHDF5Files;
+    public Map<String, String> getHdf5ProcessingPaths() {
+        return (Map<String, String>) hdf5ProcessingPathSelector.getHdf5ProcessPaths(
+                hdf5ProcessingPathSelector.determineCurrentLookupKey());
     }
-
-    ///**
-    // * Given a marker list extracts genotyping data from it. See getHDF5GenoFromSampleList for more information.
-    // * @param markerFast if the file is extracted in 'marker fast' orientation
-    // * @param errorFile Where to put errors
-    // * @param tempFolder folder for temporary files
-    // * @param posFile the place for a positional file
-    // * @return location of output
-    // * @throws FileNotFoundException if it can't find a file related
-    // */
-    //public static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder, String posFile) throws FileNotFoundException {
-    //    return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
-    //}
-
-    //private static HashMap<String,String> getSamplePosFromFile(String inputFile) throws FileNotFoundException {
-    //    HashMap<String, String> map = new HashMap<String, String>();
-    //    BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
-    //    try{
-    //        while (sampR.ready()) {
-    //                String sampLine = sampR.readLine();
-    //                if (sampLine != null) {
-    //                    String[] sampSplit = sampLine.split("\t");
-    //                    if(sampSplit.length>1) {
-    //                        map.put(sampSplit[0], sampSplit[1]);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    catch(Exception e){
-    //        ErrorLogger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
-    //    }
-    //    return map;
-    //}
 
     /**
      * Gets a pared down list of markers and samples based on position file and sample position file
      * @param markerFast if the output is 'markerFast' or sample fast
-     * @param errorFile Location of temporary error file (mostly but not entirely ignored
-     * @param tempFolder Location of folder to store temporary files
+     * @param tempOutputFolderName Location of folder to store temporary files
      * @return String location of the output file on the filesystem.
      * @throws FileNotFoundException if the datasets provided contain an invalid dataset, or the temporary file folder is badly chmodded
      */
-    public static String getHDF5GenoFromSampleList(
-            boolean markerFast, String errorFile,
-            String tempFolder, Map<String, ArrayList<String>> datasetMarkerMap,
-            Map<String, ArrayList<String>> datasetSampleMap) throws FileNotFoundException{
+    public String getHDF5Genotypes(
+            boolean markerFast, Map<String, ArrayList<String>> datasetMarkerMap,
+            Map<String, ArrayList<String>> datasetSampleMap, String tempOutputFolderName
+    ) throws FileNotFoundException {
 
         StringBuilder genoFileString=new StringBuilder();
 
+        //Hashset does not maintain order. So, sort them before you process.
+        List<String> datasetList = new ArrayList<String>(datasetMarkerMap.keySet());
+
+        Collections.sort(datasetList);
+
+        String tempOutputFolder = LineUtils.terminateDirectoryPath(
+                this.getHdf5ProcessingPaths().get("outputDir")+tempOutputFolderName);
+
+        boolean createTempFolder = (new File(tempOutputFolder)).mkdir();
+
+        if(!createTempFolder) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                    "HDF5 Interface Error. Failed to create temporary output folder.");
+        }
+
+
+        String errorFile = tempOutputFolder+"error";
+
         try{
-            for(String datasetId : datasetMarkerMap.keySet()) {
+            for(String datasetId : datasetList) {
 
                 int dsID=Integer.parseInt(datasetId);
 
@@ -102,7 +85,7 @@ public class HDF5Interface {
 
                 String sampleList = String.join(",", datasetSampleMap.get(datasetId));
 
-                String positionListFileLoc = tempFolder+"position.list";
+                String positionListFileLoc = tempOutputFolder+"position.list";
 
                 FileSystemInterface.rmIfExist(positionListFileLoc);
 
@@ -116,9 +99,9 @@ public class HDF5Interface {
 
                 if(datasetSampleMap.get(datasetId).size() > 0) {
 
-                    genoFile = getHDF5Genotype(
-                            markerFast, errorFile, dsID,
-                            tempFolder, positionListFileLoc, sampleList);
+                    genoFile = getHDF5GenotypeByDatatset(
+                            markerFast, dsID, positionListFileLoc,
+                            sampleList, tempOutputFolder, errorFile);
 
                     if(genoFile==null) return null;
                 }
@@ -137,14 +120,17 @@ public class HDF5Interface {
         }
 
         //Coallate genotype files
-        String genoFile=tempFolder+"markerList.genotype";
+        String genoFile= tempOutputFolder+"result.genotypes";
 
         logDebug("MarkerList", "Accumulating markers into final genotype file");
+
         if(genoFileString.length() == 0){
             ErrorLogger.logError("HDF5Interface","No genotype data to extract");
             return null;
         }
+
         String genotypePartFileIdentifier=genoFileString.toString();
+
 
         if(markerFast) {
             tryExec("paste" + genotypePartFileIdentifier, genoFile, errorFile);
@@ -160,41 +146,41 @@ public class HDF5Interface {
         return genoFile;
     }
 
-    ///**
-    // * Convenience method for getHDF5Genotype(boolean, String, Integer, String, String, String).
-    // * MarkerList and sampleList are passed in as null
-    // * @return see getHDF5Genotype(boolean,String, Integer, String, String, String)
-    // */
-    //public static String getHDF5Genotype(boolean markerFast, String errorFile, Integer dataSetId, String tempFolder) {
-    //    return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null,null);
-    //}
 
     /**
-     * Performs the basic genotype extraction on a dataset given by dataSetId, filtered by the string entry from the marker list
-     * and sample list files.
-     * If marker list is null, do a dataset extract. Else, do a marker list extract on the dataset. If sampleList is also set, filter by samples afterwards
+     * Performs the basic genotype extraction on a dataset given by dataSetId,
+     * filtered by the string entry from the marker list and sample list files.
+     * If marker list is null, do a dataset extract. Else, do a marker list extract on the dataset.
+     * If sampleList is also set, filter by samples afterwards
      * @param markerFast if the output is 'markerFast' or sample fast
-     * @param errorFile where error logs can be stored temporarily
      * @param dataSetId Dataset ID to be pulled from
-     * @param tempFolder folder to store intermediate results
-     * @param markerList nullable - determines what markers to extract. File containing a list of marker positions, comma separated
+     * @param markerList nullable - determines what markers to extract.
+     *                   File containing a list of marker positions, comma separated
      * @param sampleList nullable - list of comma delimited samples to cut out
+     * @param tempOutputFolder folder to store intermediate results
      * @return file location of the dataset output.
      */
-    private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList) {
-        String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
+    public String getHDF5GenotypeByDatatset( boolean markerFast, Integer dataSetId, String markerList,
+                                             String sampleList, String tempOutputFolder, String errorFile) {
+
+        String genoFile=tempOutputFolder+"DS-"+dataSetId+".genotype";
 
         String HDF5File= getFileLoc(dataSetId);
         // %s <orientation> <HDF5 file> <output file>
         String ordering="samples-fast";
+
+
         if(markerFast)ordering="markers-fast";
 
         logDebug("Extractor","HDF5 Ordering is "+ordering);
 
         if(markerList!=null) {
             String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
-            ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
-            boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" " + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
+            ErrorLogger.logInfo(
+                    "Extractor","Executing: " + hdf5Extractor+" "
+                            + ordering +" "+HDF5File+" "+markerList+" "+genoFile);
+            boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" "
+                    + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
             if(!success){
                 rmIfExist(genoFile);
                 return null;
@@ -202,8 +188,10 @@ public class HDF5Interface {
         }
         else {
             String hdf5Extractor=pathToHDF5+"dumpdataset";
-            ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
-            boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
+            ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "
+                    +ordering+" "+HDF5File+" "+genoFile);
+            boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " "
+                    + HDF5File + " " + genoFile, null, errorFile);
             if(!success){
                 rmIfExist(genoFile);
                 return null;
@@ -217,8 +205,8 @@ public class HDF5Interface {
         return genoFile;
     }
 
-    private static String getFileLoc(Integer dataSetId) {
-        return pathToHDF5Files + "DS_" + dataSetId + ".h5";
+    private String getFileLoc(Integer dataSetId) {
+        return this.getHdf5ProcessingPaths().get("dataFiles") + "DS_" + dataSetId + ".h5";
     }
 
     /**
@@ -226,7 +214,7 @@ public class HDF5Interface {
      * @param filename path to extract naked matrix
      * @param sampleList Comma separated list of sample positions
      */
-    private static void filterBySampleList(String filename, String sampleList, boolean markerFast, String errorFile){
+    private void filterBySampleList(String filename, String sampleList, boolean markerFast, String errorFile){
         String tmpFile=filename+".tmp";
         FileSystemInterface.mv(filename,tmpFile);
         String cutString=getCutString(sampleList);
@@ -252,7 +240,7 @@ public class HDF5Interface {
      * @param sampleList Input string
      * @return Output string (see above)
      */
-    private static String getCutString(String sampleList){
+    private String getCutString(String sampleList){
         String[] entries=sampleList.split(",");
         StringBuilder cutString=new StringBuilder();//Cutstring -> 1,2,4,5,6
         int i=1;

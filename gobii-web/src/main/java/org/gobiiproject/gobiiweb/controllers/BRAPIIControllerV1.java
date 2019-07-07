@@ -918,7 +918,9 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
+
         }
         catch (GobiiException gE) {
             throw gE;
@@ -1032,8 +1034,10 @@ public class BRAPIIControllerV1 {
                         "Invalid dna run Id");
             }
 
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_GENOTYPE_CALLS,
+                    RestResourceId.GOBII_DNARUN,
                     RestMethodType.GET);
 
             if(maxPageSize == null) {
