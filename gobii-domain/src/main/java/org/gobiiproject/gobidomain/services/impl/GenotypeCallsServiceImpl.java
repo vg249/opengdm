@@ -4,12 +4,14 @@ import jdk.nashorn.internal.runtime.Context;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.GenotypeCallsService;
+import org.gobiiproject.gobidomain.services.MarkerBrapiService;
 import org.gobiiproject.gobiidao.hdf5.HDF5Interface;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
@@ -33,6 +35,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     @Autowired
     private DnaRunService dnarunService = null;
 
+    @Autowired
+    private MarkerBrapiService markerService = null;
+
     /**
      * Gets the genotype calls from all datasets for given dnarunId.
      * @param dnarunId - dnarunId given by user.
@@ -53,6 +58,55 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         try {
 
             dnarun = dnarunService.getDnaRunById(dnarunId);
+
+            String outputDirPath = "";
+
+            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(
+                    dnarun, pageToken,
+                    pageSize, outputDirPath);
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+        return returnVal;
+    }
+
+
+    /**
+     * Gets the genotype calls from all datasets for given markerId.
+     * @param dnarunId - markerId given by user.
+     * @param pageToken - String token with datasetId and markerId combination of last page's last element.
+     *                  If unspecified, first page will be extracted.
+     * @param pageSize - Page size to extract. If not specified default page size.
+     * @return List of Genotype calls for given dnarunId.
+     */
+    @Override
+    public List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
+            Integer markerId, String pageToken,
+            Integer pageSize) {
+
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+        DnaRunDTO dnarun = null;
+
+        MarkerBrapiDTO marker = null;
+
+        try {
+
+            marker = markerService.getMarkers(null, null, null).get(0);
 
             String outputDirPath = "";
 
