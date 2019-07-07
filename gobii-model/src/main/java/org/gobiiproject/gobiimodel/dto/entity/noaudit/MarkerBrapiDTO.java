@@ -6,6 +6,9 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by VCalaminos on 7/3/2019.
  */
@@ -19,7 +22,7 @@ public class MarkerBrapiDTO extends DTOBase {
 
     private int variantDbId;
     private String variantName;
-    private Integer variantSetDbId;
+    private List<Integer> variantSetDbIds = new ArrayList<>();
     private String variantType;
     private String referenceName;
 
@@ -41,11 +44,11 @@ public class MarkerBrapiDTO extends DTOBase {
     @GobiiEntityColumn(columnName = "name")
     public void setVariantName(String variantName) { this.variantName = variantName; }
 
-    @GobiiEntityParam(paramName = "variantSetDbId")
-    public Integer getVariantSetDbId() { return this.variantSetDbId; }
+    @GobiiEntityParam(paramName = "variantSetDbIds")
+    public List<Integer> getVariantSetDbId() { return this.variantSetDbIds; }
 
     @GobiiEntityColumn(columnName = "dataset_ids")
-    public void setVariantSetDbId(Integer variantSetDbId) { this.variantSetDbId = variantSetDbId; }
+    public void setVariantSetDbId(List<Integer> variantSetDbIds) { this.variantSetDbIds = variantSetDbIds; }
 
     @GobiiEntityParam(paramName = "variantType")
     public String getVariantType() { return this.variantType; }
