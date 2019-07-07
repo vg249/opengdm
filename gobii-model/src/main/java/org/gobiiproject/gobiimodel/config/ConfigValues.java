@@ -388,7 +388,7 @@ class ConfigValues {
         this.emailSvrType = emailSvrType;
     }
 
-    public String gethdf5ExePath() {
+    public String getHdf5ExePath() {
         return hdf5ExePath;
     }
 

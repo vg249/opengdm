@@ -390,8 +390,8 @@ public class ConfigSettings {
         this.configValues.setProvidesBackend(providesBackend);
     }
 
-    public String gethdf5ExePath() {
-        return this.configValues.gethdf5ExePath();
+    public String getHdf5ExePath() {
+        return this.configValues.getHdf5ExePath();
     }
 
 }

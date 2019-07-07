@@ -1069,7 +1069,8 @@
     <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
 
     <bean id="hdf5Interface" class="org.gobiiproject.gobiidao.hdf5.HDF5Interface">
-        <constructor-arg ref="extractorOutputPath"/>
+        <constructor-arg index="0" ref="pathToHdf5Exe"/>
+        <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>
 
 </beans>

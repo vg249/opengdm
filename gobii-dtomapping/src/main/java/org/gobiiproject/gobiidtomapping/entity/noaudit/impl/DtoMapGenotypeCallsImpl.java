@@ -26,6 +26,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
 
+    @Autowired
+    private HDF5Interface hdf5Interface;
+
 
     @Override
     public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataList(
@@ -192,25 +195,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 }
             }
 
-            //File genotypCallsFile = new File(
-            //        this.readHdf5GenotypesByDataset(markerHdf5IndexMap, sampleHdf5IndexMap));
+            readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, sampleHdf5IndexMap);
 
-
-            //FileInputStream fstream = new FileInputStream(genotypCallsFile);
-
-            //BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-            //int i = 0;
-
-            //String strLine;
-
-            //while ((strLine = br.readLine()) != null) {
-            //    returnVal.get(i).setGenotype(new HashMap<>());
-            //    returnVal.get(i).getGenotype().put("string_value", strLine);
-            //    i++;
-            //}
-
-            //    fstream.close();
         }
         catch(GobiiException ge) {
             throw ge;
@@ -227,22 +213,30 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         return returnVal;
     }
 
-    private String readHdf5GenotypesByDataset (
+    private void readHdf5GenotypesFromResult (List<GenotypeCallsDTO> returnVal,
             Map<String, ArrayList<String>> markerHdf5IndexMap,
             Map<String, ArrayList<String>> sampleHdf5IndexMap)  throws Exception {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        HDF5Interface hdf5Interface = new HDF5Interface("");
+        File genotypCallsFile = new File(
+               hdf5Interface.getHDF5Genotypes(true, markerHdf5IndexMap, sampleHdf5IndexMap, tempFolder));
 
+        FileInputStream fstream = new FileInputStream(genotypCallsFile);
 
+        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-        hdf5Interface.getHDF5Genotypes(
-                true, "/data/gobii_bundle/crops/arbitrary-id-0/files/error.txt",
-                "/data/gobii_bundle/crops/arbitrary-id-0/files/", markerHdf5IndexMap,
-                sampleHdf5IndexMap);
+        int i = 0;
 
+        String strLine;
 
-        return "";
+        while ((strLine = br.readLine()) != null) {
+            returnVal.get(i).setGenotype(new HashMap<>());
+            returnVal.get(i).getGenotype().put("string_value", strLine);
+            i++;
+        }
+
+        fstream.close();
+
     }
 }
