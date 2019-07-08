@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -69,7 +70,12 @@ public class ResultColumnApplicator {
                             Long currentLongValue = (Long) currentColumnValue;
                             currentMethod.invoke(dtoInstance, currentLongValue);
 
-                        } else if (currentColumnType.equals(Date.class)) {
+                        } else if (currentColumnType.equals(BigDecimal.class)) {
+
+                            BigDecimal currentBigDecimalValue = (BigDecimal) currentColumnValue;
+                            currentMethod.invoke(dtoInstance, currentBigDecimalValue);
+                        }
+                        else if (currentColumnType.equals(Date.class)) {
 
                             //Date currentDateValue = (Date) currentColumnValue;
                             Timestamp timestamp = resultSet.getTimestamp(currentColumnName);
