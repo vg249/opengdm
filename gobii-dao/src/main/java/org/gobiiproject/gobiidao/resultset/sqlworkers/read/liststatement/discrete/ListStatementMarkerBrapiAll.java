@@ -92,7 +92,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                     filterCondition += "AND ";
                 }
 
-                filterCondition += " and jsonb_exists(mr.dataset_marker_idx,?::text)\n";
+                filterCondition += " jsonb_exists(mr.dataset_marker_idx,?::text)\n";
                 filterConditionIndexArr.put("variantSetDbId", parameterIndex);
                 parameterIndex++;
             }
@@ -110,7 +110,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 "FROM  \n" +
                     "marker mr\n" +
                 "LEFT OUTER JOIN reference r \n" +
-                "USING(reference_id)" +
+                "USING(reference_id)\n" +
                 pageCondition +
                 filterCondition +
                 "order by mr.marker_id\n" +

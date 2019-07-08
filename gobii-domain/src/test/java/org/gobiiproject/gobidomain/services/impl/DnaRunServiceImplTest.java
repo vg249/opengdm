@@ -78,7 +78,6 @@ public class DnaRunServiceImplTest {
     @Test
     public void getDnaRunListWithFilterByVariantDbSetId() {
 
-        // get all dnaruns to have an existing callsetname we can use as an example
         List<DnaRunDTO> dnaRunDTOList;
         dnaRunDTOList = dnaRunService.getDnaRuns(null, null, null);
 
@@ -212,6 +211,5 @@ public class DnaRunServiceImplTest {
             assertTrue(gE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST);
             assertFalse(dnaRunDTO.getCallSetDbId() > 0);
         }
-
     }
 }
