@@ -1222,7 +1222,7 @@ public class BRAPIIControllerV1 {
      */
     @ApiOperation(
             value = "List genotype calls",
-            notes = "List of all the genotype calls in a given Dna run identified by Marker run Id",
+            notes = "List of all the genotype calls in a given Marker identified by Marker Id",
             tags = {"Variants"},
             extensions = {
                     @Extension(properties = {
@@ -1237,7 +1237,7 @@ public class BRAPIIControllerV1 {
     })
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByVariant(
-            @ApiParam(value = "Id for dna run to be fetched")
+            @ApiParam(value = "Id for marker to be fetched")
             @PathVariable(value="variantDbId") String variantDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
@@ -1259,7 +1259,7 @@ public class BRAPIIControllerV1 {
                 throw new GobiiException(
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Invalid dna run Id");
+                        "Invalid marker Id");
             }
 
 
