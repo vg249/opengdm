@@ -48,6 +48,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
+import org.gobiiproject.gobiiweb.automation.BrAPIUtils;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -66,10 +67,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -907,7 +905,7 @@ public class BRAPIIControllerV1 {
 
             List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize, dnaRunDTOFilter);
 
-            BrApiMasterPayload<List<DnaRunDTO>> payload = new BrApiMasterPayload<>(dnaRunList);
+            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(dnaRunList);
 
             if (dnaRunList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(dnaRunList.size());
@@ -1137,7 +1135,7 @@ public class BRAPIIControllerV1 {
 
             List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageSize, markerBrapiDTOFilter);
 
-            BrApiMasterPayload<List<MarkerBrapiDTO>> payload = new BrApiMasterPayload<>(markerList);
+            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(markerList);
 
             if (markerList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(markerList.size());
@@ -1148,7 +1146,6 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            System.out.print(payload);
             return ResponseEntity.ok(payload);
         }
         catch (GobiiException gE) {
@@ -1164,7 +1161,28 @@ public class BRAPIIControllerV1 {
 
     }
 
+    /**
+     * Endpoint for getting a specific marker with a given markerDbId
+     *
+     * @param variantDbId ID of the requested marker
+     * @return ResponseEntity with http status code specifying if retrieval of the marker is successful.
+     * Response body contains the requested marker information
+     */
+    @ApiOperation(
+            value = "Get a variant by variantDbId",
+            notes = "Retrieves the Variant entity having the specified ID",
+            tags = {"Variants"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Variants: variantDbId")
+                    })
+            }
 
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value="/variants/{variantDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantsByVariantDbId(
             @ApiParam(value = "ID of the Variant to be extracted", required = true)
