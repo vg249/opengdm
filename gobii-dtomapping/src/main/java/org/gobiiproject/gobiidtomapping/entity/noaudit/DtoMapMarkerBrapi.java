@@ -10,5 +10,6 @@ import java.util.List;
  */
 public interface DtoMapMarkerBrapi {
 
+    MarkerBrapiDTO get(Integer markerId) throws GobiiDtoMappingException;
     List<MarkerBrapiDTO> getList(Integer pageToken, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDtoMappingException;
 }

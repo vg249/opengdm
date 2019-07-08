@@ -58,7 +58,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
             if (sqlParamVals.containsKey("pageToken")
                     && sqlParamVals.get("pageToken") instanceof Integer) {
                 if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                    pageCondition = "WHERE marker_id > ?";
+                    pageCondition = "WHERE mr.marker_id > ?";
                 } else {
                     pageCondition = "";
                 }
@@ -93,7 +93,8 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                         "marker mr\n" +
                 ") as mr2 \n" +
                 "on mr.marker_id = mr2.marker_id\n" +
-                "GROUP BY mr.marker_id, mr.platform_id, mr.variant_id, mr.name, mr.code, mr.reference_id, mr.dataset_marker_idx\n" +
+                pageCondition +
+                "\nGROUP BY mr.marker_id, mr.platform_id, mr.variant_id, mr.name, mr.code, mr.reference_id, mr.dataset_marker_idx\n" +
                 ")\n" +
                 "SELECT \n" +
                     "marker.*, \n" +

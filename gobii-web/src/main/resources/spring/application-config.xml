@@ -434,6 +434,7 @@
     <!-- *** MARKER BRAPI BEANS ************* -->
     <bean id="markerBrapiService" class="org.gobiiproject.gobidomain.services.impl.MarkerBrapiServiceImpl"/>
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
+    <bean id="rsMarkerBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerBrapiDaoImpl"/>
 
     <!-- *** Genotype Calls Beans ************************************* -->
     <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.GenotypeCallsServiceImpl"/>

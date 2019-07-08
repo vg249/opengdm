@@ -6,6 +6,8 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapMarkerBrapi;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,39 @@ public class MarkerBrapiServiceImpl implements MarkerBrapiService {
         }
 
         return returnVal;
+
+    }
+
+    @Override
+    public MarkerBrapiDTO getMarkerById(Integer markerId) throws GobiiDomainException {
+
+        MarkerBrapiDTO returnVal;
+
+        try {
+
+            returnVal = dtoMapMarkerBrapi.get(markerId);
+
+            if (null == returnVal) {
+                throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Marker not found for given id.");
+            }
+
+            return returnVal;
+
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
 
     }
 

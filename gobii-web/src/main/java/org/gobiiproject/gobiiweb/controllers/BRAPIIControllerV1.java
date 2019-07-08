@@ -958,13 +958,12 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
             @ApiParam(value = "ID of the Callset to be extracted", required = true)
-            @PathVariable("callSetDbId") String callSetDbId) {
+            @PathVariable("callSetDbId") Integer callSetDbId) {
 
         Integer callSetDbIdInt;
 
         try {
-            callSetDbIdInt = Integer.parseInt(callSetDbId);
-
+            callSetDbIdInt = callSetDbId;
             DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbIdInt);
             BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
             return ResponseEntity.ok(payload);
@@ -1078,6 +1077,28 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    /**
+     * Lists the variants by page size and page token
+     *
+     * @param pageTokenParam String page token
+     * @param pageSize - Page size set by the user. If page size is more that maximum allowed
+     *                 page size, then the response will have maximum page sie
+     * @return Brapi response with list of variants
+     */
+    @ApiOperation(
+            value = "List all variants",
+            notes = "List of all Variants",
+            tags = {"Variants"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Variants")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+            paramType = "header", dataType = "string")
+    })
     @RequestMapping(value="/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariants(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
@@ -1127,6 +1148,7 @@ public class BRAPIIControllerV1 {
                 }
             }
 
+            System.out.print(payload);
             return ResponseEntity.ok(payload);
         }
         catch (GobiiException gE) {
@@ -1140,6 +1162,31 @@ public class BRAPIIControllerV1 {
             );
         }
 
+    }
+
+
+    @RequestMapping(value="/variants/{variantDbId:[\\d]+}", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getVariantsByVariantDbId(
+            @ApiParam(value = "ID of the Variant to be extracted", required = true)
+            @PathVariable("variantDbId") Integer variantDbId) {
+
+        Integer variantDbIdInt;
+
+        try {
+            variantDbIdInt = variantDbId;
+
+            MarkerBrapiDTO markerBrapiDTO = markerBrapiService.getMarkerById(variantDbIdInt);
+            BrApiMasterPayload<MarkerBrapiDTO> payload = new BrApiMasterPayload<>(markerBrapiDTO);
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
     }
 
     /**
