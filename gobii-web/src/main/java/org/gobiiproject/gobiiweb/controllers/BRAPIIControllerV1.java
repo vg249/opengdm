@@ -1285,7 +1285,9 @@ public class BRAPIIControllerV1 {
                 payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
                 if (genotypeCallsList.size() >= pageSize) {
                     payload.getMetaData().getPagination().setNextPageToken(
-                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantDbId().toString()
+                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantSetDbId().toString() +
+                                    "-" +
+                            genotypeCallsList.get(genotypeCallsList.size() - 1).getCallSetDbId().toString()
                     );
                 }
             }

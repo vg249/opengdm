@@ -18,9 +18,9 @@ public interface DtoMapGenotypeCalls {
             Integer pageSize) throws GobiiDtoMappingException;
 
     List<GenotypeCallsDTO> getGenotypeCallsList(DnaRunDTO dnarun, String pageToken,
-                                                Integer pageSize, String outputDirPath);
+                                                Integer pageSize);
 
     List<GenotypeCallsDTO> getGenotypeCallsList(MarkerBrapiDTO marker, String pageToken,
-                                                Integer pageSize, String outputDirPath);
+                                                Integer pageSize);
 
 }

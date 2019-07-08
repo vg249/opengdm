@@ -62,8 +62,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             String outputDirPath = "";
 
             returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(
-                    dnarun, pageToken,
-                    pageSize, outputDirPath);
+                    dnarun, pageToken, pageSize);
 
         }
         catch (GobiiException gE) {
@@ -110,8 +109,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             String outputDirPath = "";
 
             returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(
-                    marker, pageToken,
-                    pageSize, outputDirPath);
+                    marker, pageToken, pageSize);
 
         }
         catch (GobiiException gE) {

@@ -67,9 +67,7 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
             } else {
                 returnVal = CropRequestAnalyzer.getGobiiCropType();
             }
-
         } catch( Exception e) {
-
             LOGGER.error("Error looking up lookup key",e);
         }
 

@@ -75,9 +75,9 @@ public class ListStatementGenotypeCallsDnarunMetaData implements ListStatement {
         returnVal.setInt(1, (Integer) sqlParamVals.get("datasetId"));
         returnVal.setInt(2, (Integer) sqlParamVals.get("datasetId"));
 
-        if (sqlParamVals.containsKey("dnarunIdLimit") &&
-                (Integer) sqlParamVals.getOrDefault("dnarunIdLimit", 0) > 0) {
-            returnVal.setInt(3, (Integer) sqlParamVals.get("dnarunIdLimit"));
+        if (sqlParamVals.containsKey("dnarunId") &&
+                (Integer) sqlParamVals.getOrDefault("dnarunId", 0) > 0) {
+            returnVal.setInt(3, (Integer) sqlParamVals.get("dnarunId"));
         }
         else {
             returnVal.setInt(3, 0);

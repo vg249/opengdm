@@ -160,9 +160,10 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
      * @param pageSize
      * @return
      */
+    @Override
     public List<GenotypeCallsDTO> getGenotypeCallsList(
             DnaRunDTO dnarun, String pageToken,
-            Integer pageSize, String outputDirPath) {
+            Integer pageSize) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
@@ -280,9 +281,10 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
      * @param pageSize
      * @return
      */
+    @Override
     public List<GenotypeCallsDTO> getGenotypeCallsList(
             MarkerBrapiDTO marker, String pageToken,
-            Integer pageSize, String outputDirPath) {
+            Integer pageSize) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
@@ -290,7 +292,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         Integer startDatasetId = null;
 
-        Integer sampleIdLimit = null;
+        Integer dnarunIdLimit = null;
 
 
 
@@ -309,9 +311,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 if (pageTokenSplit.length == 2) {
                     try {
                         startDatasetId = Integer.parseInt(Arrays.asList(pageTokenSplit).get(0));
-                        sampleIdLimit = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
+                        dnarunIdLimit = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
                     } catch (Exception e) {
-                        sampleIdLimit = null;
+                        dnarunIdLimit = null;
                         startDatasetId = null;
                     }
                 }
@@ -336,7 +338,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                         marker.getDatasetMarkerIndex().get(datasetId.toString()).toString());
 
 
-                genotypeDnarunMetadata = this.getDnarunMetaDataList(datasetId, sampleIdLimit, pageSize);
+                genotypeDnarunMetadata = this.getDnarunMetaDataList(datasetId, dnarunIdLimit, pageSize);
 
                 for(GenotypeCallsDnarunMetadataDTO dnarun : genotypeDnarunMetadata) {
 
