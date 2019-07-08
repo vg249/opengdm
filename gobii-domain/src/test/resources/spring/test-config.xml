@@ -62,6 +62,10 @@
     <bean id="dnaRunService"
           class="org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl"/>
 
+    <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
+    <bean id="markerBrapiService"
+          class="org.gobiiproject.gobidomain.services.impl.MarkerBrapiServiceImpl"/>
+
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
     <bean id="spRunnerCallable"
@@ -88,6 +92,9 @@
     <bean id="rsDnaRunDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>
 
+    <!-- **** BRAPI MARKER Beans ********************************** -->
+    <bean id="rsMarkerBrapiDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerBrapiDaoImpl"/>
 
     <bean id="listStatementProjectAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementProjectAll"/>
@@ -96,6 +103,9 @@
 
     <bean id="listStatementDnaRunAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaRunAll"/>
+
+    <bean id="listStatementMarkerBrapiAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerBrapiAll"/>
 
     <!-- **** ListStatement queries paged *************************************** -->
     <bean id="listStatementDatasetAllPaged"
@@ -122,6 +132,16 @@
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnaRunAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- BRAPI MARKER ALL -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_ALL_BRAPI}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementMarkerBrapiAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>

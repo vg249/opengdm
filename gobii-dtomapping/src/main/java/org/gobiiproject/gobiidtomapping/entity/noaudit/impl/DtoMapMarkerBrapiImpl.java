@@ -46,6 +46,16 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
 
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
+               if (returnVal.getDatasetMarkerIndex().size() > 0) {
+
+                    for (String dataSetId : returnVal.getDatasetMarkerIndex().keySet()) {
+
+                        if (dataSetId != null) {
+                            returnVal.getVariantSetDbId().add(Integer.parseInt(dataSetId));
+                        }
+                    }
+                }
+
                 if (resultSet.next()) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
@@ -94,6 +104,20 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
                 sqlParams.put("pageSize", pageSize);
             }
 
+            if (markerBrapiDTOFilter != null) {
+
+                if (markerBrapiDTOFilter.getVariantDbId() != null && markerBrapiDTOFilter.getVariantDbId() != 0) {
+                    sqlParams.put("variantDbId", markerBrapiDTOFilter.getVariantDbId());
+                }
+
+                if (markerBrapiDTOFilter.getVariantSetDbId().size() > 0) {
+                    if (markerBrapiDTOFilter.getVariantSetDbId().get(0) != 0) {
+                        sqlParams.put("variantSetDbId", markerBrapiDTOFilter.getVariantSetDbId().get(0));
+                    }
+                }
+
+            }
+
             returnVal = (List<MarkerBrapiDTO>) dtoListQueryColl.getList(
                     ListSqlId.QUERY_ID_MARKER_ALL_BRAPI,
                     null,
@@ -104,7 +128,18 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
                 return new ArrayList<>();
             }
 
+            for(MarkerBrapiDTO currentDnaRunDTO : returnVal) {
 
+                if (currentDnaRunDTO.getDatasetMarkerIndex().size() > 0) {
+
+                    for (String dataSetId : currentDnaRunDTO.getDatasetMarkerIndex().keySet()) {
+
+                        if (dataSetId != null) {
+                            currentDnaRunDTO.getVariantSetDbId().add(Integer.parseInt(dataSetId));
+                        }
+                    }
+                }
+            }
         }
         catch (GobiiException gE) {
 

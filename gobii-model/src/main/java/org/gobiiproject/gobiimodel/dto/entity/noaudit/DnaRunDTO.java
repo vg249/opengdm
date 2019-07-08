@@ -73,7 +73,6 @@ public class DnaRunDTO extends DTOBase{
     @GobiiEntityParam(paramName = "variantSetIds")
     public List<Integer> getVariantSetIds() { return this.variantSetIds; }
 
-    @GobiiEntityColumn(columnName = "dataset_ids")
     public void setVariantSetIds(List<Integer> variantSetIds) { this.variantSetIds = variantSetIds; }
 
     @GobiiEntityParam(paramName = "germplasmDbId")

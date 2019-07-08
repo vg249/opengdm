@@ -58,7 +58,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
             if (sqlParamVals.containsKey("pageToken")
                     && sqlParamVals.get("pageToken") instanceof Integer) {
                 if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                    pageCondition = "WHERE mr.marker_id > ?";
+                    pageCondition = "WHERE mr.marker_id > ?\n";
                 } else {
                     pageCondition = "";
                 }
@@ -70,44 +70,73 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
             if (!pageCondition.isEmpty()) {
                 parameterIndex = 2;
             }
+
+            if (sqlParamVals.containsKey("variantDbId")) {
+
+                if (pageCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " mr.marker_id = ?\n";
+                filterConditionIndexArr.put("variantDbId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("variantSetDbId")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " jsonb_exists(mr.dataset_marker_idx,?::text)\n";
+                filterConditionIndexArr.put("variantSetDbId", parameterIndex);
+                parameterIndex++;
+            }
         }
 
-        String sql = "with marker as (\n" +
-                "SELECT \n" +
-                    "mr.marker_id,\n" +
-                    "mr.platform_id,\n" +
-                    "mr.variant_id,\n" +
-                    "mr.name,\n" +
-                    "mr.code,\n" +
-                    "mr.reference_id,\n" +
-                    "array_agg(datasetids) as dataset_ids,\n" +
-                    "mr.dataset_marker_idx \n" +
-                "FROM\n" +
-                "marker mr\n" +
-                "left join\n" +
-                "(\n" +
-                    "SELECT \n" +
-                        "mr.marker_id, \n" +
-                        "jsonb_object_keys(mr.dataset_marker_idx)::integer as datasetids\n" +
-                    "FROM \n" +
-                        "marker mr\n" +
-                ") as mr2 \n" +
-                "on mr.marker_id = mr2.marker_id\n" +
+        String sql = "SELECT  \n" +
+                    "mr.marker_id, \n" +
+                    "mr.platform_id, \n" +
+                    "mr.variant_id, \n" +
+                    "mr.name, \n" +
+                    "mr.code, \n" +
+                    "mr.reference_id, \n" +
+                    "mr.dataset_marker_idx,\n" +
+                    "r.name as reference_name, \n" +
+                    "p.name as platform_name,\n" +
+                    "lg.name as linkage_group_name,\n" +
+                    "mlg.start,\n" +
+                    "mlg.stop,\n" +
+                    "mp.name as mapset_name\n"+
+                "FROM  \n" +
+                    "marker mr\n" +
+                "LEFT OUTER JOIN reference r \n" +
+                "USING(reference_id)\n" +
+                "LEFT OUTER JOIN platform p\n" +
+                "USING (platform_id)\n" +
+                "LEFT OUTER JOIN marker_linkage_group mlg\n" +
+                "USING (marker_id)\n" +
+                "LEFT OUTER JOIN linkage_group lg\n" +
+                "USING (linkage_group_id)\n" +
+                "LEFT OUTER JOIN mapset mp\n" +
+                "ON mp.mapset_id = lg.map_id\n" +
                 pageCondition +
-                "\nGROUP BY mr.marker_id, mr.platform_id, mr.variant_id, mr.name, mr.code, mr.reference_id, mr.dataset_marker_idx\n" +
-                ")\n" +
-                "SELECT \n" +
-                    "marker.*, \n" +
-                    "r.name as reference_name\n" +
-                "FROM \n" +
-                    "marker LEFT OUTER JOIN reference r\n" +
-                "USING(reference_id) " +
+                filterCondition +
+                "order by mr.marker_id\n" +
                 pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         if (!pageCondition.isEmpty()) {
             returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
+        }
+
+        for (Map.Entry<String, Integer> filter: filterConditionIndexArr.entrySet()) {
+            returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
         }
 
         if (!pageSizeCondition.isEmpty()) {
