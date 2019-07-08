@@ -843,6 +843,7 @@ public class BRAPIIControllerV1 {
     public @ResponseBody ResponseEntity getCallSets(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "callSetDbId", required = false) Integer callSetDbId,
             @RequestParam(value = "callSetName", required = false) String callSetName,
             @RequestParam(value = "variantSetDbId", required = false) String variantSetDbId,
             @RequestParam(value = "sampleDbId", required = false) String sampleDbId,
@@ -866,6 +867,10 @@ public class BRAPIIControllerV1 {
             }
 
             DnaRunDTO dnaRunDTOFilter = new DnaRunDTO();
+
+            if (callSetDbId != null) {
+                dnaRunDTOFilter.setCallSetDbId(callSetDbId);
+            }
 
             if (callSetName != null) {
                 dnaRunDTOFilter.setCallSetName(callSetName);
@@ -1100,7 +1105,9 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value="/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariants(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
     ) {
         try {
 
@@ -1119,6 +1126,16 @@ public class BRAPIIControllerV1 {
             }
 
             MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
+
+            if (variantDbId != null) {
+                markerBrapiDTOFilter.setVariantDbId(variantDbId);
+            }
+
+            if (variantSetDbId != null) {
+                List<Integer> variantDbArr = new ArrayList<>();
+                variantDbArr.add(variantSetDbId);
+                markerBrapiDTOFilter.setVariantSetDbId(variantDbArr);
+            }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_MARKERS,

@@ -70,6 +70,32 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
             if (!pageCondition.isEmpty()) {
                 parameterIndex = 2;
             }
+
+            if (sqlParamVals.containsKey("variantDbId")) {
+
+                if (pageCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " mr.marker_id = ?\n";
+                filterConditionIndexArr.put("variantDbId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("variantSetDbId")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " and jsonb_exists(mr.dataset_marker_idx,?::text)\n";
+                filterConditionIndexArr.put("variantSetDbId", parameterIndex);
+                parameterIndex++;
+            }
         }
 
         String sql = "SELECT  \n" +
@@ -86,6 +112,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 "LEFT OUTER JOIN reference r \n" +
                 "USING(reference_id)" +
                 pageCondition +
+                filterCondition +
                 "order by mr.marker_id\n" +
                 pageSizeCondition;
 
@@ -93,6 +120,10 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
 
         if (!pageCondition.isEmpty()) {
             returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
+        }
+
+        for (Map.Entry<String, Integer> filter: filterConditionIndexArr.entrySet()) {
+            returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
         }
 
         if (!pageSizeCondition.isEmpty()) {

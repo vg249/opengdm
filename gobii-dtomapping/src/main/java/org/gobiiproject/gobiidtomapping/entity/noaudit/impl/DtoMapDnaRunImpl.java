@@ -104,6 +104,10 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
 
             if (dnaRunDTOFilter != null) {
 
+                if (dnaRunDTOFilter.getCallSetDbId() != null && dnaRunDTOFilter.getCallSetDbId() != 0) {
+                    sqlParams.put("callSetDbId", dnaRunDTOFilter.getCallSetDbId());
+                }
+
                 if (dnaRunDTOFilter.getCallSetName() != null) {
                     sqlParams.put("callSetName", dnaRunDTOFilter.getCallSetName());
                 }

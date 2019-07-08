@@ -73,6 +73,12 @@ public class ListStatementDnaRunAll implements ListStatement {
                 parameterIndex = 2;
             }
 
+            if (sqlParamVals.containsKey("callSetDbId")) {
+                filterCondition += "and dr.dnarun_id = ?\n";
+                filterConditionIndexArr.put("callSetDbId", parameterIndex);
+                parameterIndex++;
+            }
+
             if (sqlParamVals.containsKey("callSetName")) {
                 filterCondition += "and dr.name=?\n";
                 filterConditionIndexArr.put("callSetName", parameterIndex);

@@ -104,6 +104,20 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
                 sqlParams.put("pageSize", pageSize);
             }
 
+            if (markerBrapiDTOFilter != null) {
+
+                if (markerBrapiDTOFilter.getVariantDbId() != null && markerBrapiDTOFilter.getVariantDbId() != 0) {
+                    sqlParams.put("variantDbId", markerBrapiDTOFilter.getVariantDbId());
+                }
+
+                if (markerBrapiDTOFilter.getVariantSetDbId().size() > 0) {
+                    if (markerBrapiDTOFilter.getVariantSetDbId().get(0) != 0) {
+                        sqlParams.put("variantSetDbId", markerBrapiDTOFilter.getVariantSetDbId().get(0));
+                    }
+                }
+
+            }
+
             returnVal = (List<MarkerBrapiDTO>) dtoListQueryColl.getList(
                     ListSqlId.QUERY_ID_MARKER_ALL_BRAPI,
                     null,
