@@ -105,7 +105,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         try {
 
-            marker = markerService.getMarkers(null, null, null).get(0);
+            marker = markerService.getMarkerById(markerId);
 
             String outputDirPath = "";
 
