@@ -60,7 +60,7 @@ public class ListStatementDnaRunAll implements ListStatement {
             if (sqlParamVals.containsKey("pageToken")
                     && sqlParamVals.get("pageToken") instanceof Integer) {
                 if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                    pageCondition = " WHERE dnarun_id > ?";
+                    pageCondition = " AND dnarun_id > ?\n";
                 } else {
                     pageCondition = "";
                 }
@@ -74,19 +74,19 @@ public class ListStatementDnaRunAll implements ListStatement {
             }
 
             if (sqlParamVals.containsKey("callSetName")) {
-                filterCondition += "and dnarun.name=?\n";
+                filterCondition += "and dr.name=?\n";
                 filterConditionIndexArr.put("callSetName", parameterIndex);
                 parameterIndex++;
             }
 
             if (sqlParamVals.containsKey("variantSetDbId")) {
-                filterCondition += "and jsonb_exists(dnarun.dataset_dnarun_idx,?::text)\n";
+                filterCondition += "and jsonb_exists(dr.dataset_dnarun_idx,?::text)\n";
                 filterConditionIndexArr.put("variantSetDbId", parameterIndex);
                 parameterIndex++;
             }
 
             if (sqlParamVals.containsKey("sampleDbId")) {
-                filterCondition += "and dnarun.dnasample_id=?\n";
+                filterCondition += "and dr.dnasample_id=?\n";
                 filterConditionIndexArr.put("sampleDbId", parameterIndex);
                 parameterIndex++;
             }
@@ -98,48 +98,31 @@ public class ListStatementDnaRunAll implements ListStatement {
             }
 
             if (sqlParamVals.containsKey("studyDbId")) {
-                filterCondition += "and dnarun.experiment_id=?\n";
+                filterCondition += "and dr.experiment_id=?\n";
                 filterConditionIndexArr.put("studyDbId", parameterIndex);
                 parameterIndex++;
             }
         }
 
-        String sql = "with dnarun as (\n" +
-                "SELECT\n" +
-                "dr.dnarun_id,\n" +
-                "dr.experiment_id,\n" +
-                "dr.dnasample_id,\n" +
-                "array_agg(datasetids) as dataset_ids,\n" +
-                "dr.name,\n" +
-                "dr.code,\n" +
-                "dr.dataset_dnarun_idx\n" +
-                "FROM\n" +
-                "(\n" +
-                "   SELECT\n" +
-                        "dr.dnarun_id,\n" +
-                        "dr.experiment_id,\n" +
-                        "dr.dnasample_id,\n" +
-                        "dr.name,\n" +
-                        "dr.code,\n" +
-                        "jsonb_object_keys(dr.dataset_dnarun_idx)::integer as datasetids,\n" +
-                        "dr.dataset_dnarun_idx\n" +
-                    "FROM\n" +
-                        "dnarun dr\n" +
-                    pageCondition +
-                ") as dr\n" +
-                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code, dr.dataset_dnarun_idx)\n" +
-                "SELECT\n" +
-                "   dnarun.*,\n" +
-                "   s.name as sample_name,\n" +
-                "   g.germplasm_id,\n" +
-                "   g.name as germplasm_name, \n" +
-                "   g.external_code as germplasm_external_code\n" +
-                "FROM\n" +
-                "   dnarun, dnasample s, germplasm g\n" +
-                "WHERE\n" +
-                "   dnarun.dnasample_id = s.dnasample_id\n" +
-                "   and g.germplasm_id = s.germplasm_id\n" +
+        String sql = "SELECT \n" +
+                    "dr.dnarun_id, \n" +
+                    "dr.experiment_id, \n" +
+                    "dr.dnasample_id,\n" +
+                    "dr.name,\n" +
+                    "dr.code,\n" +
+                    "dr.dataset_dnarun_idx,\n" +
+                    "s.name as sample_name, \n" +
+                    "g.germplasm_id, \n" +
+                    "g.name as germplasm_name,  \n" +
+                    "g.external_code as germplasm_external_code \n" +
+                "FROM \n" +
+                    "dnarun dr, dnasample s, germplasm g \n" +
+                "WHERE \n" +
+                    "dr.dnasample_id = s.dnasample_id \n" +
+                    "and g.germplasm_id = s.germplasm_id\n" +
+                pageCondition +
                 filterCondition +
+                "order by dr.dnarun_id\n" +
                 pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);

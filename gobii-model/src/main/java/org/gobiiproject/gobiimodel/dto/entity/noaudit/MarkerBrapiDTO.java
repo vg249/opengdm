@@ -49,7 +49,6 @@ public class MarkerBrapiDTO extends DTOBase {
     @GobiiEntityParam(paramName = "variantSetDbIds")
     public List<Integer> getVariantSetDbId() { return this.variantSetDbIds; }
 
-    @GobiiEntityColumn(columnName = "dataset_ids")
     public void setVariantSetDbId(List<Integer> variantSetDbIds) { this.variantSetDbIds = variantSetDbIds; }
 
     @GobiiEntityParam(paramName = "variantType")

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by VCalaminos on 6/25/2019.
@@ -43,6 +44,16 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
             if (resultSet.next()) {
 
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+
+                if (returnVal.getDatasetDnarunIndex().size() > 0) {
+
+                    for (String dataSetId : returnVal.getDatasetDnarunIndex().keySet()) {
+
+                        if (dataSetId != null) {
+                            returnVal.getVariantSetIds().add(Integer.parseInt(dataSetId));
+                        }
+                    }
+                }
 
                 if (resultSet.next()) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -122,6 +133,19 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
 
             if (returnVal == null) {
                 return new ArrayList<>();
+            }
+
+            for(DnaRunDTO currentDnaRunDTO : returnVal) {
+
+                if (currentDnaRunDTO.getDatasetDnarunIndex().size() > 0) {
+
+                    for (String dataSetId : currentDnaRunDTO.getDatasetDnarunIndex().keySet()) {
+
+                        if (dataSetId != null) {
+                            currentDnaRunDTO.getVariantSetIds().add(Integer.parseInt(dataSetId));
+                        }
+                    }
+                }
             }
 
         }

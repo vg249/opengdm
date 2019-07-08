@@ -24,41 +24,23 @@ public class SpGetDnaRunByDnaRunId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "with dnarun as(\n" +
-                "SELECT\n" +
-                    "dr.dnarun_id,\n" +
-                    "dr.experiment_id,\n" +
+        String sql = "SELECT \n" +
+                    "dr.dnarun_id, \n" +
+                    "dr.experiment_id, \n" +
                     "dr.dnasample_id,\n" +
-                    "array_agg(datasetids) as dataset_ids,\n" +
                     "dr.name,\n" +
-                    "dr.code\n," +
-                    "dr.dataset_dnarun_idx\n" +
-                "FROM\n" +
-                "(\n" +
-                    "SELECT\n" +
-                        "dr.dnarun_id,\n" +
-                        "dr.experiment_id,\n" +
-                        "dr.dnasample_id,\n" +
-                        "dr.name,\n" +
-                        "dr.code,\n" +
-                        "jsonb_object_keys(dr.dataset_dnarun_idx)::integer as datasetids\n," +
-                        "dr.dataset_dnarun_idx\n" +
-                    "FROM\n" +
-                        "dnarun dr\n" +
-                    "WHERE dr.dnarun_id=?\n" +
-                ") as dr\n" +
-                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code, dr.dataset_dnarun_idx)\n" +
-                "SELECT\n" +
-                "   dnarun.*,\n" +
-                "   s.name as sample_name,\n" +
-                "   g.germplasm_id as germplasm_id,\n" +
-                "   g.name as germplasm_name,\n" +
-                "   g.external_code as germplasm_external_code\n" +
-                "FROM\n" +
-                    "dnarun, dnasample s, germplasm g\n" +
-                "WHERE\n" +
-                    "dnarun.dnasample_id = s.dnasample_id\n" +
-                    "and g.germplasm_id = s.germplasm_id";
+                    "dr.code,\n" +
+                    "dr.dataset_dnarun_idx,\n" +
+                    "s.name as sample_name, \n" +
+                    "g.germplasm_id, \n" +
+                    "g.name as germplasm_name,  \n" +
+                    "g.external_code as germplasm_external_code \n" +
+                "FROM \n" +
+                    "dnarun dr, dnasample s, germplasm g \n" +
+                "WHERE \n" +
+                    "dr.dnarun_id=?\n" +
+                    "and dr.dnasample_id = s.dnasample_id \n" +
+                    "and g.germplasm_id = s.germplasm_id\n";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
         Integer dnaRunId = (Integer) parameters.get("dnaRunId");
