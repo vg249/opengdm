@@ -841,13 +841,25 @@ public class BRAPIIControllerV1 {
     })
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSets(
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used." +
+                    "If pageNumber is specified pageToken will be ignored. " +
+                    "pageToken can be used to sequentially get pages faster. " +
+                    "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(value = "ID of the CallSet to be retrieved.")
             @RequestParam(value = "callSetDbId", required = false) Integer callSetDbId,
+            @ApiParam(value = "The human readable name of the CallSet to be retrieved.")
             @RequestParam(value = "callSetName", required = false) String callSetName,
+            @ApiParam(value = "The ID of the VariantSet to be retrieved.")
             @RequestParam(value = "variantSetDbId", required = false) String variantSetDbId,
+            @ApiParam(value = "The ID of the Sample to be retrieved.")
             @RequestParam(value = "sampleDbId", required = false) String sampleDbId,
+            @ApiParam(value = "The ID of the Germplasm to be retrieved.")
             @RequestParam(value = "germplasmDbId", required = false) String germplasmDbId,
+            @ApiParam(value = "The ID of the study to be retrieved.")
             @RequestParam(value = "studyDbId", required = false) String studyDbId
     ) {
         try {
