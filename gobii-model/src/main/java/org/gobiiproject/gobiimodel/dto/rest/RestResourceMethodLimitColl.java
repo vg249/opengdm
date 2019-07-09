@@ -16,7 +16,7 @@ public class RestResourceMethodLimitColl {
 
     public RestResourceMethodLimitColl() {}
 
-    @ElementMap
+    @ElementMap(required=false,inline=true,entry="MethodType",attribute=true)
     private EnumMap<RestMethodType, RestResourceMethodLimit> limitsByMethodType = new EnumMap<>(RestMethodType.class);
 
     public boolean isMethodDefined(RestMethodType restMethodType) {

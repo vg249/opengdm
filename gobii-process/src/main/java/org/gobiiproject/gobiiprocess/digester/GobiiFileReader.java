@@ -139,8 +139,6 @@ public class GobiiFileReader {
         }
 
         //Error logs go to a file based on crop (for human readability) and
-//        pm.addFolderPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration);
-//        pm.addFolderPath("Instruction File", loaderInstructionList.getDestinationFile(), true, configuration);
         ErrorLogger.logInfo("Digester", "Beginning read of " + instructionFile);
         List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFile);
         if (list == null || list.isEmpty()) {

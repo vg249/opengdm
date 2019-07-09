@@ -105,6 +105,7 @@ public class GobiiConfig {
 
     private static String SVR_KDC = "ksvr";
     private static String SVO_OWNC = "ownc";
+    private static String SVR_OWNC_ERR = "ocERR";
     private static String SVR_KDC_RESOURCE_START = "krscSTA";
     private static String SVR_KDC_RESOURCE_STATUS = "krscSTT";
     private static String SVR_KDC_RESOURCE_DOWNLOAD = "krscDLD";
@@ -282,6 +283,7 @@ public class GobiiConfig {
 
             setOption(options, SVR_KDC, false, "KDC server to add or modify; must be accompanied by a server options and KDC options", "KDC Server options");
             setOption(options, SVO_OWNC, false, "ownCloud configuration to add or modify a server options", "ownCloud");
+            setOption(options, SVR_OWNC_ERR,true,"Error log context path for OwnCloud server.","owncloud error");
             setOption(options, SVR_KDC_RESOURCE_START, true, "KDC qcStart resource path", "qcStart resource");
             setOption(options, SVR_KDC_RESOURCE_STATUS, true, "KDC qcStatus resource path", "qcStatus resource");
             setOption(options, SVR_KDC_RESOURCE_DOWNLOAD, true, "KDC qcDownload resource path", "qcDownload resource");
@@ -626,6 +628,7 @@ public class GobiiConfig {
             String svrHost;
             Integer port;
             String contextPath;
+            String errorContextPath;
             String userName;
             String password;
             String resourceQCStart;
@@ -729,6 +732,14 @@ public class GobiiConfig {
                     configSettings.getGlobalServer(ServerType.KDC).setMaxStatusCheckMins(statusWaitThresholdMinutes);
                 }
 
+            }
+            if(serverType.equals(ServerType.OWN_CLOUD)){
+                if(commandLine.hasOption(SVR_OWNC_ERR)){
+                    String errorPath = commandLine.getOptionValue(SVR_OWNC_ERR);
+                    argsSet.add(SVR_OWNC_ERR);
+                    valsSet.add(errorPath);
+                    configSettings.getGlobalServer(ServerType.OWN_CLOUD).setErrorContextPath(errorPath);
+                }
             }
 
 

@@ -31,7 +31,7 @@ public class GobiiCropConfig {
     @Element(required = false)
     private boolean isActive = true;
 
-    @ElementMap(required = false)
+    @ElementMap(required = false, key = "ServerType",attribute = true, inline=true)
     private Map<ServerType, ServerConfig> serversByServerType = new HashMap<>();
 
     public GobiiCropConfig() {

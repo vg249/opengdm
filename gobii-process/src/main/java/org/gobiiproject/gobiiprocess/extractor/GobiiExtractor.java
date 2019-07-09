@@ -482,16 +482,8 @@ public class GobiiExtractor {
 		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration, false);
 		            pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration, false);
 		            pm.addPath("Marker File", new File(markerFile).getAbsolutePath(), configuration, false);
-
-//					pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration, false);
-//					pm.addFolderPath("Output Directory", extractDir, configuration);
-//					pm.addPath("Error Log", logFile, true, configuration, false);
-//					pm.addPath("Summary File", extractDir, configuration, false);
-//					pm.addPath("Sample File", extractDir, configuration ,false);
-//					pm.addPath("Marker File", extractDir, configuration, false);
 		            if (checkFileExistence(mapsetFile)) {
-			            pm.addPath("Mapset File", extractDir, configuration, false);
-//						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration);
+			            pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration);
 		            }
 
 		            esw.writeToFile(new File(extractSummaryFile));

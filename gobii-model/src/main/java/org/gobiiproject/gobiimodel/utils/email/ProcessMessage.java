@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiimodel.utils.links.GetLinks;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -217,11 +218,18 @@ public class ProcessMessage extends MailMessage {
 
         String pathLine = path;
         if(config.getGlobalServer(ServerType.OWN_CLOUD).isActive()){
+
+            try {
             if(path.endsWith("/")){
                 pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
             }
             else{
                 pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getLink(path, config, publicUrl);
+            }
+
+            } catch(ConnectException e){
+                ErrorLogger.logWarning("ProcessMessage","Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links",e);
+                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
             }
         }
     	if(new File(path).length() > 1){
