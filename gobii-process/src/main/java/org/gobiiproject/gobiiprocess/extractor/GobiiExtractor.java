@@ -483,7 +483,7 @@ public class GobiiExtractor {
 		            pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration, false);
 		            pm.addPath("Marker File", new File(markerFile).getAbsolutePath(), configuration, false);
 		            if (checkFileExistence(mapsetFile)) {
-			            pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration);
+			            pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration,false);
 		            }
 
 		            esw.writeToFile(new File(extractSummaryFile));
