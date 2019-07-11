@@ -290,9 +290,7 @@ public class GobiiFileReader {
         databaseValidation(loaderInstructionMap, procedure.getMetadata(), gobiiCropConfig);
 
         boolean sendQc = false;
-
-        List<GobiiFileColumn> cols = procedure.getInstructions().get(0).getGobiiFileColumns();
-
+        
         qcCheck = procedure.getMetadata().isQcCheck();
 
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
