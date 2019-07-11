@@ -36,6 +36,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructi
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
@@ -1741,15 +1742,14 @@ public class GobiiAdl {
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
         try {
             File instructionFile = new File(instructionFilePath);
-            InstructionFileAccess<GobiiLoaderInstruction> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
-            List<GobiiLoaderInstruction> instructions =
-                    instructionInstructionFileAccess.getInstructions(instructionFilePath,
-                            GobiiLoaderInstruction[].class);
-            if (null != instructions) {
+            InstructionFileAccess<GobiiLoaderProcedure> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
+            GobiiLoaderProcedure procedure = instructionInstructionFileAccess.getProcedure(instructionFilePath);
+
+            if (null != procedure) {
                 String instructionFileName = instructionFile.getName();
                 String justName = instructionFileName.replaceFirst("[.][^.]+$", "");
                 loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + justName);
-                loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
+                loaderInstructionFilesDTO.setGobiiLoaderProcedure(procedure);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -1765,7 +1765,7 @@ public class GobiiAdl {
 
         boolean returnVal = false;
 
-        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
+        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getProcedure());
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
@@ -1773,13 +1773,13 @@ public class GobiiAdl {
         } else {
             try {
                 if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 } else {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 }
                 PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
                 GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
@@ -1827,21 +1827,20 @@ public class GobiiAdl {
 
             // because we called checkStatus() with second parameter true, we know that there is at least one payload item
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
-            GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
+            GobiiLoaderProcedure procedure = data.get(0).getProcedure();
 
-            if (!currentStatus.equals(gobiiLoaderInstruction.getGobiiJobStatus().getCvName())) {
-                currentStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
+            if (!currentStatus.equals(procedure.getMetadata().getGobiiJobStatus().getCvName())) {
+                currentStatus = procedure.getMetadata().getGobiiJobStatus().getCvName();
                 System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
             }
 
-            if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
-                    gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
+            if (procedure.getMetadata().getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
+                    procedure.getMetadata().getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
 
-                System.out.println("\nJob " + instructionFileName + " failed. \n" + gobiiLoaderInstruction.getLogMessage());
                 returnVal = false;
                 statusDetermined = true;
 
-            } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
+            } else if (procedure.getMetadata().getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
                 returnVal = true;
                 statusDetermined = true;
             }
