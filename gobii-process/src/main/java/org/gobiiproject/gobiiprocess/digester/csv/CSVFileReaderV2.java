@@ -118,11 +118,11 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         processedInstruction = new GobiiProcessedInstruction(loaderInstruction);
         processedInstruction.parseInstruction();
 
-        String outputFileName = HelperFunctions.getDestinationFile(procedure);
+        String outputFileName = HelperFunctions.getDestinationFile(procedure, loaderInstruction);
         try (BufferedWriter tempFileBufferedWriter = new BufferedWriter(new FileWriter(outputFileName))) {
 
             File file = new File(procedure.getMetadata().getGobiiFile().getSource());
-            File outputFile = new File(HelperFunctions.getDestinationFile(procedure));
+            File outputFile = new File(HelperFunctions.getDestinationFile(procedure, loaderInstruction));
             if (file.isDirectory()) {
                 listFilesFromFolder(file, tempFileBufferedWriter, procedure, outputFile);
             } else {
@@ -300,7 +300,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                             if (matrixValidation.stopProcessing()) {
                                 tempFileBufferedWriter.flush();
                                 tempFileBufferedWriter.close();
-                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure));
+                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
                                 return new RowColPair<Integer>(totalCols,rowNo);
                             }
                         }
@@ -313,7 +313,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         if (matrixValidation.getErrorCount() != 0) {
             tempFileBufferedWriter.flush();
             tempFileBufferedWriter.close();
-            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure));
+            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
         }
         return new RowColPair<Integer>(totalRows,totalCols);
     }
