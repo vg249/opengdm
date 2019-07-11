@@ -97,7 +97,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setFindText(findTextTableOneColumnOne)
                 .setReplaceText(replaceTextTextTableOneColumnOne)
                 .setDataSetType(dataSetTypeTableOneColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
@@ -193,7 +193,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setConstantValue("test2")
                 .setName(instructionTwoColumnOneName)
                 .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
 
@@ -569,7 +569,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setConstantValue("test")
                 .setName(instructionColumnOneName)
                 .setDataSetType(dataSetTypeColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         gobiiLoaderInstructionOne.getGobiiFileColumns().add(gobiiFileColumnOne);
 
@@ -682,7 +682,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setConstantValue("test2")
                 .setName(instructionTwoColumnOneName)
                 .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
 
@@ -780,7 +780,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setConstantValue("test")
                 .setName(instructionColumnOneName)
                 .setDataSetType(dataSetTypeColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         gobiiLoaderInstructionThree.getGobiiFileColumns().add(gobiiFileColumnOne);
 
@@ -907,7 +907,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setConstantValue("test2")
                 .setName(instructionTwoColumnOneName)
                 .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
 
