@@ -227,8 +227,7 @@ public class GobiiFileReader {
 
         //TODO: HACK - Job's name is
         String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
-        String jobUser = procedure.getMetadata().getContactEmail();
-        pm.setUser(jobUser);
+        pm.setUser(procedure.getMetadata().getContactEmail());
 
         String logDir = configuration.getFileSystemLog();
         String logFile = null;
