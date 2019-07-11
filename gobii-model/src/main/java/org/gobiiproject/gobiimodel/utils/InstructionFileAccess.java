@@ -87,7 +87,7 @@ public class InstructionFileAccess<T> {
     } // writeInstructions
 
 
-    public T getInstruction(String instructionFileFqpn) {
+    public T getProcedure(String instructionFileFqpn) {
 
         T returnVal = null;
 
