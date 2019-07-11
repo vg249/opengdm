@@ -75,13 +75,15 @@ public class ListStatementDatasetBrapiAll implements ListStatement {
                     "d.dataset_id,\n" +
                     "d.experiment_id,\n" +
                     "d.name as variantset_name,\n" +
-                    "e.name as study_name\n" +
+                    "e.name as study_name,\n" +
+                    "d.callinganalysis_id,\n" +
+                    "d.analyses as analysis_ids\n" +
                 "FROM \n" +
                     "dataset d\n" +
                 "LEFT OUTER JOIN experiment e\n" +
                 "USING (experiment_id)\n" +
                 pageCondition +
-                "order by d.dataset_id\n"+
+                "order by d.dataset_id\n" +
                 pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);

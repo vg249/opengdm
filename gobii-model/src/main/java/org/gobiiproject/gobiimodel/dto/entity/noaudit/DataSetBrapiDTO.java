@@ -5,15 +5,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by VCalaminos on 7/9/2019.
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType"
+        "id", "allowedProcessTypes", "entityNameType", "analysisIds", "callingAnalysisId"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DataSetBrapiDTO extends DTOBase {
@@ -22,6 +23,9 @@ public class DataSetBrapiDTO extends DTOBase {
     private Integer studyDbId;
     private String variantSetName;
     private String studyName;
+    private List<AnalysisBrapiDTO> analyses;
+    private List<Integer> analysisIds;
+    private Integer callingAnalysisId;
 
     @Override
     public Integer getId() { return this.variantSetDbId; }
@@ -52,5 +56,20 @@ public class DataSetBrapiDTO extends DTOBase {
 
     @GobiiEntityColumn(columnName = "study_name")
     public void setStudyName(String studyName) { this.studyName = studyName; }
+
+    @GobiiEntityParam(paramName = "analyses")
+    public List<AnalysisBrapiDTO> getAnalyses() { return this.analyses; }
+
+    public void setAnalyses(List<AnalysisBrapiDTO> analyses) { this.analyses = analyses; }
+
+    public Integer getCallingAnalysisId() { return this.callingAnalysisId; }
+
+    @GobiiEntityColumn(columnName = "callinganalysis_id")
+    public void setCallingAnalysisId(Integer callingAnalysisId) { this.callingAnalysisId = callingAnalysisId; }
+
+    public List<Integer> getAnalysisIds() { return this.analysisIds; }
+
+    @GobiiEntityColumn(columnName = "analysis_ids")
+    public void setAnalysisIds(List<Integer> analysisIds) { this.analysisIds = analysisIds; }
 
 }

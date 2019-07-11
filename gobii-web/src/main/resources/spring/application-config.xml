@@ -440,6 +440,9 @@
     <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.DatasetBrapiServiceImpl"/>
     <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
 
+    <!-- *** ANALYSIS BRAPI BEANS ********** -->
+    <bean id="dtoMapAnalysisBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisBrapiImpl"/>
+
     <!-- *** Genotype Calls Beans ************************************* -->
     <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.GenotypeCallsServiceImpl"/>
     <bean id="dtoMapGenotypeCalls" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapGenotypeCallsImpl"/>
@@ -498,6 +501,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerBrapiAll"/>
     <bean id="listStatementDatasetBrapiAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDatasetBrapiAll"/>
+    <bean id="listStatementAnalysisBrapiByIds"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementAnalysisBrapiAll"/>
 
     <bean id="listStatementDnaRunAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaRunAll"/>
@@ -769,6 +774,16 @@
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDatasetBrapiAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- ANALYSIS BRAPI BY IDS -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_ANALYSES_ALL_BRAPI}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementAnalysisBrapiByIds"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>

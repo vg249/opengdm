@@ -114,8 +114,6 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                     "mp.name as mapset_name\n"+
                 "FROM  \n" +
                     "marker mr\n" +
-                "LEFT OUTER JOIN reference r \n" +
-                "USING(reference_id)\n" +
                 "LEFT OUTER JOIN platform p\n" +
                 "USING (platform_id)\n" +
                 "LEFT OUTER JOIN marker_linkage_group mlg\n" +
@@ -124,6 +122,8 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 "USING (linkage_group_id)\n" +
                 "LEFT OUTER JOIN mapset mp\n" +
                 "ON mp.mapset_id = lg.map_id\n" +
+                "LEFT OUTER JOIN reference r \n" +
+                "ON r.reference_id = mp.reference_id\n" +
                 pageCondition +
                 filterCondition +
                 "order by mr.marker_id\n" +
