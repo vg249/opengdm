@@ -260,11 +260,10 @@ public class GobiiFileReader {
             }
         }
 
-        GobiiFile file = procedure.getMetadata().getGobiiFile();
-        if (file == null) {
+        if (procedure.getMetadata().getGobiiFile() == null) {
             logError("Digester", "Instruction " + instructionFile + " has bad 'file' column");
         }
-        GobiiFileType instructionFileType = file.getGobiiFileType();
+        GobiiFileType instructionFileType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
         if (instructionFileType == null) {
             logError("Digester", "Instruction " + instructionFile + " has missing file format");
         }
