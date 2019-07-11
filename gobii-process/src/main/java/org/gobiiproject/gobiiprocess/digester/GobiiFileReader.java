@@ -290,15 +290,15 @@ public class GobiiFileReader {
         databaseValidation(loaderInstructionMap, procedure.getMetadata(), gobiiCropConfig);
 
         boolean sendQc = false;
-        
+
         qcCheck = procedure.getMetadata().isQcCheck();
+
+        boolean isVCF = GobiiFileType.VCF.equals(procedure.getMetadata().getGobiiFile().getGobiiFileType());
 
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
 
             //Section - Matrix Post-processing
             //Dataset is the first non-empty dataset type
-
-            boolean isVCF = GobiiFileType.VCF.equals(procedure.getMetadata().getGobiiFile().getGobiiFileType());
 
             //Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
             if (isVCF) {
