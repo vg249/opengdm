@@ -116,7 +116,6 @@ public class GobiiFileReader {
         boolean success = true;
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
         List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
-        DatasetOrientationType dso = null;
 
         ConfigSettings configuration = null;
         try {
@@ -296,10 +295,6 @@ public class GobiiFileReader {
         boolean sendQc = false;
 
         List<GobiiFileColumn> cols = procedure.getInstructions().get(0).getGobiiFileColumns();
-        GobiiFileColumn firstCol = cols.size() > 0 ? cols.get(0) : null;
-        String firstInstructionDatasetType = getDatasetType(procedure.getMetadata(), firstCol);
-
-        String dst = null;
 
         qcCheck = procedure.getMetadata().isQcCheck();
 
@@ -308,33 +303,21 @@ public class GobiiFileReader {
             //Section - Matrix Post-processing
             //Dataset is the first non-empty dataset type
 
-            for (GobiiFileColumn gfc : inst.getGobiiFileColumns()) {
-                if (gfc.getDataSetType() != null) {
-                    dst = getDatasetType(procedure.getMetadata(), gfc);
-                    if (gfc.getDataSetOrientationType() != null) dso = gfc.getDataSetOrientationType();
-                    break;
-                }
-
-            }
-
             boolean isVCF = GobiiFileType.VCF.equals(procedure.getMetadata().getGobiiFile().getGobiiFileType());
 
-            //Moving to only check Variant Call Tablename - though UI should be consistent.
-            if (inst.getTable().equals(VARIANT_CALL_TABNAME) && (dst!=null) && isVCF && (!dst.equals("NUCLEOTIDE_2_LETTER"))) {
-                ErrorLogger.logError("GobiiFileReader", "Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " + firstInstructionDatasetType);
-            }
             //Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
             if (isVCF) {
-                dst = "VCF";
+                procedure.getMetadata().getDataset().setName("VCF");
             }
 
 
             String fromFile = getDestinationFile(procedure, inst);
             SequenceInPlaceTransform intermediateFile = new SequenceInPlaceTransform(fromFile, errorPath);
-            if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
+            if (procedure.getMetadata().getDatasetType().getName() != null
+                    && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
                 errorPath = getLogName(procedure.getMetadata(), crop, "Matrix_Processing"); //Temporary Error File Name
 
-                if (DatasetOrientationType.SAMPLE_FAST.equals(dso)) {
+                if (DatasetOrientationType.SAMPLE_FAST.equals(procedure.getMetadata().getDatasetOrientationType())) {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
@@ -469,7 +452,8 @@ public class GobiiFileReader {
             }
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
                 jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
-                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
+                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, procedure.getMetadata().getDatasetType().getName(),
+                        configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
             }
@@ -836,22 +820,6 @@ public class GobiiFileReader {
         } catch (Exception e) {
             logError("Digester", "Exception while referencing data sets in Postgresql", e);
             return;
-        }
-    }
-
-    /**
-     * Since the ENUM is deprecated
-     * This is the best we've got.
-     *
-     * @param gfc file column
-     * @return String representation of the dataset type of the column
-     */
-    private static String getDatasetType(GobiiLoaderMetadata metadata, GobiiFileColumn gfc) {
-        DataSetType dst = (gfc != null ? gfc.getDataSetType() : null); //Old way
-        if (dst != null) {
-            return dst.toString();
-        } else {
-            return metadata.getDatasetType().getName(); //Get the name from the instruction.
         }
     }
 
