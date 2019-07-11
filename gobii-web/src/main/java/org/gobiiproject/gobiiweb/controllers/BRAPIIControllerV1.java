@@ -9,10 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
 import io.swagger.v3.oas.annotations.extensions.Extensions;
-import org.gobiiproject.gobidomain.services.DnaRunService;
-import org.gobiiproject.gobidomain.services.GenotypeCallsService;
-import org.gobiiproject.gobidomain.services.MarkerBrapiService;
-import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
@@ -40,6 +37,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
@@ -168,6 +166,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private GenotypeCallsService genotypeCallsService = null;
+
+    @Autowired
+    private DatasetBrapiService dataSetBrapiService = null;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -1334,6 +1335,71 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    @RequestMapping(value="/variantsets", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getVariantSets(
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        try {
+
+            Integer pageToken = null;
+
+            if (pageTokenParam != null) {
+                try {
+                    pageToken = Integer.parseInt(pageTokenParam);
+                }
+                catch (Exception e) {
+                    throw new GobiiException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid Page Token"
+                    );
+                }
+            }
+
+            DataSetBrapiDTO dataSetBrapiDTOFilter = new DataSetBrapiDTO();
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_DATASETS,
+                    RestMethodType.GET
+            );
+
+            if (maxPageSize == null) {
+                maxPageSize = 1000;
+            }
+
+            if (pageSize == null || pageSize > maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(pageToken, pageSize, dataSetBrapiDTOFilter);
+
+            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(dataSetBrapiDTOList);
+
+            if (dataSetBrapiDTOList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(dataSetBrapiDTOList.size());
+                if (dataSetBrapiDTOList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            dataSetBrapiDTOList.get(dataSetBrapiDTOList.size() - 1).getVariantSetDbId().toString()
+                    );
+                }
+            }
+
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage()
+            );
+        }
+    }
 
 
 }// BRAPIController
