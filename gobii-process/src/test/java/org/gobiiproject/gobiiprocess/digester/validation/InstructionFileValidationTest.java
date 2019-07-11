@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.GobiiTableType;
 import org.gobiiproject.gobiimodel.utils.*;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class InstructionFileValidationTest {
 	private String rCoord = "1", cCoord = "2";
 
 	/**
-	 * Test case for (IF digest.matrix EXISTS) 
+	 * Test case for (IF digest.matrix EXISTS)
 	 * 					digest.dataset_marker exists
 	 * 					digest.dataset_dnarun exists
 	 */
@@ -46,7 +47,7 @@ public class InstructionFileValidationTest {
 	}
 
 	/**
-	 * Test case for 
+	 * Test case for
                     if digest.marker file exists
                     digest.marker (name) == digest.dataset_marker (marker_name)
       */
@@ -66,7 +67,7 @@ public class InstructionFileValidationTest {
 	}
 
 	/**
-	 * Test case for 
+	 * Test case for
                    if digest.dnarun exists
    						digest.dnarun (name) == digest.ds_dnarun (dnarun_name)
      */
@@ -75,9 +76,9 @@ public class InstructionFileValidationTest {
 		String []params = {GobiiTableType.DNARUN, NAME, rCoord, cCoord,GobiiTableType.DATASET_DNARUN, DNA_RUN_NAME, rCoord, cCoord};
 		assertNull(callValidate(params));
 	}
-	
+
 	/**
-	 * Test case for 
+	 * Test case for
                    if digest.dnarun exists
    						digest.dnarun (name) == digest.ds_dnarun (dnarun_name)
      */
@@ -89,11 +90,15 @@ public class InstructionFileValidationTest {
 
 	@VisibleForTesting
 	private String callValidate(String[] params) {
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();	
+		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
 		for(int i= 0; i < params.length; i= i+4){
 			instructionList.add(InstructionFileValidationUtil.createInstruction(params[i+0], params[i+1], Integer.parseInt(params[i+2]), Integer.parseInt(params[i+3])));
 		}
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+		procedure.setInstructions(instructionList);
+
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
 		instructionFileValidator.processInstructionFile();
 		return instructionFileValidator.validate();
 	}

@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
@@ -174,7 +175,7 @@ class Util {
      * {@code org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile.java}
      */
     @VisibleForTesting
-    static void createAndSetGobiiFile(GobiiLoaderInstruction instruction, String tempFolderLocation) {
+    static void createAndSetGobiiFile(GobiiLoaderProcedure procedure, String tempFolderLocation) {
         GobiiFile gobiiFile = new GobiiFile();
         gobiiFile.setSource(tempFolderLocation + "/src");
         gobiiFile.setDestination(tempFolderLocation + "/dest");
@@ -182,7 +183,7 @@ class Util {
         gobiiFile.setGobiiFileType(GobiiFileType.GENERIC);
         gobiiFile.setCreateSource(false);
         gobiiFile.setRequireDirectoriesToExist(false);
-        instruction.setGobiiFile(gobiiFile);
+        procedure.getMetadata().setGobiiFile(gobiiFile);
     }
 
     /**
