@@ -207,7 +207,6 @@ public class GobiiFileReader {
 
         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
         // Instruction file Validation
-        JobPayloadType jpt = procedure.getMetadata().getJobPayloadType();//TODO - This is the job payload type
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validateMarkerUpload();
