@@ -175,7 +175,7 @@ public class GobiiFileReader {
         pm.addIdentifier("Dataset Type", procedure.getMetadata().getDatasetType());
 
         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Digest");
-        String dstFilePath = getDestinationFile(procedure);//Intermediate 'file'
+        String dstFilePath = getDestinationFile(procedure, procedure.getInstructions().get(0));//Intermediate 'file'
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
             dstDir = new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));

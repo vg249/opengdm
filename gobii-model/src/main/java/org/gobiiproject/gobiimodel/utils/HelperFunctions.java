@@ -214,12 +214,12 @@ public class HelperFunctions {
     }
 
     //For a folder destination, returns /digest.<tablename>
-    public static String getDestinationFile(GobiiLoaderProcedure procedure) {
+    public static String getDestinationFile(GobiiLoaderProcedure procedure, GobiiLoaderInstruction instruction) {
         String destination = procedure.getMetadata().getGobiiFile().getDestination();
         char last = destination.charAt(destination.length() - 1);
         if (last == '\\' || last == '/') {
-            return destination + "digest." + procedure.getInstructions().get(0).getTable();
-        } else return destination + "/" + "digest." + procedure.getInstructions().get(0).getTable();
+            return destination + "digest." + instruction.getTable();
+        } else return destination + "/" + "digest." + instruction.getTable();
     }
 
     /***
