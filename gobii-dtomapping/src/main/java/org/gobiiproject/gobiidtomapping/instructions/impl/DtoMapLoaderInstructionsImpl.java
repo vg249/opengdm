@@ -67,7 +67,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     @Autowired
     private DtoMapJob dtoMapJob = null;
 
-    private InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+    private InstructionFileAccess<GobiiLoaderProcedure> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
 
 
     private void createDirectories(String instructionFileDirectory,
@@ -313,7 +313,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     dtoMapJob.createJob(jobDTONew);
 
                     instructionFileAccess.writeInstructions(instructionFileFqpn,
-                            returnVal.getProcedure().getInstructions());
+                            returnVal.getProcedure());
 
                 } else {
 
