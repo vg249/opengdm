@@ -129,7 +129,7 @@ public class DtoMapDatasetBrapiImpl implements DtoMapDatasetBrapi {
     }
 
     @Override
-    public List<DataSetBrapiDTO> getList(Integer pageToken, Integer pageSize, DataSetBrapiDTO dataSetBrapiDTO) throws GobiiDtoMappingException {
+    public List<DataSetBrapiDTO> getList(Integer pageToken, Integer pageSize, DataSetBrapiDTO dataSetBrapiDTOFilter) throws GobiiDtoMappingException {
 
         List<DataSetBrapiDTO> returnVal;
 
@@ -143,6 +143,22 @@ public class DtoMapDatasetBrapiImpl implements DtoMapDatasetBrapi {
 
             if (pageSize != null) {
                 sqlParams.put("pageSize", pageSize);
+            }
+
+            if (dataSetBrapiDTOFilter != null) {
+
+                if (dataSetBrapiDTOFilter.getVariantSetDbId() != null && dataSetBrapiDTOFilter.getVariantSetDbId() != 0) {
+                    sqlParams.put("variantSetDbId", dataSetBrapiDTOFilter.getVariantSetDbId());
+                }
+
+                if (dataSetBrapiDTOFilter.getVariantSetName() != null) {
+                    sqlParams.put("variantSetName", dataSetBrapiDTOFilter.getVariantSetName());
+                }
+
+                if (dataSetBrapiDTOFilter.getStudyDbId() != null) {
+                    sqlParams.put("studyDbId", dataSetBrapiDTOFilter.getStudyDbId());
+                }
+
             }
 
             returnVal = (List<DataSetBrapiDTO>) dtoListQueryColl.getList(

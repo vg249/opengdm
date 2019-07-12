@@ -1374,7 +1374,10 @@ public class BRAPIIControllerV1 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
+            @RequestParam(value = "variantSetName", required = false) String variantSetName,
+            @RequestParam(value = "studyDbId", required = false) String studyDbId
     ) {
         try {
 
@@ -1394,6 +1397,18 @@ public class BRAPIIControllerV1 {
             }
 
             DataSetBrapiDTO dataSetBrapiDTOFilter = new DataSetBrapiDTO();
+
+            if (variantSetDbId != null) {
+                dataSetBrapiDTOFilter.setVariantSetDbId(variantSetDbId);
+            }
+
+            if (variantSetName != null) {
+                dataSetBrapiDTOFilter.setVariantSetName(variantSetName);
+            }
+
+            if (studyDbId != null) {
+                dataSetBrapiDTOFilter.setStudyDbId(Integer.parseInt(studyDbId));
+            }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_DATASETS,
