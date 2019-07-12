@@ -10,5 +10,6 @@ import java.util.List;
  */
 public interface DatasetBrapiService {
 
+    DataSetBrapiDTO getDatasetById(Integer datasetId) throws GobiiDomainException;
     List<DataSetBrapiDTO> getDatasets(Integer pageToken, Integer pageSize, DataSetBrapiDTO dataSetBrapiDTOFilter) throws GobiiDomainException;
 }

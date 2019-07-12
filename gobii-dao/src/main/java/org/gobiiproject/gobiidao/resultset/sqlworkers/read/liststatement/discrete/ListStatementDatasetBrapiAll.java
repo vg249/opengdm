@@ -69,6 +69,45 @@ public class ListStatementDatasetBrapiAll implements ListStatement {
             if (!pageCondition.isEmpty()) {
                 parameterIndex = 2;
             }
+
+            if (sqlParamVals.containsKey("variantSetDbId")) {
+
+                if (pageCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " d.dataset_id = ?\n";
+                filterConditionIndexArr.put("variantSetDbId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("variantSetName")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " d.name = ?\n";
+                filterConditionIndexArr.put("variantSetName", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("studyDbId")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " e.experiment_id = ?\n";
+                filterConditionIndexArr.put("studyDbId", parameterIndex);
+                parameterIndex++;
+            }
         }
 
         String sql = "SELECT \n" +
@@ -83,6 +122,7 @@ public class ListStatementDatasetBrapiAll implements ListStatement {
                 "LEFT OUTER JOIN experiment e\n" +
                 "USING (experiment_id)\n" +
                 pageCondition +
+                filterCondition +
                 "order by d.dataset_id\n" +
                 pageSizeCondition;
 
@@ -90,6 +130,14 @@ public class ListStatementDatasetBrapiAll implements ListStatement {
 
         if (!pageCondition.isEmpty()) {
             returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
+        }
+
+        for (Map.Entry<String, Integer> filter : filterConditionIndexArr.entrySet()) {
+            if (filter.getKey().equals("variantSetName")) {
+                returnVal.setString(filter.getValue(), (String) sqlParamVals.get(filter.getKey()));
+            } else {
+                returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
+            }
         }
 
         if (!pageSizeCondition.isEmpty()) {
