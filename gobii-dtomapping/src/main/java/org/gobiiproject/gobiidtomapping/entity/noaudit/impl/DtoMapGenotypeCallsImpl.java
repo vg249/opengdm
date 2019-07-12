@@ -409,14 +409,19 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         int i = 0;
 
-        String strLine;
+        int chrEach;
+        StringBuilder genotype = new StringBuilder();
 
-        while ((strLine = br.readLine()) != null) {
-            String[] genotypesList = strLine.split("\t");
-            for(String genotype : genotypesList) {
+        while ((chrEach = br.read()) != -1) {
+            char genotypesChar = (char) chrEach;
+            if(genotypesChar == '\t' || genotypesChar == '\n') {
                 returnVal.get(i).setGenotype(new HashMap<>());
-                returnVal.get(i).getGenotype().put("string_value", genotype);
+                returnVal.get(i).getGenotype().put("string_value", genotype.toString());
                 i++;
+                genotype.setLength(0);
+            }
+            else {
+               genotype.append(genotypesChar);
             }
         }
 
