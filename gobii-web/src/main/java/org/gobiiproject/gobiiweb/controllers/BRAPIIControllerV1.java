@@ -1097,7 +1097,7 @@ public class BRAPIIControllerV1 {
      * Lists the variants by page size and page token
      *
      * @param pageTokenParam String page token
-     * @param pageSize - Page size set by the user. If page size is more that maximum allowed
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page sie
      * @return Brapi response with list of variants
      */
@@ -1117,9 +1117,17 @@ public class BRAPIIControllerV1 {
     })
     @RequestMapping(value="/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariants(
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used." +
+                    "If pageNumber is specified pageToken will be ignored. " +
+                    "pageToken can be used to sequentially get pages faster. " +
+                    "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(value = "ID of the variant to be extracted")
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
+            @ApiParam(value = "ID of the variantSet to be extracted")
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
     ) {
         try {
@@ -1335,9 +1343,37 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    /**
+     * Lists the variantsets by page size and page token
+     *
+     * @param pageTokenParam - String page token
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed
+     *                 page size, then the response will have maximum page size
+     * @return Brapi response with list of variantsets
+     */
+    @ApiOperation(
+            value = "List all variantsets",
+            notes = "List of all Variantsets",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="VariantSets")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
     @RequestMapping(value="/variantsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantSets(
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used." +
+                    "If pageNumber is specified pageToken will be ignored. " +
+                    "pageToken can be used to sequentially get pages faster. " +
+                    "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize
     ) {
         try {
@@ -1397,6 +1433,27 @@ public class BRAPIIControllerV1 {
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     "Internal Server Error" + e.getMessage()
+            );
+        }
+    }
+
+    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getVariantSetsByVariantSetDbId(
+            @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
+            @PathVariable("variantSetDbId") Integer variantSetDbId) {
+
+        try {
+
+            DataSetBrapiDTO dataSetBrapiDTO = dataSetBrapiService.getDatasetById(variantSetDbId);
+            BrApiMasterPayload<DataSetBrapiDTO> payload = new BrApiMasterPayload<>(dataSetBrapiDTO);
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
             );
         }
     }

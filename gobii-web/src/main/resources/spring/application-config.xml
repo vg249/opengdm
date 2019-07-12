@@ -439,6 +439,7 @@
     <!-- *** DATASET BRAPI BEANS *********** -->
     <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.DatasetBrapiServiceImpl"/>
     <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
+    <bean id="rsDatasetBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDatasetBrapiDaoImpl"/>
 
     <!-- *** ANALYSIS BRAPI BEANS ********** -->
     <bean id="dtoMapAnalysisBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisBrapiImpl"/>

@@ -10,5 +10,6 @@ import java.util.List;
  */
 public interface DtoMapDatasetBrapi {
 
+    DataSetBrapiDTO get(Integer datasetId) throws GobiiDtoMappingException;
     List<DataSetBrapiDTO> getList(Integer pageToken, Integer pageSize, DataSetBrapiDTO dataSetBrapiDTOFilter) throws GobiiDtoMappingException;
 }
