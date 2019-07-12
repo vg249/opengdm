@@ -39,7 +39,7 @@ public class GetLinks {
      */
     public static String getLink(String filePath, ConfigSettings config, boolean publicUrl) throws Exception {
 
-        if (filePath.contains("ïnprogress")) {
+        if (filePath.contains("inprogress")) {
             filePath.replace("inprogress", "done");
         }
 
