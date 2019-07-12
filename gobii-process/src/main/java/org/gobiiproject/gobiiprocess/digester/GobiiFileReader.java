@@ -176,8 +176,8 @@ public class GobiiFileReader {
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
             dstDir = new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
         }
-        pm.addFolderPath("Destination Directory", dstDir.getAbsolutePath(),configuration);//Convert to directory
-        pm.addFolderPath("Input Directory", zero.getGobiiFile().getSource(), configuration);
+        pm.addFolderPath("Destination Directory", dstDir.getAbsolutePath()+"/",configuration);//Convert to directory
+        pm.addFolderPath("Input Directory", zero.getGobiiFile().getSource()+"/", configuration);
 
         Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
         if (!(Files.exists(cropPath) &&

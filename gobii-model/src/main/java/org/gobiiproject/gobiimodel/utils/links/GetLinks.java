@@ -120,7 +120,6 @@ public class GetLinks {
             int start = filePath.lastIndexOf("/");
             filePath = filePath.substring(0, start);
         }
-        System.out.println(filePath);
         String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) +  "/apps/files/?dir=" + filePath;
         return liveURL;
     }
