@@ -88,6 +88,11 @@ public class GetLinks {
             } else {
                 liveLink = "";
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + tag);
+
+            //TODO - remove debugging flags
+            ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
+            ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " + userpass);
+            ErrorLogger.logError("OWNCLOUD_DEBUG","urlpath: " + urlPath);
             }
         }
         catch(ConnectException e){
