@@ -29,9 +29,6 @@ public class GobiiAdlHelper {
                 }
             }
         }
-
-        System.exit(0);
-
     }
 
 

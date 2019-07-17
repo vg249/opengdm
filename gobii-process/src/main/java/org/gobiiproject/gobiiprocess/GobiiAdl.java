@@ -2828,5 +2828,7 @@ public class GobiiAdl {
         }
 
         GobiiAdlHelper.printADLSummary(errorList);
+
+        System.exit(0);
     }
 }
