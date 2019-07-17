@@ -23,4 +23,7 @@ public interface DtoMapGenotypeCalls {
     List<GenotypeCallsDTO> getGenotypeCallsList(MarkerBrapiDTO marker, String pageToken,
                                                 Integer pageSize);
 
+    List<GenotypeCallsDTO> getGenotypeCallsList(Integer datasetId, String pageToken,
+                                                Integer pageSize);
+
 }

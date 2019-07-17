@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
-import io.swagger.v3.oas.annotations.extensions.Extensions;
+import org.gobiiproject.gobidomain.async.SearchExtract;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
@@ -41,17 +41,22 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.BrAPIUtils;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,12 +64,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -135,6 +139,7 @@ import java.util.logging.Logger;
 @Scope(value = "request")
 @Controller
 @Api()
+@EnableAsync
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
 public class BRAPIIControllerV1 {
 
@@ -169,6 +174,12 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private DatasetBrapiService dataSetBrapiService = null;
+
+    @Autowired
+    private SearchExtract searchExtract = null;
+
+    @Autowired
+    private ConfigSettingsService configSettingsService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -1423,7 +1434,8 @@ public class BRAPIIControllerV1 {
                 pageSize = maxPageSize;
             }
 
-            List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(pageToken, pageSize, dataSetBrapiDTOFilter);
+            List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(pageToken, pageSize,
+                    dataSetBrapiDTOFilter);
 
             BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(dataSetBrapiDTOList);
 
@@ -1649,5 +1661,113 @@ public class BRAPIIControllerV1 {
     }
 
 
+    @RequestMapping(value="/variantsets/extract", method=RequestMethod.POST)
+    public ResponseEntity<String> VariantSetsExtract(
+            HttpEntity<String> extractQuery,
+            HttpServletRequest request) throws Exception {
+
+        String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+        String processingId = UUID.randomUUID().toString();
+
+        if(extractQuery.hasBody()) {
+            String extractQueryPath = LineUtils.terminateDirectoryPath(
+                    configSettingsService.getConfigSettings().getServerConfigs().get(
+                            cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
+            ) + processingId + LineUtils.PATH_TERMINATOR + "extractQuery.json";
+
+            File extractQueryFile = new File(extractQueryPath);
+
+            extractQueryFile.getParentFile().mkdirs();
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(extractQueryFile));
+
+            bw.write(extractQuery.getBody());
+
+            bw.close();
+        }
+
+        searchExtract.asyncMethod();
+
+        return ResponseEntity.ok(processingId);
+    }
+
+    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getCallsByVariantSetDbId(
+            @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
+            @PathVariable("variantSetDbId") Integer variantSetDbId,
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used." +
+                    "If pageNumber is specified pageToken will be ignored. " +
+                    "pageToken can be used to sequentially get pages faster. " +
+                    "When an invalid pageToken is given the page will start from beginning.")
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ){
+
+        try {
+
+            Integer pageToken = null;
+
+            if (pageTokenParam != null) {
+                try {
+                    pageToken = Integer.parseInt(pageTokenParam);
+                } catch (Exception e) {
+                    throw new GobiiException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid Page Token"
+                    );
+                }
+            }
+
+            DnaRunDTO dnaRunDTOFilter = new DnaRunDTO();
+
+            List<Integer> variantSetDbIdArr = new ArrayList<>();
+            variantSetDbIdArr.add(variantSetDbId);
+            dnaRunDTOFilter.setVariantSetIds(variantSetDbIdArr);
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_MARKERS,
+                    RestMethodType.GET
+            );
+
+            if (maxPageSize == null){
+                maxPageSize = 1000;
+            }
+
+            if (pageSize == null || pageSize > maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByMarkerId(
+                    variantSetDbId, pageToken.toString(), pageSize);
+
+            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(genotypeCallsList);
+
+            if (genotypeCallsList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                if (genotypeCallsList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            genotypeCallsList.get(genotypeCallsList.size() -1).getCallSetDbId().toString()
+                    );
+                }
+            }
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage()
+            );
+        }
+    }
 
 }// BRAPIController

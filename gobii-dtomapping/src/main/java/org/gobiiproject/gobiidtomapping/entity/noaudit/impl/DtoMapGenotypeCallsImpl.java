@@ -355,7 +355,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                         dnarunHdf5IndexMap.get(
                                 datasetId.toString()).add(
-                                dnarun.getHdf5MarkerIdx());
+                                dnarun.getHdf5DnarunIdx());
 
                     }
                     else {
@@ -364,7 +364,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                                 new ArrayList<>());
                         dnarunHdf5IndexMap.get(
                                 datasetId.toString()).add(
-                                dnarun.getHdf5MarkerIdx());
+                                dnarun.getHdf5DnarunIdx());
                     }
                     returnVal.add(genotypeCall);
                 }
@@ -374,6 +374,86 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 else {
                     pageSize -= genotypeDnarunMetadata.size();
                 }
+            }
+
+            readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+        }
+        catch(GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Failed to extract genotypes. " +
+                            "Please try again. If error persists, try contacting the System administrator");
+        }
+
+        return returnVal;
+    }
+
+    /**
+     * Gets the list of Genotypes Calls for given datasetId.
+     * @param datasetId
+     * @param pageToken
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<GenotypeCallsDTO> getGenotypeCallsList(
+            Integer datasetId, String pageToken,
+            Integer pageSize) {
+
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+
+        Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
+
+        Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
+
+        try {
+
+            for(GenotypeCallsDTO genotype : returnVal) {
+
+                GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+
+                if(dnarunHdf5IndexMap.containsKey(
+                        datasetId.toString())) {
+
+                    dnarunHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            genotype.getHdf5SampleIdx());
+
+                }
+                else {
+                    dnarunHdf5IndexMap.put(
+                            datasetId.toString(),
+                            new ArrayList<>());
+                    dnarunHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            genotype.getHdf5SampleIdx());
+                }
+
+                if(markerHdf5IndexMap.containsKey(datasetId.toString())) {
+
+                    markerHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            genotype.getHdf5MarkerIdx());
+
+                }
+                else {
+                    markerHdf5IndexMap.put(
+                            datasetId.toString(),
+                            new ArrayList<>());
+                    markerHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            genotype.getHdf5MarkerIdx());
+                }
+
+
+                returnVal.add(genotypeCall);
             }
 
             readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, dnarunHdf5IndexMap);
