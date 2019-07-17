@@ -12,7 +12,9 @@ public class Marshal {
 		if (str == null) {
 			return null;
 		} else {
-			return new ObjectMapper().readValue(str, GobiiLoaderProcedure.class);
+			GobiiLoaderProcedure procedure = new ObjectMapper().readValue(str, GobiiLoaderProcedure.class);
+			System.out.println(procedure);
+			return procedure;
 		}
 	}
 }
