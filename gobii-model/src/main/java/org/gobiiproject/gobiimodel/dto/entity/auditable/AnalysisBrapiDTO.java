@@ -3,27 +3,37 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by VCalaminos on 7/11/2019.
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType"
+        "id", "allowedProcessTypes", "entityNameType", "createdBy", "modifiedBy", "modifiedDate"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AnalysisBrapiDTO extends DTOBase {
+public class AnalysisBrapiDTO extends DTOBaseAuditable {
 
     private int analysisDbId;
     private String analysisName;
-    private Date created;
     private String type;
     private String description;
     private String software;
+
+    private SimpleDateFormat dateStringFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss z");
+
+    public AnalysisBrapiDTO() {
+        super(GobiiEntityNameType.ANALYSIS);
+        dateStringFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     @Override
     public Integer getId() { return this.analysisDbId; }
@@ -42,12 +52,6 @@ public class AnalysisBrapiDTO extends DTOBase {
 
     @GobiiEntityColumn(columnName = "analysis_name")
     public void setAnalysisName(String analysisName) { this.analysisName = analysisName; }
-
-    @GobiiEntityParam(paramName = "created")
-    public Date getCreated() { return this.created; }
-
-    @GobiiEntityColumn(columnName = "created")
-    public void setCreated(Date created) { this.created = created; }
 
     @GobiiEntityParam(paramName = "type")
     public String getType() { return this.type; }
