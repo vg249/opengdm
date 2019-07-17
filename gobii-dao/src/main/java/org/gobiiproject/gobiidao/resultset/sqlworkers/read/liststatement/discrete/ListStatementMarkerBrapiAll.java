@@ -96,6 +96,32 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 filterConditionIndexArr.put("variantSetDbId", parameterIndex);
                 parameterIndex++;
             }
+
+            if (sqlParamVals.containsKey("mapSetId")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " mp.mapset_id = ?\n";
+                filterConditionIndexArr.put("mapSetId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("mapSetName")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " mp.name = ?\n";
+                filterConditionIndexArr.put("mapSetName", parameterIndex);
+                parameterIndex++;
+            }
         }
 
         String sql = "SELECT  \n" +
@@ -111,7 +137,8 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                     "lg.name as linkage_group_name,\n" +
                     "mlg.start,\n" +
                     "mlg.stop,\n" +
-                    "mp.name as mapset_name\n"+
+                    "mp.name as mapset_name,\n" +
+                    "mp.mapset_id\n"+
                 "FROM  \n" +
                     "marker mr\n" +
                 "LEFT OUTER JOIN platform p\n" +
@@ -136,7 +163,11 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
         }
 
         for (Map.Entry<String, Integer> filter: filterConditionIndexArr.entrySet()) {
-            returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
+            if (filter.getKey().equals("mapSetName")) {
+                returnVal.setString(filter.getValue(), (String) sqlParamVals.get(filter.getKey()));
+            } else {
+                returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
+            }
         }
 
         if (!pageSizeCondition.isEmpty()) {

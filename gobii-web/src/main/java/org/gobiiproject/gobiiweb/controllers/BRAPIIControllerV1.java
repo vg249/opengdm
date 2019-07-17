@@ -872,7 +872,9 @@ public class BRAPIIControllerV1 {
             @ApiParam(value = "The ID of the Germplasm to be retrieved.")
             @RequestParam(value = "germplasmDbId", required = false) String germplasmDbId,
             @ApiParam(value = "The ID of the study to be retrieved.")
-            @RequestParam(value = "studyDbId", required = false) String studyDbId
+            @RequestParam(value = "studyDbId", required = false) String studyDbId,
+            @ApiParam(value = "The name of the sample to be retrieved.")
+            @RequestParam(value = "sampleName", required = false) String sampleName
     ) {
         try {
 
@@ -916,6 +918,10 @@ public class BRAPIIControllerV1 {
 
             if (studyDbId != null) {
                 dnaRunDTOFilter.setStudyDbId(Integer.parseInt(studyDbId));
+            }
+
+            if (sampleName != null) {
+                dnaRunDTOFilter.setSampleName(sampleName);
             }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
@@ -1139,7 +1145,11 @@ public class BRAPIIControllerV1 {
             @ApiParam(value = "ID of the variant to be extracted")
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
             @ApiParam(value = "ID of the variantSet to be extracted")
-            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
+            @ApiParam(value = "ID of the mapset to be retrieved")
+            @RequestParam(value = "mapSetId", required = false) Integer mapSetId,
+            @ApiParam(value = "Name of the mapset to be retrieved")
+            @RequestParam(value = "mapSetName", required = false) String mapSetName
     ) {
         try {
 
@@ -1167,6 +1177,14 @@ public class BRAPIIControllerV1 {
                 List<Integer> variantDbArr = new ArrayList<>();
                 variantDbArr.add(variantSetDbId);
                 markerBrapiDTOFilter.setVariantSetDbId(variantDbArr);
+            }
+
+            if (mapSetId != null) {
+                markerBrapiDTOFilter.setMapSetId(mapSetId);
+            }
+
+            if (mapSetName != null) {
+                markerBrapiDTOFilter.setMapSetName(mapSetName);
             }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
@@ -1506,6 +1524,24 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    /**
+     * Lists the variants for a given VariantSetDbId by page size and page token
+     *
+     * @param variantSetDbId - Integer ID of the VariantSet to be fetched
+     * @param pageTokenParam - String page token
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size, then the response will have maximum page size
+     * @return Brapi response with list of CallSets
+     */
+    @ApiOperation(
+            value = "List all Variants for a given VariantSetDbId",
+            notes = "List of all the Variants in a specific VariantSet",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="VariantSets")
+                    })
+            }
+    )
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
@@ -1517,7 +1553,11 @@ public class BRAPIIControllerV1 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(value = "ID of the mapset to be retrieved")
+            @RequestParam(value = "mapSetId", required = false) Integer mapSetId,
+            @ApiParam(value = "Name of the mapset to be retrieved")
+            @RequestParam(value = "mapSetName", required = false) String mapSetName
     ){
 
         try {
@@ -1541,6 +1581,14 @@ public class BRAPIIControllerV1 {
             List<Integer> variantSetDbIdArr = new ArrayList<>();
             variantSetDbIdArr.add(variantSetDbId);
             markerBrapiDTOFilter.setVariantSetDbId(variantSetDbIdArr);
+
+            if (mapSetId != null) {
+                markerBrapiDTOFilter.setMapSetId(mapSetId);
+            }
+
+            if (mapSetName != null) {
+                markerBrapiDTOFilter.setMapSetName(mapSetName);
+            }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_MARKERS,
@@ -1583,6 +1631,24 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    /**
+     * Lists the callsets for a given VariantSetDbId by page size and page token
+     *
+     * @param variantSetDbId - Integer ID of the VariantSet to be fetched
+     * @param pageTokenParam - String page token
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size, then the response will have maximum page size
+     * @return Brapi response with list of CallSets
+     */
+    @ApiOperation(
+            value = "List all Callsets for a given VariantSetDbId",
+            notes = "List of all the CallSets in a specific VariantSet",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="VariantSets")
+                    })
+            }
+    )
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)

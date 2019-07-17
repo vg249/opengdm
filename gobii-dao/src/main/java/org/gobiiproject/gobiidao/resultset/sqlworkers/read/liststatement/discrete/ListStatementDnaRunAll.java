@@ -108,6 +108,12 @@ public class ListStatementDnaRunAll implements ListStatement {
                 filterConditionIndexArr.put("studyDbId", parameterIndex);
                 parameterIndex++;
             }
+
+            if (sqlParamVals.containsKey("sampleName")) {
+                filterCondition += "and s.name=?\n";
+                filterConditionIndexArr.put("sampleName", parameterIndex);
+                parameterIndex++;
+            }
         }
 
         String sql = "SELECT \n" +
@@ -138,7 +144,7 @@ public class ListStatementDnaRunAll implements ListStatement {
         }
 
         for (Map.Entry<String, Integer> filter : filterConditionIndexArr.entrySet()) {
-            if (filter.getKey().equals("callSetName")) {
+            if (filter.getKey().equals("callSetName") || filter.getKey().equals("sampleName")) {
                 returnVal.setString(filter.getValue(), (String) sqlParamVals.get(filter.getKey()));
             } else {
                 returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));

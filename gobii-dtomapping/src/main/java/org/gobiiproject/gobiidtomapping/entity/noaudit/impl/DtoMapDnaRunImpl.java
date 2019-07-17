@@ -127,6 +127,10 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
                 if (dnaRunDTOFilter.getStudyDbId() != null) {
                     sqlParams.put("studyDbId", dnaRunDTOFilter.getStudyDbId());
                 }
+
+                if (dnaRunDTOFilter.getSampleName() != null) {
+                    sqlParams.put("sampleName", dnaRunDTOFilter.getSampleName());
+                }
             }
 
             returnVal = (List<DnaRunDTO>) dtoListQueryColl.getList(

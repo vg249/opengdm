@@ -33,6 +33,7 @@ public class MarkerBrapiDTO extends DTOBase {
     private BigDecimal start;
     private BigDecimal stop;
     private String mapSetName;
+    private Integer mapSetId;
 
     @Override
     public Integer getId() { return this.variantDbId; }
@@ -102,6 +103,12 @@ public class MarkerBrapiDTO extends DTOBase {
 
     @GobiiEntityColumn(columnName = "mapset_name")
     public void setMapSetName(String mapSetName) { this.mapSetName = mapSetName; }
+
+    @GobiiEntityParam(paramName = "mapSetId")
+    public Integer getMapSetId() { return this.mapSetId; }
+
+    @GobiiEntityColumn(columnName = "mapset_id")
+    public void setMapSetId(Integer mapSetId) { this.mapSetId = mapSetId; }
 
     public Map<String, Object> getDatasetMarkerIndex() {
         return this.datasetMarkerIndex;
