@@ -26,10 +26,13 @@ public class ListStatementAnalysisBrapiAll implements ListStatement {
         String sql = "SELECT \n" +
                 "a.analysis_id,\n" +
                 "a.name as analysis_name,\n" +
-                "a.created_date as created,\n" +
+                "a.created_date,\n" +
                 "cv.term as type,\n" +
                 "a.description,\n" +
-                "a.program as software\n" +
+                "a.program as software,\n" +
+                "a.created_by,\n" +
+                "a.modified_by,\n" +
+                "a.modified_date\n" +
                 "FROM\n" +
                 "analysis a\n" +
                 "LEFT OUTER JOIN cv\n" +
