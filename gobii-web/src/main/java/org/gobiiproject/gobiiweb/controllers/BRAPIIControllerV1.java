@@ -988,7 +988,9 @@ public class BRAPIIControllerV1 {
             callSetDbIdInt = callSetDbId;
             DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbIdInt);
             BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
-            return ResponseEntity.ok(payload);
+
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
         }
         catch(Exception e) {
             throw new GobiiException(
@@ -1202,7 +1204,8 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
         }
         catch (GobiiException gE) {
             throw gE;
@@ -1251,7 +1254,9 @@ public class BRAPIIControllerV1 {
 
             MarkerBrapiDTO markerBrapiDTO = markerBrapiService.getMarkerById(variantDbIdInt);
             BrApiMasterPayload<MarkerBrapiDTO> payload = new BrApiMasterPayload<>(markerBrapiDTO);
-            return ResponseEntity.ok(payload);
+
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (Exception e) {
@@ -1500,7 +1505,9 @@ public class BRAPIIControllerV1 {
 
             DataSetBrapiDTO dataSetBrapiDTO = dataSetBrapiService.getDatasetById(variantSetDbId);
             BrApiMasterPayload<DataSetBrapiDTO> payload = new BrApiMasterPayload<>(dataSetBrapiDTO);
-            return ResponseEntity.ok(payload);
+
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (Exception e) {
@@ -1604,7 +1611,8 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (GobiiException gE) {
@@ -1699,7 +1707,8 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (GobiiException gE) {
