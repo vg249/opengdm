@@ -7,15 +7,6 @@ import java.util.List;
 
 public interface DtoMapGenotypeCalls {
 
-    List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataList(
-            Integer datasetId,
-            Integer pageToken,
-            Integer pageSize) throws GobiiDtoMappingException;
-
-    List<GenotypeCallsDnarunMetadataDTO> getDnarunMetaDataList(
-            Integer datasetId,
-            Integer pageToken,
-            Integer pageSize) throws GobiiDtoMappingException;
 
     List<GenotypeCallsDTO> getGenotypeCallsList(DnaRunDTO dnarun, String pageToken,
                                                 Integer pageSize);
