@@ -37,7 +37,7 @@ public class GenotypeCallsDnarunMetadataDTO extends DTOBase{
     public void setDnarunName(String dnarunName) { this.dnarunName = dnarunName; }
 
 
-    public String getHdf5MarkerIdx() {
+    public String getHdf5DnarunIdx() {
         return this.hdf5DnarunIdx;
     }
 

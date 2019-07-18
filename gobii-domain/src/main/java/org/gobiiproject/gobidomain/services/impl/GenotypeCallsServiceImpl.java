@@ -129,4 +129,47 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         return returnVal;
     }
+
+    /**
+     * Gets the genotype calls in given datasets.
+     * @param datasetId - datasetId given by user.
+     * @param pageToken - String token with datasetId and markerId combination of last page's last element.
+     *                  If unspecified, first page will be extracted.
+     * @param pageSize - Page size to extract. If not specified default page size.
+     * @return List of Genotype calls for given dnarunId.
+     */
+    @Override
+    public List<GenotypeCallsDTO> getGenotypeCallsByDatasetId(
+            Integer datasetId, String pageToken,
+            Integer pageSize) {
+
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+
+
+        try {
+
+
+            String outputDirPath = "";
+
+            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(datasetId, pageToken, pageSize);
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+        return returnVal;
+    }
 }

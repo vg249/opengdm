@@ -6,6 +6,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context
@@ -13,7 +14,7 @@
     http://www.springframework.org/schema/tx 		
     http://www.springframework.org/schema/tx/spring-tx.xsd
 	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+	http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -29,6 +30,9 @@
     <context:component-scan base-package="org.gobiiproject.gobidomain.security"/>
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
+
+    <task:executor id="myexecutor" pool-size="5"  />
+    <task:annotation-driven executor="myexecutor"/>
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 
@@ -1135,5 +1139,7 @@
         <constructor-arg index="0" ref="pathToHdf5Exe"/>
         <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>
+
+    <bean id="searchExtract" class="org.gobiiproject.gobidomain.async.SearchExtract"/>
 
 </beans>

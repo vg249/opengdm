@@ -15,4 +15,8 @@ public interface GenotypeCallsService {
             Integer markerId, String pageToken,
             Integer pageSize) throws GobiiDomainException;
 
+    List<GenotypeCallsDTO> getGenotypeCallsByDatasetId(
+            Integer datasetId, String pageToken,
+            Integer pageSize) throws GobiiDomainException;
+
 }
