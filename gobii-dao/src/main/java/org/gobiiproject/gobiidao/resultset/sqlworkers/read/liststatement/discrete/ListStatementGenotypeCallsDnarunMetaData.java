@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_GENOTYPE_CALLS_DNARUN_METADATA;
-import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_GENOTYPE_CALLS_MARKER_METADATA;
 
 
 public class ListStatementGenotypeCallsDnarunMetaData implements ListStatement {

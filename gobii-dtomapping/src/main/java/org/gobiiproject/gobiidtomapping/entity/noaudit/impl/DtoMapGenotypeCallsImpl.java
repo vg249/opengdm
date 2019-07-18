@@ -28,8 +28,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     private HDF5Interface hdf5Interface;
 
 
-    @Override
-    public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataList(
+    public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataByMarkerIdLimit(
             Integer datasetId,
             Integer markerId,
             Integer pageSize) throws GobiiDtoMappingException {
@@ -90,8 +89,148 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         return returnVal;
     }
 
-    @Override
-    public List<GenotypeCallsDnarunMetadataDTO> getDnarunMetaDataList(
+
+    public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataByDatasetId(
+            Integer datasetId,
+            Integer pageOffset,
+            Integer pageSize) throws GobiiDtoMappingException {
+
+        List<GenotypeCallsMarkerMetadataDTO> returnVal;
+
+        try {
+
+            Map<String, Object> sqlParams = new HashMap<>();
+
+            if(datasetId != null) {
+                sqlParams.put("datasetId", datasetId);
+            }
+            else {
+
+                LOGGER.error("datasetId is null");
+
+                throw new GobiiDtoMappingException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Invalid Dataset Id");
+            }
+
+            if (pageSize != null) {
+                sqlParams.put("pageSize", pageSize);
+            }
+            else {
+
+                LOGGER.error("page size is null");
+
+                throw new GobiiDtoMappingException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Page Size is required");
+            }
+
+            if(pageOffset != null) {
+                sqlParams.put("pageOffset", pageOffset);
+            }
+
+
+            returnVal = (List<GenotypeCallsMarkerMetadataDTO>) dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_MARKER_METADATA_BY_DATASET,
+                    null,
+                    sqlParams
+            );
+
+            if (returnVal == null) {
+                return new ArrayList<>();
+            }
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE);
+
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    public List<GenotypeCallsDnarunMetadataDTO> getDnarunMetaDataByDatasetId(
+            Integer datasetId,
+            Integer pageOffset,
+            Integer pageSize) throws GobiiDtoMappingException {
+
+        List<GenotypeCallsDnarunMetadataDTO> returnVal;
+
+        try {
+
+            Map<String, Object> sqlParams = new HashMap<>();
+
+            if(datasetId != null) {
+                sqlParams.put("datasetId", datasetId);
+            }
+            else {
+
+                LOGGER.error("datasetId is null");
+
+                throw new GobiiDtoMappingException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Invalid Dataset Id");
+            }
+
+            if (pageSize != null) {
+                sqlParams.put("pageSize", pageSize);
+            }
+            else {
+
+                LOGGER.error("page size is null");
+
+                throw new GobiiDtoMappingException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Page Size is required");
+            }
+
+            if(pageOffset != null) {
+                sqlParams.put("pageOffset", pageOffset);
+            }
+
+
+            returnVal = (List<GenotypeCallsDnarunMetadataDTO>) dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_DNARUN_METADATA_BY_DATASET,
+                    null,
+                    sqlParams
+            );
+
+            if (returnVal == null) {
+                return new ArrayList<>();
+            }
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE);
+
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    public List<GenotypeCallsDnarunMetadataDTO> getDnarunMetaDataByDnarunIdLimit(
             Integer datasetId,
             Integer dnarunId,
             Integer pageSize) throws GobiiDtoMappingException {
@@ -217,8 +356,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                                 datasetId.toString()).toString());
 
 
-                genotypeMarkerMetadata = this.getMarkerMetaDataList(datasetId,
-                        markerIdLimit, pageSize);
+                genotypeMarkerMetadata = this.getMarkerMetaDataByMarkerIdLimit(
+                        datasetId, markerIdLimit, pageSize);
 
                 for(GenotypeCallsMarkerMetadataDTO marker : genotypeMarkerMetadata) {
 
@@ -338,7 +477,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                         marker.getDatasetMarkerIndex().get(datasetId.toString()).toString());
 
 
-                genotypeDnarunMetadata = this.getDnarunMetaDataList(datasetId, dnarunIdLimit, pageSize);
+                genotypeDnarunMetadata = this.getDnarunMetaDataByDnarunIdLimit(
+                        datasetId, dnarunIdLimit, pageSize);
 
                 for(GenotypeCallsDnarunMetadataDTO dnarun : genotypeDnarunMetadata) {
 
@@ -408,6 +548,11 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
+        Integer pageOffset = null;
+
+        List<GenotypeCallsMarkerMetadataDTO> markerMetadataList = new ArrayList<>();
+
+        List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList = new ArrayList<>();
 
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
@@ -415,48 +560,30 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         try {
 
-            for(GenotypeCallsDTO genotype : returnVal) {
 
-                GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+            dnarunMetadataList = this.getDnarunMetaDataByDnarunIdLimit(datasetId, pageOffset, pageSize);
 
-                if(dnarunHdf5IndexMap.containsKey(
-                        datasetId.toString())) {
+            Integer markerPageSize = (int) Math.ceil(pageSize/dnarunMetadataList.size());
 
-                    dnarunHdf5IndexMap.get(
-                            datasetId.toString()).add(
-                            genotype.getHdf5SampleIdx());
+            markerMetadataList = this.getMarkerMetaDataByDatasetId(datasetId, pageOffset, markerPageSize);
 
-                }
-                else {
-                    dnarunHdf5IndexMap.put(
-                            datasetId.toString(),
-                            new ArrayList<>());
-                    dnarunHdf5IndexMap.get(
-                            datasetId.toString()).add(
-                            genotype.getHdf5SampleIdx());
-                }
 
-                if(markerHdf5IndexMap.containsKey(datasetId.toString())) {
+            for(GenotypeCallsMarkerMetadataDTO markerMetadata : markerMetadataList) {
 
-                    markerHdf5IndexMap.get(
-                            datasetId.toString()).add(
-                            genotype.getHdf5MarkerIdx());
+                for(GenotypeCallsDnarunMetadataDTO dnarunMetadata : dnarunMetadataList) {
+
+                    GenotypeCallsDTO genotype = new GenotypeCallsDTO();
+                    genotype.setVariantSetDbId(datasetId);
+                    genotype.setVariantDbId(markerMetadata.getMarkerId());
+                    genotype.setCallSetDbId(dnarunMetadata.getDnarunId());
+                    returnVal.add(genotype);
 
                 }
-                else {
-                    markerHdf5IndexMap.put(
-                            datasetId.toString(),
-                            new ArrayList<>());
-                    markerHdf5IndexMap.get(
-                            datasetId.toString()).add(
-                            genotype.getHdf5MarkerIdx());
-                }
 
-
-                returnVal.add(genotypeCall);
             }
 
-            readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+            //readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, dnarunHdf5IndexMap);
 
         }
         catch(GobiiException ge) {
