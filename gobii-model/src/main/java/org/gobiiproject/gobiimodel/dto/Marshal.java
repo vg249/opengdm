@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ public class Marshal {
 			return null;
 		} else {
 			GobiiLoaderProcedure procedure = new ObjectMapper().readValue(str, GobiiLoaderProcedure.class);
-			System.out.println(procedure);
+			ErrorLogger.logDebug("Marshal", procedure.toString());
 			return procedure;
 		}
 	}
