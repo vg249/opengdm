@@ -1,171 +1,90 @@
 package org.gobiiproject.gobidomain.services.impl;
 
-import junit.framework.TestCase;
-import org.gobiiproject.gobidomain.security.UserContextLoader;
-import org.gobiiproject.gobidomain.services.MarkerBrapiService;
-import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapMarkerBrapi;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
- * Created by VCalaminos on 7/8/2019.
+ * Created by VCalaminos on 7/18/2019.
  */
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@WebAppConfiguration
 public class MarkerBrapiServiceImplTest {
 
-    @Autowired
-    private MarkerBrapiService markerBrapiService = null;
+    @InjectMocks
+    private MarkerBrapiServiceImpl markerBrapiService;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        UserContextLoader userContextLoader = new UserContextLoader("classpath:/spring/test-config.xml");
-        userContextLoader.loadUser("USER_READER");
+    @Mock
+    private DtoMapMarkerBrapi dtoMapMarkerBrapi;
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void getMarkerList() {
-
-        List<MarkerBrapiDTO> markerBrapiDTOList;
-
-        markerBrapiDTOList = markerBrapiService.getMarkers(null, null, null);
-
-        if (markerBrapiDTOList.size() <= 0) {
-            throw new AssumptionViolatedException("There are no available markers in the database");
-        }
-
-        assertTrue(markerBrapiDTOList.size() > 0);
-        assertNotNull(markerBrapiDTOList.get(0).getVariantDbId());
-
-    }
-
-    @Test
-    public void getMarkerListWithPageSize() {
-
-        List<MarkerBrapiDTO> markerBrapiDTOList;
-
-        Integer pageSize = 10;
-
-        markerBrapiDTOList = markerBrapiService.getMarkers(null, pageSize, null);
-
-        if (markerBrapiDTOList.size() <= 0) {
-            throw new AssumptionViolatedException("There are no available markers in the database");
-        }
-
-        assertTrue(markerBrapiDTOList.size() == pageSize);
-        assertNotNull(markerBrapiDTOList.get(0).getVariantDbId());
-    }
-
-    @Test
-    public void getMarkerListWithFilterByVariantDbSetId() {
-
-        List<MarkerBrapiDTO> markerBrapiDTOList;
-        markerBrapiDTOList = markerBrapiService.getMarkers(null, null, null);
-
-        if (markerBrapiDTOList.size() <= 0) {
-            throw new AssumptionViolatedException("There are no available markers in the database");
-        }
-
-        // check for markers that has existing dataset IDS
-        Integer variantSetDbId = null;
-
-        for (MarkerBrapiDTO currentMarkerBrapiDTO: markerBrapiDTOList) {
-
-            if (currentMarkerBrapiDTO.getVariantSetDbId().size() > 0) {
-                variantSetDbId = currentMarkerBrapiDTO.getVariantSetDbId().get(0);
-                break;
-            }
-        }
-
-        if (variantSetDbId == null) {
-            throw new AssumptionViolatedException("There are no available markers with matching datasetIds in the database");
-        }
-
-        MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
-        markerBrapiDTOFilter.getVariantSetDbId().add(variantSetDbId);
-
-        List<MarkerBrapiDTO> filteredMarkerDTOList = markerBrapiService.getMarkers(null, null, markerBrapiDTOFilter);
-
-        assertTrue(filteredMarkerDTOList.size() > 0);
-        assertNotNull(filteredMarkerDTOList.get(0).getVariantSetDbId());
-        assertTrue(filteredMarkerDTOList.get(0).getVariantSetDbId().contains(variantSetDbId));
-    }
-
-    @Test
-    public void getMarkerListWithFilterByVariantDbId() {
-
-        List<MarkerBrapiDTO> markerBrapiDTOList;
-        markerBrapiDTOList = markerBrapiService.getMarkers(null, null, null);
-
-        if (markerBrapiDTOList.size() <= 0) {
-            throw new AssumptionViolatedException("There are no available markers in the database");
-        }
-
-        assertNotNull(markerBrapiDTOList.get(0).getVariantDbId());
-
-        Integer variantDbId = markerBrapiDTOList.get(0).getVariantDbId();
-
-        MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
-        markerBrapiDTOFilter.setVariantDbId(variantDbId);
-
-        List<MarkerBrapiDTO> filteredMarkerDTOList = markerBrapiService.getMarkers(null, null, markerBrapiDTOFilter);
-
-        assertTrue(filteredMarkerDTOList.size() > 0);
-        assertNotNull(filteredMarkerDTOList.get(0).getVariantDbId());
-        assertTrue(filteredMarkerDTOList.get(0).getVariantDbId().equals(variantDbId));
-    }
-
-    @Test
-    public void getMarkersByMarkerDbId() {
-
-        MarkerBrapiDTO markerBrapiDTO = null;
-
-        List<MarkerBrapiDTO> markerBrapiDTOList = markerBrapiService.getMarkers(null, null, null);
-
-        if (markerBrapiDTOList.size() <= 0) {
-            throw new AssumptionViolatedException("There are no available markers in the database");
-        }
-
-        Integer markerDbId = markerBrapiDTOList.get(0).getVariantDbId();
-
-        markerBrapiDTO = markerBrapiService.getMarkerById(markerDbId);
-
-        assertTrue(markerBrapiDTO.getVariantDbId() > 0);
-        assertTrue(markerBrapiDTO.getVariantDbId().equals(markerDbId));
-        assertNotNull(markerBrapiDTO.getVariantName());
-
-    }
-
-    @Test
-    public void getDnaRunWithNonExistingId() {
+    private MarkerBrapiDTO createMockMarkerDTO() {
 
         MarkerBrapiDTO markerBrapiDTO = new MarkerBrapiDTO();
+        List<Integer> variantSetDbId = new ArrayList<>();
+        variantSetDbId.add(1);
+        variantSetDbId.add(2);
 
-        try {
+        markerBrapiDTO.setVariantDbId(35);
+        markerBrapiDTO.setVariantName("test-variant");
+        markerBrapiDTO.setVariantSetDbId(variantSetDbId);
+        markerBrapiDTO.setMapSetName("test-mapset");
 
-            // non-existing ID
-            Integer markerDbId = 0;
-
-            markerBrapiDTO = markerBrapiService.getMarkerById(markerDbId);
-
-        } catch (GobiiException gE) {
-
-            TestCase.assertTrue(gE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST);
-            assertFalse(markerBrapiDTO.getVariantDbId() > 0);
-        }
+        return markerBrapiDTO;
     }
+
+    @Test
+    public void getVariants() throws Exception {
+
+        List<MarkerBrapiDTO> variantsMock = new ArrayList<>();
+
+        MarkerBrapiDTO variant1 = createMockMarkerDTO();
+        variantsMock.add(variant1);
+
+        when (
+                dtoMapMarkerBrapi.getList(
+                        any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class)
+                )
+        ).thenReturn(variantsMock);
+
+        List<MarkerBrapiDTO> variantsList = markerBrapiService.getMarkers(any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class));
+
+        assertEquals(variantsMock.size(), variantsList.size());
+        verify(dtoMapMarkerBrapi, times(1)).getList(any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class));
+    }
+
+    @Test
+    public void getVariantById() throws Exception {
+
+        MarkerBrapiDTO variantDTOMock = createMockMarkerDTO();
+
+        when (
+                dtoMapMarkerBrapi.get(variantDTOMock.getVariantDbId())
+        ).thenReturn(variantDTOMock);
+
+        MarkerBrapiDTO variantResult = markerBrapiService.getMarkerById(variantDTOMock.getVariantDbId());
+
+        assertEquals(variantDTOMock.getVariantDbId(), variantResult.getVariantDbId());
+        assertEquals(variantDTOMock.getVariantName(), variantResult.getVariantName());
+        verify(dtoMapMarkerBrapi, times(1)).get(variantDTOMock.getVariantDbId());
+
+    }
+
 }
