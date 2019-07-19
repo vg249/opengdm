@@ -435,13 +435,12 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         Integer dnarunIdLimit = null;
 
-
-
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
         try {
+
             //Sort Dataset Ids in ascenrding order to aid page indexing.
             Collections.sort(markerDatasets);
 
@@ -553,7 +552,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
         Integer pageOffset = null;
-        Integer columnOffset = null;
+        Integer columnOffset = 0;
 
         Integer markerPageSize;
 
@@ -583,27 +582,28 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                         columnOffset = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
 
-                        if (columnOffset > dnarunMetadataList.size()) {
+                        if(columnOffset > dnarunMetadataList.size()) {
                             pageOffset = null;
-                            columnOffset = null;
+                            columnOffset = 0;
                         }
+
 
                     } catch (Exception e) {
                         pageOffset = null;
-                        columnOffset = null;
+                        columnOffset = 0;
                     }
                 }
             }
 
-            if (columnOffset != null && columnOffset <= dnarunMetadataList.size()) {
-                pageOffset = pageOffset - 1;
-                markerPageSize = (int) Math.ceil(
-                        ((double)pageSize - (double)columnOffset)/ (double)dnarunMetadataList.size());
+            markerPageSize = (int) Math.ceil(
+                    ((double)pageSize - (double)columnOffset)/ (double)dnarunMetadataList.size());
+
+            if (columnOffset > 0) {
+                pageOffset -= 1;
+                markerPageSize += 1;
+                columnOffset = dnarunMetadataList.size() - columnOffset;
             }
-            else {
-                markerPageSize = (int) Math.ceil(
-                        (double)pageSize / (double)dnarunMetadataList.size());
-            }
+
 
             markerMetadataList = this.getMarkerMetaDataByDatasetId(datasetId, pageOffset, markerPageSize);
 
@@ -747,9 +747,16 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         while ((chrEach = br.read()) != -1 && k < pageSize) {
 
+
             char genotypesChar = (char) chrEach;
 
             if(genotypesChar == '\t' || genotypesChar == '\n') {
+
+                if(j < columnOffset) {
+                    j += 1;
+                    genotype.setLength(0);
+                    continue;
+                }
 
                 GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
 
