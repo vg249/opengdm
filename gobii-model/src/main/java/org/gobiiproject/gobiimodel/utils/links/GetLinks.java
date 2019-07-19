@@ -27,6 +27,9 @@ public class GetLinks {
     public static String getTAG(String xmlString, String nodeName){
         int start = xmlString.indexOf("<"+nodeName+">") + nodeName.length() + 2;
         int end = xmlString.indexOf("</"+nodeName+">");
+        if(start > end || start==-1){
+        	return "";
+        }
         return xmlString.substring(start, end);
     }
 
@@ -92,7 +95,7 @@ public class GetLinks {
             //TODO - remove debugging flags
             ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
             ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " + userpass);
-            ErrorLogger.logError("OWNCLOUD_DEBUG","urlpath: " + urlPath);
+            ErrorLogger.logWarning("OWNCLOUD_DEBUG","urlpath: " + urlPath);
             }
         }
         catch(ConnectException e){
@@ -100,14 +103,14 @@ public class GetLinks {
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
             ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
             ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " +username + ":" + password );
-            ErrorLogger.logError("OWNCLOUD_DEBUG","urlpath: " + urlPath);
+            ErrorLogger.logWarning("OWNCLOUD_DEBUG","urlpath: " + urlPath);
         }
         catch(IOException e){
             liveLink="";
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
             ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
             ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " + username + ":" + password);
-            ErrorLogger.logError("OWNCLOUD_DEBUG","urlpath: " + urlPath);
+            ErrorLogger.logWarning("OWNCLOUD_DEBUG","urlpath: " + urlPath);
         }
 
         return liveLink;

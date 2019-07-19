@@ -203,7 +203,18 @@ public class ProcessMessage extends MailMessage {
     }
 
     public ProcessMessage addFolderPath(String type, String path, ConfigSettings config) throws Exception {
-        String pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
+        String pathLine=path;
+        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
+            try {
+                String urlpath=GetLinks.getOwncloudURL(path, config);
+                if(urlpath!=null&&!urlpath.isEmpty()) {
+                    pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
+                }
+            }catch (ConnectException e) {
+                ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
+                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
+            }
+        }
         paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
@@ -217,19 +228,20 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config, boolean publicUrl) throws Exception {
 
         String pathLine = path;
-        if(config.getGlobalServer(ServerType.OWN_CLOUD).isActive()){
-
+        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
+            String urlpath = null;
             try {
-            if(path.endsWith("/")){
-                pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
-            }
-            else{
-                pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getLink(path, config, publicUrl);
-            }
-
-            } catch(ConnectException e){
-                ErrorLogger.logWarning("ProcessMessage","Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links",e);
+                urlpath = path.endsWith("/") ? GetLinks.getOwncloudURL(path, config) : GetLinks.getLink(path, config, publicUrl);
+            } catch (ConnectException e) {
+                ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
                 //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
+            }
+            if (urlpath == null || urlpath.isEmpty()) {
+                //return normal path
+                ErrorLogger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
+
+            } else {
+                pathLine = path + "\n" + "<hr>" + "\n" + urlpath;
             }
         }
     	if(new File(path).length() > 1){
