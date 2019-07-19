@@ -1790,14 +1790,14 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(genotypeCallsList);
 
-            //if (genotypeCallsList.size() > 0) {
-            //    payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
-            //    if (genotypeCallsList.size() >= pageSize) {
-            //        payload.getMetaData().getPagination().setNextPageToken(
-            //                genotypeCallsList.get(genotypeCallsList.size() -1).getCallSetDbId().toString()
-            //        );
-            //    }
-            //}
+           if (genotypeCallsList.size() > 0) {
+               payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+               //if (genotypeCallsList.size() >= pageSize) {
+               //    payload.getMetaData().getPagination().setNextPageToken(
+               //            genotypeCallsList.get(genotypeCallsList.size() -1).getCallSetDbId().toString()
+               //    );
+               //}
+           }
 
             return ResponseEntity.ok(payload);
 

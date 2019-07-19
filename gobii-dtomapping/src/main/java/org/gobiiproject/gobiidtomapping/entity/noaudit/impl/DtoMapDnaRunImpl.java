@@ -87,7 +87,8 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     }
 
     @Override
-    public List<DnaRunDTO> getList(Integer pageToken, Integer pageSize, DnaRunDTO dnaRunDTOFilter) throws GobiiDtoMappingException {
+    public List<DnaRunDTO> getList(Integer pageToken, Integer pageSize,
+                                   DnaRunDTO dnaRunDTOFilter) throws GobiiDtoMappingException {
 
         List<DnaRunDTO> returnVal;
         try {

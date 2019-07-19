@@ -395,7 +395,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 }
             }
 
-            readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, dnarunHdf5IndexMap);
+            String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+            readHdf5GenotypesFromResult(returnVal, extractListPath);
 
         }
         catch(GobiiException ge) {
@@ -516,7 +518,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 }
             }
 
-            readHdf5GenotypesFromResult(returnVal, markerHdf5IndexMap, dnarunHdf5IndexMap);
+            String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+            readHdf5GenotypesFromResult(returnVal, extractListPath);
 
         }
         catch(GobiiException ge) {
@@ -549,6 +553,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
         Integer pageOffset = null;
+        Integer columnOffset = null;
+
+        Integer markerPageSize;
 
         List<GenotypeCallsMarkerMetadataDTO> markerMetadataList = new ArrayList<>();
 
@@ -558,20 +565,52 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
-        try {
 
+
+        try {
 
             dnarunMetadataList = this.getDnarunMetaDataByDnarunIdLimit(datasetId, pageOffset, pageSize);
 
-            Integer markerPageSize = (int) Math.ceil(pageSize/dnarunMetadataList.size());
+
+            if(pageToken != null) {
+                String[] pageTokenSplit = pageToken.split("-", 2);
+
+                if (pageTokenSplit.length == 2) {
+
+                    try {
+
+                        pageOffset = Integer.parseInt(Arrays.asList(pageTokenSplit).get(0));
+
+                        columnOffset = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
+
+                        if (columnOffset > dnarunMetadataList.size()) {
+                            pageOffset = null;
+                            columnOffset = null;
+                        }
+
+                    } catch (Exception e) {
+                        pageOffset = null;
+                        columnOffset = null;
+                    }
+                }
+            }
+
+            if (columnOffset != null && columnOffset <= dnarunMetadataList.size()) {
+                pageOffset = pageOffset - 1;
+                markerPageSize = (int) Math.ceil(
+                        ((double)pageSize - (double)columnOffset)/ (double)dnarunMetadataList.size());
+            }
+            else {
+                markerPageSize = (int) Math.ceil(
+                        (double)pageSize / (double)dnarunMetadataList.size());
+            }
 
             markerMetadataList = this.getMarkerMetaDataByDatasetId(datasetId, pageOffset, markerPageSize);
 
-
             //HDF5 index map for markers
             for(GenotypeCallsMarkerMetadataDTO markerMetadata : markerMetadataList) {
-                if(markerHdf5IndexMap.containsKey(
-                        datasetId.toString())) {
+
+                if(markerHdf5IndexMap.containsKey(datasetId.toString())) {
 
                     markerHdf5IndexMap.get(
                             datasetId.toString()).add(
@@ -614,7 +653,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             this.readHdf5GenotypesFromMatrix(
                     returnVal, extractFilePath,
                     pageSize, datasetId,
-                    markerMetadataList, dnarunMetadataList);
+                    columnOffset, markerMetadataList, dnarunMetadataList);
 
         }
         catch(GobiiException ge) {
@@ -650,13 +689,10 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     }
 
     private void readHdf5GenotypesFromResult (List<GenotypeCallsDTO> returnVal,
-            Map<String, ArrayList<String>> markerHdf5IndexMap,
-            Map<String, ArrayList<String>> sampleHdf5IndexMap)  throws Exception {
+                                              String extractListPath)  throws Exception {
 
-        String tempFolder = UUID.randomUUID().toString();
 
-        File genotypCallsFile = new File(
-               hdf5Interface.getHDF5Genotypes(true, markerHdf5IndexMap, sampleHdf5IndexMap, tempFolder));
+        File genotypCallsFile = new File(extractListPath);
 
         FileInputStream fstream = new FileInputStream(genotypCallsFile);
 
@@ -665,6 +701,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         int i = 0;
 
         int chrEach;
+
         StringBuilder genotype = new StringBuilder();
 
         while ((chrEach = br.read()) != -1) {
@@ -689,6 +726,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             String genotypeMatrixFilePath,
             Integer pageSize,
             Integer datasetId,
+            Integer columnOffset,
             List<GenotypeCallsMarkerMetadataDTO> markerMetadataList,
             List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList)  throws Exception {
 
