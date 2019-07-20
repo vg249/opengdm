@@ -27,6 +27,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Autowired
     private HDF5Interface hdf5Interface;
 
+    private String nextPageOffset;
+
+    private String nextColumnOffset;
 
     public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataByMarkerIdLimit(
             Integer datasetId,
@@ -229,6 +232,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         return returnVal;
     }
+
 
     public List<GenotypeCallsDnarunMetadataDTO> getDnarunMetaDataByDnarunIdLimit(
             Integer datasetId,
@@ -554,7 +558,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         Integer pageOffset = null;
         Integer columnOffset = 0;
 
-        Integer markerPageSize;
+        Integer markerPageSize = 0;
 
         List<GenotypeCallsMarkerMetadataDTO> markerMetadataList = new ArrayList<>();
 
@@ -564,12 +568,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
-
-
         try {
 
             dnarunMetadataList = this.getDnarunMetaDataByDnarunIdLimit(datasetId, pageOffset, pageSize);
-
 
             if(pageToken != null) {
                 String[] pageTokenSplit = pageToken.split("-", 2);
@@ -586,8 +587,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                             pageOffset = null;
                             columnOffset = 0;
                         }
-
-
                     } catch (Exception e) {
                         pageOffset = null;
                         columnOffset = 0;
@@ -595,13 +594,20 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 }
             }
 
+
+            Integer previousPageExcess = 0;
+
+            if(columnOffset > 0) {
+                previousPageExcess = dnarunMetadataList.size() - columnOffset;
+            }
+
             markerPageSize = (int) Math.ceil(
-                    ((double)pageSize - (double)columnOffset)/ (double)dnarunMetadataList.size());
+                    ((double)pageSize - (double)previousPageExcess)
+                            / (double)dnarunMetadataList.size());
 
             if (columnOffset > 0) {
                 pageOffset -= 1;
                 markerPageSize += 1;
-                columnOffset = dnarunMetadataList.size() - columnOffset;
             }
 
 
@@ -648,6 +654,15 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 }
             }
 
+
+            Integer nextPageOffset = markerPageSize;
+
+            if(pageOffset != null) {
+                nextPageOffset += pageOffset;
+            }
+
+            this.setNextPageOffset(nextPageOffset.toString());
+
             String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
             this.readHdf5GenotypesFromMatrix(
@@ -691,7 +706,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     private void readHdf5GenotypesFromResult (List<GenotypeCallsDTO> returnVal,
                                               String extractListPath)  throws Exception {
 
-
         File genotypCallsFile = new File(extractListPath);
 
         FileInputStream fstream = new FileInputStream(genotypCallsFile);
@@ -721,6 +735,24 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
     }
 
+    public void setNextColumnOffset(String columnOffset) {
+        this.nextColumnOffset = columnOffset;
+    }
+
+    public void setNextPageOffset(String pageOffset) {
+        this.nextPageOffset = pageOffset;
+    }
+
+    @Override
+    public String getNextColumnOffset() {
+        return this.nextColumnOffset;
+    }
+
+    @Override
+    public String getNextPageOffset() {
+        return this.nextPageOffset;
+    }
+
     private void readHdf5GenotypesFromMatrix (
             List<GenotypeCallsDTO> returnVal,
             String genotypeMatrixFilePath,
@@ -737,9 +769,11 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-        int i = 0; // row index
-        int j = 0; // column index
+        Integer i = 0; // row index
+        Integer j = 0; // column index
         int k = 0; // genotypes count
+
+
 
         int chrEach;
 
@@ -758,6 +792,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                     continue;
                 }
 
+                columnOffset = 0;
+
                 GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
 
                 genotypeCall.setCallSetDbId(dnarunMetadataList.get(j).getDnarunId());
@@ -770,6 +806,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 genotypeCall.getGenotype().put("string_value", genotype.toString());
 
                 returnVal.add(genotypeCall);
+
 
                 if(genotypesChar == '\t') {
                     j++;
@@ -789,6 +826,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             }
 
         }
+
+        this.setNextColumnOffset(j.toString());
 
         fstream.close();
 

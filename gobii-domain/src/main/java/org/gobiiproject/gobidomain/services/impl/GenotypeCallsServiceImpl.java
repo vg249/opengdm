@@ -172,4 +172,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         return returnVal;
     }
+
+    @Override
+    public String getNextPageToken() {
+        return (dtoMapGenotypeCalls.getNextPageOffset() +
+                "-" + dtoMapGenotypeCalls.getNextColumnOffset());
+    }
 }

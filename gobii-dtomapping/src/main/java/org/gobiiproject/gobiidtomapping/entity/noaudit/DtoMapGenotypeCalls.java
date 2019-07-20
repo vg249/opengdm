@@ -17,4 +17,8 @@ public interface DtoMapGenotypeCalls {
     List<GenotypeCallsDTO> getGenotypeCallsList(Integer datasetId, String pageToken,
                                                 Integer pageSize);
 
+    String getNextPageOffset();
+
+    String getNextColumnOffset();
+
 }

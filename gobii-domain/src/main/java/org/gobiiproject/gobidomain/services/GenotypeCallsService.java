@@ -19,4 +19,6 @@ public interface GenotypeCallsService {
             Integer datasetId, String pageToken,
             Integer pageSize) throws GobiiDomainException;
 
+    String getNextPageToken();
+
 }
