@@ -10,6 +10,7 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -49,11 +50,15 @@ public class ListStatementMarkerMetaDataByMarkerList implements ListStatement {
         String sql = "SELECT marker.marker_id AS marker_id, " +
                 "marker.name AS marker_name, " +
                 "marker.dataset_marker_idx as dataset_marker_idx " +
-                "FROM marker WHERE marker.marker_id IN ? ORDER BY marker_id";
+                "FROM marker WHERE marker.marker_id = ANY(?) ORDER BY marker_id";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        returnVal.setArray(1, (Array) sqlParamVals.get("markerIdList"));
+        ArrayList<String> markerIdList = (ArrayList<String>) sqlParamVals.get("markerIdList");
+
+        Array markerIdArray = dbConnection.createArrayOf("INTEGER", markerIdList.toArray());
+
+        returnVal.setArray(1, markerIdArray);
 
 
         return returnVal;

@@ -10,6 +10,7 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -60,13 +61,17 @@ public class ListStatementDnarunMetaDataByDnarunList implements ListStatement {
         String sql = "SELECT dnarun.dnarun_id AS dnarun_id, " +
                 "dnarun.name AS dnarun_name, " +
                 "dnarun.dataset_dnarun_idx as dataset_dnarun_idx " +
-                "FROM dnarun WHERE dnarun.dnarun_id IN ? ORDER BY dnarun_id";
+                "FROM dnarun WHERE dnarun.dnarun_id = ANY(?) ORDER BY dnarun_id";
 
 
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        returnVal.setArray(1, (Array)sqlParamVals.get("dnarunIdList"));
+        ArrayList<String> dnarunIdList = (ArrayList<String>) sqlParamVals.get("dnarunIdList");
+
+        Array dnarunIdArray = dbConnection.createArrayOf("INTEGER", dnarunIdList.toArray());
+
+        returnVal.setArray(1, dnarunIdArray);
 
 
         return returnVal;

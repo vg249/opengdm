@@ -521,6 +521,10 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerMetaDataByDatasetId"/>
     <bean id="listStatementDnarunMetaDataByDatasetId"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnarunMetaDataByDatasetId"/>
+    <bean id="listStatementMarkerMetaDataByMarkerIdList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerMetaDataByMarkerList"/>
+    <bean id="listStatementDnarunMetaDataByDnarunIdList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnarunMetaDataByDnarunList"/>
 
     <bean id="listStatementGermplasmByList"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementGermplasmNamesByList"/>
@@ -849,13 +853,35 @@
                     </bean>
                 </entry>
 
-                <!-- MARKER METADATA BY DATASET ID-->
+                <!-- DNARUN METADATA BY DATASET ID-->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_METADATA_BY_DATASET}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDnarunMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnarunMetaDataByDatasetId"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+
+                <!-- MARKER METADATA BY MARKER LIST-->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_METADATA_BY_MARKER_LIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementMarkerMetaDataByMarkerIdList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+
+                <!-- DNARUN METADATA BY DNARUN LIST-->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_METADATA_BY_DNARUN_LIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDnarunMetadataDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementDnarunMetaDataByDnarunIdList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>

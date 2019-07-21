@@ -50,4 +50,8 @@ public class GenotypeCallsMarkerMetadataDTO extends DTOBase{
         this.datasetMarkerIndex = datasetMarkerIndex;
     }
 
+    public Map<String, Object> getDatasetMarkerIndex() {
+        return this.datasetMarkerIndex;
+    }
+
 }

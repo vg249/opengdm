@@ -1768,10 +1768,10 @@ public class BRAPIIControllerV1 {
         return ResponseEntity.ok(processingId);
     }
 
-    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
+    @RequestMapping(value="/variantsets/{variantSetDbId}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
-            @PathVariable("variantSetDbId") Integer variantSetDbId,
+            @PathVariable("variantSetDbId") String variantSetDbIdVar,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -1779,14 +1779,37 @@ public class BRAPIIControllerV1 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            HttpServletRequest request
     ){
 
         try {
+            List<GenotypeCallsDTO> genotypeCallsList = new ArrayList<>();
 
-            List<GenotypeCallsDTO> genotypeCallsList =
-                    genotypeCallsService.getGenotypeCallsByDatasetId(
-                            variantSetDbId, pageToken, pageSize);
+            Integer variantSetDbId;
+
+            try {
+
+                variantSetDbId = Integer.parseInt(variantSetDbIdVar);
+
+                genotypeCallsList =
+                        genotypeCallsService.getGenotypeCallsByDatasetId(
+                                variantSetDbId, pageToken, pageSize);
+            }
+            catch(NumberFormatException | NullPointerException ne) {
+
+                String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+                String extractQueryPath = LineUtils.terminateDirectoryPath(
+                        configSettingsService.getConfigSettings().getServerConfigs().get(
+                                cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
+                ) + variantSetDbIdVar + LineUtils.PATH_TERMINATOR + "extractQuery.json";
+
+                genotypeCallsList =
+                        genotypeCallsService.getGenotypeCallsByExtractQuery(
+                                extractQueryPath, pageToken, pageSize);
+            }
+
 
             BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(genotypeCallsList);
 

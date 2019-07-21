@@ -49,4 +49,8 @@ public class GenotypeCallsDnarunMetadataDTO extends DTOBase{
         this.datasetDnarunIdx = datasetDnarunIndex;
     }
 
+    public Map<String, Object> getDatasetDnarunIndex() {
+        return this.datasetDnarunIdx;
+    }
+
 }
