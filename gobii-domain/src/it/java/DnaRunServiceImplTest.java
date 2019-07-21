@@ -1,5 +1,3 @@
-package org.gobiiproject.gobidomain.services.impl;
-
 import org.gobiiproject.gobidomain.security.UserContextLoader;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobiimodel.config.GobiiException;

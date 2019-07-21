@@ -65,26 +65,25 @@ public class ListStatementGenotypeCallsDnarunMetaData implements ListStatement {
 
         String sql = "SELECT dnarun.dnarun_id AS dnarun_id, " +
                 "dnarun.name AS dnarun_name, " +
-                "dnarun.dataset_dnarun_idx->>?::text as hdf5_dnarun_idx " +
+                "dnarun.dataset_dnarun_idx as dataset_dnarun_idx " +
                 "FROM dnarun WHERE dnarun.dataset_dnarun_idx ?? ?::text " +
                 "AND dnarun_id > ? ORDER BY dnarun.dnarun_id "+pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         returnVal.setInt(1, (Integer) sqlParamVals.get("datasetId"));
-        returnVal.setInt(2, (Integer) sqlParamVals.get("datasetId"));
 
         if (sqlParamVals.containsKey("dnarunId") &&
                 (Integer) sqlParamVals.getOrDefault("dnarunId", 0) > 0) {
-            returnVal.setInt(3, (Integer) sqlParamVals.get("dnarunId"));
+            returnVal.setInt(2, (Integer) sqlParamVals.get("dnarunId"));
         }
         else {
-            returnVal.setInt(3, 0);
+            returnVal.setInt(2, 0);
         }
 
 
         if(!pageSizeCondition.isEmpty()) {
-            returnVal.setInt(4, pageSize);
+            returnVal.setInt(3, pageSize);
         }
 
         return returnVal;

@@ -1746,6 +1746,7 @@ public class BRAPIIControllerV1 {
         String processingId = UUID.randomUUID().toString();
 
         if(extractQuery.hasBody()) {
+
             String extractQueryPath = LineUtils.terminateDirectoryPath(
                     configSettingsService.getConfigSettings().getServerConfigs().get(
                             cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
@@ -1783,20 +1784,19 @@ public class BRAPIIControllerV1 {
 
         try {
 
-
             List<GenotypeCallsDTO> genotypeCallsList =
                     genotypeCallsService.getGenotypeCallsByDatasetId(
                             variantSetDbId, pageToken, pageSize);
 
             BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(genotypeCallsList);
 
-           if (genotypeCallsList.size() > 0) {
-               payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
-               if (genotypeCallsList.size() >= pageSize) {
-                   payload.getMetaData().getPagination().setNextPageToken(
-                           genotypeCallsService.getNextPageToken());
-               }
-           }
+            if (genotypeCallsList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                if (genotypeCallsList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            genotypeCallsService.getNextPageToken());
+                }
+            }
 
             return ResponseEntity.ok(payload);
 

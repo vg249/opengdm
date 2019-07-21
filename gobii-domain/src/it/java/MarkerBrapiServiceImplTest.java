@@ -1,5 +1,3 @@
-package org.gobiiproject.gobidomain.services.impl;
-
 import junit.framework.TestCase;
 import org.gobiiproject.gobidomain.security.UserContextLoader;
 import org.gobiiproject.gobidomain.services.MarkerBrapiService;

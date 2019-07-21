@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 
+import java.util.Map;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes"
@@ -17,7 +19,7 @@ public class GenotypeCallsDnarunMetadataDTO extends DTOBase{
     private String dnarunName;
 
 
-    private String hdf5DnarunIdx;
+    private Map<String, Object> datasetDnarunIdx;
 
 
     @Override
@@ -37,13 +39,14 @@ public class GenotypeCallsDnarunMetadataDTO extends DTOBase{
     public void setDnarunName(String dnarunName) { this.dnarunName = dnarunName; }
 
 
-    public String getHdf5DnarunIdx() {
-        return this.hdf5DnarunIdx;
+    public String getHdf5DnarunIdx(String datasetId) {
+        return (String)this.datasetDnarunIdx.getOrDefault(datasetId, null);
+
     }
 
-    @GobiiEntityColumn(columnName = "hdf5_dnarun_idx")
-    public void setHdf5DnarunIdx(String hdf5DnarunIdx) {
-        this.hdf5DnarunIdx = hdf5DnarunIdx;
+    @GobiiEntityColumn(columnName = "dataset_dnarun_idx")
+    public void setDatasetDnarunIndex(Map<String, Object> datasetDnarunIndex) {
+        this.datasetDnarunIdx = datasetDnarunIndex;
     }
 
 }

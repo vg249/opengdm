@@ -18,6 +18,7 @@ public class GenotypeCallsMarkerMetadataDTO extends DTOBase{
 
     private String markerName;
 
+    private Map<String, Object> datasetMarkerIndex;
 
     private String hdf5MarkerIdx;
 
@@ -39,13 +40,14 @@ public class GenotypeCallsMarkerMetadataDTO extends DTOBase{
     public void setMarkerName(String markerName) { this.markerName = markerName; }
 
 
-    public String getHdf5MarkerIdx() {
-        return this.hdf5MarkerIdx;
+    public String getHdf5MarkerIdx(String datasetId) {
+        return (String)this.datasetMarkerIndex.getOrDefault(datasetId, null);
     }
 
-    @GobiiEntityColumn(columnName = "hdf5_marker_idx")
-    public void setHdf5MarkerIdx(String hdf5MarkerIdx) {
-        this.hdf5MarkerIdx = hdf5MarkerIdx;
+
+    @GobiiEntityColumn(columnName = "dataset_marker_idx")
+    public void setDatasetMarkerIndex(Map<String, Object> datasetMarkerIndex) {
+        this.datasetMarkerIndex = datasetMarkerIndex;
     }
 
 }

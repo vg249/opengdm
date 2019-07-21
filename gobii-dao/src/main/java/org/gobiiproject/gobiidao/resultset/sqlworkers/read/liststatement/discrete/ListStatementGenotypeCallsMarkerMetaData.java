@@ -65,26 +65,25 @@ public class ListStatementGenotypeCallsMarkerMetaData implements ListStatement {
 
         String sql = "SELECT marker.marker_id AS marker_id, " +
                 "marker.name AS marker_name, " +
-                "marker.dataset_marker_idx->>?::text as hdf5_marker_idx " +
+                "marker.dataset_marker_idx as dataset_marker_idx " +
                 "FROM marker WHERE marker.dataset_marker_idx ?? ?::text " +
                 "AND marker_id > ? ORDER BY marker.marker_id "+pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         returnVal.setInt(1, (Integer) sqlParamVals.get("datasetId"));
-        returnVal.setInt(2, (Integer) sqlParamVals.get("datasetId"));
 
         if (sqlParamVals.containsKey("markerIdLimit") &&
                 (Integer) sqlParamVals.getOrDefault("markerIdLimit", 0) > 0) {
-            returnVal.setInt(3, (Integer) sqlParamVals.get("markerIdLimit"));
+            returnVal.setInt(2, (Integer) sqlParamVals.get("markerIdLimit"));
         }
         else {
-            returnVal.setInt(3, 0);
+            returnVal.setInt(2, 0);
         }
 
 
         if(!pageSizeCondition.isEmpty()) {
-            returnVal.setInt(4, pageSize);
+            returnVal.setInt(3, pageSize);
         }
 
         return returnVal;

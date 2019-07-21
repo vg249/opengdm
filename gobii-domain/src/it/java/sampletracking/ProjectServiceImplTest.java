@@ -1,4 +1,4 @@
-package org.gobiiproject.gobidomain.services.impl.sampletracking;
+package sampletracking;
 
 
 import org.gobiiproject.gobidomain.security.UserContextLoader;

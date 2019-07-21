@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Gets the Query for DNA run meta data required to pull genotype calls.
  */
-public class ListStatementDnarunMetaDataByDatasetId implements ListStatement {
+public class ListStatementDnarunMetaDataByDnarunList implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
@@ -39,29 +40,14 @@ public class ListStatementDnarunMetaDataByDatasetId implements ListStatement {
                                                    Map<String, Object> sqlParamVals)
             throws SQLException, GobiiException {
 
-        Integer pageOffset = 0;
-        Integer pageSize = 0;
 
         if(sqlParamVals != null) {
 
-            if((!sqlParamVals.containsKey("datasetId")) || sqlParamVals.get("datasetId") == null) {
+            if((!sqlParamVals.containsKey("dnarunIdList")) || sqlParamVals.get("dnarunIdList") == null) {
                 throw new GobiiException(
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.BAD_REQUEST,
-                        "Invalid Dataset Id");
-            }
-
-            if((!sqlParamVals.containsKey("pageSize")) || sqlParamVals.get("pageSize") == null ||
-                    !(sqlParamVals.get("pageSize") instanceof Integer)) {
-                throw new GobiiException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.BAD_REQUEST,
-                        "Invalid Page Size in query.");
-            }
-
-            if(sqlParamVals.containsKey("pageOffset") && sqlParamVals.get("pageOffset") != null &&
-                    (sqlParamVals.get("pageSize") instanceof Integer)) {
-                pageOffset = (Integer) sqlParamVals.get("pageOffset");
+                        "Invalid Dnarun Id List");
             }
         }
         else {
@@ -74,23 +60,14 @@ public class ListStatementDnarunMetaDataByDatasetId implements ListStatement {
         String sql = "SELECT dnarun.dnarun_id AS dnarun_id, " +
                 "dnarun.name AS dnarun_name, " +
                 "dnarun.dataset_dnarun_idx as dataset_dnarun_idx " +
-                "FROM dnarun WHERE marker.dataset_dnarun_idx ?? ?::text " +
-                "LIMIT ? ";
+                "FROM dnarun WHERE dnarun.dnarun_id IN ? ORDER BY dnarun_id";
 
 
-        if(pageOffset > 0) {
-            sql += "OFFSET ? ";
-
-        }
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        returnVal.setInt(1, (Integer) sqlParamVals.get("datasetId"));
-        returnVal.setInt(2, (Integer) sqlParamVals.get("pageSize"));
+        returnVal.setArray(1, (Array)sqlParamVals.get("dnarunIdList"));
 
-        if(pageOffset > 0) {
-            returnVal.setInt(3, (Integer) sqlParamVals.get("pageOffset"));
-        }
 
         return returnVal;
 

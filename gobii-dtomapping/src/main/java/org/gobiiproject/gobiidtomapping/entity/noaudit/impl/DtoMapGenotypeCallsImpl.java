@@ -295,6 +295,56 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         return returnVal;
     }
 
+    public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataByMarkerIdList(
+            List<Integer> markerIdList) throws GobiiDtoMappingException {
+
+        List<GenotypeCallsMarkerMetadataDTO> returnVal;
+
+        try {
+
+            Map<String, Object> sqlParams = new HashMap<>();
+
+            if(markerIdList != null) {
+                sqlParams.put("markerIdList", markerIdList);
+            }
+            else {
+
+                LOGGER.error("Marker Id list is null");
+
+                throw new GobiiDtoMappingException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Invalid Marker Id list");
+            }
+
+
+            returnVal = (List<GenotypeCallsMarkerMetadataDTO>) dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_MARKER_METADATA_BY_MARKER_LIST,
+                    null,
+                    sqlParams
+            );
+
+            if (returnVal == null) {
+                return new ArrayList<>();
+            }
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE);
+
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
 
     /**
      * Gets the list of Genotypes Calls for given dnarun metadata.
@@ -378,7 +428,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                         markerHdf5IndexMap.get(
                                 datasetId.toString()).add(
-                                marker.getHdf5MarkerIdx());
+                                marker.getHdf5MarkerIdx(datasetId.toString()));
 
                     }
                     else {
@@ -387,7 +437,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                                 new ArrayList<>());
                         markerHdf5IndexMap.get(
                                 datasetId.toString()).add(
-                                marker.getHdf5MarkerIdx());
+                                marker.getHdf5MarkerIdx(datasetId.toString()));
                     }
                     returnVal.add(genotypeCall);
                 }
@@ -500,7 +550,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                         dnarunHdf5IndexMap.get(
                                 datasetId.toString()).add(
-                                dnarun.getHdf5DnarunIdx());
+                                dnarun.getHdf5DnarunIdx(datasetId.toString()));
 
                     }
                     else {
@@ -509,7 +559,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                                 new ArrayList<>());
                         dnarunHdf5IndexMap.get(
                                 datasetId.toString()).add(
-                                dnarun.getHdf5DnarunIdx());
+                                dnarun.getHdf5DnarunIdx(datasetId.toString()));
                     }
                     returnVal.add(genotypeCall);
                 }
@@ -620,7 +670,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                     markerHdf5IndexMap.get(
                             datasetId.toString()).add(
-                            markerMetadata.getHdf5MarkerIdx());
+                            markerMetadata.getHdf5MarkerIdx(datasetId.toString()));
 
                 }
                 else {
@@ -629,7 +679,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                             new ArrayList<>());
                     markerHdf5IndexMap.get(
                             datasetId.toString()).add(
-                            markerMetadata.getHdf5MarkerIdx());
+                            markerMetadata.getHdf5MarkerIdx(datasetId.toString()));
                 }
 
             }
@@ -641,7 +691,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                     dnarunHdf5IndexMap.get(
                             datasetId.toString()).add(
-                            dnarunMetadata.getHdf5DnarunIdx());
+                            dnarunMetadata.getHdf5DnarunIdx(datasetId.toString()));
 
                 }
                 else {
@@ -650,7 +700,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                             new ArrayList<>());
                     dnarunHdf5IndexMap.get(
                             datasetId.toString()).add(
-                            dnarunMetadata.getHdf5DnarunIdx());
+                            dnarunMetadata.getHdf5DnarunIdx(datasetId.toString()));
                 }
             }
 
@@ -682,6 +732,18 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                     "Failed to extract genotypes. " +
                             "Please try again. If error persists, try contacting the System administrator");
         }
+
+        return returnVal;
+    }
+
+    @Override
+    public List<GenotypeCallsDTO> getGenotypeCallsListByExtractQuery(
+            String extractQueryFilePath, String pageToken,
+            Integer pageSize) {
+
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+
 
         return returnVal;
     }
