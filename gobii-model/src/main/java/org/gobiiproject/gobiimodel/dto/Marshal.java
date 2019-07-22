@@ -14,7 +14,6 @@ public class Marshal {
 			return null;
 		} else {
 			GobiiLoaderProcedure procedure = new ObjectMapper().readValue(str, GobiiLoaderProcedure.class);
-			ErrorLogger.logDebug("Marshal", procedure.toString());
 			return procedure;
 		}
 	}
