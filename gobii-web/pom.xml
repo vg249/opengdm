@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>GP1-2262-01</version>
+        <version>GOBII Server 2.0_2018-12-21</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>
@@ -283,16 +283,7 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
-            <version>2.0.0</version>
-        </dependency>
+
     </dependencies>
 
     <build>
@@ -510,24 +501,24 @@
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.8</version>
+                <version>3.1.3</version>
                 <configuration>
                     <apiSources>
                         <apiSource>
                             <springmvc>true</springmvc>
                             <locations>
-                                <location>org.gobiiproject.gobiiweb.controllers</location>
+                                org.gobiiproject.gobiiweb.controllers
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
-                            <schemes><schema>http</schema></schemes>
-                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
-                            <basePath>/gobii-dev</basePath>
+                            <schemes>http, https</schemes>
+                            <host>localhost:8081</host>
+                            <basePath>/api</basePath>
                             <!-- content of description file overrides the <description>
                                 element of the <info> tag below. This ends up as the
                                  Overview section in the HTML/PDF -->
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
-                                <title>Genomic Data Management (GDM)</title>
+                                <title>GOBii API</title>
                                 <version>1.0</version>
                                 <!-- use markdown here because I'm using markdown for output,
                                 if you need to use html or other markup language, you need to use your target language,
@@ -553,14 +544,9 @@
                                     <name>basicAuth</name>
                                     <type>basic</type>
                                 </securityDefinition>
-                                <securityDefinition>
-                                    <name>X-Auth-Token</name>
-                                    <type>apiKey</type>
-                                    <in>header</in>
-                                </securityDefinition>
-                                <!--<securityDefinition>
-                                    <jsonPath>${doc-location-source}/securityDefinition.json</jsonPath>
-                                </securityDefinition>-->
+                                <!--<securityDefinition>-->
+                                <!--<json>/securityDefinition.json</json>-->
+                                <!--</securityDefinition>-->
                             </securityDefinitions>
                             <!-- Support classpath or file absolute path here.
                             1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
