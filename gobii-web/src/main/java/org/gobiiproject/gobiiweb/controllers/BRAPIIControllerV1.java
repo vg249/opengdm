@@ -53,6 +53,7 @@ import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -65,11 +66,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 
@@ -180,6 +184,8 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private ConfigSettingsService configSettingsService;
+
+
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -1032,7 +1038,7 @@ public class BRAPIIControllerV1 {
             tags = {"Callsets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Calls")
+                            @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
     )
@@ -1298,7 +1304,7 @@ public class BRAPIIControllerV1 {
             tags = {"Variants"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Calls")
+                            @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
     )
@@ -1545,7 +1551,7 @@ public class BRAPIIControllerV1 {
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="VariantSets")
+                            @ExtensionProperty(name="summary", value="Variants")
                     })
             }
     )
@@ -1653,7 +1659,7 @@ public class BRAPIIControllerV1 {
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="VariantSets")
+                            @ExtensionProperty(name="summary", value="Callsets")
                     })
             }
     )
@@ -1736,6 +1742,21 @@ public class BRAPIIControllerV1 {
     }
 
 
+    @ApiOperation(
+            value = "Creates a extract",
+            notes = "Creates a variant set resource for given extract query",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="VariantSets")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
     @RequestMapping(value="/variantsets/extract", method=RequestMethod.POST)
     public ResponseEntity<String> VariantSetsExtract(
             HttpEntity<String> extractQuery,
@@ -1768,7 +1789,25 @@ public class BRAPIIControllerV1 {
         return ResponseEntity.ok(processingId);
     }
 
-    @RequestMapping(value="/variantsets/{variantSetDbId}/calls", method=RequestMethod.GET)
+    @ApiOperation(
+            value = "List genotype calls",
+            notes = "List of all the genotype calls in a given Variantset",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="GenotypeCalls")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(
+            value="/variantsets/{variantSetDbId}/calls",
+            method=RequestMethod.GET,
+            produces = "application/json")
     public @ResponseBody ResponseEntity getCallsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
             @PathVariable("variantSetDbId") String variantSetDbIdVar,
@@ -1834,6 +1873,38 @@ public class BRAPIIControllerV1 {
                     "Internal Server Error" + e.getMessage()
             );
         }
+    }
+
+    @RequestMapping(
+            value="/variantsets/{variantSetDbId}/calls",
+            method=RequestMethod.GET,
+            produces = "text/csv")
+    public ResponseBodyEmitter handleRbe(
+            @PathVariable("variantSetDbId") String variantSetDbIdVar,
+            HttpServletRequest request
+
+    ) {
+
+        ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        executor.execute(() -> {
+            for (int i = 0; i < 1000; i++) {
+                try {
+                    emitter.send(i + " - ", MediaType.TEXT_PLAIN);
+
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    emitter.completeWithError(e);
+                    return;
+                }
+            }
+            emitter.complete();
+        });
+
+        return emitter;
     }
 
 }// BRAPIController

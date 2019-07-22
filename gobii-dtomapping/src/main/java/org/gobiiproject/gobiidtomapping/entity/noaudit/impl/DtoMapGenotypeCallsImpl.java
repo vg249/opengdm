@@ -892,6 +892,11 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                 returnVal.addAll(datasetGenotypes);
 
+                if(returnVal.size() >=  pageSize) {
+                    pageSize = pageSize -returnVal.size();
+                    break;
+                }
+
             }
 
 

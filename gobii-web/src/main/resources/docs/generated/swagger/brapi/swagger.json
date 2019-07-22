@@ -15,6 +15,8 @@
     "name" : "Callsets"
   }, {
     "name" : "Variants"
+  }, {
+    "name" : "VariantSets"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
@@ -27,37 +29,57 @@
         "parameters" : [ {
           "name" : "pageToken",
           "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
           "required" : false,
           "type" : "string"
         }, {
           "name" : "pageSize",
           "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "callSetDbId",
+          "in" : "query",
+          "description" : "ID of the CallSet to be retrieved.",
           "required" : false,
           "type" : "integer",
           "format" : "int32"
         }, {
           "name" : "callSetName",
           "in" : "query",
+          "description" : "The human readable name of the CallSet to be retrieved.",
           "required" : false,
           "type" : "string"
         }, {
           "name" : "variantSetDbId",
           "in" : "query",
+          "description" : "The ID of the VariantSet to be retrieved.",
           "required" : false,
           "type" : "string"
         }, {
           "name" : "sampleDbId",
           "in" : "query",
+          "description" : "The ID of the Sample to be retrieved.",
           "required" : false,
           "type" : "string"
         }, {
           "name" : "germplasmDbId",
           "in" : "query",
+          "description" : "The ID of the Germplasm to be retrieved.",
           "required" : false,
           "type" : "string"
         }, {
           "name" : "studyDbId",
           "in" : "query",
+          "description" : "The ID of the study to be retrieved.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "sampleName",
+          "in" : "query",
+          "description" : "The name of the sample to be retrieved.",
           "required" : false,
           "type" : "string"
         }, {
@@ -86,8 +108,9 @@
           "in" : "path",
           "description" : "ID of the Callset to be extracted",
           "required" : true,
-          "type" : "string",
-          "pattern" : "[\\d]+"
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
         }, {
           "name" : "X-Auth-Token",
           "in" : "header",
@@ -140,41 +163,109 @@
             "description" : "successful operation"
           }
         },
-        "x-summary" : "Calls"
+        "x-summary" : "GenotypeCalls"
       }
     },
     "/brapi/v1/variants" : {
       "get" : {
+        "tags" : [ "Variants" ],
+        "summary" : "List all variants",
+        "description" : "List of all Variants",
         "operationId" : "getVariants",
         "parameters" : [ {
           "name" : "pageToken",
           "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
           "required" : false,
           "type" : "string"
         }, {
           "name" : "pageSize",
           "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
           "required" : false,
           "type" : "integer",
           "format" : "int32"
+        }, {
+          "name" : "variantDbId",
+          "in" : "query",
+          "description" : "ID of the variant to be extracted",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "variantSetDbId",
+          "in" : "query",
+          "description" : "ID of the variantSet to be extracted",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "mapSetId",
+          "in" : "query",
+          "description" : "ID of the mapset to be retrieved",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "mapSetName",
+          "in" : "query",
+          "description" : "Name of the mapset to be retrieved",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "default" : {
             "description" : "successful operation"
           }
-        }
+        },
+        "x-summary" : "Variants"
+      }
+    },
+    "/brapi/v1/variants/{variantDbId}" : {
+      "get" : {
+        "tags" : [ "Variants" ],
+        "summary" : "Get a variant by variantDbId",
+        "description" : "Retrieves the Variant entity having the specified ID",
+        "operationId" : "getVariantsByVariantDbId",
+        "parameters" : [ {
+          "name" : "variantDbId",
+          "in" : "path",
+          "description" : "ID of the Variant to be extracted",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Variants: variantDbId"
       }
     },
     "/brapi/v1/variants/{variantDbId}/calls" : {
       "get" : {
         "tags" : [ "Variants" ],
         "summary" : "List genotype calls",
-        "description" : "List of all the genotype calls in a given Dna run identified by Marker run Id",
+        "description" : "List of all the genotype calls in a given Marker identified by Marker Id",
         "operationId" : "getCallsByVariant",
         "parameters" : [ {
           "name" : "variantDbId",
           "in" : "path",
-          "description" : "Id for dna run to be fetched",
+          "description" : "Id for marker to be fetched",
           "required" : true,
           "type" : "string"
         }, {
@@ -202,7 +293,235 @@
             "description" : "successful operation"
           }
         },
-        "x-summary" : "Calls"
+        "x-summary" : "GenotypeCalls"
+      }
+    },
+    "/brapi/v1/variantsets" : {
+      "get" : {
+        "tags" : [ "VariantSets" ],
+        "summary" : "List all variantsets",
+        "description" : "List of all Variantsets",
+        "operationId" : "getVariantSets",
+        "parameters" : [ {
+          "name" : "pageToken",
+          "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "variantSetDbId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "variantSetName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "studyDbId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "VariantSets"
+      }
+    },
+    "/brapi/v1/variantsets/extract" : {
+      "post" : {
+        "tags" : [ "VariantSets" ],
+        "summary" : "Creates a extract",
+        "description" : "Creates a variant set resource for given extract query",
+        "operationId" : "VariantSetsExtract",
+        "parameters" : [ {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        },
+        "x-summary" : "VariantSets"
+      }
+    },
+    "/brapi/v1/variantsets/{variantSetDbId}" : {
+      "get" : {
+        "tags" : [ "VariantSets" ],
+        "summary" : "Get a variantset by variantSetDbId",
+        "description" : "Retrieves the VariantSet entity having the specified ID",
+        "operationId" : "getVariantSetsByVariantSetDbId",
+        "parameters" : [ {
+          "name" : "variantSetDbId",
+          "in" : "path",
+          "description" : "ID of the VariantSet to be extracted",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "VariantSets : variantSetDbId"
+      }
+    },
+    "/brapi/v1/variantsets/{variantSetDbId}/calls" : {
+      "get" : {
+        "tags" : [ "VariantSets" ],
+        "summary" : "List genotype calls",
+        "description" : "List of all the genotype calls in a given Variantset",
+        "operationId" : "getCallsByVariantSetDbId",
+        "parameters" : [ {
+          "name" : "variantSetDbId",
+          "in" : "path",
+          "description" : "ID of the VariantSet of the CallSets to be extracted",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "pageToken",
+          "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "GenotypeCalls"
+      }
+    },
+    "/brapi/v1/variantsets/{variantSetDbId}/callsets" : {
+      "get" : {
+        "tags" : [ "VariantSets" ],
+        "summary" : "List all Callsets for a given VariantSetDbId",
+        "description" : "List of all the CallSets in a specific VariantSet",
+        "operationId" : "getCallSetsByVariantSetDbId",
+        "parameters" : [ {
+          "name" : "variantSetDbId",
+          "in" : "path",
+          "description" : "ID of the VariantSet of the CallSets to be extracted",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        }, {
+          "name" : "pageToken",
+          "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Callsets"
+      }
+    },
+    "/brapi/v1/variantsets/{variantSetDbId}/variants" : {
+      "get" : {
+        "tags" : [ "VariantSets" ],
+        "summary" : "List all Variants for a given VariantSetDbId",
+        "description" : "List of all the Variants in a specific VariantSet",
+        "operationId" : "getVariantsByVariantSetDbId",
+        "parameters" : [ {
+          "name" : "variantSetDbId",
+          "in" : "path",
+          "description" : "ID of the VariantSet of the Variants to be extracted",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        }, {
+          "name" : "pageToken",
+          "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "mapSetId",
+          "in" : "query",
+          "description" : "ID of the mapset to be retrieved",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "mapSetName",
+          "in" : "query",
+          "description" : "Name of the mapset to be retrieved",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Variants"
       }
     }
   },

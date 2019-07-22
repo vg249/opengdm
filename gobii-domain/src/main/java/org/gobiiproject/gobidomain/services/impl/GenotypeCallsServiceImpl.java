@@ -219,7 +219,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     @Override
     public String getNextPageToken() {
-        return (dtoMapGenotypeCalls.getNextPageOffset() +
-                "-" + dtoMapGenotypeCalls.getNextColumnOffset());
+        if(dtoMapGenotypeCalls.getNextPageOffset() == null || dtoMapGenotypeCalls.getNextColumnOffset() == null) {
+            return null;
+        }
+        else {
+            return (dtoMapGenotypeCalls.getNextPageOffset() +
+                    "-" + dtoMapGenotypeCalls.getNextColumnOffset());
+        }
     }
 }
