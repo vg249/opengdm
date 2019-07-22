@@ -90,27 +90,19 @@ public class GetLinks {
                 liveLink = getTAG(resultBuf.toString(), "url") + "/download";
             } else {
                 liveLink = "";
-            ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + tag);
-
-            //TODO - remove debugging flags
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " + userpass);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","urlpath: " + urlPath);
+                ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + tag);
+                ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
             }
         }
         catch(ConnectException e){
             liveLink="";
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " +username + ":" + password );
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","urlpath: " + urlPath);
+            ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
         }
         catch(IOException e){
             liveLink="";
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","File: " + path);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","User/pass: " + username + ":" + password);
-            ErrorLogger.logWarning("OWNCLOUD_DEBUG","urlpath: " + urlPath);
+            ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
         }
 
         return liveLink;
