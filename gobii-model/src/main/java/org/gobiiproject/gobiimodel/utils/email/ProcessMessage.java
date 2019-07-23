@@ -208,7 +208,7 @@ public class ProcessMessage extends MailMessage {
             try {
                 String urlpath=GetLinks.getOwncloudURL(path, config);
                 if(urlpath!=null&&!urlpath.isEmpty()) {
-                    pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
+                    pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(GetLinks.getOwncloudURL(path, config));
                 }
             }catch (ConnectException e) {
                 ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
@@ -218,6 +218,21 @@ public class ProcessMessage extends MailMessage {
         paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
+
+    /**
+     * Adds a hyperlinking tag to a string that contains a valid hyperlink.
+     * http://example.com becomes
+     * <a href="http://example.com">http://example.com</a>
+     * @param toHyperlink
+     * @return
+     */
+    private String hyperlink(String toHyperlink){
+        if(toHyperlink==null || toHyperlink.equals("")){
+            return toHyperlink;
+        }
+        return "<a href=\""+toHyperlink+"\">"+toHyperlink + "</a>";
+    }
+
         /**
          * Add item to the filepaths entry
          * @param type type of file
@@ -241,7 +256,7 @@ public class ProcessMessage extends MailMessage {
                 ErrorLogger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
 
             } else {
-                pathLine = path + "\n" + "<hr>" + "\n" + urlpath;
+                pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(urlpath);
             }
         }
     	if(new File(path).length() > 1){
