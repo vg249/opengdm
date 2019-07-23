@@ -12,7 +12,7 @@ import java.util.List;
 public class LoaderInstructionFilesDTO extends DTOBase {
 
 
-    private GobiiLoaderProcedure procedure;
+    private GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
     private String instructionFileName = null;
 
 
