@@ -240,6 +240,10 @@ public class ProcessMessage extends MailMessage {
          */
     public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config, boolean publicUrl) throws Exception {
 
+        if(path==null){
+            //Do nothing if path is not specified
+            return this;
+        }
         // As per LiveLinks 1.c., if no preview is available, make a link to the folder.
         // Convert this into a folder path by cutting off the file, so path will end with /
 
