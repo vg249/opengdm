@@ -90,8 +90,11 @@
           "type" : "string"
         } ],
         "responses" : {
-          "default" : {
-            "description" : "successful operation"
+          "200" : {
+            "description" : "Successful retrieval of CallSets",
+            "schema" : {
+              "$ref" : "#/definitions/CallSetListResponse"
+            }
           }
         },
         "x-summary" : "Callsets"
@@ -119,8 +122,11 @@
           "type" : "string"
         } ],
         "responses" : {
-          "default" : {
-            "description" : "successful operation"
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/CallSetResponse"
+            }
           }
         },
         "x-summary" : "Callsets : callSetDbId"
@@ -405,6 +411,7 @@
         "summary" : "List genotype calls",
         "description" : "List of all the genotype calls in a given Variantset",
         "operationId" : "getCallsByVariantSetDbId",
+        "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "variantSetDbId",
           "in" : "path",
@@ -437,6 +444,28 @@
           }
         },
         "x-summary" : "GenotypeCalls"
+      }
+    },
+    "/brapi/v1/variantsets/{variantSetDbId}/calls/download" : {
+      "get" : {
+        "operationId" : "handleRbe",
+        "produces" : [ "text/csv" ],
+        "parameters" : [ {
+          "name" : "variantSetDbId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ResponseBodyEmitter"
+            }
+          }
+        }
       }
     },
     "/brapi/v1/variantsets/{variantSetDbId}/callsets" : {
@@ -515,6 +544,12 @@
           "description" : "Name of the mapset to be retrieved",
           "required" : false,
           "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "default" : {
@@ -533,6 +568,142 @@
     },
     "basicAuth" : {
       "type" : "basic"
+    }
+  },
+  "definitions" : {
+    "BrApiMetaData" : {
+      "type" : "object",
+      "properties" : {
+        "pagination" : {
+          "$ref" : "#/definitions/BrApiPagination"
+        },
+        "datafiles" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        }
+      }
+    },
+    "BrApiPagination" : {
+      "type" : "object",
+      "properties" : {
+        "totalCount" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "pageSize" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "totalPages" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "currentPage" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "nextPageToken" : {
+          "type" : "string"
+        }
+      }
+    },
+    "BrApiResult" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        }
+      }
+    },
+    "BrApiResultDnaRunDTO" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DnaRunDTO"
+          }
+        }
+      }
+    },
+    "CallSetListResponse" : {
+      "type" : "object",
+      "properties" : {
+        "metaData" : {
+          "$ref" : "#/definitions/BrApiMetaData"
+        },
+        "result" : {
+          "$ref" : "#/definitions/BrApiResultDnaRunDTO"
+        }
+      }
+    },
+    "CallSetResponse" : {
+      "type" : "object",
+      "properties" : {
+        "metaData" : {
+          "$ref" : "#/definitions/BrApiMetaData"
+        },
+        "result" : {
+          "$ref" : "#/definitions/DnaRunDTO"
+        }
+      }
+    },
+    "DnaRunDTO" : {
+      "type" : "object",
+      "properties" : {
+        "callSetDbId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "studyDbId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "sampleDbId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "callSetName" : {
+          "type" : "string"
+        },
+        "dnaRunCode" : {
+          "type" : "string"
+        },
+        "variantSetIds" : {
+          "type" : "array",
+          "items" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "germplasmDbId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "germplasmName" : {
+          "type" : "string"
+        },
+        "germplasmExternalCode" : {
+          "type" : "string"
+        },
+        "sampleName" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ResponseBodyEmitter" : {
+      "type" : "object",
+      "properties" : {
+        "timeout" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      }
     }
   }
 }

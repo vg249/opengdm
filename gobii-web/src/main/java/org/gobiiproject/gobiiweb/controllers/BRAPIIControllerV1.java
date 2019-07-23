@@ -996,6 +996,12 @@ public class BRAPIIControllerV1 {
             },
             response = CallSetResponse.class
     )
+    @ApiResponses(
+            @ApiResponse(
+                    code = 200, message = "Success",
+                    response = CallSetResponse.class
+            )
+    )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
