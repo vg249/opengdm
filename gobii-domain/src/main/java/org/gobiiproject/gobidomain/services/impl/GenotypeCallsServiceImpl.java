@@ -218,8 +218,36 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
     @Override
+    public String getGenotypeCallsAsString(Integer datasetId, String pageToken) {
+
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+        try {
+            return dtoMapGenotypeCalls.getGenotypeCallsAsString(datasetId, pageToken);
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+    }
+
+    @Override
     public String getNextPageToken() {
         if(dtoMapGenotypeCalls.getNextPageOffset() == null || dtoMapGenotypeCalls.getNextColumnOffset() == null) {
+            if(dtoMapGenotypeCalls.getNextColumnOffset() == null) {
+                return dtoMapGenotypeCalls.getNextPageOffset();
+            }
             return null;
         }
         else {

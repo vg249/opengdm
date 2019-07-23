@@ -17,6 +17,8 @@ public interface DtoMapGenotypeCalls {
     List<GenotypeCallsDTO> getGenotypeCallsList(Integer datasetId, String pageToken,
                                                 Integer pageSize);
 
+    String getGenotypeCallsAsString(Integer datasetId, String pageToken);
+
     List<GenotypeCallsDTO> getGenotypeCallsListByExtractQuery(
             String extractQueryFilePath, String pageToken, Integer pageSize);
 
