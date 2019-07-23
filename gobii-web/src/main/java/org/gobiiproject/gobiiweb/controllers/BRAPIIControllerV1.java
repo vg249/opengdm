@@ -48,7 +48,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
-import org.gobiiproject.gobiiweb.automation.BrAPIUtils;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -181,9 +180,12 @@ public class BRAPIIControllerV1 {
     @Autowired
     private ConfigSettingsService configSettingsService;
 
-
-
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+
+    private class CallSetResponse extends BrApiMasterPayload<DnaRunDTO>{}
+    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<DnaRunDTO>>{}
+
 
 
     // *********************************************
@@ -847,7 +849,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Callsets")
                     })
-            }
+            },
+            response = CallSetListResponse.class
     )
     @ApiResponses(
             value = {
@@ -990,8 +993,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Callsets : callSetDbId")
                     })
-            }
-
+            },
+            response = CallSetResponse.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
@@ -1867,7 +1870,9 @@ public class BRAPIIControllerV1 {
             }
 
 
-            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(genotypeCallsList);
+            BrApiResult result = new BrApiResult();
+            result.setData(genotypeCallsList);
+            BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (genotypeCallsList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());

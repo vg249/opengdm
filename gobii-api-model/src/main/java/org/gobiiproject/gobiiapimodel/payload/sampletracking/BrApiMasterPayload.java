@@ -9,6 +9,10 @@ public class BrApiMasterPayload<T> {
     private BrApiMetaData metaData = new BrApiMetaData();
     private T result;
 
+    public BrApiMasterPayload() {
+    }
+
+
     public BrApiMasterPayload(T result) {
         this.result = result;
     }
