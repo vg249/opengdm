@@ -1898,35 +1898,53 @@ public class BRAPIIControllerV1 {
     }
 
     @RequestMapping(
-            value="/variantsets/{variantSetDbId}/calls",
+            value="/variantsets/{variantSetDbId:[\\d]+}/calls/download",
             method=RequestMethod.GET,
             produces = "text/csv")
-    public ResponseBodyEmitter handleRbe(
-            @PathVariable("variantSetDbId") String variantSetDbIdVar,
+    public ResponseEntity<ResponseBodyEmitter> handleRbe(
+            @PathVariable("variantSetDbId") Integer variantSetDbId,
             HttpServletRequest request
 
     ) {
 
-        ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+        ResponseBodyEmitter emitter = new ResponseBodyEmitter((long)1800000);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         executor.execute(() -> {
-            for (int i = 0; i < 1000; i++) {
-                try {
-                    emitter.send(i + " - ", MediaType.TEXT_PLAIN);
 
-                    Thread.sleep(10);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    emitter.completeWithError(e);
-                    return;
-                }
-            }
+
+           try {
+
+               String genotypes = genotypeCallsService.getGenotypeCallsAsString(variantSetDbId, null);
+
+               if(genotypes != null && genotypes.length() != 0) {
+                   emitter.send(genotypes, MediaType.TEXT_PLAIN);
+                   while(genotypeCallsService.getNextPageToken() != null) {
+                       genotypes = genotypeCallsService.getGenotypeCallsAsString(
+                               variantSetDbId, genotypeCallsService.getNextPageToken());
+                       emitter.send(genotypes, MediaType.TEXT_PLAIN);
+                   }
+                   emitter.complete();
+               }
+               else {
+                   emitter.complete();
+               }
+
+
+
+           } catch (Exception e) {
+               e.printStackTrace();
+               emitter.completeWithError(e);
+               return;
+           }
             emitter.complete();
         });
 
-        return emitter;
+        return ResponseEntity.ok().header(
+                "Content-Disposition", "attachment; filename=" + variantSetDbId.toString() + ".csv"
+        ).contentType(MediaType.parseMediaType("text/csv")
+        ).body(emitter);
     }
 
 }// BRAPIController
