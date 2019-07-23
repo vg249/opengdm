@@ -151,7 +151,6 @@ public static boolean setLogLevel(String level){
 		log(Level.WARN,new Error(name,reason));
 	}
 	public static void logWarning(String name, String reason, Throwable e){
-		//log(Level.WARN,new Error(name,reason));
 		log.warn(name+": "+reason,e);
 	}
 

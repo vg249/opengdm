@@ -7,14 +7,12 @@ import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiimodel.utils.links.GetLinks;
+import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
 
 import java.io.File;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.sizeToReadable;
 
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
@@ -206,9 +204,9 @@ public class ProcessMessage extends MailMessage {
         String pathLine=path;
         if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
             try {
-                String urlpath=GetLinks.getOwncloudURL(path, config);
+                String urlpath= OCLinkHandler.getOwncloudURL(path, config);
                 if(urlpath!=null&&!urlpath.isEmpty()) {
-                    pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(GetLinks.getOwncloudURL(path, config));
+                    pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(OCLinkHandler.getOwncloudURL(path, config));
                 }
             }catch (ConnectException e) {
                 ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
@@ -256,7 +254,7 @@ public class ProcessMessage extends MailMessage {
         if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
             String urlpath = null;
             try {
-                urlpath = path.endsWith("/") ? GetLinks.getOwncloudURL(path, config) : GetLinks.getLink(path, config, publicUrl);
+                urlpath = path.endsWith("/") ? OCLinkHandler.getOwncloudURL(path, config) : OCLinkHandler.getLink(path, config, publicUrl);
             } catch (ConnectException e) {
                 ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
                 //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
@@ -346,21 +344,6 @@ public class ProcessMessage extends MailMessage {
         if(pathsLine!=null)body.append(pathsLine+line);
         if(longError!=null)body.append(longError);
         body.append("</html>");
-        this.setBody(lastBody + body.toString());
-        return this;
-    }
-
-    public ProcessMessage addProcessPath(String lastBody, boolean active){
-        if(!paths.isEmpty()) {
-            pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
-        }
-        String line="<br>";
-        StringBuilder body=new StringBuilder();
-        body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
-        if(pathsLine!=null)body.append(pathsLine +line);
-        if(active){
-            body.append("<font size=6 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
-        }
         this.setBody(lastBody + body.toString());
         return this;
     }

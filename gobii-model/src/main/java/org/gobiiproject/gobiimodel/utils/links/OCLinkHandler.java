@@ -16,7 +16,7 @@ import java.util.Base64;
 /**
  * Class to livelinks from Owncloud
  */
-public class GetLinks {
+public class OCLinkHandler {
 
     /**
      * Simple parser to get the tag value from xml string (Strictly doesnt work for duplicated && nested tags)
@@ -76,30 +76,32 @@ public class GetLinks {
                     String.valueOf(path.length()));
             connection.setDoOutput(true);
             DataOutputStream output = new DataOutputStream(connection.getOutputStream());
-            output.writeBytes(path);
-            output.close();
-            DataInputStream input = new DataInputStream(connection.getInputStream());
-            int c;
-            StringBuilder resultBuf = new StringBuilder();
-            while ((c = input.read()) != -1) {
-                resultBuf.append((char) c);
+            try {
+                output.writeBytes(path);
+            }finally {
+                output.close();
             }
-            input.close();
-            String tag = getTAG(resultBuf.toString(), "status");
-            if (tag.equals("ok")) {
+            DataInputStream input = new DataInputStream(connection.getInputStream());
+
+            StringBuilder resultBuf = new StringBuilder();
+            try {
+                int c;
+                while ((c = input.read()) != -1) {
+                    resultBuf.append((char) c);
+                }
+            }
+            finally {
+                input.close();
+            }
+            String status = getTAG(resultBuf.toString(), "status");
+            if ("ok".equals(status)) {
                 liveLink = getTAG(resultBuf.toString(), "url") + "/download";
             } else {
                 liveLink = "";
-                ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + tag);
+                ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + status);
                 ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
             }
-        }
-        catch(ConnectException e){
-            liveLink="";
-            ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
-            ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
-        }
-        catch(IOException e){
+        } catch(IOException e){
             liveLink="";
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
             ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
