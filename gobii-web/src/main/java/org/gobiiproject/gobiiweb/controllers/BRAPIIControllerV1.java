@@ -11,6 +11,7 @@ import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.async.SearchExtract;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
@@ -45,7 +46,6 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
-import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.BrAPIUtils;
@@ -53,10 +53,8 @@ import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,7 +63,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,7 +71,6 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 
 /**
@@ -853,6 +849,11 @@ public class BRAPIIControllerV1 {
                     })
             }
     )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets")
+            }
+    )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
                 paramType = "header", dataType = "string")
@@ -946,7 +947,9 @@ public class BRAPIIControllerV1 {
 
             List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize, dnaRunDTOFilter);
 
-            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(dnaRunList);
+            BrApiResult result = new BrApiResult();
+            result.setData(dnaRunList);
+            BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (dnaRunList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(dnaRunList.size());
@@ -1210,7 +1213,10 @@ public class BRAPIIControllerV1 {
 
             List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageSize, markerBrapiDTOFilter);
 
-            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(markerList);
+            BrApiResult result = new BrApiResult();
+            result.setData(markerList);
+
+            BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (markerList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(markerList.size());
@@ -1466,7 +1472,10 @@ public class BRAPIIControllerV1 {
             List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(pageToken, pageSize,
                     dataSetBrapiDTOFilter);
 
-            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(dataSetBrapiDTOList);
+            BrApiResult result = new BrApiResult();
+            result.setData(dataSetBrapiDTOList);
+
+            BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (dataSetBrapiDTOList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(dataSetBrapiDTOList.size());
@@ -1555,6 +1564,10 @@ public class BRAPIIControllerV1 {
                     })
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
@@ -1618,7 +1631,9 @@ public class BRAPIIControllerV1 {
 
             List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageSize, markerBrapiDTOFilter);
 
-            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(markerList);
+            BrApiResult result = new BrApiResult();
+            result.setData(markerList);
+            BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (markerList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(markerList.size());
@@ -1714,7 +1729,9 @@ public class BRAPIIControllerV1 {
 
             List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize, dnaRunDTOFilter);
 
-            BrApiMasterPayload<Map> payload = BrAPIUtils.getListResponse(dnaRunList);
+            BrApiResult result = new BrApiResult();
+            result.setData(dnaRunList);
+            BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (dnaRunList.size() > 0) {
                 payload.getMetaData().getPagination().setPageSize(dnaRunList.size());
