@@ -242,6 +242,16 @@ public class ProcessMessage extends MailMessage {
          */
     public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config, boolean publicUrl) throws Exception {
 
+        // As per LiveLinks 1.c., if no preview is available, make a link to the folder.
+        // Convert this into a folder path by cutting off the file, so path will end with /
+
+        if(!publicUrl){
+            if(!path.endsWith("/") && path.contains("/")){
+                path = path.substring(0,path.lastIndexOf("/")+1);
+            }
+        }
+
+
         String pathLine = path;
         if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
             String urlpath = null;
