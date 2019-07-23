@@ -46,10 +46,11 @@ public class ConfigSupplement {
 
         returnVal.setCurrentRequest(currentRequest);
 
+        ConfigSettings configSettings = new ConfigSettings();
 
         Map<Object,Object> targetDataSources = new HashMap<>();
 
-        for (GobiiCropConfig currentGobiiCropConfig : this.configSettings.getActiveCropConfigs()) {
+        for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
             //Sets Postgres settings
             ServerConfig currentPostGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
