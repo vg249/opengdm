@@ -39,10 +39,6 @@ public class CropRequestAnalyzer {
 
             String requestUrl = httpRequest.getRequestURI();
 
-            if(CONFIG_SETTINGS == null) {
-                String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-                CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
-            }
 
             for (int idx = 0;
                  (idx < CONFIG_SETTINGS.getActiveCropConfigs().size()) && (returnVal == null);
@@ -118,10 +114,6 @@ public class CropRequestAnalyzer {
 
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
-        if(CONFIG_SETTINGS == null) {
-            String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-            CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
-        }
 
         if (null != requestAttributes && requestAttributes instanceof ServletRequestAttributes) {
             httpRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
