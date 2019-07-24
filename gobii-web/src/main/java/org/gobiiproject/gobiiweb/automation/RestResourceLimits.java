@@ -55,17 +55,7 @@ public class RestResourceLimits {
                                            RestMethodType restMethodType) throws Exception {
         Integer returnVal = null;
 
-        String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
-
-        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-        ConfigSettings configSettings;
-
-        if(configFileLocation == null) {
-            configSettings = new ConfigSettings();
-        }
-        else {
-            configSettings = new ConfigSettings(configFileLocation);
-        }
+        ConfigSettings configSettings = new ConfigSettings();
         ServerConfig serverConfigWeb = configSettings
                 .getCropConfig(CropRequestAnalyzer.getGobiiCropType())
                 .getServer(ServerType.GOBII_WEB);
