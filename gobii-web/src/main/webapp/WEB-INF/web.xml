@@ -93,7 +93,7 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <servlet-name>mvc-dispatcher</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <!--<url-pattern>/*</url-pattern>-->
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
