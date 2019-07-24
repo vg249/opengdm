@@ -100,7 +100,12 @@
           "fieldToCompare": [
             "external_code"
           ]
+        },{
+          "columnName": "dnasample_uuid",
+          "required": "yes",
+          "unique": "yes"
         }
+
       ]
     },
     {
