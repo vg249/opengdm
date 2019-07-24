@@ -101,7 +101,7 @@
             "external_code"
           ]
         },{
-          "columnName": "dnasample_uuid",
+          "columnName": "uuid",
           "required": "yes",
           "unique": "yes"
         }
