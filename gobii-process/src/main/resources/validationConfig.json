@@ -105,7 +105,6 @@
           "required": "yes",
           "unique": "yes"
         }
-
       ]
     },
     {
