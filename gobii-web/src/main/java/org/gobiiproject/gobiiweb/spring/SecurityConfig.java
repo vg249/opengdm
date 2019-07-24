@@ -39,12 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
 
-    private static ConfigSettings CONFIG_SETTINGS;
+    private static ConfigSettings CONFIG_SETTINGS = new ConfigSettings();
 
-    public SecurityConfig() {
-        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-        this.CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
-    }
 
     @Override
     @Bean(name = "restAuthenticationManager")
@@ -116,8 +112,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 
-        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-        ConfigSettings configSettings = new ConfigSettings(configFileLocation);
+        ConfigSettings configSettings = new ConfigSettings();
         GobiiAuthenticationType gobiiAuthenticationType = configSettings.getGobiiAuthenticationType();
         if (gobiiAuthenticationType.equals(GobiiAuthenticationType.TEST)) {
 
