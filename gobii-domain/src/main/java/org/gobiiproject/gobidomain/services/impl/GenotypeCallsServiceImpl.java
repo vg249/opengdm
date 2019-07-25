@@ -218,9 +218,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
     @Override
-    public String getGenotypeCallsAsString(Integer datasetId, String pageToken) {
+    public Map<String, String> getGenotypeCallsAsString(Integer datasetId, String pageToken) {
 
-        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+        Map<String, String> returnVal = new HashMap<>();
 
         try {
             return dtoMapGenotypeCalls.getGenotypeCallsAsString(datasetId, pageToken);

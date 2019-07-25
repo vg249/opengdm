@@ -3,8 +3,8 @@ swagger: "2.0"
 info:
   description: "The GDM web service API provides a comprehensive set of RESTful methods\
     \ for accomplishing the following core tasks in the GOBii Genomic Data Management\
-    \ (GDM) system. This manual explains the GDM web architecture and its web service\
-    \ operations.\n\n"
+    \ (GDM) system. This manual explains the GDM calls complying BrAPI Genotyping\
+    \ standards and its definitions..\n\n"
   version: "1.0"
   title: "GDM BrAPI"
   license:
@@ -399,6 +399,10 @@ paths:
       x-summary: "GenotypeCalls"
   /brapi/v1/variantsets/{variantSetDbId}/calls/download:
     get:
+      tags:
+      - "VariantSets"
+      summary: "Download genotype calls"
+      description: "Download of all the genotype calls in a given Variantset"
       operationId: "handleRbe"
       produces:
       - "text/csv"
@@ -409,11 +413,17 @@ paths:
         type: "integer"
         pattern: "[\\d]+"
         format: "int32"
+      - name: "X-Auth-Token"
+        in: "header"
+        description: "Authentication Token"
+        required: true
+        type: "string"
       responses:
         200:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ResponseBodyEmitter"
+      x-summary: "GenotypeCalls"
   /brapi/v1/variantsets/{variantSetDbId}/callsets:
     get:
       tags:

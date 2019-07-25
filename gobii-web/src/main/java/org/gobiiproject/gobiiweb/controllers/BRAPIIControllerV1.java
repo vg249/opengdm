@@ -1903,6 +1903,21 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    @ApiOperation(
+            value = "Download genotype calls",
+            notes = "Download of all the genotype calls in a given Variantset",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="GenotypeCalls")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
     @RequestMapping(
             value="/variantsets/{variantSetDbId:[\\d]+}/calls/download",
             method=RequestMethod.GET,
@@ -1919,25 +1934,35 @@ public class BRAPIIControllerV1 {
 
         executor.execute(() -> {
 
-
            try {
 
-               String genotypes = genotypeCallsService.getGenotypeCallsAsString(variantSetDbId, null);
+               Map<String, String> genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                       variantSetDbId, null);
 
-               if(genotypes != null && genotypes.length() != 0) {
+               String genotypes = genotypesResult.get("genotypes");
+
+               if(genotypesResult.containsKey("genotypes") &&
+                       genotypesResult.get("genotypes") != null &&
+                       genotypesResult.get("genotypes").length() != 0) {
+
                    emitter.send(genotypes, MediaType.TEXT_PLAIN);
-                   while(genotypeCallsService.getNextPageToken() != null) {
-                       genotypes = genotypeCallsService.getGenotypeCallsAsString(
-                               variantSetDbId, genotypeCallsService.getNextPageToken());
+
+                   while(genotypesResult.get("nextPageOffset") != null) {
+
+                       genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                               variantSetDbId, genotypesResult.get("nextPageOffset"));
+
+                       genotypes = genotypesResult.get("genotypes");
+
                        emitter.send(genotypes, MediaType.TEXT_PLAIN);
                    }
+
                    emitter.complete();
                }
                else {
                    emitter.complete();
                }
-
-
+               emitter.complete();
 
            } catch (Exception e) {
                e.printStackTrace();

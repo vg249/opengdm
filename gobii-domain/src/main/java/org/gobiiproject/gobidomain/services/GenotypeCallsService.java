@@ -4,6 +4,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GenotypeCallsService {
 
@@ -23,7 +24,7 @@ public interface GenotypeCallsService {
             String extractQueryFilePath, String pageToken,
             Integer pageSize) throws GobiiDomainException;
 
-    String getGenotypeCallsAsString(Integer datasetId, String pageToken);
+    Map<String, String> getGenotypeCallsAsString(Integer datasetId, String pageToken);
 
     String getNextPageToken();
 

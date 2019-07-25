@@ -577,7 +577,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 markerHdf5IndexMap.get(datasetId.toString()).add(
                         marker.getDatasetMarkerIndex().get(datasetId.toString()).toString());
 
-
                 genotypeDnarunMetadata = this.getDnarunMetaDataByDnarunIdLimit(
                         datasetId, dnarunIdLimit, pageSize);
 
@@ -635,9 +634,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
      * @return
      */
     @Override
-    public String getGenotypeCallsAsString(Integer datasetId, String pageToken) {
+    public Map<String, String> getGenotypeCallsAsString(Integer datasetId, String pageToken) {
 
-        String returnVal;
+        Map<String, String> returnVal = new HashMap<>();
 
         Integer pageOffset = null;
 
@@ -699,18 +698,24 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             }
 
             if(markerMetadataList.size() >= 10000) {
-                this.setNextPageOffset(nextPageOffset.toString());
+                returnVal.put("nextPageOffset", nextPageOffset.toString());
             }
             else {
-                this.setNextPageOffset(null);
+                returnVal.put("nextPageOffset", null);
             }
 
             String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-            returnVal = this.readHdf5GenotypesFromMatrix(
+            returnVal.put("genotypes", this.readHdf5GenotypesFromMatrix(
                     extractFilePath, markerMetadataList, dnarunMetadataList
-            );
+            ));
 
+            if(extractFilePath != null && extractFilePath.endsWith("result.genotypes")) {
+                File extractFile = new File(extractFilePath);
+                String parent = extractFile.getParent();
+                File extractFolder = new File(parent);
+                extractFolder.delete();
+            }
         }
         catch(GobiiException ge) {
             throw ge;
@@ -838,6 +843,13 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                     returnVal, extractFilePath,
                     pageSize, datasetId,
                     columnOffset, markerMetadataList, dnarunMetadataList);
+
+            if(extractFilePath != null && extractFilePath.endsWith("result.genotypes")) {
+                File extractFile = new File(extractFilePath);
+                String parent = extractFile.getParent();
+                File extractFolder = new File(parent);
+                extractFolder.delete();
+            }
 
         }
         catch(GobiiException ge) {
@@ -995,6 +1007,12 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                     pageSize = pageSize -returnVal.size();
                 }
 
+                if(extractFilePath != null && extractFilePath.endsWith("result.genotypes")) {
+                    File extractFile = new File(extractFilePath);
+                    String parent = extractFile.getParent();
+                    File extractFolder = new File(parent);
+                    extractFolder.delete();
+                }
             }
 
 
