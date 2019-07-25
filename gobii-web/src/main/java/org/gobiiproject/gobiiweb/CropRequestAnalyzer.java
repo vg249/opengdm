@@ -20,7 +20,7 @@ public class CropRequestAnalyzer {
 
     private static Logger LOGGER = LoggerFactory.getLogger(CropRequestAnalyzer.class);
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
-    private static ConfigSettings CONFIG_SETTINGS = new ConfigSettings();
+    private static ConfigSettings CONFIG_SETTINGS;
 
     /***
      * Given a uri (for example, /gobii-maize/gobii/v1/contacts):
