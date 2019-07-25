@@ -32,6 +32,13 @@ public class ConfigSupplement {
 
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
 
+    private ConfigSettings configSettings;
+
+    public ConfigSupplement() {
+        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+        this.configSettings = new ConfigSettings(configFileLocation);
+    }
+
     @Bean(name="dataSourceMulti")
     public DataSourceSelector dataSourceMulti() throws Exception {
 
@@ -85,11 +92,9 @@ public class ConfigSupplement {
 
         returnVal.setCurrentRequest(this.currentRequest);
 
-        ConfigSettings configSettings = new ConfigSettings();
-
         Map<String, Object> hdf5ProcessPathsByCrop = new HashMap<>();
 
-        for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
+        for (GobiiCropConfig currentGobiiCropConfig : this.configSettings.getActiveCropConfigs()) {
            Map<String, String> hdf5ProcessPaths = new HashMap<>();
 
            String gobiiCropType = currentGobiiCropConfig.getGobiiCropType();
