@@ -75,8 +75,7 @@ public class ConfigSupplement {
 
     @Bean(name="pathToHdf5Exe")
     public String PathToHdf5Executables() {
-        ConfigSettings configSettings = new ConfigSettings();
-        return configSettings.getHdf5ExePath();
+        return this.configSettings.getHdf5ExePath();
     }
 
     @Bean(name="hdf5ProcessPathSelector")
@@ -96,10 +95,10 @@ public class ConfigSupplement {
            String gobiiCropType = currentGobiiCropConfig.getGobiiCropType();
 
            hdf5ProcessPaths.put("outputDir",
-                   configSettings.getProcessingPath(gobiiCropType, GobiiFileProcessDir.EXTRACTOR_DONE));
+                   this.configSettings.getProcessingPath(gobiiCropType, GobiiFileProcessDir.EXTRACTOR_DONE));
 
            hdf5ProcessPaths.put("dataFiles",
-                   configSettings.getProcessingPath(gobiiCropType, GobiiFileProcessDir.HDF5_FILES));
+                   this.configSettings.getProcessingPath(gobiiCropType, GobiiFileProcessDir.HDF5_FILES));
 
            hdf5ProcessPathsByCrop.put(gobiiCropType, hdf5ProcessPaths);
 
