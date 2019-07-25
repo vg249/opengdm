@@ -898,6 +898,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
             extractQuery = mapper.readValue(new File(extractQueryFilePath), Map.class);
 
+
+
             for(String variantDbId : (List<String>)extractQuery.get("variantDbIds")) {
                 try {
                     markerIdList.add(Integer.parseInt(variantDbId));

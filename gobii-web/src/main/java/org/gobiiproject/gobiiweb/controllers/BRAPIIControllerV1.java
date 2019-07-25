@@ -185,6 +185,12 @@ public class BRAPIIControllerV1 {
 
     private class CallSetResponse extends BrApiMasterPayload<DnaRunDTO>{}
     private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<DnaRunDTO>>{}
+    private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
+    private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
+    private class VariantResponse extends BrApiMasterPayload<MarkerBrapiDTO>{}
+    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<MarkerBrapiDTO>>{}
+    private class VariantSetResponse extends  BrApiMasterPayload<DataSetBrapiDTO>{}
+    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<DataSetBrapiDTO>>{}
 
 
 
@@ -849,12 +855,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Callsets")
                     })
-            },
-            response = CallSetListResponse.class
+            }
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets")
+                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets",
+                            response = CallSetListResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
@@ -993,14 +1000,12 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Callsets : callSetDbId")
                     })
-            },
-            response = CallSetResponse.class
+            }
     )
     @ApiResponses(
-            @ApiResponse(
-                    code = 200, message = "Success",
-                    response = CallSetResponse.class
-            )
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets", response = CallSetResponse.class)
+            }
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
@@ -1052,6 +1057,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of Genotype calls",
+                            response = GenotypeCallsResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
@@ -1146,6 +1158,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Variants")
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of Variants",
+                            response = VariantListResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
@@ -1270,6 +1289,13 @@ public class BRAPIIControllerV1 {
             }
 
     )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of Variant by Id",
+                            response = VariantResponse.class
+                    )
+            }
+    )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
                     paramType = "header", dataType = "string"),
@@ -1321,6 +1347,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of Genotype Calls",
+                            response = GenotypeCallsResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
@@ -1414,6 +1447,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="VariantSets")
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of VariantSets",
+                            response = VariantSetListResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
@@ -1528,6 +1568,13 @@ public class BRAPIIControllerV1 {
                     })
             }
     )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of VariantSet By ID",
+                            response = VariantSetResponse.class
+                    )
+            }
+    )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
@@ -1571,6 +1618,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Variants")
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of Variants by VariantSetId",
+                            response = VariantListResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
@@ -1687,6 +1741,17 @@ public class BRAPIIControllerV1 {
                     })
             }
     )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets by VariantSetId",
+                            response = CallSetListResponse.class
+                    )
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
@@ -1823,6 +1888,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful retrieval of Genotype Calls by VariantSetId",
+                            response = GenotypeCallsListResponse.class
+                    )
             }
     )
     @ApiImplicitParams({
