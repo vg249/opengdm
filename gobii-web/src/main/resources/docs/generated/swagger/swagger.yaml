@@ -4,7 +4,7 @@ info:
   description: "The GDM web service API provides a comprehensive set of RESTful methods\
     \ for accomplishing the following core tasks in the GOBii Genomic Data Management\
     \ (GDM) system. This manual explains the GDM web architecture and its web service\
-    \ operations.\n\n"
+    \ operations.\r\n\r\n"
   version: "1.0"
   title: "Genomic Data Management (GDM)"
   license:
@@ -432,7 +432,7 @@ paths:
           schema:
             type: "string"
       x-summary: "Authentication"
-  /gobii/v1/configsettings/:
+  /gobii/v1/configsettings:
     get:
       tags:
       - "ConfigSettings"
@@ -3320,10 +3320,10 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-      group:
+      cvId:
         type: "integer"
         format: "int32"
-      cvId:
+      group:
         type: "integer"
         format: "int32"
   CvGroupDTO:
@@ -4098,18 +4098,18 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-      uri:
-        type: "string"
-        format: "uri"
-      readable:
-        type: "boolean"
-      filename:
-        type: "string"
       url:
         type: "string"
         format: "url"
       file:
         type: "file"
+      uri:
+        type: "string"
+        format: "uri"
+      filename:
+        type: "string"
+      readable:
+        type: "boolean"
   JobDTO:
     type: "object"
     properties:
