@@ -94,6 +94,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII)
 @Api()
+@CrossOrigin
 public class GOBIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);

@@ -56,7 +56,7 @@ public class ConfigSupplement {
 
             DriverManagerDataSource currentDataSource = new DriverManagerDataSource();
 
-            currentDataSource.setDriverClassName("org.postgresql.Driver")
+            currentDataSource.setDriverClassName("org.postgresql.Driver");
 
             String url = HelperFunctions.getJdbcConnectionString(currentPostGresConfig);
 
