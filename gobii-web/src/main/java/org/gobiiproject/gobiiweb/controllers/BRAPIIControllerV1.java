@@ -56,6 +56,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -140,6 +141,7 @@ import java.util.concurrent.Executors;
 @Api()
 @EnableAsync
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
+@CrossOrigin
 public class BRAPIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
