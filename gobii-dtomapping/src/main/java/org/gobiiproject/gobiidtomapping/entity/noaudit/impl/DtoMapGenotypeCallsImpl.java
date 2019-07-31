@@ -758,6 +758,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
+        SortedMap<Integer, Integer> dnarunHdf5OrderMap = new TreeMap<Integer, Integer>();
+
+
         try {
 
             dnarunMetadataList = this.getDnarunMetaDataByDnarunIdLimit(datasetId, pageOffset, pageSize);
@@ -807,7 +810,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             for(GenotypeCallsMarkerMetadataDTO markerMetadata : markerMetadataList) {
 
                 if(!markerHdf5IndexMap.containsKey(datasetId.toString())) {
-
                     markerHdf5IndexMap.put(datasetId.toString(), new ArrayList<>());
                 }
                 markerHdf5IndexMap.get(
@@ -816,16 +818,27 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
             }
 
+            Integer orderIndex = 0;
+
             //HDF5 index for dnaruns
             for(GenotypeCallsDnarunMetadataDTO dnarunMetadata : dnarunMetadataList) {
+
                 if(!dnarunHdf5IndexMap.containsKey(datasetId.toString())) {
                     dnarunHdf5IndexMap.put(
                             datasetId.toString(),
                             new ArrayList<>());
                 }
+
                 dnarunHdf5IndexMap.get(
                         datasetId.toString()).add(
                         dnarunMetadata.getHdf5DnarunIdx(datasetId.toString()));
+
+                dnarunHdf5OrderMap.put(
+                        Integer.parseInt(dnarunMetadata.getHdf5DnarunIdx(datasetId.toString())),
+                        orderIndex);
+
+                orderIndex++;
+
             }
 
 
@@ -842,7 +855,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             this.readHdf5GenotypesFromMatrix(
                     returnVal, extractFilePath,
                     pageSize, datasetId,
-                    columnOffset, markerMetadataList, dnarunMetadataList);
+                    columnOffset, markerMetadataList, dnarunMetadataList,
+                    new ArrayList<>(dnarunHdf5OrderMap.values()));
 
             if(extractFilePath != null && extractFilePath.endsWith("result.genotypes")) {
                 File extractFile = new File(extractFilePath);
@@ -894,6 +908,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         SortedSet<Integer> markerDatasets = new TreeSet<>();
 
+        SortedMap<Integer, Integer> dnarunHdf5OrderMap = new TreeMap<Integer, Integer>();
+
+
         try {
 
             extractQuery = mapper.readValue(new File(extractQueryFilePath), Map.class);
@@ -921,6 +938,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             dnarunMetadataList = this.getDnarunMetaDataByDnarunIdList(dnarunIdList);
 
 
+            Integer orderIndex = 0;
+
             for(GenotypeCallsDnarunMetadataDTO dnarunMetadata : dnarunMetadataList) {
 
                 for(String datasetId : dnarunMetadata.getDatasetDnarunIndex().keySet()) {
@@ -940,6 +959,13 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                     mapDnarunMetadataByDatasetId.get(datasetId).add(dnarunMetadata);
 
                     dnarunHdf5IndexMap.get(datasetId).add(dnarunMetadata.getHdf5DnarunIdx(datasetId));
+
+
+                    dnarunHdf5OrderMap.put(
+                            Integer.parseInt(dnarunMetadata.getHdf5DnarunIdx(datasetId.toString())),
+                            orderIndex);
+
+                    orderIndex++;
 
                 }
 
@@ -996,7 +1022,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                         datasetGenotypes, extractFilePath,
                         pageSize, datasetId,
                         0, mapMarkerMetadataByDatasetId.get(datasetId.toString()),
-                        mapDnarunMetadataByDatasetId.get(datasetId.toString()));
+                        mapDnarunMetadataByDatasetId.get(datasetId.toString()),
+                        new ArrayList<>(dnarunHdf5OrderMap.values()));
 
                 returnVal.addAll(datasetGenotypes);
 
@@ -1102,7 +1129,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             Integer datasetId,
             Integer columnOffset,
             List<GenotypeCallsMarkerMetadataDTO> markerMetadataList,
-            List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList)  throws Exception {
+            List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList,
+            List<Integer> dnarunOrder)  throws Exception {
 
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
@@ -1138,8 +1166,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                 GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
 
-                genotypeCall.setCallSetDbId(dnarunMetadataList.get(j).getDnarunId());
-                genotypeCall.setCallSetName(dnarunMetadataList.get(j).getDnarunName());
+                genotypeCall.setCallSetDbId(dnarunMetadataList.get(dnarunOrder.get(j)).getDnarunId());
+                genotypeCall.setCallSetName(dnarunMetadataList.get(dnarunOrder.get(j)).getDnarunName());
                 genotypeCall.setVariantDbId(markerMetadataList.get(i).getMarkerId());
                 genotypeCall.setVariantName(markerMetadataList.get(i).getMarkerName());
                 genotypeCall.setVariantSetDbId(datasetId);
