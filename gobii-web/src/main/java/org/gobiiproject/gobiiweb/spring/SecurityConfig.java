@@ -85,6 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers(brapiCallsUrl);
 //                .antMatchers(gobiiFIlesUrl);
+        
+        web.ignoring().antMatchers(HttpMethod.OPTIONS);
     }
 
 
