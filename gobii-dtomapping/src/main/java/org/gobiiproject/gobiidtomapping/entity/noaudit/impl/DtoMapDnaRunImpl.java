@@ -3,7 +3,7 @@ package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.gobiiproject.gobiidao.resultset.access.RsDnaRunDao;
-import org.gobiiproject.gobiidao.resultset.access.RsSearchQueryDao;
+//import org.gobiiproject.gobiidao.resultset.access.RsSearchQueryDao;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
@@ -38,8 +38,8 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     @Autowired
     private RsDnaRunDao rsDnaRunDao;
 
-    @Autowired
-    private RsSearchQueryDao rsSearchQueryDao;
+//    @Autowired
+//    private RsSearchQueryDao rsSearchQueryDao;
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
@@ -47,38 +47,38 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     @Autowired
     private DtoMapCv dtoMapCv;
 
-    @Transactional
-    @Override
-    public String createSearchQuery(String searchQuery) throws GobiiDtoMappingException {
-
-        String uuid = UUID.randomUUID().toString();
-        String type = "callset";
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("uuid", uuid);
-        parameters.put("type", type);
-        parameters.put("search_query", searchQuery);
-
-        try {
-
-            ResultSet resultSet = rsDnaRunDao.createSearchQuery(parameters);
-        }
-        catch (GobiiException gE) {
-            LOGGER.error(gE.getMessage(), gE);
-            throw new GobiiDtoMappingException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage());
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii Mapping error", e);
-            throw new GobiiDtoMappingException(e);
-        }
-
-        return uuid;
-
-
-    }
+//    @Transactional
+//    @Override
+//    public String createSearchQuery(String searchQuery) throws GobiiDtoMappingException {
+//
+//        String uuid = UUID.randomUUID().toString();
+//        String type = "callset";
+//
+//        Map<String, Object> parameters = new HashMap<>();
+//        parameters.put("uuid", uuid);
+//        parameters.put("type", type);
+//        parameters.put("search_query", searchQuery);
+//
+//        try {
+//
+//            ResultSet resultSet = rsDnaRunDao.createSearchQuery(parameters);
+//        }
+//        catch (GobiiException gE) {
+//            LOGGER.error(gE.getMessage(), gE);
+//            throw new GobiiDtoMappingException(
+//                    gE.getGobiiStatusLevel(),
+//                    gE.getGobiiValidationStatusType(),
+//                    gE.getMessage());
+//        }
+//        catch (Exception e) {
+//            LOGGER.error("Gobii Mapping error", e);
+//            throw new GobiiDtoMappingException(e);
+//        }
+//
+//        return uuid;
+//
+//
+//    }
 
     @Transactional
     @Override
@@ -256,56 +256,56 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
         return returnVal;
     }
 
-    @Transactional
-    @Override
-    public List<DnaRunDTO> getListFromSearch(String searchResultsDbId) throws GobiiDtoMappingException {
-
-        List<DnaRunDTO> returnVal = new ArrayList<>();
-
-        try {
-
-            ResultSet resultSet = rsSearchQueryDao.getSearchQuery(searchResultsDbId);
-
-            if (resultSet.next()) {
-
-                JsonParser parser = new JsonParser();
-
-                JsonObject searchQueryJson = (JsonObject) parser.parse(resultSet.getString("query"));
-
-                Map<String, Object> sqlParams = new HashMap<>();
-
-                sqlParams.put("searchQuery", searchQueryJson);
-
-
-                returnVal = (List<DnaRunDTO>) dtoListQueryColl.getList(
-                        ListSqlId.QUERY_ID_DNARUN_SEARCH,
-                        null,
-                        sqlParams
-                );
-
-                System.out.print(searchQueryJson);
-
-
-            } else {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Search query does not exist for give");
-            }
-        }
-        catch (GobiiException gE) {
-
-            LOGGER.error(gE.getMessage(), gE);
-
-            throw new GobiiDtoMappingException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage());
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii Mapping Error", e);
-            throw new GobiiDtoMappingException(e);
-        }
-
-        return returnVal;
-    }
+//    @Transactional
+//    @Override
+//    public List<DnaRunDTO> getListFromSearch(String searchResultsDbId) throws GobiiDtoMappingException {
+//
+//        List<DnaRunDTO> returnVal = new ArrayList<>();
+//
+//        try {
+//
+//            ResultSet resultSet = rsSearchQueryDao.getSearchQuery(searchResultsDbId);
+//
+//            if (resultSet.next()) {
+//
+//                JsonParser parser = new JsonParser();
+//
+//                JsonObject searchQueryJson = (JsonObject) parser.parse(resultSet.getString("query"));
+//
+//                Map<String, Object> sqlParams = new HashMap<>();
+//
+//                sqlParams.put("searchQuery", searchQueryJson);
+//
+//
+//                returnVal = (List<DnaRunDTO>) dtoListQueryColl.getList(
+//                        ListSqlId.QUERY_ID_DNARUN_SEARCH,
+//                        null,
+//                        sqlParams
+//                );
+//
+//                System.out.print(searchQueryJson);
+//
+//
+//            } else {
+//                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+//                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+//                        "Search query does not exist for give");
+//            }
+//        }
+//        catch (GobiiException gE) {
+//
+//            LOGGER.error(gE.getMessage(), gE);
+//
+//            throw new GobiiDtoMappingException(
+//                    gE.getGobiiStatusLevel(),
+//                    gE.getGobiiValidationStatusType(),
+//                    gE.getMessage());
+//        }
+//        catch (Exception e) {
+//            LOGGER.error("Gobii Mapping Error", e);
+//            throw new GobiiDtoMappingException(e);
+//        }
+//
+//        return returnVal;
+//    }
 }
