@@ -321,7 +321,7 @@ public class ProcessMessage extends MailMessage {
             entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
         }
         if(!validations.isEmpty()) {
-            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Info","Status","Reason","Column","Values");
+            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Validation","Status","Reason","Column","Values");
         }
         if(!paths.isEmpty()) {
             pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
