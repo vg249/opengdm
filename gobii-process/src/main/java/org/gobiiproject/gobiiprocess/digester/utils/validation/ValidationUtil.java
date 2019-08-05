@@ -101,6 +101,8 @@ class ValidationUtil {
                     List<String> fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
 
+                    String externalFieldFileExtension = condition.typeName.substring(condition.typeName.indexOf('.') + 1);//E.G. "gerplasm"
+
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
                         if (filesList.size() != 1) {
                             processFileError(comparisonFileName, filesList.size(), failureList);
@@ -132,7 +134,7 @@ class ValidationUtil {
                         }
 
                         if (!fileColumnElements.equals(comparisonFileColumnElements))
-                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns), String.join(",", fieldToCompare))), failureList);
+                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns), String.join(",", externalFieldFileExtension+"."+fieldToCompare))), failureList);
                     }
                 } else {
                     if (condition.fieldToCompare != null)
