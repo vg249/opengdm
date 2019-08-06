@@ -87,13 +87,13 @@ class ConfigValues {
     @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();
 
-    @ElementMap(required = false, inline=true)
+    @ElementMap(required = false)
     private Map<ServerType, ServerConfig> globalServersByServerType = new HashMap<>();
 
-    @ElementMap(required = false, inline=true)
+    @ElementMap(required = false)
     private Map<String, GobiiCropConfig> cropConfigs = new LinkedHashMap<>();
 
-    @ElementMap(required = false, inline=true)
+    @ElementMap(required = false)
     private Map<GobiiFileProcessDir, String> relativePaths = new EnumMap<GobiiFileProcessDir, String>(GobiiFileProcessDir.class) {{
 
         // these defaults should generally not be changed
