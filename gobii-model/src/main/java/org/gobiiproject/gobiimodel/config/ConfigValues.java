@@ -87,13 +87,13 @@ class ConfigValues {
     @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();
 
-    @ElementMap(required = false,key="Type",entry="Server", attribute=true, inline=true)
+    @ElementMap(required = false,key="ServerType",attribute=true, inline=true)
     private Map<ServerType, ServerConfig> globalServersByServerType = new HashMap<>();
 
-    @ElementMap(required = false, inline=true,entry="cropConfigs")
+    @ElementMap(required = false, key="CropName",attribute=true, inline=true)
     private Map<String, GobiiCropConfig> cropConfigs = new LinkedHashMap<>();
 
-    @ElementMap(required = false,entry="relativePath",key="directory",attribute=true, inline=true)
+    @ElementMap(required = false,key="DirType",attribute=true, inline=true)
     private Map<GobiiFileProcessDir, String> relativePaths = new EnumMap<GobiiFileProcessDir, String>(GobiiFileProcessDir.class) {{
 
         // these defaults should generally not be changed
@@ -113,7 +113,7 @@ class ConfigValues {
 
     }};
 
-    @ElementMap(required = false, key="NoticeType",attribute=true,inline=true, entry="noticeFileName")
+    @ElementMap(required = false, key="NoticeType",attribute=true,inline=true)
     private Map<GobiiFileNoticeType, String> noticeFileNames = new EnumMap<GobiiFileNoticeType, String>(GobiiFileNoticeType.class) {{
 
         put(GobiiFileNoticeType.CONFIDENTIALITY, "confidentiality.txt");
