@@ -79,6 +79,7 @@ const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
                            [disabled]="uploadComplete"
                            (click)="handleClickBrowse($event)"
                            [id]="viewIdGeneratorService.makeStandardId(typeControl.FILE_SELECTOR_MARKER_SAMPLE_LIST_UPLOAD)"
+                           accept="text/plain"
                     />
                     <!--  IF YOU REINSTATE THE QUEUES BELOW THIS BUTTON WILL BE SUPERFLUOUS -->
                     <BR>
@@ -188,6 +189,7 @@ export class UploaderComponent implements OnInit {
 
     public uploader: FileUploader;
 
+
     public hasBaseDropZoneOver: boolean = false;
     public hasAnotherDropZoneOver: boolean = false;
 
@@ -229,6 +231,7 @@ export class UploaderComponent implements OnInit {
                 fileUploaderOptions.url = url;
                 fileUploaderOptions.headers = [];
                 fileUploaderOptions.removeAfterUpload = true;
+                fileUploaderOptions.allowedMimeType = ['text/plain'];
 
                 let authHeader: Headers = {name: '', value: ''};
                 authHeader.name = HeaderNames.headerToken;
@@ -246,7 +249,8 @@ export class UploaderComponent implements OnInit {
 
                         fileItem.file.name = fileName;
 
-                    }
+                    };
+
 
                     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
