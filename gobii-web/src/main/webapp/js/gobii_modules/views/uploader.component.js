@@ -94,7 +94,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     for (var _i = 0, _a = this.uploader.getNotUploadedItems(); _i < _a.length; _i++) {
                         var fileItem = _a[_i];
                         if (fileItem.file.type !== "text/plain") {
-                            alert("Invalid file. Input has to be text file with '.txt' extension");
+                            this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage("Invalid Input.\nInput should be a text file with '.txt' extension.", null, null));
                             this.uploader.clearQueue();
                             this.clearSelectedFile();
                             break;

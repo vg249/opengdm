@@ -219,7 +219,8 @@ export class UploaderComponent implements OnInit {
     public onFileSelected(e: any) {
         for(let fileItem of this.uploader.getNotUploadedItems()) {
             if(fileItem.file.type !== "text/plain") {
-                alert("Invalid file. Input has to be text file with '.txt' extension");
+                this.onUploaderError.emit(new HeaderStatusMessage(
+                    "Invalid Input.\nInput should be a text file with '.txt' extension.", null, null));
                 this.uploader.clearQueue();
                 this.clearSelectedFile();
                 break;
