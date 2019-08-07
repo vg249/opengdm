@@ -34,7 +34,7 @@ public class RestResourceProfile {
     // the limit for the resource without template parameters.
     private final String DEFAULT_TEMPLATE_PARAM = "/";
 
-    @ElementMap(required = false, inline=true, attribute=true, entry="TemplateParam")
+    @ElementMap(required = false)
     private Map<String, RestResourceMethodLimitColl> resourceMethodCollsByTemplateParam = new HashMap<>();
 
     @Element(required = false)
