@@ -80,6 +80,7 @@ const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
                            (click)="handleClickBrowse($event)"
                            [id]="viewIdGeneratorService.makeStandardId(typeControl.FILE_SELECTOR_MARKER_SAMPLE_LIST_UPLOAD)"
                            accept="text/plain"
+                           (onFileSelected)="onFileSelected($event)"
                     />
                     <!--  IF YOU REINSTATE THE QUEUES BELOW THIS BUTTON WILL BE SUPERFLUOUS -->
                     <BR>
@@ -215,6 +216,17 @@ export class UploaderComponent implements OnInit {
 
     }
 
+    public onFileSelected(e: any) {
+        for(let fileItem of this.uploader.getNotUploadedItems()) {
+            if(fileItem.file.type !== "text/plain") {
+                alert("Invalid file. Input has to be text file with '.txt' extension");
+                this.uploader.clearQueue();
+                this.clearSelectedFile();
+                break;
+            }
+        }
+    }
+
     ngOnInit(): any {
 
         let JobId$: Observable<GobiiFileItem> = this.store.select(fromRoot.getJobId);
@@ -231,7 +243,6 @@ export class UploaderComponent implements OnInit {
                 fileUploaderOptions.url = url;
                 fileUploaderOptions.headers = [];
                 fileUploaderOptions.removeAfterUpload = true;
-                fileUploaderOptions.allowedMimeType = ['text/plain'];
 
                 let authHeader: Headers = {name: '', value: ''};
                 authHeader.name = HeaderNames.headerToken;
@@ -239,6 +250,7 @@ export class UploaderComponent implements OnInit {
                 let token: string = this._authenticationService.getToken();
 
                 if (token) {
+
                     authHeader.value = token;
 
                     fileUploaderOptions.headers.push(authHeader);
@@ -250,6 +262,7 @@ export class UploaderComponent implements OnInit {
                         fileItem.file.name = fileName;
 
                     };
+
 
 
                     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
