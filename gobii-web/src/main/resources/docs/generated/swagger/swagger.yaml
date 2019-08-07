@@ -4,13 +4,13 @@ info:
   description: "The GDM web service API provides a comprehensive set of RESTful methods\
     \ for accomplishing the following core tasks in the GOBii Genomic Data Management\
     \ (GDM) system. This manual explains the GDM web architecture and its web service\
-    \ operations.\r\n\r\n"
+    \ operations.\n\n"
   version: "1.0"
   title: "Genomic Data Management (GDM)"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "cbsugobiixvm11.biohpc.cornell.edu:8081"
+host: "api.gobii.org:8081"
 basePath: "/gobii-dev"
 tags:
 - name: "Analyses"
@@ -3320,10 +3320,10 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-      cvId:
+      group:
         type: "integer"
         format: "int32"
-      group:
+      cvId:
         type: "integer"
         format: "int32"
   CvGroupDTO:
@@ -4098,6 +4098,8 @@ definitions:
         type: "string"
       open:
         type: "boolean"
+      readable:
+        type: "boolean"
       url:
         type: "string"
         format: "url"
@@ -4108,8 +4110,6 @@ definitions:
         format: "uri"
       filename:
         type: "string"
-      readable:
-        type: "boolean"
   JobDTO:
     type: "object"
     properties:
