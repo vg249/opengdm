@@ -1396,7 +1396,7 @@ public class BRAPIIControllerV1 {
                     RestMethodType.GET);
 
             if(maxPageSize == null) {
-                //As per brapi initial standards
+                //As per initial standards
                 maxPageSize = 10000;
             }
 
@@ -1520,7 +1520,8 @@ public class BRAPIIControllerV1 {
                 pageSize = maxPageSize;
             }
 
-            List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(pageToken, pageSize,
+            List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(
+                    pageToken, pageSize,
                     dataSetBrapiDTOFilter);
 
             BrApiResult result = new BrApiResult();
@@ -1537,8 +1538,7 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (GobiiException gE) {
@@ -2002,6 +2002,8 @@ public class BRAPIIControllerV1 {
 
     ) {
 
+        //Giving Response emitter to finish the download within 30 mins.
+        //The request thread will be terminated once 30 mins is done.
         ResponseBodyEmitter emitter = new ResponseBodyEmitter((long)1800000);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
