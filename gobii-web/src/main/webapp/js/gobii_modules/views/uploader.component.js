@@ -136,6 +136,8 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                                 }
                                 else {
                                     _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(response, null, null));
+                                    _this.uploader.clearQueue();
+                                    _this.clearSelectedFile();
                                 }
                             };
                         }

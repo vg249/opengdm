@@ -4100,16 +4100,16 @@ definitions:
         type: "boolean"
       readable:
         type: "boolean"
-      url:
-        type: "string"
-        format: "url"
-      file:
-        type: "file"
       uri:
         type: "string"
         format: "uri"
       filename:
         type: "string"
+      url:
+        type: "string"
+        format: "url"
+      file:
+        type: "file"
   JobDTO:
     type: "object"
     properties:

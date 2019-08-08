@@ -284,6 +284,8 @@ export class UploaderComponent implements OnInit {
                         } else {
 
                             this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
+                            this.uploader.clearQueue();
+                            this.clearSelectedFile();
 
                         }
 
