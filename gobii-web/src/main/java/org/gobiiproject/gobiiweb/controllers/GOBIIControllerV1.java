@@ -5613,8 +5613,7 @@ public class GOBIIControllerV1 {
                 // GDM-266 Need to validate file type only for
                 // text files.
                 // So, adding below condition to avoid validating for other kind of instruction files.
-                if(destinationType.equals("EXTRACTOR_INSTRUCTIONS") && (
-                        fileName.endsWith(".txt") || fileName.endsWith(".txt"))) {
+                if(destinationType.equals("EXTRACTOR_INSTRUCTIONS") && fileName.endsWith(".txt")) {
                     fileMimeType = this.tika.detect(byteArray);
                 }
 
