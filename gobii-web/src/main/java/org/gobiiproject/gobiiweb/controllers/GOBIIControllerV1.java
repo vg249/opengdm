@@ -5631,9 +5631,7 @@ public class GOBIIControllerV1 {
                 }
                 else {
 
-                    String message = "Invalid Input file. " +
-                            "File contains non text encodings. " +
-                            "Please check the file or contact GDM system administrator.";
+                    String message = "Invalid Input file. " + "File is identified as "+ fileMimeType + ".";
                     ControllerUtils.writeRawResponse(response,
                             HttpServletResponse.SC_NOT_ACCEPTABLE,
                             message);
