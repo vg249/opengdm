@@ -10,7 +10,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "cbsugobiixvm11.biohpc.cornell.edu:8081"
+host: "api.gobii.org:8081"
 basePath: "/gobii-dev"
 tags:
 - name: "Analyses"
@@ -4100,16 +4100,16 @@ definitions:
         type: "boolean"
       readable:
         type: "boolean"
-      uri:
-        type: "string"
-        format: "uri"
-      filename:
-        type: "string"
       url:
         type: "string"
         format: "url"
       file:
         type: "file"
+      uri:
+        type: "string"
+        format: "uri"
+      filename:
+        type: "string"
   JobDTO:
     type: "object"
     properties:
