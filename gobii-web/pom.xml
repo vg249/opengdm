@@ -520,7 +520,7 @@
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
-                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <host>api.gobii.org:8081</host>
                             <basePath>/gobii-dev</basePath>
                             <!-- content of description file overrides the <description>
                                 element of the <info> tag below. This ends up as the
