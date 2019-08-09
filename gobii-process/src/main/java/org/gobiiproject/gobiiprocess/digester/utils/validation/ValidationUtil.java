@@ -135,7 +135,7 @@ class ValidationUtil {
                         }
 
                         if (!fileColumnElements.equals(comparisonFileColumnElements))
-                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns), String.join(",", externalFieldFileExtension+"."+fieldToCompare))), failureList);
+                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns),externalFieldFileExtension+".", String.join(",", fieldToCompare))), failureList);
                     }
                 } else {
                     if (condition.fieldToCompare != null)
