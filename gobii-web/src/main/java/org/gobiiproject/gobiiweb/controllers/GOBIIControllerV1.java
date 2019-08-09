@@ -5482,7 +5482,6 @@ public class GOBIIControllerV1 {
      * Delete an arbitary file to the specified destination
      * @param destinationType
      * @param fileName
-     * @param file
      * @param request
      * @param response
      * @return
