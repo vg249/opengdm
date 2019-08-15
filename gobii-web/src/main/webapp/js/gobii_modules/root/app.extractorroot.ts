@@ -47,24 +47,8 @@ import {TypeControl} from "../services/core/type-control";
 
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">{{currentStatus}}
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        {{loggedInUser}}</h3>
+                    <h3 class="panel-title" style="display: inline-block">{{currentStatus}}</h3>
+                    <h3 class="panel-title" style="display:inline-block; float:right;"> {{loggedInUser}}</h3>
                 </div> <!-- panel heading  -->
 
                 <BR>
@@ -413,7 +397,7 @@ export class ExtractorRoot implements OnInit {
                             )[0];
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
-                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
+                    scope$.currentStatus = "GDM version " + gobiiVersion;
                     //scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
@@ -424,8 +408,7 @@ export class ExtractorRoot implements OnInit {
                 dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving server configs: "
                     + m.message))
             }
-        )
-        ;
+        );
     } // initializeServerConfigs()
 
     private initializeSubmissionContact() {

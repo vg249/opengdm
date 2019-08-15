@@ -43,13 +43,11 @@ public class ConfigSettings {
     ConfigValues configValues = null;
 
     public ConfigSettings(String configFileWebPath) {
-
         try {
             configValues = ConfigValuesReader.read(configFileWebPath);
             this.configFileFqpn = configFileWebPath;
         } catch (Exception e) {
             LOGGER.error("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
-
         }
     } // ctor
 
