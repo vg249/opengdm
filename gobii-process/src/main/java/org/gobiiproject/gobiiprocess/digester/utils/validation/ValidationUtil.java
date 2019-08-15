@@ -421,15 +421,21 @@ class ValidationUtil {
             if (typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE))
                 typeName = GobiiEntityNameType.GERMPLASM.name();
             List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, fieldToCompare, failureList);
-            if (typeName.equalsIgnoreCase(ValidationConstants.CV))
+            if (typeName.equalsIgnoreCase(ValidationConstants.CV)) {
                 processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList);
-            else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE))
+            }
+            else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
                 processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_REFERENCE_VALUE, failureList);
+            }
+            else{
+                //In theory, 'germplasm' works as a field to compare
+                processResponseList(nameIdDTOListResponse,fieldToCompare,FailureTypes.UNDEFINED_VALUE, failureList);
+            }
         }
     }
 
     private static void validateDNASampleNameAndNum(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
-        String fieldToCompare = condition.fieldToCompare.get(0);
+        List<String> fieldToCompare = condition.fieldToCompare;
         Set<String> foreignKeyList = new HashSet<>();
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
             Map<String, Set<List<String>>> mapForeignkeyAndName = new HashMap<>();
@@ -587,7 +593,7 @@ class ValidationUtil {
      * @param fileName             fileName
      * @param condition            Condition
      * @param mapForeignkeyAndName foreignKeyMap
-     * @param failureList          failure list
+     * @param failureList          failureS list
      * @return status
      */
     private static boolean createPlatformIdSampleNameAndNumGroup(String fileName, ConditionUnit condition, Map<String, Set<List<String>>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
@@ -613,15 +619,18 @@ class ValidationUtil {
     /**
      * Process the DB response. If there is no id add it to the failure list
      */
-    private static void processResponseList(List<NameIdDTO> nameIdDTOList, String fieldToCompare, String reason, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static void processResponseList(List<NameIdDTO> nameIdDTOList, List<String> fieldToCompare, String reason, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (NameIdDTO nameIdDTO : nameIdDTOList)
-            if (nameIdDTO.getId() == 0) createFailure(reason, Collections.singletonList(fieldToCompare), nameIdDTO.getName(), failureList);
+            if (nameIdDTO.getId() == 0) createFailure(reason, fieldToCompare, nameIdDTO.getName(), failureList);
+    }
+    private static void processResponseList(List<NameIdDTO> nameIdDTOList, String fieldToCompare, String reason, List<Failure> failureList) throws MaximumErrorsValidationException {
+        processResponseList(nameIdDTOList,Collections.singletonList(fieldToCompare),reason,failureList);
     }
 
-    /**
-     * Reads specified key.
-     * Can simplify while refactoring
-     */
+        /**
+		 * Reads specified key.
+		 * Can simplify while refactoring
+		 */
     private static boolean readForeignKey(String fileName, String foreignKey, Set<String> foreignKeyList, List<Failure> failureList) throws MaximumErrorsValidationException {
         if (checkForHeaderExistence(fileName, Collections.singletonList(foreignKey), "yes", failureList))
             return readColumnIntoSet(fileName, foreignKey, foreignKeyList, failureList);
