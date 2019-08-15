@@ -23,9 +23,10 @@ public class GobiiVersionInfo {
 
         if(configSettings.getFileSystemRoot() != null) {
 
+            //TODO: The full config path should be part of gobii-web.xml
             String versionFilePath = (
                     LineUtils.terminateDirectoryPath(configSettings.getFileSystemRoot()) +
-                    "gobii.version");
+                    "config/gobii.version");
 
             //The Version file should be a property file with gobii_version as key
             //This is done believing we can avoid junk values if appended to file
