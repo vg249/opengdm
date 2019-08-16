@@ -497,6 +497,13 @@
         "description" : "The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. X-Auth-Token header and value obtained from /auth call will be used as an API-key for the rest of the GDM calls.",
         "operationId" : "authenticate",
         "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "X-Username",
           "in" : "header",
           "description" : "User Identifier",
@@ -4788,8 +4795,15 @@
         "open" : {
           "type" : "boolean"
         },
+        "filename" : {
+          "type" : "string"
+        },
         "readable" : {
           "type" : "boolean"
+        },
+        "uri" : {
+          "type" : "string",
+          "format" : "uri"
         },
         "url" : {
           "type" : "string",
@@ -4797,13 +4811,6 @@
         },
         "file" : {
           "type" : "file"
-        },
-        "uri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "filename" : {
-          "type" : "string"
         }
       }
     },
