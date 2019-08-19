@@ -355,6 +355,14 @@
                             <!--<goal>create-resources</goal>-->
                             <goal>npm</goal><!-- setup grunt and plugin -->
                         </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>
+                                    install
+                                </argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
