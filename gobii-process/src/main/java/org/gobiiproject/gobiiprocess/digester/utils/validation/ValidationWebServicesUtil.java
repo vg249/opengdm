@@ -176,6 +176,9 @@ public class ValidationWebServicesUtil {
             Status status = responsePayloadEnvelope.getHeader().getStatus();
             if (!status.isSucceeded()) {
                 ErrorLogger.logWarning("ValidtionWebServices","Bad NameIdDTO request",new Exception());
+                for(NameIdDTO dto:nameIdDTOList){
+                    ErrorLogger.logWarning("DTO",dto.getName() + "   " + dto.getParameters());
+                }
                 ArrayList<HeaderStatusMessage> statusMessages = status.getStatusMessages();
                 for (HeaderStatusMessage message : statusMessages)
                     ValidationUtil.createFailure(FailureTypes.DATABASE_ERROR, new ArrayList<>(), message.getMessage(), failureList);
