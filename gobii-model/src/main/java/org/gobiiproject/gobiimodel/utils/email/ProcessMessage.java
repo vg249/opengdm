@@ -1,15 +1,18 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.sizeToReadable;
 
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
@@ -197,10 +200,37 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
-    public ProcessMessage addFolderPath(String type,String path) {
-        paths.add(new HTMLTableEntity(type,path,""));
+    public ProcessMessage addFolderPath(String type, String path, ConfigSettings config) throws Exception {
+        String pathLine=path;
+        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
+            try {
+                String urlpath= OCLinkHandler.getOwncloudURL(path, config);
+                if(urlpath!=null&&!urlpath.isEmpty()) {
+                    pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(OCLinkHandler.getOwncloudURL(path, config));
+                }
+            }catch (ConnectException e) {
+                ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
+                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
+            }
+        }
+        paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
+
+    /**
+     * Adds a hyperlinking tag to a string that contains a valid hyperlink.
+     * http://example.com becomes
+     * <a href="http://example.com">http://example.com</a>
+     * @param toHyperlink
+     * @return
+     */
+    private String hyperlink(String toHyperlink){
+        if(toHyperlink==null || toHyperlink.equals("")){
+            return toHyperlink;
+        }
+        return "<a href=\""+toHyperlink+"\">"+toHyperlink + "</a>";
+    }
+
         /**
          * Add item to the filepaths entry
          * @param type type of file
@@ -208,12 +238,44 @@ public class ProcessMessage extends MailMessage {
          * #param alwaysShow to always show the path, even if no object is there
          * @return this object
          */
-    public ProcessMessage addPath(String type,String path, boolean alwaysShow){
+    public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config, boolean publicUrl) throws Exception {
+
+        if(path==null){
+            //Do nothing if path is not specified
+            return this;
+        }
+        // As per LiveLinks 1.c., if no preview is available, make a link to the folder.
+        // Convert this into a folder path by cutting off the file, so path will end with /
+
+        if(!publicUrl){
+            if(!path.endsWith("/") && path.contains("/")){
+                path = path.substring(0,path.lastIndexOf("/")+1);
+            }
+        }
+
+
+        String pathLine = path;
+        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
+            String urlpath = null;
+            try {
+                urlpath = path.endsWith("/") ? OCLinkHandler.getOwncloudURL(path, config) : OCLinkHandler.getLink(path, config, publicUrl);
+            } catch (ConnectException e) {
+                ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
+                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
+            }
+            if (urlpath == null || urlpath.isEmpty()) {
+                //return normal path
+                ErrorLogger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
+
+            } else {
+                pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(urlpath);
+            }
+        }
     	if(new File(path).length() > 1){
-    		paths.add(new HTMLTableEntity(type, escapeHTML(path), HelperFunctions.sizeToReadable(new File(path).length())));
+    		paths.add(new HTMLTableEntity(type, pathLine, HelperFunctions.sizeToReadable(new File(path).length())));
     	}
     	else if(alwaysShow){
-    	    paths.add(new HTMLTableEntity(type,escapeHTML(path),""));
+    	    paths.add(new HTMLTableEntity(type,pathLine,""));
         }
         return this;
     }
@@ -224,8 +286,8 @@ public class ProcessMessage extends MailMessage {
      * @param path filepath
      * @return
      */
-    public ProcessMessage addPath(String type, String path){
-        return addPath(type,path,false);
+    public ProcessMessage addPath(String type, String path, ConfigSettings config, boolean publicUrl) throws Exception {
+        return addPath(type,path,false,config, publicUrl);
     }
 
     
@@ -259,7 +321,7 @@ public class ProcessMessage extends MailMessage {
             entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
         }
         if(!validations.isEmpty()) {
-            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Info","Status","Reason","Column","Values");
+            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Validation","Status","Reason","Column","Values");
         }
         if(!paths.isEmpty()) {
             pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");

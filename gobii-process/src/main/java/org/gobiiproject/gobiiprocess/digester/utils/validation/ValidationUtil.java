@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
@@ -101,6 +102,8 @@ class ValidationUtil {
                     List<String> fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
 
+                    String externalFieldFileExtension = condition.typeName.substring(condition.typeName.indexOf('.') + 1);//E.G. "gerplasm"
+
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
                         if (filesList.size() != 1) {
                             processFileError(comparisonFileName, filesList.size(), failureList);
@@ -132,7 +135,7 @@ class ValidationUtil {
                         }
 
                         if (!fileColumnElements.equals(comparisonFileColumnElements))
-                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns), String.join(",", fieldToCompare))), failureList);
+                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns),externalFieldFileExtension+"."+String.join(",", fieldToCompare))), failureList);
                     }
                 } else {
                     if (condition.fieldToCompare != null)
@@ -499,15 +502,28 @@ class ValidationUtil {
                             nameIdDTO.setName(name);
                             nameIdDTOList.add(nameIdDTO);
                         }
+
+                        String failureReason = null;
+                        switch(condition.typeName.toLowerCase()) {
+                            case ValidationConstants.LINKAGE_GROUP:
+                                failureReason = FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE;
+                                break;
+                            case ValidationConstants.DNARUN:
+                                failureReason = FailureTypes.UNDEFINED_DNARUN_NAME__VALUE;
+                                break;
+                            case ValidationConstants.DNASAMPLE:
+
+                                failureReason = FailureTypes.UNDEFINED_DNASAMPLE_NAME_VALUE;
+                                break;
+                            case ValidationConstants.MARKER:
+                                failureReason = FailureTypes.UNDEFINED_MARKER_NAME__VALUE;
+                                break;
+                            default:
+                                ErrorLogger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
+                        }
+
                         List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP))
-                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
-                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE))
-                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNASAMPLE_NAME_VALUE, failureList);
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
-                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_MARKER_NAME__VALUE, failureList);
+                        processResponseList(nameIdDTOListResponse, fieldToCompare, failureReason, failureList);
                     } else undefinedForeignKey(condition, ent.getKey(), failureList);
                 }
             }

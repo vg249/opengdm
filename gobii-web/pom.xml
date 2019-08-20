@@ -269,6 +269,7 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
+
         <!-- UPLOADS -->
         <!-- Apache Commons FileUpload -->
         <dependency>
@@ -293,6 +294,14 @@
             <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
             <version>2.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.22</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -346,6 +355,14 @@
                             <!--<goal>create-resources</goal>-->
                             <goal>npm</goal><!-- setup grunt and plugin -->
                         </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>
+                                    install
+                                </argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -521,7 +538,7 @@
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
-                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <host>api.gobii.org:8081</host>
                             <basePath>/gobii-dev</basePath>
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>

@@ -20,7 +20,7 @@ __Terms of service__ : null
 
 === URI scheme
 [%hardbreaks]
-__Host__ : cbsugobiixvm11.biohpc.cornell.edu:8081
+__Host__ : api.gobii.org:8081
 __BasePath__ : /gobii-dev
 __Schemes__ : HTTP
 
