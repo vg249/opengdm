@@ -19,7 +19,9 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart; 
+import javax.mail.internet.MimeMultipart;
+
+import static org.gobiiproject.gobiimodel.utils.email.AuthType.PASSWORD;
 
 public class MailInterface {
 	
@@ -28,14 +30,21 @@ public class MailInterface {
 	private String user;
 	private String password;
 	private String protocol;
+	private AuthType authType;
 	
 	
-	public MailInterface(ConfigSettings config){
+	public MailInterface(ConfigSettings config) {
 		host = config.getEmailSvrDomain();
 		port = config.getEmailServerPort().toString();
 		user = config.getEmailSvrUser();
 		password = config.getEmailSvrPassword();
 		protocol = config.getEmailSvrType().toLowerCase();
+		try {
+			authType = config.getEmailAuth();
+		}catch(IllegalArgumentException e){
+			ErrorLogger.logWarning("MailInterface","Unable to parse Email Auth. Defaulting to Password");
+			authType=PASSWORD;
+		}
 	}
 	
 	public String getHost(){
@@ -57,28 +66,36 @@ public class MailInterface {
 	public String getProtocol(){
 		return protocol;
 	}
+	public AuthType getAuthType(){
+		return authType;
+	}
 
 	
-	public void send(MailMessage message) throws Exception{
+	public void send(MailMessage message ) throws Exception{
 		if(message.getUser()==null || message.getUser().equals(""))return;
 		
 		String username = this.getUser();
 		String password = this.getPassword();
 		String protocol = this.getProtocol();
+		AuthType authType = this.getAuthType();
 		
 		Properties props = new Properties();
-		props.setProperty("mail.smtp.auth", "true");
-		props.setProperty("mail.smtp.starttls.enable", "true");
-		props.setProperty("mail.smtp.starttls.required", "true");
+		if(authType.equals(PASSWORD)) {
+			props.setProperty("mail.smtp.auth", "true");
+			props.setProperty("mail.smtp.starttls.enable", "true");
+			props.setProperty("mail.smtp.starttls.required", "true");
+		}
+
 		props.setProperty("mail.transport.protocol", protocol);
 		props.setProperty("mail.smtp.host", this.getHost());
 		props.setProperty("mail.smtp.port", this.getPort());
 		props.setProperty("mail.host", this.getHost());
 		props.setProperty("mail.port", this.getPort());
 		props.setProperty("mail.user", username);
-		props.setProperty("mail.password", password);
-		
 
+		if(authType.equals(PASSWORD)) {
+			props.setProperty("mail.password", password);
+		}
 
 		Session mailSession = Session.getInstance(props,
 				new javax.mail.Authenticator(){
@@ -86,8 +103,7 @@ public class MailInterface {
 						return new PasswordAuthentication(username, password);
 					}
 				});
-		Transport transport = mailSession.getTransport(protocol);
-		
+
 		MimeMessage mimeMessage = new MimeMessage(mailSession);
 		mimeMessage.setFrom(new InternetAddress(username));
 		mimeMessage.setSubject(message.getSubject());
@@ -126,12 +142,21 @@ public class MailInterface {
 		mimeMessage.addRecipient(Message.RecipientType.TO,
 				new InternetAddress(message.getUser()));
 		ErrorLogger.logDebug("Mail Interface","Recipient.TO => "+message.getUser());
-		transport.connect(username, password);
-		transport.sendMessage(mimeMessage,
-				mimeMessage.getRecipients(Message.RecipientType.TO));
-		ErrorLogger.logDebug("Mail Interface","Sending To => "+mimeMessage.getRecipients(Message.RecipientType.TO));
-		transport.close();
-		ErrorLogger.logInfo("Mail Interface","Email sent");
+		switch(authType){
+			case PASSWORD:
+				Transport transport = mailSession.getTransport(protocol);
+				transport.connect(username, password);
+				transport.sendMessage(mimeMessage,
+						mimeMessage.getRecipients(Message.RecipientType.TO));
+				ErrorLogger.logDebug("Mail Interface", "Sending To => " + mimeMessage.getRecipients(Message.RecipientType.TO));
+				transport.close();
+				ErrorLogger.logInfo("Mail Interface", "Email sent");
+				break;
+			case PASSWORDLESS:
+				Transport.send(mimeMessage);
+				ErrorLogger.logDebug("Mail Interface", "Sending To => " + mimeMessage.getRecipients(Message.RecipientType.TO));
+				break;
+		}
 	}
 	
 }

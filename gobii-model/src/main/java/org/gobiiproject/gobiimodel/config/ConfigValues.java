@@ -9,6 +9,7 @@ import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.email.AuthType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
@@ -139,6 +140,9 @@ class ConfigValues {
 
     @Element(required = false)
     private Integer emailServerPort = 0;
+
+    @Element(required = false)
+    private String emailAuthType;
 
     @Element(required = false)
     private GobiiAuthenticationType gobiiAuthenticationType = GobiiAuthenticationType.TEST;
@@ -451,6 +455,13 @@ class ConfigValues {
     public void setEmailSvrPort(Integer emailServerPort) {
         this.emailServerPort = emailServerPort;
     }
+
+    public void setEmailAuthType(String authType){ this.emailAuthType=authType; }
+
+    public String getEmailAuthType(){ return emailAuthType;}
+
+    public AuthType getEmailAuthEnum(){return Enum.valueOf(AuthType.class,emailAuthType);}
+
 
     public GobiiAuthenticationType getGobiiAuthenticationType() {
         return gobiiAuthenticationType;
