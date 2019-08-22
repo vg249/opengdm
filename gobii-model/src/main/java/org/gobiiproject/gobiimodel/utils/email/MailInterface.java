@@ -30,7 +30,7 @@ public class MailInterface {
 	private String user;
 	private String password;
 	private String protocol;
-	private AuthType authType;
+	private AuthType authType=PASSWORD;
 	
 	
 	public MailInterface(ConfigSettings config) {
@@ -42,8 +42,7 @@ public class MailInterface {
 		try {
 			authType = config.getEmailAuth();
 		}catch(IllegalArgumentException e){
-			ErrorLogger.logWarning("MailInterface","Unable to parse Email Auth. Defaulting to Password");
-			authType=PASSWORD;
+			ErrorLogger.logWarning("MailInterface","Unable to parse Email Auth. Defaulting to " +authType.name());
 		}
 	}
 	
