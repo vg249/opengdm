@@ -593,7 +593,7 @@ class ValidationUtil {
      * @param fileName             fileName
      * @param condition            Condition
      * @param mapForeignkeyAndName foreignKeyMap
-     * @param failureList          failureS list
+     * @param failureList          failure list
      * @return status
      */
     private static boolean createPlatformIdSampleNameAndNumGroup(String fileName, ConditionUnit condition, Map<String, Set<List<String>>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
