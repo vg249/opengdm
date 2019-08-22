@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.gobiiproject.gobiimodel.utils.email.AuthType.PASSWORD;
+
 
 /**
  * This class is essentially a POJO for the configuration data. It has a small
@@ -460,7 +462,9 @@ class ConfigValues {
 
     public String getEmailAuthType(){ return emailAuthType;}
 
-    public AuthType getEmailAuthEnum(){return Enum.valueOf(AuthType.class,emailAuthType);}
+    public AuthType getEmailAuthEnum(){
+        if(emailAuthType == null){return PASSWORD;}
+        return Enum.valueOf(AuthType.class,emailAuthType);}
 
 
     public GobiiAuthenticationType getGobiiAuthenticationType() {
