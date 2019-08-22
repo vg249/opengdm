@@ -52,8 +52,15 @@
         <module>gobii-domain</module>
         <module>gobii-process</module>
         <module>gobii-web</module>
-
+	<module>gobii-bert</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>https://repo.clojars.org</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -454,6 +461,12 @@
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j</artifactId>
                 <version>3.3.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ernie</groupId>
+                <artifactId>ernie</artifactId>
+                <version>0.1.0-SNAPSHOT</version>
             </dependency>
 
         </dependencies>
