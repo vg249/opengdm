@@ -27,16 +27,21 @@ class SNPSepRemoval {
         missingAlts = new ArrayList<>();
         missingAlts.add("?");
         missingAlts.add("0");
-        missingAlts.add("");
 
         missingFromFile = new ArrayList<>();
         missingFromFile.addAll(missingFileElements);
+        missingFromFile.remove("");//Just in case
     }
 
     boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
-            if (element.length() < 1 || missingFromFile.contains(element)) {
+            if(element.length() < 1){
+                String errMsg = "SNPSepRemoval Unsupported empty Allele Call in row " + rowNo;
+                matrixErrorUtil.setError(errMsg);
+                return false;
+            }
+            if (missingFromFile.contains(element)) {
                 outrow.add("NN");
             } else {
                 final String s = "SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo;
