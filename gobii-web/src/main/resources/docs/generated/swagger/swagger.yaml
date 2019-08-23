@@ -468,23 +468,19 @@ paths:
       parameters:
       - name: "email"
         in: "query"
-        description: "contact's email"
-        required: true
+        required: false
         type: "string"
       - name: "lastName"
         in: "query"
-        description: "contact's last name"
-        required: true
+        required: false
         type: "string"
       - name: "firstName"
         in: "query"
-        description: "contact's first name"
-        required: true
+        required: false
         type: "string"
       - name: "userName"
         in: "query"
-        description: "contact's user name"
-        required: true
+        required: false
         type: "string"
       - name: "X-Auth-Token"
         in: "header"
@@ -3135,15 +3131,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       analysisId:
         type: "integer"
         format: "int32"
@@ -3254,15 +3254,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       contactId:
         type: "integer"
         format: "int32"
@@ -3522,15 +3526,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       includeDetailsList:
         type: "boolean"
       displayId:
@@ -3716,15 +3724,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       experimentId:
         type: "integer"
         format: "int32"
@@ -4103,18 +4115,18 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-      filename:
-        type: "string"
       readable:
         type: "boolean"
-      uri:
-        type: "string"
-        format: "uri"
       url:
         type: "string"
         format: "url"
       file:
         type: "file"
+      filename:
+        type: "string"
+      uri:
+        type: "string"
+        format: "uri"
   JobDTO:
     type: "object"
     properties:
@@ -4286,15 +4298,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       manifestId:
         type: "integer"
         format: "int32"
@@ -4351,15 +4367,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       mapsetId:
         type: "integer"
         format: "int32"
@@ -4482,15 +4502,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       markerGroupId:
         type: "integer"
         format: "int32"
@@ -4668,15 +4692,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       organizationId:
         type: "integer"
         format: "int32"
@@ -5298,15 +5326,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       projectId:
         type: "integer"
         format: "int32"
@@ -5385,15 +5417,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       protocolId:
         type: "integer"
         format: "int32"
@@ -5465,15 +5501,19 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
+        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+        readOnly: true
       referenceId:
         type: "integer"
         format: "int32"

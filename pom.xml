@@ -48,6 +48,7 @@
         <module>gobii-brapi</module>
         <module>gobii-client</module>
         <module>gobii-dao</module>
+        <module>gobii-sampletracking-dao</module>
         <module>gobii-dtomapping</module>
         <module>gobii-domain</module>
         <module>gobii-process</module>
@@ -68,6 +69,12 @@
             <dependency>
                 <groupId>org.gobiiproject</groupId>
                 <artifactId>gobii-dao</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-sampletracking-dao</artifactId>
                 <version>${gobii.version}</version>
             </dependency>
 

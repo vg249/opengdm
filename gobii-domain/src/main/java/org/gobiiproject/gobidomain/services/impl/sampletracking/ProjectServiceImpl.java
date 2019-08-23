@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDT
 import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.ProjectDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private ProjectDAO projectDao;
 
     @Override
     public ProjectDTO createProject(ProjectDTO newProject) throws GobiiDomainException {
@@ -115,6 +119,8 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
         ProjectDTO returnVal;
         try {
+
+            ProjectDTO pD = projectDao.getProjectById(projectId);
 
             returnVal = dtoMapSampleTrackingProject.get(projectId);
 

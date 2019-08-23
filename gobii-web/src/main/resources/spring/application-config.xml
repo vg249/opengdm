@@ -320,7 +320,6 @@
     <bean id="AnalysisService"
           class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
 
-
     <!-- **** Platform Beans *************************************** -->
     <bean id="rsPlatformDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
@@ -386,6 +385,8 @@
 
     <bean id="rsSampleTrackingProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsProjectDaoImpl"/>
+
+    <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
 
 
     <!-- **** Manifests Beans *************************************** -->
@@ -993,7 +994,7 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+                <prop key="hibernate.dialect">org.gobiiproject.gobiisampletrackingdao.hibernate.PostgreSQL9JsonDialect</prop>
             </props>
         </property>
     </bean>
