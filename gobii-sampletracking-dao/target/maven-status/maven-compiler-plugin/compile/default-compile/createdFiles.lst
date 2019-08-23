@@ -1,0 +1,3 @@
+org/gobiiproject/gobiisampletrackingdao/ProjectDAO.class
+org/gobiiproject/gobiisampletrackingdao/ProjectDaoImpl.class
+org/gobiiproject/gobiisampletrackingdao/hibernate/PostgreSQL9JsonDialect.class
