@@ -39,7 +39,7 @@ class SNPSepRemoval {
             if(element.length() < 1){
                 String errMsg = "SNPSepRemoval Unsupported empty Allele Call in row " + rowNo;
                 matrixErrorUtil.setError(errMsg);
-                return false;
+                returnStatus = false;
             }
             if (missingFromFile.contains(element)) {
                 outrow.add("NN");
