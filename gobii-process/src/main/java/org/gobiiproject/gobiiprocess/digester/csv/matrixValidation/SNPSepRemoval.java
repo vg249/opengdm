@@ -36,26 +36,27 @@ class SNPSepRemoval {
     boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
-            if(element.length() < 1){
+            if (element.length() < 1) {
                 String errMsg = "SNPSepRemoval Unsupported empty Allele Call in row " + rowNo;
                 matrixErrorUtil.setError(errMsg);
                 returnStatus = false;
-            }
-            if (missingFromFile.contains(element)) {
-                outrow.add("NN");
             } else {
-                final String s = "SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo;
-
-                String allele1, allele2;
-                if (alleles.contains(String.valueOf(element.charAt(0))) && alleles.contains(String.valueOf(element.charAt(element.length() - 1)))) {
-                    allele1 = String.valueOf(element.charAt(0));
-                    allele2 = String.valueOf(element.charAt(element.length() - 1));
-                    if (missingAlts.contains(allele1)) allele1 = "N";
-                    if (missingAlts.contains(allele2)) allele2 = "N";
-                    outrow.add(allele1 + allele2);
+                if (missingFromFile.contains(element)) {
+                    outrow.add("NN");
                 } else {
-                    matrixErrorUtil.setError(s);
-                    returnStatus = false;
+                    final String s = "SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo;
+
+                    String allele1, allele2;
+                    if (alleles.contains(String.valueOf(element.charAt(0))) && alleles.contains(String.valueOf(element.charAt(element.length() - 1)))) {
+                        allele1 = String.valueOf(element.charAt(0));
+                        allele2 = String.valueOf(element.charAt(element.length() - 1));
+                        if (missingAlts.contains(allele1)) allele1 = "N";
+                        if (missingAlts.contains(allele2)) allele2 = "N";
+                        outrow.add(allele1 + allele2);
+                    } else {
+                        matrixErrorUtil.setError(s);
+                        returnStatus = false;
+                    }
                 }
             }
         }
