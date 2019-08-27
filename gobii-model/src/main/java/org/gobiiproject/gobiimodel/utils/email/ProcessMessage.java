@@ -75,7 +75,7 @@ public class ProcessMessage extends MailMessage {
             entities.clear();
         }
         if(!validations.isEmpty()) {
-            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Info","Status","Reason","Column","Values");
+            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Validation","Status","Reason","Column","Values");
             validations.clear();
         }
         if(!paths.isEmpty()) {
