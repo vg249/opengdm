@@ -1132,7 +1132,7 @@ public class GobiiConfig {
                     if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_FROM)) {
                         String emailSvrFrom = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_FROM);
                         configSettings.setEmailSvrFrom(emailSvrFrom);
-                        argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
+                        argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_FROM);
                         valsSet.add(emailSvrFrom);
                     }
 
