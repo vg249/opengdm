@@ -398,5 +398,8 @@ public class ConfigSettings {
     public String getEmailSvrFrom(){
         return this.configValues.getEmailSvrFrom();
     }
+    public void setEmailSvrFrom(String emailSvrFrom){
+        this.configValues.setEmailSvrFrom(emailSvrFrom);
+    }
 
 }

@@ -669,4 +669,7 @@ class ConfigValues {
     public String getEmailSvrFrom(){
         return this.emailSvrFrom;
     }
+    public void setEmailSvrFrom(String emailSvrFrom){
+        this.emailSvrFrom = emailSvrFrom;
+    }
 }

@@ -106,9 +106,9 @@ public class MailInterface {
 
 		MimeMessage mimeMessage = new MimeMessage(mailSession);
 		InternetAddress fromAddress;
-		if(from != null && !from.equals("")){
+		if(from != null && !from.equals("")) {//From is optional
 			fromAddress=new InternetAddress(from);
-		}else{
+		} else { //Default to from user equal to login username
 			fromAddress=new InternetAddress(username);
 		}
 		mimeMessage.setFrom(fromAddress);
