@@ -395,5 +395,8 @@ public class ConfigSettings {
 
     public void setEmailAuth(String auth){ this.configValues.setEmailAuthType(auth);}
 
+    public String getEmailSvrFrom(){
+        this.configValues.getEmailSvrFrom();
+    }
 
 }

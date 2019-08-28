@@ -31,7 +31,7 @@ public class MailInterface {
 	private String password;
 	private String protocol;
 	private AuthType authType=PASSWORD;
-	
+	private String from;
 	
 	public MailInterface(ConfigSettings config) {
 		host = config.getEmailSvrDomain();
@@ -44,6 +44,7 @@ public class MailInterface {
 		}catch(IllegalArgumentException e){
 			ErrorLogger.logWarning("MailInterface","Unable to parse Email Auth. Defaulting to " +authType.name());
 		}
+		 from = config.getEmailSvrFrom();
 	}
 	
 	public String getHost(){
@@ -104,7 +105,13 @@ public class MailInterface {
 				});
 
 		MimeMessage mimeMessage = new MimeMessage(mailSession);
-		mimeMessage.setFrom(new InternetAddress(username));
+		InternetAddress fromAddress;
+		if(from != null && !from.equals("")){
+			fromAddress=new InternetAddress(from);
+		}else{
+			fromAddress=new InternetAddress(username);
+		}
+		mimeMessage.setFrom(fromAddress);
 		mimeMessage.setSubject(message.getSubject());
 		
 		MimeMultipart multipart = new MimeMultipart("related");
