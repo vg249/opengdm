@@ -572,7 +572,7 @@
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
                             <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
-                            <basePath>/gobii-dev/sample-tracking</basePath>
+                            <basePath>/gobii-dev</basePath>
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
                                 <title>GDM Sample Tracking</title>

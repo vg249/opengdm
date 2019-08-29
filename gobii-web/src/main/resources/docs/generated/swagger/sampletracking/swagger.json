@@ -10,7 +10,7 @@
     }
   },
   "host" : "cbsugobiixvm11.biohpc.cornell.edu:8081",
-  "basePath" : "/gobii-dev/sample-tracking",
+  "basePath" : "/gobii-dev",
   "tags" : [ {
     "name" : "Dataset"
   }, {
@@ -25,7 +25,7 @@
     "/sample-tracking/v1/dataset" : {
       "post" : {
         "tags" : [ "Dataset" ],
-        "summary" : "Create a new dataset",
+        "summary" : "Create new dataset",
         "description" : "Creates a new dataset in the system.",
         "operationId" : "createDataset",
         "consumes" : [ "application/json" ],
@@ -48,7 +48,6 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "Dataset",
         "x-summary" : "Dataset"
       }
     },
@@ -89,7 +88,6 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "Dataset",
         "x-summary" : "Upload Data"
       }
     },
@@ -98,9 +96,26 @@
         "tags" : [ "Experiments" ],
         "summary" : "List all experiments",
         "description" : "List of all Experiments.",
-        "operationId" : "listExperiments",
+        "operationId" : "listExperiment",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "pageToken",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "pageNum",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
           "name" : "X-Auth-Token",
           "in" : "header",
           "description" : "Authentication Token",
@@ -119,8 +134,8 @@
       },
       "post" : {
         "tags" : [ "Experiments" ],
-        "summary" : "Create a new experiment",
-        "description" : "Creates a new experiment in the system.",
+        "summary" : "Create new experiment",
+        "description" : "Creates new experiment in the system.",
         "operationId" : "createExperiment",
         "consumes" : [ "multipart/form-data" ],
         "parameters" : [ {
@@ -147,7 +162,6 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "A Experiment",
         "x-summary" : "Experiments"
       }
     },
@@ -199,6 +213,12 @@
           "type" : "integer",
           "format" : "int32"
         }, {
+          "name" : "pageNum",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
           "name" : "X-Auth-Token",
           "in" : "header",
           "description" : "Authentication Token",
@@ -217,7 +237,7 @@
       },
       "post" : {
         "tags" : [ "Projects" ],
-        "summary" : "Create a new project",
+        "summary" : "Create new project",
         "description" : "Creates a new project in the system.",
         "operationId" : "createProject",
         "consumes" : [ "application/json" ],
@@ -240,7 +260,6 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "A project consists of a group of samples that are, or will be, genotyped. A project belings to a Principal Investigator (PI), also called a PI contact. ",
         "x-summary" : "Projects"
       }
     },
@@ -277,7 +296,7 @@
     "/sample-tracking/v1/samples" : {
       "post" : {
         "tags" : [ "Samples" ],
-        "summary" : "Create a new samples",
+        "summary" : "Create new samples",
         "description" : "Creates a new samples in the system.",
         "operationId" : "createSamples",
         "consumes" : [ "application/json" ],
@@ -300,7 +319,6 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "Samples",
         "x-summary" : "Samples"
       }
     },
@@ -335,7 +353,6 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "Samples",
         "x-summary" : "Upload Samples"
       }
     }

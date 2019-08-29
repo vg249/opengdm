@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import io.swagger.annotations.*;
-import io.swagger.v3.oas.annotations.media.Content;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
@@ -14,7 +12,6 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
-import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -29,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,17 +42,15 @@ public class SampleTrackingController {
     @Autowired
     private ExperimentService<ExperimentDTO> sampleTrackingExperimentService = null;
 
-    //@Autowired
-    //private DnaSampleService<DnaSampleDTO> sampleTrackingDnaSampleService = null;
-    @Autowired
-    private ContactService contactService;
-
     /**
+     * ----------------------- List Project --------------------------------
+     *
      * Lists the projects by page size and page token.
      *
      * @param pageTokenParam - String page token.
      * @param pageSize - Page Size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size.
+     * @param pageNum - Page number for the list defined by pageSize.
      * @return Brapi response with list of projects.
      */
     @ApiOperation(
@@ -66,7 +60,8 @@ public class SampleTrackingController {
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Projects")
-                    })}
+                    })
+            }
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
@@ -78,7 +73,8 @@ public class SampleTrackingController {
     @ResponseBody
     public ResponseEntity listProjects(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageNum", required = false) Integer pageNum
     ) {
         try {
 
@@ -131,14 +127,16 @@ public class SampleTrackingController {
         }
     }
 
+
     /**
+     * ----------------------- Get Project --------------------------------
+     *
      * Endpoint for getting a specific project with the given project ID
      *
      * @param projectId ID of the requested project
      * @return ResponseEntity with http status code specifying if retrieval of the project is successful.
      * Response body contains the requested Project information
      */
-
     @ApiOperation(
             value = "Get a project by projectId",
             notes = "Retrieves the Project entity having the specified ID.",
@@ -163,7 +161,10 @@ public class SampleTrackingController {
             return ResponseEntity.ok(payload);
     }
 
+
     /**
+     * ----------------------- Create Project --------------------------------
+     *
      * Endpoint to create new project.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newProject - New project to be created.
@@ -172,18 +173,12 @@ public class SampleTrackingController {
      * Response body contains created resource if project creation is successful.
      */
     @ApiOperation(
-            value = "Create a new project",
+            value = "Create new project",
             notes = "Creates a new project in the system.",
             tags = {"Projects"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Projects"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value="A project consists of a group of samples that are, " +
-                                            "or will be, genotyped. A project belings to a Principal Investigator (PI), " +
-                                            "also called a PI contact. "
-                            )
+                            @ExtensionProperty(name="summary", value="Projects")
                     })
             }
     )
@@ -199,6 +194,18 @@ public class SampleTrackingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
+
+    /**
+     * ----------------------- List Experiment --------------------------------
+     *
+     * Lists the experiments by page size and page token.
+     *
+     * @param pageTokenParam - String page token.
+     * @param pageSize - Page Size set by the user. If page size is more than maximum allowed
+     *                 page size, then the response will have maximum page size.
+     * @param pageNum - Page number for the list defined by pageSize.
+     * @return Brapi response with list of experiments.
+     */
     @ApiOperation(
             value = "List all experiments",
             notes = "List of all Experiments.",
@@ -215,10 +222,11 @@ public class SampleTrackingController {
     @ApiResponses(value={@ApiResponse(code=200, message="successful operation",
             response=ExperimentDTO.class)})
     @RequestMapping(value="/experiments", method=RequestMethod.GET, produces="application/json")
-    public @ResponseBody ResponseEntity listExperiments(
-            HttpServletRequest request,
-            HttpServletResponse response) {
-
+    public @ResponseBody ResponseEntity listExperiment(
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageNum", required = false) Integer pageNum
+    ) {
         try {
             List<ExperimentDTO> experimentsList = sampleTrackingExperimentService.getExperiments();
             ListPayload<ExperimentDTO> payload = new ListPayload<ExperimentDTO>();
@@ -231,17 +239,24 @@ public class SampleTrackingController {
     }
 
 
+    /**
+     * ----------------------- Create Experiment --------------------------------
+     *
+     * Endpoint to create new experiment.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
+     * @param newExperiment - New experiment to be created.
+     *                   Json request body automatically deserialized to ExperimentDTO.
+     * @param dataFile - File associated with Experiment to be created.
+     * @return ResponseEntity with http status code respective of successful creation or failure.
+     * Response body contains created resource if experiment creation is successful.
+     */
     @ApiOperation(
-            value = "Create a new experiment",
-            notes = "Creates a new experiment in the system.",
+            value = "Create new experiment",
+            notes = "Creates new experiment in the system.",
             tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Experiments"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value="A Experiment"
-                            )
                     })
             }
     )
@@ -259,9 +274,7 @@ public class SampleTrackingController {
             @ApiParam(hidden = true)
             @RequestPart(name = "dataFile", required = false) MultipartFile dataFile,
             @ApiParam(hidden = true)
-            @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment,
-            HttpServletRequest request,
-            HttpServletResponse response){
+            @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment){
         try {
             sampleTrackingExperimentService.createExperiment(newExperiment);
             return ResponseEntity.ok(newExperiment);
@@ -270,6 +283,15 @@ public class SampleTrackingController {
         }
     }
 
+    /**
+     * ----------------------- Get Experiment --------------------------------
+     *
+     * Endpoint for getting a specific experiment with the given experiment ID
+     *
+     * @param experimentId ID of the requested experiment
+     * @return ResponseEntity with http status code specifying if retrieval of the Experiment is successful.
+     * Response body contains the requested Experiment information
+     */
     @ApiOperation(
             value = "Get an experiment by experimentId",
             notes = "Retrieves the Experiment entity having the specified ID.",
@@ -304,17 +326,25 @@ public class SampleTrackingController {
         }
     }
 
+
+    /**
+     * ----------------------- Create Samples --------------------------------
+     *
+     * Endpoint to create new samples for given projectId.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
+     * @param newProjectSamples - List samples to be created to project.
+     *                          Json request body automatically deserialized to ProjectSamplesDTO.
+     *                          projectId and Samples[] will be the request body.
+     * @return ResponseEntity with http status code 200 for OK accepted.
+     * Response body contains jobId and related details to check the success/failure of asynchronous operation.
+     */
     @ApiOperation(
-            value = "Create a new samples",
+            value = "Create new samples",
             notes = "Creates a new samples in the system.",
             tags = {"Samples"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Samples"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value="Samples"
-                            )
+                            @ExtensionProperty(name="summary", value="Samples")
                     })
             }
     )
@@ -332,6 +362,17 @@ public class SampleTrackingController {
         }
     }
 
+
+    /**
+     * ----------------------- Upload Samples --------------------------------
+     *
+     * Endpoint to upload samples for given project Id.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
+     * @param sampleFile - Tab delimited sample file, with respective columns as per design document.
+     * @return ResponseEntity with http status code 200 for OK accepted.
+     * Response body contains jobId and related details to check the success of asynchronous operation.
+     *
+     */
     @ApiOperation(
             value = "Upload new samples",
             notes = "Creates a new samples in the system.",
@@ -339,10 +380,6 @@ public class SampleTrackingController {
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Upload Samples"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value="Samples"
-                            )
                     })
             }
     )
@@ -367,17 +404,21 @@ public class SampleTrackingController {
         }
     }
 
+    /**
+     * ----------------------- Create Dataset --------------------------------
+     *
+     * Endpoint to create dataset under given experiment Id.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
+     * @param newDataset - Dataset metadata.
+     * @return ResponseEntity with http status code 201 if successful.
+     */
     @ApiOperation(
-            value = "Create a new dataset",
+            value = "Create new dataset",
             notes = "Creates a new dataset in the system.",
             tags = {"Dataset"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Dataset"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value="Dataset"
-                            )
                     })
             }
     )
@@ -386,7 +427,7 @@ public class SampleTrackingController {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value = "/dataset", method=RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody ResponseEntity createDataset(@RequestBody DataSetDTO dataset) {
+    public @ResponseBody ResponseEntity createDataset(@RequestBody DataSetDTO newDataset) {
         try {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
         } catch(Exception e) {
@@ -394,6 +435,17 @@ public class SampleTrackingController {
         }
     }
 
+    /**
+     * ----------------------- Upload Data to Dataset --------------------------------
+     *
+     * Endpoint to upload data to given Dataset Id.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
+     * @param genotypeFile - Genotype files as application/zip
+     * @param datasetMetaData - Meta data related to dataset and Vendor file urls to
+     *                        download data from external sources.
+     * @return ResponseEntity with http status code 200 for OK accepted.
+     * Response body contains jobId and related details to check the success of asynchronous operation.
+     */
     @ApiOperation(
             value = "Upload data to dataset",
             notes = "Upload data to the dataset.",
@@ -401,10 +453,6 @@ public class SampleTrackingController {
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Upload Data"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value="Dataset"
-                            )
                     })
             }
     )
