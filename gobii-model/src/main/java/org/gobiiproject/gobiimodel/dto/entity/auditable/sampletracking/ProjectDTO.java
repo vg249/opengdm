@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 
 import com.fasterxml.jackson.annotation.*;
+import io.swagger.annotations.ApiModel;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;

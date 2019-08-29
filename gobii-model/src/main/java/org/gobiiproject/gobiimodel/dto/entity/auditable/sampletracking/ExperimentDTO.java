@@ -12,7 +12,8 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "allowedProcessTypes", "entityNameType", "properties"
+        "id", "allowedProcessTypes", "entityNameType",
+        "dataFilePath"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExperimentDTO extends DTOBaseAuditable {
@@ -20,21 +21,26 @@ public class ExperimentDTO extends DTOBaseAuditable {
     private int id;
     private String name;
     private String code;
-    private String dataFile;
+    private String dataFilePath;
     private Integer projectId;
     private Integer vendorProtocolId;
     private Integer manifestId;
     private Integer status;
+    private String dataFileUrl;
 
     public ExperimentDTO() { super(GobiiEntityNameType.EXPERIMENT); }
 
     @Override
-    @GobiiEntityParam(paramName = "experimentId")
     public Integer getId() { return this.id; }
 
     @Override
-    @GobiiEntityColumn(columnName = "experiment_id")
     public void setId(Integer id) { this.id = id; }
+
+    @GobiiEntityParam(paramName = "experimentId")
+    public Integer getExperimentId() { return this.id; }
+
+    @GobiiEntityColumn(columnName = "experiment_id")
+    public void setExperimentId(Integer id) { this.id = id; }
 
     @GobiiEntityParam(paramName = "experimentName")
     public String getName() { return this.name; }
@@ -49,10 +55,14 @@ public class ExperimentDTO extends DTOBaseAuditable {
     public void setCode(String code) { this.code = code; }
 
     @GobiiEntityParam(paramName = "experimentDataFile")
-    public String getDataFile() { return this.dataFile; }
+    public String getDataFilePath() { return this.dataFilePath; }
 
     @GobiiEntityColumn(columnName = "data_file")
-    public void setDataFile(String dataFile) { this.dataFile = dataFile; }
+    public void setDataFilePath(String dataFile) { this.dataFilePath = dataFile; }
+
+    public String getDataFileUrl() { return this.dataFilePath; }
+
+    public void setDataFileUrl(String dataFile) { this.dataFilePath = dataFile; }
 
     @GobiiEntityParam(paramName = "projectId")
     public Integer getProjectId() { return this.projectId; }

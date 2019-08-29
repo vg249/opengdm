@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;

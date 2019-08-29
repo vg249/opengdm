@@ -34,6 +34,7 @@ public class DnaSampleDTO extends DTOBaseAuditable{
     private String num;
     private String wellRow;
     private String wellCol;
+    private GermplasmDTO germplasm = new GermplasmDTO();
     private Map<String, Object> properties = new HashMap<>();
 
     public DnaSampleDTO() { super(GobiiEntityNameType.DNASAMPLE); }
@@ -93,6 +94,12 @@ public class DnaSampleDTO extends DTOBaseAuditable{
 
     @GobiiEntityColumn(columnName = "sample_uuid")
     public void setSampleUuid(String sampleUuid) { this.sampleUuid = sampleUuid; }
+
+    @GobiiEntityParam(paramName = "sampleUuid")
+    public GermplasmDTO getGermplasm() { return this.germplasm; }
+
+    @GobiiEntityColumn(columnName = "sample_uuid")
+    public void setGermplasm(GermplasmDTO germplasm) { this.germplasm = germplasm; }
 
     public Map<String, Object> getProperties() {
         return this.properties;

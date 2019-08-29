@@ -15,7 +15,6 @@ public class ProjectSamplesDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public Integer projectId;
 
-    @JsonUnwrapped
     public List<DnaSampleDTO> samples;
 
 

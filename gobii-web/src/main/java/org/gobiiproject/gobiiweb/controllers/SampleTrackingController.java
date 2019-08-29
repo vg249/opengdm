@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.media.Content;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
@@ -10,11 +11,10 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.GermplasmDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
+import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -24,11 +24,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Scope(value="request")
 @RestController
@@ -69,7 +72,9 @@ public class SampleTrackingController {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/projects", method= RequestMethod.GET)
+    @ApiResponses(value={@ApiResponse(code=200, message="successful operation",
+            response=ProjectDTO.class)})
+    @RequestMapping(value="/projects", method= RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity listProjects(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
@@ -148,7 +153,7 @@ public class SampleTrackingController {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)
+    @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET, produces = "application/json")
     public @ResponseBody ResponseEntity getProjectById(
             @ApiParam(value = "ID of the Project to be extracted", required = true)
             @PathVariable Integer projectId
@@ -166,9 +171,8 @@ public class SampleTrackingController {
      * @return ResponseEntity with http status code respective of successful creation or failure.
      * Response body contains created resource if project creation is successful.
      */
-
     @ApiOperation(
-            value = "Creates a new project",
+            value = "Create a new project",
             notes = "Creates a new project in the system.",
             tags = {"Projects"},
             extensions = {
@@ -187,8 +191,7 @@ public class SampleTrackingController {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
                 paramType = "header", dataType = "string")
     })
-
-    @RequestMapping(value="/projects", method=RequestMethod.POST)
+    @RequestMapping(value="/projects", method=RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity createProject(
             @ApiParam(required = true)
             @RequestBody ProjectDTO newProject) {
@@ -196,8 +199,22 @@ public class SampleTrackingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
-    @RequestMapping(value="/experiments", method=RequestMethod.GET)
+    @ApiOperation(
+            value = "List all experiments",
+            notes = "List of all Experiments.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
+    @ApiResponses(value={@ApiResponse(code=200, message="successful operation",
+            response=ExperimentDTO.class)})
+    @RequestMapping(value="/experiments", method=RequestMethod.GET, produces="application/json")
     public @ResponseBody ResponseEntity listExperiments(
             HttpServletRequest request,
             HttpServletResponse response) {
@@ -213,13 +230,38 @@ public class SampleTrackingController {
         }
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
-    @RequestMapping(value="/experiments", method=RequestMethod.POST)
+
+    @ApiOperation(
+            value = "Create a new experiment",
+            notes = "Creates a new experiment in the system.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A Experiment"
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="experimentMetaData", value="The file to be uploaded",
+                    required = true, dataType = "string",
+                    paramType = "formData"),
+            @ApiImplicitParam(name="dataFile", value="The file to be uploaded",
+                    dataType = "string", paramType = "formData"),
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/experiments", method=RequestMethod.POST, consumes="multipart/form-data")
     public @ResponseBody ResponseEntity createExperiment(
-            @RequestBody ExperimentDTO newExperiment,
+            @ApiParam(hidden = true)
+            @RequestPart(name = "dataFile", required = false) MultipartFile dataFile,
+            @ApiParam(hidden = true)
+            @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment,
             HttpServletRequest request,
             HttpServletResponse response){
-
         try {
             sampleTrackingExperimentService.createExperiment(newExperiment);
             return ResponseEntity.ok(newExperiment);
@@ -228,8 +270,22 @@ public class SampleTrackingController {
         }
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
-    @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
+    @ApiOperation(
+            value = "Get an experiment by experimentId",
+            notes = "Retrieves the Experiment entity having the specified ID.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiment : experimentId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string"),
+    })
+    @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET,
+            produces = "application/json")
     public @ResponseBody ResponseEntity getExperimentById(
             @PathVariable Integer experimentId,
             HttpServletRequest request,
@@ -248,26 +304,134 @@ public class SampleTrackingController {
         }
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
-    @RequestMapping(value = "/projects/{projectId:[\\d]+}/samples", method=RequestMethod.POST)
+    @ApiOperation(
+            value = "Create a new samples",
+            notes = "Creates a new samples in the system.",
+            tags = {"Samples"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Samples"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Samples"
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/samples", method=RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity createSamples(
-        @RequestBody ProjectSamplesDTO newProjectSamples,
-        @PathVariable Integer projectId,
-        HttpServletRequest request,
-        HttpServletResponse response) {
-
+        @RequestBody ProjectSamplesDTO newProjectSamples) {
         try {
-            //ProjectSamplesDTO createdProjectSamples = .createSamples(newProjectSamples);
-            newProjectSamples.setProjectId(projectId);
             return ResponseEntity.status(HttpStatus.CREATED).body(newProjectSamples);
-
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
         }
-
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
+    @ApiOperation(
+            value = "Upload new samples",
+            notes = "Creates a new samples in the system.",
+            tags = {"Samples"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Upload Samples"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Samples"
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="sampleMetaData", value="The file to be uploaded",
+                    dataType = "string", paramType = "formData"),
+            @ApiImplicitParam(name="sampleFile", value="The file to be uploaded",
+                    dataType = "string", paramType = "formData", required = true),
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/samples/upload", method=RequestMethod.POST, consumes = "multipart/form-data")
+    public @ResponseBody ResponseEntity uploadSamples(
+            @ApiParam(hidden = true)
+            @RequestPart("sampleFile") MultipartFile sampleFile,
+            @ApiParam(hidden = true)
+            @RequestPart("sampleMetaData") Map<String, String> sampleMetaData) {
+        try {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+    }
+
+    @ApiOperation(
+            value = "Create a new dataset",
+            notes = "Creates a new dataset in the system.",
+            tags = {"Dataset"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Dataset"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Dataset"
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/dataset", method=RequestMethod.POST, consumes = "application/json")
+    public @ResponseBody ResponseEntity createDataset(@RequestBody DataSetDTO dataset) {
+        try {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+    }
+
+    @ApiOperation(
+            value = "Upload data to dataset",
+            notes = "Upload data to the dataset.",
+            tags = {"Dataset"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Upload Data"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Dataset"
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="datasetMetaData", value="Metadata associated with data",
+                    dataType = "string", paramType = "formData", required = true),
+            @ApiImplicitParam(name="genotypeFile", value="The file to be uploaded",
+                    dataType = "string", paramType = "formData", required = true),
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/dataset/{datasetId}/data", method=RequestMethod.POST, consumes = "multipart/form-data")
+    public @ResponseBody ResponseEntity uploadDatasetData(
+            @ApiParam(hidden = true)
+            @RequestPart("genotypeFile") MultipartFile genotypeFile,
+            @ApiParam(hidden = true)
+            @RequestPart("genotypeMetaData") DataSetDataDTO datasetMetaData,
+            @PathVariable Integer datasetId) {
+        try {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+    }
+
+
+    @ApiOperation(value="dummy", hidden = true)
     @RequestMapping(value = "/germplasm", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity createGermplasm(
             @RequestBody GermplasmListDTO germplasmListDTO,
@@ -287,10 +451,9 @@ public class SampleTrackingController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
         }
-
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
+    @ApiOperation(value="dummy", hidden = true)
     @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity listGermplasms(
             HttpServletRequest request,
@@ -298,6 +461,14 @@ public class SampleTrackingController {
         try {
 
             List<GermplasmDTO> germplasmDTOList = new ArrayList<>();
+
+            GermplasmDTO germplasmDTO = new GermplasmDTO();
+            germplasmDTO.setName("foo germplasm");
+            germplasmDTO.setExternalCode("external bar code");
+            germplasmDTO.setSpeciesName("foo species");
+            germplasmDTO.setTypeName("foo type");
+
+            germplasmDTOList.add(germplasmDTO);
 
             return ResponseEntity.ok(germplasmDTOList);
 
@@ -307,7 +478,7 @@ public class SampleTrackingController {
 
     }
 
-    @ApiOperation(value="List Experiments", hidden = true)
+    @ApiOperation(value="dummy", hidden = true)
     @RequestMapping(value = "/germplasm/{germplasmId:[\\d]+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity listGermplasms(
             @PathVariable Integer germplasmId,
@@ -324,5 +495,7 @@ public class SampleTrackingController {
         }
 
     }
+
+
 
 }
