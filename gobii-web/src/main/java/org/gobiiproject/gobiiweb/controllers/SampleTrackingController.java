@@ -56,7 +56,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "List all projects",
             notes = "List of all Projects.",
-            tags = {"Projects"},
+            tags = {"Project"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Projects")
@@ -140,7 +140,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "Get a project by projectId",
             notes = "Retrieves the Project entity having the specified ID.",
-            tags = {"Projects"},
+            tags = {"Project"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Projects : projectId")
@@ -175,7 +175,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "Create new project",
             notes = "Creates a new project in the system.",
-            tags = {"Projects"},
+            tags = {"Project"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Projects")
@@ -209,7 +209,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "List all experiments",
             notes = "List of all Experiments.",
-            tags = {"Experiments"},
+            tags = {"Experiment"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Experiments")
@@ -253,7 +253,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "Create new experiment",
             notes = "Creates new experiment in the system.",
-            tags = {"Experiments"},
+            tags = {"Experiment"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Experiments"),
@@ -295,7 +295,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "Get an experiment by experimentId",
             notes = "Retrieves the Experiment entity having the specified ID.",
-            tags = {"Experiments"},
+            tags = {"Experiment"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Experiment : experimentId")
@@ -341,7 +341,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "Create new samples",
             notes = "Creates a new samples in the system.",
-            tags = {"Samples"},
+            tags = {"Sample"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Samples")
@@ -376,7 +376,7 @@ public class SampleTrackingController {
     @ApiOperation(
             value = "Upload new samples",
             notes = "Creates a new samples in the system.",
-            tags = {"Samples"},
+            tags = {"Sample"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Upload Samples"),

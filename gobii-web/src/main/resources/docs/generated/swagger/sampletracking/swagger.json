@@ -14,11 +14,11 @@
   "tags" : [ {
     "name" : "Dataset"
   }, {
-    "name" : "Experiments"
+    "name" : "Experiment"
   }, {
-    "name" : "Projects"
+    "name" : "Project"
   }, {
-    "name" : "Samples"
+    "name" : "Sample"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
@@ -93,7 +93,7 @@
     },
     "/sample-tracking/v1/experiments" : {
       "get" : {
-        "tags" : [ "Experiments" ],
+        "tags" : [ "Experiment" ],
         "summary" : "List all experiments",
         "description" : "List of all Experiments.",
         "operationId" : "listExperiment",
@@ -133,7 +133,7 @@
         "x-summary" : "Experiments"
       },
       "post" : {
-        "tags" : [ "Experiments" ],
+        "tags" : [ "Experiment" ],
         "summary" : "Create new experiment",
         "description" : "Creates new experiment in the system.",
         "operationId" : "createExperiment",
@@ -167,7 +167,7 @@
     },
     "/sample-tracking/v1/experiments/{experimentId}" : {
       "get" : {
-        "tags" : [ "Experiments" ],
+        "tags" : [ "Experiment" ],
         "summary" : "Get an experiment by experimentId",
         "description" : "Retrieves the Experiment entity having the specified ID.",
         "operationId" : "getExperimentById",
@@ -196,7 +196,7 @@
     },
     "/sample-tracking/v1/projects" : {
       "get" : {
-        "tags" : [ "Projects" ],
+        "tags" : [ "Project" ],
         "summary" : "List all projects",
         "description" : "List of all Projects.",
         "operationId" : "listProjects",
@@ -236,7 +236,7 @@
         "x-summary" : "Projects"
       },
       "post" : {
-        "tags" : [ "Projects" ],
+        "tags" : [ "Project" ],
         "summary" : "Create new project",
         "description" : "Creates a new project in the system.",
         "operationId" : "createProject",
@@ -265,7 +265,7 @@
     },
     "/sample-tracking/v1/projects/{projectId}" : {
       "get" : {
-        "tags" : [ "Projects" ],
+        "tags" : [ "Project" ],
         "summary" : "Get a project by projectId",
         "description" : "Retrieves the Project entity having the specified ID.",
         "operationId" : "getProjectById",
@@ -295,7 +295,7 @@
     },
     "/sample-tracking/v1/samples" : {
       "post" : {
-        "tags" : [ "Samples" ],
+        "tags" : [ "Sample" ],
         "summary" : "Create new samples",
         "description" : "Creates a new samples in the system.",
         "operationId" : "createSamples",
@@ -324,7 +324,7 @@
     },
     "/sample-tracking/v1/samples/upload" : {
       "post" : {
-        "tags" : [ "Samples" ],
+        "tags" : [ "Sample" ],
         "summary" : "Upload new samples",
         "description" : "Creates a new samples in the system.",
         "operationId" : "uploadSamples",

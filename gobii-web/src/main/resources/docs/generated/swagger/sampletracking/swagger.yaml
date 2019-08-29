@@ -14,9 +14,9 @@ host: "cbsugobiixvm11.biohpc.cornell.edu:8081"
 basePath: "/gobii-dev"
 tags:
 - name: "Dataset"
-- name: "Experiments"
-- name: "Projects"
-- name: "Samples"
+- name: "Experiment"
+- name: "Project"
+- name: "Sample"
 schemes:
 - "http"
 paths:
@@ -81,7 +81,7 @@ paths:
   /sample-tracking/v1/experiments:
     get:
       tags:
-      - "Experiments"
+      - "Experiment"
       summary: "List all experiments"
       description: "List of all Experiments."
       operationId: "listExperiment"
@@ -115,7 +115,7 @@ paths:
       x-summary: "Experiments"
     post:
       tags:
-      - "Experiments"
+      - "Experiment"
       summary: "Create new experiment"
       description: "Creates new experiment in the system."
       operationId: "createExperiment"
@@ -144,7 +144,7 @@ paths:
   /sample-tracking/v1/experiments/{experimentId}:
     get:
       tags:
-      - "Experiments"
+      - "Experiment"
       summary: "Get an experiment by experimentId"
       description: "Retrieves the Experiment entity having the specified ID."
       operationId: "getExperimentById"
@@ -169,7 +169,7 @@ paths:
   /sample-tracking/v1/projects:
     get:
       tags:
-      - "Projects"
+      - "Project"
       summary: "List all projects"
       description: "List of all Projects."
       operationId: "listProjects"
@@ -203,7 +203,7 @@ paths:
       x-summary: "Projects"
     post:
       tags:
-      - "Projects"
+      - "Project"
       summary: "Create new project"
       description: "Creates a new project in the system."
       operationId: "createProject"
@@ -227,7 +227,7 @@ paths:
   /sample-tracking/v1/projects/{projectId}:
     get:
       tags:
-      - "Projects"
+      - "Project"
       summary: "Get a project by projectId"
       description: "Retrieves the Project entity having the specified ID."
       operationId: "getProjectById"
@@ -253,7 +253,7 @@ paths:
   /sample-tracking/v1/samples:
     post:
       tags:
-      - "Samples"
+      - "Sample"
       summary: "Create new samples"
       description: "Creates a new samples in the system."
       operationId: "createSamples"
@@ -277,7 +277,7 @@ paths:
   /sample-tracking/v1/samples/upload:
     post:
       tags:
-      - "Samples"
+      - "Sample"
       summary: "Upload new samples"
       description: "Creates a new samples in the system."
       operationId: "uploadSamples"
