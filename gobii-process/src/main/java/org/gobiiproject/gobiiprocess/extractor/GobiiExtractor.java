@@ -765,6 +765,10 @@ public class GobiiExtractor {
                     ErrorLogger.logInfo("QC", "Empty JSON payload");
                 } else {
                     Long qcJobID = jsonPayload.get("jobId").getAsLong();
+
+                    //Fix GSD-86 - qcJobID reported by KDC UI is one lower than this number.
+	                qcJobID--;
+
                     ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
                     ProcessMessage qcStartPm = new ProcessMessage();
                     qcStartPm.setUser(inst.getContactEmail());
