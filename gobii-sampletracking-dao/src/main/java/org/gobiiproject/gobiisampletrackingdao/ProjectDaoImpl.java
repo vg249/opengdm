@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.entity.Project;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +24,7 @@ public class ProjectDaoImpl implements ProjectDAO {
 
         ProjectDTO projectDTO = new ProjectDTO();
 
-        List<ProjectDTO> listProject = em
+        List<Project> listProject = em
                 .createNativeQuery("SELECT project.name FROM project WHERE project_id = ?")
                 .setParameter(1, projectId)
                 .getResultList();

@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.entity;
 
-public class Person extends BaseEntity {
+public class Project extends BaseEntity {
 
     public Integer projectId;
 
