@@ -23,7 +23,7 @@ public class ProjectDaoImpl implements ProjectDAO {
 
         ProjectDTO projectDTO = new ProjectDTO();
 
-        List<?> listProject = em
+        List<ProjectDTO> listProject = em
                 .createNativeQuery("SELECT project.name FROM project WHERE project_id = ?")
                 .setParameter(1, projectId)
                 .getResultList();
