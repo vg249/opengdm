@@ -191,6 +191,9 @@ class ConfigValues {
     @Element(required = false)
     private boolean isProvidesBackend = true;
 
+    @Element(required = false)
+    private String versionFilePath;
+
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
     }
@@ -661,5 +664,11 @@ class ConfigValues {
 
     public void setGlobalServersByServerType(Map<ServerType, ServerConfig> globalServersByServerType) {
         this.globalServersByServerType = globalServersByServerType;
+    }
+    public void setVersionFilePath(String versionFilePath){
+        this.versionFilePath=versionFilePath;
+    }
+    public String getVersionFilePath(){
+        return versionFilePath;
     }
 }

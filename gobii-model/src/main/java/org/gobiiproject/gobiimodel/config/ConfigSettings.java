@@ -395,5 +395,11 @@ public class ConfigSettings {
 
     public void setEmailAuth(String auth){ this.configValues.setEmailAuthType(auth);}
 
+    public void setVersionFilePath(String versionFilePath){
+        this.configValues.setVersionFilePath(versionFilePath);
+    }
+    public String getVersionFilePath(){
+        return this.configValues.getVersionFilePath();
+    }
 
 }
