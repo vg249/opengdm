@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,15 @@ public class ProjectDaoImpl implements ProjectDao {
     protected EntityManager em;
 
     @Override
+    @Transactional
     public Integer createProject(Project newProject) {
+
+        em.persist(newProject);
+
+        em.getTransaction().commit();
+
         return 0;
+
     }
 
     @Override

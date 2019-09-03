@@ -3,35 +3,59 @@ package org.gobiiproject.gobiimodel.entity.JpaConverters;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.postgresql.util.PGobject;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.sql.Types;
 
 /**
  * JPA convertor class to convert Postgresql Database json string to jackson Json Node and vice versa.
  */
 @Converter
-public class JsonbConverter implements AttributeConverter<JsonNode, String> {
+public class JsonbConverter implements AttributeConverter<JsonNode, Object> {
 
     /**
      * Converts json node to string.
-     * @param jsonObject - Jackson Json Node
+     * @param jsonNode - Jackson Json Node
      * @return
      */
     @Override
-    public String convertToDatabaseColumn(JsonNode jsonObject) {
-        return jsonObject.toString();
+    public Object convertToDatabaseColumn(JsonNode jsonNode) {
+
+        String jsonString = "{}";
+
+        if(jsonNode != null) {
+            jsonString = jsonNode.toString();
+        }
+
+        try {
+
+            PGobject jsonObject = new PGobject();
+
+            jsonObject.setType("jsonb");
+
+            jsonObject.setValue(jsonString);
+
+            return jsonObject;
+        }
+        catch(Exception e) {
+            throw new GobiiException("Conversion of jsonb database column failed");
+        }
+
     }
 
     /**
      * Converts json string to jackson json node.
-     * @param jsonString - Json string.
+     * @param jsonObject - Postgres jsonb object.
      * @return
      */
     @Override
-    public JsonNode convertToEntityAttribute(String jsonString) {
+    public JsonNode convertToEntityAttribute(Object jsonObject) {
 
         try {
+
+            String jsonString = ((PGobject) jsonObject).getValue();
 
             ObjectMapper objectMapper = new ObjectMapper();
 

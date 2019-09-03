@@ -24,8 +24,24 @@ public class ProjectDaoTest {
         Project project = projectDao.getProjectById(1);
 
         assertTrue(project.getProjectId() > 0);
+
         assertTrue(project.getProjectId().equals(1));
 
+
+    }
+
+    @Test
+    public void createNewProject() {
+
+        Project newProject = new Project();
+
+        newProject.setPiContactId(1);
+
+        newProject.setProjectName("test");
+
+        newProject.setProjectStatus(1);
+
+        projectDao.createProject(newProject);
 
     }
 

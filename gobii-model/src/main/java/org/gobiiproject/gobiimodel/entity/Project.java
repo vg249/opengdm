@@ -3,17 +3,25 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 
 /**
  * Model for Project Entity.
+ * Represents the database table project.
+ *
+ * props - is a jsonb column. It is converted to jackson.fasterxml JsonNode using a
+ * user defined hibernate converter class.
  */
 @Entity
+@Table(name = "project")
 public class Project extends BaseEntity {
 
     @Id
     @Column(name="project_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer projectId;
 
     @Column(name="name")
@@ -31,7 +39,7 @@ public class Project extends BaseEntity {
     @Column(name="status")
     public Integer projectStatus;
 
-    @Column(name="props")
+    @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
     public JsonNode properties;
 
