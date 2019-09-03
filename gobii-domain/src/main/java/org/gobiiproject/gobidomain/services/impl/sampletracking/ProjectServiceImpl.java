@@ -3,22 +3,19 @@ package org.gobiiproject.gobidomain.services.impl.sampletracking;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiisampletrackingdao.ProjectDAO;
+import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
@@ -32,7 +29,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     private ContactService contactService;
 
     @Autowired
-    private ProjectDAO projectDao;
+    private ProjectDao projectDao;
 
     @Override
     public ProjectDTO createProject(ProjectDTO newProject) throws GobiiDomainException {
@@ -120,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         ProjectDTO returnVal;
         try {
 
-            ProjectDTO pD = projectDao.getProjectById(projectId);
+            Project project = projectDao.getProjectById(projectId);
 
             returnVal = dtoMapSampleTrackingProject.get(projectId);
 

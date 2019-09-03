@@ -987,14 +987,19 @@
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSourceMulti"/>
-        <property name="packagesToScan" value="org.gobiiproject.gobiidao.entity"/>
+        <property name="packagesToScan">
+            <array>
+                <value>org.gobiiproject.gobiidao.entity</value>
+                <value>org.gobiiproject.gobiimodel.entity</value>
+            </array>
+        </property>
         <property name="mappingResources" value="META_INF/mapping.xml"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.gobiiproject.gobiisampletrackingdao.hibernate.PostgreSQL9JsonDialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
             </props>
         </property>
     </bean>

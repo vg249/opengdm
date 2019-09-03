@@ -1,20 +1,39 @@
 package org.gobiiproject.gobiimodel.entity;
 
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+
+import javax.persistence.*;
+
+/**
+ * Model for Project Entity.
+ */
+@Entity
 public class Project extends BaseEntity {
 
+    @Id
+    @Column(name="project_id")
     public Integer projectId;
 
+    @Column(name="name")
     public String projectName;
 
+    @Column(name="pi_contact")
     public Integer piContactId;
 
+    @Column(name="code")
     public String projectCode;
 
+    @Column(name="description")
     public String projectDescription;
 
-    public String projectStatus;
+    @Column(name="status")
+    public Integer projectStatus;
 
-    public String properties;
+    @Column(name="props")
+    @Convert(converter = JsonbConverter.class)
+    public JsonNode properties;
 
     public Integer getProjectId() {
         return this.projectId;
@@ -42,6 +61,7 @@ public class Project extends BaseEntity {
     }
 
     public String getProjectCode() {
+
         return this.projectCode;
     }
 
@@ -57,19 +77,19 @@ public class Project extends BaseEntity {
         this.projectDescription = projectDescription;
     }
 
-    public String getProjectStatus() {
+    public Integer getProjectStatus() {
         return this.projectStatus;
     }
 
-    public void setProjectStatus(String projectStatus) {
+    public void setProjectStatus(Integer projectStatus) {
         this.projectStatus = projectStatus;
     }
 
-    public String getProperties() {
+    public JsonNode getProperties() {
         return this.properties;
     }
 
-    public void setProperties(String properties) {
+    public void setProperties(JsonNode properties) {
         this.properties = properties;
     }
 
