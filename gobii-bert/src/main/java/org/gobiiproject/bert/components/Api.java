@@ -1,41 +1,84 @@
 package org.gobiiproject.bert.components;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ernie.core.Action;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
+import ernie.core.Clean;
+import ernie.core.Verify;
+import org.gobiiproject.bert.ApiUtil;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.*;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 
 import static org.gobiiproject.bert.ApiUtil.*;
 
 public class Api {
 
+	private static final String HEADER_USERNAME = "X-Username";
+	private static final String HEADER_PASSWORD = "X-Password";
+	private static final String HEADER_AUTH_TOKEN = "X-Auth-Token";
+
+	private static final String URL_AUTH = "%s/auth";
 	private static final String URL_PING = "%s/ping";
 	private static final String URL_CONTACT_SEARCH = "%s/contact-search";
 	private static final String URL_PROJECT = "%s/projects";
 	private static final String URL_EXPERIMENTS = "%s/experiments";
 	private static final String URL_PROTOCOLS = "%s/protocols";
 	private static final String URL_PLATFORMS = "%s/platforms";
-
-	private static final String PROJECT_JSON_TEMPLATE = "{\"projectName\": %s}";
-	private static final String PROTOCOL_JSON_TEMPLATE = "{\"protocolName\": %s}";
-	private static final String PLATFORM_JSON_TEMPLATE = "{\"platformName\": %s}";
-	private static final String EXPERIMENT_JSON_TEMPLATE = "{\"projectId\": %s, \"experimentName\": %s}";
+	private static final String URL_VENDOR_PROTOCOL = "%s/protocols/%s/vendors";
+	private static final String URL_ORGANIZATIONS = "%s/organizations";
 
 	private String url;
+	private String authToken;
+	private String user;
+	private String password;
 
-	private String url(String endpoint) {
-		return String.format(endpoint, url);
+	private String url(String endpoint, Object ... params) {
+		Object[] params1 = new Object[params.length + 1];
+		params1[0] = url;
+		System.arraycopy(params, 0, params1, 1, params.length);
+		return String.format(endpoint, params1);
+	}
+
+	private HttpHeaders authHeader() {
+		return headers(HEADER_AUTH_TOKEN, authToken, HEADER_USERNAME, user, HEADER_PASSWORD, password);
 	}
 
 	@Action("host")
-	public void host(String url) {
-
-		post(url(URL_PING), "", JsonNode.class);
-
+	public ResponseEntity<AuthDTO> host(String url, String user, String password) {
 		this.url = url;
+		ResponseEntity<AuthDTO> response = post(url(URL_AUTH),
+				headers(HEADER_USERNAME, user,
+						HEADER_PASSWORD, password),
+				AuthDTO.class);
+
+		return response;
+	}
+
+	@Verify("host")
+	public boolean verifyHost(ResponseEntity<AuthDTO> response, String url, String user, String password) {
+		String authToken = response.getHeaders().get(HEADER_AUTH_TOKEN).get(0);
+
+		ResponseEntity<PingDTO> pingResponse = post(url(URL_PING), headers(HEADER_AUTH_TOKEN, authToken),
+													 PingDTO.class, new PingDTO());
+
+		if (HttpStatus.OK.equals(response.getStatusCode())
+			&& HttpStatus.OK.equals(pingResponse.getStatusCode())) {
+			this.authToken = authToken;
+			this.user = user;
+			this.password = password;
+			return true;
+		}
+		return true;
 	}
 
 	@Action("principalInvestigator")
@@ -46,54 +89,151 @@ public class Api {
 		ResponseEntity<JsonNode> response;
 
 		if (tokens.length == 1) {
-			response = get(url(URL_CONTACT_SEARCH), JsonNode.class,
+			response = get(url(URL_CONTACT_SEARCH), authHeader(), JsonNode.class,
 					"firstName", tokens[0]);
 		} else if (tokens.length == 2) {
-			response = get(url(URL_CONTACT_SEARCH), JsonNode.class,
+			response = get(url(URL_CONTACT_SEARCH), authHeader(), JsonNode.class,
 					"firstName", tokens[0], "lastName", tokens[1]);
 		} else {
 			throw new Exception("Principal Investigator should be provide a first name, or a first name and a last name");
 		}
 
-		return response.getBody().get("payload").get("data").get(0).get("contactId").asInt();
+		return getIn(response.getBody(), "payload", "data", 0, "contactId").asInt();
 	}
 
 	@Action("project")
-	public ProjectDTO createProject(Integer principalInvestigatorId, String name) {
+	public ProjectDTO createProject(Long principalInvestigatorId, String name) throws Exception {
 
-		String json = makeEnvelopeJson(PROJECT_JSON_TEMPLATE, name);
+		ProjectDTO project = new ProjectDTO();
+		project.setCreatedBy(1);
+		project.setProjectName(name);
+		project.setProjectCode("_" + name);
+		project.setModifiedBy(1);
+		project.setCreatedBy(1);
+		project.setProjectStatus(1);
+		project.setPiContact(principalInvestigatorId.intValue());
 
-		ResponseEntity<JsonNode> response = post(url(URL_PROJECT), json, JsonNode.class);
+		PayloadEnvelope<ProjectDTO> envelope = new PayloadEnvelope<>(project, GobiiProcessType.CREATE);
 
-		return result(response, ProjectDTO.class);
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_PROJECT), authHeader(), JsonNode.class, envelope);
+			return result(response, ProjectDTO.class);
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
 	}
 
 	@Action("protocol")
-	public ProtocolDTO createProtocol(String name) {
-		String json = makeEnvelopeJson(PROTOCOL_JSON_TEMPLATE, name);
+	public ProtocolDTO createProtocol(PlatformDTO platform, String name) throws Exception {
 
-		ResponseEntity<JsonNode> response = post(url(URL_PROTOCOLS), json, JsonNode.class);
+		ProtocolDTO protocol = new ProtocolDTO();
 
-		return result(response, ProtocolDTO.class);
+		protocol.setName(name);
+		protocol.setPlatformId(platform.getId());
+		protocol.setModifiedBy(1);
+		protocol.setCreatedBy(1);
+		protocol.setTypeId(1);
+		protocol.setStatus(1);
+
+		PayloadEnvelope<ProtocolDTO> envelope = new PayloadEnvelope<>(protocol, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_PROTOCOLS), authHeader(), JsonNode.class, envelope);
+			return result(response, ProtocolDTO.class);
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
 	}
 
 	@Action("platform")
-	public PlatformDTO createPlatform(String name) {
-		String json = makeEnvelopeJson(PLATFORM_JSON_TEMPLATE, name);
+	public PlatformDTO createPlatform(String name) throws Exception {
 
-		ResponseEntity<JsonNode> response = post(url(URL_PLATFORMS), json, JsonNode.class);
+		PlatformDTO platform = new PlatformDTO();
+		platform.setPlatformName(name);
+		platform.setPlatformCode(name);
+		platform.setModifiedBy(1);
+		platform.setCreatedBy(1);
+		platform.setStatusId(1);
+		platform.setTypeId(1);
 
-		return result(response, PlatformDTO.class);
+		PayloadEnvelope<PlatformDTO> envelope = new PayloadEnvelope<>(platform, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_PLATFORMS), authHeader(), JsonNode.class, envelope);
+			return result(response, PlatformDTO.class);
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
 	}
 
 	@Action("experiment")
-	public ExperimentDTO createExperiment(ProjectDTO project, String name) {
+	public ExperimentDTO createExperiment(ProjectDTO project, String name, ProtocolDTO protocol) throws Exception {
 
-		String json = makeEnvelopeJson(EXPERIMENT_JSON_TEMPLATE, project.getId(), name);
+		ExperimentDTO experiment = new ExperimentDTO();
+		experiment.setExperimentName(name);
+		experiment.setExperimentCode(name);
+		experiment.setProjectId(project.getId());
+		experiment.setModifiedBy(1);
+		experiment.setCreatedBy(1);
+		experiment.setStatusId(1);
 
-		ResponseEntity<JsonNode> response = post(url(URL_EXPERIMENTS), json, JsonNode.class);
+		PayloadEnvelope<ExperimentDTO> envelope = new PayloadEnvelope<>(experiment, GobiiProcessType.CREATE);
 
-		return result(response, ExperimentDTO.class);
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_EXPERIMENTS), authHeader(), JsonNode.class, envelope);
+			return result(response, ExperimentDTO.class);
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
 	}
 
+	@Action("organization")
+	public OrganizationDTO organization(String name) throws Exception{
+		OrganizationDTO organization = new OrganizationDTO();
+
+		organization.setName(name);
+		organization.setStatusId(1);
+		organization.setAddress("");
+		organization.setWebsite("");
+		organization.setCreatedBy(1);
+		organization.setModifiedBy(1);
+
+		PayloadEnvelope<OrganizationDTO> envelope = new PayloadEnvelope<>(organization, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_ORGANIZATIONS), authHeader(), JsonNode.class, envelope);
+			return result(response, OrganizationDTO.class);
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("vendorProtocol")
+	public VendorProtocolDTO vendorProtocol(OrganizationDTO vendor, ProtocolDTO protocol) throws Exception {
+
+		try {
+			PayloadEnvelope<OrganizationDTO> envelope = new PayloadEnvelope<>(vendor, GobiiProcessType.CREATE);
+			ResponseEntity<JsonNode> response = post(url(URL_VENDOR_PROTOCOL, protocol.getId()), authHeader(), JsonNode.class, envelope);
+			OrganizationDTO updatedVendor = result(response, OrganizationDTO.class);
+			
+			return updatedVendor.getVendorProtocols().stream()
+					.filter(vp -> vp.getProtocolId().equals(protocol.getId()))
+					.findFirst().get();
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+	
+	public void printHttpError(HttpServerErrorException e) throws Exception {
+		JsonNode json = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
+		for (JsonNode j : ApiUtil.getIn(json, "header", "status", "statusMessages")) {
+			System.out.println(j.get("message").asText().replace("\\n", "\n"));
+		}
+	}
 }
