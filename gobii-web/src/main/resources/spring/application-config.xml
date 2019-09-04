@@ -77,6 +77,9 @@
     <bean id="spRunnerCallable"
           class="org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable"/>
 
+    <bean id="spWorker"
+          class="org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker"/>
+
 
     <!-- **** Ping Beans *************************************** -->
     <bean id="dbMetaData"

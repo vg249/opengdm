@@ -37,11 +37,13 @@ public class ProjectDaoTest {
 
         newProject.setPiContactId(1);
 
-        newProject.setProjectName("test");
+        newProject.setProjectName("test3");
 
         newProject.setProjectStatus(1);
 
-        projectDao.createProject(newProject);
+        Integer newProjectId = projectDao.createProject(newProject);
+
+        assertTrue(newProjectId > 0);
 
     }
 

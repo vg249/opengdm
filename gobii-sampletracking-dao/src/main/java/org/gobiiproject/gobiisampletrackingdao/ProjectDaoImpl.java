@@ -3,11 +3,14 @@ package org.gobiiproject.gobiisampletrackingdao;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.spworkers.SpDef;
+import org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,15 +22,38 @@ public class ProjectDaoImpl implements ProjectDao {
     @PersistenceContext
     protected EntityManager em;
 
+    @Autowired
+    protected SpWorker spWorker;
+
     @Override
     @Transactional
     public Integer createProject(Project newProject) {
 
-        em.persist(newProject);
+        Integer returnVal = 0;
 
-        em.getTransaction().commit();
+        try {
 
-        return 0;
+            SpDef spDef = new SpDef("{call createproject(?,?,?,?,?,?,?,?,?)}")
+                    .addParamDef(1, String.class, newProject.projectName)
+                    .addParamDef(2, String.class, newProject.projectCode)
+                    .addParamDef(3, String.class, newProject.projectDescription)
+                    .addParamDef(4, Integer.class, newProject.piContactId)
+                    .addParamDef(5, Integer.class, newProject.createdBy)
+                    .addParamDef(6, Date.class, newProject.createdDate)
+                    .addParamDef(7, Integer.class, newProject.modifiedBy)
+                    .addParamDef(8, Date.class, newProject.modifiedDate)
+                    .addParamDef(9, Integer.class, newProject.projectStatus);
+
+            spWorker.run(spDef);
+
+            returnVal = spWorker.getResult();
+
+        }
+        catch(Exception e) {
+
+        }
+
+        return returnVal;
 
     }
 
