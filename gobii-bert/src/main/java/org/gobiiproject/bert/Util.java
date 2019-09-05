@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Util {
 
-	public static <T> Map<T, T> map(Map<T, T> map, T ... ts) {
+	public static <T> Map<T, T> into(Map<T, T> map, T ... ts) {
 		if (! (ts.length % 2 == 0)) {
 			throw new RuntimeException("An uneven number of key/values provided to Util.map");
 		}
@@ -20,7 +20,7 @@ public class Util {
 	}
 
 	public static <T> Map<T,T> map(T ... ts) {
-		return map(new HashMap<>(), ts);
+		return into(new HashMap<>(), ts);
 	}
 
 	public static <S,T> Map<S, T> zipMap(List<S> keys, List<T> vals) {

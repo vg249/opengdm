@@ -1,52 +1,59 @@
-package org.gobiiproject.bert.components;
+package org.gobiiproject.bert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcraft.jsch.JSchException;
 import ernie.core.Action;
 import ernie.core.Clean;
 import ernie.core.Verify;
-import org.gobiiproject.bert.ApiUtil;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.*;
-import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
 
-import static org.gobiiproject.bert.ApiUtil.*;
+import java.io.IOException;
+import java.util.Date;
 
-public class Api {
+import static org.gobiiproject.bert.ComponentsUtil.*;
+
+public class Components {
 
 	private static final String HEADER_USERNAME = "X-Username";
 	private static final String HEADER_PASSWORD = "X-Password";
 	private static final String HEADER_AUTH_TOKEN = "X-Auth-Token";
 
-	private static final String URL_AUTH = "%s/auth";
-	private static final String URL_PING = "%s/ping";
-	private static final String URL_CONTACT_SEARCH = "%s/contact-search";
-	private static final String URL_PROJECT = "%s/projects";
-	private static final String URL_EXPERIMENTS = "%s/experiments";
-	private static final String URL_PROTOCOLS = "%s/protocols";
-	private static final String URL_PLATFORMS = "%s/platforms";
-	private static final String URL_VENDOR_PROTOCOL = "%s/protocols/%s/vendors";
-	private static final String URL_ORGANIZATIONS = "%s/organizations";
+	private static final String URL_BASE = "%s:%s%s";
 
-	private String url;
+	private static final String URL_AUTH = "/auth";
+	private static final String URL_PING = "/ping";
+	private static final String URL_CONTACT_SEARCH = "/contact-search";
+	private static final String URL_PROJECT = "/projects";
+	private static final String URL_EXPERIMENTS = "/experiments";
+	private static final String URL_PROTOCOLS = "/protocols";
+	private static final String URL_PLATFORMS = "/platforms";
+	private static final String URL_VENDOR_PROTOCOL = "/protocols/%s/vendors";
+	private static final String URL_ORGANIZATIONS = "/organizations";
+	private static final String URL_JOBS = "/jobs";
+
+	private String host;
+	private Long port;
+	private String path;
 	private String authToken;
 	private String user;
 	private String password;
 
 	private String url(String endpoint, Object ... params) {
-		Object[] params1 = new Object[params.length + 1];
-		params1[0] = url;
-		System.arraycopy(params, 0, params1, 1, params.length);
-		return String.format(endpoint, params1);
+		return String.format(String.format(URL_BASE, host, port, path) + endpoint, params);
 	}
 
 	private HttpHeaders authHeader() {
@@ -54,8 +61,10 @@ public class Api {
 	}
 
 	@Action("host")
-	public ResponseEntity<AuthDTO> host(String url, String user, String password) {
-		this.url = url;
+	public ResponseEntity<AuthDTO> host(String host, Long port, String path, String user, String password) {
+		this.host = host;
+		this.port = port;
+		this.path = path;
 		ResponseEntity<AuthDTO> response = post(url(URL_AUTH),
 				headers(HEADER_USERNAME, user,
 						HEADER_PASSWORD, password),
@@ -65,7 +74,7 @@ public class Api {
 	}
 
 	@Verify("host")
-	public boolean verifyHost(ResponseEntity<AuthDTO> response, String url, String user, String password) {
+	public boolean verifyHost(ResponseEntity<AuthDTO> response, String host, Long port, String path, String user, String password) {
 		String authToken = response.getHeaders().get(HEADER_AUTH_TOKEN).get(0);
 
 		ResponseEntity<PingDTO> pingResponse = post(url(URL_PING), headers(HEADER_AUTH_TOKEN, authToken),
@@ -170,7 +179,7 @@ public class Api {
 	}
 
 	@Action("experiment")
-	public ExperimentDTO createExperiment(ProjectDTO project, String name, ProtocolDTO protocol) throws Exception {
+	public ExperimentDTO createExperiment(ProjectDTO project, ProtocolDTO protocol, String name) throws Exception {
 
 		ExperimentDTO experiment = new ExperimentDTO();
 		experiment.setExperimentName(name);
@@ -229,11 +238,54 @@ public class Api {
 			throw e;
 		}
 	}
-	
-	public void printHttpError(HttpServerErrorException e) throws Exception {
-		JsonNode json = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
-		for (JsonNode j : ApiUtil.getIn(json, "header", "status", "statusMessages")) {
-			System.out.println(j.get("message").asText().replace("\\n", "\n"));
+
+	@Action("job")
+	public JobDTO job(String jobPayloadType) {
+		try {
+			JobDTO job = new JobDTO();
+			job.setSubmittedBy(1);
+			job.setMessage("");
+			job.setPayloadType(jobPayloadType);
+			job.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
+			job.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+			job.setSubmittedDate(new Date());
+			job.setJobName("");
+
+			PayloadEnvelope<JobDTO> envelope = new PayloadEnvelope<>(job, GobiiProcessType.CREATE);
+			ResponseEntity<JsonNode> response = post(url(URL_JOBS), authHeader(), JsonNode.class, envelope);
+
+			return result(response, JobDTO.class);
+		} catch (HttpServerErrorException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("load")
+	public void load(String procedureFilePath, String dataFolderPath) throws IOException, JSchException {
+		scp(this.host, this.user, procedureFilePath, "/tmp/procedure_" + randomString());
+		scp(this.host, this.user, dataFolderPath, "/tmp/data", "-r");
+
+		JsonNode procedure = new ObjectMapper().convertValue(slurp(procedureFilePath), JsonNode.class);
+		String jobPayloadType = getIn(procedure, "metadata", "jobPayloadType").asText();
+
+		job(jobPayloadType);
+	}
+
+	@Clean("load")
+	public void cleanLoad(Object obj, String instructionFilePath, String dataFolderPath) throws JSchException {
+		ssh(this.host, this.user, "rm /tmp/instructionfile");
+		ssh(this.host, this.user, "rm -r /tmp/data");
+	}
+
+	public void printHttpError(HttpServerErrorException e) throws RuntimeException {
+		try {
+			JsonNode json = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
+			for (JsonNode j : ComponentsUtil.getIn(json, "header", "status", "statusMessages")) {
+				System.out.println(j.get("message").asText().replace("\\n", "\n"));
+			}
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 }

@@ -1,22 +1,19 @@
 package org.gobiiproject.bert;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ernie.core.Ernie;
-import org.gobiiproject.bert.components.Api;
-import org.springframework.web.client.HttpServerErrorException;
 
 public class Bert {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		Ernie ernie = new Ernie();
 
-		ernie.loadComponents(Api.class);
+		ernie.loadComponents(Components.class);
 
 		for (String s : args) {
 			ernie.runFile(args[0]);
 		}
 
+		ComponentsUtil.scp("cbsugobiixvm16.biohpc.cornell.edu", "gadm", "/tmp/asdf", "/tmp/asdf");
 	}
 }
