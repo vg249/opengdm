@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +20,33 @@ public class ProjectDaoTest {
     private ProjectDao projectDao;
 
     @Test
-    public void getProjectWithExistingId() {
+    public void createNewProject() {
 
+        Project newProject = new Project();
+
+        newProject.setPiContactId(1);
+
+        newProject.setProjectName("test10");
+
+        newProject.setProjectStatus(1);
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode testProps = mapper.createObjectNode();
+
+        ((ObjectNode) testProps).put("4", "test9");
+
+        newProject.setProperties(testProps);
+
+        Integer newProjectId = projectDao.createProject(newProject);
+
+        assertTrue(newProjectId > 0);
+
+    }
+
+
+    @Test
+    public void getProjectWithExistingId() {
 
         // get the ID of the newly created Project
         Project project = projectDao.getProjectById(1);
@@ -27,23 +55,6 @@ public class ProjectDaoTest {
 
         assertTrue(project.getProjectId().equals(1));
 
-
-    }
-
-    @Test
-    public void createNewProject() {
-
-        Project newProject = new Project();
-
-        newProject.setPiContactId(1);
-
-        newProject.setProjectName("test3");
-
-        newProject.setProjectStatus(1);
-
-        Integer newProjectId = projectDao.createProject(newProject);
-
-        assertTrue(newProjectId > 0);
 
     }
 

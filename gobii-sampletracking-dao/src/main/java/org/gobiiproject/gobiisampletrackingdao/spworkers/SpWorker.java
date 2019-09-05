@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao.spworkers;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
@@ -71,7 +72,9 @@ public class SpWorker implements Work {
         for (SpParamDef currentParamDef : paramDefs) {
 
             Integer currentParamIndex = currentParamDef.getOrderIdx();
+
             Type currentParamType = currentParamDef.getParamType();
+
             Object currentParamValue = currentParamDef.getCurrentValue();
 
             try {
@@ -99,7 +102,6 @@ public class SpWorker implements Work {
                     }
                 } else if (currentParamType.equals(ArrayList.class)) {
                     if (null != currentParamValue) {
-
                         List<Integer> list = (List<Integer>) currentParamValue;
                         Integer[] intArray = new Integer[list.size()];
                         intArray = list.toArray(intArray);
@@ -108,7 +110,20 @@ public class SpWorker implements Work {
                     } else {
                         callableStatement.setNull(currentParamIndex, Types.ARRAY);
                     }
-                } else {
+                }
+                else if (currentParamType.equals(JsonNode.class)) {
+
+                    if(null != currentParamValue) {
+
+                        String currentParamJsonString = currentParamValue.toString();
+
+                        callableStatement.setString(currentParamIndex, (String) currentParamJsonString);
+
+                    } else {
+                        callableStatement.setNull(currentParamIndex, Types.VARCHAR);
+                    }
+                }
+                else {
                     throw new SQLException("Unsupported param type: " + Type.class.toString());
                 }
 

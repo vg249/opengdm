@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -25,6 +26,25 @@ public class ProjectDaoImpl implements ProjectDao {
     @Autowired
     protected SpWorker spWorker;
 
+    /**
+     * Uses createprojectwithprops stored function in postgres database.
+     * Stored procedure arguments by index are, 1-based index
+     * 1 - projectname
+     * 2 - projectcode
+     * 3 - projectdescription
+     * 4 - picontact
+     * 5 - createdby
+     * 6 - createddate
+     * 7 - modifiedby
+     * 8 - modifieddate
+     * 9 - projectstatus
+     * 10 - props
+     *
+     * Stored function returns integer project id.
+     *
+     * @param newProject - Project entity to be created.
+     * @return projectId - Id of the newly created project
+     */
     @Override
     @Transactional
     public Integer createProject(Project newProject) {
@@ -33,7 +53,7 @@ public class ProjectDaoImpl implements ProjectDao {
 
         try {
 
-            SpDef spDef = new SpDef("{call createproject(?,?,?,?,?,?,?,?,?)}")
+            SpDef spDef = new SpDef("{call createprojectwithprops(?,?,?,?,?,?,?,?,?,?)}")
                     .addParamDef(1, String.class, newProject.projectName)
                     .addParamDef(2, String.class, newProject.projectCode)
                     .addParamDef(3, String.class, newProject.projectDescription)
@@ -42,7 +62,8 @@ public class ProjectDaoImpl implements ProjectDao {
                     .addParamDef(6, Date.class, newProject.createdDate)
                     .addParamDef(7, Integer.class, newProject.modifiedBy)
                     .addParamDef(8, Date.class, newProject.modifiedDate)
-                    .addParamDef(9, Integer.class, newProject.projectStatus);
+                    .addParamDef(9, Integer.class, newProject.projectStatus)
+                    .addParamDef(10, JsonNode.class, newProject.properties);
 
             spWorker.run(spDef);
 
