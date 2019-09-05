@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapPr
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.entity.Project;
+import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
@@ -32,27 +33,37 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     private ProjectDao projectDao;
 
     @Override
-    public ProjectDTO createProject(ProjectDTO newProject) throws GobiiDomainException {
+    public ProjectDTO createProject(ProjectDTO newProjectDto) throws GobiiDomainException {
 
-        ProjectDTO returnVal;
         try {
+
+            Project newProject = new Project();
 
             //Setting created by contactId
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
             Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
 
-            newProject.setCreatedBy(contactId);
+            newProjectDto.setCreatedBy(contactId);
 
             //Setting created date
-            newProject.setCreatedDate(new Date(new Date().getTime()));
+            newProjectDto.setCreatedDate(new Date(new Date().getTime()));
 
             // Project status is set as 1 which corresponds to new project
             // Can be moved to stored procedure.
             // TODO: Should be moved inside Stored Procedure.
-            newProject.setProjectStatus(1);
+            newProjectDto.setProjectStatus(1);
 
-            returnVal = dtoMapSampleTrackingProject.create(newProject);
+            ModelMapper.mapDtoToEntity(newProjectDto, newProject);
+
+            Integer createdProjectId = projectDao.createProject(newProject);
+
+            if(createdProjectId > 0) {
+                newProjectDto.setProjectId(createdProjectId);
+            }
+            else {
+                throw new GobiiException("Failed creating project. System Error.");
+            }
 
         }
         catch(GobiiException gE) {
@@ -68,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             throw new GobiiDomainException(e);
         }
 
-        return returnVal;
+        return newProjectDto;
     }
 
     @Override

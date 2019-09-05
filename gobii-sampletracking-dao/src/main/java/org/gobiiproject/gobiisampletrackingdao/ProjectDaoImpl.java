@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -71,7 +72,7 @@ public class ProjectDaoImpl implements ProjectDao {
 
         }
         catch(Exception e) {
-
+           throw new GobiiException(e.getMessage());
         }
 
         return returnVal;
