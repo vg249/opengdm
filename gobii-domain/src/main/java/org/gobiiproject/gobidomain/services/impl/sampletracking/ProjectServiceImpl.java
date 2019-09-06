@@ -66,9 +66,13 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
             ModelMapper.mapDtoToEntity(newProjectDto, newProject);
 
-            List<Cv> cvList = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName());
+            if(!newProjectDto.getProperties().isEmpty()) {
 
-            newProject.setProperties(this.getCvIdMappedProperties(cvList, newProjectDto.getProperties()));
+                List<Cv> cvList = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName());
+
+                newProject.setProperties(this.getCvIdMappedProperties(cvList, newProjectDto.getProperties()));
+
+            }
 
             Integer createdProjectId = projectDao.createProject(newProject);
 
@@ -110,6 +114,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
                     cvIdMappedProperties.put(cv.getCvId().toString(),
                             projectProperties.get(cv.getTerm()));
+
                 }
             }
 
