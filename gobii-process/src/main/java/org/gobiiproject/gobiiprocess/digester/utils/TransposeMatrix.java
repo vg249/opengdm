@@ -16,6 +16,7 @@ public class TransposeMatrix {
     public static void transposeMatrix (String sep, String iFile, String oFile, String dest) throws FileNotFoundException{
         if (!checkFileExistence(iFile)) {
             ErrorLogger.logError("Transpose Matrix", "Input file "+iFile+" provided does not exists.\n");
+            return;
         }
         startTime = System.currentTimeMillis();
 
@@ -61,8 +62,9 @@ public class TransposeMatrix {
         for(String s:outFiles){
             fileList.append(" ").append(s);
         }
-        tryExec("paste"+ fileList.toString(), oFile, null);
-
+        if(fileList.length() > 0) { //if there are no files this will hang
+            tryExec("paste" + fileList.toString(), oFile, null);
+        }
         //Delete all intermediates once 'paste' is complete
         for (File inFile: files){
             if(inFile.getName().matches("_transposed_.*")){

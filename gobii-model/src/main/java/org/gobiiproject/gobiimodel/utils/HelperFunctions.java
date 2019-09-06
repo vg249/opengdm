@@ -1,8 +1,12 @@
 package org.gobiiproject.gobiimodel.utils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -68,69 +72,16 @@ public class HelperFunctions {
         //Too clever by a half- if from and too are null, returns substring(0,-1);
     }
 
-
-
-
-    /*
-     *	Prints file to know that the job is done.
-     *	File contains table <tab> output file
-     *	@param path of the instruction file
-     *	@author v.calaminos
-     */
-
-    public static void printDoneFile(String filePath) throws IOException {
-        FileWriter writer = new FileWriter(filePath + ".load", false);
-        boolean first = true;
-        List<GobiiLoaderInstruction> list = parseInstructionFile(filePath);
-        if (list == null) {
-            writer.close();
-            return;
+    public static String readFile(String path) {
+        StringBuilder contentBuilder = new StringBuilder();
+        try (Stream<String> stream = Files.lines( Paths.get(path), StandardCharsets.UTF_8))  {
+            stream.forEach(s -> contentBuilder.append(s).append("\n"));
         }
-        for (GobiiLoaderInstruction inst : list) {
-            if (inst == null) break;
-            if (!first) writer.write("\r\n");
-            first = false;
-            GobiiFile fileParams = inst.getGobiiFile();
-            writer.write(inst.getTable());
-            writer.write("\t");
-            writer.write(getDestinationFile(inst));
+        catch (IOException e) {
+            return null;
         }
-        writer.close();
+        return contentBuilder.toString();
     }
-
-    public static String[] getDoneFileAsArray(String instructionFilePath) {
-        List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFilePath);
-        if (list == null || list.isEmpty()) return null;
-        String[] args = new String[list.size()];
-        int i = 0;
-        for (GobiiLoaderInstruction inst : list) {
-            if (inst == null) break;
-            args[i++] = inst.getTable() + "\t" + getDestinationFile(inst);
-        }
-        return args;
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        System.out.println("Tests filter");
-        System.out.println(filter("banana", "a", "a", null, null));
-        System.out.println(filter("banana", "b", "", "a", "denden"));
-        System.out.println(filter("banana", null, "n", "a", null));
-    }
-
-    public static List<GobiiLoaderInstruction> parseInstructionFile(String filename) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        GobiiLoaderInstruction[] file = null;
-
-        try {
-            file = objectMapper.readValue(new FileInputStream(filename), GobiiLoaderInstruction[].class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (file == null) return null;
-        return Arrays.asList(file);
-    }
-
 
     /**
      * Helper method which executes a string as a command line argument, and waits for it to complete using Runtime.getRuntime.exec.
@@ -264,8 +215,8 @@ public class HelperFunctions {
     }
 
     //For a folder destination, returns /digest.<tablename>
-    public static String getDestinationFile(GobiiLoaderInstruction instruction) {
-        String destination = instruction.getGobiiFile().getDestination();
+    public static String getDestinationFile(GobiiLoaderProcedure procedure, GobiiLoaderInstruction instruction) {
+        String destination = procedure.getMetadata().getGobiiFile().getDestination();
         char last = destination.charAt(destination.length() - 1);
         if (last == '\\' || last == '/') {
             return destination + "digest." + instruction.getTable();

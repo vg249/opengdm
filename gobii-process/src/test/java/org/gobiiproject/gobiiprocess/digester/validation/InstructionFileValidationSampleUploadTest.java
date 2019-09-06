@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.GobiiTableType;
 import org.gobiiproject.gobiimodel.utils.*;
 import org.junit.Test;
@@ -69,7 +70,7 @@ public class InstructionFileValidationSampleUploadTest {
 		String []params = {GobiiTableType.GERMPLASM_PROP, NAME, rCoord, cCoord};
 		assertNotNull(callValidateSampleUpload(params));
 	}
-	
+
 	/**
 	 * Test case for digest.germplasm_prop (external_code) == digest.germplasm (external_code)
 	 */
@@ -87,7 +88,7 @@ public class InstructionFileValidationSampleUploadTest {
 		String []params = {GobiiTableType.GERMPLASM_PROP, EXTERNAL_CODE, rCoord, cCoord, GobiiTableType.GERMPLASM, EXTERNAL_CODE, rCoord+1, cCoord+1};
 		assertNotNull(callValidateSampleUpload(params));
 	}
-	
+
 	/*
 	 * Tests case for digest.dnasample_prop upload only if digest.dnasample exists
 	 */
@@ -114,7 +115,7 @@ public class InstructionFileValidationSampleUploadTest {
 		String []params = {GobiiTableType.DNASAMPLE_PROP, DNA_SAMPLE_NAME, rCoord, cCoord, GobiiTableType.DNASAMPLE, NAME, rCoord+1, cCoord+1};
 		assertNotNull(callValidateSampleUpload(params));
 	}
-	
+
 	/*
 	 * Tests case for digest.dnarun_prop upload only if digest.dnarun file exists
 	 */
@@ -123,7 +124,7 @@ public class InstructionFileValidationSampleUploadTest {
 		String []params = {GobiiTableType.DNARUN_PROP, NAME, rCoord, cCoord};
 		assertNotNull(callValidateSampleUpload(params));
 	}
-	
+
 	/*
 	 * Tests case for digest.dnarun_prop (dnarun_name) == digest.dnarun (name)
 	 */
@@ -141,14 +142,18 @@ public class InstructionFileValidationSampleUploadTest {
 		String []params = {GobiiTableType.DNARUN_PROP, DNA_RUN_NAME, rCoord, cCoord, GobiiTableType.DNARUN, NAME, rCoord+1, cCoord+1};
 		assertNotNull(callValidateSampleUpload(params));
 	}
-	
+
 	@VisibleForTesting
 	private String callValidateSampleUpload(String[] params) {
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();	
+		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
 		for(int i= 0; i < params.length; i= i+4){
 			instructionList.add(InstructionFileValidationUtil.createInstruction(params[i+0], params[i+1], Integer.parseInt(params[i+2]), Integer.parseInt(params[i+3])));
 		}
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+		procedure.setInstructions(instructionList);
+
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
 		instructionFileValidator.processInstructionFile();
 		return instructionFileValidator.validateSampleUpload();
 	}

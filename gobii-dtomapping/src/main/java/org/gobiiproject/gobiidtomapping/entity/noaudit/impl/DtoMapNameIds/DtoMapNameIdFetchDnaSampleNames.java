@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,6 +36,74 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
     @Override
     public GobiiEntityNameType getEntityTypeName() { return GobiiEntityNameType.DNASAMPLE; }
 
+    private Integer getDnaSamplesFromResultSet(List<NameIdDTO> nameIdDTOList, ResultSet resultSet, String columnName, String columnId, GobiiFilterType gobiiFilterType) throws SQLException {
+
+        Collections.sort(nameIdDTOList);
+        Integer index;
+        Integer nameId;
+
+        List<NameIdDTO> nameList = new ArrayList<>();
+
+        while (resultSet.next()) {
+
+            NameIdDTO searchNameDTO = new NameIdDTO();
+            searchNameDTO.setName(resultSet.getString(columnName));
+
+            searchNameDTO.getParameters().put("dnaSampleNum", resultSet.getString("num"));
+
+            for (int i = 0; i < nameIdDTOList.size(); i ++) {
+                // i is the index
+                // yourArrayList.get(i) is the element
+
+                NameIdDTO currentNameIdDTO = nameIdDTOList.get(i);
+
+                String currentName = currentNameIdDTO.getName();
+                String searchName = searchNameDTO.getName();
+
+                if (currentNameIdDTO.getParameters().containsKey("dnaSampleNum")) {
+                    String currentNum = currentNameIdDTO.getParameters().get("dnaSampleNum").toString();
+                    String searchNum = searchNameDTO.getParameters().get("dnaSampleNum").toString();
+
+                    if (currentName.equals(searchName) && currentNum.equals(searchNum)) {
+
+                        nameId = resultSet.getInt(columnId);
+
+                        nameIdDTOList.get(i).setId(nameId);
+
+                        if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT) {
+                            nameIdDTOList.remove(nameIdDTOList.get(i));
+
+                        } else if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS) {
+                            nameList.add(nameIdDTOList.get(i));
+                        }
+                    }
+                } else {
+                    if (currentName.equals(searchName)) {
+
+                        nameId = resultSet.getInt(columnId);
+
+                        nameIdDTOList.get(i).setId(nameId);
+
+                        if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT) {
+                            nameIdDTOList.remove(nameIdDTOList.get(i));
+
+                        } else if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS) {
+                            nameList.add(nameIdDTOList.get(i));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS) {
+
+            nameIdDTOList.removeAll(nameIdDTOList);
+            nameIdDTOList.addAll(nameList);
+        }
+
+        return resultSet.getFetchSize();
+
+    }
 
     private List<NameIdDTO> getDnaSampleNamesByNameList(List<NameIdDTO> nameIdDTOList, String projectId, GobiiFilterType gobiiFilterType) {
 
@@ -46,7 +116,7 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
                         put("nameArray", nameIdDTOList);
                     }});
 
-            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "dnasample_id", gobiiFilterType);
+            Integer resultSize = getDnaSamplesFromResultSet(nameIdDTOList, resultSet, "name", "dnasample_id", gobiiFilterType);
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);

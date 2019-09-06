@@ -19,17 +19,18 @@ import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.*;
 
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.*;
+
+import java.util.LinkedList;
 
 
 public class DtoRequestGobiiFileLoadInstructionsTest {
@@ -69,16 +70,23 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
-        String instructionOneTableName = "foo_table";
         Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET);
         Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT);
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
+        GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+
+        procedure.setInstructions(new LinkedList<>());
+        procedure.setMetadata(new GobiiLoaderMetadata());
+        procedure.getMetadata().setDataset(new PropNameId());
+        procedure.getMetadata().getDataset().setId(instructionOneDataSetId);
+        procedure.getMetadata().setContactId(instructionOneContactId);
+        procedure.getMetadata().setGobiiCropType(gobiiCropType);
+
+        String instructionOneTableName = "foo_table";
+
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
-        gobiiLoaderInstructionOne.setDataSetId(instructionOneDataSetId);
-        gobiiLoaderInstructionOne.setContactId(instructionOneContactId);
-        gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropType);
         gobiiLoaderInstructionOne.setTable("matrix"); // need this for job record creation test
 
 
@@ -97,7 +105,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setFindText(findTextTableOneColumnOne)
                 .setReplaceText(replaceTextTextTableOneColumnOne)
                 .setDataSetType(dataSetTypeTableOneColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
@@ -114,24 +122,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // GobiiFile Config
         String testSourceDirName = digesterInputDirectory + "file_one_dir";
         String testDestinationDirName = digesterOutputDirectory + "file_one_dir";
-        gobiiLoaderInstructionOne.getGobiiFile().setDelimiter(",")
+        procedure.getMetadata().getGobiiFile().setDelimiter(",")
                 .setSource("c://your-dir")
                 .setDestination("c://mydir")
                 .setGobiiFileType(GobiiFileType.VCF)
                 .setSource(testSourceDirName)
                 .setDestination(testDestinationDirName);
 
-        // VCF Parameters
-        gobiiLoaderInstructionOne.getVcfParameters()
-                .setMaf(1.1f)
-                .setMinDp(1.1f)
-                .setMinQ(1.1f)
-                .setRemoveIndels(true)
-                .setToIupac(true);
+        procedure.getInstructions().add(gobiiLoaderInstructionOne);
 
-        loaderInstructionFilesDTOToSend
-                .getGobiiLoaderInstructions()
-                .add(gobiiLoaderInstructionOne);
+        loaderInstructionFilesDTOToSend.setGobiiLoaderProcedure(procedure);
 
 
         // INSTRUCTION ONE END
@@ -177,13 +177,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Integer invalidProjectId = projectId + 1;
 
         gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
-        gobiiLoaderInstructionTwo.setDataSetId(dataSetId);
-        gobiiLoaderInstructionTwo.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getDatasetName());
-        gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
-        gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
-        gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
-        gobiiLoaderInstructionTwo.getProject().setId(invalidProjectId);
 
         // column one
         String instructionTwoColumnOneName = "test2_column_one";
@@ -193,22 +186,15 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setConstantValue("test2")
                 .setName(instructionTwoColumnOneName)
                 .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
 
         gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
 
         // gobiifile config
         String testSourceTwoDirName = digesterInputDirectory + "file_two_dir";
         String testDestinationTwoDirName = digesterOutputDirectory + "file_two_dir";
-        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",")
-                .setSource("c://your-dr")
-                .setDestination("c://mydir")
-                .setGobiiFileType(GobiiFileType.GENERIC)
-                .setSource(testSourceTwoDirName)
-                .setDestination(testDestinationTwoDirName);
 
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
-                .add(gobiiLoaderInstructionTwo);
+        procedure.getInstructions().add(gobiiLoaderInstructionTwo);
 
         /***** InstructionTwo END *****/
 
@@ -232,7 +218,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         .count() > 0);
 
         JobPayloadType payloadTypeToTest = JobPayloadType.CV_PAYLOADTYPE_MATRIX;
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().get(0).setJobPayloadType(payloadTypeToTest);
+        loaderInstructionFilesDTOToSend.getProcedure().getMetadata().setJobPayloadType(payloadTypeToTest);
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -250,51 +236,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         Assert.assertTrue("The number of remapped tables does not match the number of tables sent",
-                loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().size() ==
-                        loaderInstructionFileDTOResponse.getGobiiLoaderInstructions().get(0).getColumnsByTableName().size());
-        
-
-        //verify remaping
-        for (GobiiLoaderInstruction currentLoaderInstructionSent : loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()) {
-
-            Assert.assertTrue("A table is missing from the table mapping: " + currentLoaderInstructionSent.getTable(),
-                    loaderInstructionFileDTOResponse
-                            .getGobiiLoaderInstructions().get(0)
-                            .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
-
-            Assert.assertTrue("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
-                    loaderInstructionFileDTOResponse
-                            .getGobiiLoaderInstructions().get(0)
-                            .getColumnsByTableName().get(currentLoaderInstructionSent.getTable()).size() ==
-                            currentLoaderInstructionSent.getGobiiFileColumns().size());
-
-            Assert.assertTrue("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
-                    loaderInstructionFileDTOResponse
-                            .getGobiiLoaderInstructions().get(0)
-                            .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
-
-            Assert.assertNotNull("The job status field should not be null: " + currentLoaderInstructionSent.getGobiiJobStatus(),
-                    currentLoaderInstructionSent.getGobiiJobStatus());
-
-            Assert.assertTrue("The default reported status should not be " + JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName(),
-                    !currentLoaderInstructionSent.getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName()));
+                loaderInstructionFilesDTOToSend.getProcedure().getInstructions().size() ==
+                        loaderInstructionFileDTOResponse.getProcedure().getInstructions().size());
 
 
-            for (GobiiFileColumn currentFileColumnSent : currentLoaderInstructionSent.getGobiiFileColumns()) {
+        Assert.assertNotNull("The job status field should not be null: " + loaderInstructionFileDTOResponse.getProcedure().getMetadata().getGobiiJobStatus(),
+                loaderInstructionFilesDTOToSend.getProcedure().getMetadata().getGobiiJobStatus());
 
-                Assert.assertTrue("File column "
-                                + currentFileColumnSent.getName()
-                                + "of table "
-                                + currentLoaderInstructionSent.getTable()
-                                + " does not exist in the remapped instruction",
-                        loaderInstructionFileDTOResponse
-                                .getGobiiLoaderInstructions().get(0)
-                                .getColumnsByTableName().get(currentLoaderInstructionSent.getTable())
-                                .stream()
-                                .filter(gfc -> gfc.getName().equals(currentFileColumnSent.getName())).count() > 0);
-            }
+        Assert.assertTrue("The default reported status should not be " + JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName(),
+                !loaderInstructionFilesDTOToSend.getProcedure().getMetadata().getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName()));
 
-        }
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE USING THE HATEOS LINKS
 
@@ -309,33 +260,34 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse = resultEnvelope.getPayload().getData().get(0);
 
-        Assert.assertNotNull(loaderInstructionFilesDTOretrieveResponse.getGobiiLoaderInstructions());
+        Assert.assertNotNull(loaderInstructionFilesDTOretrieveResponse.getProcedure());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         Assert.assertTrue(
                 2 == loaderInstructionFilesDTOretrieveResponse
-                        .getGobiiLoaderInstructions()
+                        .getProcedure().getInstructions()
                         .size()
         );
 
         Assert.assertNotNull(
                 loaderInstructionFilesDTOretrieveResponse
-                        .getGobiiLoaderInstructions().get(0)
+                        .getProcedure().getMetadata()
         );
 
 
         Assert.assertTrue(
                 loaderInstructionFilesDTOretrieveResponse
-                        .getGobiiLoaderInstructions()
-                        .get(0)
-                        .getDataSetId().equals(instructionOneDataSetId)
+                        .getProcedure()
+                        .getMetadata().getDataset().getId()
+                        .equals(instructionOneDataSetId)
         );
 
 
         Assert.assertTrue(
                 loaderInstructionFilesDTOretrieveResponse
-                        .getGobiiLoaderInstructions()
+                        .getProcedure()
+                        .getInstructions()
                         .get(0)
                         .getGobiiFileColumns()
                         .get(0)
@@ -369,7 +321,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         //VERIFY THAT THE DATSET RECORD HAS THE JOB ID FOR THE JOB
-        Integer loadedDataSetId = loaderInstructionFileDTOResponse.getGobiiLoaderInstructions().get(0).getDataSetId();
+        Integer loadedDataSetId = loaderInstructionFileDTOResponse.getProcedure().getMetadata().getDataset().getId();
         RestUri dataSEtUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
@@ -393,8 +345,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
 
         loaderInstructionFilesDTOToSend
-                .getGobiiLoaderInstructions()
-                .get(0)
+                .getProcedure()
+                .getMetadata()
                 .getGobiiFile()
                 .setSource("foo")
                 .setDestination("bar")
@@ -423,8 +375,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String newInstructionFileNameNoError = "testapp_" + DateUtils.makeDateIdString();
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
         loaderInstructionFilesDTOToSend
-                .getGobiiLoaderInstructions()
-                .get(0)
+                .getProcedure()
+                .getMetadata()
                 .getGobiiFile()
                 .setSource(testSourceDirName)
                 .setDestination(testDestinationDirName)
@@ -459,8 +411,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
 
         loaderInstructionFilesDTOToSend
-                .getGobiiLoaderInstructions()
-                .get(0)
+                .getProcedure()
+                .getMetadata()
                 .getGobiiFile()
                 .setSource("foo")
                 .setDestination("bar")
@@ -495,8 +447,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
         loaderInstructionFilesDTOToSend
-                .getGobiiLoaderInstructions()
-                .get(0)
+                .getProcedure()
+                .getMetadata()
                 .getGobiiFile()
                 .setSource(bogusUserInputFile)
                 .setDestination(testDestinationDirName)
@@ -510,442 +462,4 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(testForuserInputFileExistsNoErrorEnvelope.getHeader()));
 
     }
-
-    @Ignore
-    public void testInvalidExperimentForDataset() throws Exception {
-
-        LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
-
-        String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
-
-        String digesterInputDirectory = GobiiClientContext
-                .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-
-        String digesterOutputDirectory =
-                GobiiClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
-
-        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
-
-        String instructionOneTableName = "test_table1";
-
-        //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
-
-        RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-        datasetsUri.setParamValue("id", dataSetId.toString());
-
-        GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
-        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceDataSet.get(DataSetDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
-        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
-
-        Integer experimentId = dataSetDTOResponse.getExperimentId();
-
-        // invalid experimentId
-        Integer invalidExperimentId = experimentId + 1;
-
-        String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
-
-        /**  InstructionOne START -  test for wrong experimentId for given dataset **/
-        GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
-
-        gobiiLoaderInstructionOne.setTable(instructionOneTableName);
-        gobiiLoaderInstructionOne.setDataSetId(dataSetId);
-        gobiiLoaderInstructionOne.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionOne.getDataSet().setName(dataSetDTOResponse.getDatasetName());
-        gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropType);
-        gobiiLoaderInstructionOne.getExperiment().setId(invalidExperimentId);
-
-        // column one
-        String instructionColumnOneName = "test_column_one";
-        DataSetType dataSetTypeColumnOne = DataSetType.IUPAC;
-        GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
-                .setGobiiColumnType(GobiiColumnType.CONSTANT)
-                .setConstantValue("test")
-                .setName(instructionColumnOneName)
-                .setDataSetType(dataSetTypeColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
-
-        gobiiLoaderInstructionOne.getGobiiFileColumns().add(gobiiFileColumnOne);
-
-        // gobiifile config
-        String testSourceDirName = digesterInputDirectory + "file_one_dir";
-        String testDestinationDirName = digesterOutputDirectory + "file_one_dir";
-        gobiiLoaderInstructionOne.getGobiiFile().setDelimiter(",")
-                .setSource("c://your-dr")
-                .setDestination("c://mydir")
-                .setGobiiFileType(GobiiFileType.GENERIC)
-                .setSource(testSourceDirName)
-                .setDestination(testDestinationDirName);
-
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
-                .add(gobiiLoaderInstructionOne);
-
-        /***  InstructionOne END ***/
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory
-                .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS));
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
-                payloadEnvelope);
-
-        Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-
-        Assert.assertTrue("The error message should say that the experiment is invalid for the given dataset",
-                loaderInstructionFileDTOResponseEnvelope.getHeader()
-                        .getStatus()
-                        .getStatusMessages()
-                        .stream()
-                        .filter(m -> m.getMessage().toLowerCase().contains("the specified experiment in the dataset is incorrect"))
-                        .count()
-                        > 0);
-    }
-
-    @Ignore
-    public void testInvalidProjectForExperiment() throws Exception {
-
-
-        LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
-
-        String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
-
-        String digesterInputDirectory = GobiiClientContext
-                .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-
-        String digesterOutputDirectory =
-                GobiiClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
-
-        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
-
-        String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
-
-        //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
-
-        RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-        datasetsUri.setParamValue("id", dataSetId.toString());
-
-        GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
-        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceDataSet.get(DataSetDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
-        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
-
-        Integer experimentId = dataSetDTOResponse.getExperimentId();
-
-        /*** InstructionTwo START - Test for wrong projectId for given experiment. Valid experimentId will be used here ***/
-        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
-
-        String instructionTwoTableName = "test_table2";
-
-        //get experimentDTO
-        RestUri experimentsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS);
-        experimentsUri.setParamValue("id", experimentId.toString());
-
-        GobiiEnvelopeRestResource<ExperimentDTO,ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(experimentsUri);
-        PayloadEnvelope<ExperimentDTO> resultEnvelopeExperiment = gobiiEnvelopeRestResourceExperiment.get(ExperimentDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeExperiment.getHeader()));
-        ExperimentDTO experimentDTOResponse = resultEnvelopeExperiment.getPayload().getData().get(0);
-
-        Integer projectId = experimentDTOResponse.getProjectId();
-
-        // invalid projectId
-        Integer invalidProjectId = projectId + 1;
-
-        gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
-        gobiiLoaderInstructionTwo.setDataSetId(dataSetId);
-        gobiiLoaderInstructionTwo.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getDatasetName());
-        gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
-        gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
-        gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
-        gobiiLoaderInstructionTwo.getProject().setId(invalidProjectId);
-
-        // column one
-        String instructionTwoColumnOneName = "test2_column_one";
-        DataSetType dataSetTypeTwoColumnOne = DataSetType.IUPAC;
-        GobiiFileColumn gobiiFileTwoColumnOne = new GobiiFileColumn()
-                .setGobiiColumnType(GobiiColumnType.CONSTANT)
-                .setConstantValue("test2")
-                .setName(instructionTwoColumnOneName)
-                .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
-
-        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
-
-        // gobiifile config
-        String testSourceTwoDirName = digesterInputDirectory + "file_two_dir";
-        String testDestinationTwoDirName = digesterOutputDirectory + "file_two_dir";
-        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",")
-                .setSource("c://your-dr")
-                .setDestination("c://mydir")
-                .setGobiiFileType(GobiiFileType.GENERIC)
-                .setSource(testSourceTwoDirName)
-                .setDestination(testDestinationTwoDirName);
-
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
-                .add(gobiiLoaderInstructionTwo);
-
-        /***** InstructionTwo END *****/
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory
-                .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS));
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
-                payloadEnvelope);
-
-        Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-
-
-        Assert.assertTrue("The error message should say that the project is invalid for the given experiment",
-                loaderInstructionFileDTOResponseEnvelope.getHeader()
-                        .getStatus()
-                        .getStatusMessages()
-                        .stream()
-                        .filter(m -> m.getMessage().toLowerCase().contains("the specified project in the experiment is incorrect"))
-                        .count()
-                        > 0);
-
-    }
-
-    @Ignore
-    public void testInvalidDataTypeForDataset() throws Exception {
-
-        LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
-
-        String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
-
-        String digesterInputDirectory = GobiiClientContext
-                .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-
-        String digesterOutputDirectory =
-                GobiiClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
-
-        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
-
-        String instructionThreeTableName = "test_table3";
-
-        //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
-
-        RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-        datasetsUri.setParamValue("id", dataSetId.toString());
-
-        GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
-        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceDataSet.get(DataSetDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
-        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
-
-        Integer dataTypeId = dataSetDTOResponse.getDatatypeId();
-
-        // invalid dataTypeId
-        Integer invalidDataTypeId = dataTypeId + 1;
-
-        String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
-
-        /**  InstructionOne START -  test for wrong experimentId for given dataset **/
-        GobiiLoaderInstruction gobiiLoaderInstructionThree = new GobiiLoaderInstruction();
-
-        gobiiLoaderInstructionThree.setTable(instructionThreeTableName);
-        gobiiLoaderInstructionThree.setDataSetId(dataSetId);
-        gobiiLoaderInstructionThree.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionThree.getDataSet().setName(dataSetDTOResponse.getDatasetName());
-        gobiiLoaderInstructionThree.setGobiiCropType(gobiiCropType);
-        gobiiLoaderInstructionThree.getDatasetType().setId(invalidDataTypeId);
-
-        // column one
-        String instructionColumnOneName = "test_column_one";
-        DataSetType dataSetTypeColumnOne = DataSetType.IUPAC;
-        GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
-                .setGobiiColumnType(GobiiColumnType.CONSTANT)
-                .setConstantValue("test")
-                .setName(instructionColumnOneName)
-                .setDataSetType(dataSetTypeColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
-
-        gobiiLoaderInstructionThree.getGobiiFileColumns().add(gobiiFileColumnOne);
-
-        // gobiifile config
-        String testSourceDirName = digesterInputDirectory + "file_one_dir";
-        String testDestinationDirName = digesterOutputDirectory + "file_one_dir";
-        gobiiLoaderInstructionThree.getGobiiFile().setDelimiter(",")
-                .setSource("c://your-dr")
-                .setDestination("c://mydir")
-                .setGobiiFileType(GobiiFileType.GENERIC)
-                .setSource(testSourceDirName)
-                .setDestination(testDestinationDirName);
-
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
-                .add(gobiiLoaderInstructionThree);
-
-        /***  InstructionOne END ***/
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory
-                .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS));
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
-                payloadEnvelope);
-
-        Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-
-        Assert.assertTrue("The error message should say that the data type is invalid for the given dataset",
-                loaderInstructionFileDTOResponseEnvelope.getHeader()
-                        .getStatus()
-                        .getStatusMessages()
-                        .stream()
-                        .filter(m -> m.getMessage().toLowerCase().contains("the specified data type in the dataset is incorrect"))
-                        .count()
-                        > 0);
-
-
-    }
-
-    @Ignore
-    public void testInvalidPlatformForExperiment() throws Exception {
-
-
-        LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
-
-        String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
-
-        String digesterInputDirectory = GobiiClientContext
-                .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-
-        String digesterOutputDirectory =
-                GobiiClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
-
-        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
-
-        String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
-
-        //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
-
-        RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-        datasetsUri.setParamValue("id", dataSetId.toString());
-
-        GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
-        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceDataSet.get(DataSetDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
-        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
-
-        Integer experimentId = dataSetDTOResponse.getExperimentId();
-
-        /*** InstructionTwo START - Test for wrong platformId for given experiment. Valid experimentId will be used here ***/
-        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
-
-        String instructionTwoTableName = "test_table2";
-
-        //get experimentDTO
-        RestUri experimentsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS);
-        experimentsUri.setParamValue("id", experimentId.toString());
-
-        GobiiEnvelopeRestResource<ExperimentDTO,ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(experimentsUri);
-        PayloadEnvelope<ExperimentDTO> resultEnvelopeExperiment = gobiiEnvelopeRestResourceExperiment.get(ExperimentDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeExperiment.getHeader()));
-        ExperimentDTO experimentDTOResponse = resultEnvelopeExperiment.getPayload().getData().get(0);
-
-
-        //get protocolDTO
-        RestUri protocolUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS)
-                .setParamValue("id", experimentDTOResponse.getId().toString())
-                .appendSegment(RestResourceId.GOBII_PROTOCOL);
-
-        GobiiEnvelopeRestResource<ProtocolDTO,ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(protocolUri);
-        PayloadEnvelope<ProtocolDTO> resultEnvelopeProtocol = gobiiEnvelopeRestResourceProtocol.get(ProtocolDTO.class);
-
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocol.getHeader()));
-        ProtocolDTO protocolDTOResponse = resultEnvelopeProtocol.getPayload().getData().get(0);
-
-        Integer platformId = protocolDTOResponse.getPlatformId();
-
-        //invalid platformId
-        Integer invalidPlatformId = platformId + 1;
-
-        gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
-        gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
-        gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
-        gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
-        gobiiLoaderInstructionTwo.getPlatform().setId(invalidPlatformId);
-
-        // column one
-        String instructionTwoColumnOneName = "test2_column_one";
-        DataSetType dataSetTypeTwoColumnOne = DataSetType.IUPAC;
-        GobiiFileColumn gobiiFileTwoColumnOne = new GobiiFileColumn()
-                .setGobiiColumnType(GobiiColumnType.CONSTANT)
-                .setConstantValue("test2")
-                .setName(instructionTwoColumnOneName)
-                .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
-
-        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
-
-        // gobiifile config
-        String testSourceTwoDirName = digesterInputDirectory + "file_two_dir";
-        String testDestinationTwoDirName = digesterOutputDirectory + "file_two_dir";
-        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",")
-                .setSource("c://your-dr")
-                .setDestination("c://mydir")
-                .setGobiiFileType(GobiiFileType.GENERIC)
-                .setSource(testSourceTwoDirName)
-                .setDestination(testDestinationTwoDirName);
-
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
-                .add(gobiiLoaderInstructionTwo);
-
-        /***** InstructionTwo END *****/
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory
-                .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS));
-
-        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
-                payloadEnvelope);
-
-        Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-
-
-        Assert.assertTrue("The error message should say that the platform is invalid for the given experiment",
-                loaderInstructionFileDTOResponseEnvelope.getHeader()
-                        .getStatus()
-                        .getStatusMessages()
-                        .stream()
-                        .filter(m -> m.getMessage().toLowerCase().contains("the specified platform in the experiment is incorrect"))
-                        .count()
-                        > 0);
-
-    }
-
-
 }

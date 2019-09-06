@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>GOBII Server 2.0_2018-12-21</version>
+        <version>GOBII Server 2.1_2019-08-23</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>
@@ -355,6 +355,14 @@
                             <!--<goal>create-resources</goal>-->
                             <goal>npm</goal><!-- setup grunt and plugin -->
                         </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>
+                                    install
+                                </argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

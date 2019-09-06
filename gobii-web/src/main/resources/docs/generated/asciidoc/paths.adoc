@@ -644,6 +644,8 @@ The user credentials are specified in the request headers X-Username and X-Passw
 __|User password|string
 |**Header**|**X-Username** +
 __|User Identifier|string
+|**Body**|**body** +
+__||string
 |===
 
 
