@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.GobiiTableType;
 import org.gobiiproject.gobiimodel.utils.*;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class InstructionFileValidationMarkerUploadTest {
 		String []params = {GobiiTableType.MARKER, NAME, rCoord, cCoord, GobiiTableType.MARKER_LINKAGE_GROUP, MARKER_NAME, rCoord+1, cCoord+1};
 		assertNotNull(callValidateMarkerUpload(params));
 	}
-	
+
 	/**
 	 * Test case for digest.lg_marker (lg_name) == digest.linkage_group (name)
 	 */
@@ -59,7 +60,7 @@ public class InstructionFileValidationMarkerUploadTest {
 		String []params = {GobiiTableType.MARKER_LINKAGE_GROUP, MARKER_NAME, rCoord, cCoord, GobiiTableType.LINKAGE_GROUP, NAME, rCoord+1, cCoord+1};
 		assertNotNull(callValidateMarkerUpload(params));
 	}
-	
+
 	/**
 	 * Test case for digest.marker_prop (marker_name) == digest.marker (name)
 	 */
@@ -78,7 +79,7 @@ public class InstructionFileValidationMarkerUploadTest {
 		String []params = {GobiiTableType.MARKER_PROP, MARKER_NAME, rCoord, cCoord, GobiiTableType.MARKER, NAME, rCoord+1, cCoord+1};
 		assertNotNull(callValidateMarkerUpload(params));
 	}
-	
+
 	/*
 	 * Tests case for digest.marker_prop upload only if digest.marker exist
 	 */
@@ -96,12 +97,14 @@ public class InstructionFileValidationMarkerUploadTest {
 		String []params = {GobiiTableType.MARKER_PROP, NAME, rCoord, cCoord};
 		assertNotNull(callValidateMarkerUpload(params));
 	}
-	
+
 	/*
 	 * Test case for if digest.marker_linkage_group exists, then file must contain all columns lg_name, marker_name, start and stop
 	 */
 	@Test
 	public void testMarkerLinkageGroup() {
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
 
 		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
 
@@ -109,18 +112,26 @@ public class InstructionFileValidationMarkerUploadTest {
 		lgMarkerInstruction.getGobiiFileColumns().remove(0);
 		instructionList.add(lgMarkerInstruction);
 
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
+		procedure.setInstructions(instructionList);
+
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
 		instructionFileValidator.processInstructionFile();
 		assertNotNull(instructionFileValidator.validateMarkerUpload());
 	}
 
 	@VisibleForTesting
 	private String callValidateMarkerUpload(String[] params) {
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();	
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+
+		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
 		for(int i= 0; i < params.length; i= i+4){
 			instructionList.add(InstructionFileValidationUtil.createInstruction(params[i+0], params[i+1], Integer.parseInt(params[i+2]), Integer.parseInt(params[i+3])));
 		}
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
+
+		procedure.setInstructions(instructionList);
+
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
 		instructionFileValidator.processInstructionFile();
 		return instructionFileValidator.validateMarkerUpload();
 	}

@@ -12,6 +12,7 @@ import java.util.*;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
@@ -50,17 +51,13 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         this.loaderScriptPath = loaderScriptPath;
     }
 
-    /**
-     * Parses a given instruction file, and executes the loader on every instruction found within, by passing the objects to {@link CSVFileReaderV2#processCSV(GobiiLoaderInstruction)}.
-     * This method can be called directly to simulate an instruction file being parsed by the reader.
-     */
-    public static void parseInstructionFile(List<GobiiLoaderInstruction> instructions, String loaderScriptPath) {
+    public static void parseInstructionFile(GobiiLoaderProcedure procedure, String loaderScriptPath) {
         CSVFileReaderInterface reader;
         if (LoaderGlobalConfigs.getSingleThreadFileRead()) {
-            for (GobiiLoaderInstruction i : instructions) {
+            for (GobiiLoaderInstruction i : procedure.getInstructions()) {
                 try {
                     reader = new CSVFileReaderV2(loaderScriptPath);
-                    reader.processCSV(i);
+                    reader.processCSV(procedure, i);
                 } catch (InterruptedException e) {
                     ErrorLogger.logError("CSVFileReader", "Interrupted reading instruction", e);
                 } catch (Exception e) {
@@ -71,19 +68,19 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         }
 
         List<Thread> threads = new LinkedList<>();
-        if (instructions == null) {
+        if (procedure.getInstructions() == null) {
             ErrorLogger.logError("CSVFileReader", "No instructions passed in");
         } else {
             GobiiLoaderInstruction matrixInstruction = null;
 
             //Create threads
-            for (GobiiLoaderInstruction loaderInstruction : instructions) {
+            for (GobiiLoaderInstruction loaderInstruction : procedure.getInstructions()) {
                 if (matrixInstruction == null && isMatrixInstruction(loaderInstruction)) {
                     matrixInstruction = loaderInstruction;
                     continue;//Skip processing until after all intermediate files
                 }
                 reader = new CSVFileReaderV2(loaderScriptPath);
-                Thread processingThread = new Thread(new ReaderThread(reader, loaderInstruction));
+                Thread processingThread = new Thread(new ReaderThread(reader, procedure, loaderInstruction));
                 threads.add(processingThread);
                 processingThread.start();
             }
@@ -100,7 +97,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             //Process matrix in main processing thread.
             if (matrixInstruction != null) {
                 reader = new CSVFileReaderV2(loaderScriptPath);
-                new ReaderThread(reader, matrixInstruction).run();//Calls this thread from our thread
+                new ReaderThread(reader, procedure, matrixInstruction).run();//Calls this thread from our thread
             }
         }
     }
@@ -116,20 +113,20 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      *
      * @param loaderInstruction Singular instruction, specifying input and output directories
      */
-    public void processCSV(GobiiLoaderInstruction loaderInstruction) {
+    public void processCSV(GobiiLoaderProcedure procedure, GobiiLoaderInstruction loaderInstruction) {
 
         processedInstruction = new GobiiProcessedInstruction(loaderInstruction);
         processedInstruction.parseInstruction();
 
-        String outputFileName = HelperFunctions.getDestinationFile(loaderInstruction);
+        String outputFileName = HelperFunctions.getDestinationFile(procedure, loaderInstruction);
         try (BufferedWriter tempFileBufferedWriter = new BufferedWriter(new FileWriter(outputFileName))) {
 
-            File file = new File(loaderInstruction.getGobiiFile().getSource());
-            File outputFile = new File(HelperFunctions.getDestinationFile(loaderInstruction));
+            File file = new File(procedure.getMetadata().getGobiiFile().getSource());
+            File outputFile = new File(HelperFunctions.getDestinationFile(procedure, loaderInstruction));
             if (file.isDirectory()) {
-                listFilesFromFolder(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+                listFilesFromFolder(file, tempFileBufferedWriter, procedure, outputFile);
             } else {
-                writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+                writeToOutputFile(file, tempFileBufferedWriter, procedure, outputFile);
             }
         } catch (FileNotFoundException e) {
             ErrorLogger.logError("CSVReader", "Unexpected Missing File", e);
@@ -145,10 +142,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      *
      * @param folder                 Folder in the file-system to start from (input folder)
      * @param tempFileBufferedWriter Output File writer
-     * @param loaderInstruction      Loader instruction
      */
     private void listFilesFromFolder(File folder, BufferedWriter tempFileBufferedWriter,
-                                     GobiiLoaderInstruction loaderInstruction, File outputFile) {
+                                     GobiiLoaderProcedure procedure, File outputFile) {
         if (folder == null) {
             ErrorLogger.logWarning("CSVFileReader", "Read from null folder");
             return;
@@ -157,7 +153,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             // Sub folders are ignored
             if (file.isFile() & !file.getName().contains("digest")) {
                 try {
-                    writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+                    writeToOutputFile(file, tempFileBufferedWriter, procedure, outputFile);
                 } catch (IOException e) {
                     ErrorLogger.logError("CSVReader", "Failure to write digest files", e);
                 }
@@ -172,18 +168,17 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      *
      * @param file                   File to read from
      * @param tempFileBufferedWriter output file writer
-     * @param loaderInstruction      Loader Instruction.
      * @throws IOException when the requisite file is missing or cannot be read
      */
     private void writeToOutputFile(File file, BufferedWriter tempFileBufferedWriter,
-                                   GobiiLoaderInstruction loaderInstruction, File outputFile) throws IOException {
+                                   GobiiLoaderProcedure procedure, File outputFile) throws IOException {
 
         if (processedInstruction.hasCSV_ROW()) {
-            processCSV_ROW(file, tempFileBufferedWriter, loaderInstruction);
+            processCSV_ROW(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_COL()) {
-            processCSV_COL(file, tempFileBufferedWriter, loaderInstruction);
+            processCSV_COL(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_BOTH()) {
-            RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+            RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, procedure, outputFile);
             CSVFileReaderInterface.lastMatrixSizeRowCol=matrixSize;//Terrible hack to pass back to main thread the size of the file if it's a matrix file. There should be at most
             //One of these. It sucks, but passing it up the object chain doesn't make sense, as it goes through several layers of indirection.
         }
@@ -194,12 +189,10 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      *
      * @param file                   Input file to read from.
      * @param tempFileBufferedWriter Output file writer.
-     * @param loaderInstruction      Loader instruction.
      * @throws IOException Exception in I/O operations
      */
-    private void processCSV_ROW(File file, BufferedWriter tempFileBufferedWriter,
-                                GobiiLoaderInstruction loaderInstruction) throws IOException {
-        readCSV_ROWS(file, loaderInstruction);
+    private void processCSV_ROW(File file, BufferedWriter tempFileBufferedWriter, GobiiLoaderProcedure procedure) throws IOException {
+        readCSV_ROWS(file, procedure);
         // Added for consistency in flow. For CSV_ROW this variable is not used. So empty list is passed
         List<String> rowList = new ArrayList<>();
         if (processedInstruction.isFirstLine()) {
@@ -216,11 +209,10 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      *
      * @param file                   Input file to read from.
      * @param tempFileBufferedWriter Output file writer.
-     * @param loaderInstruction      Loader instruction.
      */
 
     private void processCSV_COL(File file, BufferedWriter tempFileBufferedWriter,
-                                GobiiLoaderInstruction loaderInstruction) {
+                                GobiiLoaderProcedure procedure) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
             String fileRow;
@@ -239,7 +231,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             List<Integer> reqCols = getRequiredColNo();
             while ((fileRow = bufferedReader.readLine()) != null) {
 
-                String[] row = fileRow.split(loaderInstruction.getGobiiFile().getDelimiter(), -1);//Need to capture blank trailing values
+                String[] row = fileRow.split(procedure.getMetadata().getGobiiFile().getDelimiter(), -1);//Need to capture blank trailing values
 
                 if (rowNo >= rowNoInGobiiColumn) {
                     List<String> rowList = new ArrayList<>();
@@ -263,14 +255,13 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      *
      * @param file                   Input file to read from.
      * @param tempFileBufferedWriter Output file writer.
-     * @param loaderInstruction      Loader instruction.
      * #returns Pair of row, column counts as integers
      *
      * @throws IOException Exception in I/O operations
      */
 
     private RowColPair<Integer> processCSV_BOTH(File file, BufferedWriter tempFileBufferedWriter,
-                                 GobiiLoaderInstruction loaderInstruction, File outputFile) throws IOException {
+                                 GobiiLoaderProcedure procedure, File outputFile) throws IOException {
         Integer totalCols=null;
         Integer totalRows=null;
         boolean skipValidation = !LoaderGlobalConfigs.getValidation();
@@ -287,14 +278,14 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
         String parentDirectory = outputFile.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
-        MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile, markerFile);
+        MatrixValidation matrixValidation = new MatrixValidation(procedure.getMetadata().getDatasetType().getName(), missingFile, markerFile);
         if (matrixValidation.setUp()) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;
                 String fileRow;
                 List<String> inputRowList, outputRowList;
-                String delimiter = loaderInstruction.getGobiiFile().getDelimiter();
-                boolean isVCF = loaderInstruction.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+                String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
+                boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
                     if (rowNo >= csv_BothColumn.getrCoord()) {
                         inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
@@ -309,7 +300,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                             if (matrixValidation.stopProcessing()) {
                                 tempFileBufferedWriter.flush();
                                 tempFileBufferedWriter.close();
-                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
+                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
                                 return new RowColPair<Integer>(totalCols,rowNo);
                             }
                         }
@@ -322,7 +313,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         if (matrixValidation.getErrorCount() != 0) {
             tempFileBufferedWriter.flush();
             tempFileBufferedWriter.close();
-            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
+            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
         }
         return new RowColPair<Integer>(totalRows,totalCols);
     }
@@ -420,9 +411,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      * processing once all the required rows are read.
      *
      * @param file              Input file.
-     * @param loaderInstruction Loader Instruction.
      */
-    private void readCSV_ROWS(File file, GobiiLoaderInstruction loaderInstruction) {
+    private void readCSV_ROWS(File file, GobiiLoaderProcedure procedure) {
         int maxRequiredRowNo = maxRequiredRow();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
@@ -432,7 +422,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                     // All required rows read.
                     break;
                 }
-                String[] row = fileRow.split(loaderInstruction.getGobiiFile().getDelimiter());
+                String[] row = fileRow.split(procedure.getMetadata().getGobiiFile().getDelimiter());
                 // Can't initialize here as it creates issue when same row is
                 // used multiple gobiiFileColumn's.
                 ArrayList<String> rowList;
@@ -528,17 +518,19 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
 
 class ReaderThread implements Runnable {
     private CSVFileReaderInterface reader;
+    private GobiiLoaderProcedure procedure;
     private GobiiLoaderInstruction instruction;
 
-    ReaderThread(CSVFileReaderInterface reader, GobiiLoaderInstruction instruction) {
+    ReaderThread(CSVFileReaderInterface reader, GobiiLoaderProcedure procedure, GobiiLoaderInstruction instruction) {
         this.reader = reader;
+        this.procedure = procedure;
         this.instruction = instruction;
     }
 
     @Override
     public void run() {
         try {
-            reader.processCSV(instruction);
+            reader.processCSV(procedure, instruction);
         } catch (Exception e) {
             ErrorLogger.logError("ReaderThread", "Error processing file read", e);
         }

@@ -3957,12 +3957,36 @@ definitions:
   GobiiLoaderInstruction:
     type: "object"
     properties:
-      columnsByTableName:
-        type: "object"
-        additionalProperties:
-          type: "array"
-          items:
-            $ref: "#/definitions/GobiiFileColumn"
+      table:
+        type: "string"
+      gobiiFileColumns:
+        type: "array"
+        items:
+          $ref: "#/definitions/GobiiFileColumn"
+  GobiiLoaderMetadata:
+    type: "object"
+    properties:
+      project:
+        $ref: "#/definitions/PropNameId"
+      platform:
+        $ref: "#/definitions/PropNameId"
+      experiment:
+        $ref: "#/definitions/PropNameId"
+      datasetOrientationType:
+        type: "string"
+        enum:
+        - "SAMPLE_FAST"
+        - "MARKER_FAST"
+      dataset:
+        $ref: "#/definitions/PropNameId"
+      datasetType:
+        $ref: "#/definitions/PropNameId"
+      mapset:
+        $ref: "#/definitions/PropNameId"
+      gobiiFile:
+        $ref: "#/definitions/GobiiFile"
+      gobiiCropType:
+        type: "string"
       jobPayloadType:
         type: "string"
         enum:
@@ -3971,26 +3995,6 @@ definitions:
         - "CV_PAYLOADTYPE_MATRIX"
         - "CV_PAYLOADTYPE_MARKERSAMPLES"
         - "CV_PAYLOADTYPE_ALLMETA"
-      gobiiFile:
-        $ref: "#/definitions/GobiiFile"
-      table:
-        type: "string"
-      gobiiFileColumns:
-        type: "array"
-        items:
-          $ref: "#/definitions/GobiiFileColumn"
-      vcfParameters:
-        $ref: "#/definitions/VcfParameters"
-      dataSetId:
-        type: "integer"
-        format: "int32"
-      gobiiCropType:
-        type: "string"
-      contactId:
-        type: "integer"
-        format: "int32"
-      contactEmail:
-        type: "string"
       gobiiJobStatus:
         type: "string"
         enum:
@@ -4008,22 +4012,22 @@ definitions:
         - "CV_PROGRESSSTATUS_FINALASSEMBLY"
         - "CV_PROGRESSSTATUS_QCPROCESSING"
         - "CV_PROGRESSSTATUS_NOSTATUS"
-      logMessage:
+      contactId:
+        type: "integer"
+        format: "int32"
+      contactEmail:
         type: "string"
       qcCheck:
         type: "boolean"
-      project:
-        $ref: "#/definitions/PropNameId"
-      platform:
-        $ref: "#/definitions/PropNameId"
-      dataSet:
-        $ref: "#/definitions/PropNameId"
-      datasetType:
-        $ref: "#/definitions/PropNameId"
-      mapset:
-        $ref: "#/definitions/PropNameId"
-      experiment:
-        $ref: "#/definitions/PropNameId"
+  GobiiLoaderProcedure:
+    type: "object"
+    properties:
+      metadata:
+        $ref: "#/definitions/GobiiLoaderMetadata"
+      instructions:
+        type: "array"
+        items:
+          $ref: "#/definitions/GobiiLoaderInstruction"
   Header:
     type: "object"
     properties:
@@ -4103,18 +4107,18 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-      filename:
-        type: "string"
-      readable:
-        type: "boolean"
-      uri:
-        type: "string"
-        format: "uri"
       url:
         type: "string"
         format: "url"
       file:
         type: "file"
+      uri:
+        type: "string"
+        format: "uri"
+      readable:
+        type: "boolean"
+      filename:
+        type: "string"
   JobDTO:
     type: "object"
     properties:
@@ -4233,10 +4237,8 @@ definitions:
           - "UPDATE"
           - "DELETE"
           - "NONE"
-      gobiiLoaderInstructions:
-        type: "array"
-        items:
-          $ref: "#/definitions/GobiiLoaderInstruction"
+      procedure:
+        $ref: "#/definitions/GobiiLoaderProcedure"
       instructionFileName:
         type: "string"
       id:
@@ -5624,22 +5626,6 @@ definitions:
       rank:
         type: "integer"
         format: "int32"
-  VcfParameters:
-    type: "object"
-    properties:
-      maf:
-        type: "number"
-        format: "float"
-      minQ:
-        type: "number"
-        format: "float"
-      minDp:
-        type: "number"
-        format: "float"
-      removeIndels:
-        type: "boolean"
-      toIupac:
-        type: "boolean"
   VendorProtocolDTO:
     type: "object"
     properties:
