@@ -487,13 +487,13 @@ public class GobiiFileReader {
      * @param pm
      * @param configuration
      * @param mailInterface
-     * @param instructionFile
+     * @param instructionFilePath
      * @param crop
      * @param jobName
      * @param logFile
      * @throws Exception
      */
-    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
+    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFilePath, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
         try {
             GobiiFileType loadType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
             String loadTypeName = "";//No load type name if default
