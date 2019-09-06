@@ -7,6 +7,8 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.spworkers.SpDef;
 import org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -16,10 +18,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Data Access Object(DAO) for Project.
  */
 public class ProjectDaoImpl implements ProjectDao {
+
+    Logger LOGGER = LoggerFactory.getLogger(SpWorker.class);
 
     @PersistenceContext
     protected EntityManager em;
@@ -72,7 +77,10 @@ public class ProjectDaoImpl implements ProjectDao {
 
         }
         catch(Exception e) {
-           throw new GobiiException(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
         }
 
         return returnVal;
@@ -82,23 +90,35 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public Project getProjectById(Integer projectId) {
 
-        List<Project> projectList = em
-                .createNativeQuery(
-                        "SELECT * FROM project WHERE project_id = ?", Project.class)
-                .setParameter(1, projectId)
-                .getResultList();
+        List<Project> projectList;
 
-        if(projectList.size() == 0) {
-           return null;
+        try {
+
+            projectList = em
+                    .createNativeQuery(
+                            "SELECT * FROM project WHERE project_id = ?", Project.class)
+                    .setParameter(1, projectId)
+                    .getResultList();
+
+            if (projectList.size() == 0) {
+                return null;
+            } else if (projectList.size() > 1) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
+                        "Multiple resources found. Violation of Unique Project Id constraint." +
+                                " Please contact your Data Administrator to resolve this. " +
+                                "Changing underlying database schemas and constraints " +
+                                "without consulting GOBii Team is not recommended.");
+
+            }
         }
-        else if(projectList.size() > 1) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                    "Multiple resources found. Violation of Unique Project Id constraint." +
-                            " Please contact your Data Administrator to resolve this. " +
-                            "Changing underlying database schemas and constraints " +
-                            "without consulting GOBii Team is not recommended.");
+        catch(Exception e) {
 
+           LOGGER.error(e.getMessage(), e);
+
+           throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                   GobiiValidationStatusType.UNKNOWN,
+                   e.getMessage());
         }
 
         return projectList.get(0);

@@ -1,15 +1,20 @@
 package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
@@ -31,6 +38,9 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
     @Autowired
     private ProjectDao projectDao;
+
+    @Autowired
+    private CvDao cvDao;
 
     @Override
     public ProjectDTO createProject(ProjectDTO newProjectDto) throws GobiiDomainException {
@@ -56,6 +66,10 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
             ModelMapper.mapDtoToEntity(newProjectDto, newProject);
 
+            List<Cv> cvList = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName());
+
+            newProject.setProperties(this.getCvIdMappedProperties(cvList, newProjectDto.getProperties()));
+
             Integer createdProjectId = projectDao.createProject(newProject);
 
             if(createdProjectId > 0) {
@@ -64,7 +78,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             else {
                 throw new GobiiException("Failed creating project. System Error.");
             }
-
         }
         catch(GobiiException gE) {
             LOGGER.error(gE.getMessage(), gE.getMessage());
@@ -80,6 +93,40 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         }
 
         return newProjectDto;
+    }
+
+    private JsonNode getCvIdMappedProperties(List<Cv> cvList, Map<String, String> projectProperties) {
+
+        JsonNode returnVal;
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+
+            Map<String, String> cvIdMappedProperties = new HashMap<>();
+
+            for (Cv cv : cvList) {
+                if (projectProperties.containsKey(cv.getTerm())) {
+
+                    cvIdMappedProperties.put(cv.getCvId().toString(),
+                            projectProperties.get(cv.getTerm()));
+                }
+            }
+
+            returnVal = mapper.reader().readTree(
+                    mapper.writeValueAsString(cvIdMappedProperties));
+
+        }
+        catch(Exception e) {
+
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+
+        }
+
+        return returnVal;
     }
 
     @Override
