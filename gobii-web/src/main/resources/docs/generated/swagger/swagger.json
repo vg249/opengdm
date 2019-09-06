@@ -9,7 +9,7 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "cbsugobiixvm11.biohpc.cornell.edu:8081",
+  "host" : "api.gobii.org:8081",
   "basePath" : "/gobii-dev",
   "tags" : [ {
     "name" : "Analyses"
@@ -497,6 +497,13 @@
         "description" : "The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. X-Auth-Token header and value obtained from /auth call will be used as an API-key for the rest of the GDM calls.",
         "operationId" : "authenticate",
         "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "X-Username",
           "in" : "header",
           "description" : "User Identifier",
@@ -526,7 +533,7 @@
         "x-summary" : "Authentication"
       }
     },
-    "/gobii/v1/configsettings/" : {
+    "/gobii/v1/configsettings" : {
       "get" : {
         "tags" : [ "ConfigSettings" ],
         "summary" : "List all configuration settings.",
@@ -4788,15 +4795,15 @@
         "open" : {
           "type" : "boolean"
         },
-        "uri" : {
-          "type" : "string",
-          "format" : "uri"
+        "filename" : {
+          "type" : "string"
         },
         "readable" : {
           "type" : "boolean"
         },
-        "filename" : {
-          "type" : "string"
+        "uri" : {
+          "type" : "string",
+          "format" : "uri"
         },
         "url" : {
           "type" : "string",

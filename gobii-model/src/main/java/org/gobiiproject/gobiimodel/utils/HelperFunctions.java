@@ -16,6 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 
+import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -417,9 +418,10 @@ public class HelperFunctions {
      *
      * @param instructionFile Fully qualified path to the instruction file
      */
-    public static void completeInstruction(String instructionFile, String doneFolder) {
+    public static String completeInstruction(String instructionFile, String doneFolder) {
         //Move instruction file
         FileSystemInterface.mv(instructionFile, doneFolder);
+        return (doneFolder + FilenameUtils.getName(instructionFile));
     }
 
     /**

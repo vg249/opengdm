@@ -79,6 +79,8 @@ const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
                            [disabled]="uploadComplete"
                            (click)="handleClickBrowse($event)"
                            [id]="viewIdGeneratorService.makeStandardId(typeControl.FILE_SELECTOR_MARKER_SAMPLE_LIST_UPLOAD)"
+                           accept="text/plain"
+                           (onFileSelected)="onFileSelected($event)"
                     />
                     <!--  IF YOU REINSTATE THE QUEUES BELOW THIS BUTTON WILL BE SUPERFLUOUS -->
                     <BR>
@@ -188,6 +190,7 @@ export class UploaderComponent implements OnInit {
 
     public uploader: FileUploader;
 
+
     public hasBaseDropZoneOver: boolean = false;
     public hasAnotherDropZoneOver: boolean = false;
 
@@ -213,6 +216,18 @@ export class UploaderComponent implements OnInit {
 
     }
 
+    public onFileSelected(e: any) {
+        for(let fileItem of this.uploader.getNotUploadedItems()) {
+            if(fileItem.file.type !== "text/plain") {
+                this.onUploaderError.emit(new HeaderStatusMessage(
+                    "Invalid Input.\nInput should be a text file with '.txt' extension.", null, null));
+                this.uploader.clearQueue();
+                this.clearSelectedFile();
+                break;
+            }
+        }
+    }
+
     ngOnInit(): any {
 
         let JobId$: Observable<GobiiFileItem> = this.store.select(fromRoot.getJobId);
@@ -236,6 +251,7 @@ export class UploaderComponent implements OnInit {
                 let token: string = this._authenticationService.getToken();
 
                 if (token) {
+
                     authHeader.value = token;
 
                     fileUploaderOptions.headers.push(authHeader);
@@ -246,7 +262,9 @@ export class UploaderComponent implements OnInit {
 
                         fileItem.file.name = fileName;
 
-                    }
+                    };
+
+
 
                     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
@@ -266,6 +284,8 @@ export class UploaderComponent implements OnInit {
                         } else {
 
                             this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
+                            this.uploader.clearQueue();
+                            this.clearSelectedFile();
 
                         }
 

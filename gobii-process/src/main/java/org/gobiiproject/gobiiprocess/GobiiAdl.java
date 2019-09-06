@@ -44,6 +44,7 @@ import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.gobiiadl.GobiiAdlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,8 +84,11 @@ public class GobiiAdl {
     private static File parentDirectoryPath;
     private static boolean batchMode = true;
     private static boolean doExtract = true;
+    private static boolean doFileCompare = true;
     private static String fileComparatorPath = null;
     private static String pathToMatrixFile = null;
+    private static HashMap<String, List<String>> errorList = new HashMap<>();
+    private static String currentScenarioName = "";
 
     private static String INPUT_HOST = "h";
     private static String INPUT_USER = "u";
@@ -93,7 +97,7 @@ public class GobiiAdl {
     private static String INPUT_SCENARIO = "s";
     private static String INPUT_DIRECTORY = "d";
     private static String INPUT_EXTRACT = "no_extract";
-    private static String INPUT_FILECOMPARATOR = "fc";
+    private static String INPUT_FILECOMPARE = "no_compare";
     private static String NAME_COMMAND = "GobiiAdl";
 
     private static List<GobiiDataSetExtract> dataSetExtractReturnList = null;
@@ -1653,6 +1657,7 @@ public class GobiiAdl {
                 if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
 
                     processError("\nError in downloading " + currentFileName + ": " + httpMethodResult.getResponseCode() + ": " + httpMethodResult.getReasonPhrase(), GobiiStatusLevel.WARNING);
+
                     continue;
                 }
 
@@ -1663,76 +1668,41 @@ public class GobiiAdl {
     }
 
 
-    private static void compareExtractedFiles(String localPathName, File scenarioFolder, String jobName) throws Exception {
+    private static void compareExtractedFiles(File extractedFilesDir, String pathToKnownExtract) throws Exception {
 
-        // check if file comparator tool exists
+        System.out.println("\nComparing extracted files by ADL with known-good extracts...\n");
 
-        File fileComparatorJar = new File(fileComparatorPath);
+        for (File currentFile : extractedFilesDir.listFiles()) {
 
-        if (!fileComparatorJar.exists()) {
-            processError("File Comparator tool does not exist. Skipping comparison of files", GobiiStatusLevel.WARNING);
-        } else {
+            String fileName = currentFile.getName();
 
+            if (fileName.endsWith(".log") || fileName.endsWith(".XML") || fileName.equals("summary.file")) {
+                //skip
+                continue;
+            }
 
-            System.out.println("\nComparing output matrix by ADL with input dataset:\n");
+            File knownFile = new File(pathToKnownExtract + "/" +  fileName);
 
-            // check if hapmap file exists
-            File hapmapExtractFile = new File(localPathName + "/Dataset.hmp.txt");
-            File flapjackExtractFile = new File(localPathName + "/Dataset.genotype");
-            File extractFile = null;
+            if (!knownFile.exists()) {
+                processError("\nFile: " + fileName + " does not exist.", GobiiStatusLevel.WARNING);
+                continue;
+            }
 
-            if (!hapmapExtractFile.exists() && !flapjackExtractFile.exists()) {
-                processError("Output matrix file does not exist.", GobiiStatusLevel.WARNING);
-            } else {
+            if (knownFile.isDirectory()) {
+                processError("\nFile: " + fileName + " is a directory.", GobiiStatusLevel.WARNING);
+                continue;
+            }
 
-                if (hapmapExtractFile.exists()) {
-                    extractFile = hapmapExtractFile;
-                } else {
-                    extractFile = flapjackExtractFile;
-                }
+            boolean isFileEqual = FileUtils.contentEqualsIgnoreEOL(currentFile, knownFile, null);
 
-                File dataInputFile = new File(pathToMatrixFile);
+            if (!isFileEqual) {
 
-                if (!dataInputFile.exists()){
-                    processError("Input Data file does not exist.", GobiiStatusLevel.WARNING);
-                } else {
-
-                    // create comparison output directory
-                    File outputDir = new File(scenarioFolder.getAbsoluteFile() + "/File_Comparator_Results/");
-                    if (!outputDir.exists() || !outputDir.isDirectory()) {
-                        outputDir.mkdir();
-                    }
-
-                    String outputFileName = outputDir.getAbsoluteFile() +"/" +jobName+"-";
-
-                    String command = "java -jar " + fileComparatorJar.getAbsoluteFile() + " -i " + dataInputFile.getAbsoluteFile() + " -t " + extractFile.getAbsoluteFile() + " -o " + outputFileName;
-
-                    boolean successful = HelperFunctions.tryExec(command, "output.txt", "error.txt");
-
-                    File outputFile = new File(outputFileName+"output.txt");
-                    if (outputFile.exists()) {
-
-                        BufferedReader reader = new BufferedReader(new FileReader(outputFileName+"output.txt"));
-                        int lines = 0;
-                        Boolean comparePassed = true;
-                        while (reader.readLine() != null) {
-
-                            if (lines > 1) {
-                                comparePassed = false;
-                                break;
-                            }
-
-                            lines++;
-                        }
-                        reader.close();
-                        String message = (comparePassed) ? "PASSED" : "FAILED";
-                        System.out.print(message);
-                    }
-
-                }
+                processError("\nExtracted file: " + fileName +" from ADL and extractor UI are not equal.", GobiiStatusLevel.WARNING);
+                continue;
 
             }
 
+            System.out.println("\nExtracted file: " + fileName + " from ADL and extractor UI are equal");
         }
     }
 
@@ -1794,7 +1764,8 @@ public class GobiiAdl {
                 } else {
                     String instructionFileName = payload.getData().get(0).getInstructionFileName();
                     System.out.println("Request " + instructionFileName + " submitted.");
-                    returnVal = checkJobStatusLoad(instructionFileName);
+                    Integer datasetId = loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId();
+                    returnVal = checkJobStatusLoad(instructionFileName, datasetId);
                 }
             } catch (Exception err) {
                 processError("Error submitting instruction file: " + err.getMessage(), GobiiStatusLevel.ERROR);
@@ -1804,7 +1775,7 @@ public class GobiiAdl {
         return returnVal;
     }
 
-    private static boolean checkJobStatusLoad(String instructionFileName) throws Exception {
+    private static boolean checkJobStatusLoad(String instructionFileName, Integer datasetId) throws Exception {
 
         boolean returnVal = false;
 
@@ -1829,18 +1800,44 @@ public class GobiiAdl {
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderProcedure procedure = data.get(0).getProcedure();
 
-            if (!currentStatus.equals(procedure.getMetadata().getGobiiJobStatus().getCvName())) {
-                currentStatus = procedure.getMetadata().getGobiiJobStatus().getCvName();
+            String newStatus = procedure.getMetadata().getGobiiJobStatus().getCvName();
+
+            if (newStatus.equalsIgnoreCase("qc_processing")) {
+
+                if (!currentStatus.equals(newStatus)) {
+                    currentStatus = newStatus;
+                    System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
+                }
+
+                // get dataset
+
+                RestUri datasetGetUri = GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
+                datasetGetUri.setParamValue("id", datasetId.toString());
+                GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceForDatasetGet = new GobiiEnvelopeRestResource<>(datasetGetUri);
+                PayloadEnvelope<DataSetDTO> resultEnvelopeForDatasetGet = gobiiEnvelopeRestResourceForDatasetGet.get(DataSetDTO.class);
+                checkStatus(resultEnvelopeForDatasetGet);
+
+                DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
+
+                newStatus = dataSetDTOGetResponse.getJobStatusName();
+            }
+
+            if (!currentStatus.equals(newStatus)) {
+                currentStatus = newStatus;
                 System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
             }
 
-            if (procedure.getMetadata().getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
-                    procedure.getMetadata().getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
 
+            if (newStatus.equalsIgnoreCase("failed") ||
+                    newStatus.equalsIgnoreCase("aborted")) {
+
+                System.out.println("\nJob " + instructionFileName + " failed. \n");
                 returnVal = false;
                 statusDetermined = true;
 
-            } else if (procedure.getMetadata().getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
+            } else if (newStatus.equalsIgnoreCase("completed")) {
                 returnVal = true;
                 statusDetermined = true;
             }
@@ -1943,6 +1940,15 @@ public class GobiiAdl {
             Node jobPayloadTypeNode = currentElement.getElementsByTagName("PayloadType").item(0);
             validateNode(jobPayloadTypeNode, currentElement.getTagName(), "PayloadType");
             String jobPayloadType = jobPayloadTypeNode.getTextContent();
+
+            Node qcCheckNode = currentElement.getElementsByTagName("QcCheck").item(0);
+            boolean qcCheck = false;
+
+            if (qcCheckNode != null) {
+                String qcString = qcCheckNode.getTextContent();
+                qcCheck = (qcString.toLowerCase().equals("true"));
+            }
+
             System.out.println("Parsing scenario: " + scenarioName);
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
             jobId = dateFormat.format(new Date());
@@ -2039,6 +2045,14 @@ public class GobiiAdl {
                         instructionObject.addProperty("gobiiCropType", crop);
                     }
 
+                    if (instructionObject.has("qcCheck")) {
+                        if (qcCheck && k == (jsonArray.size() - 1)) {
+                            instructionObject.addProperty("qcCheck", qcCheck);
+                        } else {
+                            instructionObject.addProperty("qcCheck", false);
+                        }
+                    }
+
                     if (entityName.equals("contact")) {
                         if (instructionObject.has("contactId")) {
                             instructionObject.addProperty("contactId", currentEntityId);
@@ -2133,7 +2147,7 @@ public class GobiiAdl {
                     instructionObject.add("gobiiFileColumns", gobiiFileColumnsArr);
                     jsonArray.set(k, instructionObject);
                 }
-            } // iterate instruciton file json
+            } // iterate instruction file json
 
             // update instruction file
             System.out.println("\nWriting instruction file for " + scenarioName + "\n");
@@ -2199,6 +2213,27 @@ public class GobiiAdl {
             ErrorLogger.logError("GobiiADL", message);
             System.err.print(message);
             System.exit(1);
+        } else if (gobiiStatusLevel.equals(GobiiStatusLevel.WARNING)) {
+
+            if (currentScenarioName != "") {
+
+                List<String> existingErrorMessage = new ArrayList<>();
+
+                if (errorList.containsKey(currentScenarioName)) {
+
+                    existingErrorMessage = errorList.get(currentScenarioName);
+
+                    existingErrorMessage.add(message);
+
+                    errorList.replace(currentScenarioName, existingErrorMessage);
+
+                } else {
+
+                    existingErrorMessage.add(message);
+                    errorList.put(currentScenarioName, existingErrorMessage);
+                }
+            }
+
         }
 
     }
@@ -2559,7 +2594,7 @@ public class GobiiAdl {
 
             int idx = 0;
 
-            if (isExtractSuccessful && dataSetExtractReturnList != null) {
+            if (isExtractSuccessful && dataSetExtractReturnList != null && doFileCompare) {
 
                 // download files and compare to known good extracted files
 
@@ -2573,16 +2608,15 @@ public class GobiiAdl {
 
                 File dataFileDir = new File(dataFilePath);
 
-                File[] extractedFiles = dataFileDir.listFiles();
-
-
                 String localPathName = subDirectory.getAbsoluteFile() + "/" + jobName;
 
                 downloadFiles(localPathName, jobName, dataSetExtractReturnList);
 
-                if (dataFileDir.exists() && dataFileDir.isDirectory() && dataFileDir.listFiles().length > 0) {
+                File extractedFilesDir = new File(localPathName);
 
-                     compareExtractedFiles(localPathName, subDirectory, jobName);
+                if (extractedFilesDir.exists() && extractedFilesDir.isDirectory() && extractedFilesDir.listFiles().length > 0) {
+
+                     compareExtractedFiles(extractedFilesDir,dataFilePath);
 
                 }
 
@@ -2644,6 +2678,8 @@ public class GobiiAdl {
 
         validateSubDirectory(currentDir);
 
+        currentScenarioName = currentDir.getName();
+
         /*** Process XML file ***/
 
         System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentDir.getName());
@@ -2674,7 +2710,7 @@ public class GobiiAdl {
         setOption(options, INPUT_SCENARIO, true, "Specifies the path of one subdirectory under the main directory. When specified, tool is run in single-scenario mode", "scenario");
         setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in", "directory");
         setOption(options, INPUT_EXTRACT, false, "If specified, ADL won't do an extract", "extract");
-        setOption(options, INPUT_FILECOMPARATOR, true, "Specifies the path to GDMFileProject.jar", "file comparator");
+        setOption(options, INPUT_FILECOMPARE, false, "If specified, ADL won't do a comparison of the known-extract and the new extract", "filecompare");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
@@ -2729,13 +2765,9 @@ public class GobiiAdl {
             doExtract = false;
         }
 
-        if (commandLine.hasOption(INPUT_FILECOMPARATOR)) {
+        if (commandLine.hasOption(INPUT_FILECOMPARE)) {
 
-            fileComparatorPath = commandLine.getOptionValue(INPUT_FILECOMPARATOR);
-        }
-
-        if (fileComparatorPath == null) {
-            fileComparatorPath = "GDMFileProject.jar";
+            doFileCompare = false;
         }
 
         String directory;
@@ -2838,7 +2870,8 @@ public class GobiiAdl {
 
         }
 
-        System.out.println("\nADL process successfully finished!");
+        GobiiAdlHelper.printADLSummary(errorList);
+
         System.exit(0);
     }
 }

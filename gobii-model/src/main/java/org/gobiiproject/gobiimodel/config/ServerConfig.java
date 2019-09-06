@@ -36,6 +36,9 @@ public class ServerConfig {
     private String contextPath = "";
 
     @Element(required = false)
+    private String errorContextPath = "";
+
+    @Element(required = false)
     private Integer port = 0;
 
     @Element(required = false)
@@ -181,6 +184,25 @@ public class ServerConfig {
 
     public ServerConfig setContextPath(String contextPath) {
         this.contextPath = contextPath;
+        return this;
+    }
+
+    public String getErrorContextPath() {
+        return this.getErrorContextPath(true);
+    }
+
+    public String getErrorContextPath(boolean terminate) {
+
+        String returnVal = this.errorContextPath;
+
+        if (terminate && !LineUtils.isNullOrEmpty(returnVal)) {
+            returnVal = LineUtils.terminateDirectoryPath(returnVal);
+        }
+        return returnVal;
+    }
+
+    public ServerConfig setErrorContextPath(String contextPath) {
+        this.errorContextPath = contextPath;
         return this;
     }
 

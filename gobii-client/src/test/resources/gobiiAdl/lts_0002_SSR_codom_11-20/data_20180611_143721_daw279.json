@@ -758,6 +758,22 @@
     "dataSetType" : "IUPAC",
     "dataSetOrientationType" : "MARKER_FAST",
     "metaDataId" : null
+  }, {
+    "gobiiColumnType" : "CSV_COLUMN",
+    "rCoord" : 1,
+    "cCoord" : 1,
+    "name" : "uuid",
+    "filterFrom" : null,
+    "filterTo" : null,
+    "findText" : null,
+    "replaceText" : null,
+    "constantValue" : null,
+    "index" : null,
+    "subcolumn" : false,
+    "subcolumnDelimiter" : null,
+    "dataSetType" : "IUPAC",
+    "dataSetOrientationType" : "MARKER_FAST",
+    "metaDataId" : null
   } ],
   "vcfParameters" : {
     "maf" : null,

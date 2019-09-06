@@ -100,6 +100,10 @@
           "fieldToCompare": [
             "external_code"
           ]
+        },{
+          "columnName": "uuid",
+          "required": "yes",
+          "unique": "yes"
         }
       ]
     },
