@@ -523,6 +523,7 @@ class ReaderThread implements Runnable {
 
     ReaderThread(CSVFileReaderInterface reader, GobiiLoaderProcedure procedure, GobiiLoaderInstruction instruction) {
         this.reader = reader;
+        this.procedure = procedure;
         this.instruction = instruction;
     }
 
