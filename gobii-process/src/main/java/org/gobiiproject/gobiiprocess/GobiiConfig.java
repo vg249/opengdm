@@ -47,6 +47,7 @@ public class GobiiConfig {
     private static String COPY_WARS = "wcopy";
     private static String PROP_FILE_FQPN = "wfqpn";
     private static String PROP_FILE_PROPS_TO_XML = "wxml";
+    private static String VERSION_FILE_PATH = "wVerFl";
     private static String VALIDATE_CONFIGURATION = "validate";
 
     private static String CONFIG_ADD_ITEM = "a";
@@ -218,6 +219,7 @@ public class GobiiConfig {
             setOption(options, COPY_WARS, false, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")", "copy wars");
             setOption(options, PROP_FILE_FQPN, true, "fqpn of gobii configuration file", "config fqpn");
             setOption(options, PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")", "convert to xml");
+            setOption(options, VERSION_FILE_PATH, true, "Path to gobii version file", "versionfile");
             setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the infrastructure parameters ("
                     + CONFIG_GLOBAL_FILESYS_ROOT + ") or parameters that require server option parameters ("
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")", "add config item");
@@ -878,6 +880,13 @@ public class GobiiConfig {
                 String ldapTestPassword = null;
                 String testDownloadDirectory = null;
                 boolean isTestSsh = false;
+
+                if(commandLine.hasOption(VERSION_FILE_PATH)){
+                    String versionFilePath=commandLine.getOptionValue(VERSION_FILE_PATH);
+                    argsSet.add(VERSION_FILE_PATH);
+                    valsSet.add(versionFilePath);
+                    configSettings.setVersionFilePath(versionFilePath);
+                }
 
                 if (commandLine.hasOption(CONFIG_TST_GLOBAL_INTIAL_URL)) {
                     initialConfigUrl = commandLine.getOptionValue(CONFIG_TST_GLOBAL_INTIAL_URL);
