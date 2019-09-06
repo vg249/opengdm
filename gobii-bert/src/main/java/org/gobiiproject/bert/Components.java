@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -240,7 +241,7 @@ public class Components {
 	}
 
 	@Action("job")
-	public JobDTO job(String jobPayloadType) {
+	public JobDTO job(String jobPayloadType, String jobName) {
 		try {
 			JobDTO job = new JobDTO();
 			job.setSubmittedBy(1);
@@ -249,7 +250,7 @@ public class Components {
 			job.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
 			job.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
 			job.setSubmittedDate(new Date());
-			job.setJobName("");
+			job.setJobName(jobName);
 
 			PayloadEnvelope<JobDTO> envelope = new PayloadEnvelope<>(job, GobiiProcessType.CREATE);
 			ResponseEntity<JsonNode> response = post(url(URL_JOBS), authHeader(), JsonNode.class, envelope);
@@ -263,19 +264,27 @@ public class Components {
 
 	@Action("load")
 	public void load(String procedureFilePath, String dataFolderPath) throws IOException, JSchException {
-		scp(this.host, this.user, procedureFilePath, "/tmp/procedure_" + randomString());
-		scp(this.host, this.user, dataFolderPath, "/tmp/data", "-r");
+		String procedureFileName = procedureFilePath.substring(procedureFilePath.lastIndexOf(File.pathSeparator + 1));
 
 		JsonNode procedure = new ObjectMapper().convertValue(slurp(procedureFilePath), JsonNode.class);
 		String jobPayloadType = getIn(procedure, "metadata", "jobPayloadType").asText();
+		String dataSrc = getIn(procedure, "metadata", "gobiiFile", "source").asText();
 
-		job(jobPayloadType);
+		scp(this.host, this.user, procedureFilePath, "/tmp/" + procedureFileName);
+		scp(this.host, this.user, dataFolderPath, dataSrc, "-r");
+
+		job(jobPayloadType, procedureFileName);
 	}
 
 	@Clean("load")
-	public void cleanLoad(Object obj, String instructionFilePath, String dataFolderPath) throws JSchException {
-		ssh(this.host, this.user, "rm /tmp/instructionfile");
-		ssh(this.host, this.user, "rm -r /tmp/data");
+	public void cleanLoad(Object obj, String procedureFilePath, String dataFolderPath) throws JSchException, IOException {
+
+		String procedureFileName = procedureFilePath.substring(procedureFilePath.lastIndexOf(File.pathSeparator + 1));
+		JsonNode procedure = new ObjectMapper().convertValue(slurp(procedureFilePath), JsonNode.class);
+		String dataSrc = getIn(procedure, "metadata", "gobiiFile", "source").asText();
+
+		ssh(this.host, this.user, "rm /tmp/" + procedureFileName);
+		ssh(this.host, this.user, "rm -r " + dataSrc);
 	}
 
 	public void printHttpError(HttpServerErrorException e) throws RuntimeException {

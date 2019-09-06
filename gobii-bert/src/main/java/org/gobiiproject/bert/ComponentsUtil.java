@@ -92,15 +92,34 @@ public class ComponentsUtil {
 		return new ObjectMapper().convertValue(getIn(response.getBody(), "payload", "data", 0), as);
 	}
 
+	private static HashMap<String[], Session> sessions = new HashMap<>();
+
+	private static JSch jsch = new JSch();
+	static {
+		try {
+			jsch.addIdentity("/Users/ljc237-admin/.ssh/id_rsa");
+		} catch (JSchException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Session sessionOf(String host, String user) throws JSchException {
+		final String[] pair = {host, user};
+
+		if (! sessions.containsKey(pair)) {
+			Session session = jsch.getSession(user, host, 22);
+			return session;
+		}
+
+		return sessions.get(pair);
+	}
+
 	public static void ssh(String host, String user, String command) throws JSchException {
 
 		Channel channel = null;
 		try {
-			JSch jsch = new JSch();
 
-			jsch.addIdentity("/Users/ljc237-admin/.ssh/id_rsa");
-
-			Session session = jsch.getSession(user, host, 22);
+			Session session = sessionOf(host, user);
 
 			Properties config = new Properties();
 			config.put("StrictHostKeyChecking", "no");
@@ -124,11 +143,7 @@ public class ComponentsUtil {
 
 	public static void scp(String host, String user, String from, String to, String ... params) throws JSchException, IOException {
 
-		JSch jsch = new JSch();
-
-		jsch.addIdentity("/Users/ljc237-admin/.ssh/id_rsa");
-
-		Session session = jsch.getSession(user, host, 22);
+		Session session = sessionOf(host, user);
 
 		Properties config = new Properties();
 		config.put("StrictHostKeyChecking", "no");

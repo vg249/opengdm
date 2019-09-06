@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
-import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
+import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 
@@ -37,7 +37,7 @@ public class GobiiFileColumn {
     private String subcolumnDelimiter = null;
 
     private DataSetType dataSetType = DataSetType.IUPAC;
-    private DataSetOrientationType dataSetOrientationType = DataSetOrientationType.MARKER_FAST;
+    private DatasetOrientationType dataSetOrientationType = DatasetOrientationType.MARKER_FAST;
 
 
     private String metaDataId = null;
@@ -169,11 +169,11 @@ public class GobiiFileColumn {
         return this;
     }
 
-    public DataSetOrientationType getDataSetOrientationType() {
+    public DatasetOrientationType getDataSetOrientationType() {
         return dataSetOrientationType;
     }
 
-    public GobiiFileColumn setDataSetOrientationType(DataSetOrientationType dataSetOrientationType) {
+    public GobiiFileColumn setDataSetOrientationType(DatasetOrientationType dataSetOrientationType) {
         this.dataSetOrientationType = dataSetOrientationType;
         return this;
     }
