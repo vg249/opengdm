@@ -881,12 +881,6 @@ public class GobiiConfig {
                 String testDownloadDirectory = null;
                 boolean isTestSsh = false;
 
-                if(commandLine.hasOption(VERSION_FILE_PATH)){
-                    String versionFilePath=commandLine.getOptionValue(VERSION_FILE_PATH);
-                    argsSet.add(VERSION_FILE_PATH);
-                    valsSet.add(versionFilePath);
-                    configSettings.setVersionFilePath(versionFilePath);
-                }
 
                 if (commandLine.hasOption(CONFIG_TST_GLOBAL_INTIAL_URL)) {
                     initialConfigUrl = commandLine.getOptionValue(CONFIG_TST_GLOBAL_INTIAL_URL);
@@ -1223,7 +1217,25 @@ public class GobiiConfig {
                     returnVal = false;
                 }
 
-            } else {
+            }
+            else if(commandLine.hasOption(VERSION_FILE_PATH)){
+                List<String> argsSet = new ArrayList<>();
+                List<String> valsSet = new ArrayList<>();
+                String versionFilePath=commandLine.getOptionValue(VERSION_FILE_PATH);
+                argsSet.add(VERSION_FILE_PATH);
+                valsSet.add(versionFilePath);
+
+                configSettings.setVersionFilePath(versionFilePath);
+
+                writeConfigSettingsMessage(options,
+                        ServerType.UNKNOWN,
+                        propFileFqpn,
+                        argsSet,
+                        valsSet,
+                        null);
+                configSettings.commit();
+            }
+            else {
                 // do nothing: allow control to fall through to print help
 
             }
