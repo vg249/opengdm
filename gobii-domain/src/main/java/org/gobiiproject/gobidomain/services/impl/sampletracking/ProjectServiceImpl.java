@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.gobiiproject.gobidomain.CvIdCvTermMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ProjectService;
@@ -70,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
                 List<Cv> cvList = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName());
 
-                newProject.setProperties(this.getCvIdMappedProperties(cvList, newProjectDto.getProperties()));
+                newProject.setProperties(CvIdCvTermMapper.mapCvTermsToCvId(cvList, newProjectDto.getProperties()));
 
             }
 
@@ -99,40 +100,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         return newProjectDto;
     }
 
-    private JsonNode getCvIdMappedProperties(List<Cv> cvList, Map<String, String> projectProperties) {
-
-        JsonNode returnVal;
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-
-            Map<String, String> cvIdMappedProperties = new HashMap<>();
-
-            for (Cv cv : cvList) {
-                if (projectProperties.containsKey(cv.getTerm())) {
-
-                    cvIdMappedProperties.put(cv.getCvId().toString(),
-                            projectProperties.get(cv.getTerm()));
-
-                }
-            }
-
-            returnVal = mapper.reader().readTree(
-                    mapper.writeValueAsString(cvIdMappedProperties));
-
-        }
-        catch(Exception e) {
-
-            throw new GobiiDomainException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage());
-
-        }
-
-        return returnVal;
-    }
 
     @Override
     public ProjectDTO replaceProject(Integer projectId, ProjectDTO newProject)
