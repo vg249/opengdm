@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.spworkers.SpDef;
 import org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,29 @@ public class ProjectDaoImpl implements ProjectDao {
 
             returnVal = spWorker.getResult();
 
+        }
+        catch (ConstraintViolationException constraintViolation) {
+
+            String errorMsg;
+            GobiiValidationStatusType statusType = GobiiValidationStatusType.BAD_REQUEST;
+            // Postgresql error code for Unique Constraint Violation is 23505
+            if(constraintViolation.getSQLException() != null) {
+                if(constraintViolation.getSQLException().getSQLState().equals("23505")) {
+                    statusType = GobiiValidationStatusType.ENTITY_ALREADY_EXISTS;
+                    errorMsg = "Project already exists";
+                }
+                else {
+                    errorMsg = "Bad request";
+                }
+            }
+            else {
+                errorMsg = constraintViolation.getMessage();
+            }
+            throw (new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    statusType,
+                    errorMsg)
+            );
         }
         catch(Exception e) {
             LOGGER.error(e.getMessage(), e);
