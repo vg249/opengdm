@@ -25,20 +25,64 @@ public class CvDaoImpl implements CvDao {
     protected EntityManager em;
 
     @Override
+    public Cv getCvByCvId(Integer cvId) {
+
+
+        Objects.requireNonNull(cvId, "Cv Id should not be null");
+
+        try {
+            List<Cv> cvList = em
+                    .createNativeQuery("SELECT * FROM cv WHERE cv_id = ?", Cv.class)
+                    .setParameter(1, cvId)
+                    .getResultList();
+
+            if(cvList.size() == 1) {
+                return cvList.get(0);
+            }
+
+            return null;
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+
+        }
+
+    }
+
+    @Override
     public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) {
 
         List<Cv> cvList = new ArrayList<>();
 
+        Objects.requireNonNull(cvGroupName, "CV group name should not be null");
+
+        String queryString = "SELECT DISTINCT cv.* FROM cv INNER JOIN cvgroup " +
+                "ON (cv.cvgroup_id = cvgroup.cvgroup_id AND cvgroup.name = ?";
+
+        if(cvType != null) {
+            queryString += " AND cvgroup.type = ?)";
+        }
+        else {
+            queryString += " )";
+        }
+
         try {
 
-            cvList = em
-                    .createNativeQuery(
-                            "SELECT DISTINCT cv.* FROM cv " +
-                                    "INNER JOIN cvgroup " +
-                                    "ON (cv.cvgroup_id = cvgroup.cvgroup_id " +
-                                    "AND cvgroup.name = ?)", Cv.class)
-                    .setParameter(1, cvGroupName)
-                    .getResultList();
+            Query q = em
+                    .createNativeQuery(queryString, Cv.class)
+                    .setParameter(1, cvGroupName);
+
+
+            if(cvType != null) {
+                q.setParameter(2, cvType.getGroupTypeId());
+            }
+
+            cvList = q.getResultList();
 
         }
         catch(Exception e) {
@@ -66,7 +110,10 @@ public class CvDaoImpl implements CvDao {
                 "ON (cv.cvgroup_id = cvgroup.cvgroup_id AND cvgroup.name = ? AND cv.term = ?";
 
         if(cvType != null) {
-            queryString += " AND cvgroup.type = ?";
+            queryString += " AND cvgroup.type = ?)";
+        }
+        else {
+            queryString += " )";
         }
 
         try {

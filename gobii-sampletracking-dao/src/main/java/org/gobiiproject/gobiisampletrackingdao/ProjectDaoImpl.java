@@ -124,6 +124,8 @@ public class ProjectDaoImpl implements ProjectDao {
                     .setParameter(1, projectId)
                     .getResultList();
 
+
+
             if (projectList.size() == 0) {
                 return null;
             } else if (projectList.size() > 1) {

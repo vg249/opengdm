@@ -57,7 +57,32 @@ public class CvIdCvTermMapper {
         }
 
         return returnVal;
+    }
 
+
+    public static Map<String, String> mapCvIdToCvTerms(List<Cv> cvList, JsonNode propertiesJson) {
+
+        Map<String, String> returnVal = new HashMap();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            for(Cv cv : cvList) {
+                if(propertiesJson.has(cv.getCvId().toString())) {
+                    returnVal.put(cv.getTerm(), propertiesJson.get(cv.getCvId().toString()).asText());
+                }
+            }
+        }
+        catch(Exception e) {
+
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+
+        }
+
+        return returnVal;
 
     }
 }

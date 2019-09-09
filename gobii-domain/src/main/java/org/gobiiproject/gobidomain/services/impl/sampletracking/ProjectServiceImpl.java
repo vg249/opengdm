@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDT
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -43,6 +44,12 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     @Autowired
     private CvDao cvDao;
 
+    /**
+     * Creates the Project with given details.
+     * @param newProjectDto
+     * @return
+     * @throws GobiiDomainException
+     */
     @Override
     public ProjectDTO createProject(ProjectDTO newProjectDto) throws GobiiDomainException {
 
@@ -55,21 +62,30 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
             Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
 
-            newProjectDto.setCreatedBy(contactId);
+            newProject.setCreatedBy(contactId);
 
             //Setting created date
-            newProjectDto.setCreatedDate(new Date(new Date().getTime()));
+            newProject.setCreatedDate(new Date(new Date().getTime()));
 
-            // Project status is set as 1 which corresponds to new project
-            // Can be moved to stored procedure.
-            // TODO: Should be moved inside Stored Procedure.
-            newProjectDto.setProjectStatus(1);
+            // Set the Status of the project as newly created by getting it respective cvId
+            List<Cv> statusCvList = cvDao.getCvsByCvTermAndCvGroup(
+                    "new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                    GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+            //As CV term is unique under its CV group, there should be only
+            //one cv for term "new" under group "status"
+            if(statusCvList.size() > 0) {
+                Cv statusCv = statusCvList.get(0);
+                newProject.setProjectStatus(statusCv.getCvId());
+            }
+
 
             ModelMapper.mapDtoToEntity(newProjectDto, newProject);
 
             if(!newProjectDto.getProperties().isEmpty()) {
 
-                List<Cv> cvList = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName());
+                List<Cv> cvList = cvDao.getCvListByCvGroup(
+                        CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
 
                 newProject.setProperties(CvIdCvTermMapper.mapCvTermsToCvId(cvList, newProjectDto.getProperties()));
 
@@ -78,7 +94,8 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             Integer createdProjectId = projectDao.createProject(newProject);
 
             if(createdProjectId > 0) {
-                newProjectDto.setProjectId(createdProjectId);
+
+                return this.getProjectById(createdProjectId);
             }
             else {
                 throw new GobiiException("Failed creating project. System Error.");
@@ -97,7 +114,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             throw new GobiiDomainException(e);
         }
 
-        return newProjectDto;
     }
 
 
@@ -144,18 +160,33 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     public ProjectDTO getProjectById(Integer projectId)
     throws GobiiDomainException {
 
-        ProjectDTO returnVal;
+        ProjectDTO returnVal = new ProjectDTO();
+
         try {
 
             Project project = projectDao.getProjectById(projectId);
 
-            returnVal = dtoMapSampleTrackingProject.get(projectId);
-
-            if (null == returnVal) {
+            if (project == null) {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "Project not found for given id.");
             }
+
+            ModelMapper.mapEntityToDto(project, returnVal);
+
+            //Set Project Status by cvId
+            Cv statusCv = cvDao.getCvByCvId(project.getProjectStatus());
+
+            if(statusCv != null) {
+                returnVal.setProjectStatus(statusCv.getTerm());
+            }
+
+            if(project.getProperties() != null && project.getProperties().size() > 0) {
+                List<Cv> cvList = cvDao.getCvListByCvGroup(
+                        CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+                returnVal.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.properties));
+            }
+
             return returnVal;
         }
         catch (GobiiException gE) {

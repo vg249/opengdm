@@ -12,5 +12,6 @@ public interface CvDao {
 
     List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvGroupType);
     List<Cv> getCvsByCvTermAndCvGroup(String cvTerm, String cvGroupName, GobiiCvGroupType cvType);
+    Cv getCvByCvId(Integer cvId);
 
 }

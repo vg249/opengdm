@@ -2,6 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,17 @@ public class CvDaoTest {
     public void getCvListByCvGroupTest() {
 
         List<Cv> cvList = cvDao.getCvListByCvGroup(
-                CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName());
+                CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        assertTrue(cvList.size() > 0);
+
+    }
+
+    @Test
+    public void getCvsByCvTermAndCvGroup() {
+
+        List<Cv> cvList = cvDao.getCvsByCvTermAndCvGroup( "new",
+                CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
 

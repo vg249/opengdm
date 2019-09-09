@@ -27,8 +27,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="projectName", entity=Project.class)
     private String projectName;
 
-    @GobiiEntityMap(paramName="projectStatus", entity=Project.class)
-    private Integer projectStatus;
+    private String projectStatus;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="projectCode", entity=Project.class)
@@ -77,11 +76,11 @@ public class ProjectDTO extends DTOBaseAuditable {
         this.projectName = projectName;
     }
 
-    public Integer getProjectStatus() {
+    public String getProjectStatus() {
         return this.projectStatus;
     }
 
-    public void setProjectStatus(Integer status) {
+    public void setProjectStatus(String status) {
         this.projectStatus = status;
     }
 
