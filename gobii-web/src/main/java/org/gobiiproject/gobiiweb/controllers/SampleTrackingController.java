@@ -1,12 +1,15 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
@@ -15,6 +18,7 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -43,8 +47,65 @@ public class SampleTrackingController {
     private ExperimentService<ExperimentDTO> sampleTrackingExperimentService = null;
 
     /**
-     * ----------------------- List Project --------------------------------
-     *
+     * Authenticates the User.
+     * @param noContentExpected
+     * @param request
+     * @param response
+     * @return
+     */
+    @ApiOperation(
+            value = "authenticate",
+            notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
+                    "the response and the response headers include the token in the X-Auth-Token header. " +
+                    "X-Auth-Token header and value obtained from /auth call will be used as an API-key " +
+                    "for the rest of the GDM calls.",
+            tags = {"Authentication"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Authentication")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Username", value="User Identifier", required=true,
+                    paramType = "header", dataType = "string"),
+            @ApiImplicitParam(name="X-Password", value="User password", required=true,
+                    paramType = "header", dataType = "string"),
+    })
+    @ApiResponses(value={
+            @ApiResponse(code=200, message = "OK", responseHeaders=@ResponseHeader(
+                    name="X-Auth-Token ", description = "API key to authenticate GDM api calls",
+                    response = String.class
+            ))
+    })
+    @RequestMapping(value = "/auth", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity authenticate(@RequestBody(required = false) String noContentExpected,
+                               HttpServletRequest request,
+                               HttpServletResponse response) throws GobiiException {
+
+        HeaderAuth dtoHeaderAuth = new HeaderAuth();
+
+        try {
+
+
+            dtoHeaderAuth.setToken(response.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN));
+            dtoHeaderAuth.setGobiiCropType(response.getHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP));
+            dtoHeaderAuth.setUserName(response.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME));
+
+
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Authentication Failure");
+        }
+
+        return ResponseEntity.ok(dtoHeaderAuth);
+    }
+
+    /**
      * Lists the projects by page size and page token.
      *
      * @param pageTokenParam - String page token.
@@ -129,8 +190,6 @@ public class SampleTrackingController {
 
 
     /**
-     * ----------------------- Get Project --------------------------------
-     *
      * Endpoint for getting a specific project with the given project ID
      *
      * @param projectId ID of the requested project
@@ -155,7 +214,7 @@ public class SampleTrackingController {
     public @ResponseBody ResponseEntity getProjectById(
             @ApiParam(value = "ID of the Project to be extracted", required = true)
             @PathVariable Integer projectId
-    ) {
+    ) throws GobiiException {
             ProjectDTO project = sampleTrackingProjectService.getProjectById(projectId);
             BrApiMasterPayload<ProjectDTO> payload = new BrApiMasterPayload<>(project);
             return ResponseEntity.ok(payload);
@@ -163,8 +222,6 @@ public class SampleTrackingController {
 
 
     /**
-     * ----------------------- Create Project --------------------------------
-     *
      * Endpoint to create new project.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newProject - New project to be created.
@@ -189,15 +246,15 @@ public class SampleTrackingController {
     @RequestMapping(value="/projects", method=RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity createProject(
             @ApiParam(required = true)
-            @RequestBody ProjectDTO newProject) {
+            @RequestBody ProjectDTO newProject) throws GobiiException {
+
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
 
     /**
-     * ----------------------- List Experiment --------------------------------
-     *
      * Lists the experiments by page size and page token.
      *
      * @param pageTokenParam - String page token.
@@ -240,8 +297,6 @@ public class SampleTrackingController {
 
 
     /**
-     * ----------------------- Create Experiment --------------------------------
-     *
      * Endpoint to create new experiment.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newExperiment - New experiment to be created.
@@ -284,8 +339,6 @@ public class SampleTrackingController {
     }
 
     /**
-     * ----------------------- Get Experiment --------------------------------
-     *
      * Endpoint for getting a specific experiment with the given experiment ID
      *
      * @param experimentId ID of the requested experiment
@@ -328,8 +381,6 @@ public class SampleTrackingController {
 
 
     /**
-     * ----------------------- Create Samples --------------------------------
-     *
      * Endpoint to create new samples for given projectId.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newProjectSamples - List samples to be created to project.
@@ -364,8 +415,6 @@ public class SampleTrackingController {
 
 
     /**
-     * ----------------------- Upload Samples --------------------------------
-     *
      * Endpoint to upload samples for given project Id.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param sampleFile - Tab delimited sample file, with respective columns as per design document.
@@ -405,8 +454,6 @@ public class SampleTrackingController {
     }
 
     /**
-     * ----------------------- Create Dataset --------------------------------
-     *
      * Endpoint to create dataset under given experiment Id.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newDataset - Dataset metadata.
@@ -436,8 +483,6 @@ public class SampleTrackingController {
     }
 
     /**
-     * ----------------------- Upload Data to Dataset --------------------------------
-     *
      * Endpoint to upload data to given Dataset Id.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param genotypeFile - Genotype files as application/zip

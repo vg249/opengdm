@@ -57,6 +57,8 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
             Project newProject = new Project();
 
+            ModelMapper.mapDtoToEntity(newProjectDto, newProject);
+
             //Setting created by contactId
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -78,9 +80,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
                 Cv statusCv = statusCvList.get(0);
                 newProject.setProjectStatus(statusCv.getCvId());
             }
-
-
-            ModelMapper.mapDtoToEntity(newProjectDto, newProject);
 
             if(!newProjectDto.getProperties().isEmpty()) {
 
@@ -132,7 +131,9 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     }
 
     public List<ProjectDTO> getProjects(Integer pageToken, Integer pageSize) {
+
         List<ProjectDTO> returnVal;
+
         try {
 
             returnVal = dtoMapSampleTrackingProject.getList(pageToken, pageSize);

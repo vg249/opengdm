@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMetaData {
 
-    private BrApiPagination pagination = new BrApiPagination();
+    private BrApiPagination pagination;
 
     @JsonUnwrapped
     private List<BrApiStatus> status;
