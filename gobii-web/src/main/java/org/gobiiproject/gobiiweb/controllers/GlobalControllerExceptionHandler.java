@@ -18,7 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * Handles the exceptions thrown in all the Controllers
  * in this project and returns appropriate HTTP response.
  */
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = {SampleTrackingController.class})
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
@@ -37,6 +37,7 @@ public class GlobalControllerExceptionHandler {
         errorPayload.setError(gEx.getMessage());
         HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         switch (gEx.getGobiiValidationStatusType()) {
+
             case ENTITY_DOES_NOT_EXIST: {
                 errorStatus = HttpStatus.NOT_FOUND;
                 break;
@@ -50,10 +51,14 @@ public class GlobalControllerExceptionHandler {
                 break;
             }
             default: {
-               errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                errorPayload.setError("System error. Please contact the web service administrator.");
             }
+
         }
+
         LOGGER.error(gEx.getMessage());
+
         return ResponseEntity.status(errorStatus).body(errorPayload);
     }
 
