@@ -138,7 +138,7 @@ class ConfigValues {
     private String emailSvrHashType;
 
     @Element(required = false)
-    private String emailSvrPassword;
+    private ConfigEncrypt emailSvrPassword;
 
     @Element(required = false)
     private Integer emailServerPort = 0;
@@ -428,26 +428,10 @@ class ConfigValues {
         this.emailSvrHashType = emailSvrHashType;
     }
 
-    public String getEmailSvrPassword() {
-
-        String returnVal;
-
-        if (this.isDecrypt) {
-
-            returnVal = Decrypter.decrypt(this.emailSvrPassword, null);
-
-        } else {
-
-            returnVal = this.emailSvrPassword;
-
-        }
-
-        return returnVal;
-
-    }
+    public String getEmailSvrPassword() { return this.emailSvrPassword.getValue(); }
 
     public void setEmailSvrPassword(String emailSvrPassword) {
-        this.emailSvrPassword = emailSvrPassword;
+        this.emailSvrPassword = new ConfigEncrypt(emailSvrPassword);
     }
 
     public Integer getEmailServerPort() {
