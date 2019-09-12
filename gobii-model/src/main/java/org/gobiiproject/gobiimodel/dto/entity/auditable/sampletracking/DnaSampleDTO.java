@@ -34,6 +34,7 @@ public class DnaSampleDTO extends DTOBaseAuditable{
     private String num;
     private String wellRow;
     private String wellCol;
+
     private GermplasmDTO germplasm = new GermplasmDTO();
     private Map<String, Object> properties = new HashMap<>();
 

@@ -12,6 +12,30 @@ map | Object | *Optional* Object mapping File header to the API Fields. Nested f
 
 * sampleFile: **Required** Sample file. Content Type: text/plain. File should be tab(\\t) delimited.
 
+**Python Example**
+
+```
+
+  import requests
+  
+  import json
+  
+  # URL for Sample Upload
+  url = "http://cbsugobiixvm11.biohpc.cornell.edu:8081/gobii-dev/sample-tracking/v1/samples/upload"
+  
+  # Sample Meta Data added in data field with sampleMetaData as key
+  sampleMetaData = {"projectId" : 7, "map" :  {}}
+  
+  data = {"sampleMetaData" : json.dumps(sampleMetaData)}
+  
+  #Sample File is added in files fields with sampleFile as key
+  files = { "sampleFile" : open("/home/user/sample.txt", 'rb')}
+  
+  response = requests.post(url, data=data, files=files, headers= {"X-Auth-Token" : "123apitoken!"})
+
+
+```
+
 **Form Data Example**
 
 ```

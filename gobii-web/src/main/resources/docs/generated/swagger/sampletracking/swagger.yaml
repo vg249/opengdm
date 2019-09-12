@@ -13,6 +13,7 @@ info:
 host: "cbsugobiixvm11.biohpc.cornell.edu:8081"
 basePath: "/gobii-dev"
 tags:
+- name: "Authentication"
 - name: "Dataset"
 - name: "Experiment"
 - name: "Project"
@@ -20,6 +21,39 @@ tags:
 schemes:
 - "http"
 paths:
+  /sample-tracking/v1/auth:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Authentication"
+      description: "Authentication"
+      operationId: "authenticate"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "string"
+      - name: "X-Username"
+        in: "header"
+        description: "User Id"
+        required: true
+        type: "string"
+      - name: "X-Password"
+        in: "header"
+        description: "User password"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          headers:
+            'X-Auth-Token ':
+              type: "string"
+              description: "API key to authenticate GDM api calls"
+      x-summary: "Authentication"
   /sample-tracking/v1/dataset:
     post:
       tags:
@@ -485,10 +519,10 @@ definitions:
       projectName:
         type: "string"
       projectStatus:
-        type: "integer"
-        format: "int32"
+        type: "string"
       projectCode:
         type: "string"
+        readOnly: true
       projectDescription:
         type: "string"
       properties:

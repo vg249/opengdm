@@ -489,6 +489,7 @@
     <bean id="createStatementDnaSamples"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.modify.liststatement.CreateStatementDnaSamples"/>
 
+
     <!-- **** ListStatement queries paged *************************************** -->
     <bean id="listStatementDatasetAllPaged"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.paged.ListStatementDatasetPaged"/>

@@ -17,32 +17,39 @@ import java.util.Map;
  */
 public class GobiiLoaderInstruction {
 
-
-
-
     //Tables collection
     //linked hash map preserves the insertion order
     Map<String,List<GobiiFileColumn>> columnsByTableName = new LinkedHashMap<>();
 
     //Type of load
     private JobPayloadType jobPayloadType;
+
     //File location information (Each table can come from a separate file)
     private GobiiFile gobiiFile = new GobiiFile();
+
     //Name of this table. Used as filename for loading, and to determine what database table it goes to.
     private String table = null;
+
     //List of GobiiFileColumn columns, left to right ordering
     private List<GobiiFileColumn> gobiiFileColumns = new ArrayList<>();
+
     //Special filtering parameters for VCF (Mostly ignored)
     private VcfParameters vcfParameters = new VcfParameters();
+
     //ID of the dataset, used when loading matrix data
     private Integer dataSetId;
+
     //Name of the crop being loaded
     private String gobiiCropType;
+
     //ID of the primary contact for this action
     private Integer contactId;
+
     //Email of the primary contact for this action
     private String contactEmail;
+
     private JobProgressStatusType gobiiJobStatus = JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS;
+
     private String logMessage;
 
     private boolean qcCheck;

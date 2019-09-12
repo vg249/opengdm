@@ -1,10 +1,12 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.primitives.Bytes;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobidomain.services.SampleService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
@@ -15,6 +17,9 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -29,6 +34,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +62,8 @@ public class SampleTrackingController {
      * @return
      */
     @ApiOperation(
-            value = "authenticate",
-            notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
-                    "the response and the response headers include the token in the X-Auth-Token header. " +
-                    "X-Auth-Token header and value obtained from /auth call will be used as an API-key " +
-                    "for the rest of the GDM calls.",
+            value = "Authentication",
+            notes = "Authentication",
             tags = {"Authentication"},
             extensions = {
                     @Extension(properties = {
@@ -67,7 +72,7 @@ public class SampleTrackingController {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Username", value="User Identifier", required=true,
+            @ApiImplicitParam(name="X-Username", value="User Id", required=true,
                     paramType = "header", dataType = "string"),
             @ApiImplicitParam(name="X-Password", value="User password", required=true,
                     paramType = "header", dataType = "string"),
@@ -445,8 +450,42 @@ public class SampleTrackingController {
             @ApiParam(hidden = true)
             @RequestPart("sampleFile") MultipartFile sampleFile,
             @ApiParam(hidden = true)
-            @RequestPart("sampleMetaData") Map<String, String> sampleMetaData) {
+            @RequestPart("sampleMetaData") SampleMetadataDTO sampleMetaData) {
+
+        InputStream is;
+
+        BufferedReader br;
+
+        List<GobiiFileColumn> gobiiFileColumns = new ArrayList<>();
+
         try {
+
+            is = sampleFile.getInputStream();
+
+            br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+            String fileHeader = br.readLine();
+
+            String[] fileHeaderList = fileHeader.split("\t");
+
+            for(String columnHeader : fileHeaderList) {
+
+                GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
+
+                if(sampleMetaData.getMap().containsKey(columnHeader)) {
+
+                    String dtoProp = sampleMetaData.getMap().get(columnHeader);
+
+                    gobiiFileColumn.setCCoord(1);
+
+                    gobiiFileColumn.setRCoord(2);
+
+                }
+            }
+
+            //ObjectMapper mapper = new ObjectMapper();
+            //SampleMetadataDTO sampleMetadata = mapper.readValue(
+             //       sampleMetaData, SampleMetadataDTO.class);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
@@ -556,10 +595,10 @@ public class SampleTrackingController {
             List<GermplasmDTO> germplasmDTOList = new ArrayList<>();
 
             GermplasmDTO germplasmDTO = new GermplasmDTO();
-            germplasmDTO.setName("foo germplasm");
+            germplasmDTO.setGermplasmName("foo germplasm");
             germplasmDTO.setExternalCode("external bar code");
-            germplasmDTO.setSpeciesName("foo species");
-            germplasmDTO.setTypeName("foo type");
+            germplasmDTO.setGermplasmSpecies("foo species");
+            germplasmDTO.setGermplasmType("foo type");
 
             germplasmDTOList.add(germplasmDTO);
 

@@ -21,10 +21,10 @@ import java.util.Map;
 public class GermplasmDTO extends DTOBaseAuditable {
 
     private int id;
-    private String name;
+    private String germplasmName;
     private String externalCode;
-    private String speciesName;
-    private String typeName;
+    private String germplasmSpecies;
+    private String germplasmType;
 
     private Map<String, String> properties = new HashMap<>();
 
@@ -43,13 +43,13 @@ public class GermplasmDTO extends DTOBaseAuditable {
     public void setGermplasmId(Integer id) { this.id = id; }
 
     @GobiiEntityParam(paramName = "name")
-    public String getName() {
-        return this.name;
+    public String getGermplasmName() {
+        return this.germplasmName;
     }
 
     @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) {
-        this.name = name;
+    public void setGermplasmName(String name) {
+        this.germplasmName = name;
     }
 
     @GobiiEntityParam(paramName = "externalCode")
@@ -63,22 +63,22 @@ public class GermplasmDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityParam(paramName = "species_id")
-    public String getSpeciesName() {
-        return this.speciesName;
+    public String getGermplasmSpecies() {
+        return this.germplasmSpecies;
     }
 
     @GobiiEntityColumn(columnName = "species_id")
-    public void setSpeciesName(String speciesId) {
-        this.speciesName = speciesName;
+    public void setGermplasmSpecies(String speciesName) {
+        this.germplasmSpecies = speciesName;
     }
 
     @GobiiEntityParam(paramName = "type_id")
-    public String getTypeName() {
-        return this.typeName;
+    public String getGermplasmType() {
+        return this.germplasmType;
     }
 
     @GobiiEntityColumn(columnName = "type_id")
-    public void setTypeName(String typeId) {
-        this.typeName = typeId;
+    public void setGermplasmType(String typeName) {
+        this.germplasmType = typeName;
     }
 }
