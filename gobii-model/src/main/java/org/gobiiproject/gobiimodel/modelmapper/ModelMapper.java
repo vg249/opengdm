@@ -145,7 +145,7 @@ public class ModelMapper {
 
                             entityFieldBean.setColumnName(dbColumnName);
 
-                            returnVal.put(field.getName(), entityFieldBean.);
+                            returnVal.put(field.getName(), entityFieldBean);
 
                         }
                     }
