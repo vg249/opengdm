@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
+import javax.persistence.Table;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -108,9 +109,10 @@ public class ModelMapper {
         ModelMapper.maper(entityInstance, dtoInstance, false);
     }
 
-    public static Map<String, EntityFieldBean> getDtoEntityMap(Class dtoClassName) {
-
-        Map<String, EntityFieldBean> returnVal = new HashMap<>();
+    private static void getDtoEntityMap(
+            Class dtoClassName,
+            Map<String, EntityFieldBean> returnVal,
+            String prefix) {
 
         try {
 
@@ -127,6 +129,13 @@ public class ModelMapper {
                     if(entityParamName != null & entityClass != null) {
 
                         Field entityField;
+
+                        String tableName = null;
+
+                        if(entityClass.isAnnotationPresent(Table.class)) {
+                            Table table = entityClass.getClass().getAnnotation(Table.class);
+                            tableName = table.name();
+                        }
 
                         try {
                             entityField = entityClass.getDeclaredField(entityParamName);
@@ -145,12 +154,29 @@ public class ModelMapper {
 
                             entityFieldBean.setColumnName(dbColumnName);
 
-                            returnVal.put(field.getName(), entityFieldBean);
+                            entityFieldBean.setTableName(tableName);
+
+                            if(prefix.isEmpty()) {
+                                returnVal.put(field.getName(), entityFieldBean);
+                            }
+                            else {
+                                returnVal.put(prefix + "." + field.getName(), entityFieldBean);
+                            }
 
                         }
                     }
                 }
-
+                else if(field.getType().getName().startsWith("org.gobiiproject.gobiimodel.dto")) {
+                   getDtoEntityMap(field.getType(), returnVal, field.getName());
+                }
+                else {
+                    if(prefix.isEmpty()) {
+                        returnVal.put(field.getName(), null);
+                    }
+                    else {
+                        returnVal.put(prefix + "." + field.getName(), null);
+                    }
+                }
             }
         }
         catch(Exception e) {
@@ -162,6 +188,16 @@ public class ModelMapper {
                     GobiiValidationStatusType.UNKNOWN,
                     "Unable to map DTO to Entity");
         }
+
+
+
+    }
+
+    public static Map<String, EntityFieldBean> getDtoEntityMap(Class dtoClassName) {
+
+        Map<String, EntityFieldBean> returnVal = new HashMap<>();
+
+        getDtoEntityMap(dtoClassName, returnVal, "");
 
         return returnVal;
 

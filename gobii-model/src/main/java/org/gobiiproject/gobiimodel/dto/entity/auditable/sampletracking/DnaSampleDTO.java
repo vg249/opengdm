@@ -37,10 +37,13 @@ public class DnaSampleDTO extends DTOBaseAuditable{
     @GobiiEntityMap(paramName = "plateName", entity = DnaSample.class)
     private String plateName;
 
+    @GobiiEntityMap(paramName = "dnaSampleNum", entity = DnaSample.class)
     private String sampleNum;
 
+    @GobiiEntityMap(paramName = "wellRow", entity = DnaSample.class)
     private String wellRow;
 
+    @GobiiEntityMap(paramName = "wellCol", entity = DnaSample.class)
     private String wellCol;
 
     private GermplasmDTO germplasm = new GermplasmDTO();

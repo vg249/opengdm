@@ -474,7 +474,6 @@ public class SampleTrackingController {
 
             for(int i = 0; i < fileHeaderList.length; i++) {
 
-
                 GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
 
                 String columnHeader = fileHeaderList[i];
