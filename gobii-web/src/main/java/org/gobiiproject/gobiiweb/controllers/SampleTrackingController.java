@@ -19,6 +19,8 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
+import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
+import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -468,25 +470,33 @@ public class SampleTrackingController {
 
             String[] fileHeaderList = fileHeader.split("\t");
 
-            for(String columnHeader : fileHeaderList) {
+            Map<String, EntityFieldBean> dtoEntityMap = ModelMapper.getDtoEntityMap(DnaSampleDTO.class);
+
+            for(int i = 0; i < fileHeaderList.length; i++) {
+
 
                 GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
+
+                String columnHeader = fileHeaderList[i];
 
                 if(sampleMetaData.getMap().containsKey(columnHeader)) {
 
                     String dtoProp = sampleMetaData.getMap().get(columnHeader);
 
-                    gobiiFileColumn.setCCoord(1);
+                    if(dtoEntityMap.containsKey(dtoProp)) {
 
-                    gobiiFileColumn.setRCoord(2);
+                        gobiiFileColumn.setName(dtoEntityMap.get(dtoProp).getColumnName());
+
+                        gobiiFileColumn.setCCoord(i + 1);
+
+                        gobiiFileColumn.setRCoord(2);
+                    }
 
                 }
             }
 
-            //ObjectMapper mapper = new ObjectMapper();
-            //SampleMetadataDTO sampleMetadata = mapper.readValue(
-             //       sampleMetaData, SampleMetadataDTO.class);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
+
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
         }
