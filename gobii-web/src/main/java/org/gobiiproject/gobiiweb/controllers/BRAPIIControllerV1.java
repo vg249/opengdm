@@ -38,6 +38,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
@@ -1270,7 +1271,6 @@ public class BRAPIIControllerV1 {
                     "Internal Server Error" + e.getMessage()
             );
         }
-
     }
 
     /**
@@ -1326,6 +1326,22 @@ public class BRAPIIControllerV1 {
                     "Entity does not exist"
             );
         }
+    }
+
+    public @ResponseBody ResponseEntity getMaps(
+            @RequestParam("type") String mapType) {
+
+        try {
+           return ResponseEntity.ok("");
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
+
     }
 
     /**
@@ -1833,6 +1849,9 @@ public class BRAPIIControllerV1 {
             );
         }
     }
+
+
+
 
 
     @ApiOperation(
