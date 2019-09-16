@@ -11,9 +11,11 @@ public class Bert {
 		ernie.loadComponents(Components.class);
 
 		for (String s : args) {
-			ernie.runFile(args[0]);
+			ernie.runFile(s);
 		}
 
-		ComponentsUtil.scp("cbsugobiixvm16.biohpc.cornell.edu", "gadm", "/tmp/asdf", "/tmp/asdf");
+		ernie.runFile("/Users/ljc237-admin/gobii/bert/test.bert");
+
+		System.exit(0);
 	}
 }

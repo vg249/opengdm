@@ -10,16 +10,21 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.*;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
-import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +50,11 @@ public class Components {
 	private static final String URL_VENDOR_PROTOCOL = "/protocols/%s/vendors";
 	private static final String URL_ORGANIZATIONS = "/organizations";
 	private static final String URL_JOBS = "/jobs";
+	private static final String URL_MAPSETS = "/mapsets";
+	private static final String URL_ANALYSES = "/analyses";
+	private static final String URL_DATASETS = "/datasets";
+	private static final String URL_CVS = "/cvs";
+	private static final String URL_CV_GROUP = "/cvgroups/%s";
 
 	private String host;
 	private Long port;
@@ -54,7 +64,7 @@ public class Components {
 	private String password;
 
 	private String url(String endpoint, Object ... params) {
-		return String.format(String.format(URL_BASE, host, port, path) + endpoint, params);
+		return "http://" + String.format(String.format(URL_BASE, host, port, path) + endpoint, params);
 	}
 
 	private HttpHeaders authHeader() {
@@ -128,7 +138,7 @@ public class Components {
 		try {
 			ResponseEntity<JsonNode> response = post(url(URL_PROJECT), authHeader(), JsonNode.class, envelope);
 			return result(response, ProjectDTO.class);
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
@@ -151,7 +161,7 @@ public class Components {
 		try {
 			ResponseEntity<JsonNode> response = post(url(URL_PROTOCOLS), authHeader(), JsonNode.class, envelope);
 			return result(response, ProtocolDTO.class);
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
@@ -173,7 +183,7 @@ public class Components {
 		try {
 			ResponseEntity<JsonNode> response = post(url(URL_PLATFORMS), authHeader(), JsonNode.class, envelope);
 			return result(response, PlatformDTO.class);
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
@@ -195,7 +205,7 @@ public class Components {
 		try {
 			ResponseEntity<JsonNode> response = post(url(URL_EXPERIMENTS), authHeader(), JsonNode.class, envelope);
 			return result(response, ExperimentDTO.class);
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
@@ -217,7 +227,7 @@ public class Components {
 		try {
 			ResponseEntity<JsonNode> response = post(url(URL_ORGANIZATIONS), authHeader(), JsonNode.class, envelope);
 			return result(response, OrganizationDTO.class);
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
@@ -234,14 +244,121 @@ public class Components {
 			return updatedVendor.getVendorProtocols().stream()
 					.filter(vp -> vp.getProtocolId().equals(protocol.getId()))
 					.findFirst().get();
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("mapset")
+	public MapsetDTO mapset(String name) {
+		MapsetDTO mapset = new MapsetDTO();
+
+		mapset.setName(name);
+		mapset.setDescription(name);
+		mapset.setCode("");
+		mapset.setMapType(1);
+		mapset.setModifiedBy(1);
+		mapset.setCreatedBy(1);
+		mapset.setStatusId(1);
+
+		PayloadEnvelope<MapsetDTO> envelope = new PayloadEnvelope<>(mapset, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_MAPSETS), authHeader(), JsonNode.class, envelope);
+			return result(response, MapsetDTO.class);
+		} catch (HttpStatusCodeException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("cv")
+	public CvDTO cv(CvGroupDTO group, String term, String definition) {
+
+		CvDTO cv = new CvDTO();
+
+		cv.setTerm(term);
+		cv.setDefinition(definition);
+		cv.setGroupId(group.getCvGroupId());
+		cv.setRank(1);
+		cv.setEntityStatus(1);
+
+		PayloadEnvelope<CvDTO> envelope = new PayloadEnvelope<>(cv, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_CVS), authHeader(), JsonNode.class, envelope);
+			return result(response, CvDTO.class);
+		} catch (HttpStatusCodeException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("cvGroup")
+	public CvGroupDTO cvGroup(String name) {
+		try {
+			ResponseEntity<JsonNode> cvGroup = get(url(URL_CV_GROUP, name), authHeader(), JsonNode.class, "cvGroupTypeId", GobiiCvGroupType.GROUP_TYPE_SYSTEM.getGroupTypeId().toString());
+			return result(cvGroup, CvGroupDTO.class);
+		} catch (HttpStatusCodeException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("analysis")
+	public AnalysisDTO analysis(CvDTO cv, String name) {
+
+		AnalysisDTO analysis = new AnalysisDTO();
+
+		analysis.setAnalysisName(name);
+		analysis.setAnlaysisTypeId(cv.getCvId());
+		analysis.setAnalysisDescription(name);
+		analysis.setProgram(name);
+		analysis.setProgramVersion(name);
+		analysis.setAlgorithm(name);
+		analysis.setSourceName(name);
+		analysis.setSourceUri(name);
+		analysis.setSourceName(name);
+		analysis.setSourceVersion(name);
+		analysis.setStatusId(1);
+		analysis.setCreatedBy(1);
+		analysis.setModifiedBy(1);
+
+		PayloadEnvelope<AnalysisDTO> envelope = new PayloadEnvelope<>(analysis, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_ANALYSES), authHeader(), JsonNode.class, envelope);
+			return result(response, AnalysisDTO.class);
+		} catch (HttpStatusCodeException e) {
+			printHttpError(e);
+			throw e;
+		}
+	}
+
+	@Action("dataset")
+	public DataSetDTO dataset(ExperimentDTO experiment, AnalysisDTO analysis, String name) {
+		DataSetDTO dataset = new DataSetDTO();
+		dataset.setDatasetName(name);
+		dataset.setExperimentId(experiment.getExperimentId());
+		dataset.setCallingAnalysisId(analysis.getId());
+		dataset.setStatusId(1);
+		dataset.setCreatedBy(1);
+		dataset.setModifiedBy(1);
+
+		PayloadEnvelope<DataSetDTO> envelope = new PayloadEnvelope<>(dataset, GobiiProcessType.CREATE);
+
+		try {
+			ResponseEntity<JsonNode> response = post(url(URL_DATASETS), authHeader(), JsonNode.class, envelope);
+			return result(response, DataSetDTO.class);
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
 	}
 
 	@Action("job")
-	public JobDTO job(String jobPayloadType, String jobName) {
+	public JobDTO job(DataSetDTO dataset, String jobPayloadType, String name) {
 		try {
 			JobDTO job = new JobDTO();
 			job.setSubmittedBy(1);
@@ -250,51 +367,76 @@ public class Components {
 			job.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
 			job.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
 			job.setSubmittedDate(new Date());
-			job.setJobName(jobName);
+			job.setJobName(name);
+			job.getDatasetIds().add(dataset.getDataSetId());
 
 			PayloadEnvelope<JobDTO> envelope = new PayloadEnvelope<>(job, GobiiProcessType.CREATE);
 			ResponseEntity<JsonNode> response = post(url(URL_JOBS), authHeader(), JsonNode.class, envelope);
 
 			return result(response, JobDTO.class);
-		} catch (HttpServerErrorException e) {
+		} catch (HttpStatusCodeException e) {
 			printHttpError(e);
 			throw e;
 		}
 	}
 
 	@Action("load")
-	public void load(String procedureFilePath, String dataFolderPath) throws IOException, JSchException {
-		String procedureFileName = procedureFilePath.substring(procedureFilePath.lastIndexOf(File.pathSeparator + 1));
+	public GobiiLoaderProcedure load(ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset,
+									 String procedureFilePath, String dataFolderPath) throws IOException, JSchException {
 
-		JsonNode procedure = new ObjectMapper().convertValue(slurp(procedureFilePath), JsonNode.class);
-		String jobPayloadType = getIn(procedure, "metadata", "jobPayloadType").asText();
-		String dataSrc = getIn(procedure, "metadata", "gobiiFile", "source").asText();
+		GobiiLoaderProcedure procedure = new ObjectMapper().readValue(slurp(procedureFilePath), GobiiLoaderProcedure.class);
+		String jobPayloadType = procedure.getMetadata().getJobPayloadType().getCvName();
 
-		scp(this.host, this.user, procedureFilePath, "/tmp/" + procedureFileName);
-		scp(this.host, this.user, dataFolderPath, dataSrc, "-r");
+		String randomString = randomString();
 
-		job(jobPayloadType, procedureFileName);
+		String dataSrc = procedure.getMetadata().getGobiiFile().getSource();
+
+		scpDirectory(this.host, this.user, dataFolderPath, dataSrc);
+
+		String procedureFileName = new File(procedureFilePath).getName();
+		procedureFileName = procedureFileName.substring(0, procedureFileName.lastIndexOf(".json"));
+		procedureFileName += randomString;
+
+		job(dataset, jobPayloadType, procedureFileName);
+
+		fillInProcedurePrototype(procedure, project, experiment, platform, dataset);
+
+		String procedureFileRemoteDirectory = "/data/gobii_bundle/crops/" + procedure.getMetadata().getGobiiCropType() + "/loader/instructions/";
+		String procedureFileRemotePath = procedureFileRemoteDirectory + procedureFileName + ".json";
+
+		ssh(this.host, this.user, "mkdir -p " + procedure.getMetadata().getGobiiFile().getDestination());
+
+		scpContent(this.host, this.user, new ObjectMapper().writeValueAsString(procedure), procedureFileRemotePath);
+
+		ssh(this.host, this.user,
+				String.format("docker exec -i gobii-compute-node bash -c " +
+								"\"cd /data/gobii_bundle/core " +
+								"&& java -jar Digester.jar %s",
+							  procedureFileRemotePath));
+
+
+		return procedure;
 	}
 
 	@Clean("load")
-	public void cleanLoad(Object obj, String procedureFilePath, String dataFolderPath) throws JSchException, IOException {
+	public void cleanLoad(GobiiLoaderProcedure procedure, String procedureFilePath, String dataFolderPath) throws JSchException, IOException {
 
 		String procedureFileName = procedureFilePath.substring(procedureFilePath.lastIndexOf(File.pathSeparator + 1));
-		JsonNode procedure = new ObjectMapper().convertValue(slurp(procedureFilePath), JsonNode.class);
-		String dataSrc = getIn(procedure, "metadata", "gobiiFile", "source").asText();
+		String dataSrc = procedure.getMetadata().getGobiiFile().getSource();
 
 		ssh(this.host, this.user, "rm /tmp/" + procedureFileName);
 		ssh(this.host, this.user, "rm -r " + dataSrc);
 	}
 
-	public void printHttpError(HttpServerErrorException e) throws RuntimeException {
-		try {
-			JsonNode json = new ObjectMapper().readValue(e.getResponseBodyAsString(), JsonNode.class);
-			for (JsonNode j : ComponentsUtil.getIn(json, "header", "status", "statusMessages")) {
-				System.out.println(j.get("message").asText().replace("\\n", "\n"));
-			}
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+	private static void fillInProcedurePrototype(GobiiLoaderProcedure procedure, ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset) {
+
+		procedure.getMetadata()
+				.setGobiiJobStatus(JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS)
+				.setQcCheck(false)
+				.setProject(new PropNameId(project.getId(), project.getProjectName()))
+				.setExperiment(new PropNameId(experiment.getId(), experiment.getExperimentName()))
+				.setPlatform(new PropNameId(platform.getId(), platform.getPlatformName()))
+				.setDataset(new PropNameId(dataset.getDataSetId(), dataset.getDatasetName()));
+
 	}
 }
