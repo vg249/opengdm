@@ -39,10 +39,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -182,6 +179,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private ConfigSettingsService configSettingsService;
+
+    @Autowired
+    private MapsetBrapiService mapsetBrapiService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -1328,11 +1328,33 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    @RequestMapping(value="/maps", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMaps(
-            @RequestParam("type") String mapType) {
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "type", required = false) String mapType) {
 
         try {
-           return ResponseEntity.ok("");
+
+            List<MapsetListBrapiDTO> mapsetList = mapsetBrapiService.getMapSets(page, pageSize);
+
+            Map<String, Object> brapiResult = new HashMap<>();
+
+            brapiResult.put("data", mapsetList);
+
+            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
+
+            if(page != null && page > 0) {
+                payload.getMetaData().getPagination().setCurrentPage(page);
+            }
+
+            if(page != null && pageSize > 0) {
+                payload.getMetaData().getPagination().setPageSize(pageSize);
+            }
+
+            payload.getMetaData().getPagination().setTotalCount(mapsetList.size());
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
         }
         catch(Exception e) {
             throw new GobiiException(

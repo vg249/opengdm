@@ -445,6 +445,10 @@
     <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
     <bean id="rsDatasetBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDatasetBrapiDaoImpl"/>
 
+    <!-- *** MAPSET BRAPI BEANS *********** -->
+    <bean id="mapSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.MapsetBrapiServiceImpl"/>
+    <bean id="dtoMapMapsetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetBrapiImpl"/>
+
     <!-- *** ANALYSIS BRAPI BEANS ********** -->
     <bean id="dtoMapAnalysisBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisBrapiImpl"/>
 
@@ -508,6 +512,9 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDatasetBrapiAll"/>
     <bean id="listStatementAnalysisBrapiByIds"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementAnalysisBrapiAll"/>
+
+    <bean id="listStatementBrapiMapset"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMapsetBrapi"/>
 
     <bean id="listStatementDnaRunAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaRunAll"/>
@@ -800,6 +807,18 @@
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
+
+                <!-- MAPSET BRAPI AS LIST-->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MAPSET_BRAPI_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetListBrapiDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementBrapiMapset"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+
                 <!-- DNA RUN NAMES BY LIST -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_NAMES_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
