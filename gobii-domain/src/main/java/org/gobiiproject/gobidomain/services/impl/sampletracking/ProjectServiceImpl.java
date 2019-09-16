@@ -81,12 +81,14 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
                 newProject.setProjectStatus(statusCv.getCvId());
             }
 
-            if(!newProjectDto.getProperties().isEmpty()) {
+            if(newProjectDto.getProperties() != null & !newProjectDto.getProperties().isEmpty()) {
 
                 List<Cv> cvList = cvDao.getCvListByCvGroup(
                         CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
 
-                newProject.setProperties(CvIdCvTermMapper.mapCvTermsToCvId(cvList, newProjectDto.getProperties()));
+                newProject.setProperties(
+                        CvIdCvTermMapper.mapCvTermsToCvId(cvList, newProjectDto.getProperties())
+                );
 
             }
 

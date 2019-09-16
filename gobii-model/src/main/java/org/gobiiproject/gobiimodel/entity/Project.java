@@ -2,6 +2,8 @@ package org.gobiiproject.gobiimodel.entity;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.NullNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -41,7 +43,7 @@ public class Project extends BaseEntity {
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
-    public JsonNode properties;
+    public JsonNode properties = JsonNodeFactory.instance.objectNode();
 
     public Integer getProjectId() {
         return this.projectId;
