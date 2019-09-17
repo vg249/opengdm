@@ -3,11 +3,20 @@ package org.gobiiproject.bert;
 import java.io.*;
 import java.util.*;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcraft.jsch.*;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.ConnectionException;
+import net.schmizz.sshj.connection.channel.Channel;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.transport.TransportException;
+import net.schmizz.sshj.transport.verification.HostKeyVerifier;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import net.schmizz.sshj.userauth.UserAuthException;
+import net.schmizz.sshj.xfer.FileSystemFile;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -127,57 +136,28 @@ public class ComponentsUtil {
 		return new ObjectMapper().convertValue(getIn(response.getBody(), "payload", "data", 0), as);
 	}
 
-	private static HashMap<String[], Session> sessions = new HashMap<>();
+	private static HashMap<String[], SSHClient> clients = new HashMap<>();
 
-	private static JSch jsch = new JSch();
-	static {
-		try {
-			jsch.addIdentity("/Users/ljc237-admin/.ssh/id_rsa");
-		} catch (JSchException e) {
-			e.printStackTrace();
-		}
-	}
 
-	public static Session sessionOf(String host, String user) throws JSchException {
+	public static SSHClient clientOf(String host, String user) throws IOException {
 		final String[] pair = {host, user};
 
-		if (! sessions.containsKey(pair) || ! sessions.get(pair).isConnected()) {
-			Session session = jsch.getSession(user, host, 22);
-			Properties config = new Properties();
-			config.put("StrictHostKeyChecking", "no");
-			session.setConfig(config);
-			session.connect(30000);
-			sessions.put(pair, session);
+		if (! clients.containsKey(pair) || ! clients.get(pair).isConnected()) {
+
+			SSHClient client = new SSHClient();
+			client.addHostKeyVerifier(new PromiscuousVerifier());
+			client.connect(host);
+			client.loadKeys("/Users/ljc237-admin/.ssh/id_rsa");
+			client.authPublickey(user);
+
+			clients.put(pair, client);
 		}
 
-		return sessions.get(pair);
+		return clients.get(pair);
 	}
 
-	public static void printChannel(Channel channel) throws IOException {
-		byte[] buffer = new byte[1024];
-		InputStream in = channel.getInputStream();
-		String line = "";
-		while (true){
-			while (in.available() > 0) {
-				int i = in.read(buffer, 0, 1024);
-				if (i < 0) {
-					break;
-				}
-				line = new String(buffer, 0, i);
-				System.out.println(line);
-			}
-
-			if(line.contains("logout")){
-				break;
-			}
-
-			if (channel.isClosed()){
-				break;
-			}
-			try {
-				Thread.sleep(1000);
-			} catch (Exception ee){}
-		}
+	public static Session sessionOf(String host, String user) throws IOException {
+		return clientOf(host, user).startSession();
 	}
 
 	public static void go(Runnable ... runnable) {
@@ -188,113 +168,29 @@ public class ComponentsUtil {
 		}).start();
 	}
 
-	public static void ssh(String host, String user, String command) throws JSchException, IOException {
+	public static void ssh(String host, String user, String command) throws IOException {
 
-		Channel channel = null;
-		try {
-
-			Session session = sessionOf(host, user);
-
-			channel = session.openChannel("exec");
-
-			((ChannelExec) channel).setCommand(command);
-
-			channel.connect(30000);
-			printChannel(channel);
-
-		} catch (JSchException e ) {
-			throw e;
-		} finally {
-			if (channel != null) {
-				channel.disconnect();
-			}
-		}
-	}
-
-	public static void scp(String host, String user, String from, String to, String ... params) throws JSchException, IOException {
+		System.out.println(command);
 
 		Session session = sessionOf(host, user);
 
-		boolean ptimestamp = true;
+		Session.Command cmd = session.exec(command);
 
-		// exec 'scp -t rfile' remotely
-		String argString = String.join(" ", params) + " ";
 
-		String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + argString + to;
-		Channel channel = session.openChannel("exec");
-		((ChannelExec) channel).setCommand(command);
-
-		// get I/O streams for remote scp
-		OutputStream out = channel.getOutputStream();
-		InputStream in = channel.getInputStream();
-
-		channel.connect();
-
-		if (checkAck(in) != 0) {
-			throw new RuntimeException("scp failure");
-		}
-
-		File _lfile = new File(from);
-
-		if (ptimestamp) {
-			command = "T" + (_lfile.lastModified() / 1000) + " 0";
-			// The access time should be sent here,
-			// but it is not accessible with JavaAPI ;-<
-			command += (" " + (_lfile.lastModified() / 1000) + " 0\n");
-			out.write(command.getBytes());
-			out.flush();
-			if (checkAck(in) != 0) {
-				throw new RuntimeException("scp failure");
-			}
-		}
-
-		// send "C0644 filesize filename", where filename should not include '/'
-		long filesize = _lfile.length();
-		command = "C0644 " + filesize + " ";
-		if (from.lastIndexOf('/') > 0) {
-			command += from.substring(from.lastIndexOf('/') + 1);
-		} else {
-			command += from;
-		}
-
-		command += "\n";
-		out.write(command.getBytes());
-		out.flush();
-
-		if (checkAck(in) != 0) {
-			throw new RuntimeException("scp failure");
-		}
-
-		// send a content of lfile
-		FileInputStream fis = new FileInputStream(from);
-		byte[] buf = new byte[1024];
-		while (true) {
-			int len = fis.read(buf, 0, buf.length);
-			if (len <= 0) break;
-			out.write(buf, 0, len); //out.flush();
-		}
-
-		// send '\0'
-		buf[0] = 0;
-		out.write(buf, 0, 1);
-		out.flush();
-
-		if (checkAck(in) != 0) {
-			throw new RuntimeException("scp failure");
-		}
-		out.close();
-
-		try {
-			if (fis != null) fis.close();
-		} catch (Exception ex) {
-			System.out.println(ex);
-		}
-
-		channel.disconnect();
-		session.disconnect();
+		System.out.println("*** RESULTS ***\n" + slurp(cmd.getInputStream()));
+		System.out.println("*** ERRORS ***\n " + slurp(cmd.getErrorStream()));
+		cmd.join(15, TimeUnit.SECONDS);
+		System.out.println("\n** exit status: " + cmd.getExitStatus() + "\n");
 	}
 
-	public static void scpDirectory(String host, String user, String directoryPath, String to, String ... params) throws JSchException, IOException {
+	public static void scp(String host, String user, String from, String to) throws IOException {
+
+		SSHClient ssh = clientOf(host, user);
+
+		ssh.newSCPFileTransfer().upload(new FileSystemFile(from), to);
+	}
+
+	public static void scpDirectory(String host, String user, String directoryPath, String to) throws IOException {
 
 		File directory = new File(directoryPath);
 
@@ -302,14 +198,14 @@ public class ComponentsUtil {
 
 		for (File f : directory.listFiles()) {
 			if (f.isDirectory()) {
-				scpDirectory(host, user, f.getAbsolutePath(), to + "/" + f.getName(), params);
+				scpDirectory(host, user, f.getAbsolutePath(), to + "/" + f.getName());
 			} else {
-				scp(host, user, f.getAbsolutePath(), to + "/", params);
+				scp(host, user, f.getAbsolutePath(), to + "/");
 			}
 		}
 	}
 
-	public static void scpContent(String host, String user, String content, String to, String ... params) throws IOException, JSchException {
+	public static void scpContent(String host, String user, String content, String to, String ... params) throws IOException {
 
 		String tmpFileName = to.substring(to.lastIndexOf("/")) + randomString();
 
@@ -317,7 +213,7 @@ public class ComponentsUtil {
 
 		spit(file.getAbsolutePath(), content);
 
-		scp(host, user, file.getAbsolutePath(), to, params);
+		scp(host, user, file.getAbsolutePath(), to);
 
 		rm(file.getAbsolutePath());
 	}

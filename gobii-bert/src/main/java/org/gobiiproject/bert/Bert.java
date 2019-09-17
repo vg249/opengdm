@@ -16,6 +16,9 @@ public class Bert {
 
 		ernie.runFile("/Users/ljc237-admin/gobii/bert/test.bert");
 
+//		ComponentsUtil.ssh("cbsugobiixvm16.biohpc.cornell.edu", "gadm", "ls > asdf");
+//		ComponentsUtil.ssh("cbsugobiixvm16.biohpc.cornell.edu", "gadm", "cat asdf");
+
 		System.exit(0);
 	}
 }

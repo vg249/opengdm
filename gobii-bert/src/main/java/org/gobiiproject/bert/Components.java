@@ -2,7 +2,6 @@ package org.gobiiproject.bert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcraft.jsch.JSchException;
 import ernie.core.Action;
 import ernie.core.Clean;
 import ernie.core.Verify;
@@ -382,7 +381,7 @@ public class Components {
 
 	@Action("load")
 	public GobiiLoaderProcedure load(ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset,
-									 String procedureFilePath, String dataFolderPath) throws IOException, JSchException {
+									 String procedureFilePath, String dataFolderPath) throws IOException {
 
 		GobiiLoaderProcedure procedure = new ObjectMapper().readValue(slurp(procedureFilePath), GobiiLoaderProcedure.class);
 		String jobPayloadType = procedure.getMetadata().getJobPayloadType().getCvName();
@@ -401,7 +400,7 @@ public class Components {
 
 		fillInProcedurePrototype(procedure, project, experiment, platform, dataset);
 
-		String procedureFileRemoteDirectory = "/data/gobii_bundle/crops/" + procedure.getMetadata().getGobiiCropType() + "/loader/instructions/";
+		String procedureFileRemoteDirectory = "/data/gobii_bundle/crops/" + procedure.getMetadata().getGobiiCropType() + "/loader/inprogress/";
 		String procedureFileRemotePath = procedureFileRemoteDirectory + procedureFileName + ".json";
 
 		ssh(this.host, this.user, "mkdir -p " + procedure.getMetadata().getGobiiFile().getDestination());
@@ -409,22 +408,26 @@ public class Components {
 		scpContent(this.host, this.user, new ObjectMapper().writeValueAsString(procedure), procedureFileRemotePath);
 
 		ssh(this.host, this.user,
-				String.format("docker exec -i gobii-compute-node bash -c " +
-								"\"cd /data/gobii_bundle/core " +
-								"&& java -jar Digester.jar %s",
-							  procedureFileRemotePath));
+				String.format("docker exec "
+								+ "-w /data/gobii_bundle/core "
+								+ "-i gobii-compute-node "
+								+ "java -jar Digester.jar %s > /tmp/tempFile%s", procedureFileRemotePath, randomString));
 
-
+		ssh(this.host, this.user, String.format("cat /tmp/tempFile%s", randomString));
+		ssh(this.host, this.user, String.format("rm /tmp/tempFile%s", randomString));
+		ssh(this.host, this.user, "ls");
 		return procedure;
 	}
 
 	@Clean("load")
-	public void cleanLoad(GobiiLoaderProcedure procedure, String procedureFilePath, String dataFolderPath) throws JSchException, IOException {
+	public void cleanLoad(GobiiLoaderProcedure procedure, String procedureFilePath, String dataFolderPath) throws IOException {
 
-		String procedureFileName = procedureFilePath.substring(procedureFilePath.lastIndexOf(File.pathSeparator + 1));
+		String procedureFileRemoteDirectory = "/data/gobii_bundle/crops/" + procedure.getMetadata().getGobiiCropType() + "/loader/inprogress/";
+		String procedureFileName = new File(procedureFilePath).getName();
+		String procedureFileRemotePath = procedureFileRemoteDirectory + procedureFileName + ".json";
 		String dataSrc = procedure.getMetadata().getGobiiFile().getSource();
 
-		ssh(this.host, this.user, "rm /tmp/" + procedureFileName);
+		ssh(this.host, this.user, "rm " + procedureFileRemotePath);
 		ssh(this.host, this.user, "rm -r " + dataSrc);
 	}
 
