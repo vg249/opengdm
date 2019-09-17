@@ -3,8 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
-import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetBrapiImpl;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetListBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,10 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
      * @throws GobiiDomainException
      */
     @Override
-    public List<MapsetListBrapiDTO> getMapSets(
+    public List<MapsetBrapiDTO> getMapSets(
             Integer pageNum, Integer pageSize) throws GobiiDomainException {
 
-        List<MapsetListBrapiDTO> returnVal = new ArrayList<>();
+        List<MapsetBrapiDTO> returnVal = new ArrayList<>();
 
         try {
 

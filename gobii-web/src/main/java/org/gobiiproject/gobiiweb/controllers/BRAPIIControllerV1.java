@@ -38,7 +38,6 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -1336,7 +1335,7 @@ public class BRAPIIControllerV1 {
 
         try {
 
-            List<MapsetListBrapiDTO> mapsetList = mapsetBrapiService.getMapSets(page, pageSize);
+            List<MapsetBrapiDTO> mapsetList = mapsetBrapiService.getMapSets(page, pageSize);
 
             Map<String, Object> brapiResult = new HashMap<>();
 
@@ -1355,6 +1354,7 @@ public class BRAPIIControllerV1 {
             payload.getMetaData().getPagination().setTotalCount(mapsetList.size());
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            
         }
         catch(Exception e) {
             throw new GobiiException(

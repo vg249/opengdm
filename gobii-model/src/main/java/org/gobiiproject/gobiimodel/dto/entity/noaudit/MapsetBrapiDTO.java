@@ -1,22 +1,26 @@
 package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+
+import java.util.List;
 
 /**
  * Brapi DTO for Genome Maps List
  */
-public class MapsetListBrapiDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class MapsetBrapiDTO {
 
 
     private Integer mapDbId;
 
-   private String comments;
+    private String comments;
 
-   private String type;
+    private String type;
 
-   private String name;
+    private String name;
 
-   private Integer linkageGroupCount;
+    private Integer linkageGroupCount;
 
     public String getComments() {
         return comments;
@@ -25,6 +29,16 @@ public class MapsetListBrapiDTO {
     public Integer getMapDbId() {
         return mapDbId;
     }
+
+    public List<LinkageGroupBrapiDTO> getLinkageGroups() {
+        return linkageGroups;
+    }
+
+    public void setLinkageGroups(List<LinkageGroupBrapiDTO> linkageGroups) {
+        this.linkageGroups = linkageGroups;
+    }
+
+    private List<LinkageGroupBrapiDTO> linkageGroups;
 
     @GobiiEntityColumn(columnName = "mapset_id")
     public void setMapDbId(Integer mapDbId) {

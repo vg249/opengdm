@@ -812,7 +812,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MAPSET_BRAPI_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetListBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementBrapiMapset"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
