@@ -18,6 +18,7 @@ import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -177,8 +178,17 @@ public class ComponentsUtil {
 		Session.Command cmd = session.exec(command);
 
 
-		System.out.println("*** RESULTS ***\n" + slurp(cmd.getInputStream()));
-		System.out.println("*** ERRORS ***\n " + slurp(cmd.getErrorStream()));
+		String results = slurp(cmd.getInputStream());
+		String errors = slurp(cmd.getErrorStream());
+
+		if (StringUtils.isNotEmpty(results)) {
+			System.out.println("*** RESULTS ***\n" + results);
+		}
+
+		if (StringUtils.isNotEmpty(errors)) {
+			System.out.println("*** ERRORS ***\n " + errors);
+		}
+
 		cmd.join(15, TimeUnit.SECONDS);
 		System.out.println("\n** exit status: " + cmd.getExitStatus() + "\n");
 	}

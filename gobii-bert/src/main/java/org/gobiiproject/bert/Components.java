@@ -411,10 +411,8 @@ public class Components {
 				String.format("docker exec "
 								+ "-w /data/gobii_bundle/core "
 								+ "-i gobii-compute-node "
-								+ "java -jar Digester.jar %s > /tmp/tempFile%s", procedureFileRemotePath, randomString));
+								+ "java -jar Digester.jar %s", procedureFileRemotePath));
 
-		ssh(this.host, this.user, String.format("cat /tmp/tempFile%s", randomString));
-		ssh(this.host, this.user, String.format("rm /tmp/tempFile%s", randomString));
 		ssh(this.host, this.user, "ls");
 		return procedure;
 	}
