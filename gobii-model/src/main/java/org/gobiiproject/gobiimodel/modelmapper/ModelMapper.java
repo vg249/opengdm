@@ -133,7 +133,7 @@ public class ModelMapper {
                         String tableName = null;
 
                         if(entityClass.isAnnotationPresent(Table.class)) {
-                            Table table = entityClass.getClass().getAnnotation(Table.class);
+                            Table table = (Table) entityClass.getAnnotation(Table.class);
                             tableName = table.name();
                         }
 

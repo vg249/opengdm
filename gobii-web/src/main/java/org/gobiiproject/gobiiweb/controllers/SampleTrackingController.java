@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
@@ -460,6 +461,8 @@ public class SampleTrackingController {
 
         List<GobiiFileColumn> gobiiFileColumns = new ArrayList<>();
 
+        GobiiLoaderInstruction gobiiLoaderInstruction = new GobiiLoaderInstruction();
+
         try {
 
             is = sampleFile.getInputStream();
@@ -478,20 +481,34 @@ public class SampleTrackingController {
 
                 String columnHeader = fileHeaderList[i];
 
-                if(sampleMetaData.getMap().containsKey(columnHeader)) {
+                EntityFieldBean entityField = null;
 
+                if(sampleMetaData.getMap().containsKey(columnHeader)) {
                     String dtoProp = sampleMetaData.getMap().get(columnHeader);
 
                     if(dtoEntityMap.containsKey(dtoProp)) {
-
-                        gobiiFileColumn.setName(dtoEntityMap.get(dtoProp).getColumnName());
-
-                        gobiiFileColumn.setCCoord(i + 1);
-
-                        gobiiFileColumn.setRCoord(2);
+                        entityField = dtoEntityMap.get(dtoProp);
                     }
+                }
+                else {
+                    if(dtoEntityMap.containsKey(columnHeader)) {
+                        entityField = dtoEntityMap.get(columnHeader);
+                    }
+                }
+
+
+                if(entityField != null) {
+
+                    gobiiFileColumn.setName(entityField.getColumnName());
+
+                    gobiiFileColumn.setCCoord(i + 1);
+
+                    gobiiFileColumn.setRCoord(2);
+
+                    gobiiFileColumns.add(gobiiFileColumn);
 
                 }
+
             }
 
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
