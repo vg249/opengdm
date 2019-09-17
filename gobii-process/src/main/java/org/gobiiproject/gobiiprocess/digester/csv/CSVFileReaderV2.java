@@ -364,11 +364,13 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      * @param tempFileBufferedWriter Output file writer.
      * @param rowList                Contains the columns that needs to be appended.
      * @throws IOException I/O Exception
+     * TODO: this method only works performantly in an array list, and see below TODO which does not even do that.
      */
-    private void writeOutputLine(BufferedWriter tempFileBufferedWriter, List<String> rowList) throws IOException {
+    private void writeOutputLine(BufferedWriter tempFileBufferedWriter, /*ARRAY*/List<String> rowList) throws IOException {
         StringBuilder outputLine = new StringBuilder();
         // Used in traversing requiredRows
         int rowNo = 0;
+        int rowIndex = 0; //position of elements 'removed' from rowList.
         for (FileLineEntry entry : processedInstruction.getFileLine()) {
             GobiiFileColumn column = processedInstruction.getColumnList().get(entry.getColumnNo());
             switch (entry.getColumnType()) {
@@ -384,17 +386,18 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                     break;
                 case CSV_ROW:
                     appendTabToOutput(outputLine, column);
+                    //TODO- this is also super bad, using remove on a long array list
                     outputLine.append(processedInstruction.getRequiredRows().get(rowNo).remove(0));
                     rowNo++;
                     break;
                 case CSV_COLUMN:
                     appendTabToOutput(outputLine, column);
-                    outputLine.append(rowList.remove(0));
+                    outputLine.append(rowList.get(rowIndex++));
                     break;
                 case CSV_BOTH:
-                    while (!rowList.isEmpty()) {
+                    while (rowList.size() > rowIndex) {
                         appendTabToOutput(outputLine, column);
-                        outputLine.append(rowList.remove(0));
+                        outputLine.append(rowList.get(rowIndex++));
                     }
                     break;
                 default:
