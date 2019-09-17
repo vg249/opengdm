@@ -75,7 +75,7 @@ public class ProcessMessage extends MailMessage {
             entities.clear();
         }
         if(!validations.isEmpty()) {
-            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Info","Status","Reason","Column","Values");
+            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Validation","Status","Reason","Column","Values");
             validations.clear();
         }
         if(!paths.isEmpty()) {
@@ -305,50 +305,6 @@ public class ProcessMessage extends MailMessage {
 
     public ProcessMessage addConfidentialityMessage(String confidentialyMessage){
         this.setConfidentialityMessage("<font color="+redColor+"><b></br>"+escapeHTML(confidentialyMessage)+"</br></b></font>");
-        return this;
-    }
-
-    public ProcessMessage addBody(String lastBody, String jobName, String type, long time, String shortError,boolean success, String longError){
-        this.errorLine=shortError;
-        this.color = (success ? greenColor:redColor);
-        if(!entries.isEmpty()) {
-            tableLine = HTMLTableEntity.getHTMLTable(entries, tableLineWidth,"Table","Total in File", "Total Loaded","Total Existing","Total Invalid");
-        }
-        if(!identifiers.isEmpty()) {
-            identifierLine = HTMLTableEntity.getHTMLTable(identifiers, identifierLineWidth,"Identifier Type","Name","ID");
-        }
-        if(!entities.isEmpty()) {
-            entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
-        }
-        if(!validations.isEmpty()) {
-            validationLine = HTMLTableEntity.getHTMLTable(validations, validationLineWidth,"Validation","Status","Reason","Column","Values");
-        }
-        if(!paths.isEmpty()) {
-            pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
-        }
-
-        String line="<br>";
-        StringBuilder body=new StringBuilder();
-        body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
-
-        if(type!=null){
-            body.append("<font size = 4><b>"+type+"</b></font> (Duration: "+(time>=1000?time/1000+"secs":time+"ms")+")<br><br>");
-        }
-        else{
-            body.append("<br><br>");
-        }
-
-        body.append(statusLine+line);
-        if(errorLine!=null)body.append(errorLine+line);
-        body.append(line);
-        if(identifierLine!=null)body.append(identifierLine+line);
-        if(entityLine!=null)body.append(entityLine+line);
-        if(tableLine!=null)body.append(tableLine+line);
-        if(validationLine!=null)body.append(validationLine+line);
-        if(pathsLine!=null)body.append(pathsLine+line);
-        if(longError!=null)body.append(longError);
-        body.append("</html>");
-        this.setBody(lastBody + body.toString());
         return this;
     }
 

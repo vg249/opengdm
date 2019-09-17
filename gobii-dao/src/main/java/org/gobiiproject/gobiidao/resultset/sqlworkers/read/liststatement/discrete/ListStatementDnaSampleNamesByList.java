@@ -36,7 +36,7 @@ public class ListStatementDnaSampleNamesByList implements ListStatement {
         String parsedNameList = ListStatementUtil.generateParsedNameListForDnaSamples(nameArray);
 
         ParameterizedSql parameterizedSql =
-                new ParameterizedSql("select dnasample_id, name " +
+                new ParameterizedSql("select dnasample_id, name, num " +
                         "from dnasample " +
                         "where project_id::varchar = ?" +
                         "and ("+ PARAM_NAME_NAME_LIST+ ")",

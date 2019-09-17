@@ -576,16 +576,27 @@ __|string
 [options="header", cols=".^3,.^4"]
 |===
 |Name|Schema
-|**columnsByTableName** +
-__|< string, < <<_gobiifilecolumn,GobiiFileColumn>> > array > map
+|**gobiiFileColumns** +
+__|< <<_gobiifilecolumn,GobiiFileColumn>> > array
+|**table** +
+__|string
+|===
+
+
+[[_gobiiloadermetadata]]
+=== GobiiLoaderMetadata
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
 |**contactEmail** +
 __|string
 |**contactId** +
 __|integer (int32)
-|**dataSet** +
+|**dataset** +
 __|<<_propnameid,PropNameId>>
-|**dataSetId** +
-__|integer (int32)
+|**datasetOrientationType** +
+__|enum (SAMPLE_FAST, MARKER_FAST)
 |**datasetType** +
 __|<<_propnameid,PropNameId>>
 |**experiment** +
@@ -594,14 +605,10 @@ __|<<_propnameid,PropNameId>>
 __|string
 |**gobiiFile** +
 __|<<_gobiifile,GobiiFile>>
-|**gobiiFileColumns** +
-__|< <<_gobiifilecolumn,GobiiFileColumn>> > array
 |**gobiiJobStatus** +
 __|enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
 |**jobPayloadType** +
 __|enum (CV_PAYLOADTYPE_SAMPLES, CV_PAYLOADTYPE_MARKERS, CV_PAYLOADTYPE_MATRIX, CV_PAYLOADTYPE_MARKERSAMPLES, CV_PAYLOADTYPE_ALLMETA)
-|**logMessage** +
-__|string
 |**mapset** +
 __|<<_propnameid,PropNameId>>
 |**platform** +
@@ -610,10 +617,19 @@ __|<<_propnameid,PropNameId>>
 __|<<_propnameid,PropNameId>>
 |**qcCheck** +
 __|boolean
-|**table** +
-__|string
-|**vcfParameters** +
-__|<<_vcfparameters,VcfParameters>>
+|===
+
+
+[[_gobiiloaderprocedure]]
+=== GobiiLoaderProcedure
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**instructions** +
+__|< <<_gobiiloaderinstruction,GobiiLoaderInstruction>> > array
+|**metadata** +
+__|<<_gobiiloadermetadata,GobiiLoaderMetadata>>
 |===
 
 
@@ -794,12 +810,12 @@ __|string
 |Name|Schema
 |**allowedProcessTypes** +
 __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
-|**gobiiLoaderInstructions** +
-__|< <<_gobiiloaderinstruction,GobiiLoaderInstruction>> > array
 |**id** +
 __|integer (int32)
 |**instructionFileName** +
 __|string
+|**procedure** +
+__|<<_gobiiloaderprocedure,GobiiLoaderProcedure>>
 |===
 
 
@@ -2043,25 +2059,6 @@ __|integer (int32)
 __|string
 |**rank** +
 __|integer (int32)
-|===
-
-
-[[_vcfparameters]]
-=== VcfParameters
-
-[options="header", cols=".^3,.^4"]
-|===
-|Name|Schema
-|**maf** +
-__|number (float)
-|**minDp** +
-__|number (float)
-|**minQ** +
-__|number (float)
-|**removeIndels** +
-__|boolean
-|**toIupac** +
-__|boolean
 |===
 
 

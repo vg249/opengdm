@@ -409,9 +409,8 @@ class ValidationUtil {
      */
     private static void validateDB(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
         Set<String> fieldNameList = new HashSet<>();
-        List<String> fieldToCompare = condition.fieldToCompare;
+        String fieldToCompare = condition.fieldToCompare.get(0);
         String typeName = condition.typeName;
-        String filterValue = fieldToCompare.get(0);
         if (readColumnIntoSet(fileName, fieldToCompare, fieldNameList, failureList)) {
             List<NameIdDTO> nameIdDTOList = new ArrayList<>();
             for (String fieldName : fieldNameList) {
@@ -421,11 +420,17 @@ class ValidationUtil {
             }
             if (typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE))
                 typeName = GobiiEntityNameType.GERMPLASM.name();
-            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, filterValue, failureList);
-            if (typeName.equalsIgnoreCase(ValidationConstants.CV))
+            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, fieldToCompare, failureList);
+            if (typeName.equalsIgnoreCase(ValidationConstants.CV)) {
                 processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList);
-            else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE))
+            }
+            else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
                 processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_REFERENCE_VALUE, failureList);
+            }
+            else{
+                //In theory, 'germplasm' works as a field to compare
+                processResponseList(nameIdDTOListResponse,fieldToCompare,FailureTypes.UNDEFINED_VALUE, failureList);
+            }
         }
     }
 
@@ -435,18 +440,17 @@ class ValidationUtil {
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
             Map<String, Set<List<String>>> mapForeignkeyAndName = new HashMap<>();
             if (createPlatformIdSampleNameAndNumGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
-                Map<String, String> foreignKeyValueFromDB = new HashMap<>();
+                Map<String, String> foreignKeyValueFromDB;
                 if (foreignKeyList.size() != 1) {
                     multiplePlatformIdError(condition, failureList);
                     return;
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
-                    for (String platformId : foreignKeyList) {
-                        foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
-                        if (foreignKeyValueFromDB.size() == 0) {
-                            undefinedForeignKey(condition, platformId, failureList);
-                            return;
-                        }
+                    String platformId = foreignKeyList.iterator().next();//There's only 1
+                    foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                    if (foreignKeyValueFromDB.size() == 0) {
+                        undefinedForeignKey(condition, platformId, failureList);
+                        return;
                     }
                 } else {
                     createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY, Collections.singletonList(condition.foreignKey), failureList);
@@ -471,7 +475,7 @@ class ValidationUtil {
     }
 
     private static void validateDbWithForeignKey(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String> fieldToCompare = condition.fieldToCompare;
+        String fieldToCompare = condition.fieldToCompare.get(0);
         String typeName = condition.typeName;
         Set<String> foreignKeyList = new HashSet<>();
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
@@ -495,9 +499,14 @@ class ValidationUtil {
                 }
 
                 for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
-                    if (foreignKeyValueFromDB.keySet().contains(ent.getKey())) {
-                        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                    String foreignKey=ent.getKey();
+                    if (foreignKeyValueFromDB.keySet().contains(foreignKey)) {
+                        Set <String> nameSet = new HashSet<String>();
                         for (String name : ent.getValue()) {
+                            nameSet.add(name);
+                        }
+                        List<NameIdDTO> nameIdDTOList = new ArrayList<>(); //Put into set, before final array
+                        for(String name: nameSet) {
                             NameIdDTO nameIdDTO = new NameIdDTO();
                             nameIdDTO.setName(name);
                             nameIdDTOList.add(nameIdDTO);
@@ -512,7 +521,6 @@ class ValidationUtil {
                                 failureReason = FailureTypes.UNDEFINED_DNARUN_NAME__VALUE;
                                 break;
                             case ValidationConstants.DNASAMPLE:
-
                                 failureReason = FailureTypes.UNDEFINED_DNASAMPLE_NAME_VALUE;
                                 break;
                             case ValidationConstants.MARKER:
@@ -522,11 +530,18 @@ class ValidationUtil {
                                 ErrorLogger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
                         }
 
-                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
+                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, foreignKey, failureList);
                         processResponseList(nameIdDTOListResponse, fieldToCompare, failureReason, failureList);
                     } else undefinedForeignKey(condition, ent.getKey(), failureList);
-                }
+                }//end for entry in entryset
             }
+            else { //createForeignKeyGroup
+             ErrorLogger.logWarning("Vaidation","Unable to create foreignKeyGroup");
+            }
+        }
+        else{//readForeignKey
+            ErrorLogger.logWarning("Vaidation","Unable to read foreign key");
+
         }
     }
 
@@ -550,7 +565,7 @@ class ValidationUtil {
      * @param condition            Condition
      * @param mapForeignkeyAndName foreignKeyMap
      * @param failureList          failure list
-     * @return status
+     * @return status true if succeeded
      */
     private static boolean createForeignKeyGroup(String fileName, ConditionUnit condition, Map<String, Set<String>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
@@ -608,14 +623,17 @@ class ValidationUtil {
         for (NameIdDTO nameIdDTO : nameIdDTOList)
             if (nameIdDTO.getId() == 0) createFailure(reason, fieldToCompare, nameIdDTO.getName(), failureList);
     }
+    private static void processResponseList(List<NameIdDTO> nameIdDTOList, String fieldToCompare, String reason, List<Failure> failureList) throws MaximumErrorsValidationException {
+        processResponseList(nameIdDTOList,Collections.singletonList(fieldToCompare),reason,failureList);
+    }
 
-    /**
-     * Reads specified key.
-     * Can simplify while refactoring
-     */
+        /**
+		 * Reads specified key.
+		 * Can simplify while refactoring
+		 */
     private static boolean readForeignKey(String fileName, String foreignKey, Set<String> foreignKeyList, List<Failure> failureList) throws MaximumErrorsValidationException {
         if (checkForHeaderExistence(fileName, Collections.singletonList(foreignKey), "yes", failureList))
-            return readColumnIntoSet(fileName, Collections.singletonList(foreignKey), foreignKeyList, failureList);
+            return readColumnIntoSet(fileName, foreignKey, foreignKeyList, failureList);
         return false;
     }
 
@@ -623,12 +641,11 @@ class ValidationUtil {
      * Reads column into the set. If the header does not exist it wont return a failure.
      * Use  checkForHeaderExistence to check for the header
      */
-    private static boolean readColumnIntoSet(String fileName, List<String> fieldToCompare, Collection<String> fieldNameList, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static boolean readColumnIntoSet(String fileName,String fieldToCompare, Set<String> fieldNameList, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String[]> collectList = new ArrayList<>();
         if (readFileIntoMemory(fileName, collectList, failureList)) {
             List<String> headers = Arrays.asList(collectList.get(0));
-            //TODO: Current assumption there will be only one row validation from Database
-            int fieldIndex = headers.indexOf(fieldToCompare.get(0));
+            int fieldIndex = headers.indexOf(fieldToCompare);
             if (fieldIndex < 0) return false;
             collectList.remove(0);
             for (String[] fileRow : collectList) {

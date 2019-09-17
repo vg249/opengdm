@@ -36,6 +36,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructi
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
@@ -1711,15 +1712,14 @@ public class GobiiAdl {
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
         try {
             File instructionFile = new File(instructionFilePath);
-            InstructionFileAccess<GobiiLoaderInstruction> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
-            List<GobiiLoaderInstruction> instructions =
-                    instructionInstructionFileAccess.getInstructions(instructionFilePath,
-                            GobiiLoaderInstruction[].class);
-            if (null != instructions) {
+            InstructionFileAccess<GobiiLoaderProcedure> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
+            GobiiLoaderProcedure procedure = instructionInstructionFileAccess.getProcedure(instructionFilePath);
+
+            if (null != procedure) {
                 String instructionFileName = instructionFile.getName();
                 String justName = instructionFileName.replaceFirst("[.][^.]+$", "");
                 loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + justName);
-                loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
+                loaderInstructionFilesDTO.setGobiiLoaderProcedure(procedure);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -1735,7 +1735,7 @@ public class GobiiAdl {
 
         boolean returnVal = false;
 
-        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
+        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getProcedure());
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
@@ -1743,13 +1743,13 @@ public class GobiiAdl {
         } else {
             try {
                 if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 } else {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 }
                 PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
                 GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
@@ -1764,7 +1764,7 @@ public class GobiiAdl {
                 } else {
                     String instructionFileName = payload.getData().get(0).getInstructionFileName();
                     System.out.println("Request " + instructionFileName + " submitted.");
-                    Integer datasetId = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).getDataSetId();
+                    Integer datasetId = loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId();
                     returnVal = checkJobStatusLoad(instructionFileName, datasetId);
                 }
             } catch (Exception err) {
@@ -1798,9 +1798,9 @@ public class GobiiAdl {
 
             // because we called checkStatus() with second parameter true, we know that there is at least one payload item
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
-            GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
+            GobiiLoaderProcedure procedure = data.get(0).getProcedure();
 
-            String newStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
+            String newStatus = procedure.getMetadata().getGobiiJobStatus().getCvName();
 
             if (newStatus.equalsIgnoreCase("qc_processing")) {
 
@@ -1833,7 +1833,7 @@ public class GobiiAdl {
             if (newStatus.equalsIgnoreCase("failed") ||
                     newStatus.equalsIgnoreCase("aborted")) {
 
-                System.out.println("\nJob " + instructionFileName + " failed. \n" + gobiiLoaderInstruction.getLogMessage());
+                System.out.println("\nJob " + instructionFileName + " failed. \n");
                 returnVal = false;
                 statusDetermined = true;
 
@@ -1991,7 +1991,7 @@ public class GobiiAdl {
             } else {
                 obj = parser.parse(new FileReader(instructionFilePath));
             }
-            JsonArray jsonArray = (JsonArray) obj;
+            JsonObject procedure = (JsonObject) obj;
             NodeList dbPkeys = currentElement.getElementsByTagName("DbFkey");
             for (int j = 0; j < dbPkeys.getLength(); j++) {
                 Element currentDbPkeyElement = (Element) dbPkeys.item(j);
@@ -2038,71 +2038,80 @@ public class GobiiAdl {
                     entityName = entityName.toLowerCase();
                 }
 
-                for (int k = 0; k < jsonArray.size(); k++) {
-                    JsonObject instructionObject = (JsonObject) jsonArray.get(k);
+                // metadata
 
-                    if (instructionObject.has("gobiiCropType")) {
-                        instructionObject.addProperty("gobiiCropType", crop);
+                JsonObject metadata = (JsonObject) procedure.get("metadata");
+
+                if (metadata.has("gobiiCropType")) {
+                    metadata.addProperty("gobiiCropType", crop);
+                }
+
+                if (metadata.has("qcCheck")) {
+                    metadata.addProperty("qcCheck", qcCheck);
+                }
+
+                if (entityName.equals("contact")) {
+                    if (metadata.has("contactId")) {
+                        metadata.addProperty("contactId", currentEntityId);
+                    }
+                    if (metadata.has("contactEmail")) {
+                        metadata.addProperty("contactEmail", dbPkeySurrogateValue);
+                    }
+                    continue;
+                }
+
+                if (entityName.equals("dataset")) {
+                    if (metadata.has("dataset")) {
+                        JsonObject datasetPropNameId = new JsonObject();
+                        datasetPropNameId.addProperty("id", currentEntityId);
+                        metadata.add("datasetId", datasetPropNameId);
                     }
 
-                    if (instructionObject.has("qcCheck")) {
-                        if (qcCheck && k == (jsonArray.size() - 1)) {
-                            instructionObject.addProperty("qcCheck", qcCheck);
-                        } else {
-                            instructionObject.addProperty("qcCheck", false);
-                        }
-                    }
+                    // get datasetType ID
 
-                    if (entityName.equals("contact")) {
-                        if (instructionObject.has("contactId")) {
-                            instructionObject.addProperty("contactId", currentEntityId);
-                        }
-                        if (instructionObject.has("contactEmail")) {
-                            instructionObject.addProperty("contactEmail", dbPkeySurrogateValue);
-                        }
-                        continue;
-                    }
+                    RestUri datasetGetUri = GobiiClientContext.getInstance(null, false)
+                            .getUriFactory()
+                            .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
+                    datasetGetUri.setParamValue("id", currentEntityId);
+                    GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceForDatasetGet = new GobiiEnvelopeRestResource<>(datasetGetUri);
+                    PayloadEnvelope<DataSetDTO> resultEnvelopeForDatasetGet = gobiiEnvelopeRestResourceForDatasetGet.get(DataSetDTO.class);
+                    checkStatus(resultEnvelopeForDatasetGet);
 
-                    if (entityName.equals("dataSet")) {
-                        if (instructionObject.has("dataSetId")) {
-                            instructionObject.addProperty("dataSetId", currentEntityId);
-                        }
+                    DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
 
-                        // get datasetType ID
+                    // set datasetType fields in instruction file template
+                    JsonObject datasetTypeObj = (JsonObject) metadata.get("datasetType");
+                    datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName().toUpperCase());
+                    datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
 
-                        RestUri datasetGetUri = GobiiClientContext.getInstance(null, false)
-                                .getUriFactory()
-                                .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-                        datasetGetUri.setParamValue("id", currentEntityId);
-                        GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceForDatasetGet = new GobiiEnvelopeRestResource<>(datasetGetUri);
-                        PayloadEnvelope<DataSetDTO> resultEnvelopeForDatasetGet = gobiiEnvelopeRestResourceForDatasetGet.get(DataSetDTO.class);
-                        checkStatus(resultEnvelopeForDatasetGet);
+                    metadata.add("datasetType", datasetTypeObj);
+                }
 
-                        DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
+                JsonObject tempObject = (JsonObject) metadata.get(entityName);
+                tempObject.addProperty("name", dbPkeySurrogateValue);
+                tempObject.addProperty("id", currentEntityId);
 
-                        // set datasetType fields in instruction file template
-                        JsonObject datasetTypeObj = (JsonObject) instructionObject.get("datasetType");
-                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName().toUpperCase());
-                        datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
+                metadata.add(entityName, tempObject);
 
-                        instructionObject.add("datasetType", datasetTypeObj);
-                    }
+                if (writeSourcePath) {
+                    JsonObject gobiiFileObject = (JsonObject) metadata.get("gobiiFile");
+                    gobiiFileObject.addProperty("source", filesPath);
+                    gobiiFileObject.addProperty("destination", digestPath);
+                    metadata.add("gobiiFile", gobiiFileObject);
+                }
 
-                    JsonObject tempObject = (JsonObject) instructionObject.get(entityName);
-                    tempObject.addProperty("name", dbPkeySurrogateValue);
-                    tempObject.addProperty("id", currentEntityId);
+                procedure.add("metadata", metadata);
 
-                    instructionObject.add(entityName, tempObject);
+                // instructions
 
-                    if (writeSourcePath) {
-                        JsonObject gobiiFileObject = (JsonObject) instructionObject.get("gobiiFile");
-                        gobiiFileObject.addProperty("source", filesPath);
-                        gobiiFileObject.addProperty("destination", digestPath);
-                        instructionObject.add("gobiiFile", gobiiFileObject);
-                    }
+                JsonArray instructions = (JsonArray) procedure.get("instructions");
+
+                for (int k = 0; k < instructions.size(); k++) {
+
+                    JsonObject instruction = (JsonObject) instructions.get(k);
 
                     // modify gobiiFileColumns attribute
-                    JsonArray gobiiFileColumnsArr = (JsonArray) instructionObject.get("gobiiFileColumns");
+                    JsonArray gobiiFileColumnsArr = (JsonArray) instruction.get("gobiiFileColumns");
                     for (int o = 0; o < gobiiFileColumnsArr.size(); o++) {
                         JsonObject fileColumnObj = (JsonObject) gobiiFileColumnsArr.get(o);
                         if (fileColumnObj.has("gobiiColumnType")) {
@@ -2144,15 +2153,16 @@ public class GobiiAdl {
                             }
                         }
                     }
-                    instructionObject.add("gobiiFileColumns", gobiiFileColumnsArr);
-                    jsonArray.set(k, instructionObject);
+                    instruction.add("gobiiFileColumns", gobiiFileColumnsArr);
+                    instructions.set(k, instruction);
                 }
+                procedure.add("instructions", instructions);
             } // iterate instruction file json
 
             // update instruction file
             System.out.println("\nWriting instruction file for " + scenarioName + "\n");
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String prettyJsonString = gson.toJson(jsonArray);
+            String prettyJsonString = gson.toJson(procedure);
             if (new File(instructionFilePath).exists()) {
                 FileWriter instructionFileWriter = new FileWriter(instructionFilePath);
                 instructionFileWriter.write(prettyJsonString);

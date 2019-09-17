@@ -22,7 +22,7 @@ public class FailureTypes {
     public static final String UNDEFINED_CV = "Undefined CV term";
     public static final String DATABASE_ERROR = "Database Error";
     public static final String UNDEFINED_CV_VALUE = "Undefined CV value";
-    public static final String UNDEFINED_VALUE = "Undefined value";
+    public static final String UNDEFINED_VALUE = "Undefined value in DB";
     public static final String UNDEFINED_REFERENCE_VALUE = "Reference value does not exist in DB";
     public static final String UNDEFINED_LINKAGE_GROUP_NAME__VALUE = "linkage_group_name does not exist in DB";
     public static final String UNDEFINED_DNARUN_NAME__VALUE = "dnarun_name does not exist in DB";

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidtomapping.instructions.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.instructions.DtoMapLoaderFiles;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -24,7 +25,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapLoaderFilesImpl.class);
 
-    private InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+    private InstructionFileAccess<GobiiLoaderProcedure> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
 
 
     public LoaderFilePreviewDTO makeDirectory(String cropType, String directoryName) throws GobiiDaoException {
