@@ -3,8 +3,10 @@ package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapLinkageGroupBrApi;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DtoMapMapsetBrapiImpl implements DtoMapMapsetBrApi {
+public class DtoMapLinkageGroupBrapiImpl implements DtoMapLinkageGroupBrApi {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDatasetBrapiImpl.class);
 
@@ -23,9 +25,9 @@ public class DtoMapMapsetBrapiImpl implements DtoMapMapsetBrApi {
     private DtoListQueryColl dtoListQueryColl;
 
     @Override
-    public List<MapsetBrapiDTO> listMapset(Integer pageNum, Integer pageSize) {
+    public List<LinkageGroupBrapiDTO> listLinkageGroup(Integer pageNum, Integer pageSize) {
 
-        List<MapsetBrapiDTO> mapsetList = new ArrayList<>();
+        List<LinkageGroupBrapiDTO> linkageGroupsList = new ArrayList<>();
 
         Map<String, Object> sqlParams = new HashMap<>();
 
@@ -35,41 +37,10 @@ public class DtoMapMapsetBrapiImpl implements DtoMapMapsetBrApi {
 
             sqlParams.put("pageSize", pageSize);
 
-            mapsetList = dtoListQueryColl.getList(
-                    ListSqlId.QUERY_ID_MAPSET_BRAPI_BYLIST, null, sqlParams);
+            linkageGroupsList = dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_LINKAGE_GROUP_BRAPI_BYLIST, null, sqlParams);
 
-            return mapsetList;
-
-        }
-        catch (GobiiException gE) {
-
-            LOGGER.error(gE.getMessage(), gE);
-
-            throw new GobiiDtoMappingException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage()
-            );
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii Mapping Error", e);
-            throw new GobiiDtoMappingException(e);
-        }
-
-    }
-
-    @Override
-    public MapsetBrapiDTO getMapsetById(Integer mapSetId) {
-
-        MapsetBrapiDTO mapSet = new MapsetBrapiDTO();
-
-        Map<String, Object> sqlParams = new HashMap<>();
-
-        try {
-
-            sqlParams.put("mapSetId", "");
-
-            return mapSet;
+            return linkageGroupsList;
 
         }
         catch (GobiiException gE) {

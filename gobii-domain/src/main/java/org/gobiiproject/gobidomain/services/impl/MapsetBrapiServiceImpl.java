@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
@@ -18,6 +19,10 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
     @Autowired
     private DtoMapMapsetBrApi dtoMapMapsetBrApi;
 
+    @Autowired
+    private LinkageGroupBrapiService linkageGroupBrapiService;
+
+
     /**
      * Gets the list of Genome Maps in the database by Page Number and Page Size
      * @param pageNum - Page Number to be fetched
@@ -34,6 +39,34 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
         try {
 
             return dtoMapMapsetBrApi.listMapset(pageNum, pageSize);
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+    }
+
+    /**
+     * Gets the Genome Map by map Id. The linkage group list in the map is paged.
+     * @param pageNum - Page Number to be fetched
+     * @param pageSize - Page Size to be fetched
+     * @return MapSetBrapiDTO
+     * @throws GobiiDomainException
+     */
+    @Override
+    public MapsetBrapiDTO getMapSet(
+            Integer mapSetId,
+            Integer pageNum,
+            Integer pageSize) throws GobiiDomainException {
+
+        MapsetBrapiDTO returnVal = new MapsetBrapiDTO();
+
+        try {
+
+            return returnVal;
 
         } catch (Exception e) {
 

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class MapsetBrapiDTO {
         this.linkageGroups = linkageGroups;
     }
 
+    @JsonProperty(value = "data")
     private List<LinkageGroupBrapiDTO> linkageGroups;
 
     @GobiiEntityColumn(columnName = "mapset_id")
