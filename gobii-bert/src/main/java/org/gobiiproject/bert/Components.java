@@ -367,7 +367,10 @@ public class Components {
 			job.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
 			job.setSubmittedDate(new Date());
 			job.setJobName(name);
-			job.getDatasetIds().add(dataset.getDataSetId());
+
+			if (dataset != null) {
+				job.getDatasetIds().add(dataset.getDataSetId());
+			}
 
 			PayloadEnvelope<JobDTO> envelope = new PayloadEnvelope<>(job, GobiiProcessType.CREATE);
 			ResponseEntity<JsonNode> response = post(url(URL_JOBS), authHeader(), JsonNode.class, envelope);
@@ -380,7 +383,7 @@ public class Components {
 	}
 
 	@Action("load")
-	public GobiiLoaderProcedure load(ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset,
+	public GobiiLoaderProcedure load(ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset, MapsetDTO mapset,
 									 String procedureFilePath, String dataFolderPath) throws IOException {
 
 		GobiiLoaderProcedure procedure = new ObjectMapper().readValue(slurp(procedureFilePath), GobiiLoaderProcedure.class);
@@ -398,7 +401,7 @@ public class Components {
 
 		job(dataset, jobPayloadType, procedureFileName);
 
-		fillInProcedurePrototype(procedure, project, experiment, platform, dataset);
+		fillInProcedurePrototype(procedure, project, experiment, platform, dataset, mapset);
 
 		String procedureFileRemoteDirectory = "/data/gobii_bundle/crops/" + procedure.getMetadata().getGobiiCropType() + "/loader/inprogress/";
 		String procedureFileRemotePath = procedureFileRemoteDirectory + procedureFileName + ".json";
@@ -417,7 +420,7 @@ public class Components {
 		return procedure;
 	}
 
-	@Clean("load")
+//	@Clean("load")
 	public void cleanLoad(GobiiLoaderProcedure procedure, String procedureFilePath, String dataFolderPath) throws IOException {
 
 		String procedureFileRemoteDirectory = "/data/gobii_bundle/crops/" + procedure.getMetadata().getGobiiCropType() + "/loader/inprogress/";
@@ -429,15 +432,20 @@ public class Components {
 		ssh(this.host, this.user, "rm -r " + dataSrc);
 	}
 
-	private static void fillInProcedurePrototype(GobiiLoaderProcedure procedure, ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset) {
+	private static void fillInProcedurePrototype(GobiiLoaderProcedure procedure, ProjectDTO project, ExperimentDTO experiment, PlatformDTO platform, DataSetDTO dataset, MapsetDTO mapset) {
 
 		procedure.getMetadata()
 				.setGobiiJobStatus(JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS)
 				.setQcCheck(false)
 				.setProject(new PropNameId(project.getId(), project.getProjectName()))
 				.setExperiment(new PropNameId(experiment.getId(), experiment.getExperimentName()))
-				.setPlatform(new PropNameId(platform.getId(), platform.getPlatformName()))
-				.setDataset(new PropNameId(dataset.getDataSetId(), dataset.getDatasetName()));
+				.setPlatform(new PropNameId(platform.getId(), platform.getPlatformName()));
 
+		if (dataset != null) {
+			procedure.getMetadata().setDataset(new PropNameId(dataset.getDataSetId(), dataset.getDatasetName()));
+		}
+		if (mapset != null) {
+			procedure.getMetadata().setMapset(new PropNameId(mapset.getId(), mapset.getName()));
+		}
 	}
 }

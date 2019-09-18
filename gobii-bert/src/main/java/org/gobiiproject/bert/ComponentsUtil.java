@@ -215,7 +215,7 @@ public class ComponentsUtil {
 		}
 	}
 
-	public static void scpContent(String host, String user, String content, String to, String ... params) throws IOException {
+	public static void scpContent(String host, String user, String content, String to) throws IOException {
 
 		String tmpFileName = to.substring(to.lastIndexOf("/")) + randomString();
 

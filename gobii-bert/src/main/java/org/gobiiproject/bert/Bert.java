@@ -14,7 +14,8 @@ public class Bert {
 			ernie.runFile(s);
 		}
 
-		ernie.runFile("/Users/ljc237-admin/gobii/bert/test.bert");
+		ernie.runFile("/Users/ljc237-admin/gobii/bert/preamble.bert");
+		ernie.runFile("/Users/ljc237-admin/gobii/bert/tests.bert");
 
 //		ComponentsUtil.ssh("cbsugobiixvm16.biohpc.cornell.edu", "gadm", "ls > asdf");
 //		ComponentsUtil.ssh("cbsugobiixvm16.biohpc.cornell.edu", "gadm", "cat asdf");
