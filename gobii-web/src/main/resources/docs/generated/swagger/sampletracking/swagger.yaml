@@ -396,19 +396,19 @@ definitions:
         type: "string"
         format: "date-time"
         readOnly: true
+      sampleId:
+        type: "integer"
+        format: "int32"
       projectId:
         type: "integer"
         format: "int32"
-        readOnly: true
       sampleUuid:
         type: "string"
-      name:
-        type: "string"
-      code:
+      sampleName:
         type: "string"
       plateName:
         type: "string"
-      num:
+      sampleNum:
         type: "string"
       wellRow:
         type: "string"
@@ -420,6 +420,12 @@ definitions:
         type: "object"
         additionalProperties:
           type: "object"
+      id:
+        type: "integer"
+        format: "int32"
+      dnaSampleId:
+        type: "integer"
+        format: "int32"
   ExperimentDTO:
     type: "object"
     properties:
@@ -479,13 +485,13 @@ definitions:
         type: "string"
         format: "date-time"
         readOnly: true
-      name:
+      germplasmName:
         type: "string"
       externalCode:
         type: "string"
-      speciesName:
+      germplasmSpecies:
         type: "string"
-      typeName:
+      germplasmType:
         type: "string"
       germplasmId:
         type: "integer"

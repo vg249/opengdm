@@ -17,7 +17,7 @@ import java.util.Map;
 public class CvIdCvTermMapper {
 
     /**
-     * Function maps the Maps the properties object with CV term as a key to Json Node
+     * Function maps the properties object with CV term as a key to Json Node
      * with cvIds as Key.
      *
      * @param cvList List of Cv Entity

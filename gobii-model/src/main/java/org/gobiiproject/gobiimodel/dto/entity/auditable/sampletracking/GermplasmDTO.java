@@ -2,9 +2,11 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.Germplasm;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.HashMap;
@@ -20,64 +22,66 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GermplasmDTO extends DTOBaseAuditable {
 
-    private int id;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName = "germplasmId", entity = Germplasm.class)
+    private int germplasmId;
+
+    @GobiiEntityMap(paramName = "germplasmName", entity = Germplasm.class)
     private String germplasmName;
+
+    @GobiiEntityMap(paramName = "externalCode", entity = Germplasm.class)
     private String externalCode;
+
+    @GobiiEntityMap(paramName = "germplasm_species", cvGroup = CvGroup.CVGROUP_GERMPLASM_SPECIES)
     private String germplasmSpecies;
+
+    @GobiiEntityMap(paramName = "germplasm_type", cvGroup = CvGroup.CVGROUP_GERMPLASM_TYPE)
     private String germplasmType;
 
+    @GobiiEntityMap(paramName = "germplasm_type", cvGroup = CvGroup.CVGROUP_GERMPLASM_PROP)
     private Map<String, String> properties = new HashMap<>();
 
     public GermplasmDTO() { super(GobiiEntityNameType.GERMPLASM); }
 
     @Override
-    @GobiiEntityParam(paramName = "germplasmId")
-    public Integer getId() { return this.id; }
+    public Integer getId() { return this.germplasmId; }
 
     @Override
-    @GobiiEntityColumn(columnName = "germplasm_id")
-    public void setId(Integer id) { this.id = id; }
+    public void setId(Integer id) { this.germplasmId = id; }
 
-    public Integer getGermplasmId() { return this.id; }
+    public Integer getGermplasmId() { return this.germplasmId; }
 
-    public void setGermplasmId(Integer id) { this.id = id; }
+    public void setGermplasmId(Integer id) { this.germplasmId = id; }
 
-    @GobiiEntityParam(paramName = "name")
     public String getGermplasmName() {
         return this.germplasmName;
     }
 
-    @GobiiEntityColumn(columnName = "name")
     public void setGermplasmName(String name) {
         this.germplasmName = name;
     }
 
-    @GobiiEntityParam(paramName = "externalCode")
     public String getExternalCode() {
         return this.externalCode;
     }
 
-    @GobiiEntityColumn(columnName = "external_code")
     public void setExternalCode(String externalCode) {
         this.externalCode = externalCode;
     }
 
-    @GobiiEntityParam(paramName = "species_id")
     public String getGermplasmSpecies() {
         return this.germplasmSpecies;
     }
 
-    @GobiiEntityColumn(columnName = "species_id")
     public void setGermplasmSpecies(String speciesName) {
         this.germplasmSpecies = speciesName;
     }
 
-    @GobiiEntityParam(paramName = "type_id")
     public String getGermplasmType() {
         return this.germplasmType;
     }
 
-    @GobiiEntityColumn(columnName = "type_id")
     public void setGermplasmType(String typeName) {
         this.germplasmType = typeName;
     }

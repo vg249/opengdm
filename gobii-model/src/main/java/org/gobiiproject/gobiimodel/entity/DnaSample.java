@@ -7,7 +7,7 @@ import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import javax.persistence.*;
 
 /**
- * Model for Project Entity.
+ * Model for Dnasample Entity.
  * Represents the database table project.
  *
  * props - is a jsonb column. It is converted to jackson.fasterxml JsonNode using a

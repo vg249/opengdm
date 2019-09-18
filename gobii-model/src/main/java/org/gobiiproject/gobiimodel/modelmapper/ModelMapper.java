@@ -126,7 +126,7 @@ public class ModelMapper {
 
                     Class entityClass = gobiiEntityMap.entity();
 
-                    if(entityParamName != null & entityClass != null) {
+                    if(entityParamName != null & entityClass != void.class) {
 
                         Field entityField;
 

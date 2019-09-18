@@ -479,24 +479,24 @@
           "format" : "date-time",
           "readOnly" : true
         },
+        "sampleId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
         "projectId" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "sampleUuid" : {
           "type" : "string"
         },
-        "name" : {
-          "type" : "string"
-        },
-        "code" : {
+        "sampleName" : {
           "type" : "string"
         },
         "plateName" : {
           "type" : "string"
         },
-        "num" : {
+        "sampleNum" : {
           "type" : "string"
         },
         "wellRow" : {
@@ -513,6 +513,14 @@
           "additionalProperties" : {
             "type" : "object"
           }
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "dnaSampleId" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -593,16 +601,16 @@
           "format" : "date-time",
           "readOnly" : true
         },
-        "name" : {
+        "germplasmName" : {
           "type" : "string"
         },
         "externalCode" : {
           "type" : "string"
         },
-        "speciesName" : {
+        "germplasmSpecies" : {
           "type" : "string"
         },
-        "typeName" : {
+        "germplasmType" : {
           "type" : "string"
         },
         "germplasmId" : {

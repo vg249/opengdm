@@ -33,4 +33,10 @@ public class DnaSampleServiceImpl {
 
         }
     }
+
+    public void uploadSamples(Integer jobId, String sampleFileFqpn) {
+
+
+
+    }
 }

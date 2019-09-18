@@ -20,12 +20,10 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +39,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Scope(value="request")
 @RestController
-@RequestMapping(GobiiControllerType.SERVICE_PATH_SAMPLE_TRACKING)
+@RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
 public class SampleTrackingController {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SampleTrackingController.class);
@@ -459,9 +458,7 @@ public class SampleTrackingController {
 
         BufferedReader br;
 
-        List<GobiiFileColumn> gobiiFileColumns = new ArrayList<>();
-
-        GobiiLoaderInstruction gobiiLoaderInstruction = new GobiiLoaderInstruction();
+        Map<String, List<GobiiFileColumn>> fileColumnByTableMap = new HashMap<>();
 
         try {
 
@@ -484,18 +481,48 @@ public class SampleTrackingController {
                 EntityFieldBean entityField = null;
 
                 if(sampleMetaData.getMap().containsKey(columnHeader)) {
+
                     String dtoProp = sampleMetaData.getMap().get(columnHeader);
 
                     if(dtoEntityMap.containsKey(dtoProp)) {
+
                         entityField = dtoEntityMap.get(dtoProp);
+
                     }
+                    else {
+
+                        if(dtoProp.substring(dtoProp.lastIndexOf(".")) == "properties"
+                                && dtoProp.substring(0, dtoProp.lastIndexOf(".")) == "germplasm") {
+
+                            entityField = new EntityFieldBean();
+
+                            entityField.setColumnName("49");
+
+                            entityField.setTableName("germplasm_props");
+
+                        }
+                        else if (dtoProp.substring(dtoProp.lastIndexOf(".")) == "properties"
+                                      && dtoProp.substring(0, dtoProp.lastIndexOf(".")) == "") {
+
+                            entityField = new EntityFieldBean();
+
+                            entityField.setColumnName("50");
+
+                            entityField.setTableName("dnasample_props");
+
+                        }
+
+                    }
+
                 }
                 else {
+
                     if(dtoEntityMap.containsKey(columnHeader)) {
+
                         entityField = dtoEntityMap.get(columnHeader);
+
                     }
                 }
-
 
                 if(entityField != null) {
 
@@ -505,7 +532,18 @@ public class SampleTrackingController {
 
                     gobiiFileColumn.setRCoord(2);
 
-                    gobiiFileColumns.add(gobiiFileColumn);
+                    gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
+
+                    if(entityField.getTableName() != null) {
+
+                        if (!fileColumnByTableMap.containsKey(entityField.getTableName())) {
+
+                            fileColumnByTableMap.put(entityField.getTableName(), new ArrayList<>());
+
+                        }
+
+                        fileColumnByTableMap.get(entityField.getTableName()).add(gobiiFileColumn);
+                    }
 
                 }
 
