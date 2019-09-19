@@ -150,6 +150,10 @@ public static boolean setLogLevel(String level){
 	public static void logWarning(String name, String reason){
 		log(Level.WARN,new Error(name,reason));
 	}
+	public static void logWarning(String name, String reason, Throwable e){
+		log.warn(name+": "+reason,e);
+	}
+
 	private static void log(Level l, Error e){
 		if(l.equals(Level.ERROR))
 			log.error("{}: {}", e.name, e.reason);

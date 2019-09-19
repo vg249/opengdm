@@ -1,6 +1,6 @@
-#										germplasm_name	germplasmname_2nuc__1	germplasmname_2nuc__2	germplasmname_2nuc__3	germplasmname_2nuc__4	germplasmname_2nuc__5	germplasmname_2nuc__6	germplasmname_2nuc__7	germplasmname_2nuc__8	germplasmname_2nuc__9	germplasmname_2nuc__10
+#										germplasm_name	germplasmname_Deb_FQ_2ltr_1	germplasmname_Deb_FQ_2ltr_2	germplasmname_Deb_FQ_2ltr_3	germplasmname_Deb_FQ_2ltr_4	germplasmname_Deb_FQ_2ltr_5	germplasmname_Deb_FQ_2ltr_6	germplasmname_Deb_FQ_2ltr_7	germplasmname_Deb_FQ_2ltr_8	germplasmname_Deb_FQ_2ltr_9	germplasmname_Deb_FQ_2ltr_10
 #										germplasm_pedigree										
-#										germplasm_type										
+#										germplasm_type	Inbred_line	Inbred_line	Inbred_line	Inbred_line	Inbred_line	Inbred_line	Inbred_line	Inbred_line	Inbred_line	Inbred_line
 #										dnarun_barcode										
 #										project_name	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01	sim_2letternuc_proj_01
 #										project_pi_contact	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User	GOBii Load User
@@ -14,7 +14,7 @@
 #										protocol_name	Sequencing	Sequencing	Sequencing	Sequencing	Sequencing	Sequencing	Sequencing	Sequencing	Sequencing	Sequencing
 #										dataset_name	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01	sim_2letternuc_ds_01
 #										germplasm_external_code	54000001	54000002	54000003	54000004	54000005	54000006	54000007	54000008	54000009	54000010
-#										germplasm_species										
+#										germplasm_species	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa	Oryza sativa
 #										germplasm_id										
 #										germplasm_seed_source_id										
 #										germplasm_subsp	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7	Deb_FQ_germ_subsp_7

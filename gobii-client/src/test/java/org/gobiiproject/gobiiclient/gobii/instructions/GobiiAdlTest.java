@@ -94,16 +94,6 @@ public class GobiiAdlTest {
 
         }
 
-        /**
-         * DISABLE FILE COMPARATOR FOR NOW
-
-            // get path to GDMFileProject.jar
-
-            File fileComparator = new File("/gobii-process/src/main/resources/gobiiadl/GDMFileProject.jar");
-
-            adlEncapsulator.setInputFileComparator(fileComparator.getAbsolutePath());
-
-         */
 
         if (tempDir.exists() && tempDir.isDirectory() && tempDir.listFiles().length > 0) {
 

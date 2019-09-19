@@ -8,6 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.tika.Tika;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.Payload;
@@ -173,6 +174,8 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private EntityStatsService entityStatsService = null;
+
+    private Tika tika = new Tika();
 
     @ApiOperation(value="ping",
             notes = "Pings the GDB Web server.",
@@ -5595,6 +5598,7 @@ public class GOBIIControllerV1 {
 
         String name = file.getName();
 
+        String fileMimeType = null;
 
         //we aren't using jobId here yet. For some destination types it will be required
         //for example, if we wanted to put files into the extractor/output directory, we would need
@@ -5607,15 +5611,33 @@ public class GOBIIControllerV1 {
 
                 byte[] byteArray = file.getBytes();
 
-                String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-                GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+                // GDM-266 Need to validate file type only for
+                // text files. But, this endpoint allows different type of files from different sources.
+                // So, adding below condition to avoid validating for other kind of instruction files.
+                if(destinationType.equals("EXTRACTOR_INSTRUCTIONS") && fileName.endsWith(".txt")) {
+                    fileMimeType = this.tika.detect(byteArray);
+                }
 
-                this.fileService
-                        .writeJobFileForCrop(cropType,
-                                gobiiJobId,
-                                fileName,
-                                gobiiFileProcessDir,
-                                byteArray);
+                if(fileMimeType == null || fileMimeType.equals("text/plain") ) {
+
+                    String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+                    GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+
+                    this.fileService
+                            .writeJobFileForCrop(cropType,
+                                    gobiiJobId,
+                                    fileName,
+                                    gobiiFileProcessDir,
+                                    byteArray);
+                }
+                else {
+
+                    String message = "Invalid Input file. " + "File is identified as "+ fileMimeType + ".";
+                    ControllerUtils.writeRawResponse(response,
+                            HttpServletResponse.SC_NOT_ACCEPTABLE,
+                            message);
+                    LOGGER.error("Error uploading file", message);
+                }
 
             } catch (Exception e) {
                 ControllerUtils.writeRawResponse(response,

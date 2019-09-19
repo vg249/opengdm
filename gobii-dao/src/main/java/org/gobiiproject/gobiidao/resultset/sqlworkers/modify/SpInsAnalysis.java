@@ -15,7 +15,7 @@ public class SpInsAnalysis extends SpDef {
 
         this.addParamDef("analysisName",String.class).setNullable(true);
         this.addParamDef("analysisDescription",String.class).setNullable(true);
-        this.addParamDef("analysisTypeId",Integer.class).setNullable(true);
+        this.addParamDef("analysisTypeId",Integer.class).setNullable(false);
         this.addParamDef("program",String.class).setNullable(true);
         this.addParamDef("programVersion",String.class).setNullable(true);
         this.addParamDef("algorithm",String.class).setNullable(true);
@@ -24,7 +24,7 @@ public class SpInsAnalysis extends SpDef {
         this.addParamDef("sourceUri",String.class).setNullable(true);
         this.addParamDef("referenceId",Integer.class).setNullable(true);
         this.addParamDef("timeExecuted",Date.class).setNullable(true);
-        this.addParamDef("status",Integer.class).setNullable(true);
+        this.addParamDef("status",Integer.class).setNullable(false);
         this.addParamDef("createdBy", Integer.class).setNullable(true);
         this.addParamDef("createdDate", java.util.Date.class).setNullable(true);
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);

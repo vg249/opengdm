@@ -207,38 +207,28 @@ import {FileItem} from "ng2-file-upload";
                             </td>
                         </tr>
 
+                        <tr>
+                            <td><b>Experiment</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.experimentName : null}}
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><b>Platform</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.platformName : null}}
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><b>Protocol</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.protocolName : null}}
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
-                </div>
-
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" style="font-size: medium">
-                        <b>Experiment:
-                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.experimentName : null}}</b>
-
-                    </div>
-                    <div class="card text-white bg-info">
-
-                        <div class="card-body">
-                            <table class="table table-striped table-hover">
-                                <!--<table class="table table-striped table-hover table-bordered">-->
-                                <tbody>
-                                <tr>
-                                    <td>Platform:</td>
-                                    <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.platformName : null}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Protocol:</td>
-                                    <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.protocolName : null}}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
                 </div>
                 <BR>
                 <div>

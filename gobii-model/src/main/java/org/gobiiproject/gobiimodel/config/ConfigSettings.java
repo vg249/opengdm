@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
+import org.gobiiproject.gobiimodel.utils.email.AuthType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -393,5 +394,8 @@ public class ConfigSettings {
     public String getHdf5ExePath() {
         return this.configValues.getHdf5ExePath();
     }
+    public AuthType getEmailAuth(){return this.configValues.getEmailAuthEnum();}
+
+    public void setEmailAuth(String auth){ this.configValues.setEmailAuthType(auth);}
 
 }

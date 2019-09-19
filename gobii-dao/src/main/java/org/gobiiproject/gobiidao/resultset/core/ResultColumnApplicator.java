@@ -50,11 +50,27 @@ public class ResultColumnApplicator {
                     if (methodParameterTypes.length == 1) {
 
                         currentColumnType = methodParameterTypes[0];
+
                         currentParameterName = currentMethod.getParameters()[0].getName();
 
+                        Object currentColumnValue = null;
 
+                        try {
 
-                        Object currentColumnValue = resultSet.getObject(currentColumnName);
+                            currentColumnValue = resultSet.getObject(currentColumnName);
+                        }
+                        catch(SQLException sqlE) {
+                            String message = sqlE.getMessage();
+
+                            if (null != sqlE.getCause()) {
+                                message += " caused by: " + sqlE.getCause();
+                            }
+
+                            LOGGER.error(message, sqlE);
+
+                           continue;
+                        }
+
                         if (currentColumnType.equals(String.class)) {
 
                             String currentStringValue = (String) currentColumnValue;

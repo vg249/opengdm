@@ -52,7 +52,7 @@ public class InstructionFileAccess<T> {
 
                         ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-                        objectMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+                        objectMapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
                         String instructionsAsJson = objectMapper.writeValueAsString(instructions);
                         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(instructionFileFqpn));
                         bufferedWriter.write(instructionsAsJson);
@@ -87,7 +87,7 @@ public class InstructionFileAccess<T> {
     } // writeInstructions
 
 
-    public T getInstruction(String instructionFileFqpn) {
+    public T getProcedure(String instructionFileFqpn) {
 
         T returnVal = null;
 

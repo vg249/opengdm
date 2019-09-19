@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.utils;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiTableType;
 import java.util.*;
@@ -20,11 +21,11 @@ public class InstructionFileValidator {
 
     private static String statusMessage = null;
 
-    private List<GobiiLoaderInstruction> instructionList;
+    private GobiiLoaderProcedure procedure;
     private HashMap<TableEntryKey, TableEntryValue> instructionMap = new HashMap<>();
 
-    public InstructionFileValidator(List<GobiiLoaderInstruction> instructionList) {
-        this.instructionList = instructionList;
+    public InstructionFileValidator(GobiiLoaderProcedure procedure) {
+        this.procedure = procedure;
         statusMessage = null;
     }
 
@@ -45,7 +46,7 @@ public class InstructionFileValidator {
         requiredColumnTypes.add(GobiiColumnType.CSV_COLUMN);
 
 
-        for (GobiiLoaderInstruction instruction : instructionList) {
+        for (GobiiLoaderInstruction instruction : procedure.getInstructions()) {
             for (GobiiFileColumn fileColumn : instruction.getGobiiFileColumns()) {
                 if (requiredColumnTypes.contains(fileColumn.getGobiiColumnType())) {
                     TableEntryKey entryKey = new TableEntryKey(instruction.getTable(), fileColumn.getName());

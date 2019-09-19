@@ -30,3 +30,4 @@ gobii-client/gobii-web.xml
 
 gobii-web/package-lock.json
 
+gobii-web/src/main/resources/docs/generated/*

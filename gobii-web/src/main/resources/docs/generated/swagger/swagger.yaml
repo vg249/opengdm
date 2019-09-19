@@ -3,18 +3,19 @@ swagger: "2.0"
 info:
   description: "The GDM web service API provides a comprehensive set of RESTful methods\
     \ for accomplishing the following core tasks in the GOBii Genomic Data Management\
-    \ (GDM) system. This manual explains the GDM calls complying BrAPI Genotyping\
-    \ standards and its definitions..\n\n"
+    \ (GDM) system. This manual explains the GDM web architecture and its web service\
+    \ operations.\n\n"
   version: "1.0"
   title: "Genomic Data Management (GDM)"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "cbsugobiixvm11.biohpc.cornell.edu:8081"
+host: "api.gobii.org:8081"
 basePath: "/gobii-dev"
 tags:
 - name: "Analyses"
 - name: "Authentication"
+- name: "BrAPI"
 - name: "ConfigSettings"
 - name: "Contacts"
 - name: "ControlledVocabularies"
@@ -40,6 +41,263 @@ tags:
 schemes:
 - "http"
 paths:
+  /brapi/v1/allelematrices:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "Get Allele Matrices"
+      description: "Get allele matrices by given study db id"
+      operationId: "getAlleleMatrices"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "studyDbId"
+        in: "query"
+        description: "Study DB Id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "AlleleMatrices"
+  /brapi/v1/allelematrix-search:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "Search Allele Matrix"
+      description: "Search allele matrix using marker profiles"
+      operationId: "getAlleleMatrix"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "matrixDbId"
+        in: "query"
+        description: "Matrix DB Id"
+        required: true
+        type: "string"
+      - name: "markerprofileDbId"
+        in: "query"
+        description: "Marker Profile Id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "AlleleMatrixSearch"
+    post:
+      tags:
+      - "BrAPI"
+      summary: "Search Allele Matrix"
+      description: "Search allele matrix using marker profiles"
+      operationId: "postAlleleMatrix"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "matrixDbId"
+        in: "query"
+        description: "Matrix DB Id"
+        required: true
+        type: "string"
+      - name: "markerprofileDbId"
+        in: "query"
+        description: "Marker Profile Id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "AlleleMatrixSearch"
+  /brapi/v1/allelematrix-search/status/{jobId}:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "Get Allele Matrix Job status"
+      description: "Get allele matrix Job status"
+      operationId: "getAlleleMatrixStatus"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "jobId"
+        in: "path"
+        description: "Job Id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "AlleleMatrix.status : jobId"
+  /brapi/v1/calls:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "List all calls."
+      description: "List all calls"
+      operationId: "getCalls"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-tag-description: "BrAPI is standards api calls. Below section list all the\
+        \ BrAPI calls supported by GDM."
+      x-summary: "Calls"
+  /brapi/v1/files:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "List all files"
+      description: "List all the files in a given path."
+      operationId: "getFile"
+      produces:
+      - "application/octet-stream"
+      parameters:
+      - name: "fqpn"
+        in: "query"
+        description: "Fully qualified path name"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+      x-summary: "Files"
+  /brapi/v1/germplasm/{studyDbId}:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "Get germplasm by study db id."
+      description: "Get germplasm by study db id."
+      operationId: "getGermplasmByDbId"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "studyDbId"
+        in: "path"
+        description: "Study DB Id"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "Germplasm : studyDbId"
+  /brapi/v1/markerprofiles:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "List all Marker Profiles"
+      description: "List all Marker Profiles in given germplasm db.."
+      operationId: "getMarkerProfile"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "germplasmDbId"
+        in: "query"
+        description: "Germplasm DB Id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "MarkerProfiles"
+    post:
+      tags:
+      - "BrAPI"
+      summary: "List all Marker Profiles"
+      description: "List all Marker Profiles in given germplasm db.."
+      operationId: "postMarkerProfile"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "germplasmDbId"
+        in: "query"
+        description: "Germplasm DB Id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "MarkerProfiles"
+  /brapi/v1/studies-search:
+    post:
+      tags:
+      - "BrAPI"
+      summary: "Search the studies."
+      description: "Search studies."
+      operationId: "getStudies"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "StudiesSearch"
+  /brapi/v1/studies/{studyDbId}/observationVariables:
+    get:
+      tags:
+      - "BrAPI"
+      summary: "List all observation variables for given study db id"
+      description: "List all observation variables for given study db id"
+      operationId: "getObservationVariables"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "studyDbId"
+        in: "path"
+        description: "Study DB Id"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "Studies.observationVariables"
+  /brapi/v1/token:
+    post:
+      tags:
+      - "BrAPI"
+      summary: "List all tokens."
+      description: "List all tokens"
+      operationId: "postLogin"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-summary: "Tokens"
   /gobii/v1/analyses:
     get:
       tags:
@@ -210,19 +468,23 @@ paths:
       parameters:
       - name: "email"
         in: "query"
-        required: false
+        description: "contact's email"
+        required: true
         type: "string"
       - name: "lastName"
         in: "query"
-        required: false
+        description: "contact's last name"
+        required: true
         type: "string"
       - name: "firstName"
         in: "query"
-        required: false
+        description: "contact's first name"
+        required: true
         type: "string"
       - name: "userName"
         in: "query"
-        required: false
+        description: "contact's user name"
+        required: true
         type: "string"
       - name: "X-Auth-Token"
         in: "header"
@@ -2873,19 +3135,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       analysisId:
         type: "integer"
         format: "int32"
@@ -2996,19 +3254,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       contactId:
         type: "integer"
         format: "int32"
@@ -3268,19 +3522,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       includeDetailsList:
         type: "boolean"
       displayId:
@@ -3466,19 +3716,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       experimentId:
         type: "integer"
         format: "int32"
@@ -3711,12 +3957,36 @@ definitions:
   GobiiLoaderInstruction:
     type: "object"
     properties:
-      columnsByTableName:
-        type: "object"
-        additionalProperties:
-          type: "array"
-          items:
-            $ref: "#/definitions/GobiiFileColumn"
+      table:
+        type: "string"
+      gobiiFileColumns:
+        type: "array"
+        items:
+          $ref: "#/definitions/GobiiFileColumn"
+  GobiiLoaderMetadata:
+    type: "object"
+    properties:
+      project:
+        $ref: "#/definitions/PropNameId"
+      platform:
+        $ref: "#/definitions/PropNameId"
+      experiment:
+        $ref: "#/definitions/PropNameId"
+      datasetOrientationType:
+        type: "string"
+        enum:
+        - "SAMPLE_FAST"
+        - "MARKER_FAST"
+      dataset:
+        $ref: "#/definitions/PropNameId"
+      datasetType:
+        $ref: "#/definitions/PropNameId"
+      mapset:
+        $ref: "#/definitions/PropNameId"
+      gobiiFile:
+        $ref: "#/definitions/GobiiFile"
+      gobiiCropType:
+        type: "string"
       jobPayloadType:
         type: "string"
         enum:
@@ -3725,26 +3995,6 @@ definitions:
         - "CV_PAYLOADTYPE_MATRIX"
         - "CV_PAYLOADTYPE_MARKERSAMPLES"
         - "CV_PAYLOADTYPE_ALLMETA"
-      gobiiFile:
-        $ref: "#/definitions/GobiiFile"
-      table:
-        type: "string"
-      gobiiFileColumns:
-        type: "array"
-        items:
-          $ref: "#/definitions/GobiiFileColumn"
-      vcfParameters:
-        $ref: "#/definitions/VcfParameters"
-      dataSetId:
-        type: "integer"
-        format: "int32"
-      gobiiCropType:
-        type: "string"
-      contactId:
-        type: "integer"
-        format: "int32"
-      contactEmail:
-        type: "string"
       gobiiJobStatus:
         type: "string"
         enum:
@@ -3762,22 +4012,22 @@ definitions:
         - "CV_PROGRESSSTATUS_FINALASSEMBLY"
         - "CV_PROGRESSSTATUS_QCPROCESSING"
         - "CV_PROGRESSSTATUS_NOSTATUS"
-      logMessage:
+      contactId:
+        type: "integer"
+        format: "int32"
+      contactEmail:
         type: "string"
       qcCheck:
         type: "boolean"
-      project:
-        $ref: "#/definitions/PropNameId"
-      platform:
-        $ref: "#/definitions/PropNameId"
-      dataSet:
-        $ref: "#/definitions/PropNameId"
-      datasetType:
-        $ref: "#/definitions/PropNameId"
-      mapset:
-        $ref: "#/definitions/PropNameId"
-      experiment:
-        $ref: "#/definitions/PropNameId"
+  GobiiLoaderProcedure:
+    type: "object"
+    properties:
+      metadata:
+        $ref: "#/definitions/GobiiLoaderMetadata"
+      instructions:
+        type: "array"
+        items:
+          $ref: "#/definitions/GobiiLoaderInstruction"
   Header:
     type: "object"
     properties:
@@ -3857,8 +4107,6 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-      readable:
-        type: "boolean"
       url:
         type: "string"
         format: "url"
@@ -3867,6 +4115,8 @@ definitions:
       uri:
         type: "string"
         format: "uri"
+      readable:
+        type: "boolean"
       filename:
         type: "string"
   JobDTO:
@@ -3987,10 +4237,8 @@ definitions:
           - "UPDATE"
           - "DELETE"
           - "NONE"
-      gobiiLoaderInstructions:
-        type: "array"
-        items:
-          $ref: "#/definitions/GobiiLoaderInstruction"
+      procedure:
+        $ref: "#/definitions/GobiiLoaderProcedure"
       instructionFileName:
         type: "string"
       id:
@@ -4040,19 +4288,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       manifestId:
         type: "integer"
         format: "int32"
@@ -4109,19 +4353,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       mapsetId:
         type: "integer"
         format: "int32"
@@ -4244,19 +4484,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       markerGroupId:
         type: "integer"
         format: "int32"
@@ -4434,19 +4670,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       organizationId:
         type: "integer"
         format: "int32"
@@ -5068,19 +5300,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       projectId:
         type: "integer"
         format: "int32"
@@ -5159,19 +5387,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       protocolId:
         type: "integer"
         format: "int32"
@@ -5243,19 +5467,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       referenceId:
         type: "integer"
         format: "int32"
@@ -5290,7 +5510,6 @@ definitions:
         - "GOBII_AUTH"
         - "GOBII_PING"
         - "GOBII_PROJECTS"
-        - "GOBII_GENOTYPE_CALLS"
         - "GOBII_NAME_ID_LIST_DEPRECATED"
         - "GOBII_NAMES"
         - "GOBII_FILE_LOAD"
@@ -5346,7 +5565,6 @@ definitions:
         - "BRAPI_STUDIES_SEARCH"
         - "BRAPI_STUDIES"
         - "BRAPI_CALLS"
-        - "BRAPI_CALLSETS"
       restMethodType:
         type: "string"
         enum:
@@ -5408,22 +5626,6 @@ definitions:
       rank:
         type: "integer"
         format: "int32"
-  VcfParameters:
-    type: "object"
-    properties:
-      maf:
-        type: "number"
-        format: "float"
-      minQ:
-        type: "number"
-        format: "float"
-      minDp:
-        type: "number"
-        format: "float"
-      removeIndels:
-        type: "boolean"
-      toIupac:
-        type: "boolean"
   VendorProtocolDTO:
     type: "object"
     properties:
