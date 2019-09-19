@@ -251,6 +251,6 @@ public static boolean setLogLevel(String level){
 		this(name,reason,null);
 	}
 	public String toString(){
-		return name+": "+reason+(file!=null?"\nAn log for this error may be available at "+file:"");
+		return name+": "+reason+(file!=null?"\nA log for this error may be available at "+file:"");
 	}
 }
