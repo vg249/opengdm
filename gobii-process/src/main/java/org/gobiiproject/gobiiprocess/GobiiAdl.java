@@ -2033,7 +2033,7 @@ public class GobiiAdl {
 
                 //write to instruction file
                 if (entityName.equals("Dataset")) {
-                    entityName = "dataSet";
+                    entityName = "dataset";
                 } else {
                     entityName = entityName.toLowerCase();
                 }
@@ -2146,7 +2146,7 @@ public class GobiiAdl {
                                             }
                                             break;
                                         case "dataset_id":
-                                            if (entityName.equals("dataSet")) {
+                                            if (entityName.equals("dataset")) {
                                                 fileColumnObj.addProperty("constantValue", currentEntityId);
                                             }
                                             break;
