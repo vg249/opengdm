@@ -415,8 +415,7 @@ public class Components {
 								+ "-w /data/gobii_bundle/core "
 								+ "-i gobii-compute-node "
 								+ "java -jar Digester.jar %s", procedureFileRemotePath));
-
-		ssh(this.host, this.user, "ls");
+		
 		return procedure;
 	}
 
