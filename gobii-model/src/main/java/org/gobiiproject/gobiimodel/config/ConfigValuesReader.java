@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.config;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jndi.JndiTemplate;
 
@@ -15,10 +16,6 @@ import java.io.File;
  * how to convert a legacy .properties file to a new XML format file.
  */
 class ConfigValuesReader {
-
-    private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ConfigValuesReader.class);
-
-
 
     /**
      * Creates a new and empty configuration file. If {@code fqpn} is null, fully-qualified pathname of the configuation
@@ -129,7 +126,7 @@ class ConfigValuesReader {
             returnVal = new ConfigFileReaderXml().read(fqpn);
 
         } catch (Exception e) {
-            LOGGER.error("Error creating configuration POJO", e);
+            ErrorLogger.logError("Error creating configuration POJO", e);
             throw (e);
         }
 

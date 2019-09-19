@@ -8,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Horribly simplistic error logger.
@@ -21,8 +20,28 @@ import java.util.List;
 
 
 public class ErrorLogger {
-	private static final Logger log = LoggerFactory.getLogger("org.gobiiproject.gobiimodel");
+	private static final Logger log = LoggerFactory.getLogger("gobii");
 	public static List<Error> errors = new ArrayList();
+
+	private static final Set<String> nonRelevantClasses = new HashSet<>();
+	static {
+		nonRelevantClasses.add(ErrorLogger.class.getName());
+		nonRelevantClasses.add(Error.class.getName());
+		nonRelevantClasses.add(Thread.class.getName());
+	}
+
+	private static StackTraceElement getMostRecentStackTraceElement() {
+
+		return Arrays.stream(Thread.currentThread().getStackTrace())
+				.filter(ste -> ! nonRelevantClasses.contains(ste.getClassName()))
+				.findFirst()
+				.get();
+	}
+
+	protected static String generateLine(String msg) {
+		StackTraceElement ste = getMostRecentStackTraceElement();
+		return String.format("%s.%s:%s - %s", ste.getClassName(), ste.getMethodName(), ste.getLineNumber(), msg);
+	}
 
 	/**
 	 * Assuming Logback under slf4j, sets the log level to the logback item. Otherwise this will burn.
@@ -89,7 +108,7 @@ public static boolean setLogLevel(String level){
 	public static void logError(String name, String message, Throwable e){
 		Error err=new Error(name,message);
 		errors.add(err);
-		log.error(name+":"+message,e);
+		log.error(generateLine(name+":"+message),e);
 	}
 
 	public static void logError(String name, Throwable e){
@@ -103,7 +122,7 @@ public static boolean setLogLevel(String level){
 		}
 		//Error err=new Error(name,message);
 		//errors.add(err);
-		log.error(name+":"+message,e);
+		log.error(generateLine(name+":"+message),e);
 	}
 
 
@@ -151,7 +170,7 @@ public static boolean setLogLevel(String level){
 		log(Level.WARN,new Error(name,reason));
 	}
 	public static void logWarning(String name, String reason, Throwable e){
-		log.warn(name+": "+reason,e);
+		log.warn(generateLine(name+": "+reason),e);
 	}
 
 	private static void log(Level l, Error e){
@@ -226,7 +245,7 @@ public static boolean setLogLevel(String level){
 	String file;
 	Error(String name, String reason, String file){
 		this.name=name;
-		this.reason=reason;
+		this.reason= ErrorLogger.generateLine(reason);
 		this.file=file;
 	}
 	Error(String name, String reason){
