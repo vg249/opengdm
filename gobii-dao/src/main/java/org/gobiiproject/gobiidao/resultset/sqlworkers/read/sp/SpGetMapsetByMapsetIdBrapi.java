@@ -27,8 +27,8 @@ public class SpGetMapsetByMapsetIdBrapi implements Work {
     public void execute(Connection dbConnection) throws SQLException {
 
         String sql = "SELECT mapset.mapset_id AS mapset_id, " +
-                "mapset.name as mapset_name, " +
-                "cv.term AS map_type " +
+                "mapset.name as name, " +
+                "cv.term AS type " +
                 "FROM mapset INNER JOIN cv ON(mapset.type_id = cv.cv_id " +
                 "AND cv.cvgroup_id = (" +
                 "SELECT cvgroup_id FROM cvgroup WHERE name = ? AND cvgroup.type = 1))  WHERE mapset_id = ?;";

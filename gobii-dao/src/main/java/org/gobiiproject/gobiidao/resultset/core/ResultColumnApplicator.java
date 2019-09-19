@@ -66,7 +66,7 @@ public class ResultColumnApplicator {
                                 message += " caused by: " + sqlE.getCause();
                             }
 
-                            LOGGER.error(message, sqlE);
+                            LOGGER.error(message);
 
                            continue;
                         }
