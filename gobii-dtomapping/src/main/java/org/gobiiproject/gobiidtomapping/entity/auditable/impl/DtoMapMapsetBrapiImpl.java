@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
+import org.gobiiproject.gobiidao.resultset.access.RsMapsetBrapiDao;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -10,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +25,9 @@ public class DtoMapMapsetBrapiImpl implements DtoMapMapsetBrApi {
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
+
+    @Autowired
+    private RsMapsetBrapiDao rsMapsetBrapiDao;
 
     @Override
     public List<MapsetBrapiDTO> listMapset(Integer pageNum, Integer pageSize) {
@@ -50,10 +57,14 @@ public class DtoMapMapsetBrapiImpl implements DtoMapMapsetBrApi {
                     gE.getGobiiValidationStatusType(),
                     gE.getMessage()
             );
+
         }
         catch (Exception e) {
+
             LOGGER.error("Gobii Mapping Error", e);
+
             throw new GobiiDtoMappingException(e);
+
         }
 
     }
@@ -61,31 +72,25 @@ public class DtoMapMapsetBrapiImpl implements DtoMapMapsetBrApi {
     @Override
     public MapsetBrapiDTO getMapsetById(Integer mapSetId) {
 
-        MapsetBrapiDTO mapSet = new MapsetBrapiDTO();
+        MapsetBrapiDTO returnVal = new MapsetBrapiDTO();
 
-        Map<String, Object> sqlParams = new HashMap<>();
+        ResultSet resultSet = rsMapsetBrapiDao.getMapsetByMapsetId(mapSetId);
 
         try {
 
-            sqlParams.put("mapSetId", "");
+            if(resultSet.next()) {
 
-            return mapSet;
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-        }
-        catch (GobiiException gE) {
+            }
 
-            LOGGER.error(gE.getMessage(), gE);
-
-            throw new GobiiDtoMappingException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage()
-            );
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii Mapping Error", e);
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving mapset details", e);
             throw new GobiiDtoMappingException(e);
         }
+
+        return returnVal;
+
 
     }
 

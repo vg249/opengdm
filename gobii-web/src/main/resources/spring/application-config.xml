@@ -448,6 +448,8 @@
     <!-- *** MAPSET BRAPI BEANS *********** -->
     <bean id="mapSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.MapsetBrapiServiceImpl"/>
     <bean id="dtoMapMapsetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetBrapiImpl"/>
+    <bean id="rsMapBrapiDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapsetBrapiDaoImpl"/>
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
     <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.LinkakgeGroupBrapiServiceImpl"/>

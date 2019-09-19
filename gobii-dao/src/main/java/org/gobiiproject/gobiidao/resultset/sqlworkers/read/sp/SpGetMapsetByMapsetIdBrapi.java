@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.jdbc.Work;
@@ -24,12 +26,23 @@ public class SpGetMapsetByMapsetIdBrapi implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "";
+        String sql = "SELECT mapset.mapset_id AS mapset_id, " +
+                "mapset.name as mapset_name, " +
+                "cv.term AS map_type " +
+                "FROM mapset INNER JOIN cv ON(mapset.type_id = cv.cv_id " +
+                "AND cv.cvgroup_id = (" +
+                "SELECT cvgroup_id FROM cvgroup WHERE name = ? AND cvgroup.type = 1))  WHERE mapset_id = ?;";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+
         if(parameters.containsKey("mapsetId")) {
+
             Integer mapsetId = (Integer) parameters.get("mapsetId");
-            preparedStatement.setInt(1, mapsetId);
+
+            preparedStatement.setString(1, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName());
+
+            preparedStatement.setInt(2, mapsetId);
+
         }
         else {
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,

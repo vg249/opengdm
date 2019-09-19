@@ -1366,6 +1366,31 @@ public class BRAPIIControllerV1 {
 
     }
 
+    @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getMaps(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @PathVariable(value = "mapId") Integer mapId) {
+
+        try {
+
+            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
+
+            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
+
+    }
+
     /**
      * Returns the list of genotypes calls in a given Marker id.
      * It fetches calls in all the datasets where the marker_id is present.

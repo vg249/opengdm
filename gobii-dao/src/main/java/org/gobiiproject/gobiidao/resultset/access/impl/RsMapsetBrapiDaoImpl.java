@@ -18,9 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-/**
- * Created by VCalaminos on 7/7/2019.
- */
 public class RsMapsetBrapiDaoImpl implements RsMapsetBrapiDao {
 
     Logger LOGGER = LoggerFactory.getLogger(RsMapsetBrapiDaoImpl.class);
@@ -43,6 +40,7 @@ public class RsMapsetBrapiDaoImpl implements RsMapsetBrapiDao {
             SpGetMapsetByMapsetIdBrapi spGetMapsetByMapsetIdBrapi = new SpGetMapsetByMapsetIdBrapi(parameters);
 
             storedProcExec.doWithConnection(spGetMapsetByMapsetIdBrapi);
+
             returnVal = spGetMapsetByMapsetIdBrapi.getResultSet();
 
         } catch (SQLGrammarException e) {

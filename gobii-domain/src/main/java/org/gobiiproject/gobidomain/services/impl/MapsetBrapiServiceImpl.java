@@ -4,7 +4,10 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +69,16 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
         try {
 
-            return returnVal;
+            returnVal = dtoMapMapsetBrApi.getMapsetById(mapSetId);
 
+            if (null == returnVal) {
+                throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "The specified mapsetId ("
+                                + mapSetId
+                                + ") does not match an existing mapset ");
+            }
+            return returnVal;
         } catch (Exception e) {
 
             LOGGER.error("Gobii service error", e);

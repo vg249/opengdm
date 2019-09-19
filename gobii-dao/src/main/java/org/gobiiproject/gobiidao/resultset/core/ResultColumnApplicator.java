@@ -123,6 +123,7 @@ public class ResultColumnApplicator {
             } // iterate all fields
 
         } catch (Exception e) {
+
             String message = "error applying value of column "
                     + currentColumnName
                     + " to setter labeleled as "
@@ -131,12 +132,15 @@ public class ResultColumnApplicator {
                     + dtoInstance.getClass()
                     + ": "
                     + e.getMessage();
+
             if (null != e.getCause()) {
                 message += " caused by: " + e.getCause();
             }
 
             LOGGER.error(message, e);
+
             throw new GobiiDaoException(message);
+
         }
 
     } // applyColumnValues()
