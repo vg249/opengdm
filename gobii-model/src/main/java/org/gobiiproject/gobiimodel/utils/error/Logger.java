@@ -174,15 +174,15 @@ public static boolean setLogLevel(String level){
 
 	private static void log(Level l, Error e){
 		if(l.equals(Level.ERROR))
-			log.error("{}: {}", e.name, e.reason);
+			log.error("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.WARN))
-			log.warn("{}: {}", e.name, e.reason);
+			log.warn("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.DEBUG))
-			log.debug("{}: {}", e.name, e.reason);
+			log.debug("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.INFO))
-			log.info("{}: {}", e.name, e.reason);
+			log.info("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.TRACE))
-			log.trace("{}: {}", e.name, e.reason);
+			log.trace("{}: {}", e.name, generateLine(e.reason));
 		else
 			log.error("Invalid log level",new Throwable());
 	}
@@ -244,7 +244,7 @@ public static boolean setLogLevel(String level){
 	String file;
 	Error(String name, String reason, String file){
 		this.name=name;
-		this.reason= Logger.generateLine(reason);
+		this.reason= reason;
 		this.file=file;
 	}
 	Error(String name, String reason){
