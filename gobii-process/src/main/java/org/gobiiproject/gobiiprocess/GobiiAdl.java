@@ -2088,6 +2088,11 @@ public class GobiiAdl {
                 }
 
                 JsonObject tempObject = (JsonObject) metadata.get(entityName);
+
+                if (tempObject == null) {
+                    tempObject = new JsonObject();
+                }
+
                 tempObject.addProperty("name", dbPkeySurrogateValue);
                 tempObject.addProperty("id", currentEntityId);
 
