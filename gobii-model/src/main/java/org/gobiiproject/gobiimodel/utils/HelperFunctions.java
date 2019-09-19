@@ -23,8 +23,7 @@ import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.types.ServerType;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiimodel.utils.error.ErrorMessageInterpreter;
 //import com.sun.jna.Library;
 //import com.sun.jna.Native;
@@ -104,7 +103,7 @@ public class HelperFunctions {
         boolean success = tryExec(efc.getCommand(), outputFile, errorFile);
         if (!success) {
             try {
-                ErrorLogger.logError(efc.functionName, "Non-zero exit code", errorFile);
+                Logger.logError(efc.functionName, "Non-zero exit code", errorFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -138,8 +137,8 @@ public class HelperFunctions {
                 returnVal.waitFor();
             }
         } catch (Exception e) {
-            ErrorLogger.logError(execCommandProcName, "Exception in process", e);
-            ErrorLogger.logError(execCommandProcName, "Error File Contents", errorFile);
+            Logger.logError(execCommandProcName, "Exception in process", e);
+            Logger.logError(execCommandProcName, "Error File Contents", errorFile);
         }
 
         return returnVal;
@@ -175,12 +174,12 @@ public class HelperFunctions {
         Process p = initProcecess(execArray, outputFile, errorFile, inputFile, null);
 
         if(p == null){
-            ErrorLogger.logError(executedProcName,"Process did not execute correctly - no data returned");
+            Logger.logError(executedProcName,"Process did not execute correctly - no data returned");
             return false;
         }
         if (p.exitValue() != 0) {
             String message = ErrorMessageInterpreter.getErrorMessage(executedProcName,p.exitValue(),errorFile);
-            ErrorLogger.logError(executedProcName, message, errorFile);
+            Logger.logError(executedProcName, message, errorFile);
             return false;
         }
         return true;
@@ -204,12 +203,12 @@ public class HelperFunctions {
             reader = new BufferedReader(new InputStreamReader(p.getInputStream()));//What terrible person makes 'InputStream' the type of the output of a process
             p.waitFor();
             if (p.exitValue() != 0) {
-                ErrorLogger.logError(execString.substring(0, execString.indexOf(" ")), "Exit code " + p.exitValue(), errorFile);
+                Logger.logError(execString.substring(0, execString.indexOf(" ")), "Exit code " + p.exitValue(), errorFile);
                 return -1;
             }
             return Integer.parseInt(reader.readLine().split(" ")[0]);
         } catch (Exception e) {
-            ErrorLogger.logError(execString.substring(0, execString.indexOf(" ")), e.getMessage(), e);
+            Logger.logError(execString.substring(0, execString.indexOf(" ")), e.getMessage(), e);
             return -1;
         }
     }

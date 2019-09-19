@@ -35,15 +35,13 @@ import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
-import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.gobiiadl.GobiiAdlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,11 +62,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.JarFile;
 
 /**
  * Created by VCalaminos on 2/21/2017.
@@ -2220,7 +2215,7 @@ public class GobiiAdl {
 
         System.out.println(message);
         if (gobiiStatusLevel.equals(GobiiStatusLevel.ERROR)) {
-            ErrorLogger.logError("GobiiADL", message);
+            Logger.logError("GobiiADL", message);
             System.err.print(message);
             System.exit(1);
         } else if (gobiiStatusLevel.equals(GobiiStatusLevel.WARNING)) {

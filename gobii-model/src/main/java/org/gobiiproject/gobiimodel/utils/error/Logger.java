@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
@@ -19,13 +18,13 @@ import java.util.*;
  */
 
 
-public class ErrorLogger {
-	private static final Logger log = LoggerFactory.getLogger("gobii");
+public class Logger {
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger("gobii");
 	public static List<Error> errors = new ArrayList();
 
 	private static final Set<String> nonRelevantClasses = new HashSet<>();
 	static {
-		nonRelevantClasses.add(ErrorLogger.class.getName());
+		nonRelevantClasses.add(Logger.class.getName());
 		nonRelevantClasses.add(Error.class.getName());
 		nonRelevantClasses.add(Thread.class.getName());
 	}
@@ -154,7 +153,7 @@ public static boolean setLogLevel(String level){
 	}
 	/**
 	 * Logs an error through ErrorLogger, as well as notifying ErrorLogger that an important error
-	 * has occurred (see {@link ErrorLogger#success success})
+	 * has occurred (see {@link Logger#success success})
 	 * @param name Name of the component being logged
 	 * @param reason Reason given for error
 	 * @param file File containing additional error details (if exists) Nullable
@@ -245,7 +244,7 @@ public static boolean setLogLevel(String level){
 	String file;
 	Error(String name, String reason, String file){
 		this.name=name;
-		this.reason= ErrorLogger.generateLine(reason);
+		this.reason= Logger.generateLine(reason);
 		this.file=file;
 	}
 	Error(String name, String reason){

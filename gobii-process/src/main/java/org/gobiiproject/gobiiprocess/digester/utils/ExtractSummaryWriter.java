@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.utils;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,7 +49,7 @@ public class ExtractSummaryWriter {
 			out.close();
 		}
 		catch(Exception e){
-			ErrorLogger.logError("Extract Summary Writer",e);
+			Logger.logError("Extract Summary Writer",e);
 		}
 	}
 

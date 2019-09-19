@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiprocess.extractor.hapmap;
 
 import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,10 +26,10 @@ public class HapmapTransformer {
 
             // Process sample File
             int sampleRowsNumber = processSampleFile(hapmapScanners.sampleScanner, sampleHeaders, sampleData);
-            ErrorLogger.logInfo("Extractor", sampleRowsNumber + " sample data rows read");
+            Logger.logInfo("Extractor", sampleRowsNumber + " sample data rows read");
             hapmapScanners.sampleScanner.close();
             if (sampleRowsNumber == 0) {
-                ErrorLogger.logError("Extractor", "No sample data rows", errorFile);
+                Logger.logError("Extractor", "No sample data rows", errorFile);
                 return false;
             }
             try {
@@ -43,7 +43,7 @@ public class HapmapTransformer {
 
                 List<String> markerHeaders = new ArrayList<>();
                 if (!readHeaders(hapmapScanners.markerScanner, markerHeaders, "marker")) {
-                    ErrorLogger.logError("Extractor", "Marker data file empty", errorFile);
+                    Logger.logError("Extractor", "Marker data file empty", errorFile);
                     return false;
                 }
 
@@ -56,7 +56,7 @@ public class HapmapTransformer {
                 List<String> extendedMarkerHeaders = new ArrayList<>();
                 if (hapmapScanners.extendedMarkerScanner != null) {
                     if (!readHeaders(hapmapScanners.extendedMarkerScanner, extendedMarkerHeaders, "extended marker")) {
-                        ErrorLogger.logInfo("Extractor", "Extended marker data file empty");
+                        Logger.logInfo("Extractor", "Extended marker data file empty");
                     }
                 }
 
@@ -67,18 +67,18 @@ public class HapmapTransformer {
                 fileWriter.write(stringBuilderNewLine.toString());
 
                 if (!(hapmapScanners.markerScanner.hasNextLine())) {
-                    ErrorLogger.logError("Extractor", "No marker data rows", errorFile);
+                    Logger.logError("Extractor", "No marker data rows", errorFile);
                     return false;
                 }
 
                 if (!(hapmapScanners.genotypeScanner.hasNextLine())) {
-                    ErrorLogger.logError("Extractor", "No genotype data rows", errorFile);
+                    Logger.logError("Extractor", "No genotype data rows", errorFile);
                     return false;
                 }
 
                 int processedBothRowsNumber = writeMarkerAndGenoTypeInfo(hapmapScanners, fileWriter, markerHeaders, extendedMarkerHeaders, newMarkerHeadersLine);
 
-                ErrorLogger.logInfo("Extractor", processedBothRowsNumber + " processed rows read");
+                Logger.logInfo("Extractor", processedBothRowsNumber + " processed rows read");
 
                 fileWriter.close();
                 hapmapScanners.markerScanner.close();
@@ -87,13 +87,13 @@ public class HapmapTransformer {
                 }
                 hapmapScanners.genotypeScanner.close();
             } catch (IOException e) {
-                ErrorLogger.logError("Hapmap Transformer", "Error writing " + outFile, e);
+                Logger.logError("Hapmap Transformer", "Error writing " + outFile, e);
                 return false;
             } catch (Exception e) {
-                ErrorLogger.logError("Hapmap Transformer", "Unexpected exception in Hapmap Transformer", e);
+                Logger.logError("Hapmap Transformer", "Unexpected exception in Hapmap Transformer", e);
             }
         } else {
-            ErrorLogger.logError("Hapmap Transformer", "Sample data file empty", errorFile);
+            Logger.logError("Hapmap Transformer", "Sample data file empty", errorFile);
             return false;
         }
         return true;

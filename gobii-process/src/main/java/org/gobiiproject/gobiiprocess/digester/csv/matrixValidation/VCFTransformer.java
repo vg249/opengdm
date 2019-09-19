@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * Created by AVB on 1/5/2017.
@@ -52,7 +52,7 @@ class VCFTransformer {
                     int value = Integer.parseInt(terms[k]);
                     if (value >= mrefLineData.length) {
                         if (unspecifiedAlt)
-                            ErrorLogger.logWarning("VCFTransformer", "Alternate number " + terms[k] + " specified with '.' alts listed on data line " + lineNumber + " column " + col);
+                            Logger.logWarning("VCFTransformer", "Alternate number " + terms[k] + " specified with '.' alts listed on data line " + lineNumber + " column " + col);
                         else
                             matrixErrorUtil.setError("VCFTransformer, Alternate number " + terms[k] + " exceeds the length of the alternates list on data line " + lineNumber + " column " + col);
                         bimatrixCell += BI_UNKNOWN;

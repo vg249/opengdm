@@ -13,7 +13,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.gobiiproject.gobiimodel.utils.email.AuthType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * This class encapsulates all the configuration data with which the rest of the system interacts.
@@ -35,7 +35,7 @@ public class ConfigSettings {
         try {
             configValues = ConfigValuesReader.read(null);
         } catch (Exception e) {
-            ErrorLogger.logError("Error instancing ConfigValues with null fqpn", e);
+            Logger.logError("Error instancing ConfigValues with null fqpn", e);
         }
     }
 
@@ -47,7 +47,7 @@ public class ConfigSettings {
             configValues = ConfigValuesReader.read(configFileWebPath);
             this.configFileFqpn = configFileWebPath;
         } catch (Exception e) {
-            ErrorLogger.logError("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
+            Logger.logError("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
 
         }
     } // ctor

@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiimodel.config;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.slf4j.LoggerFactory;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.springframework.jndi.JndiTemplate;
 
 import java.io.File;
@@ -126,7 +124,7 @@ class ConfigValuesReader {
             returnVal = new ConfigFileReaderXml().read(fqpn);
 
         } catch (Exception e) {
-            ErrorLogger.logError("Error creating configuration POJO", e);
+            Logger.logError("Error creating configuration POJO", e);
             throw (e);
         }
 

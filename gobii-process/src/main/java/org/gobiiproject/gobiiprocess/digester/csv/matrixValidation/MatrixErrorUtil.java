@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 public class MatrixErrorUtil {
     private static final int MAX_ERRORS = 20;
@@ -20,7 +20,7 @@ public class MatrixErrorUtil {
 
     public void setError(String s) {
         errorCount++;
-        ErrorLogger.logError("CSVReader", s);
+        Logger.logError("CSVReader", s);
     }
 
     boolean stopProcessing() {
