@@ -417,6 +417,11 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      */
     private void readCSV_ROWS(File file, GobiiLoaderProcedure procedure) {
         int maxRequiredRowNo = maxRequiredRow();
+
+        if(maxRequiredRowNo==0){
+            maxRequiredRowNo=1; //need to read at least one row to know maxLines.
+        }
+
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
             String fileRow;
