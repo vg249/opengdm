@@ -1713,7 +1713,7 @@ public class GobiiAdl {
         try {
             File instructionFile = new File(instructionFilePath);
             InstructionFileAccess<GobiiLoaderProcedure> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
-            GobiiLoaderProcedure procedure = instructionInstructionFileAccess.getProcedure(instructionFilePath);
+            GobiiLoaderProcedure procedure = instructionInstructionFileAccess.getProcedure(instructionFilePath, false);
 
             if (null != procedure) {
                 String instructionFileName = instructionFile.getName();
@@ -2064,7 +2064,7 @@ public class GobiiAdl {
                     if (metadata.has("dataset")) {
                         JsonObject datasetPropNameId = new JsonObject();
                         datasetPropNameId.addProperty("id", currentEntityId);
-                        metadata.add("datasetId", datasetPropNameId);
+                        metadata.add("dataset", datasetPropNameId);
                     }
 
                     // get datasetType ID

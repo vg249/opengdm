@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -87,7 +88,7 @@ public class InstructionFileAccess<T> {
     } // writeInstructions
 
 
-    public T getProcedure(String instructionFileFqpn) {
+    public T getProcedure(String instructionFileFqpn, boolean failOnUnknownProperties) {
 
         T returnVal = null;
 
@@ -98,6 +99,7 @@ public class InstructionFileAccess<T> {
             FileInputStream fileInputStream = new FileInputStream(file);
 
             org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
+            objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknownProperties);
 
             returnVal = objectMapper.readValue(fileInputStream, instanceType);
 
@@ -108,6 +110,10 @@ public class InstructionFileAccess<T> {
 
         return returnVal;
 
+    }
+
+    public T getProcedure(String instructionFileFqpn) {
+        return getProcedure(instructionFileFqpn, true);
     }
 
     // it is irritating that we seem to need a separate function that does everything the same as getINstruction()
