@@ -14,13 +14,14 @@
   "project":{"id":18, "name":"Deb_Sim_Proj2"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":34, "name":"Deb_Sim_Proj2_Exp_Illumina"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
+  "mapset":{},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":1, "name":"Illumina_Infinium"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":98, "name":"IUPAC"}},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

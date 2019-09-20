@@ -1713,7 +1713,7 @@ public class GobiiAdl {
         try {
             File instructionFile = new File(instructionFilePath);
             InstructionFileAccess<GobiiLoaderProcedure> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
-            GobiiLoaderProcedure procedure = instructionInstructionFileAccess.getProcedure(instructionFilePath, false);
+            GobiiLoaderProcedure procedure = instructionInstructionFileAccess.getProcedure(instructionFilePath);
 
             if (null != procedure) {
                 String instructionFileName = instructionFile.getName();
@@ -2033,7 +2033,7 @@ public class GobiiAdl {
 
                 //write to instruction file
                 if (entityName.equals("Dataset")) {
-                    entityName = "dataset";
+                    entityName = "dataSet";
                 } else {
                     entityName = entityName.toLowerCase();
                 }
@@ -2064,7 +2064,7 @@ public class GobiiAdl {
                     if (metadata.has("dataset")) {
                         JsonObject datasetPropNameId = new JsonObject();
                         datasetPropNameId.addProperty("id", currentEntityId);
-                        metadata.add("dataset", datasetPropNameId);
+                        metadata.add("datasetId", datasetPropNameId);
                     }
 
                     // get datasetType ID
@@ -2088,11 +2088,6 @@ public class GobiiAdl {
                 }
 
                 JsonObject tempObject = (JsonObject) metadata.get(entityName);
-
-                if (tempObject == null) {
-                    tempObject = new JsonObject();
-                }
-
                 tempObject.addProperty("name", dbPkeySurrogateValue);
                 tempObject.addProperty("id", currentEntityId);
 
@@ -2146,7 +2141,7 @@ public class GobiiAdl {
                                             }
                                             break;
                                         case "dataset_id":
-                                            if (entityName.equals("dataset")) {
+                                            if (entityName.equals("dataSet")) {
                                                 fileColumnObj.addProperty("constantValue", currentEntityId);
                                             }
                                             break;

@@ -14,13 +14,14 @@
   "project":{"id":14, "name":"Deb_Proj1_FlexQuery"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":32, "name":"Deb_Proj1_Exp3_rAmpSeq_FQ"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
+  "mapset":{},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":5, "name":"Sequencing"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":98, "name":"IUPAC"}},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

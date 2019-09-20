@@ -13,14 +13,14 @@
   "project":{"id":"6", "name":"sim_2letternuc_proj_01"},
   "contactEmail":"gobii.dev@gmail.com",
   "experiment":{"id":"7", "name":"sim_2letternuc_exp_01"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":"5", "name":"Test_Physical"},
   "contactId":"67",
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":"5", "name":"Sequencing"},
   "gobiiCropType":"zoan",
-  "datasetType":{"id":97, "name":"NUCLEOTIDE_2_LETTER"}},
+  "datasetType":"NUCLEOTIDE_2_LETTER"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":
