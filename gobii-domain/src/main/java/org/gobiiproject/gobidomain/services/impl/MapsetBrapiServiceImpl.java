@@ -5,6 +5,7 @@ import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -70,6 +71,15 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
         try {
 
             returnVal = dtoMapMapsetBrApi.getMapsetById(mapSetId);
+
+            if(returnVal.getMapDbId() > 0) {
+
+                returnVal.setLinkageGroups(
+                        linkageGroupBrapiService.getLinkageGroupsByMapId(returnVal.getMapDbId(), pageNum, pageSize));
+
+            }
+
+
 
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,

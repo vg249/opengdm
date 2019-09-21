@@ -88,7 +88,7 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
     }
 
     @Override
-    public List<MarkerBrapiDTO> getList(Integer pageToken, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDtoMappingException {
+    public List<MarkerBrapiDTO> getList(Integer pageToken, Integer pageNum, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDtoMappingException {
 
         List<MarkerBrapiDTO> returnVal;
 
@@ -98,6 +98,10 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
 
             if (pageToken != null) {
                 sqlParams.put("pageToken", pageToken);
+            }
+
+            if(pageNum != null) {
+                sqlParams.put("pageNum", pageNum);
             }
 
             if (pageSize != null) {

@@ -60,4 +60,43 @@ public class DtoMapLinkageGroupBrapiImpl implements DtoMapLinkageGroupBrApi {
 
     }
 
+    @Override
+    public List<LinkageGroupBrapiDTO> listLinkageGroupByMapId(Integer mapId,
+                                                              Integer pageNum, Integer pageSize) {
+
+        List<LinkageGroupBrapiDTO> linkageGroupsList = new ArrayList<>();
+
+        Map<String, Object> sqlParams = new HashMap<>();
+
+        try {
+
+            sqlParams.put("mapId", mapId);
+
+            sqlParams.put("pageNum", pageNum);
+
+            sqlParams.put("pageSize", pageSize);
+
+            linkageGroupsList = dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_LINKAGE_GROUP_BY_MAP_BRAPI_BYLIST, null, sqlParams);
+
+            return linkageGroupsList;
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE);
+
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+    }
+
 }

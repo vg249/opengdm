@@ -105,19 +105,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       projectId:
         type: "integer"
         format: "int32"

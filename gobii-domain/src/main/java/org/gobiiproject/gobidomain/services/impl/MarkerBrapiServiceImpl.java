@@ -25,13 +25,13 @@ public class MarkerBrapiServiceImpl implements MarkerBrapiService {
     private DtoMapMarkerBrapi dtoMapMarkerBrapi = null;
 
     @Override
-    public List<MarkerBrapiDTO> getMarkers(Integer pageToken, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDomainException {
+    public List<MarkerBrapiDTO> getMarkers(Integer pageToken, Integer pageNum, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDomainException {
 
         List<MarkerBrapiDTO> returnVal;
 
         try {
 
-            returnVal = dtoMapMarkerBrapi.getList(pageToken, pageSize, markerBrapiDTOFilter);
+            returnVal = dtoMapMarkerBrapi.getList(pageToken, pageNum, pageSize, markerBrapiDTOFilter);
 
         } catch (GobiiException gE) {
 

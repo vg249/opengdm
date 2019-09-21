@@ -36,7 +36,34 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
 
         try {
 
-            return returnVal;
+            return dtoMapLinkageGroupBrApi.listLinkageGroup(pageNum, pageSize);
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+    }
+
+    /**
+     * Gets the list of LinkageGroups in the database by MapId, Page Number and Page Size
+     * @param mapId - Mapset Id
+     * @param pageNum - Page Number to be fetched
+     * @param pageSize - Page Size to be fetched
+     * @return List of Brapi Specified Genome Maps DTO
+     * @throws GobiiDomainException
+     */
+    @Override
+    public List<LinkageGroupBrapiDTO> getLinkageGroupsByMapId(Integer mapId,
+            Integer pageNum, Integer pageSize) throws GobiiDomainException {
+
+        List<LinkageGroupBrapiDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            return dtoMapLinkageGroupBrApi.listLinkageGroupByMapId(mapId, pageNum, pageSize);
 
         } catch (Exception e) {
 

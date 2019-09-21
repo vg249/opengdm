@@ -12,12 +12,13 @@ public class LinkageGroupBrapiDTO {
 
     private Integer maxPosition;
 
-    private Integer markerCount;
+    private Long markerCount;
 
     public String getLinkageGroupName() {
         return linkageGroupName;
     }
 
+    @GobiiEntityColumn(columnName = "linkage_group_name")
     public void setLinkageGroupName(String linkageGroupName) {
         this.linkageGroupName = linkageGroupName;
     }
@@ -26,15 +27,17 @@ public class LinkageGroupBrapiDTO {
         return maxPosition;
     }
 
+    @GobiiEntityColumn(columnName = "max_position")
     public void setMaxPosition(Integer maxPosition) {
         this.maxPosition = maxPosition;
     }
 
-    public Integer getMarkerCount() {
+    public Long getMarkerCount() {
         return markerCount;
     }
 
-    public void setMarkerCount(Integer markerCount) {
+    @GobiiEntityColumn(columnName = "marker_count")
+    public void setMarkerCount(Long markerCount) {
         this.markerCount = markerCount;
     }
 

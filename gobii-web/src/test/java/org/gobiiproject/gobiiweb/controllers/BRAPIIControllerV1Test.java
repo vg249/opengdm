@@ -191,7 +191,7 @@ public class BRAPIIControllerV1Test {
 
         when (
                 markerBrapiService.getMarkers(
-                        any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class)
+                        any(Integer.TYPE), any(Integer.TYPE) ,any(Integer.TYPE), any(MarkerBrapiDTO.class)
                 )
         ).thenReturn(variants);
 
@@ -283,7 +283,7 @@ public class BRAPIIControllerV1Test {
 
         when(
                 markerBrapiService.getMarkers(
-                        any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class)
+                        any(Integer.TYPE), any(Integer.TYPE) , any(Integer.TYPE), any(MarkerBrapiDTO.class)
                 )
         ).thenReturn(variants);
 

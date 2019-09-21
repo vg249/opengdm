@@ -30,6 +30,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
         String pageSizeCondition = "";
         String filterCondition = "";
         Integer pageSize = 0;
+        Integer pageNum = 0;
         HashMap<String, Integer> filterConditionIndexArr = new HashMap<>();
         Integer parameterIndex = 1;
 
@@ -39,6 +40,25 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 pageSize = (Integer) sqlParamVals.getOrDefault("pageSize", 0);
                 if (pageSize > 0) {
                     pageSizeCondition = "LIMIT ?";
+                    if(sqlParamVals.containsKey("pageNum") && sqlParamVals.get("pageSize") instanceof Integer) {
+                        pageNum = (Integer) sqlParamVals.getOrDefault("pageNum", 0);
+                        if(pageNum > 0) {
+                            pageSizeCondition += " OFFSET ? ";
+                        }
+                    }
+                    else {
+                        if (sqlParamVals.containsKey("pageToken")
+                                && sqlParamVals.get("pageToken") instanceof Integer) {
+                            if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
+                                pageCondition = "WHERE mr.marker_id > ?\n";
+                            } else {
+                                pageCondition = "";
+                            }
+                        }
+                        else {
+                            pageCondition = "";
+                        }
+                    }
                 }
                 else {
                     throw new GobiiException(
@@ -54,21 +74,18 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                         "Invalid Page Size"
                 );
             }
+            else {
+                throw new GobiiException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Required page size"
+                );
 
-            if (sqlParamVals.containsKey("pageToken")
-                    && sqlParamVals.get("pageToken") instanceof Integer) {
-                if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                    pageCondition = "WHERE mr.marker_id > ?\n";
-                } else {
-                    pageCondition = "";
-                }
-            } else if (sqlParamVals.containsKey("pageToken")) {
-                throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                        "Invalid Page Token");
             }
 
+
             if (!pageCondition.isEmpty()) {
-                parameterIndex = 2;
+                parameterIndex += 1;
             }
 
             if (sqlParamVals.containsKey("variantDbId")) {
@@ -159,7 +176,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         if (!pageCondition.isEmpty()) {
-            returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
+            returnVal.setInt((Integer)1, (Integer) sqlParamVals.get("pageToken"));
         }
 
         for (Map.Entry<String, Integer> filter: filterConditionIndexArr.entrySet()) {
@@ -172,6 +189,9 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
 
         if (!pageSizeCondition.isEmpty()) {
             returnVal.setInt(parameterIndex, pageSize);
+            if(pageNum > 0) {
+                returnVal.setInt((Integer)(parameterIndex+1), pageSize*pageNum);
+            }
         }
 
         return returnVal;

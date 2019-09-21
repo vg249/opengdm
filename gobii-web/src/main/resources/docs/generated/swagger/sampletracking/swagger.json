@@ -121,23 +121,19 @@
       "properties" : {
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "projectId" : {
           "type" : "integer",

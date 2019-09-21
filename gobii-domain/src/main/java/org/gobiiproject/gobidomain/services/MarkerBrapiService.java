@@ -12,6 +12,6 @@ import java.util.List;
 public interface MarkerBrapiService {
 
     MarkerBrapiDTO getMarkerById(Integer markerId) throws GobiiDomainException;
-    List<MarkerBrapiDTO> getMarkers(Integer pageToken, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDomainException;
+    List<MarkerBrapiDTO> getMarkers(Integer pageToken, Integer pageNum, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDomainException;
 
 }

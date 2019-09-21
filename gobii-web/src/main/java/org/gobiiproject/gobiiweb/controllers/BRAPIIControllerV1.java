@@ -1182,6 +1182,7 @@ public class BRAPIIControllerV1 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageNum", required = false) Integer pageNum,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @ApiParam(value = "ID of the variant to be extracted")
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
@@ -1241,7 +1242,8 @@ public class BRAPIIControllerV1 {
                 pageSize = maxPageSize;
             }
 
-            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageSize, markerBrapiDTOFilter);
+            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageNum,
+                    pageSize, markerBrapiDTOFilter);
 
             BrApiResult result = new BrApiResult();
             result.setData(markerList);
@@ -1347,11 +1349,10 @@ public class BRAPIIControllerV1 {
                 payload.getMetaData().getPagination().setCurrentPage(page);
             }
 
-            if(page != null && pageSize > 0) {
+            if(pageSize != null && pageSize > 0) {
                 payload.getMetaData().getPagination().setPageSize(pageSize);
             }
 
-            payload.getMetaData().getPagination().setTotalCount(mapsetList.size());
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
             
@@ -1377,6 +1378,14 @@ public class BRAPIIControllerV1 {
             MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
+
+            if(page != null && page > 0) {
+                payload.getMetaData().getPagination().setCurrentPage(page);
+            }
+
+            if(pageSize != null && pageSize > 0) {
+                payload.getMetaData().getPagination().setPageSize(pageSize);
+            }
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
@@ -1706,6 +1715,7 @@ public class BRAPIIControllerV1 {
                     "pageToken can be used to sequentially get pages faster. " +
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageNum", required = false) Integer pageNum,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @ApiParam(value = "ID of the mapset to be retrieved")
@@ -1757,7 +1767,8 @@ public class BRAPIIControllerV1 {
                 pageSize = maxPageSize;
             }
 
-            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageSize, markerBrapiDTOFilter);
+            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageNum,
+                    pageSize, markerBrapiDTOFilter);
 
             BrApiResult result = new BrApiResult();
             result.setData(markerList);

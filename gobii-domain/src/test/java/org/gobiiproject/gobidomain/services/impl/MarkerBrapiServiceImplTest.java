@@ -60,14 +60,16 @@ public class MarkerBrapiServiceImplTest {
 
         when (
                 dtoMapMarkerBrapi.getList(
-                        any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class)
+                        any(Integer.TYPE), any(Integer.TYPE) ,any(Integer.TYPE), any(MarkerBrapiDTO.class)
                 )
         ).thenReturn(variantsMock);
 
-        List<MarkerBrapiDTO> variantsList = markerBrapiService.getMarkers(any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class));
+        List<MarkerBrapiDTO> variantsList = markerBrapiService.getMarkers(
+                any(Integer.TYPE), any(Integer.TYPE) ,any(Integer.TYPE), any(MarkerBrapiDTO.class));
 
         assertEquals(variantsMock.size(), variantsList.size());
-        verify(dtoMapMarkerBrapi, times(1)).getList(any(Integer.TYPE), any(Integer.TYPE), any(MarkerBrapiDTO.class));
+        verify(dtoMapMarkerBrapi, times(1)).getList(any(Integer.TYPE),
+                any(Integer.TYPE),any(Integer.TYPE), any(MarkerBrapiDTO.class));
     }
 
     @Test
