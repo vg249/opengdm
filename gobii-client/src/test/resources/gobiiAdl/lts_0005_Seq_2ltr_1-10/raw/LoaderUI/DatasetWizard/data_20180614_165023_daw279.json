@@ -14,14 +14,14 @@
   "project":{"id":14, "name":"Deb_Proj1_FlexQuery"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":32, "name":"Deb_Proj1_Exp3_rAmpSeq_FQ"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":2, "name":"Test_Physical"},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":5, "name":"Sequencing"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":97, "name":"NUCLEOTIDE_2_LETTER"}},
+  "datasetType":"NUCLEOTIDE_2_LETTER"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

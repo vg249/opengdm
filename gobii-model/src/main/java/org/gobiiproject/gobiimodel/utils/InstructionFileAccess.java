@@ -6,7 +6,6 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -109,7 +108,6 @@ public class InstructionFileAccess<T> {
         return returnVal;
 
     }
-
     // it is irritating that we seem to need a separate function that does everything the same as getINstruction()
     // except except the type parameterization for the List type. There is probably a more elegant and hence
     // less redundant way tot do this; however, for now, encapsulating this code in one class is a huge improvement

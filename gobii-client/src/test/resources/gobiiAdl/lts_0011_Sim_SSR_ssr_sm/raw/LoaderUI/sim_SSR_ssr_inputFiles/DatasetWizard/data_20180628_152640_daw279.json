@@ -13,13 +13,14 @@
   "project":{"id":17, "name":"Deb_Sim_Proj1"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":49, "name":"Deb_Sim_Proj1_Exp1_SSR_ssr_allele"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
+  "mapset":{},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":10, "name":"SSR_STS_CAPS"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":101, "name":"SSR_ALLELE_SIZE"}},
+  "datasetType":"SSR_ALLELE_SIZE"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

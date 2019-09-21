@@ -13,14 +13,14 @@
   "project":{"id":18, "name":"Deb_Sim_Proj2_med"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":51, "name":"Deb_Sim_Proj2_Exp1_Dart_dom"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":5, "name":"Sim_dominant"},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":8, "name":"Dart_clone"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":99, "name":"DOMINANT_NON_NUCLEOTIDE"}},
+  "datasetType":"DOMINANT_NON_NUCLEOTIDE"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

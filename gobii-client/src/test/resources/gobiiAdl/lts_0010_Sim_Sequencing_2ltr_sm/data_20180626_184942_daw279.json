@@ -1,6 +1,6 @@
 {"metadata":
  {"gobiiJobStatus":"CV_PROGRESSSTATUS_NOSTATUS",
-  "dataset":null,
+  "dataset":{},
   "gobiiFile":
   {"source":
    "\/data\/gobii_bundle\/crops\/dev\/files\/data_20180626_184942_daw279",
@@ -13,12 +13,14 @@
   "project":{"id":17, "name":"Deb_Sim_Proj1"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":53, "name":"Deb_Sim_Proj1_Exp1_Sequencing"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
+  "mapset":{},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_SAMPLES",
+  "platform":{},
   "gobiiCropType":"dev",
-  "datasetType":null},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"germplasm",
    "gobiiFileColumns":

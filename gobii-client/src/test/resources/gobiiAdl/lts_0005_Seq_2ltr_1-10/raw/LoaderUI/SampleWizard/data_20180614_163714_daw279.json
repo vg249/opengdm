@@ -1,6 +1,6 @@
 {"metadata":
  {"gobiiJobStatus":"CV_PROGRESSSTATUS_NOSTATUS",
-  "dataset":null,
+  "dataset":{},
   "gobiiFile":
   {"source":
    "\/data\/gobii_bundle\/crops\/dev\/files\/data_20180614_163714_daw279",
@@ -13,12 +13,14 @@
   "project":{"id":14, "name":"Deb_Proj1_FlexQuery"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":32, "name":"Deb_Proj1_Exp3_rAmpSeq_FQ"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
+  "mapset":{},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_SAMPLES",
+  "platform":{},
   "gobiiCropType":"dev",
-  "datasetType":null},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"germplasm",
    "gobiiFileColumns":

@@ -1,6 +1,6 @@
 {"metadata":
  {"gobiiJobStatus":"CV_PROGRESSSTATUS_NOSTATUS",
-  "dataset":null,
+  "dataset":{},
   "gobiiFile":
   {"source":
    "\/data\/gobii_bundle\/crops\/dev\/files\/data_20180702_144013_daw279",
@@ -13,14 +13,14 @@
   "project":{"id":18, "name":"Deb_Sim_Proj2"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":34, "name":"Deb_Sim_Proj2_Exp_Illumina"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":2, "name":"Test_Physical"},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MARKERS",
   "platform":{"id":1, "name":"Illumina_Infinium"},
   "gobiiCropType":"dev",
-  "datasetType":null},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":
