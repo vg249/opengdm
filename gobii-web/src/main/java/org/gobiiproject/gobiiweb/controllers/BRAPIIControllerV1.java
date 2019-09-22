@@ -1333,7 +1333,7 @@ public class BRAPIIControllerV1 {
     public @ResponseBody ResponseEntity getMaps(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @RequestParam(value = "type", required = false) String mapType) {
+            @RequestParam(value = "type", required = false) String mapType) throws GobiiException {
 
         try {
 
@@ -1345,9 +1345,10 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
 
-            if(page != null && page > 0) {
-                payload.getMetaData().getPagination().setCurrentPage(page);
+            if(page != null) {
+                page = 0;
             }
+            payload.getMetaData().getPagination().setCurrentPage(page);
 
             if(pageSize != null && pageSize > 0) {
                 payload.getMetaData().getPagination().setPageSize(pageSize);
@@ -1371,7 +1372,7 @@ public class BRAPIIControllerV1 {
     public @ResponseBody ResponseEntity getMapByMapId(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @PathVariable(value = "mapId") Integer mapId) {
+            @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
 
         try {
 
@@ -1379,9 +1380,10 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
 
-            if(page != null && page > 0) {
-                payload.getMetaData().getPagination().setCurrentPage(page);
+            if(page != null) {
+                page = 0;
             }
+            payload.getMetaData().getPagination().setCurrentPage(page);
 
             if(pageSize != null && pageSize > 0) {
                 payload.getMetaData().getPagination().setPageSize(pageSize);
@@ -1404,7 +1406,8 @@ public class BRAPIIControllerV1 {
     public @ResponseBody ResponseEntity getMarkersByMapId(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @PathVariable(value = "mapId") Integer mapId) {
+            @RequestParam(value = "linkageGroupName", required = false) String linkageGroupName,
+            @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
 
         try {
 
@@ -1414,14 +1417,23 @@ public class BRAPIIControllerV1 {
 
             markerFilter.setMapSetId(mapset.getMapDbId());
 
+            if(linkageGroupName != null) {
+                markerFilter.setLinkageGroupName(linkageGroupName);
+            }
+
             List<MarkerBrapiDTO> markers = markerBrapiService.getMarkers(
                     null, page, pageSize, markerFilter);
 
-            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(markers);
+            Map<String, Object> brapiResult = new HashMap<>();
 
-            if(page != null && page > 0) {
-                payload.getMetaData().getPagination().setCurrentPage(page);
+            brapiResult.put("data", markers);
+
+            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
+
+            if(page != null) {
+                page = 0;
             }
+            payload.getMetaData().getPagination().setCurrentPage(page);
 
             if(pageSize != null && pageSize > 0) {
                 payload.getMetaData().getPagination().setPageSize(pageSize);
@@ -1429,6 +1441,9 @@ public class BRAPIIControllerV1 {
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
+        }
+        catch(GobiiException gE) {
+            throw gE;
         }
         catch(Exception e) {
             throw new GobiiException(

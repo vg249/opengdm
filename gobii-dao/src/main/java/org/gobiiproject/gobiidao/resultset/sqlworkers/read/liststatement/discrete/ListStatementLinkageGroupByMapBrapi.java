@@ -88,7 +88,7 @@ public class ListStatementLinkageGroupByMapBrapi implements ListStatement {
             returnVal.setInt(2, pageSize);
 
             if(pageNumber > 0) {
-                returnVal.setInt(3, (pageNumber-1)*pageSize);
+                returnVal.setInt(3, (pageNumber)*pageSize);
             }
 
         }

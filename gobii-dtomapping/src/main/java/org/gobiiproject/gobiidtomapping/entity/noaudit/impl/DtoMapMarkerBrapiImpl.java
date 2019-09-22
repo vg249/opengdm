@@ -128,6 +128,9 @@ public class DtoMapMarkerBrapiImpl implements DtoMapMarkerBrapi {
                     sqlParams.put("mapSetName", markerBrapiDTOFilter.getMapSetName());
                 }
 
+                if (markerBrapiDTOFilter.getLinkageGroupName() != null) {
+                    sqlParams.put("linkageGroupName", markerBrapiDTOFilter.getLinkageGroupName());
+                }
             }
 
             returnVal = (List<MarkerBrapiDTO>) dtoListQueryColl.getList(

@@ -77,7 +77,7 @@ public class ListStatementMapsetBrapi implements ListStatement {
         if(pageSize > 0) {
             returnVal.setInt(1, pageSize);
             if(pageNumber > 0) {
-                returnVal.setInt(2, (pageNumber-1)*pageSize);
+                returnVal.setInt(2, (pageNumber)*pageSize);
                 returnVal.setString(3, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName());
             }
             else {

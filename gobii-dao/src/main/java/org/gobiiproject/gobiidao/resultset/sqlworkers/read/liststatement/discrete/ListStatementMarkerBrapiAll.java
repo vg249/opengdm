@@ -139,6 +139,19 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
                 filterConditionIndexArr.put("mapSetName", parameterIndex);
                 parameterIndex++;
             }
+
+            if (sqlParamVals.containsKey("linkageGroupName")) {
+
+                if (pageCondition.isEmpty() && filterCondition.isEmpty()) {
+                    filterCondition += "WHERE \n";
+                } else {
+                    filterCondition += "AND ";
+                }
+
+                filterCondition += " lg.name = ?\n";
+                filterConditionIndexArr.put("linkageGroupName", parameterIndex);
+                parameterIndex++;
+            }
         }
 
         String sql = "SELECT  \n" +
@@ -180,7 +193,7 @@ public class ListStatementMarkerBrapiAll implements ListStatement {
         }
 
         for (Map.Entry<String, Integer> filter: filterConditionIndexArr.entrySet()) {
-            if (filter.getKey().equals("mapSetName")) {
+            if (filter.getKey().equals("mapSetName") || filter.getKey().equals("linkageGroupName")) {
                 returnVal.setString(filter.getValue(), (String) sqlParamVals.get(filter.getKey()));
             } else {
                 returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
