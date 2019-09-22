@@ -1430,7 +1430,7 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
 
-            if(page != null) {
+            if(page == null) {
                 page = 0;
             }
             payload.getMetaData().getPagination().setCurrentPage(page);
