@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
@@ -31,7 +32,7 @@ public class MarkerBrapiDTO extends DTOBase {
     private String platformName;
     private String linkageGroupName;
     private BigDecimal start;
-    private BigDecimal stop;
+    protected BigDecimal stop;
     private String mapSetName;
     private Integer mapSetId;
 
@@ -42,12 +43,14 @@ public class MarkerBrapiDTO extends DTOBase {
     public void setId(Integer id) { this.variantDbId = id; }
 
     @GobiiEntityParam(paramName = "variantDbId")
+    @JsonProperty("markerDbId")
     public Integer getVariantDbId() { return this.variantDbId; }
 
     @GobiiEntityColumn(columnName = "marker_id")
     public void setVariantDbId(Integer variantDbId) { this.variantDbId = variantDbId; }
 
     @GobiiEntityParam(paramName = "variantName")
+    @JsonProperty("markerName")
     public String getVariantName() { return this.variantName; }
 
     @GobiiEntityColumn(columnName = "name")
@@ -94,6 +97,8 @@ public class MarkerBrapiDTO extends DTOBase {
 
     @GobiiEntityParam(paramName = "stop")
     public BigDecimal getStop() { return this.stop; }
+
+    public BigDecimal getLocation() { return this.stop; }
 
     @GobiiEntityColumn(columnName = "stop")
     public void setStop(BigDecimal stop) { this.stop = stop; }

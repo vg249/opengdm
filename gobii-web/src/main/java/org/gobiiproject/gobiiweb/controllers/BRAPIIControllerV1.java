@@ -1368,7 +1368,7 @@ public class BRAPIIControllerV1 {
     }
 
     @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMaps(
+    public @ResponseBody ResponseEntity getMapByMapId(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @PathVariable(value = "mapId") Integer mapId) {
@@ -1378,6 +1378,46 @@ public class BRAPIIControllerV1 {
             MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
+
+            if(page != null && page > 0) {
+                payload.getMetaData().getPagination().setCurrentPage(page);
+            }
+
+            if(pageSize != null && pageSize > 0) {
+                payload.getMetaData().getPagination().setPageSize(pageSize);
+            }
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
+
+    }
+
+    @RequestMapping(value="/maps/{mapId}/positions", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getMarkersByMapId(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @PathVariable(value = "mapId") Integer mapId) {
+
+        try {
+
+            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
+
+            MarkerBrapiDTO markerFilter = new MarkerBrapiDTO();
+
+            markerFilter.setMapSetId(mapset.getMapDbId());
+
+            List<MarkerBrapiDTO> markers = markerBrapiService.getMarkers(
+                    null, page, pageSize, markerFilter);
+
+            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(markers);
 
             if(page != null && page > 0) {
                 payload.getMetaData().getPagination().setCurrentPage(page);
