@@ -19,7 +19,7 @@ public class MapsetBrapiDTO {
 
     private String type;
 
-    private String name;
+    private String mapName;
 
     private Integer linkageGroupCount;
 
@@ -56,18 +56,30 @@ public class MapsetBrapiDTO {
         return type;
     }
 
+    public String getUnit() {
+
+        if(this.type.toLowerCase() == "physical") {
+            return "Mb";
+        }
+        else if (this.type.toLowerCase() == "genetic") {
+            return "cM";
+        }
+
+        return null;
+    }
+
     @GobiiEntityColumn(columnName = "type")
     public void setType(String type) {
         this.type = type;
     }
 
     public String getName() {
-        return name;
+        return mapName;
     }
 
     @GobiiEntityColumn(columnName = "name")
     public void setName(String name) {
-        this.name = name;
+        this.mapName = name;
     }
 
     public Integer getLinkageGroupCount() {

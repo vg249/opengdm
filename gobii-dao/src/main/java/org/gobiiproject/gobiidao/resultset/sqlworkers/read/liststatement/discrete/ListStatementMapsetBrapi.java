@@ -60,7 +60,7 @@ public class ListStatementMapsetBrapi implements ListStatement {
                 "COUNT(DISTINCT linkage_group_id)::INT linkage_group_count, " +
                 "COUNT(marker_id)::INT marker_count " +
                 "FROM mapset_paged AS mapset " +
-                "LEFT JOIN cv ON(cv.cv_id = mapset.type_id AND cv.cvgroup_id = (" +
+                "LEFT JOIN cv ON(cv.cv_id = mapset.type_id AND cv.cv_id = (" +
                     "SELECT cv.cv_id FROM cv " +
                     "INNER JOIN cvgroup USING(cvgroup_id) " +
                     // cvgroup.type = 1 and denotes it is a system property. No relationship that defines cvgroup type
