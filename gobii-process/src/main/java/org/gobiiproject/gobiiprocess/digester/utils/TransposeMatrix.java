@@ -1,11 +1,16 @@
 package org.gobiiproject.gobiiprocess.digester.utils;
 
-import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.lineCount;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;

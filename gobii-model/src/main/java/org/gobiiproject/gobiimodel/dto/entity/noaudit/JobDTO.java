@@ -1,12 +1,11 @@
 package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 
 /**
  * Created by VCalaminos on 8/25/2017.

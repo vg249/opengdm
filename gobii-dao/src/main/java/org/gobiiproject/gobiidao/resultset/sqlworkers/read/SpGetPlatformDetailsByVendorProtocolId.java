@@ -1,12 +1,11 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
-import org.hibernate.jdbc.Work;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import org.hibernate.jdbc.Work;
 
 /**
  * Created by Angel on 4/19/2016.

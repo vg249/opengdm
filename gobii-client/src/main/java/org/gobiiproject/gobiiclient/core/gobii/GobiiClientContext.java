@@ -1,31 +1,30 @@
 package org.gobiiproject.gobiiclient.core.gobii;
 
-import org.apache.http.HttpStatus;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiiclient.core.common.HttpCore;
-import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiimodel.config.ServerConfigItem;
-import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
-import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
-import org.gobiiproject.gobiimodel.types.RestMethodType;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
-import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.http.HttpStatus;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
+import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /***
  * This class encapsulates the configuration data and http component that Java clients

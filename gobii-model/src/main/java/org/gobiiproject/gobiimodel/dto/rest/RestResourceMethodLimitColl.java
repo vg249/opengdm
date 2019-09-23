@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiimodel.dto.rest;
 
+import java.util.EnumMap;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.simpleframework.xml.ElementMap;
-
-import java.util.EnumMap;
 
 /***
  * Collection of RestResourceMethodLimit by REST verb (POST, PUT, GET, DELETE, etc.)

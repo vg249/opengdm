@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
@@ -19,10 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Angel on 4/19/2016.

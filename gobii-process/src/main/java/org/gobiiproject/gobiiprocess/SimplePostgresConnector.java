@@ -1,10 +1,12 @@
 package org.gobiiproject.gobiiprocess;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-
-import java.sql.*;
 
 /**
  * Created by jdl232 on 6/21/2017.

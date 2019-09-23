@@ -1,13 +1,9 @@
 package org.gobiiproject.gobiimodel.dto.entity.children;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 /**
  * Created by Phil on 4/8/2016.

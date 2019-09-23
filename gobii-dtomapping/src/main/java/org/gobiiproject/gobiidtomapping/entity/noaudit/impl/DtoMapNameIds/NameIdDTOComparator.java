@@ -1,8 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-
 import java.util.Comparator;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 
 /**
  * Created by VCalaminos on 10/11/2018.

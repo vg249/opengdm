@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 
 /**
  * Digest-specific mail message format

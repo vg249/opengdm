@@ -1,17 +1,14 @@
 package org.gobiiproject.gobiiweb;
 
+import javax.servlet.http.HttpServletRequest;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Phil on 5/25/2016.

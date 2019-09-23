@@ -1,19 +1,18 @@
 package org.gobiiproject.gobiidtomapping.system.impl;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.gobiiproject.gobiidao.resultset.access.RsPingDao;
 import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
-import org.gobiiproject.gobiidtomapping.system.DtoMapPing;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.system.DtoMapPing;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Phil on 3/29/2016.

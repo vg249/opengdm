@@ -1,16 +1,29 @@
 package org.gobiiproject.gobiiprocess.extractor.hapmap;
 
-import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.*;
-import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformerHelper.*;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.ALLELES;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.ASSAY_LSID;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.ASSEMBLY;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.CENTER;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.CHROM;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.PANEL_LSID;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.POS;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.PROT_LSID;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.QC_CODE;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.RS;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapConstants.STRAND;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformerHelper.processSampleFile;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformerHelper.readHeaders;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformerHelper.writeMarkerAndGenoTypeInfo;
+import static org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformerHelper.writeSampleInfoOutputFile;
 
 public class HapmapTransformer {
 

@@ -2,7 +2,6 @@ package org.gobiiproject.gobiimodel.utils;
 
 
 import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;

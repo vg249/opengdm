@@ -1,10 +1,6 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-
 import java.util.Properties;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -18,7 +14,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import static org.gobiiproject.gobiimodel.utils.email.AuthType.PASSWORD;
 
 public class MailInterface {

@@ -5,10 +5,10 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.services.impl;
 
+import javax.annotation.PostConstruct;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.security.TokenManager;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
-import org.gobiiproject.gobidomain.services.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Service responsible for all around authentication, token checks, etc.

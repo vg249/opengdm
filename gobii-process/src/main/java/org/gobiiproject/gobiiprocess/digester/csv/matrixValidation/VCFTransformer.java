@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import java.util.List;
-
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**

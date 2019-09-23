@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiiclient.core.common;
 
 import com.google.gson.JsonObject;
-import org.apache.http.HttpResponse;
-
 import java.net.URI;
+import org.apache.http.HttpResponse;
 
 
 /**

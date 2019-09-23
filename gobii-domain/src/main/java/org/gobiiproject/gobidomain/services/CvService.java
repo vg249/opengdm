@@ -5,10 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.services;
 
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
-
-import java.util.List;
 
 /**
  * Created by Angel on 4/29/2016.

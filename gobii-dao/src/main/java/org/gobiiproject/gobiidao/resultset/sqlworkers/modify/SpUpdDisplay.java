@@ -1,9 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
-import org.gobiiproject.gobiidao.resultset.core.SpDef;
-
-import java.util.ArrayList;
 import java.util.Date;
+import org.gobiiproject.gobiidao.resultset.core.SpDef;
 
 /**
  * Created by Angel on 5/5/2016.

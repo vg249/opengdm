@@ -1,14 +1,26 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
-
-import java.io.File;
-import java.util.*;
-
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.addMessageToList;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.getFileColumns;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.getFilesWithExtension;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.processFileError;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateColumnBetweenFiles;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateColumns;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateDataBasecalls;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateFileExistenceCheck;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateUniqueColumnListHelper;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateUniqueColumns;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.verifyEqualMatrixSizeDnarun;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.verifyEqualMatrixSizeMarker;
 
 class Validator {
     boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) {

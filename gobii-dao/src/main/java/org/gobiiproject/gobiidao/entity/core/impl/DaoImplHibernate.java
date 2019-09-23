@@ -1,13 +1,11 @@
 package org.gobiiproject.gobiidao.entity.core.impl;
 
-import org.gobiiproject.gobiidao.entity.core.EntityDao;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.gobiiproject.gobiidao.entity.core.EntityDao;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Phil on 3/29/2016.
