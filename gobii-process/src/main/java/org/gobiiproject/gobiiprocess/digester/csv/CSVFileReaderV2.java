@@ -534,7 +534,7 @@ class ReaderThread implements Runnable {
         } catch (Exception e) {
             Logger.logError("ReaderThread", "Error processing file read", e);
         } catch(OutOfMemoryError e){
-            Logger.logError("ReaderThread",e);
+            Logger.logError("ReaderThread","Out of memory processing instruction " + instruction.getTable(),e);
             throw e;//Rethrow, as we can't deal with OOM
         }
     }
