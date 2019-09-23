@@ -6,6 +6,8 @@
 package org.gobiiproject.gobidomain.security;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import org.gobiiproject.gobiidao.entity.access.UserDao;
 import org.gobiiproject.gobiimodel.dto.system.User;
 import org.springframework.beans.BeansException;
@@ -17,9 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserContextLoader implements ApplicationContextAware {
 

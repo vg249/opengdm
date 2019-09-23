@@ -1,13 +1,8 @@
 package org.gobiiproject.gobiiprocess.digester.csv;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
+import java.io.IOException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Created by jdl232 on 3/28/2017.

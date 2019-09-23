@@ -1,11 +1,10 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * A loader instruction containing all the details nessisary to create a digest file.

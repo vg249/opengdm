@@ -1,16 +1,15 @@
 package org.gobiiproject.gobiimodel.utils.links;
 
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.types.ServerType;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.types.ServerType;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * Class to livelinks from Owncloud

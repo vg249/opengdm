@@ -6,14 +6,13 @@
 package org.gobiiproject.gobidomain.security.impl;
 
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.gobiiproject.gobiimodel.dto.system.User;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import org.gobiiproject.gobiimodel.dto.system.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /** This object wraps {@link User} and makes it {@link UserDetails} so that Spring Security can use it. */
 public class UserContext implements UserDetails {

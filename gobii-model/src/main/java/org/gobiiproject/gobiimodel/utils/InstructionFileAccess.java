@@ -2,10 +2,6 @@ package org.gobiiproject.gobiimodel.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 
 /**
  * Created by araquel on 3/16/2017.

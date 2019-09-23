@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiimodel.utils;
 
-import javax.sound.sampled.Line;
-
 /**
  * Created by Phil on 5/24/2016.
  */

@@ -1,10 +1,13 @@
 package org.gobiiproject.gobiiprocess.digester;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.SimplePostgresConnector;
-
-import java.io.*;
 
 /**
  * A series of simple existance queries

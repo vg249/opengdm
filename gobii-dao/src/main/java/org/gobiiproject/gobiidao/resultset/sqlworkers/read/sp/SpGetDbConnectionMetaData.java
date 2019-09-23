@@ -1,14 +1,12 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
 
-import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
-import org.hibernate.jdbc.Work;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
+import org.hibernate.jdbc.Work;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by Phil on 4/7/2016.

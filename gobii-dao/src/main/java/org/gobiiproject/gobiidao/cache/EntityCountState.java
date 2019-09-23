@@ -1,8 +1,7 @@
 package org.gobiiproject.gobiidao.cache;
 
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-
 import java.util.Date;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 public class EntityCountState {
 

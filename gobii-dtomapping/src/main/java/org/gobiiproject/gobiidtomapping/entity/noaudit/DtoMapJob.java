@@ -1,11 +1,9 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
-import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
-
 import java.text.ParseException;
 import java.util.List;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 
 /**
  * Created by VCalaminos on 9/4/2017.

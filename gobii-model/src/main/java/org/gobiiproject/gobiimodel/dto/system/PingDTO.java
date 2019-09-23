@@ -6,9 +6,9 @@
 package org.gobiiproject.gobiimodel.dto.system;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-
-import java.util.*;
 
 public class PingDTO extends DTOBase {
 

@@ -5,10 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiidao.entity.access;
 
+import java.util.List;
 import org.gobiiproject.gobiidao.entity.core.EntityDao;
 import org.gobiiproject.gobiidao.entity.pojos.Marker;
-
-import java.util.List;
 
 /**
  * Created by Phil on 3/24/2016.

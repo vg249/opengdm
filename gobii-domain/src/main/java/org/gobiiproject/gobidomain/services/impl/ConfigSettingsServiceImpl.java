@@ -7,7 +7,6 @@ import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import static org.gobiiproject.gobiimodel.types.GobiiProcessType.READ;
 
 /**

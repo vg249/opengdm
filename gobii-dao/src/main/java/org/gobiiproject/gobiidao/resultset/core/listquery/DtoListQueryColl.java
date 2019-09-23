@@ -1,12 +1,11 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.system.PagedList;
-
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 
 /**
  * This colleciton of DtoListquery instances is consuemd by DtoMap classes to retreive lists

@@ -5,9 +5,8 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.security;
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Date;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /** Contains information about a token. */
 public final class TokenInfo {

@@ -5,12 +5,11 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.security;
 
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 
 /**
  * {@link AuthenticationEntryPoint} that rejects all requests. Login-like function is featured

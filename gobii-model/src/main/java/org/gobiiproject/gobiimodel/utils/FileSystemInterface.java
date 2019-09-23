@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiimodel.utils;
 
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 public class FileSystemInterface {
 

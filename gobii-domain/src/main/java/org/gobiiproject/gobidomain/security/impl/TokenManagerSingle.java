@@ -6,14 +6,17 @@
 package org.gobiiproject.gobidomain.security.impl;
 
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.security.TokenManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Base64;
-
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.util.*;
 
 
 /**

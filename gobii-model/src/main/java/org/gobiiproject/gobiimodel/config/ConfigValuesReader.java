@@ -1,11 +1,10 @@
 package org.gobiiproject.gobiimodel.config;
 
+import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.springframework.jndi.JndiTemplate;
-
-import java.io.File;
 
 
 /**
