@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.*;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -47,7 +46,7 @@ public class MatrixValidation {
             stream.forEach(missingFileElements::add);
         } catch (IOException e) {
             matrixErrorUtil.incrementErrorCount();
-            ErrorLogger.logError("SNPSepRemoval", "Exception in reading SNSSepRemoval missing values.");
+            Logger.logError("SNPSepRemoval", "Exception in reading SNSSepRemoval missing values.");
             return false;
         }
         snpSepRemoval = new SNPSepRemoval(missingFileElements);

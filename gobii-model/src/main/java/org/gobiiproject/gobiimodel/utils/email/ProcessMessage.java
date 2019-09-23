@@ -6,7 +6,7 @@ import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
 
 import java.io.File;
@@ -209,7 +209,7 @@ public class ProcessMessage extends MailMessage {
                     pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(OCLinkHandler.getOwncloudURL(path, config));
                 }
             }catch (ConnectException e) {
-                ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
+                Logger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
                 //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
             }
         }
@@ -260,12 +260,12 @@ public class ProcessMessage extends MailMessage {
             try {
                 urlpath = path.endsWith("/") ? OCLinkHandler.getOwncloudURL(path, config) : OCLinkHandler.getLink(path, config, publicUrl);
             } catch (ConnectException e) {
-                ErrorLogger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
+                Logger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
                 //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
             }
             if (urlpath == null || urlpath.isEmpty()) {
                 //return normal path
-                ErrorLogger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
+                Logger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
 
             } else {
                 pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(urlpath);

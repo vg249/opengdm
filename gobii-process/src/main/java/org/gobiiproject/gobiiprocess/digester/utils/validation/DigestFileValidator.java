@@ -7,7 +7,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
@@ -78,7 +78,7 @@ public class DigestFileValidator {
                     List<ValidationError> validationErrorList = new ArrayList<>();
                     validationErrorList.add(validationError);
                     writer.write(validationErrorList);
-                    ErrorLogger.logError("DigestFileValidator",e);
+                    Logger.logError("DigestFileValidator",e);
                 }
             } else {
                 validationError.status = ValidationConstants.FAILURE;
@@ -89,7 +89,7 @@ public class DigestFileValidator {
             }
             writer.close();
         } catch (IOException e) {
-            ErrorLogger.logError("I/O Error ", e);
+            Logger.logError("I/O Error ", e);
         }
     }
 
@@ -158,7 +158,7 @@ public class DigestFileValidator {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
         }
-        ErrorLogger.logDebug("Entered Options are ", inputParameters.rootDir + " , " + inputParameters.validationFile + " , " + inputParameters.url + " , " + inputParameters.userName + " , " + inputParameters.password);
+        Logger.logDebug("Entered Options are ", inputParameters.rootDir + " , " + inputParameters.validationFile + " , " + inputParameters.url + " , " + inputParameters.userName + " , " + inputParameters.password);
     }
 
     /**

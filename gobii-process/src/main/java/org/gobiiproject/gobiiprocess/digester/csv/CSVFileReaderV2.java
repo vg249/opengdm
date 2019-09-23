@@ -17,7 +17,7 @@ import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
@@ -59,9 +59,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                     reader = new CSVFileReaderV2(loaderScriptPath);
                     reader.processCSV(procedure, i);
                 } catch (InterruptedException e) {
-                    ErrorLogger.logError("CSVFileReader", "Interrupted reading instruction", e);
+                    Logger.logError("CSVFileReader", "Interrupted reading instruction", e);
                 } catch (Exception e) {
-                    ErrorLogger.logError("CSVFileReader", "Unexpected Exception in reader", e);
+                    Logger.logError("CSVFileReader", "Unexpected Exception in reader", e);
                 }
             }
             return;
@@ -69,7 +69,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
 
         List<Thread> threads = new LinkedList<>();
         if (procedure.getInstructions() == null) {
-            ErrorLogger.logError("CSVFileReader", "No instructions passed in");
+            Logger.logError("CSVFileReader", "No instructions passed in");
         } else {
             GobiiLoaderInstruction matrixInstruction = null;
 
@@ -90,7 +90,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 try {
                     t.join();
                 } catch (InterruptedException e) {
-                    ErrorLogger.logError("CSVFileReader", "Interrupt", e);
+                    Logger.logError("CSVFileReader", "Interrupt", e);
                 }
             }
 
@@ -129,9 +129,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 writeToOutputFile(file, tempFileBufferedWriter, procedure, outputFile);
             }
         } catch (FileNotFoundException e) {
-            ErrorLogger.logError("CSVReader", "Unexpected Missing File", e);
+            Logger.logError("CSVReader", "Unexpected Missing File", e);
         } catch (IOException e) {
-            ErrorLogger.logError("CSVReader", "Unexpected IO Error", e);
+            Logger.logError("CSVReader", "Unexpected IO Error", e);
         }
     }
 
@@ -146,7 +146,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
     private void listFilesFromFolder(File folder, BufferedWriter tempFileBufferedWriter,
                                      GobiiLoaderProcedure procedure, File outputFile) {
         if (folder == null) {
-            ErrorLogger.logWarning("CSVFileReader", "Read from null folder");
+            Logger.logWarning("CSVFileReader", "Read from null folder");
             return;
         }
         for (File file : folder.listFiles()) {
@@ -155,7 +155,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 try {
                     writeToOutputFile(file, tempFileBufferedWriter, procedure, outputFile);
                 } catch (IOException e) {
-                    ErrorLogger.logError("CSVReader", "Failure to write digest files", e);
+                    Logger.logError("CSVReader", "Failure to write digest files", e);
                 }
             }
         }
@@ -244,9 +244,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 rowNo++;
             }
         } catch (FileNotFoundException e) {
-            ErrorLogger.logError("CSVReader", "Unexpected Missing File", e);
+            Logger.logError("CSVReader", "Unexpected Missing File", e);
         } catch (IOException e) {
-            ErrorLogger.logError("CSVReader", "Unexpected IO Error", e);
+            Logger.logError("CSVReader", "Unexpected IO Error", e);
         }
     }
 
@@ -444,9 +444,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 rowNo++;
             }
         } catch (FileNotFoundException e) {
-            ErrorLogger.logError("CSVReader", "Unexpected Missing File", e);
+            Logger.logError("CSVReader", "Unexpected Missing File", e);
         } catch (IOException e) {
-            ErrorLogger.logError("CSVReader", "Unexpected IO Error", e);
+            Logger.logError("CSVReader", "Unexpected IO Error", e);
         }
 
     }
@@ -532,7 +532,7 @@ class ReaderThread implements Runnable {
         try {
             reader.processCSV(procedure, instruction);
         } catch (Exception e) {
-            ErrorLogger.logError("ReaderThread", "Error processing file read", e);
+            Logger.logError("ReaderThread", "Error processing file read", e);
         }
     }
 }

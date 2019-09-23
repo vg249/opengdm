@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester;
 
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.SimplePostgresConnector;
 
 import java.io.*;
@@ -19,7 +19,7 @@ public class DatabaseQuerier {
         while(reader.hasNext()){
             String marker=reader.next();
             if(!connector.hasMarker(marker)){
-                ErrorLogger.logError("Validation","Marker "+marker+" does not exist in database");
+                Logger.logError("Validation","Marker "+marker+" does not exist in database");
                 return false;
             }
         }
@@ -30,7 +30,7 @@ public class DatabaseQuerier {
         while(reader.hasNext()){
             String germplasm=reader.next();
             if(!connector.hasGermplasmType(germplasm)){
-                ErrorLogger.logError("Validation","Germplasm Type "+germplasm+" does not exist in database");
+                Logger.logError("Validation","Germplasm Type "+germplasm+" does not exist in database");
                 return false;
             }
         }
@@ -41,7 +41,7 @@ public class DatabaseQuerier {
         while(reader.hasNext()){
             String germplasm=reader.next();
             if(!connector.hasGermplasmSpecies(germplasm)){
-                ErrorLogger.logError("Validation","Germplasm Species "+germplasm+" does not exist in database");
+                Logger.logError("Validation","Germplasm Species "+germplasm+" does not exist in database");
                 return false;
             }
         }
@@ -52,7 +52,7 @@ public class DatabaseQuerier {
         while(reader.hasNext()){
             String dnarun=reader.next();
             if(!connector.hasDNARuninExperiment(dnarun,experiment)){
-                ErrorLogger.logError("Validation","DNARun "+dnarun+" does not exist in experiment "+experiment);
+                Logger.logError("Validation","DNARun "+dnarun+" does not exist in experiment "+experiment);
                 return false;
             }
         }
@@ -63,7 +63,7 @@ public class DatabaseQuerier {
         while(reader.hasNext()){
             String marker=reader.next();
             if(!connector.hasDNARuninExperiment(marker,platform)){
-                ErrorLogger.logError("Validation","Marker "+marker+" does not exist in platform "+platform);
+                Logger.logError("Validation","Marker "+marker+" does not exist in platform "+platform);
                 return false;
             }
         }
@@ -94,9 +94,9 @@ class ColReader{
                 }
             }
         } catch (FileNotFoundException e) {
-            ErrorLogger.logError("Postgres Query","Failed to find file", e);
+            Logger.logError("Postgres Query","Failed to find file", e);
         } catch (IOException e) {
-            ErrorLogger.logError("Postgres Query","Error reading file", e);
+            Logger.logError("Postgres Query","Error reading file", e);
         }
         next();
     }
