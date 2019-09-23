@@ -69,6 +69,7 @@ public enum RestResourceId {
     BRAPI_STUDIES_SEARCH("studies-search", ServerType.BRAPI),
     BRAPI_STUDIES("studies", ServerType.BRAPI),
     BRAPI_CALLS("calls", ServerType.BRAPI),
+    BRAPI_MAPS_CALLS("maps", ServerType.BRAPI),
     BRAPI_CALLSETS("callsets", ServerType.BRAPI);
 
     private String requestPath;
