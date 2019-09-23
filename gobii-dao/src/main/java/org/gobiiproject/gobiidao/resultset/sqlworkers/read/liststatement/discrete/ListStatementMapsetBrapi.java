@@ -60,13 +60,7 @@ public class ListStatementMapsetBrapi implements ListStatement {
                 "COUNT(DISTINCT linkage_group_id)::INT linkage_group_count, " +
                 "COUNT(marker_id)::INT marker_count " +
                 "FROM mapset_paged AS mapset " +
-                "LEFT JOIN cv ON(cv.cv_id = mapset.type_id AND cv.cv_id = (" +
-                    "SELECT cv.cv_id FROM cv " +
-                    "INNER JOIN cvgroup USING(cvgroup_id) " +
-                    // cvgroup.type = 1 and denotes it is a system property. No relationship that defines cvgroup type
-                    // was found, so hard coding it as 1
-                    "WHERE cvgroup.name LIKE ? AND cvgroup.type = 1 LIMIT 1" +
-                ")) " +
+                "LEFT JOIN cv ON(cv.cv_id = mapset.type_id) " +
                 "LEFT JOIN linkage_group ON(mapset.mapset_id = linkage_group.map_id) " +
                 "LEFT JOIN marker_linkage_group USING(linkage_group_id) " +
                 "GROUP BY mapset_id, mapset.name, mapset.description, cv.term;";
@@ -78,14 +72,7 @@ public class ListStatementMapsetBrapi implements ListStatement {
             returnVal.setInt(1, pageSize);
             if(pageNumber > 0) {
                 returnVal.setInt(2, (pageNumber)*pageSize);
-                returnVal.setString(3, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName());
             }
-            else {
-                returnVal.setString(2, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName());
-            }
-        }
-        else {
-            returnVal.setString(1, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName());
         }
 
         return returnVal;
