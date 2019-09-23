@@ -73,12 +73,12 @@ public class MapsetBrapiDTO {
         this.type = type;
     }
 
-    public String getName() {
+    public String getMapName() {
         return mapName;
     }
 
     @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) {
+    public void setMapName(String name) {
         this.mapName = name;
     }
 
