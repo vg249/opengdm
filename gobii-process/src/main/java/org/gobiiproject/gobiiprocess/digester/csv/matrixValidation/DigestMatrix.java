@@ -1,11 +1,10 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
-import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiimodel.types.DataSetType;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.types.DataSetType;
 
 class DigestMatrix {
 

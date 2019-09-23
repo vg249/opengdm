@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiprocess.extractor.hapmap;
 
 import static org.junit.Assert.*;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -23,7 +23,7 @@ public class HapmapTransformerTest {
         String expectedOutFile = "src/test/resources/hapmap_marker_out_benchmark.file";
 
         HapmapTransformer hapmapTransformer = new HapmapTransformer();
-        ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
+        Logger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
         boolean success;
         try {
             success = hapmapTransformer.generateFile(markerFile,sampleFile, "", genotypeFile, outFile, "");
@@ -48,7 +48,7 @@ public class HapmapTransformerTest {
         String expectedOutFile = "src/test/resources/hapmap_extended_out_benchmark.file";
 
         HapmapTransformer hapmapTransformer = new HapmapTransformer();
-        ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
+        Logger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
         boolean success;
         try {
             success = hapmapTransformer.generateFile(markerFile,sampleFile, extendedMarkerFile, genotypeFile,outFile, "");

@@ -1,10 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Phil on 4/8/2016.
@@ -12,8 +8,7 @@ import java.util.List;
 public class LoaderInstructionFilesDTO extends DTOBase {
 
 
-    private GobiiLoaderInstruction primaryLoaderInstruction = new GobiiLoaderInstruction();
-    private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
+    private GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
     private String instructionFileName = null;
 
 
@@ -27,12 +22,12 @@ public class LoaderInstructionFilesDTO extends DTOBase {
         ;
     }
 
-    public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
-        return gobiiLoaderInstructions;
+    public GobiiLoaderProcedure getProcedure() {
+        return procedure;
     }
 
-    public void setGobiiLoaderInstructions(List<GobiiLoaderInstruction> gobiiLoaderInstructions) {
-        this.gobiiLoaderInstructions = gobiiLoaderInstructions;
+    public void setGobiiLoaderProcedure(GobiiLoaderProcedure procedure) {
+        this.procedure = procedure;
     }
 
     public String getInstructionFileName() {

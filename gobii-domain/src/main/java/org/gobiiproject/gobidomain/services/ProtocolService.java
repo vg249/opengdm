@@ -1,11 +1,10 @@
 package org.gobiiproject.gobidomain.services;
 
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
-
-import java.util.List;
 
 /**
  * Created by VCalaminos on 2016-12-14.

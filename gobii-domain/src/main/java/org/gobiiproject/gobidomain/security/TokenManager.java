@@ -5,10 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.security;
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.Map;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Manages tokens - separated from {@link AuthenticationService},

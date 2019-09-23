@@ -6,11 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -64,9 +67,12 @@ public class CSVFileReaderV2Test {
     @Test
     public void testMultipleCSV_ROW() throws IOException {
 
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+		procedure.setMetadata(new GobiiLoaderMetadata());
+		Util.createAndSetGobiiFile(procedure, tempFolderLocation);
+
         String table = "multipleCSV_ROW";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
@@ -76,16 +82,21 @@ public class CSVFileReaderV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+
+        csvReader.processCSV(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
 
     @Test
     public void testMultipleCSV_COL() throws IOException {
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+		procedure.setMetadata(new GobiiLoaderMetadata());
+		Util.createAndSetGobiiFile(procedure, tempFolderLocation);
+
         String table = "multipleCSV_COL";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
@@ -95,16 +106,20 @@ public class CSVFileReaderV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
 
     @Test
     public void testSubColumn() throws IOException {
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+		procedure.setMetadata(new GobiiLoaderMetadata());
+		Util.createAndSetGobiiFile(procedure, tempFolderLocation);
+
         String table = "CSVSubColumn";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
@@ -113,13 +128,18 @@ public class CSVFileReaderV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
 
     @Test
     public void testMultipleFilesCSV_ROW() throws IOException {
+
+		GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
+		procedure.setMetadata(new GobiiLoaderMetadata());
+		Util.createAndSetGobiiFile(procedure, tempFolderLocation);
+
         String table = "multiFileCSV_ROW";
         File file2 = new File(tempFolderLocation + "\\src" + "\\file2.txt");
         String data[] = {"marker_name	dnarunname_dom_1	dnarunname_dom_2	dnarunname_dom_3	dnarunname_dom_4",
@@ -130,7 +150,6 @@ public class CSVFileReaderV2Test {
         srcFileWriter.close();
 
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
@@ -139,7 +158,7 @@ public class CSVFileReaderV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         file2.delete();

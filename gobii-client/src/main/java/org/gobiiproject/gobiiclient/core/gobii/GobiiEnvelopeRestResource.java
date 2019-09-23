@@ -1,18 +1,16 @@
 package org.gobiiproject.gobiiclient.core.gobii;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 /**
  * This class adds the GOBII-specific type handling on top of the generic

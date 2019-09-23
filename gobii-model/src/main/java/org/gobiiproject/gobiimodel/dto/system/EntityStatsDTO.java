@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.system;
 
+import java.util.Date;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-
-import java.util.Date;
 
 /**
  * Created by Phil on 4/8/2016.

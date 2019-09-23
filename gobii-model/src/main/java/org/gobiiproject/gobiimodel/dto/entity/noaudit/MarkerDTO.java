@@ -2,12 +2,10 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 // Generated Mar 31, 2016 1:44:38 PM by Hibernate Tools 3.2.2.GA
 
 
-
+import java.util.List;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-
-import java.util.List;
 
 public class MarkerDTO extends DTOBase {
 

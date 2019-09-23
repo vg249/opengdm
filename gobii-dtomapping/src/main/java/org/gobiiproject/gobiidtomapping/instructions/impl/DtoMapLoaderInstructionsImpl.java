@@ -1,10 +1,7 @@
 package org.gobiiproject.gobiidtomapping.instructions.impl;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Date;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapExperiment;
@@ -13,31 +10,27 @@ import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.instructions.DtoMapLoaderInstructions;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-
+import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -66,7 +59,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     @Autowired
     private DtoMapJob dtoMapJob = null;
 
-    private InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+    private InstructionFileAccess<GobiiLoaderProcedure> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
 
 
     private void createDirectories(String instructionFileDirectory,
@@ -116,28 +109,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     + INSTRUCTION_FILE_EXT;
 
 
-            GobiiLoaderInstruction primaryLoaderInstruction = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0);
-
-
-            for (GobiiLoaderInstruction currentInstruction : loaderInstructionFilesDTO
-                    .getGobiiLoaderInstructions()) {
-
-                if (StringUtils.isNotEmpty(currentInstruction.getTable())) {
-                    primaryLoaderInstruction.getColumnsByTableName().put(currentInstruction.getTable(), currentInstruction.getGobiiFileColumns());
-                }
-            }
-
-
-            primaryLoaderInstruction.setColumnsByTableName(
-                    loaderInstructionFilesDTO
-                            .getGobiiLoaderInstructions()
-                            .stream()
-                            .filter(gfi -> StringUtils.isNotEmpty(gfi.getTable()))
-                            .collect(Collectors.toMap(GobiiLoaderInstruction::getTable, GobiiLoaderInstruction::getGobiiFileColumns))
-            );
-
-
-            if (primaryLoaderInstruction.getJobPayloadType() == null) {
+            if (loaderInstructionFilesDTO.getProcedure().getMetadata().getJobPayloadType() == null) {
                 throw new Exception("The primary instruction does not have a payload type");
             }
 
@@ -150,11 +122,11 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 //                        loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(currentFileIdx);
 
 
-            if (LineUtils.isNullOrEmpty(primaryLoaderInstruction.getGobiiCropType())) {
-                primaryLoaderInstruction.setGobiiCropType(cropType);
+            if (LineUtils.isNullOrEmpty(loaderInstructionFilesDTO.getProcedure().getMetadata().getGobiiCropType())) {
+                loaderInstructionFilesDTO.getProcedure().getMetadata().setGobiiCropType(cropType);
             }
 
-            GobiiFile currentGobiiFile = primaryLoaderInstruction.getGobiiFile();
+            GobiiFile currentGobiiFile = loaderInstructionFilesDTO.getProcedure().getMetadata().getGobiiFile();
 
             // check that we have all required values
             if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
@@ -196,21 +168,21 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             //validate loader instruction
 
             // check if the dataset is referenced by the specified experiment
-            if (primaryLoaderInstruction.getDataSet().getId() != null) {
+            if (loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId() != null) {
 
-                DataSetDTO dataSetDTO = dtoMapDataSet.get(primaryLoaderInstruction.getDataSet().getId());
+                DataSetDTO dataSetDTO = dtoMapDataSet.get(loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId());
 
                 // check if the experiment is referenced by the specified project
-                if (primaryLoaderInstruction.getExperiment().getId() != null) {
+                if (loaderInstructionFilesDTO.getProcedure().getMetadata().getExperiment().getId() != null) {
 
-                    if (!dataSetDTO.getExperimentId().equals(primaryLoaderInstruction.getExperiment().getId())) {
+                    if (!dataSetDTO.getExperimentId().equals(loaderInstructionFilesDTO.getProcedure().getMetadata().getExperiment().getId())) {
 
                         throw new GobiiDtoMappingException("The specified experiment in the dataset is incorrect");
                     }
 
-                    ExperimentDTO experimentDTO = dtoMapExperiment.get(primaryLoaderInstruction.getExperiment().getId());
+                    ExperimentDTO experimentDTO = dtoMapExperiment.get(loaderInstructionFilesDTO.getProcedure().getMetadata().getExperiment().getId());
 
-                    if (!experimentDTO.getProjectId().equals(primaryLoaderInstruction.getProject().getId())) {
+                    if (!experimentDTO.getProjectId().equals(loaderInstructionFilesDTO.getProcedure().getMetadata().getProject().getId())) {
 
                         throw new GobiiDtoMappingException("The specified project in the experiment is incorrect");
 
@@ -219,9 +191,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 }
 
                 // check if the datatype is referenced by the dataset
-                if (primaryLoaderInstruction.getDatasetType().getId() != null) {
+                if (loaderInstructionFilesDTO.getProcedure().getMetadata().getDatasetType().getId() != null) {
 
-                    if (!dataSetDTO.getDatatypeId().equals(primaryLoaderInstruction.getDatasetType().getId())) {
+                    if (!dataSetDTO.getDatatypeId().equals(loaderInstructionFilesDTO.getProcedure().getMetadata().getDatasetType().getId())) {
 
                         throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect");
 
@@ -232,9 +204,10 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
 
 
-            if (primaryLoaderInstruction.getPlatform().getId() != null && primaryLoaderInstruction.getExperiment().getId() != null) {
+            if (loaderInstructionFilesDTO.getProcedure().getMetadata().getPlatform().getId() != null
+                    && loaderInstructionFilesDTO.getProcedure().getMetadata().getExperiment().getId() != null) {
 
-                ExperimentDTO experimentDTO = dtoMapExperiment.get(primaryLoaderInstruction.getExperiment().getId());
+                ExperimentDTO experimentDTO = dtoMapExperiment.get(loaderInstructionFilesDTO.getProcedure().getMetadata().getExperiment().getId());
 
                 if (experimentDTO.getVendorProtocolId() != null) {
 
@@ -246,7 +219,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                         if (protocolDTO.getPlatformId() != null) {
 
-                            Integer loaderPlatformId = primaryLoaderInstruction.getPlatform().getId();
+                            Integer loaderPlatformId = loaderInstructionFilesDTO.getProcedure().getMetadata().getPlatform().getId();
 
                             if (!loaderPlatformId.equals(protocolDTO.getPlatformId())) {
 
@@ -292,12 +265,13 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             // NOW CREATE THE JOB RECORD *********************************************************
             Integer dataSetId = null;
-            if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(primaryLoaderInstruction.getJobPayloadType())) {
-                if (primaryLoaderInstruction.getDataSetId() != null) {
-                    dataSetId = primaryLoaderInstruction.getDataSetId();
+            if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(loaderInstructionFilesDTO.getProcedure().getMetadata().getJobPayloadType())) {
+                if (loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId() != null) {
+                    dataSetId = loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId();
                 } else {
-                    if (primaryLoaderInstruction.getDataSet() != null && primaryLoaderInstruction.getDataSet().getId() != null) {
-                        dataSetId = primaryLoaderInstruction.getDataSetId();
+                    if (loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset() != null
+                            && loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId() != null) {
+                        dataSetId = loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId();
                     }
                 }
 
@@ -308,7 +282,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
 
 
-            Integer contactId = primaryLoaderInstruction.getContactId();
+            Integer contactId = loaderInstructionFilesDTO.getProcedure().getMetadata().getContactId();
 
             if (contactId != null || contactId > 0) {
 
@@ -324,14 +298,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     jobDTONew.setSubmittedBy(contactId);
                     jobDTONew.setMessage("Instruction file written by web services");
                     jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
-                    jobDTONew.setPayloadType(primaryLoaderInstruction.getJobPayloadType().getCvName());
+                    jobDTONew.setPayloadType(loaderInstructionFilesDTO.getProcedure().getMetadata().getJobPayloadType().getCvName());
                     jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
                     jobDTONew.setSubmittedDate(new Date());
 
                     dtoMapJob.createJob(jobDTONew);
 
                     instructionFileAccess.writeInstructions(instructionFileFqpn,
-                            returnVal.getGobiiLoaderInstructions());
+                            returnVal.getProcedure());
 
                 } else {
 
@@ -365,17 +339,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         try {
             returnVal.setInstructionFileName(instructionFileName);
 
-            InstructionFileAccess<GobiiLoaderInstruction> loaderInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
-            List<GobiiLoaderInstruction> instructions = loaderInstructionFileAccess.getInstructions(jobStatusReporter.getLoaderInstructionFileFqpn(cropType), GobiiLoaderInstruction[].class);
-            for (GobiiLoaderInstruction instruction : instructions) {
-                instruction.setGobiiJobStatus(jobProgressStatus);
-                if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
-                    instruction.setLogMessage(jobStatusReporter.getLogErrorMessage());
-                }
-            }
-            returnVal.setGobiiLoaderInstructions(instructions);
+            InstructionFileAccess<GobiiLoaderProcedure> loaderInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
+            GobiiLoaderProcedure procedure = loaderInstructionFileAccess.getProcedure(jobStatusReporter.getLoaderInstructionFileFqpn(cropType));
 
-            if (instructions == null || instructions.size() == 0) {
+            procedure.getMetadata().setGobiiJobStatus(jobProgressStatus);
+
+            returnVal.setGobiiLoaderProcedure(procedure);
+
+            if (procedure == null || procedure.getInstructions() == null || procedure.getInstructions().size() == 0) {
                 throw new GobiiDtoMappingException(
                         GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "The specified instruction file does not exist: " + instructionFileName);
             }

@@ -1,9 +1,8 @@
 package org.gobiiproject.gobidomain.services;
 
+import java.io.File;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-
-import java.io.File;
 
 
 /**

@@ -1,22 +1,24 @@
 package org.gobiiproject.gobiiprocess;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
-
-import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
-import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logDebug;
-import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logDebug;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 /**
  * A repository of methods designed to interface with HDF5 files, both in the creation and in the execution of 
@@ -56,7 +58,7 @@ public class HDF5Interface {
             default:
                 logError("Digester","Unknown type "+dst.toString());return false;
         }
-        ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
+        Logger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
         if(!success){
             //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
@@ -111,7 +113,7 @@ public class HDF5Interface {
                 }
             }
         catch(Exception e){
-            ErrorLogger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
+            Logger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
         }
         return map;
     }
@@ -131,7 +133,7 @@ public class HDF5Interface {
      */
     public static String getHDF5GenoFromSampleList(boolean markerFast, String errorFile, String tempFolder, String posFile, String samplePosFile) throws FileNotFoundException{
         if(!new File(posFile).exists()){
-            ErrorLogger.logError("Genotype Matrix","No positions generated - Likely no data");
+            Logger.logError("Genotype Matrix","No positions generated - Likely no data");
             return null;
         }
         BufferedReader posR=new BufferedReader(new FileReader(posFile));
@@ -150,7 +152,7 @@ StringBuilder genoFileString=new StringBuilder();
             while(posR.ready()) {
                 String[] line = posR.readLine().split("\t");
                 if(line.length < 2){
-                    ErrorLogger.logDebug("MarkerList","Skipping line " + Arrays.deepToString(line));
+                    Logger.logDebug("MarkerList","Skipping line " + Arrays.deepToString(line));
                     continue;
                 }
                 int dsID=Integer.parseInt(line[0]);
@@ -179,14 +181,14 @@ StringBuilder genoFileString=new StringBuilder();
                 }
             }
         }catch(IOException e) {
-            ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
+            Logger.logError("GobiiExtractor", "MarkerList reading failed", e);
         }
 
         //Coallate genotype files
         String genoFile=tempFolder+"markerList.genotype";
         logDebug("MarkerList", "Accumulating markers into final genotype file");
         if(genoFileString.length() == 0){
-            ErrorLogger.logError("HDF5Interface","No genotype data to extract");
+            Logger.logError("HDF5Interface","No genotype data to extract");
             return null;
         }
         String genotypePartFileIdentifier=genoFileString.toString();
@@ -236,7 +238,7 @@ StringBuilder genoFileString=new StringBuilder();
 
         if(markerList!=null) {
             String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
-            ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
+            Logger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
             boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" " + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
             if(!success){
                 rmIfExist(genoFile);
@@ -245,7 +247,7 @@ StringBuilder genoFileString=new StringBuilder();
         }
         else {
             String hdf5Extractor=pathToHDF5+"dumpdataset";
-            ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
+            Logger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
             boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
             if(!success){
                 rmIfExist(genoFile);
@@ -256,7 +258,7 @@ StringBuilder genoFileString=new StringBuilder();
         if(sampleList!=null){
             filterBySampleList(genoFile,sampleList,markerFast, errorFile);
         }
-        ErrorLogger.logDebug("Extractor",(ErrorLogger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
+        Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
         return genoFile;
     }
 
@@ -306,7 +308,7 @@ StringBuilder genoFileString=new StringBuilder();
                 String entryWithoutSpaces=entry.trim().replaceAll(" ","");
                 val=Integer.parseInt(entryWithoutSpaces);
             }catch(Exception e){
-                ErrorLogger.logDebug("GobiiExtractor NFE",e.toString());
+                Logger.logDebug("GobiiExtractor NFE",e.toString());
             }
             if( val != -1){
                 cutString.append((val+1)+",");

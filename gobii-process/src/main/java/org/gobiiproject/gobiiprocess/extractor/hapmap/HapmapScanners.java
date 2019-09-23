@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiiprocess.extractor.hapmap;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * Class that has the scanners required for the Hapmap.
@@ -73,11 +72,11 @@ class HapmapScanners{
      */
     boolean validateFile(File file, String fileName) {
         if (!(file.exists())) {
-            ErrorLogger.logInfo("Extractor", fileName + " file not found");
+            Logger.logInfo("Extractor", fileName + " file not found");
             return false;
         } else {
             if (!(file.isFile())) {
-                ErrorLogger.logInfo("Extractor", fileName + "file not correct");
+                Logger.logInfo("Extractor", fileName + "file not correct");
                 return false;
             } else
                 return true;

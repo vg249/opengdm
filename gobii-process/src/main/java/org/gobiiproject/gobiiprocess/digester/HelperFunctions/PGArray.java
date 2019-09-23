@@ -5,10 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.util.Scanner;
-
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * PGArray method converts takes an input and output file and converts a column inside it into an array.
@@ -66,10 +65,10 @@ public class PGArray {
             input.close();
             writer.close();
         } catch (FileNotFoundException err) {
-            ErrorLogger.logError("PGArray","Error processing converting column to array file.",err);
+            Logger.logError("PGArray","Error processing converting column to array file.",err);
 
         } catch (Exception err) {
-            ErrorLogger.logError("PGArray","Error processing converting column to array file.",err);
+            Logger.logError("PGArray","Error processing converting column to array file.",err);
         }
     }
 

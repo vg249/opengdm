@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiimodel.utils;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * An interface to request a file dump for the data. Solves our basic needs for data loading, but not much else.

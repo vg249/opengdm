@@ -1,10 +1,9 @@
 package org.gobiiproject.gobidomain.services;
 
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
-
-import java.util.List;
 
 /**
  * Created by Phil on 4/21/2016.

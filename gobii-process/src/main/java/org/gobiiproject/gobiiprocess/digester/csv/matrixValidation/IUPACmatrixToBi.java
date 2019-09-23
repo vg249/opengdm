@@ -1,12 +1,23 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
-import org.gobiiproject.gobiimodel.types.NucIupacCodes;
-
-import static org.gobiiproject.gobiimodel.types.NucIupacCodes.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.gobiiproject.gobiimodel.types.NucIupacCodes;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.AA;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.AC;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.AG;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.AT;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.CC;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.GC;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.GG;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.NN;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.TC;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.TG;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.TT;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.minus;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.plus;
+import static org.gobiiproject.gobiimodel.types.NucIupacCodes.plusminus;
 
 /**
  * Created by siva on 18-05-2017.

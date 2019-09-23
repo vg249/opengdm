@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiidao.resultset.core;
 
-import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 
 /**
  * Created by Phil on 4/7/2016.

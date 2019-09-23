@@ -2,11 +2,6 @@ package org.gobiiproject.gobiimodel.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 
 /**
  * Created by araquel on 3/16/2017.
@@ -52,7 +48,7 @@ public class InstructionFileAccess<T> {
 
                         ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-                        objectMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+                        objectMapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
                         String instructionsAsJson = objectMapper.writeValueAsString(instructions);
                         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(instructionFileFqpn));
                         bufferedWriter.write(instructionsAsJson);
@@ -87,7 +83,7 @@ public class InstructionFileAccess<T> {
     } // writeInstructions
 
 
-    public T getInstruction(String instructionFileFqpn) {
+    public T getProcedure(String instructionFileFqpn) {
 
         T returnVal = null;
 
@@ -109,7 +105,6 @@ public class InstructionFileAccess<T> {
         return returnVal;
 
     }
-
     // it is irritating that we seem to need a separate function that does everything the same as getINstruction()
     // except except the type parameterization for the List type. There is probably a more elegant and hence
     // less redundant way tot do this; however, for now, encapsulating this code in one class is a huge improvement

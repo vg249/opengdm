@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
+import java.util.Date;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-
-import java.util.Date;
 
 /**
  * All Dto classes for tables that have the created_date, modified_date, created_by,

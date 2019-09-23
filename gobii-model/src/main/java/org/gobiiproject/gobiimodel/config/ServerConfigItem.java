@@ -1,15 +1,14 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.ServerType;
-import org.simpleframework.xml.Element;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.ServerType;
+import org.simpleframework.xml.Element;
 
 /**
  * This class encapsualtes the configuration properties that are returned to web clients via

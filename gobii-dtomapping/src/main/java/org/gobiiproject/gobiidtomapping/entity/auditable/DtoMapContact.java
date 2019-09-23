@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
-import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMap;
+import java.util.List;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
-
-import java.util.List;
 
 /**
  * Created by Anggel on 5/4/2016.
