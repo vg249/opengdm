@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class Logger {
-	private static final org.slf4j.Logger log = LoggerFactory.getLogger("gobii");
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger("GOBii");
 	public static List<Error> errors = new ArrayList();
 
 	private static final Set<String> nonRelevantClasses = new HashSet<>();
