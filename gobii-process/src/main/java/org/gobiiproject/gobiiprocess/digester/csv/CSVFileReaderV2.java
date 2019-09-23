@@ -541,6 +541,9 @@ class ReaderThread implements Runnable {
             reader.processCSV(procedure, instruction);
         } catch (Exception e) {
             ErrorLogger.logError("ReaderThread", "Error processing file read", e);
+        } catch (OutOfMemoryError e){
+            ErrorLogger.logError("ReaderThread",e);
+            throw e;
         }
     }
 }
