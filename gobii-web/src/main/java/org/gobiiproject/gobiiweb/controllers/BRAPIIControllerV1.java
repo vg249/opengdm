@@ -219,11 +219,11 @@ public class BRAPIIControllerV1 {
             hidden = true
     )
     @ResponseBody
-    public String getCalls(
+    public ResponseEntity getCalls(
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String returnVal;
+        //String returnVal;
 
         BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
                 new BrapiResponseEnvelopeMasterDetail<>();
@@ -247,9 +247,9 @@ public class BRAPIIControllerV1 {
             brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelopeMasterDetail);
+        //returnVal = objectMapper.writeValueAsString(brapiResponseEnvelopeMasterDetail);
 
-        return returnVal;
+        return ResponseEntity.ok(brapiResponseEnvelopeMasterDetail);
     }
 
 

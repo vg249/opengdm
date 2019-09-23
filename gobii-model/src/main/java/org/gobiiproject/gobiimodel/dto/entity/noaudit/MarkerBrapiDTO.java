@@ -104,12 +104,14 @@ public class MarkerBrapiDTO extends DTOBase {
     public void setStop(BigDecimal stop) { this.stop = stop; }
 
     @GobiiEntityParam(paramName = "mapSetName")
+    @JsonProperty("mapName")
     public String getMapSetName() { return this.mapSetName; }
 
     @GobiiEntityColumn(columnName = "mapset_name")
     public void setMapSetName(String mapSetName) { this.mapSetName = mapSetName; }
 
     @GobiiEntityParam(paramName = "mapSetId")
+    @JsonProperty("mapDbId")
     public Integer getMapSetId() { return this.mapSetId; }
 
     @GobiiEntityColumn(columnName = "mapset_id")
