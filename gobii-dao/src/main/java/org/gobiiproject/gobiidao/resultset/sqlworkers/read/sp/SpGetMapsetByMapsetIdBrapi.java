@@ -37,9 +37,8 @@ public class SpGetMapsetByMapsetIdBrapi implements Work {
 
             Integer mapsetId = (Integer) parameters.get("mapsetId");
 
-            preparedStatement.setString(1, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName());
 
-            preparedStatement.setInt(2, mapsetId);
+            preparedStatement.setInt(1, mapsetId);
 
         }
         else {
