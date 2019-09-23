@@ -58,14 +58,14 @@ public class MapsetBrapiDTO {
 
     public String getUnit() {
 
-        if(this.type.toLowerCase() == "physical") {
+
+        if (this.type != null && this.type.toLowerCase().equals("physical")) {
             return "Mb";
-        }
-        else if (this.type.toLowerCase() == "genetic") {
+        } else if (this.type != null && this.type.toLowerCase().equals("genetic")) {
             return "cM";
         }
 
-        return null;
+        return "";
     }
 
     @GobiiEntityColumn(columnName = "type")
