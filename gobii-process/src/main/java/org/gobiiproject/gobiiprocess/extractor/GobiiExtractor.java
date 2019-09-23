@@ -20,12 +20,14 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -496,7 +498,9 @@ public class GobiiExtractor {
 			            pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 		            }
 
-		            pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration, false);
+		            //Note - link to place where it *will* be if there are no errors. Sadly, we won't know if it's right until we've sent all the emails already
+		            String finalIFPath= configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE) + FilenameUtils.getName(instructionFile);
+		            pm.addPath("Instruction File", finalIFPath , true, configuration, false);
 		            pm.addFolderPath("Output Directory", extractDir, configuration);
 		            pm.addPath("Error Log", logFile, true, configuration, false);
 		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration, false);
