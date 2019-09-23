@@ -6,7 +6,7 @@ import java.util.List;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 public class GobiiProcessedInstruction {
 
@@ -98,7 +98,7 @@ public class GobiiProcessedInstruction {
 				hasCSV_BOTH = true;
 				break;
 			default:
-				ErrorLogger.logError("CSVReader", "Unable to deal with file type"+gobiiFileColumn.getGobiiColumnType().name(), new Throwable());
+				Logger.logError("CSVReader", "Unable to deal with file type"+gobiiFileColumn.getGobiiColumnType().name(), new Throwable());
 				break;
 			}
 			columnNo++;

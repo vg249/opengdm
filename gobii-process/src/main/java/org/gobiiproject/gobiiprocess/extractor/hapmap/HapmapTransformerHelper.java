@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiprocess.extractor.hapmap;
 
 import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,7 +23,7 @@ class HapmapTransformerHelper {
     static boolean readHeaders(Scanner scanner, List<String> fileHeaders, String info) {
         if (scanner.hasNextLine()) {
             String[] headers = scanner.nextLine().split("\\t", -1);
-            ErrorLogger.logInfo("Extractor", headers.length + info + " header columns read");
+            Logger.logInfo("Extractor", headers.length + info + " header columns read");
             for (String header : headers) {
                 fileHeaders.add(header.trim());
             }
@@ -103,7 +103,7 @@ class HapmapTransformerHelper {
      */
     private static void readSampleHeader(Scanner sampleScanner, List<String> sampleHeaders, TreeMap<Integer, ArrayList<String>> sampleData) {
         String[] headers = sampleScanner.nextLine().split("\\t", -1);
-        ErrorLogger.logInfo("Extractor", headers.length + " sample header columns read");
+        Logger.logInfo("Extractor", headers.length + " sample header columns read");
         for (int index = 0; index < headers.length; index++) {
             sampleHeaders.add(headers[index].trim());
             sampleData.put(index, new ArrayList<>());

@@ -20,7 +20,7 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
@@ -175,7 +175,7 @@ public class ValidationWebServicesUtil {
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             Status status = responsePayloadEnvelope.getHeader().getStatus();
             if (!status.isSucceeded()) {
-                ErrorLogger.logWarning("ValidtionWebServices","Bad NameIdDTO request",new Exception());
+                Logger.logWarning("ValidtionWebServices","Bad NameIdDTO request",new Exception());
                 ArrayList<HeaderStatusMessage> statusMessages = status.getStatusMessages();
                 for (HeaderStatusMessage message : statusMessages)
                     ValidationUtil.createFailure(FailureTypes.DATABASE_ERROR, new ArrayList<>(), message.getMessage(), failureList);

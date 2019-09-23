@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
@@ -527,7 +527,7 @@ class ValidationUtil {
                                 failureReason = FailureTypes.UNDEFINED_MARKER_NAME__VALUE;
                                 break;
                             default:
-                                ErrorLogger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
+                                Logger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
                         }
 
                         List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, foreignKey, failureList);
@@ -536,11 +536,11 @@ class ValidationUtil {
                 }//end for entry in entryset
             }
             else { //createForeignKeyGroup
-             ErrorLogger.logWarning("Vaidation","Unable to create foreignKeyGroup");
+             Logger.logWarning("Vaidation","Unable to create foreignKeyGroup");
             }
         }
         else{//readForeignKey
-            ErrorLogger.logWarning("Vaidation","Unable to read foreign key");
+            Logger.logWarning("Vaidation","Unable to read foreign key");
 
         }
     }

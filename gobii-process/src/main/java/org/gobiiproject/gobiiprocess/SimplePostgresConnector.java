@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiprocess;
 
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.sql.*;
 
@@ -22,7 +22,7 @@ public class SimplePostgresConnector {
             String jdbcUrl = HelperFunctions.getJdbcConnectionString(config);
             conn=DriverManager.getConnection(jdbcUrl,config.getUserName(),config.getPassword());
         }catch(SQLException e){
-            ErrorLogger.logError("SimplePostgresConnector","Failed creating postgres connection",e);
+            Logger.logError("SimplePostgresConnector","Failed creating postgres connection",e);
         }
         return conn;
     }
@@ -58,7 +58,8 @@ public class SimplePostgresConnector {
         String statement="SELECT 1 from marker WHERE name = '"+ name + "' and platform_id = "+platform+" LIMIT 1";
         try {
             return boolQuery(statement);
-        }catch(SQLException e){ErrorLogger.logError("Postgres Connector",e);}
+        }catch(SQLException e){
+			Logger.logError("Postgres Connector",e);}
         return false;
     }
 
@@ -66,7 +67,7 @@ public class SimplePostgresConnector {
         try {
             return hasEntry("marker", "name", markerName);
         }catch(SQLException e){
-            ErrorLogger.logError("Postgres Connector",e);
+            Logger.logError("Postgres Connector",e);
         }
         return false;
     }
@@ -76,7 +77,8 @@ public class SimplePostgresConnector {
         String statement="SELECT 1 from dnarun WHERE name = '"+ name + "' and experiment_id = "+experiment+" LIMIT 1";
         try {
             return boolQuery(statement);
-        }catch(SQLException e){ErrorLogger.logError("Postgres Connector",e);}
+        }catch(SQLException e){
+			Logger.logError("Postgres Connector",e);}
         return false;
     }
 
@@ -88,7 +90,7 @@ public class SimplePostgresConnector {
         try{
             return hasCVEntry("germplasm_type",germplasmType);
         }catch(SQLException e){
-            ErrorLogger.logError("Postgres Connector",e);
+            Logger.logError("Postgres Connector",e);
         }
         return false;
     }
@@ -96,7 +98,7 @@ public class SimplePostgresConnector {
         try{
             return hasCVEntry("germplasm_species",germplasmSpecies);
         }catch(SQLException e){
-            ErrorLogger.logError("Postgres Connector",e);
+            Logger.logError("Postgres Connector",e);
         }
         return false;
     }
@@ -105,7 +107,7 @@ public class SimplePostgresConnector {
         try {
             dbConn.close();
         } catch (SQLException e) {
-            ErrorLogger.logError("SimplePostgresConnector","Error closing",e);
+            Logger.logError("SimplePostgresConnector","Error closing",e);
             return false;
         }
         dbConn=null;

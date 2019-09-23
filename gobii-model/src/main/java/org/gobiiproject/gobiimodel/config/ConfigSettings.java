@@ -13,8 +13,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.gobiiproject.gobiimodel.utils.email.AuthType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * This class encapsulates all the configuration data with which the rest of the system interacts.
@@ -30,14 +29,13 @@ import org.slf4j.LoggerFactory;
  */
 public class ConfigSettings {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ConfigSettings.class);
     private String configFileFqpn;
 
     public ConfigSettings() {
         try {
             configValues = ConfigValuesReader.read(null);
         } catch (Exception e) {
-            LOGGER.error("Error instancing ConfigValues with null fqpn", e);
+            Logger.logError("Error instancing ConfigValues with null fqpn", e);
         }
     }
 
@@ -49,7 +47,7 @@ public class ConfigSettings {
             configValues = ConfigValuesReader.read(configFileWebPath);
             this.configFileFqpn = configFileWebPath;
         } catch (Exception e) {
-            LOGGER.error("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
+            Logger.logError("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
 
         }
     } // ctor

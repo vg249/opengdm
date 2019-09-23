@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.utils;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
@@ -58,7 +57,7 @@ public class FileSystemInterface {
 			try {
 				Files.move(file.toPath(),tempFile.toPath(),(CopyOption)StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				ErrorLogger.logError("FileSystemInterface","Unable to move file to a temporary directory",e);
+				Logger.logError("FileSystemInterface","Unable to move file to a temporary directory",e);
 			}
 		}
 
@@ -87,7 +86,7 @@ public class FileSystemInterface {
 
 	public static int lineCount(String file){
 		if(!new File(file).exists()){
-			ErrorLogger.logDebug("FileSystemInterface","File " + file + " being WC'd does not exist");
+			Logger.logDebug("FileSystemInterface","File " + file + " being WC'd does not exist");
 			return 0;
 		}
 		String [] exec={"wc","-l",file};
@@ -101,7 +100,7 @@ public class FileSystemInterface {
 
 		}
 		catch(Exception e){
-			ErrorLogger.logError("FileSystemInterface","Unable to call wc",e);
+			Logger.logError("FileSystemInterface","Unable to call wc",e);
 		}
 		return retVal;
 	}

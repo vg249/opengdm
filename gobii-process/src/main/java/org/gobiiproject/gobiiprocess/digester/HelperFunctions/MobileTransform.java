@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.HelperFunctions;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.FileNotFoundException;
 
@@ -37,7 +37,7 @@ public abstract class MobileTransform {
                 try {
                     transposeMatrix("tab", fromFile, toFile, dest);
                 } catch (FileNotFoundException e) {
-                    ErrorLogger.logError("Matrix Transpose", "Missing File", e);
+                    Logger.logError("Matrix Transpose", "Missing File", e);
                 }
             }
         };
