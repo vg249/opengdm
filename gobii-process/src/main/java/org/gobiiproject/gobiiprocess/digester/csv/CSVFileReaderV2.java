@@ -13,11 +13,13 @@ import java.util.*;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
@@ -77,6 +79,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             for (GobiiLoaderInstruction loaderInstruction : procedure.getInstructions()) {
                 if (matrixInstruction == null && isMatrixInstruction(loaderInstruction)) {
                     matrixInstruction = loaderInstruction;
+                    GobiiFileReader.isMarkerFast = isMarkerFast(matrixInstruction.getGobiiFileColumns().get(0));
                     continue;//Skip processing until after all intermediate files
                 }
                 reader = new CSVFileReaderV2(loaderScriptPath);
@@ -520,6 +523,21 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 maxRowNo = gobiiFileColumn.getrCoord();
         }
         return maxRowNo;
+    }
+    private static boolean isMarkerFast(GobiiFileColumn gfc){
+        if(gfc!=null){
+            if(gfc.getDataSetOrientationType().equals(DatasetOrientationType.MARKER_FAST)){
+                return true;
+            }
+            if(gfc.getDataSetOrientationType().equals(DatasetOrientationType.SAMPLE_FAST)){
+                return false;
+            }
+            ErrorLogger.logError("FileReader","File column Dataset Orientation invalid");
+            return false;
+        }
+        else {
+            ErrorLogger.logError("FileReader", "File column is null");
+        }
     }
 }
 
