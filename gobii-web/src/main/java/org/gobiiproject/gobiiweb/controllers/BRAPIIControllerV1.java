@@ -277,14 +277,17 @@ public class BRAPIIControllerV1 {
 
         String returnVal;
 
-
         BrapiResponseLogin brapiResponseLogin = null;
+
         try {
 
-            BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestLogin.class);
+            BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(
+                    BrapiRequestLogin.class);
+
             BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
 
             BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
+
             brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
 
 
