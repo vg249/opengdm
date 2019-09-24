@@ -35,7 +35,6 @@ public class GobiiFileColumn {
     private boolean subcolumn = false;
     //Delimiter to use to affix this column to the previous column.
     private String subcolumnDelimiter = null;
-    private DatasetOrientationType dataSetOrientationType = DatasetOrientationType.MARKER_FAST;
 
 
     private String metaDataId = null;
@@ -155,15 +154,6 @@ public class GobiiFileColumn {
 
     public GobiiFileColumn setReplaceText(String replaceText) {
         this.replaceText = replaceText;
-        return this;
-    }
-
-    public DatasetOrientationType getDataSetOrientationType() {
-        return dataSetOrientationType;
-    }
-
-    public GobiiFileColumn setDataSetOrientationType(DatasetOrientationType dataSetOrientationType) {
-        this.dataSetOrientationType = dataSetOrientationType;
         return this;
     }
 }

@@ -63,7 +63,6 @@ class Util {
         fileColumn.setName("csvRow");
         fileColumn.setSubcolumn(true);
         fileColumn.setSubcolumnDelimiter("_");
-        fileColumn.setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
         return fileColumn;
 
     }
@@ -83,7 +82,6 @@ class Util {
         fileColumn.setCCoord(cCoord);
         fileColumn.setName("csvBoth");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
         return fileColumn;
 
     }
@@ -100,7 +98,6 @@ class Util {
         fileColumn.setGobiiColumnType(GobiiColumnType.AUTOINCREMENT);
         fileColumn.setName("AutoIncrement");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
         return fileColumn;
 
     }
@@ -121,7 +118,6 @@ class Util {
         fileColumn.setCCoord(cCoord);
         fileColumn.setName("csvRow");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
         return fileColumn;
     }
 
@@ -141,7 +137,6 @@ class Util {
         fileColumn.setCCoord(cCoord);
         fileColumn.setName("csvCol");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
         return fileColumn;
     }
 
@@ -158,8 +153,7 @@ class Util {
         fileColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
         fileColumn.setName("constantName");
         fileColumn.setConstantValue(constantValue);
-        filecolumn.setsubcolumn(false);
-        fileColumn.setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
+        fileColumn.setSubcolumn(false);
         return fileColumn;
     }
 
