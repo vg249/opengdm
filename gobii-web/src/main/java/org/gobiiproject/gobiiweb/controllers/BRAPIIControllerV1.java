@@ -1337,6 +1337,20 @@ public class BRAPIIControllerV1 {
 
         try {
 
+            if(page == null) {
+
+                //First Page
+                page = getDefaultBrapiPage();
+
+            }
+
+            if(pageSize == null) {
+
+                //TODO: Using same resource limit as markers. But, Can be defined seperately
+                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
+            }
+
+
             List<MapsetBrapiDTO> mapsetList = mapsetBrapiService.getMapSets(page, pageSize);
 
             Map<String, Object> brapiResult = new HashMap<>();
@@ -1345,14 +1359,9 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
 
-            if(page != null) {
-                page = 0;
-            }
             payload.getMetaData().getPagination().setCurrentPage(page);
 
-            if(pageSize != null && pageSize > 0) {
-                payload.getMetaData().getPagination().setPageSize(pageSize);
-            }
+            payload.getMetaData().getPagination().setPageSize(pageSize);
 
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
@@ -1376,18 +1385,25 @@ public class BRAPIIControllerV1 {
 
         try {
 
+            if(page == null) {
+                //First Page
+                page = getDefaultBrapiPage();
+            }
+            if(pageSize == null) {
+
+                //TODO: Using same resource limit as markers. But, Can be defined seperately
+                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
+
+            }
+
             MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
 
-            if(page != null) {
-                page = 0;
-            }
+
             payload.getMetaData().getPagination().setCurrentPage(page);
 
-            if(pageSize != null && pageSize > 0) {
-                payload.getMetaData().getPagination().setPageSize(pageSize);
-            }
+            payload.getMetaData().getPagination().setPageSize(pageSize);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
@@ -1411,11 +1427,23 @@ public class BRAPIIControllerV1 {
 
         try {
 
+            if(page == null) {
+                //First Page
+                page = getDefaultBrapiPage();
+            }
+            if(pageSize == null) {
+
+                //TODO: Using same resource limit as markers. But, Can be defined seperately
+                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
+
+            }
+
             MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
 
             MarkerBrapiDTO markerFilter = new MarkerBrapiDTO();
 
             markerFilter.setMapSetId(mapset.getMapDbId());
+
 
             if(linkageGroupName != null) {
                 markerFilter.setLinkageGroupName(linkageGroupName);
@@ -1430,14 +1458,9 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
 
-            if(page == null) {
-                page = 0;
-            }
-            payload.getMetaData().getPagination().setCurrentPage(page);
 
-            if(pageSize != null && pageSize > 0) {
-                payload.getMetaData().getPagination().setPageSize(pageSize);
-            }
+            payload.getMetaData().getPagination().setCurrentPage(page);
+            payload.getMetaData().getPagination().setPageSize(pageSize);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
@@ -2184,6 +2207,44 @@ public class BRAPIIControllerV1 {
                 "Content-Disposition", "attachment; filename=" + variantSetDbId.toString() + ".csv"
         ).contentType(MediaType.parseMediaType("text/csv")
         ).body(emitter);
+    }
+
+    /**
+     * Brapi pages are 0 indexed and first page number is 0
+     * @return First page number
+     */
+    public Integer getDefaultBrapiPage() {
+
+        return 0;
+    }
+
+    /**
+     * Gets the default page size
+     * @param restResourceId Resource Id for which default page size needs to be fetched. Example: GOBII_MARKERS
+     * @return
+     */
+    public Integer getDefaultPageSize(RestResourceId restResourceId) {
+
+        Integer pageSize = 1000;
+
+        try {
+
+            //TODO: Using same resource limit as markers. define different resource limit if required
+            pageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_MARKERS,
+                    RestMethodType.GET
+            );
+
+            if(pageSize == null) {
+                pageSize = 1000;
+            }
+        }
+        catch(Exception e) {
+            //If resource limit is not defined
+            pageSize = 1000;
+        }
+
+        return pageSize;
     }
 
 }// BRAPIController
