@@ -103,9 +103,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setFilterTo(".*")
                 .setName(instructionOneColumnOneName)
                 .setFindText(findTextTableOneColumnOne)
-                .setReplaceText(replaceTextTextTableOneColumnOne)
-                .setDataSetType(dataSetTypeTableOneColumnOne)
-                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
+                .setReplaceText(replaceTextTextTableOneColumnOne);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
@@ -184,9 +182,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         GobiiFileColumn gobiiFileTwoColumnOne = new GobiiFileColumn()
                 .setGobiiColumnType(GobiiColumnType.CONSTANT)
                 .setConstantValue("test2")
-                .setName(instructionTwoColumnOneName)
-                .setDataSetType(dataSetTypeTwoColumnOne)
-                .setDataSetOrientationType(DatasetOrientationType.MARKER_FAST);
+                .setName(instructionTwoColumnOneName);
 
         gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
 
