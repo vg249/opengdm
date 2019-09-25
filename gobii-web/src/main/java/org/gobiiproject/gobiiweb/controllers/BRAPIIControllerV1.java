@@ -2089,9 +2089,9 @@ public class BRAPIIControllerV1 {
 
                 variantSetDbId = Integer.parseInt(variantSetDbIdVar);
 
-                genotypeCallsList =
-                        genotypeCallsService.getGenotypeCallsByDatasetId(
-                                variantSetDbId, pageToken, pageSize);
+                genotypeCallsList = genotypeCallsService.getGenotypeCallsByDatasetId(
+                        variantSetDbId, pageToken, pageSize);
+
             }
             catch(NumberFormatException | NullPointerException ne) {
 

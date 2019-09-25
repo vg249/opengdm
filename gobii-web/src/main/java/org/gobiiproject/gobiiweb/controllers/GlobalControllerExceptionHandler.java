@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -75,6 +76,25 @@ public class GlobalControllerExceptionHandler {
         LOGGER.error(jmEx.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
     }
+
+    /**
+     * HTTP request method not supported exception handler.
+     *
+     * @param e - exception object.
+     * @return ResponseEntity with Internal server error as status code and Server error as message
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity HttpMethodNotSupportedExceptionHandler(Exception e) {
+
+        ErrorPayload errorPayload = new ErrorPayload();
+
+        errorPayload.setError("Request method not supported!");
+
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorPayload);
+    }
+
 
     /**
      * Handles all the other exceptions not handled by the other handlers.
