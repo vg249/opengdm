@@ -60,14 +60,10 @@ public class DtoMapContactImpl implements DtoMapContact {
 
             ResultSet resultSet = rsContactDao.getContactDetailsByContactId(contactId);
 
-            while (resultSet.next()) {
+            if (resultSet.next()) {
 
                 // apply contact values
-                //ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
-
-                returnVal.setEmail(returnVal.getEmail() + " " + resultSet.getString("email"));
-                returnVal.setFirstName(returnVal.getFirstName() + " " + resultSet.getString("firstname"));
-                returnVal.setLastName(returnVal.getLastName() + " " + resultSet.getString("lastname"));
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
             } // iterate resultSet
 
@@ -114,10 +110,14 @@ public class DtoMapContactImpl implements DtoMapContact {
 
             ResultSet resultSet = rsContactDao.getContactDetailsByEmail(email);
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
 
                 // apply contact values
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                // ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+
+                returnVal.setEmail(returnVal.getEmail() + " " + resultSet.getString("email"));
+                returnVal.setFirstName(returnVal.getFirstName() + " " + resultSet.getString("firstname"));
+                returnVal.setLastName(returnVal.getLastName() + " " + resultSet.getString("lastname"));
 
             } // iterate resultSet
 
