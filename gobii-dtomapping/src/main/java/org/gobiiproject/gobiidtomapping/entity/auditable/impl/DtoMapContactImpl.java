@@ -60,10 +60,14 @@ public class DtoMapContactImpl implements DtoMapContact {
 
             ResultSet resultSet = rsContactDao.getContactDetailsByContactId(contactId);
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
 
                 // apply contact values
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                //ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+
+                returnVal.setEmail(returnVal.getEmail() + " " + resultSet.getString("email"));
+                returnVal.setFirstName(returnVal.getFirstName() + " " + resultSet.getString("firstname"));
+                returnVal.setLastName(returnVal.getLastName() + " " + resultSet.getString("lastname"));
 
             } // iterate resultSet
 
