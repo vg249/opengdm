@@ -922,7 +922,7 @@ public class GOBIIControllerV1 {
     // all parameters must be present, but they don't all neeed a value
     @ApiOperation(
             value = "List all contacts from Contacts search",
-            notes = "List contacts for emailid, lastname, firstname, username.",
+            notes = "List contacts for emailid, username.",
             tags = {"Contacts"},
             extensions = {
             @Extension(properties = {
@@ -935,14 +935,12 @@ public class GOBIIControllerV1 {
     })
     @RequestMapping(
             value = "/contact-search",
-            params = {"email", "lastName", "firstName", "userName"},
+            params = {"email", "userName"},
             method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContactsBySearch(
-            @ApiParam(value = "contact's email", required = true) @RequestParam("email") String email,
-            @ApiParam(value = "contact's last name", required = true) @RequestParam("lastName") String lastName,
-            @ApiParam(value = "contact's first name", required = true) @RequestParam("firstName") String firstName,
-            @ApiParam(value = "contact's user name", required = true) @RequestParam("userName") String userName,
+            @ApiParam(value = "contact's email", required = false) @RequestParam(name = "email", required = false) String email,
+            @ApiParam(value = "contact's user name", required = false) @RequestParam(name = "userName", required = false) String userName,
             HttpServletRequest request,
             HttpServletResponse response) {
 
