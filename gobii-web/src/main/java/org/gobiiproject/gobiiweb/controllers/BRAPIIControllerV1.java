@@ -967,9 +967,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (dnaRunList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(dnaRunList.size());
+                payload.getMetadata().getPagination().setPageSize(dnaRunList.size());
                 if(dnaRunList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             dnaRunList.get(dnaRunList.size() - 1).getCallSetDbId().toString()
                     );
                 }
@@ -1126,9 +1126,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
 
             if (genotypeCallsList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
                 if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantDbId().toString()
                     );
                 }
@@ -1254,9 +1254,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (markerList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(markerList.size());
+                payload.getMetadata().getPagination().setPageSize(markerList.size());
                 if (markerList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             markerList.get(markerList.size() -1).getVariantDbId().toString()
                     );
                 }
@@ -1362,9 +1362,9 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
 
-            payload.getMetaData().getPagination().setCurrentPage(page);
+            payload.getMetadata().getPagination().setCurrentPage(page);
 
-            payload.getMetaData().getPagination().setPageSize(pageSize);
+            payload.getMetadata().getPagination().setPageSize(pageSize);
 
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
@@ -1404,9 +1404,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
 
 
-            payload.getMetaData().getPagination().setCurrentPage(page);
+            payload.getMetadata().getPagination().setCurrentPage(page);
 
-            payload.getMetaData().getPagination().setPageSize(pageSize);
+            payload.getMetadata().getPagination().setPageSize(pageSize);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
@@ -1462,8 +1462,8 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
 
 
-            payload.getMetaData().getPagination().setCurrentPage(page);
-            payload.getMetaData().getPagination().setPageSize(pageSize);
+            payload.getMetadata().getPagination().setCurrentPage(page);
+            payload.getMetadata().getPagination().setPageSize(pageSize);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
@@ -1563,9 +1563,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
 
             if (genotypeCallsList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
                 if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantSetDbId().toString() +
                                     "-" +
                             genotypeCallsList.get(genotypeCallsList.size() - 1).getCallSetDbId().toString()
@@ -1683,9 +1683,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (dataSetBrapiDTOList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(dataSetBrapiDTOList.size());
+                payload.getMetadata().getPagination().setPageSize(dataSetBrapiDTOList.size());
                 if (dataSetBrapiDTOList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             dataSetBrapiDTOList.get(dataSetBrapiDTOList.size() - 1).getVariantSetDbId().toString()
                     );
                 }
@@ -1856,9 +1856,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (markerList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(markerList.size());
+                payload.getMetadata().getPagination().setPageSize(markerList.size());
                 if (markerList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             markerList.get(markerList.size() -1).getVariantDbId().toString()
                     );
                 }
@@ -1965,9 +1965,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (dnaRunList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(dnaRunList.size());
+                payload.getMetadata().getPagination().setPageSize(dnaRunList.size());
                 if (dnaRunList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             dnaRunList.get(dnaRunList.size() -1).getCallSetDbId().toString()
                     );
                 }
@@ -2113,9 +2113,9 @@ public class BRAPIIControllerV1 {
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (genotypeCallsList.size() > 0) {
-                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
                 if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             genotypeCallsService.getNextPageToken());
                 }
             }

@@ -106,9 +106,9 @@ public class SampleTrackingController {
 
 
             if(projectsList.size() > 0 ) {
-                payload.getMetaData().getPagination().setPageSize(projectsList.size());
+                payload.getMetadata().getPagination().setPageSize(projectsList.size());
                 if(projectsList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
+                    payload.getMetadata().getPagination().setNextPageToken(
                             projectsList.get(projectsList.size() - 1).getProjectId().toString());
                 }
             }
