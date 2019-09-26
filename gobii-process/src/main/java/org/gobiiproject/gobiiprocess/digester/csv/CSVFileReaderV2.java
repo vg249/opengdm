@@ -79,7 +79,6 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             for (GobiiLoaderInstruction loaderInstruction : procedure.getInstructions()) {
                 if (matrixInstruction == null && isMatrixInstruction(loaderInstruction)) {
                     matrixInstruction = loaderInstruction;
-                    GobiiFileReader.isMarkerFast = isMarkerFast(matrixInstruction.getGobiiFileColumns().get(0));
                     continue;//Skip processing until after all intermediate files
                 }
                 reader = new CSVFileReaderV2(loaderScriptPath);
@@ -523,21 +522,6 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 maxRowNo = gobiiFileColumn.getrCoord();
         }
         return maxRowNo;
-    }
-    private static boolean isMarkerFast(GobiiFileColumn gfc){
-        if(gfc!=null){
-            if(gfc.getDataSetOrientationType().equals(DatasetOrientationType.MARKER_FAST)){
-                return true;
-            }
-            if(gfc.getDataSetOrientationType().equals(DatasetOrientationType.SAMPLE_FAST)){
-                return false;
-            }
-            ErrorLogger.logError("FileReader","File column Dataset Orientation invalid");
-            return false;
-        }
-        else {
-            ErrorLogger.logError("FileReader", "File column is null");
-        }
     }
 }
 

@@ -83,31 +83,41 @@ public class TransposeMatrix {
      * @return success
      */
     protected static boolean transposeMatrix(String sep, String iFile, String oFile){
-        int lineNumber = lineCount(iFile);
+        //TODO; debugging trace
+        ErrorLogger.logTrace("TransposeMatrix", "\nInFile: " + iFile+ "\n" + "OutFile: " + iFile);
+        int lineNumber = lineCount(iFile);//Todo - line count doesn't equate to buffered read line list, wc -l could be more or less 'lines'
         int lineNo=0, colNo=0;
         String inLine;
         int columnNumber = getColumnNumber(iFile, sep);
         if(columnNumber < 0){
             ErrorLogger.logError("Transpose Matrix", "Input file does not contain any content.\n");
         }
-        String[][] Matrix = new String[columnNumber][lineNumber];
-        try(BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile));
-            BufferedReader buffIn=new BufferedReader(new FileReader(iFile))){
+        String[][] matrix = new String[columnNumber][lineNumber];
+        try{
+            BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile));
+            BufferedReader buffIn=new BufferedReader(new FileReader(iFile));
             while ((inLine = buffIn.readLine()) != null){
                 String [] iBase = inLine.split(sep);
                 colNo = 0;
                 for (String base:iBase){
-                    Matrix[colNo][lineNo] = base;
+                    matrix[colNo][lineNo] = base;
                     colNo++;
                 }
                 lineNo++;
+                if(lineNo > lineNumber){
+                    ErrorLogger.logWarning("TransposeMatrix", "Lines in file exceeded 'linecount'");
+                    break;
+                }
             }
             for (int i = 0; i < colNo; i++) {
-                buffOut.write(StringUtils.join(Matrix[i], sep));
+                buffOut.write(StringUtils.join(matrix[i], sep));
                 buffOut.newLine();
             }
             endTime = System.currentTimeMillis();
             duration = endTime-startTime;
+            buffOut.flush();
+            buffOut.close();
+            buffIn.close();
             ErrorLogger.logTrace("Transpose Matrix","Time taken" + "(" + iFile + "):" + duration/1000 + " Seconds");
             return true;
         } catch (FileNotFoundException e){
