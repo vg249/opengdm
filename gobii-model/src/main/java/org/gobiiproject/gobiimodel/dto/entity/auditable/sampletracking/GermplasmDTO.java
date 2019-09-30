@@ -12,9 +12,6 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by VCalaminos on 5/3/2019.
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "allowedProcessTypes", "entityNameType", "id"
@@ -33,13 +30,10 @@ public class GermplasmDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "externalCode", entity = Germplasm.class)
     private String externalCode;
 
-    @GobiiEntityMap(paramName = "germplasm_species", cvGroup = CvGroup.CVGROUP_GERMPLASM_SPECIES)
     private String germplasmSpecies;
 
-    @GobiiEntityMap(paramName = "germplasm_type", cvGroup = CvGroup.CVGROUP_GERMPLASM_TYPE)
     private String germplasmType;
 
-    @GobiiEntityMap(paramName = "germplasm_type", cvGroup = CvGroup.CVGROUP_GERMPLASM_PROP)
     private Map<String, String> properties = new HashMap<>();
 
     public GermplasmDTO() { super(GobiiEntityNameType.GERMPLASM); }

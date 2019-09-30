@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
@@ -45,7 +46,7 @@ import java.util.Map;
 
 @Scope(value="request")
 @RestController
-@RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
+@RequestMapping(GobiiControllerType.SERVICE_PATH_SAMPLE_TRACKING)
 public class SampleTrackingController {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SampleTrackingController.class);
@@ -484,7 +485,7 @@ public class SampleTrackingController {
 
                     String dtoProp = sampleMetaData.getMap().get(columnHeader);
 
-                    if(dtoEntityMap.containsKey(dtoProp)) {
+                    if(dtoEntityMap.containsKey(dtoProp) && dtoEntityMap.get(dtoProp) != null) {
 
                         entityField = dtoEntityMap.get(dtoProp);
 
@@ -498,7 +499,7 @@ public class SampleTrackingController {
 
                             entityField.setColumnName("49");
 
-                            entityField.setTableName("germplasm_props");
+                            entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
 
                         }
                         else if (dtoProp.substring(dtoProp.lastIndexOf(".")) == "properties"
@@ -508,10 +509,26 @@ public class SampleTrackingController {
 
                             entityField.setColumnName("50");
 
-                            entityField.setTableName("dnasample_props");
+                            entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
 
                         }
+                        else if (dtoProp == "germplasmSpecies") {
 
+                            entityField = new EntityFieldBean();
+
+                            entityField.setColumnName("species_name");
+
+                            entityField.setTableName("germplasm");
+
+                        }
+                        else if(dtoProp == "germplasmType") {
+
+                            entityField = new EntityFieldBean();
+
+                            entityField.setColumnName("type_name");
+
+                            entityField.setTableName("germplasm");
+                        }
                     }
 
                 }
@@ -528,11 +545,13 @@ public class SampleTrackingController {
 
                     gobiiFileColumn.setName(entityField.getColumnName());
 
-                    gobiiFileColumn.setCCoord(i + 1);
+                    gobiiFileColumn.setCCoord(i);
 
-                    gobiiFileColumn.setRCoord(2);
+                    gobiiFileColumn.setRCoord(1);
 
                     gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
+
+                    gobiiFileColumn.setSubcolumn(false);
 
                     if(entityField.getTableName() != null) {
 

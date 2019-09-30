@@ -41,12 +41,12 @@ public class Germplasm extends BaseEntity {
         this.externalCode = externalCode;
     }
 
-    public Integer getSpeciesId() {
-        return germplasmSpeciesId;
+    public Cv getSpeciesId() {
+        return germplasmSpecies;
     }
 
-    public void setSpeciesId(Integer speciesId) {
-        this.germplasmSpeciesId = speciesId;
+    public void setSpeciesId(Cv species) {
+        this.germplasmSpecies = species;
     }
 
     public Integer getGermplasmTypeId() {
@@ -93,7 +93,7 @@ public class Germplasm extends BaseEntity {
     public String externalCode;
 
     @Column(name="species_id")
-    public Integer germplasmSpeciesId;
+    public Cv germplasmSpecies;
 
     @Column(name="type_id")
     public Integer germplasmTypeId;
