@@ -23,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
@@ -125,37 +122,10 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     }
 
     @Override
-    public List<ProjectDTO> getProjects() throws GobiiDomainException {
+    public List<ProjectDTO> getProjectsForLoadedDatasets() throws GobiiDomainException {
 
         List<ProjectDTO> returnVal = null;
 
-        return returnVal;
-    }
-
-    public List<ProjectDTO> getProjects(Integer pageToken, Integer pageSize) {
-
-        List<ProjectDTO> returnVal;
-
-        try {
-
-            returnVal = dtoMapSampleTrackingProject.getList(pageToken, pageSize);
-
-        }
-        catch (GobiiException gE) {
-
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-
-            throw new GobiiDomainException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage()
-            );
-
-        }
-        catch(Exception e) {
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
         return returnVal;
     }
 
@@ -206,12 +176,69 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         }
     }
 
+    @Override
+    public List<ProjectDTO> getProjects() {
+        List<ProjectDTO> returnVal = new ArrayList<>();
+        return returnVal;
+    }
 
 
     @Override
-    public List<ProjectDTO> getProjectsForLoadedDatasets() {
-        List<ProjectDTO> returnVal = null;
-        return returnVal;
+    public List<ProjectDTO> getProjects(Integer pageNum, Integer pageSize) {
+        List<ProjectDTO> returnVal = new ArrayList<>();
+
+        try {
+
+
+            List<Project> projectList = projectDao.listProjects(0, 1000, null);
+
+            List<Cv> cvList = cvDao.getCvListByCvGroup(
+                    CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+
+            List<Cv> cvStatusList = cvDao.getCvListByCvGroup(
+                    CvGroup.CVGROUP_STATUS.getCvGroupName(), null);
+
+            Map<Integer, String> cvStatusMap = new HashMap<>();
+
+            for(Cv cvStatus : cvStatusList) {
+                cvStatusMap.put(cvStatus.getCvId(), cvStatus.getTerm());
+            }
+
+            for(Project project : projectList) {
+                if (project != null) {
+
+                    ProjectDTO projectDto = new ProjectDTO();
+
+                    ModelMapper.mapEntityToDto(project, projectDto);
+
+                    String projectStatus = cvStatusMap.getOrDefault(project.getProjectStatus(), null);
+
+                    if (projectStatus != null) {
+                        projectDto.setProjectStatus(projectStatus);
+                    }
+
+                    if (project.getProperties() != null && project.getProperties().size() > 0) {
+                        projectDto.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.properties));
+                    }
+
+                    returnVal.add(projectDto);
+                }
+            }
+
+            return returnVal;
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
     }
 
 }

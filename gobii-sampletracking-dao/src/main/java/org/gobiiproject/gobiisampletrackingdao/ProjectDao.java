@@ -11,7 +11,7 @@ public interface ProjectDao {
     Integer createProject(Project newProject);
     Project getProjectById(Integer projectId);
     Project getProjectByName(String projectName);
-    List<Project> listProjects(Map<String, String> projectQuery);
+    List<Project> listProjects(Integer pageNum, Integer pageSize, Map<String, String> projectQuery);
     Integer updateProject(Project newProject);
 
 }

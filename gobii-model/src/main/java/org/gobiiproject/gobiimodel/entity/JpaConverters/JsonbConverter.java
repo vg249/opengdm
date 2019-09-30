@@ -55,11 +55,18 @@ public class JsonbConverter implements AttributeConverter<JsonNode, Object> {
 
         try {
 
-            String jsonString = ((PGobject) jsonObject).getValue();
 
             ObjectMapper objectMapper = new ObjectMapper();
 
-            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            JsonNode jsonNode = objectMapper.createObjectNode();
+
+
+            if(jsonObject != null) {
+
+                String jsonString = ((PGobject) jsonObject).getValue();
+
+                jsonNode = objectMapper.readTree(jsonString);
+            }
 
             return  jsonNode;
         }

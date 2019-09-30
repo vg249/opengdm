@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMasterPayload<T> {
 
-    private BrApiMetaData metaData;
+    private BrApiMetaData metaData = new BrApiMetaData();
     private T result;
 
     public BrApiMasterPayload(T result) {

@@ -147,39 +147,14 @@ public class SampleTrackingController {
     ) {
         try {
 
-            Integer pageToken = null;
 
-            if(pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                }
-                catch(Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid Page Token");
-                }
-            }
-
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_PROJECTS,
-                    RestMethodType.GET);
-
-            if(pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects(pageToken, pageSize);
+            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects(0, 1000);
 
             BrApiMasterPayload<List<ProjectDTO>> payload = new BrApiMasterPayload<>(projectsList);
 
 
             if(projectsList.size() > 0 ) {
                 payload.getMetaData().getPagination().setPageSize(projectsList.size());
-                if(projectsList.size() >= pageSize) {
-                    payload.getMetaData().getPagination().setNextPageToken(
-                            projectsList.get(projectsList.size() - 1).getProjectId().toString());
-                }
             }
 
             return ResponseEntity.ok(payload);

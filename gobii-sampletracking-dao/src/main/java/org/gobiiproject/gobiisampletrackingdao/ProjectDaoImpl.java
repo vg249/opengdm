@@ -158,8 +158,25 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     @Override
-    public List<Project> listProjects(Map<String, String> projectQuery) {
+    public List<Project> listProjects(Integer pageNum, Integer pageSize, Map<String, String> projectQuery) {
         List<Project> projectList = new ArrayList<>();
+        try {
+
+            projectList = em
+                    .createNativeQuery(
+                            "SELECT * FROM project", Project.class)
+                    .getResultList();
+
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+        }
+
         return projectList;
     }
 

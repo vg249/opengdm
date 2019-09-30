@@ -10,7 +10,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMetaData {
 
-    private BrApiPagination pagination;
+    private BrApiPagination pagination = new BrApiPagination();
 
     @JsonUnwrapped
     private List<BrApiStatus> status;
