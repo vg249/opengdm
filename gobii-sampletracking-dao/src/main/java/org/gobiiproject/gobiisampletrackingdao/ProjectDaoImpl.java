@@ -80,16 +80,25 @@ public class ProjectDaoImpl implements ProjectDao {
         catch (ConstraintViolationException constraintViolation) {
 
             String errorMsg;
+
             GobiiValidationStatusType statusType = GobiiValidationStatusType.BAD_REQUEST;
+
             // Postgresql error code for Unique Constraint Violation is 23505
             if(constraintViolation.getSQLException() != null) {
+
                 if(constraintViolation.getSQLException().getSQLState().equals("23505")) {
+
                     statusType = GobiiValidationStatusType.ENTITY_ALREADY_EXISTS;
+
                     errorMsg = "Project already exists";
+
                 }
                 else {
+
                     errorMsg = "Bad request";
+
                 }
+
             }
             else {
                 errorMsg = constraintViolation.getMessage();
