@@ -171,7 +171,8 @@ class ValidationUtil {
         if (!verifyEqualSizeColumn(failureList, fileColumns)) return;
 
         List<String> concatList = new ArrayList<>();
-        for (int i = 0; i < fileColumns.get(0).size(); i++) {
+        int size = fileColumns.get(0).size();//only calculate loop size once
+        for (int i = 0; i < size; i++) {
             StringBuilder value = new StringBuilder();
             for (List<String> column : fileColumns) {
                 if (value.toString().equals("")) value = new StringBuilder(column.get(i));
