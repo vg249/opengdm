@@ -190,7 +190,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         try {
 
 
-            List<Project> projectList = projectDao.listProjects(0, 1000, null);
+            List<Project> projectList = projectDao.listProjects(pageNum, pageSize, null);
 
             List<Cv> cvList = cvDao.getCvListByCvGroup(
                     CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
@@ -205,6 +205,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             }
 
             for(Project project : projectList) {
+
                 if (project != null) {
 
                     ProjectDTO projectDto = new ProjectDTO();

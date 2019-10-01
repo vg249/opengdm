@@ -159,12 +159,22 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Override
     public List<Project> listProjects(Integer pageNum, Integer pageSize, Map<String, String> projectQuery) {
+
         List<Project> projectList = new ArrayList<>();
+
         try {
+
+            if(pageNum == null || pageSize == null) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        "Required page size and page number.");
+            }
 
             projectList = em
                     .createNativeQuery(
-                            "SELECT * FROM project", Project.class)
+                            "SELECT * FROM project LIMIT ? OFFSET ? ", Project.class)
+                    .setParameter(1, pageSize)
+                    .setParameter(2, pageNum*pageSize)
                     .getResultList();
 
         }

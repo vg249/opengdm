@@ -116,7 +116,6 @@ public class SampleTrackingController {
     /**
      * Lists the projects by page size and page token.
      *
-     * @param pageTokenParam - String page token.
      * @param pageSize - Page Size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size.
      * @param pageNum - Page number for the list defined by pageSize.
@@ -141,21 +140,31 @@ public class SampleTrackingController {
     @RequestMapping(value="/projects", method= RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity listProjects(
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "pageNum", required = false) Integer pageNum
     ) {
         try {
 
-
-            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects(0, 1000);
-
-            BrApiMasterPayload<List<ProjectDTO>> payload = new BrApiMasterPayload<>(projectsList);
-
-
-            if(projectsList.size() > 0 ) {
-                payload.getMetaData().getPagination().setPageSize(projectsList.size());
+            if(pageSize == null) {
+                //Default Brapi Page Size.
+                //TODO: Add it to the Gobii Web XML resource limit
+                pageSize = 1000;
             }
+
+            if(pageNum == null) {
+                pageNum = 0;
+            }
+
+            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects(pageNum, pageSize);
+
+            Map<String, List<ProjectDTO>> brapiDataList = new HashMap<>();
+            brapiDataList.put("data", projectsList);
+
+            BrApiMasterPayload<Object> payload = new BrApiMasterPayload<>(brapiDataList);
+
+
+            payload.getMetaData().getPagination().setPageSize(pageSize);
+            payload.getMetaData().getPagination().setCurrentPage(pageNum);
 
             return ResponseEntity.ok(payload);
 
