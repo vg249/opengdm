@@ -1,14 +1,13 @@
 package org.gobiiproject.gobiimodel.entity;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Model for Experiment Entity.
  * Represents database table Experiment.
  */
+@Entity
+@Table(name = "experiment")
 public class Experiment extends BaseEntity{
 
 
@@ -71,24 +70,35 @@ public class Experiment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "experiment_name")
-    public Integer experimentId;
+    private Integer experimentId;
 
     @Column(name="name")
-    public String experimentName;
+    private String experimentName;
 
     @Column(name="code")
-    public String experimentCode;
+    private String experimentCode;
 
     @Column(name="project_id")
-    public Integer projectId;
+    private Integer projectId;
 
     @Column(name="manifest_id")
-    public Integer manifestId;
+    private Integer manifestId;
 
     @Column(name="data_file")
-    public String dataFile;
+    private String dataFile;
 
     @Column(name="vendor_protocol_id")
-    public Integer vendorProtocolId;
+    private Integer vendorProtocolId;
+
+    public Integer getExperimentStatus() {
+        return experimentStatus;
+    }
+
+    public void setExperimentStatus(Integer experimentStatus) {
+        this.experimentStatus = experimentStatus;
+    }
+
+    @Column(name = "status")
+    private Integer experimentStatus;
 
 }

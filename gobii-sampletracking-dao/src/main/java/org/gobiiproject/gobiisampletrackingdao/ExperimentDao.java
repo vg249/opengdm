@@ -4,5 +4,5 @@ import org.gobiiproject.gobiimodel.entity.Experiment;
 
 public interface ExperimentDao {
 
-    Integer createExperiment(Experiment);
+    Integer createExperiment(Experiment experiment);
 }

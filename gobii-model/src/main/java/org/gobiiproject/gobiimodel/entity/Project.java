@@ -24,26 +24,26 @@ public class Project extends BaseEntity {
     @Id
     @Column(name="project_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer projectId;
+    private Integer projectId;
 
     @Column(name="name")
-    public String projectName;
+    private String projectName;
 
     @Column(name="pi_contact")
-    public Integer piContactId;
+    private Integer piContactId;
 
     @Column(name="code")
-    public String projectCode;
+    private String projectCode;
 
     @Column(name="description")
-    public String projectDescription;
+    private String projectDescription;
 
     @Column(name="status")
-    public Integer projectStatus;
+    private Integer projectStatus;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
-    public JsonNode properties = JsonNodeFactory.instance.objectNode();
+    private JsonNode properties = JsonNodeFactory.instance.objectNode();
 
     public Integer getProjectId() {
         return this.projectId;

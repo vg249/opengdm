@@ -61,16 +61,16 @@ public class ProjectDaoImpl implements ProjectDao {
         try {
 
             SpDef spDef = new SpDef("{call createprojectwithprops(?,?,?,?,?,?,?,?,?,?)}")
-                    .addParamDef(1, String.class, newProject.projectName)
-                    .addParamDef(2, String.class, newProject.projectCode)
-                    .addParamDef(3, String.class, newProject.projectDescription)
-                    .addParamDef(4, Integer.class, newProject.piContactId)
-                    .addParamDef(5, Integer.class, newProject.createdBy)
-                    .addParamDef(6, Date.class, newProject.createdDate)
-                    .addParamDef(7, Integer.class, newProject.modifiedBy)
-                    .addParamDef(8, Date.class, newProject.modifiedDate)
-                    .addParamDef(9, Integer.class, newProject.projectStatus)
-                    .addParamDef(10, JsonNode.class, newProject.properties);
+                    .addParamDef(1, String.class, newProject.getProjectName())
+                    .addParamDef(2, String.class, newProject.getProjectCode())
+                    .addParamDef(3, String.class, newProject.getProjectDescription())
+                    .addParamDef(4, Integer.class, newProject.getPiContactId())
+                    .addParamDef(5, Integer.class, newProject.getCreatedBy())
+                    .addParamDef(6, Date.class, newProject.getCreatedDate())
+                    .addParamDef(7, Integer.class, newProject.getModifiedBy())
+                    .addParamDef(8, Date.class, newProject.getModifiedDate())
+                    .addParamDef(9, Integer.class, newProject.getProjectStatus())
+                    .addParamDef(10, JsonNode.class, newProject.getProperties());
 
             spWorker.run(spDef);
 
@@ -95,7 +95,7 @@ public class ProjectDaoImpl implements ProjectDao {
                 }
                 else {
 
-                    errorMsg = "Bad request";
+                    errorMsg = "Invalid request or Missing Required fields.";
 
                 }
 

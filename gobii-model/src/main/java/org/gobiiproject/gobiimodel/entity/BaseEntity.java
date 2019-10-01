@@ -8,16 +8,16 @@ import java.util.Date;
 public class BaseEntity {
 
     @Column(name="created_by")
-    public Integer createdBy;
+    private Integer createdBy;
 
     @Column(name="created_date")
-    public Date createdDate;
+    private Date createdDate;
 
     @Column(name="modified_by")
-    public Integer modifiedBy;
+    private Integer modifiedBy;
 
     @Column(name="modified_date")
-    public Date modifiedDate;
+    private Date modifiedDate;
 
     public Integer getCreatedBy() {
         return createdBy;
