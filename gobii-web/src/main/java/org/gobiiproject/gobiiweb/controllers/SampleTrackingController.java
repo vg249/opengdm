@@ -7,6 +7,7 @@ import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.SampleService;
+import org.gobiiproject.gobidomain.services.impl.sampletracking.ExperimentServiceImpl;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
@@ -26,6 +27,7 @@ import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -55,7 +57,7 @@ public class SampleTrackingController {
     private ProjectService<ProjectDTO> sampleTrackingProjectService = null;
 
     @Autowired
-    private ExperimentService<ExperimentDTO> sampleTrackingExperimentService = null;
+    private ExperimentServiceImpl sampleTrackingExperimentService = null;
 
     /**
      * Authenticates the User.
@@ -321,12 +323,28 @@ public class SampleTrackingController {
             @ApiParam(hidden = true)
             @RequestPart(name = "dataFile", required = false) MultipartFile dataFile,
             @ApiParam(hidden = true)
-            @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment){
+            @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment,
+            HttpServletRequest request) {
+
+
         try {
+
+            byte[] dataFileBytes = dataFile.getBytes();
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            String dataFileName = dataFile.getName();
+
+            if(dataFileName.isEmpty()) {
+                dataFileName = "experimentDataFile";
+            }
+
+            sampleTrackingExperimentService.saveExperimentDataFile(cropType, dataFileName, dataFileBytes);
 
             sampleTrackingExperimentService.createExperiment(newExperiment);
 
             return ResponseEntity.ok(newExperiment);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
