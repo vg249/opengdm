@@ -29,8 +29,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
     Logger LOGGER = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
-    @Autowired
-    private DtoMapProject dtoMapSampleTrackingProject = null;
 
     @Autowired
     private ContactService contactService;
@@ -157,7 +155,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             if(project.getProperties() != null && project.getProperties().size() > 0) {
                 List<Cv> cvList = cvDao.getCvListByCvGroup(
                         CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
-                returnVal.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.properties));
+                returnVal.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.getProperties()));
             }
 
             return returnVal;
@@ -219,7 +217,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
                     }
 
                     if (project.getProperties() != null && project.getProperties().size() > 0) {
-                        projectDto.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.properties));
+                        projectDto.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.getProperties()));
                     }
 
                     returnVal.add(projectDto);

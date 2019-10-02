@@ -392,6 +392,9 @@
     <!-- **** New Project DAO for sample tracking use cases -->
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
 
+    <!-- **** New Experiment DAO for sample tracking use cases -->
+    <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
+
     <!-- **** New CV DAO for sample tracking use cases -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 

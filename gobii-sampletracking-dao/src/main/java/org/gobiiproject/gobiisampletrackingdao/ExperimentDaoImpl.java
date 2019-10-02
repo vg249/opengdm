@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 public class ExperimentDaoImpl implements ExperimentDao {
 
@@ -95,4 +96,45 @@ public class ExperimentDaoImpl implements ExperimentDao {
         return returnVal;
 
     }
+
+    @Override
+    public Experiment getExperimentById(Integer experimentId) {
+
+        List<Experiment> experimentList;
+
+        try {
+
+            experimentList = em
+                    .createNativeQuery(
+                            "SELECT * FROM experiment WHERE experiment_id = ?", Experiment.class)
+                    .setParameter(1, experimentId)
+                    .getResultList();
+
+
+
+            if (experimentList.size() == 0) {
+                return null;
+            } else if (experimentList.size() > 1) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
+                        "Multiple resources found. Violation of Unique Experiment Id constraint." +
+                                " Please contact your Data Administrator to resolve this. " +
+                                "Changing underlying database schemas and constraints " +
+                                "without consulting GOBii Team is not recommended.");
+
+            }
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+        }
+
+        return experimentList.get(0);
+
+    }
+
 }

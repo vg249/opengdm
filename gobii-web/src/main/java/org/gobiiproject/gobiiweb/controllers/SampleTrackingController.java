@@ -323,7 +323,9 @@ public class SampleTrackingController {
             @ApiParam(hidden = true)
             @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment){
         try {
+
             sampleTrackingExperimentService.createExperiment(newExperiment);
+
             return ResponseEntity.ok(newExperiment);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
