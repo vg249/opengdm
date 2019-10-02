@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -71,10 +69,14 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
         return returnVal;
     }
 
-
+    /**
+     * Saves experiment data file.
+     * @param cropType
+     * @param fileName
+     * @param dataFileBytes
+     * @return
+     */
     public String saveExperimentDataFile(String cropType, String fileName, byte[] dataFileBytes) {
-
-        BufferedReader bufferedReader;
 
         try {
 
@@ -82,12 +84,43 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
 
             String rawUserFilesPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
 
-            String experimentFileFolderName = UUID.randomUUID().toString().replace("-","");
+            String experimentFolderName = UUID.randomUUID().toString().replace("-","");
 
-            String experimentDataFilePath = (
+            String experimentFolderPath = (
                     LineUtils.terminateDirectoryPath(rawUserFilesPath) +
-                            experimentFileFolderName + "/" + fileName);
+                            experimentFolderName);
 
+            File dataFolder = new File(experimentFolderPath);
+
+            try {
+                dataFolder.mkdirs();
+            }
+            catch(Exception e) {
+                throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        "Unable to save experiment data file.");
+            }
+
+            String experimentDataFilePath = experimentFolderPath + "/" + fileName;
+
+            try {
+
+                File experimentFile = new File(experimentDataFilePath);
+
+                BufferedOutputStream stream = new BufferedOutputStream(
+                        new FileOutputStream(experimentFile));
+
+                stream.write(dataFileBytes);
+
+                stream.close();
+
+            } catch (IOException e) {
+                throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        "Unable to save experiment data file.");
+            }
 
 
             return  experimentDataFilePath;
@@ -102,7 +135,6 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
                     "Unable to save experiment data file.");
         }
 
-        return "";
     }
 
     @Override

@@ -336,7 +336,9 @@ public class SampleTrackingController {
             String dataFileName = dataFile.getName();
 
             if(dataFileName.isEmpty()) {
+
                 dataFileName = "experimentDataFile";
+
             }
 
             sampleTrackingExperimentService.saveExperimentDataFile(cropType, dataFileName, dataFileBytes);
