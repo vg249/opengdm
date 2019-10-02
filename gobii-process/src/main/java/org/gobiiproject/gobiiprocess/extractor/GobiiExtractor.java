@@ -481,6 +481,14 @@ public class GobiiExtractor {
 			            esw.addItem("Marker List", markerListFileLocation);
 		            }
 
+		            //Marker groups (spelled out, unlike marker and sample files)
+		            List<PropNameId> mGroup = extract.getMarkerGroups();
+		            if((mGroup!= null && !mGroup.isEmpty())){
+		            	List<String> markerGroupNames = mGroup.stream().map(PropNameId::getName).collect(Collectors.toList());
+		            	pm.addCriteria("Marker Group", String.join(", ",markerGroupNames));
+			            esw.addPropList("Marker Group", mGroup);
+		            }
+
 		            if (type != null) {
 			            pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
 		            }
