@@ -36,7 +36,6 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
     @Autowired
     private ContactService contactService;
 
-
     @Autowired
     private ExperimentDao experimentDao;
 
@@ -65,7 +64,10 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
             //Setting created date
             newExperiment.setCreatedDate(new Date(new Date().getTime()));
 
-            // Set the Status of the project as newly created by getting it respective cvId
+            //Experiment Code is a non null field in experiment entity
+            newExperiment.setExperimentCode(newExperimentDTO.getExperimentName());
+
+            // Set the Status of the experiment as newly created by getting it respective cvId
             List<Cv> statusCvList = cvDao.getCvsByCvTermAndCvGroup(
                     "new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
                     GobiiCvGroupType.GROUP_TYPE_SYSTEM);
@@ -79,6 +81,8 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
             }
 
             Integer newExperimentId = experimentDao.createExperiment(newExperiment);
+
+            returnVal.setExperimentId(newExperimentId);
 
         }
         catch(GobiiException gE) {
@@ -102,77 +106,6 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
         return returnVal;
     }
 
-    /**
-     * Saves experiment data file.
-     * @param cropType
-     * @param fileName
-     * @param dataFileBytes
-     * @return
-     */
-    public String saveExperimentDataFile(String cropType, String fileName, byte[] dataFileBytes) {
-
-        try {
-
-            ConfigSettings configSettings = new ConfigSettings();
-
-            String rawUserFilesPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
-
-            String experimentFolderName = UUID.randomUUID().toString().replace("-","");
-
-            String experimentFolderPath = (
-                    LineUtils.terminateDirectoryPath(rawUserFilesPath) +
-                            experimentFolderName);
-
-            File dataFolder = new File(experimentFolderPath);
-
-            try {
-
-                dataFolder.mkdirs();
-
-            }
-            catch(Exception e) {
-
-                throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.UNKNOWN,
-                        "Unable to save experiment data file.");
-
-            }
-
-            String experimentDataFilePath = experimentFolderPath + "/" + fileName;
-
-            try {
-
-                File experimentFile = new File(experimentDataFilePath);
-
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(experimentFile));
-
-                stream.write(dataFileBytes);
-
-                stream.close();
-
-            } catch (IOException e) {
-                throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.UNKNOWN,
-                        "Unable to save experiment data file.");
-            }
-
-
-            return  experimentDataFilePath;
-
-
-        }
-        catch(Exception e) {
-
-            throw new GobiiDomainException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Unable to save experiment data file.");
-        }
-
-    }
 
     @Override
     public ExperimentDTO replaceExperiment(Integer experimentId, ExperimentDTO experimentDTO) throws GobiiDomainException {

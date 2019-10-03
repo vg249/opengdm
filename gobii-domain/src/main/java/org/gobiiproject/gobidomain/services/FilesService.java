@@ -31,5 +31,7 @@ public interface FilesService {
                             String fileName,
                             GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception;
 
+    String writeExperimentDataFile(String cropType, String fileName, byte[] dataFileBytes) throws Exception;
+
 
 }

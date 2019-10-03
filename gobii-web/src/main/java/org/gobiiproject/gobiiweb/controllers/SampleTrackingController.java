@@ -3,10 +3,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.primitives.Bytes;
 import io.swagger.annotations.*;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.SampleService;
+import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobidomain.services.impl.sampletracking.ExperimentServiceImpl;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -58,6 +55,9 @@ public class SampleTrackingController {
 
     @Autowired
     private ExperimentServiceImpl sampleTrackingExperimentService = null;
+
+    @Autowired
+    private FilesService fileService = null;
 
     /**
      * Authenticates the User.
@@ -324,8 +324,9 @@ public class SampleTrackingController {
             @RequestPart(name = "dataFile", required = false) MultipartFile dataFile,
             @ApiParam(hidden = true)
             @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment,
-            HttpServletRequest request) {
+            HttpServletRequest request)  throws GobiiException {
 
+        newExperiment = sampleTrackingExperimentService.createExperiment(newExperiment);
 
         try {
 
@@ -341,14 +342,17 @@ public class SampleTrackingController {
 
             }
 
-            sampleTrackingExperimentService.saveExperimentDataFile(cropType, dataFileName, dataFileBytes);
-
-            sampleTrackingExperimentService.createExperiment(newExperiment);
+            String dataFilePath = fileService.writeExperimentDataFile(cropType, dataFileName, dataFileBytes);
 
             return ResponseEntity.ok(newExperiment);
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+        catch (Exception e) {
+
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal server error.");
         }
     }
 

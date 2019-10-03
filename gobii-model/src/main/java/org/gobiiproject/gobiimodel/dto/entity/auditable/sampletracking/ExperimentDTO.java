@@ -61,9 +61,9 @@ public class ExperimentDTO extends DTOBaseAuditable {
 
     public void setExperimentId(Integer id) { this.experimentId = id; }
 
-    public String getName() { return this.experimentName; }
+    public String getExperimentName() { return this.experimentName; }
 
-    public void setName(String name) { this.experimentName = name; }
+    public void setExperimentName(String name) { this.experimentName = name; }
 
     public String getCode() { return this.experimentCode; }
 

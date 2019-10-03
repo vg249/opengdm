@@ -11,11 +11,16 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructi
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 
 /**
@@ -142,5 +147,77 @@ public class FileServiceImpl implements FilesService {
         return returnVal;
     }
 
+    /**
+     * Saves experiment data file.
+     * @param cropType
+     * @param fileName
+     * @param dataFileBytes
+     * @return Path where the file is saved
+     */
+    @Override
+    public String writeExperimentDataFile(String cropType, String fileName, byte[] dataFileBytes) {
+
+        try {
+
+            ConfigSettings configSettings = new ConfigSettings();
+
+            String rawUserFilesPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
+
+            String experimentFolderName = UUID.randomUUID().toString().replace("-","");
+
+            String experimentFolderPath = (
+                    LineUtils.terminateDirectoryPath(rawUserFilesPath) +
+                            experimentFolderName);
+
+            File dataFolder = new File(experimentFolderPath);
+
+            try {
+
+                dataFolder.mkdirs();
+
+            }
+            catch(Exception e) {
+
+                throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        "Unable to save experiment data file.");
+
+            }
+
+            String experimentDataFilePath = experimentFolderPath + "/" + fileName;
+
+            try {
+
+                File experimentFile = new File(experimentDataFilePath);
+
+                BufferedOutputStream stream = new BufferedOutputStream(
+                        new FileOutputStream(experimentFile));
+
+                stream.write(dataFileBytes);
+
+                stream.close();
+
+            } catch (IOException e) {
+                throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        "Unable to save experiment data file.");
+            }
+
+
+            return  experimentDataFilePath;
+
+
+        }
+        catch(Exception e) {
+
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Unable to save experiment data file.");
+        }
+
+    }
 
 } // ExtractorInstructionFileServiceImpl
