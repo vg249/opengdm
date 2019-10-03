@@ -137,4 +137,39 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
     }
 
+    /**
+     * Updates the Experiment with given datafile path by experimentId.
+     * @param experimentId - Id of the experiment to be updated.
+     * @param dataFilePath - data file path that needs to be added.
+     * @return number of records updated.
+     */
+    @Override
+    @Transactional
+    public Integer updateExperimentDataFile(Integer experimentId, String dataFilePath) {
+
+        Integer updatedRecords = 0;
+
+        try {
+
+            updatedRecords = em
+                    .createNativeQuery(
+                            "UPDATE experiment SET data_file = ? WHERE experiment_id = ?")
+                    .setParameter(1, dataFilePath)
+                    .setParameter(2, experimentId)
+                    .executeUpdate();
+
+            return updatedRecords;
+
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+        }
+
+    }
+
 }

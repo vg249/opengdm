@@ -3,6 +3,8 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
@@ -11,19 +13,17 @@ import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
-/**
- * Created by VCalaminos on 5/1/2019.
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType",
-        "dataFilePath", "dataFileUrl"
+        "dataFilePath"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExperimentDTO extends DTOBaseAuditable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="experimentId", entity = Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private int experimentId;
 
     @GobiiEntityMap(paramName="experimentName", entity= Experiment.class)
@@ -36,16 +36,19 @@ public class ExperimentDTO extends DTOBaseAuditable {
     private String dataFilePath;
 
     @GobiiEntityMap(paramName="projectId", entity= Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer projectId;
 
     @GobiiEntityMap(paramName="vendorProtocolId", entity= Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer vendorProtocolId;
 
     @GobiiEntityMap(paramName="manifestId", entity= Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer manifestId;
 
-    @GobiiEntityMap(paramName="experimentStatus", entity= Experiment.class)
-    private Integer experimentStatus;
+    //Mapped by cvStatus
+    private String experimentStatus;
 
     private String dataFileUrl;
 
@@ -89,8 +92,8 @@ public class ExperimentDTO extends DTOBaseAuditable {
 
     public void setManifestId(Integer manifestId) { this.manifestId = manifestId; }
 
-    public Integer getStatus() { return this.experimentStatus; }
+    public String getExperimentStatus() { return this.experimentStatus; }
 
-    public void setStatus(Integer status) { this.experimentStatus = status; }
+    public void setExperimentStatus(String status) { this.experimentStatus = status; }
 
 }

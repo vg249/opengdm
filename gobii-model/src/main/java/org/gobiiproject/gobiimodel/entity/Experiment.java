@@ -69,7 +69,7 @@ public class Experiment extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "experiment_name")
+    @Column(name = "experiment_id")
     private Integer experimentId;
 
     @Column(name="name")

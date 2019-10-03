@@ -82,7 +82,7 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
 
             Integer newExperimentId = experimentDao.createExperiment(newExperiment);
 
-            returnVal.setExperimentId(newExperimentId);
+            returnVal = this.getExperimentById(newExperimentId);
 
         }
         catch(GobiiException gE) {
@@ -106,7 +106,6 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
         return returnVal;
     }
 
-
     @Override
     public ExperimentDTO replaceExperiment(Integer experimentId, ExperimentDTO experimentDTO) throws GobiiDomainException {
         return experimentDTO;
@@ -125,9 +124,53 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
 
         ExperimentDTO returnVal = new ExperimentDTO();
 
+        try {
 
-        return returnVal;
+            Experiment experiment = experimentDao.getExperimentById(experimentId);
 
+            if (experiment == null) {
+
+                throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Experiment not found for given id.");
+            }
+
+            ModelMapper.mapEntityToDto(experiment, returnVal);
+
+            //Set Experiment Status by cvId
+            Cv statusCv = cvDao.getCvByCvId(experiment.getExperimentStatus());
+
+            if(statusCv != null) {
+                returnVal.setExperimentStatus(statusCv.getTerm());
+            }
+
+            return returnVal;
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+    }
+
+    public boolean updateExperimentDataFile(Integer experimentId, String dataFilePath) throws GobiiException {
+
+        Integer updatedRecords = 0;
+
+        updatedRecords = experimentDao.updateExperimentDataFile(experimentId, dataFilePath);
+
+        if(updatedRecords > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override

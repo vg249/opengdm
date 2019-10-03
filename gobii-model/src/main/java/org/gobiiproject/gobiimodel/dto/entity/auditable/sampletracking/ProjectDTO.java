@@ -3,6 +3,8 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -19,9 +21,11 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="projectId", entity = Project.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private int projectId;
 
     @GobiiEntityMap(paramName="piContactId", entity=Project.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer piContactId;
 
     @GobiiEntityMap(paramName="projectName", entity=Project.class)

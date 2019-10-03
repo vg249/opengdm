@@ -328,23 +328,33 @@ public class SampleTrackingController {
 
         newExperiment = sampleTrackingExperimentService.createExperiment(newExperiment);
 
+        if(dataFile == null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(newExperiment);
+        }
+
         try {
 
             byte[] dataFileBytes = dataFile.getBytes();
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            String dataFileName = dataFile.getName();
+            String dataFileName = dataFile.getOriginalFilename();
 
             if(dataFileName.isEmpty()) {
-
                 dataFileName = "experimentDataFile";
-
             }
 
             String dataFilePath = fileService.writeExperimentDataFile(cropType, dataFileName, dataFileBytes);
 
-            return ResponseEntity.ok(newExperiment);
+            boolean updateSuccess = sampleTrackingExperimentService.updateExperimentDataFile(
+                    newExperiment.getExperimentId(), dataFilePath);
+
+            if(updateSuccess) {
+                newExperiment.setDataFileUrl(request.getRequestURI() +
+                        "/" + newExperiment.getExperimentId() + "/" + dataFileName);
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(newExperiment);
 
         }
         catch (Exception e) {
@@ -384,10 +394,10 @@ public class SampleTrackingController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-
         try {
             ExperimentDTO experimentDTO = sampleTrackingExperimentService.getExperimentById(experimentId);
-            return ResponseEntity.ok(experimentDTO);
+            BrApiMasterPayload<ExperimentDTO> payload = new BrApiMasterPayload<>(experimentDTO);
+            return ResponseEntity.ok(payload);
         }
         catch (GobiiException gobiiE) {
             throw gobiiE;

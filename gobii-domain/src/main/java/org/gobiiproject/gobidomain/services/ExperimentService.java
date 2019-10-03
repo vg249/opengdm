@@ -20,5 +20,4 @@ public interface ExperimentService<T> {
     List<T> getExperiments() throws GobiiDomainException;
     T getExperimentById(Integer experimentId) throws GobiiDomainException;
     List<T> getExperimentsByProjectIdForLoadedDatasets(Integer experimentId) throws GobiiDomainException;
-
 }
