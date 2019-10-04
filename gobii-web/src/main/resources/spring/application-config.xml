@@ -313,6 +313,8 @@
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
     <bean id="sampleTrackingExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.sampletracking.ExperimentServiceImpl"/>
+    <bean id="sampleTrackingDnasampleService"
+          class="org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl"/>
 
 
     <!-- **** Analysis Beans *************************************** -->

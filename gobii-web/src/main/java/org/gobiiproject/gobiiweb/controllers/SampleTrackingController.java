@@ -57,6 +57,9 @@ public class SampleTrackingController {
     private ExperimentServiceImpl sampleTrackingExperimentService = null;
 
     @Autowired
+    private DnaSampleService sampleTrackingDnasampleService = null;
+
+    @Autowired
     private FilesService fileService = null;
 
     /**
@@ -332,6 +335,7 @@ public class SampleTrackingController {
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiment);
         }
 
+        //Save the data file.
         try {
 
             byte[] dataFileBytes = dataFile.getBytes();
@@ -348,11 +352,6 @@ public class SampleTrackingController {
 
             boolean updateSuccess = sampleTrackingExperimentService.updateExperimentDataFile(
                     newExperiment.getExperimentId(), dataFilePath);
-
-            if(updateSuccess) {
-                newExperiment.setDataFileUrl(request.getRequestURI() +
-                        "/" + newExperiment.getExperimentId() + "/" + dataFileName);
-            }
 
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiment);
 
@@ -474,125 +473,22 @@ public class SampleTrackingController {
             @RequestPart("sampleFile") MultipartFile sampleFile,
             @ApiParam(hidden = true)
             @RequestPart("sampleMetaData") SampleMetadataDTO sampleMetaData) {
-
-        InputStream is;
-
-        BufferedReader br;
-
-        Map<String, List<GobiiFileColumn>> fileColumnByTableMap = new HashMap<>();
-
         try {
+            InputStream is = sampleFile.getInputStream();
 
-            is = sampleFile.getInputStream();
+            sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData);
 
-            br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-
-            String fileHeader = br.readLine();
-
-            String[] fileHeaderList = fileHeader.split("\t");
-
-            Map<String, EntityFieldBean> dtoEntityMap = ModelMapper.getDtoEntityMap(DnaSampleDTO.class);
-
-            for(int i = 0; i < fileHeaderList.length; i++) {
-
-                GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
-
-                String columnHeader = fileHeaderList[i];
-
-                EntityFieldBean entityField = null;
-
-                if(sampleMetaData.getMap().containsKey(columnHeader)) {
-
-                    String dtoProp = sampleMetaData.getMap().get(columnHeader);
-
-                    if(dtoEntityMap.containsKey(dtoProp) && dtoEntityMap.get(dtoProp) != null) {
-
-                        entityField = dtoEntityMap.get(dtoProp);
-
-                    }
-                    else {
-
-                        if(dtoProp.substring(dtoProp.lastIndexOf(".")) == "properties"
-                                && dtoProp.substring(0, dtoProp.lastIndexOf(".")) == "germplasm") {
-
-                            entityField = new EntityFieldBean();
-
-                            entityField.setColumnName("49");
-
-                            entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
-
-                        }
-                        else if (dtoProp.substring(dtoProp.lastIndexOf(".")) == "properties"
-                                      && dtoProp.substring(0, dtoProp.lastIndexOf(".")) == "") {
-
-                            entityField = new EntityFieldBean();
-
-                            entityField.setColumnName("50");
-
-                            entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
-
-                        }
-                        else if (dtoProp == "germplasmSpecies") {
-
-                            entityField = new EntityFieldBean();
-
-                            entityField.setColumnName("species_name");
-
-                            entityField.setTableName("germplasm");
-
-                        }
-                        else if(dtoProp == "germplasmType") {
-
-                            entityField = new EntityFieldBean();
-
-                            entityField.setColumnName("type_name");
-
-                            entityField.setTableName("germplasm");
-                        }
-                    }
-
-                }
-                else {
-
-                    if(dtoEntityMap.containsKey(columnHeader)) {
-
-                        entityField = dtoEntityMap.get(columnHeader);
-
-                    }
-                }
-
-                if(entityField != null) {
-
-                    gobiiFileColumn.setName(entityField.getColumnName());
-
-                    gobiiFileColumn.setCCoord(i);
-
-                    gobiiFileColumn.setRCoord(1);
-
-                    gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
-
-                    gobiiFileColumn.setSubcolumn(false);
-
-                    if(entityField.getTableName() != null) {
-
-                        if (!fileColumnByTableMap.containsKey(entityField.getTableName())) {
-
-                            fileColumnByTableMap.put(entityField.getTableName(), new ArrayList<>());
-
-                        }
-
-                        fileColumnByTableMap.get(entityField.getTableName()).add(gobiiFileColumn);
-                    }
-
-                }
-
-            }
-
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("");
-
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+            return ResponseEntity.status(HttpStatus.CREATED).body("done");
         }
+        catch(GobiiException gE) {
+            throw gE;
+        }
+        catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    "Unknown Error. Please contact system administrator.");
+        }
+
+
     }
 
     /**
