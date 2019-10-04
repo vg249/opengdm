@@ -54,7 +54,7 @@ public class SampleTrackingController {
     private ProjectService<ProjectDTO> sampleTrackingProjectService = null;
 
     @Autowired
-    private ExperimentServiceImpl sampleTrackingExperimentService = null;
+    private ExperimentService sampleTrackingExperimentService = null;
 
     @Autowired
     private DnaSampleService sampleTrackingDnasampleService = null;
@@ -329,7 +329,7 @@ public class SampleTrackingController {
             @RequestPart(name="experimentMetaData") ExperimentDTO newExperiment,
             HttpServletRequest request)  throws GobiiException {
 
-        newExperiment = sampleTrackingExperimentService.createExperiment(newExperiment);
+        newExperiment = (ExperimentDTO) sampleTrackingExperimentService.createExperiment(newExperiment);
 
         if(dataFile == null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiment);
@@ -394,7 +394,7 @@ public class SampleTrackingController {
             HttpServletResponse response
     ) {
         try {
-            ExperimentDTO experimentDTO = sampleTrackingExperimentService.getExperimentById(experimentId);
+            ExperimentDTO experimentDTO = (ExperimentDTO) sampleTrackingExperimentService.getExperimentById(experimentId);
             BrApiMasterPayload<ExperimentDTO> payload = new BrApiMasterPayload<>(experimentDTO);
             return ResponseEntity.ok(payload);
         }
