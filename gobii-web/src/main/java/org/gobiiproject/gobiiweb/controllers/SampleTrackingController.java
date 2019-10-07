@@ -472,11 +472,14 @@ public class SampleTrackingController {
             @ApiParam(hidden = true)
             @RequestPart("sampleFile") MultipartFile sampleFile,
             @ApiParam(hidden = true)
-            @RequestPart("sampleMetaData") SampleMetadataDTO sampleMetaData) {
+            @RequestPart("sampleMetaData") SampleMetadataDTO sampleMetaData,
+            HttpServletRequest request) {
         try {
             InputStream is = sampleFile.getInputStream();
 
-            sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData, cropType);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("done");
         }

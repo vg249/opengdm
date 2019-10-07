@@ -60,7 +60,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         }
     }
 
-    public void uploadSamples(InputStream is, SampleMetadataDTO sampleMetadata) {
+    public void uploadSamples(InputStream is, SampleMetadataDTO sampleMetadata, String cropType) {
 
         BufferedReader br;
 
@@ -76,7 +76,9 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             GobiiLoaderMetadata gobiiLoaderMetadata = new GobiiLoaderMetadata();
 
-            //Get project details to create project prop
+            gobiiLoaderMetadata.setGobiiCropType(cropType);
+
+            //Get project details to set Project PropName in instruction file.
             PropNameId projectPropName = new PropNameId();
 
             ProjectDTO projectDTO = (ProjectDTO) sampleTrackingProjectService.getProjectById(

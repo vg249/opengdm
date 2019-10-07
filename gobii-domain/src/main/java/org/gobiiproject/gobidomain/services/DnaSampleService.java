@@ -10,6 +10,9 @@ import java.util.List;
 public interface DnaSampleService {
 
     ProjectSamplesDTO createSamples(ProjectSamplesDTO sampleListDTO) throws GobiiDomainException;
-    void uploadSamples(InputStream inputFileStream, SampleMetadataDTO sampleMetadataDTO) throws GobiiDomainException;
+    void uploadSamples(
+            InputStream inputFileStream,
+            SampleMetadataDTO sampleMetadataDTO,
+            String cropType) throws GobiiDomainException;
 
 }
