@@ -1,15 +1,16 @@
 package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.DnaSampleService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
@@ -24,6 +25,7 @@ import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -42,6 +44,10 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
     @Autowired
     private ProjectService sampleTrackingProjectService;
+
+    @Autowired
+    private ContactService contactService;
+
 
     @Override
     public ProjectSamplesDTO createSamples(ProjectSamplesDTO projectSamplesDTO)  throws GobiiDomainException {
@@ -76,7 +82,16 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             GobiiLoaderMetadata gobiiLoaderMetadata = new GobiiLoaderMetadata();
 
+            //Set Croptype
             gobiiLoaderMetadata.setGobiiCropType(cropType);
+
+            //Set Contact email for instruction file
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            gobiiLoaderMetadata.setContactEmail(this.contactService.getContactByUserName(userName).getEmail());
+
+            //Set Job Payload Type
+            gobiiLoaderMetadata.setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
 
             //Get project details to set Project PropName in instruction file.
             PropNameId projectPropName = new PropNameId();
