@@ -2,23 +2,28 @@ package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DnaSampleService;
+import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,6 +39,9 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
     @Autowired
     private CvDao cvDao;
+
+    @Autowired
+    private ProjectService sampleTrackingProjectService;
 
     @Override
     public ProjectSamplesDTO createSamples(ProjectSamplesDTO projectSamplesDTO)  throws GobiiDomainException {
@@ -54,29 +62,55 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
     public void uploadSamples(InputStream is, SampleMetadataDTO sampleMetadata) {
 
-
         BufferedReader br;
 
-
         try {
-
 
             br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 
             String fileHeader = br.readLine();
 
-            Map<String, List<GobiiFileColumn>> fileColumnByTableMap = this.mapFileCoulumnToGobiiTable(fileHeader,
+            GobiiLoaderProcedure gobiiLoaderProcedure = new GobiiLoaderProcedure();
+
+            List<GobiiLoaderInstruction> gobiiLoaderInstructionList = new ArrayList<>();
+
+            GobiiLoaderMetadata gobiiLoaderMetadata = new GobiiLoaderMetadata();
+
+            //Get project details to create project prop
+            PropNameId projectPropName = new PropNameId();
+
+            ProjectDTO projectDTO = (ProjectDTO) sampleTrackingProjectService.getProjectById(
+                    sampleMetadata.getProjectId());
+
+            projectPropName.setId(projectDTO.getProjectId());
+
+            projectPropName.setName(projectDTO.getProjectName());
+
+            gobiiLoaderMetadata.setProject(projectPropName);
+
+            //Map File columns to the table columns
+            Map<String, List<GobiiFileColumn>> fileColumnByTableMap = this.mapFileCoulumnToGobiiTable(
+                    fileHeader,
                     sampleMetadata);
 
+            for(String tableName : fileColumnByTableMap.keySet()) {
 
+                GobiiLoaderInstruction gobiiLoaderInstruction = new GobiiLoaderInstruction();
 
+                gobiiLoaderInstruction.setTable(tableName);
+
+                gobiiLoaderInstruction.setGobiiFileColumns(fileColumnByTableMap.get(tableName));
+
+                gobiiLoaderInstructionList.add(gobiiLoaderInstruction);
+
+            }
+
+            gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
 
         } catch(Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, "Server error");
         }
-
-
     }
 
     public Map<String, List<GobiiFileColumn>> mapFileCoulumnToGobiiTable(String fileHeader,
@@ -144,15 +178,28 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                         // needs to be figured
                         if (propField.equals("germplasm.properties")) {
 
-                            entityField.setColumnName("49");
+                            String germplasmPropField = dtoProp.substring(dtoProp.lastIndexOf(".")+1);
 
-                            entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
+                            if(germplasmPropByCvTerm.containsKey(germplasmPropField)) {
+
+                                entityField.setColumnName(germplasmPropByCvTerm.get(germplasmPropField).getCvId().toString());
+
+                                entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
+
+                            }
 
                         } else if (propField.equals("properties")) {
 
-                            entityField.setColumnName("50");
+                            String dnasamplePropField = dtoProp.substring(dtoProp.lastIndexOf(".")+1);
 
-                            entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
+                            if(dnasamplePropByCvTerm.containsKey(dnasamplePropField)) {
+
+                                entityField.setColumnName(dnasamplePropByCvTerm.get(
+                                        dnasamplePropField).getCvId().toString());
+
+                                entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
+
+                            }
 
                         } else if (dtoProp.equals("germplasm.germplasmSpecies")) {
 
