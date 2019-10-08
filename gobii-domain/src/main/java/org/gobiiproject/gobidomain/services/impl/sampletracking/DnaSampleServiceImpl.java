@@ -1,5 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.DnaSampleService;
@@ -20,6 +22,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -31,10 +34,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DnaSampleServiceImpl implements  DnaSampleService {
 
@@ -128,13 +128,52 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             }
 
+            gobiiLoaderProcedure.setMetadata(gobiiLoaderMetadata);
+
             gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
+
+            String jobName = UUID.randomUUID().toString().replace("-",  "");
+
+            String fileName = jobName + ".json";
+
+            this.writeDnasampleLoaderInstruction(gobiiLoaderProcedure, fileName, cropType);
 
 
         } catch(Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, "Server error");
         }
+    }
+
+    public void writeDnasampleLoaderInstruction(
+            GobiiLoaderProcedure gobiiLoaderProcedure, String fileName, String cropType) {
+
+        ObjectMapper jsonMapper = new ObjectMapper();
+
+        try {
+            if (gobiiLoaderProcedure != null) {
+
+                jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+                String instruction = jsonMapper.writeValueAsString(gobiiLoaderProcedure);
+
+                byte[] instructionBytes = instruction.getBytes("UTF-8");
+
+                fileService.writeFileToProcessDir(
+                        cropType,
+                        fileName,
+                        GobiiFileProcessDir.LOADER_INSTRUCTIONS,
+                        instructionBytes);
+            }
+        }
+        catch(Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN, "Unable to write instruction file");
+        }
+
     }
 
     public Map<String, List<GobiiFileColumn>> mapFileCoulumnToGobiiTable(String fileHeader,
@@ -242,10 +281,8 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                         }
                     }
 
-                } else {
-                    if (dtoEntityMap.containsKey(columnHeader)) {
-                        entityField = dtoEntityMap.get(columnHeader);
-                    }
+                } else if (dtoEntityMap.containsKey(columnHeader)) {
+                    entityField = dtoEntityMap.get(columnHeader);
                 }
 
                 if (entityField != null) {

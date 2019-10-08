@@ -63,7 +63,8 @@ public class FileServiceImpl implements FilesService {
 
 
             } else {
-                throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE, "There is no instruction for the job ");
+                throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE, "There is no instruction for the job ");
             }
 
         } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.RAW_USER_FILES)) {
