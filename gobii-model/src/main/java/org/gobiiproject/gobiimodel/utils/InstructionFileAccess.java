@@ -227,7 +227,8 @@ public class InstructionFileAccess<T> {
 
     }
 
-    public void writeFile(String path,
+
+    public String writeFile(String path,
                           String fileName,
                           byte[] byteArray) throws Exception {
 
@@ -235,7 +236,7 @@ public class InstructionFileAccess<T> {
         this.createDirectory(path);
         String fqpn = this.makeFileName(path, fileName);
         this.writePlainFile(fqpn, byteArray);
-
+        return fqpn;
     }
 
     public void deleteFile(String fqpn) throws Exception {

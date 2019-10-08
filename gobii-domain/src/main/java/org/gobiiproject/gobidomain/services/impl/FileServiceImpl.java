@@ -169,44 +169,7 @@ public class FileServiceImpl implements FilesService {
                     LineUtils.terminateDirectoryPath(rawUserFilesPath) +
                             experimentFolderName);
 
-            File dataFolder = new File(experimentFolderPath);
-
-            try {
-
-                dataFolder.mkdirs();
-
-            }
-            catch(Exception e) {
-
-                throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.UNKNOWN,
-                        "Unable to save experiment data file.");
-
-            }
-
-            String experimentDataFilePath = experimentFolderPath + "/" + fileName;
-
-            try {
-
-                File experimentFile = new File(experimentDataFilePath);
-
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(experimentFile));
-
-                stream.write(dataFileBytes);
-
-                stream.close();
-
-            } catch (IOException e) {
-                throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.UNKNOWN,
-                        "Unable to save experiment data file.");
-            }
-
-
-            return  experimentDataFilePath;
+            return instructionFileAccess.writeFile(experimentFolderPath, fileName, dataFileBytes);
 
 
         }

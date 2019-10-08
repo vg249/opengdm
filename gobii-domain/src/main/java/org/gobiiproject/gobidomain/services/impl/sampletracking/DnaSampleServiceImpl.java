@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl.sampletracking;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.DnaSampleService;
+import org.gobiiproject.gobidomain.services.FilesService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
@@ -48,6 +49,9 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
     @Autowired
     private ContactService contactService;
 
+    @Autowired
+    private FilesService fileService = null;
+
 
     @Override
     public ProjectSamplesDTO createSamples(ProjectSamplesDTO projectSamplesDTO)  throws GobiiDomainException {
@@ -75,6 +79,8 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 
             String fileHeader = br.readLine();
+
+
 
             GobiiLoaderProcedure gobiiLoaderProcedure = new GobiiLoaderProcedure();
 
@@ -123,6 +129,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             }
 
             gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
+
 
         } catch(Exception e) {
             LOGGER.error(e.getMessage(), e);
