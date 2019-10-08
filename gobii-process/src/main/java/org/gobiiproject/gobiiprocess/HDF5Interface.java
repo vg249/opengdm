@@ -302,6 +302,7 @@ StringBuilder genoFileString=new StringBuilder();
         //Take all positive integers from this list as cut values. See cutString.
         //Ex 0,1,2,-1,4,5 -> 0,1,2,4,5
         List<Integer> elements= Arrays.stream(elementList.split(","))
+                .map(String::trim)
                 .map(Integer::parseInt)
                 .filter(n -> n > -1)
                 .collect(toList());
