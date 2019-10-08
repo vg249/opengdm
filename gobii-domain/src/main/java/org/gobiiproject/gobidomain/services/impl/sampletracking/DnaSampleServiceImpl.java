@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -81,6 +82,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             String fileHeader = br.readLine();
 
 
+            JobDTO dnasampleLoadJob  = this.createDnaSampleUploadJob();
 
             GobiiLoaderProcedure gobiiLoaderProcedure = new GobiiLoaderProcedure();
 
@@ -132,9 +134,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
 
-            String jobName = UUID.randomUUID().toString().replace("-",  "");
-
-            String fileName = jobName + ".json";
+            String fileName = dnasampleLoadJob.getJobName() + ".json";
 
             this.writeDnasampleLoaderInstruction(gobiiLoaderProcedure, fileName, cropType);
 
@@ -143,6 +143,20 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             LOGGER.error(e.getMessage(), e);
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, "Server error");
         }
+    }
+
+    public JobDTO createDnaSampleUploadJob() {
+
+        JobDTO jobDto = new JobDTO();
+
+        //UUID for Jobname would be used for tracking job details
+        String jobName = UUID.randomUUID().toString().replace("-",  "");
+
+        jobDto.setMessage("");
+
+        jobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName());
+
+        return jobDto;
     }
 
     public void writeDnasampleLoaderInstruction(
