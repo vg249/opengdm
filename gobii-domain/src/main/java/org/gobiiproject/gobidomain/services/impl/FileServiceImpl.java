@@ -127,7 +127,9 @@ public class FileServiceImpl implements FilesService {
                                     byte[] byteArray) throws GobiiException, Exception {
 
         String path = this.getFilePath(cropType, jobId, gobiiFileProcessDir);
+
         instructionFileAccess.writeFile(path, fileName, byteArray);
+
     }
 
     @Override

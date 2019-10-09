@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -282,9 +283,13 @@ public class SampleTrackingController {
             @RequestParam(value = "pageNum", required = false) Integer pageNum
     ) {
         try {
+
             List<ExperimentDTO> experimentsList = sampleTrackingExperimentService.getExperiments();
+
             ListPayload<ExperimentDTO> payload = new ListPayload<ExperimentDTO>();
+
             payload.setData(experimentsList);
+
             return ResponseEntity.ok(payload);
 
         } catch (Exception e) {
@@ -475,13 +480,15 @@ public class SampleTrackingController {
             @RequestPart("sampleMetaData") SampleMetadataDTO sampleMetaData,
             HttpServletRequest request) {
         try {
+
             InputStream is = sampleFile.getInputStream();
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData, cropType);
+            JobDTO uploadSampleJob = sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData, cropType);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("done");
+            return ResponseEntity.status(HttpStatus.CREATED).body(uploadSampleJob);
+
         }
         catch(GobiiException gE) {
             throw gE;
