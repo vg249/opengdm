@@ -4,13 +4,10 @@
 package org.gobiiproject.gobiiprocess;
 
 import java.util.Hashtable;
-import java.util.Scanner;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;

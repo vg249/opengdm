@@ -1,14 +1,13 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Data Set-Specific extract. Each represents a single data set extracting to a unique file name.

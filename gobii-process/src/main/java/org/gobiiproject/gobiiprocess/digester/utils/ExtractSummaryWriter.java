@@ -1,8 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.utils;
 
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -10,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * Singleton that stores and exports extract summary information to a file.
@@ -49,7 +48,7 @@ public class ExtractSummaryWriter {
 			out.close();
 		}
 		catch(Exception e){
-			ErrorLogger.logError("Extract Summary Writer",e);
+			Logger.logError("Extract Summary Writer",e);
 		}
 	}
 

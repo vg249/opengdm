@@ -1,22 +1,23 @@
 package org.gobiiproject.gobiiprocess;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
-import java.util.*;
-
-import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 
 /**
@@ -62,7 +63,7 @@ public class JobStatus {
 
     public void set(String status,String message){
     	if(status==null || !acceptedStatuses.contains(status)){
-    		ErrorLogger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
+    		Logger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
 		}
             try{
                 RestUri restUri=uriFactory
@@ -120,7 +121,7 @@ public class JobStatus {
         if(lastStatus!=null){
             errorMessage="Status: " + lastStatus.getStatus()+" - " + lastStatus.getMessage() + " | \n";
         }
-        errorMessage += message + " : " + ErrorLogger.getFirstErrorReason();
+        errorMessage += message + " : " + Logger.getFirstErrorReason();
         set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),errorMessage);
     }
 }

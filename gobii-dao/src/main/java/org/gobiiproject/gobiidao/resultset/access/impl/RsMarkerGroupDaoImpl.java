@@ -1,10 +1,17 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.*;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpDelMarkerGroupMarkerById;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarkerGroup;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarkerGroupMarkers;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdMarkerGroup;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdMarkerGroupName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkerGroupDetailsByMarkerGroupId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkerGroupNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkersByMarkerAndPlatformName;
@@ -17,10 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Angel on 4/27/2016.

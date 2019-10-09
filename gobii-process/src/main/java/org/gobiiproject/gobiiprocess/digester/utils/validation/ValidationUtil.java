@@ -1,22 +1,29 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
-import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
+import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
 class ValidationUtil {
     static boolean isNullAndEmpty(String value) {
@@ -527,7 +534,7 @@ class ValidationUtil {
                                 failureReason = FailureTypes.UNDEFINED_MARKER_NAME__VALUE;
                                 break;
                             default:
-                                ErrorLogger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
+                                Logger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
                         }
 
                         List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, foreignKey, failureList);
@@ -536,11 +543,11 @@ class ValidationUtil {
                 }//end for entry in entryset
             }
             else { //createForeignKeyGroup
-             ErrorLogger.logWarning("Vaidation","Unable to create foreignKeyGroup");
+             Logger.logWarning("Vaidation","Unable to create foreignKeyGroup");
             }
         }
         else{//readForeignKey
-            ErrorLogger.logWarning("Vaidation","Unable to read foreign key");
+            Logger.logWarning("Vaidation","Unable to read foreign key");
 
         }
     }

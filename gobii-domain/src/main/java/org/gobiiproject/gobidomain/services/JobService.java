@@ -1,11 +1,10 @@
 package org.gobiiproject.gobidomain.services;
 
+import java.text.ParseException;
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
-
-import java.text.ParseException;
-import java.util.List;
 
 /**
  * Created by VCalaminos on 8/30/2017.

@@ -1,8 +1,10 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCvGroup;
+import org.gobiiproject.gobidomain.services.CvGroupService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
@@ -11,10 +13,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.gobiiproject.gobidomain.services.CvGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * Created by VCalaminos on 2/1/2017.

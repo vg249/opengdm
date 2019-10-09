@@ -1,11 +1,16 @@
 package org.gobiiproject.gobiiprocess.digester.utils;
 
-import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.lineCount;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
@@ -15,7 +20,7 @@ public class TransposeMatrix {
     private static long startTime, endTime, duration;
     public static void transposeMatrix (String sep, String iFile, String oFile, String dest) throws FileNotFoundException{
         if (!checkFileExistence(iFile)) {
-            ErrorLogger.logError("Transpose Matrix", "Input file "+iFile+" provided does not exists.\n");
+            Logger.logError("Transpose Matrix", "Input file "+iFile+" provided does not exists.\n");
             return;
         }
         startTime = System.currentTimeMillis();
@@ -28,7 +33,7 @@ public class TransposeMatrix {
                 sep = ",";
                 break;
             default:
-                ErrorLogger.logError("Transpose Matrix", "Unknown file separator" + sep);
+                Logger.logError("Transpose Matrix", "Unknown file separator" + sep);
                 break;
         }
         File directory = new File(dest);
@@ -55,7 +60,7 @@ public class TransposeMatrix {
                 t.join();
             }
             catch(InterruptedException e){
-                ErrorLogger.logError("TransposeMatrix","Interrupt",e);
+                Logger.logError("TransposeMatrix","Interrupt",e);
             }
         }
         StringBuilder fileList=new StringBuilder();
@@ -88,7 +93,7 @@ public class TransposeMatrix {
         String inLine;
         int columnNumber = getColumnNumber(iFile, sep);
         if(columnNumber < 0){
-            ErrorLogger.logError("Transpose Matrix", "Input file does not contain any content.\n");
+            Logger.logError("Transpose Matrix", "Input file does not contain any content.\n");
         }
         String[][] Matrix = new String[columnNumber][lineNumber];
         try(BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile));
@@ -108,12 +113,12 @@ public class TransposeMatrix {
             }
             endTime = System.currentTimeMillis();
             duration = endTime-startTime;
-            ErrorLogger.logTrace("Transpose Matrix","Time taken" + "(" + iFile + "):" + duration/1000 + " Seconds");
+            Logger.logTrace("Transpose Matrix","Time taken" + "(" + iFile + "):" + duration/1000 + " Seconds");
             return true;
         } catch (FileNotFoundException e){
-            ErrorLogger.logError("Transpose Matrix","Missing file", e);
+            Logger.logError("Transpose Matrix","Missing file", e);
         } catch (IOException e){
-            ErrorLogger.logError("Transpose Matrix","IOException transposing from "+iFile+" to "+oFile, e);
+            Logger.logError("Transpose Matrix","IOException transposing from "+iFile+" to "+oFile, e);
         }
         return false;
     }
@@ -129,7 +134,7 @@ public class TransposeMatrix {
             String[] iLine = buffIn.readLine().split(sep);
             return iLine.length;
         }catch(Exception e){
-            ErrorLogger.logError("Transpose Matrix","Unable to open the input file",e);
+            Logger.logError("Transpose Matrix","Unable to open the input file",e);
             return -1;
         }
     }
@@ -152,7 +157,7 @@ class TransposeThread implements Runnable{
             iFile.delete();
         }
         catch(Exception e){
-            ErrorLogger.logError("TransposeThread","Error processing short file transposition",e);
+            Logger.logError("TransposeThread","Error processing short file transposition",e);
         }
     }
 }

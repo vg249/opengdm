@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
 import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -9,10 +12,6 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
-
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
 
 @Root
 public class ServerConfig {

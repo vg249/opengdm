@@ -1,47 +1,69 @@
 package org.gobiiproject.gobiiprocess.digester;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.cli.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiiapimodel.payload.Header;
+import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.config.*;
 import org.gobiiproject.gobiimodel.dto.Marshal;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
+import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
-import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
-import org.gobiiproject.gobiimodel.types.*;
-import org.gobiiproject.gobiimodel.utils.*;
-import org.gobiiproject.gobiimodel.utils.email.*;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.SimpleTimer;
+import org.gobiiproject.gobiimodel.utils.email.MailInterface;
+import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
-import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
+import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
+import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
-
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
-import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getWebserviceConnectionString;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
@@ -120,7 +142,7 @@ public class GobiiFileReader {
         ConfigSettings configuration = null;
         try {
             configuration = new ConfigSettings(propertiesFile);
-            ErrorLogger.logDebug("Config file path", "Opened config settings at " + propertiesFile);
+            Logger.logDebug("Config file path", "Opened config settings at " + propertiesFile);
 
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -138,7 +160,7 @@ public class GobiiFileReader {
         }
 
         //Error logs go to a file based on crop (for human readability) and
-        ErrorLogger.logInfo("Digester", "Beginning read of " + instructionFile);
+        Logger.logInfo("Digester", "Beginning read of " + instructionFile);
 
         final String instructionFileContents = HelperFunctions.readFile(instructionFile);
 
@@ -162,7 +184,7 @@ public class GobiiFileReader {
         try {
             jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobFileName);
         } catch (Exception e) {
-            ErrorLogger.logError("GobiiFileReader", "Error Checking Status", e);
+            Logger.logError("GobiiFileReader", "Error Checking Status", e);
         }
 
         pm.addIdentifier("Project", procedure.getMetadata().getProject());
@@ -210,17 +232,17 @@ public class GobiiFileReader {
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validateMarkerUpload();
         if (validationStatus != null) {
-            ErrorLogger.logError("Marker validation failed.", validationStatus);
+            Logger.logError("Marker validation failed.", validationStatus);
         }
 
         validationStatus = instructionFileValidator.validateSampleUpload();
         if (validationStatus != null) {
-            ErrorLogger.logError("Sample validation failed.", validationStatus);
+            Logger.logError("Sample validation failed.", validationStatus);
         }
 
         validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
-            ErrorLogger.logError("Validation failed.", validationStatus);
+            Logger.logError("Validation failed.", validationStatus);
         }
 
 
@@ -234,10 +256,10 @@ public class GobiiFileReader {
             String instructionName = new File(instructionFile).getName();
             instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
             logFile = logDir + "/" + instructionName + ".log";
-            String oldLogFile = ErrorLogger.getLogFilepath();
-            ErrorLogger.logDebug("Error Logger", "Moving error log to " + logFile);
-            ErrorLogger.setLogFilepath(logFile);
-            ErrorLogger.logDebug("Error Logger", "Moved error log to " + logFile);
+            String oldLogFile = Logger.getLogFilepath();
+            Logger.logDebug("Error Logger", "Moving error log to " + logFile);
+            Logger.setLogFilepath(logFile);
+            Logger.logDebug("Error Logger", "Moved error log to " + logFile);
             FileSystemInterface.rmIfExist(oldLogFile);
         }
 
@@ -269,7 +291,7 @@ public class GobiiFileReader {
 
 
         //Section - Processing
-        ErrorLogger.logTrace("Digester", "Beginning List Processing");
+        Logger.logTrace("Digester", "Beginning List Processing");
         success = true;
         switch (procedure.getMetadata().getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type, all file types go through CSVFileReader(V2)
             case HAPMAP:
@@ -349,7 +371,7 @@ public class GobiiFileReader {
 
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, procedure.getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+            Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
             return;
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -371,7 +393,7 @@ public class GobiiFileReader {
                     Files.list(Paths.get(directory))
                             .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
             if (pathList.size() < 1) {
-                ErrorLogger.logError("Validation","Unable to find validation checks");
+                Logger.logError("Validation","Unable to find validation checks");
             }
             ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
             boolean hasAnyFailedStatuses=false;
@@ -383,7 +405,7 @@ public class GobiiFileReader {
             for (ValidationError status : fileErrors) {
                 if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
                     if(!reportedValidationFailures){//Lets only add this to the error log once
-                        ErrorLogger.logError("Validation", "Validation failures");
+                        Logger.logError("Validation", "Validation failures");
                         reportedValidationFailures=true;
                     }
                     for (int i = 0; i < status.failures.size(); i++)
@@ -397,7 +419,7 @@ public class GobiiFileReader {
                 }
             }
         }
-        if (success && ErrorLogger.success()) {
+        if (success && Logger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
@@ -410,19 +432,19 @@ public class GobiiFileReader {
                     String inputFile = " -i " + loaderInstructionMap.get(key);
                     String outputFile = " -o " + dstDir.getAbsolutePath() + "/"; //Output here is temporary files, needs terminal /
 
-                    ErrorLogger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
+                    Logger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
                     //Lines affected returned by method call - THIS IS NOW IGNORED
                     HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", verbose ? dstDir.getAbsolutePath() + "/iflOut" : null, errorPath);
 
                     IFLLineCounts counts = calculateTableStats(pm, loaderInstructionMap, dstDir, key);
 
                     if (counts.loadedData == 0) {
-                        ErrorLogger.logDebug("FileReader", "No data loaded for table " + key);
+                        Logger.logDebug("FileReader", "No data loaded for table " + key);
                     } else {
                         loadedData = true;
                     }
                     if (counts.invalidData > 0 && !isVariableLengthTable(key)) {
-                        ErrorLogger.logWarning("FileReader", "Invalid data in table " + key);
+                        Logger.logWarning("FileReader", "Invalid data in table " + key);
                     } else {
                         if (LoaderGlobalConfigs.getDeleteIntermediateFiles()) {
                             deleteIFLFiles(dstDir, key);
@@ -434,7 +456,7 @@ public class GobiiFileReader {
 
             }
             if (!loadedData) {
-                ErrorLogger.logError("FileReader", "No new data was uploaded.");
+                Logger.logError("FileReader", "No new data was uploaded.");
             }
             //Load Monet/HDF5
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "Matrix_Upload");
@@ -451,8 +473,8 @@ public class GobiiFileReader {
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
             }
-            if (success && ErrorLogger.success()) {
-                ErrorLogger.logInfo("Digester", "Successful Data Upload");
+            if (success && Logger.success()) {
+                Logger.logInfo("Digester", "Successful Data Upload");
                 if (sendQc) {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
                     sendQCExtract(configuration, procedure.getMetadata().getGobiiCropType());
@@ -461,13 +483,13 @@ public class GobiiFileReader {
                 }
 
             } else { //endIf(success)
-                ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
+                Logger.logWarning("Digester", "Unsuccessful Upload");
                 sendQc = false;//Files failed = bad.
                 jobStatus.setError("Unsuccessfully Uploaded Files");
             }
         }//endif Digest section
         else {
-            ErrorLogger.logWarning("Digester", "Aborted - Unsuccessfully Generated Files");
+            Logger.logWarning("Digester", "Aborted - Unsuccessfully Generated Files");
             jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
         }
 
@@ -487,23 +509,24 @@ public class GobiiFileReader {
      * @param pm
      * @param configuration
      * @param mailInterface
-     * @param instructionFilePath
+     * @param instructionFile
      * @param crop
      * @param jobName
      * @param logFile
      * @throws Exception
      */
-    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFilePath, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
-        try {
+    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
+            String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+                try {
             GobiiFileType loadType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
             String loadTypeName = "";//No load type name if default
             if (loadType != GobiiFileType.GENERIC) loadTypeName = loadType.name();
             pm.addPath("Instruction File", instructionFilePath, configuration, false);
             pm.addPath("Error Log", logFile, configuration, false);
-            pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
+            pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
             mailInterface.send(pm);
         } catch (Exception e) {
-            ErrorLogger.logError("MailInterface", "Error Sending Mail", e);
+            Logger.logError("MailInterface", "Error Sending Mail", e);
         }
 
     }
@@ -532,20 +555,20 @@ public class GobiiFileReader {
 
     private static GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderMetadata metadata, String crop) {
         GobiiExtractorInstruction gobiiExtractorInstruction;
-        ErrorLogger.logInfo("Digester", "qcCheck detected");
-        ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #1 of 3...");
+        Logger.logInfo("Digester", "qcCheck detected");
+        Logger.logInfo("Digester", "Entering into the QC Subsection #1 of 3...");
         gobiiExtractorInstruction = new GobiiExtractorInstruction();
         gobiiExtractorInstruction.setContactEmail(metadata.getContactEmail());
         gobiiExtractorInstruction.setContactId(metadata.getContactId());
         gobiiExtractorInstruction.setGobiiCropType(crop);
         gobiiExtractorInstruction.getMapsetIds().add(metadata.getMapset().getId());
         gobiiExtractorInstruction.setQcCheck(true);
-        ErrorLogger.logInfo("Digester", "Done with the QC Subsection #1 of 3!");
+        Logger.logInfo("Digester", "Done with the QC Subsection #1 of 3!");
         return gobiiExtractorInstruction;
     }
 
     private static void setQCExtractPaths(GobiiLoaderMetadata metadata) {
-        ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
+        Logger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
         gobiiDataSetExtract.setDataSet(metadata.getDataset());
@@ -557,17 +580,17 @@ public class GobiiFileReader {
         // It is going to be set by the Gobii web services
         gobiiDataSetExtract.setGobiiJobStatus(null);
         qcExtractInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
-        ErrorLogger.logInfo("Digester", "Done with the QC Subsection #2 of 3!");
+        Logger.logInfo("Digester", "Done with the QC Subsection #2 of 3!");
     }
 
     private static void sendQCExtract(ConfigSettings configuration, String crop) throws Exception {
-        ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #3 of 3...");
+        Logger.logInfo("Digester", "Entering into the QC Subsection #3 of 3...");
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
         extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
         extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_" + DateUtils.makeDateIdString());
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+            Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
             return;
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -582,7 +605,7 @@ public class GobiiFileReader {
 
             Header header = extractorInstructionFileDTOResponseEnvelope.getHeader();
             if (header.getStatus().isSucceeded()) {
-                ErrorLogger.logInfo("Digester", "Extractor Request Sent");
+                Logger.logInfo("Digester", "Extractor Request Sent");
 
             } else {
 
@@ -592,13 +615,13 @@ public class GobiiFileReader {
                     messages += (currentStatusMesage.getMessage()) + "; ";
                 }
 
-                ErrorLogger.logError("Digester", "Error sending extract request: " + messages);
+                Logger.logError("Digester", "Error sending extract request: " + messages);
 
             }
         } else {
-            ErrorLogger.logInfo("Digester", "Error Sending Extractor Request");
+            Logger.logInfo("Digester", "Error Sending Extractor Request");
         }
-        ErrorLogger.logInfo("Digester", "Done with the QC Subsection #3 of 3!");
+        Logger.logInfo("Digester", "Done with the QC Subsection #3 of 3!");
     }
 
     /**

@@ -25,7 +25,7 @@
         <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
         <encoder>
             <!-- %M: Method Name %L: Line Number -->
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36}.%M %L - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -49,6 +49,10 @@
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
+            <logger name="gobii" level="${loggerLevel}" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
         </then>
     </if>
 
@@ -63,6 +67,11 @@
     <logger name="org.gobiiproject" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+
+    <logger name="GOBii" level="${loggerLevel}" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <!-- In investigating GSD-269, it is believed gobii-model is overwriting gobii-processes logback.xml.
     Temporarily reducing log level to ERROR as a stopgap measure. -->
     <root level="ERROR">

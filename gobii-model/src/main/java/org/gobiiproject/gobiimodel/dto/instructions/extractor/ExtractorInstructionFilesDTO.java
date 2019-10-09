@@ -1,11 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
 /**
  * Created by Phil on 4/8/2016.

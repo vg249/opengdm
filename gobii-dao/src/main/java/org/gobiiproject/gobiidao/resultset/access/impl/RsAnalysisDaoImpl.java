@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
@@ -8,17 +11,17 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysisParameters;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdAnalysis;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.*;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetAnalysisDetailsByAnalysisId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetAnalysisNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetAnalysisNamesByTypeId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetNameIdsForAnalysisNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetPropertiesForAnalysis;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Phil on 4/22/2016.

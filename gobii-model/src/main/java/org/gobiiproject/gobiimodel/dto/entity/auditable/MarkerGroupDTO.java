@@ -7,13 +7,16 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.children.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-
-import java.util.*;
 
 public class MarkerGroupDTO extends DTOBaseAuditable {
 

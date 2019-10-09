@@ -1,11 +1,10 @@
 package org.gobiiproject.gobiidtomapping;
 
+import java.util.List;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
-
-import java.util.List;
 
 /**
  * Created by Phil on 3/29/2016.

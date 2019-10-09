@@ -1,12 +1,11 @@
 package org.gobiiproject.gobiidao.entity.access.impl.mock;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.gobiiproject.gobiidao.entity.access.PingEntityDao;
 import org.gobiiproject.gobiidao.entity.core.impl.DaoImplHibernate;
 import org.gobiiproject.gobiidao.entity.pojos.Marker;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Phil on 4/4/2016.
