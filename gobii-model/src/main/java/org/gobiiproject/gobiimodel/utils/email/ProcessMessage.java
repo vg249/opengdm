@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.utils.email;
 
 import java.io.File;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -44,6 +45,14 @@ public class ProcessMessage extends MailMessage {
     List<HTMLTableEntity> paths=new ArrayList<>();
     List<HTMLTableEntity> validations=new ArrayList<>();
 
+    private String hostname = "HOSTNAME_NOT_FOUND";
+    {
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e){
+            Logger.logWarning("ProcessMessage", "Hostname for machine could not be determined");
+        }
+    }
 
     /**
      * Sets the BODY of the mail message with TABLEs
@@ -94,6 +103,7 @@ public class ProcessMessage extends MailMessage {
         }
 
         body.append(statusLine+line);
+        body.append(String.format("<b>%s</b>", hostname));
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
         if(identifierLine!=null)body.append(identifierLine+line);
