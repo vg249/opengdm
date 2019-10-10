@@ -14,10 +14,8 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.*;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
@@ -450,6 +448,8 @@ public class SampleTrackingController {
      * Endpoint to upload samples for given project Id.
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param sampleFile - Tab delimited sample file, with respective columns as per design document.
+     * @param sampleMetaData - Object with project Id and Map object to map input file headers to
+     *                       gdm properties.
      * @return ResponseEntity with http status code 200 for OK accepted.
      * Response body contains jobId and related details to check the success of asynchronous operation.
      *
@@ -485,7 +485,8 @@ public class SampleTrackingController {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            JobDTO uploadSampleJob = sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData, cropType);
+            JobStatusDTO uploadSampleJob = (JobStatusDTO) (
+                    sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData, cropType));
 
             return ResponseEntity.status(HttpStatus.CREATED).body(uploadSampleJob);
 

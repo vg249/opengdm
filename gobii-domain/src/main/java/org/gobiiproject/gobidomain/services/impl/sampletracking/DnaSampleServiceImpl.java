@@ -7,11 +7,14 @@ import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobStatusDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -21,10 +24,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiColumnType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +72,26 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         }
     }
 
+    /**
+     * Upload sample input file to the GDM crop database.
+     * An instruction file for the sample upload job is created and posted in the instruction file folder
+     * which will be fetched by the Cron Job running in compute node.
+     * An entry for the job is also added to the backend database to keep track of the job.
+     *
+     * Input file should be a tab delimited file with header as its first row.
+     *
+     * The required fields for the prop tables are fetched from prop-table.properties file in config folder
+     * TODO: The file prop-table.properties was created by referring to dnasample_prop.nmap and germplasm_prop.name
+     *   file used by the ifl(scripts to aid data loading). This might cause problems in future as there
+     *   are two source of reference for required fields and both needs to be updated when there is a change.
+     *   A request need to be raised to make Loader UI and IFL to use the same properties file in config folder.
+     * @param is - input stream for the sample
+     * @param sampleMetadata -  Meta data for sample upload, projectId and map object to map the
+     *                       input file headers to the gdm system sample properties.
+     * @param cropType - The crop database to which the samples needs to be uploaded
+     * @return Job sttatus object with job id and other relevant details
+     */
+    @Override
     public JobDTO uploadSamples(InputStream is, SampleMetadataDTO sampleMetadata, String cropType) {
 
         BufferedReader br;
@@ -82,69 +102,49 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
         List<GobiiLoaderInstruction> gobiiLoaderInstructionList = new ArrayList<>();
 
+        JobDTO dnasampleLoadJob  = new JobStatusDTO();
+
         try {
 
-            br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-
-            String fileHeader = br.readLine();
-
-            //Get Contact Object of requesting user to set createdBy field
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
             ContactDTO userContact = this.contactService.getContactByUserName(userName);
-
-            JobDTO dnasampleLoadJob  = new JobDTO();
-
-            dnasampleLoadJob.setSubmittedBy(userContact.getContactId());
-
-            dnasampleLoadJob.setSubmittedDate(new Date(new Date().getTime()));
-
-            this.createDnaSampleUploadJob(dnasampleLoadJob);
-
-            //Set croptype
-            gobiiLoaderMetadata.setGobiiCropType(cropType);
 
             gobiiLoaderMetadata.setContactEmail(userContact.getEmail());
 
-            //Set job payload Type
+            dnasampleLoadJob.setSubmittedBy(userContact.getContactId());
+            dnasampleLoadJob.setSubmittedDate(new Date(new Date().getTime()));
+            this.createDnaSampleUploadJob(dnasampleLoadJob);
+
+            gobiiLoaderMetadata.setGobiiCropType(cropType);
+
             gobiiLoaderMetadata.setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
 
-            //Get project details to set Project PropName in instruction file.
             PropNameId projectPropName = new PropNameId();
-
             ProjectDTO projectDTO = (ProjectDTO) sampleTrackingProjectService.getProjectById(
                     sampleMetadata.getProjectId());
-
             projectPropName.setId(projectDTO.getProjectId());
-
             projectPropName.setName(projectDTO.getProjectName());
-
             gobiiLoaderMetadata.setProject(projectPropName);
 
-            //Map File columns to the table columns
+            br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            String fileHeader = br.readLine();
+
             Map<String, List<GobiiFileColumn>> fileColumnByTableMap = this.mapFileCoulumnToGobiiTable(
                     fileHeader,
                     sampleMetadata);
 
-            //Create Map of GobiiFileColumn List mapped by table name
             for(String tableName : fileColumnByTableMap.keySet()) {
-
                 GobiiLoaderInstruction gobiiLoaderInstruction = new GobiiLoaderInstruction();
-
                 gobiiLoaderInstruction.setTable(tableName);
-
                 gobiiLoaderInstruction.setGobiiFileColumns(fileColumnByTableMap.get(tableName));
-
                 gobiiLoaderInstructionList.add(gobiiLoaderInstruction);
-
             }
 
             gobiiLoaderProcedure.setMetadata(gobiiLoaderMetadata);
-
             gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
 
+            //Instruction file name needs to be same as job name
             String fileName = dnasampleLoadJob.getJobName() + ".json";
-
             this.writeDnasampleLoaderInstruction(gobiiLoaderProcedure, fileName, cropType);
 
             return dnasampleLoadJob;
@@ -158,7 +158,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         }
     }
 
-    public JobDTO createDnaSampleUploadJob(JobDTO jobDto) {
+    private JobDTO createDnaSampleUploadJob(JobDTO jobDto) {
 
 
         try {
@@ -167,10 +167,10 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             String jobName = UUID.randomUUID().toString().replace("-", "");
 
             jobDto.setJobName(jobName);
-
             jobDto.setMessage("Submitted the job for sample upload");
-
             jobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName());
+            jobDto.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
+            jobDto.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
 
             jobDto = jobService.createJob(jobDto);
 
@@ -192,7 +192,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         }
     }
 
-    public void writeDnasampleLoaderInstruction(
+    private void writeDnasampleLoaderInstruction(
             GobiiLoaderProcedure gobiiLoaderProcedure, String fileName, String cropType) {
 
         ObjectMapper jsonMapper = new ObjectMapper();
@@ -223,7 +223,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
     }
 
-    public Map<String, List<GobiiFileColumn>> mapFileCoulumnToGobiiTable(
+    private Map<String, List<GobiiFileColumn>> mapFileCoulumnToGobiiTable(
             String fileHeader,
             SampleMetadataDTO sampleMetadata) {
 
@@ -293,7 +293,8 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                             if(germplasmPropByCvTerm.containsKey(germplasmPropField)) {
 
-                                entityField.setColumnName(germplasmPropByCvTerm.get(germplasmPropField).getCvId().toString());
+                                entityField.setColumnName(
+                                        germplasmPropByCvTerm.get(germplasmPropField).getCvId().toString());
 
                                 entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
 
@@ -333,22 +334,26 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                     entityField = dtoEntityMap.get(columnHeader);
                 }
 
-                if (entityField != null) {
+                if (entityField != null && entityField.getTableName() != null) {
 
-                    gobiiFileColumn.setName(entityField.getColumnName());
-
+                    //The file header needs to be the first line.
+                    // TODO: file header position hard coded for now. Will be made configurable at some point
+                    gobiiFileColumn.setRCoord(1);
                     gobiiFileColumn.setCCoord(i);
 
-                    gobiiFileColumn.setRCoord(1);
+                    if(entityField.getTableName().endsWith("prop")) {
 
-                    gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
 
-                    gobiiFileColumn.setSubcolumn(false);
 
-                    if (entityField.getTableName() != null) {
+                    }
+                    else {
+
+                        gobiiFileColumn.setName(entityField.getColumnName());
+                        gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
+                        gobiiFileColumn.setSubcolumn(false);
 
                         if (!fileColumnByTableMap.containsKey(entityField.getTableName())) {
-                            fileColumnByTableMap.put(entityField.getTableName(), new ArrayList<>());
+                            fileColumnByTableMap.put(entityField.getTableName(), new LinkedList<>());
                         }
 
                         fileColumnByTableMap.get(entityField.getTableName()).add(gobiiFileColumn);
