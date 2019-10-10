@@ -397,7 +397,8 @@ public class SampleTrackingController {
             HttpServletResponse response
     ) {
         try {
-            ExperimentDTO experimentDTO = (ExperimentDTO) sampleTrackingExperimentService.getExperimentById(experimentId);
+            ExperimentDTO experimentDTO = (ExperimentDTO) sampleTrackingExperimentService.getExperimentById(
+                    experimentId);
             BrApiMasterPayload<ExperimentDTO> payload = new BrApiMasterPayload<>(experimentDTO);
             return ResponseEntity.ok(payload);
         }

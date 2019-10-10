@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
@@ -25,6 +26,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -135,14 +138,14 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
             String fileHeader = br.readLine();
 
-            Map<String, List<GobiiFileColumn>> fileColumnByTableMap = this.mapFileCoulumnToGobiiTable(
+            Map<String, List<GobiiFileColumn>> fileColumnsByTableName = this.mapFileCoulumnToGobiiTable(
                     fileHeader,
                     sampleMetadata);
 
-            for(String tableName : fileColumnByTableMap.keySet()) {
+            for(String tableName : fileColumnsByTableName.keySet()) {
                 GobiiLoaderInstruction gobiiLoaderInstruction = new GobiiLoaderInstruction();
                 gobiiLoaderInstruction.setTable(tableName);
-                gobiiLoaderInstruction.setGobiiFileColumns(fileColumnByTableMap.get(tableName));
+                gobiiLoaderInstruction.setGobiiFileColumns(fileColumnsByTableName.get(tableName));
                 gobiiLoaderInstructionList.add(gobiiLoaderInstruction);
             }
 
@@ -157,7 +160,11 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             return dnasampleLoadJob;
 
-        } catch(Exception e) {
+        }
+        catch(GobiiException gE) {
+            throw gE;
+        }
+        catch(Exception e) {
 
             LOGGER.error(e.getMessage(), e);
 
@@ -235,21 +242,29 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             String fileHeader,
             SampleMetadataDTO sampleMetadata) {
 
-        Map<String, List<GobiiFileColumn>> fileColumnByTableMap = new HashMap<>();
+        Map<String, List<GobiiFileColumn>> fileColumnsByTableName = new HashMap<>();
+
+        Map<String, List<GobiiFileColumn>> propTableRequired = new HashMap<>();
 
         try {
 
             Map<String, EntityFieldBean> dtoEntityMap = ModelMapper.getDtoEntityMap(DnaSampleDTO.class);
 
+            Map<String, HashSet<String>> requiredFieldProps = this.getPropTableRequiredFields();
+
             //Add Project Id File column to dnasample table instruction
-            fileColumnByTableMap.put("dnasample", new LinkedList<>());
+            fileColumnsByTableName.put("dnasample", new LinkedList<>());
+            propTableRequired.put("dnasample_prop", new LinkedList<>());
+
             GobiiFileColumn projectIdColumn = new GobiiFileColumn();
             projectIdColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
             projectIdColumn.setSubcolumn(false);
             projectIdColumn.setConstantValue(sampleMetadata.getProjectId().toString());
             projectIdColumn.setName(dtoEntityMap.get("projectId").getColumnName());
 
-            fileColumnByTableMap.get("dnasample").add(projectIdColumn);
+
+            fileColumnsByTableName.get("dnasample").add(projectIdColumn);
+            propTableRequired.get("dnasample_prop").add(projectIdColumn);
 
             String[] fileHeaderList = fileHeader.split("\t");
 
@@ -358,10 +373,10 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                         GobiiFileColumn gobiiFileKeyColumn = new GobiiFileColumn();
 
                         //The key name needs to be props other wise loading will fail
-                        if (!fileColumnByTableMap.containsKey(entityField.getTableName())) {
+                        if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
                             gobiiFileKeyColumn.setName("props");
                             gobiiFileKeyColumn.setSubcolumn(false);
-                            fileColumnByTableMap.put(entityField.getTableName(), new LinkedList<>());
+                            fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
                         }
                         else {
 
@@ -375,14 +390,14 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                             commaColumn.setConstantValue(",");
                             commaColumn.setName("comma"+entityField.getColumnName());
 
-                            fileColumnByTableMap.get(entityField.getTableName()).add(commaColumn);
+                            fileColumnsByTableName.get(entityField.getTableName()).add(commaColumn);
 
                         }
 
                         gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
                         gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
 
-                        fileColumnByTableMap.get(entityField.getTableName()).add(gobiiFileKeyColumn);
+                        fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileKeyColumn);
 
                         //Add Value column
                         //Add a comma gobii file column as required by instruction file
@@ -396,7 +411,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                         valueColumn.setRCoord(1);
                         valueColumn.setCCoord(i);
 
-                        fileColumnByTableMap.get(entityField.getTableName()).add(valueColumn);
+                        fileColumnsByTableName.get(entityField.getTableName()).add(valueColumn);
 
 
                     }
@@ -413,20 +428,91 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                         gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
                         gobiiFileColumn.setSubcolumn(false);
 
-                        if (!fileColumnByTableMap.containsKey(entityField.getTableName())) {
-                            fileColumnByTableMap.put(entityField.getTableName(), new LinkedList<>());
+                        if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
+                            fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
                         }
 
-                        fileColumnByTableMap.get(entityField.getTableName()).add(gobiiFileColumn);
+                        if(requiredFieldProps.containsKey(entityField.getTableName())
+                                && requiredFieldProps.get(entityField.getTableName()).contains(
+                                            entityField.getColumnName())) {
+
+                            String propTableName = entityField.getTableName()+"_prop";
+
+                            if(!propTableRequired.containsKey(propTableName)) {
+                                propTableRequired.put(propTableName, new LinkedList<>());
+                            }
+
+                            propTableRequired.get(propTableName).add(gobiiFileColumn);
+
+                        }
+
+                        fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileColumn);
                     }
                 }
             }
 
-            return fileColumnByTableMap;
+            for(String tableName : fileColumnsByTableName.keySet()) {
+
+                if(propTableRequired.containsKey(tableName)) {
+
+                    List<GobiiFileColumn> propFileColumns =  fileColumnsByTableName.get(tableName);
+
+                    List<GobiiFileColumn> requiredFileColumns = propTableRequired.get(tableName);
+
+                    requiredFileColumns.addAll(propFileColumns);
+
+                    fileColumnsByTableName.put(tableName, requiredFileColumns);
+                }
+
+            }
+
+            return fileColumnsByTableName;
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, "Server error");
         }
+    }
+
+    private Map<String, HashSet<String>> getPropTableRequiredFields() {
+
+        Map<String, HashSet<String>> returnVal = new HashMap<>();
+        Properties propColumnRequiredProperties = new Properties();
+
+        try {
+
+            ConfigSettings configSettings = new ConfigSettings();
+
+            String fileSystemRoot = configSettings.getFileSystemRoot();
+
+            /**
+             * TODO: Make the file path configurable
+             */
+            String requiredFieldsFilePath = LineUtils.terminateDirectoryPath(fileSystemRoot)
+                    + "/config/propcolumn-required.properties";
+
+            FileInputStream inputStream = new FileInputStream(requiredFieldsFilePath);
+
+            propColumnRequiredProperties.load(inputStream);
+
+            for(String tableName : propColumnRequiredProperties.stringPropertyNames()) {
+                HashSet<String> columnNamesSet = new HashSet();
+
+                //Comma seperated column names
+                String columnNames = propColumnRequiredProperties.getProperty(tableName);
+                StringTokenizer stColumnNames = new StringTokenizer(columnNames, ",");
+                while(stColumnNames.hasMoreTokens()) {
+                    columnNamesSet.add(stColumnNames.nextToken());
+                }
+
+                returnVal.put(tableName, columnNamesSet);
+            }
+        }
+        catch(Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, "Server error");
+        }
+
+        return returnVal;
     }
 }
