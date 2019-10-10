@@ -81,7 +81,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
      * Input file should be a tab delimited file with header as its first row.
      *
      * The required fields for the prop tables are fetched from prop-table.properties file in config folder
-     * TODO: The file prop-table.properties was created by referring to dnasample_prop.nmap and germplasm_prop.name
+     * TODO: The file propcolumn-required.properties was created by referring to dnasample_prop.nmap and germplasm_prop.name
      *   file used by the ifl(scripts to aid data loading). This might cause problems in future as there
      *   are two source of reference for required fields and both needs to be updated when there is a change.
      *   A request need to be raised to make Loader UI and IFL to use the same properties file in config folder.
@@ -120,6 +120,12 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             gobiiLoaderMetadata.setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
 
             PropNameId projectPropName = new PropNameId();
+            if(sampleMetadata.getProjectId() == null) {
+                throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                        "Project id is required");
+            }
             ProjectDTO projectDTO = (ProjectDTO) sampleTrackingProjectService.getProjectById(
                     sampleMetadata.getProjectId());
             projectPropName.setId(projectDTO.getProjectId());
@@ -139,6 +145,8 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                 gobiiLoaderInstruction.setGobiiFileColumns(fileColumnByTableMap.get(tableName));
                 gobiiLoaderInstructionList.add(gobiiLoaderInstruction);
             }
+
+
 
             gobiiLoaderProcedure.setMetadata(gobiiLoaderMetadata);
             gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
@@ -163,7 +171,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
         try {
 
-            //UUID for Jobname would be used for tracking job details
+            //UUID for Jobname. would be used for tracking job details
             String jobName = UUID.randomUUID().toString().replace("-", "");
 
             jobDto.setJobName(jobName);
@@ -231,9 +239,20 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
         try {
 
+            Map<String, EntityFieldBean> dtoEntityMap = ModelMapper.getDtoEntityMap(DnaSampleDTO.class);
+
+            //Add Project Id File column to dnasample table instruction
+            fileColumnByTableMap.put("dnasample", new LinkedList<>());
+            GobiiFileColumn projectIdColumn = new GobiiFileColumn();
+            projectIdColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
+            projectIdColumn.setSubcolumn(false);
+            projectIdColumn.setConstantValue(sampleMetadata.getProjectId().toString());
+            projectIdColumn.setName(dtoEntityMap.get("projectId").getColumnName());
+
+            fileColumnByTableMap.get("dnasample").add(projectIdColumn);
+
             String[] fileHeaderList = fileHeader.split("\t");
 
-            Map<String, EntityFieldBean> dtoEntityMap = ModelMapper.getDtoEntityMap(DnaSampleDTO.class);
 
             //Get Germplasm prop cvs TODO: Below cv mapping could be moved to a generalized function.
             //TODO: Create Cv service function to achieve the same.
@@ -265,7 +284,6 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             for (int i = 0; i < fileHeaderList.length; i++) {
 
-                GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
 
                 String columnHeader = fileHeaderList[i];
 
@@ -295,8 +313,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                                 entityField.setColumnName(
                                         germplasmPropByCvTerm.get(germplasmPropField).getCvId().toString());
-
-                                entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
+                                entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
 
                             }
 
@@ -308,8 +325,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                                 entityField.setColumnName(dnasamplePropByCvTerm.get(
                                         dnasamplePropField).getCvId().toString());
-
-                                entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
+                                entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
 
                             }
 
@@ -336,17 +352,62 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                 if (entityField != null && entityField.getTableName() != null) {
 
-                    //The file header needs to be the first line.
-                    // TODO: file header position hard coded for now. Will be made configurable at some point
-                    gobiiFileColumn.setRCoord(1);
-                    gobiiFileColumn.setCCoord(i);
 
                     if(entityField.getTableName().endsWith("prop")) {
 
+                        GobiiFileColumn gobiiFileKeyColumn = new GobiiFileColumn();
+
+                        //The key name needs to be props other wise loading will fail
+                        if (!fileColumnByTableMap.containsKey(entityField.getTableName())) {
+                            gobiiFileKeyColumn.setName("props");
+                            gobiiFileKeyColumn.setSubcolumn(false);
+                            fileColumnByTableMap.put(entityField.getTableName(), new LinkedList<>());
+                        }
+                        else {
+
+                            gobiiFileKeyColumn.setSubcolumn(true);
+
+                            //Add a comma file column between two keys as required by instruction file
+                            GobiiFileColumn commaColumn = new GobiiFileColumn();
+
+                            commaColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
+                            commaColumn.setSubcolumn(true);
+                            commaColumn.setConstantValue(",");
+                            commaColumn.setName("comma"+entityField.getColumnName());
+
+                            fileColumnByTableMap.get(entityField.getTableName()).add(commaColumn);
+
+                        }
+
+                        gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
+                        gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
+
+                        fileColumnByTableMap.get(entityField.getTableName()).add(gobiiFileKeyColumn);
+
+                        //Add Value column
+                        //Add a comma gobii file column as required by instruction file
+                        GobiiFileColumn valueColumn = new GobiiFileColumn();
+
+                        valueColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
+                        valueColumn.setSubcolumn(true);
+                        valueColumn.setName("comma"+entityField.getColumnName());
+                        //The file header needs to be the first line.
+                        // TODO: file header position hard coded for now. Will be made configurable at some point
+                        valueColumn.setRCoord(1);
+                        valueColumn.setCCoord(i);
+
+                        fileColumnByTableMap.get(entityField.getTableName()).add(valueColumn);
 
 
                     }
                     else {
+
+                        GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
+
+                        //The file header needs to be the first line.
+                        // TODO: file header position hard coded for now. Will be made configurable at some point
+                        gobiiFileColumn.setRCoord(1);
+                        gobiiFileColumn.setCCoord(i);
 
                         gobiiFileColumn.setName(entityField.getColumnName());
                         gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);

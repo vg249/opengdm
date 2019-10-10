@@ -607,8 +607,8 @@ public class SampleTrackingController {
             GermplasmDTO germplasmDTO = new GermplasmDTO();
             germplasmDTO.setGermplasmName("foo germplasm");
             germplasmDTO.setExternalCode("external bar code");
-            germplasmDTO.setGermplasmSpecies("foo species");
-            germplasmDTO.setGermplasmType("foo type");
+            germplasmDTO.setSpeciesName("foo species");
+            germplasmDTO.setTypeName("foo type");
 
             germplasmDTOList.add(germplasmDTO);
 

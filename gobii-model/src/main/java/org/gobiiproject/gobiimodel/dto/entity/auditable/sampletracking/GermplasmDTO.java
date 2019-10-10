@@ -30,9 +30,9 @@ public class GermplasmDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "externalCode", entity = Germplasm.class)
     private String externalCode;
 
-    private String germplasmSpecies;
+    private String speciesName;
 
-    private String germplasmType;
+    private String typeName;
 
     private Map<String, String> properties = new HashMap<>();
 
@@ -64,19 +64,19 @@ public class GermplasmDTO extends DTOBaseAuditable {
         this.externalCode = externalCode;
     }
 
-    public String getGermplasmSpecies() {
-        return this.germplasmSpecies;
+    public String getSpeciesName() {
+        return speciesName;
     }
 
-    public void setGermplasmSpecies(String speciesName) {
-        this.germplasmSpecies = speciesName;
+    public void setSpeciesName(String speciesName) {
+        this.speciesName = speciesName;
     }
 
-    public String getGermplasmType() {
-        return this.germplasmType;
+    public String getTypeName() {
+        return typeName;
     }
 
-    public void setGermplasmType(String typeName) {
-        this.germplasmType = typeName;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 }
