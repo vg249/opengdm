@@ -1,10 +1,10 @@
 package org.gobiiproject.gobiiclient.core.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletResponse;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseLogin;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
@@ -15,8 +15,6 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.ServerType;
-
-import javax.servlet.http.HttpServletResponse;
 
 
 /**

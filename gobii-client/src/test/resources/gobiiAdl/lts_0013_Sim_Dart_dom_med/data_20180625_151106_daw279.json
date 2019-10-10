@@ -13,14 +13,14 @@
   "project":{"id":"10", "name":"sim_dominant_proj_02"},
   "contactEmail":"v.calaminos@irri.org",
   "experiment":{"id":"18", "name":"sim_dominant_exp_03"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":"4", "name":"sim_dominant"},
   "contactId":"67",
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":"8", "name":"Dart_clone"},
   "gobiiCropType":"zoan",
-  "datasetType":{"id":100, "name":"CO_DOMINANT_NON_NUCLEOTIDE"}},
+  "datasetType":"DOMINANT_NON_NUCLEOTIDE"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

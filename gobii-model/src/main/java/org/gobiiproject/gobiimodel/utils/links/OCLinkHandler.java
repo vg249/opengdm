@@ -1,17 +1,15 @@
 package org.gobiiproject.gobiimodel.utils.links;
 
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.types.ServerType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.types.ServerType;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * Class to livelinks from Owncloud
@@ -98,13 +96,13 @@ public class OCLinkHandler {
                 liveLink = getTAG(resultBuf.toString(), "url") + "/download";
             } else {
                 liveLink = "";
-                ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + status);
-                ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
+                Logger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + status);
+                Logger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
             }
         } catch(IOException e){
             liveLink="";
-            ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
-            ErrorLogger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
+            Logger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
+            Logger.logWarning("OWNCLOUD","Could not request file information at path: " + urlPath);
         }
 
         return liveLink;

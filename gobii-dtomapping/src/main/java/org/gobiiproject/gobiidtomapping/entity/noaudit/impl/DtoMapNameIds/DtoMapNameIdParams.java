@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
+import java.util.List;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
-
-import java.util.List;
 
 /**
  * Created by Phil on 10/16/2016.

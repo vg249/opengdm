@@ -13,14 +13,14 @@
   "project":{"id":17, "name":"Deb_Sim_Proj1"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":53, "name":"Deb_Sim_Proj1_Exp1_Sequencing"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":3, "name":"Sim_2letternuc"},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":5, "name":"Sequencing"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":97, "name":"NUCLEOTIDE_2_LETTER"}},
+  "datasetType":"NUCLEOTIDE_2_LETTER"},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

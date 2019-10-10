@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.paged;
 
-import org.gobiiproject.gobiidao.resultset.core.listquery.ParameterizedSql;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ParameterizedSql;
 
 /*
 * This class is the core of paging sql. The page frame methods returns the sql for a table that

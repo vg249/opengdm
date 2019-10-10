@@ -1,13 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.rest;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * Provides meta data pertaining to a specific REST resource, which is defined

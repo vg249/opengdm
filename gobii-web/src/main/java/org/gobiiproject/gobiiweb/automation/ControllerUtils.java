@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiiweb.automation;
 
+import javax.servlet.http.HttpServletResponse;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.springframework.http.HttpStatus;
-
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by Phil on 9/23/2016.

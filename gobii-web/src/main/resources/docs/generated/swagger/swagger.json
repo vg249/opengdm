@@ -4635,14 +4635,6 @@
         "subcolumnDelimiter" : {
           "type" : "string"
         },
-        "dataSetType" : {
-          "type" : "string",
-          "enum" : [ "NUCLEOTIDE_2_LETTER", "IUPAC", "SSR_ALLELE_SIZE", "DOMINANT_NON_NUCLEOTIDE", "CO_DOMINANT_NON_NUCLEOTIDE", "VCF" ]
-        },
-        "dataSetOrientationType" : {
-          "type" : "string",
-          "enum" : [ "SAMPLE_FAST", "MARKER_FAST" ]
-        },
         "metaDataId" : {
           "type" : "string"
         }

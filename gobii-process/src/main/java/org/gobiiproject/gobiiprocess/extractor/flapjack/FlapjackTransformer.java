@@ -1,9 +1,7 @@
 package org.gobiiproject.gobiiprocess.extractor.flapjack;
 
-import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-
 import java.io.File;
-
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 

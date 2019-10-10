@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester;
-import org.apache.commons.cli.*;
-import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiiprocess.ProcessGlobalConfigs;
 
 public class LoaderGlobalConfigs extends ProcessGlobalConfigs{

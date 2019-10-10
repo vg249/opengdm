@@ -1,6 +1,6 @@
 {"metadata":
  {"gobiiJobStatus":"CV_PROGRESSSTATUS_NOSTATUS",
-  "dataset":null,
+  "dataset":{},
   "gobiiFile":
   {"source":
    "\/data\/gobii_bundle\/crops\/dev\/files\/data_20180614_155458_daw279",
@@ -13,14 +13,14 @@
   "project":{"id":14, "name":"Deb_Proj1_FlexQuery"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":31, "name":"Deb_Proj1_Exp2_KASP_FQ"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":2, "name":"Test_Physical"},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MARKERS",
   "platform":{"id":4, "name":"KASP"},
   "gobiiCropType":"dev",
-  "datasetType":null},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

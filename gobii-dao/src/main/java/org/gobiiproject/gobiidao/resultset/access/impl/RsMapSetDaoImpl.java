@@ -1,27 +1,26 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapsetProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapset;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapsetProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdMapset;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMapNamesByTypeId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMapSetNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMapsetDetailsByMapsetId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetPropertiesForMapset;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMapSetNames;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.

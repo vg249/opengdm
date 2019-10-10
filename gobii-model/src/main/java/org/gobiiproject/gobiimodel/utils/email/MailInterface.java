@@ -1,12 +1,6 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.security.Decrypter;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
-import java.util.Map;
 import java.util.Properties;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -20,7 +14,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import static org.gobiiproject.gobiimodel.utils.email.AuthType.PASSWORD;
 
 public class MailInterface {
@@ -42,7 +37,7 @@ public class MailInterface {
 		try {
 			authType = config.getEmailAuth();
 		}catch(IllegalArgumentException e){
-			ErrorLogger.logWarning("MailInterface","Unable to parse Email Auth. Defaulting to " +authType.name());
+			Logger.logWarning("MailInterface","Unable to parse Email Auth. Defaulting to " +authType.name());
 		}
 	}
 	
@@ -140,20 +135,20 @@ public class MailInterface {
 		mimeMessage.setContent(multipart);
 		mimeMessage.addRecipient(Message.RecipientType.TO,
 				new InternetAddress(message.getUser()));
-		ErrorLogger.logDebug("Mail Interface","Recipient.TO => "+message.getUser());
+		Logger.logDebug("Mail Interface","Recipient.TO => "+message.getUser());
 		switch(authType){
 			case PASSWORD:
 				Transport transport = mailSession.getTransport(protocol);
 				transport.connect(username, password);
 				transport.sendMessage(mimeMessage,
 						mimeMessage.getRecipients(Message.RecipientType.TO));
-				ErrorLogger.logDebug("Mail Interface", "Sending To => " + mimeMessage.getRecipients(Message.RecipientType.TO));
+				Logger.logDebug("Mail Interface", "Sending To => " + mimeMessage.getRecipients(Message.RecipientType.TO));
 				transport.close();
-				ErrorLogger.logInfo("Mail Interface", "Email sent");
+				Logger.logInfo("Mail Interface", "Email sent");
 				break;
 			case PASSWORDLESS:
 				Transport.send(mimeMessage);
-				ErrorLogger.logDebug("Mail Interface", "Sending To => " + mimeMessage.getRecipients(Message.RecipientType.TO));
+				Logger.logDebug("Mail Interface", "Sending To => " + mimeMessage.getRecipients(Message.RecipientType.TO));
 				break;
 		}
 	}

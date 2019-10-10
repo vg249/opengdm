@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiiprocess.gobiiadl;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

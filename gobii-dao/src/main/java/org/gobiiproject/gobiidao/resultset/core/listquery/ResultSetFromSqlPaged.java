@@ -1,16 +1,13 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
-import org.gobiiproject.gobiidao.cache.PageFrameState;
-import org.gobiiproject.gobiidao.cache.PageState;
-import org.hibernate.exception.SQLGrammarException;
-import org.hibernate.jdbc.Work;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.gobiiproject.gobiidao.cache.PageFrameState;
+import org.gobiiproject.gobiidao.cache.PageState;
+import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.jdbc.Work;
 
 /**
  */

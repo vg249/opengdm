@@ -1,5 +1,10 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -9,7 +14,6 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
-
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
@@ -20,12 +24,9 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
-
-import java.net.URL;
-import java.util.*;
 
 public class ValidationWebServicesUtil {
 
@@ -175,7 +176,7 @@ public class ValidationWebServicesUtil {
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             Status status = responsePayloadEnvelope.getHeader().getStatus();
             if (!status.isSucceeded()) {
-                ErrorLogger.logWarning("ValidtionWebServices","Bad NameIdDTO request",new Exception());
+                Logger.logWarning("ValidtionWebServices","Bad NameIdDTO request",new Exception());
                 ArrayList<HeaderStatusMessage> statusMessages = status.getStatusMessages();
                 for (HeaderStatusMessage message : statusMessages)
                     ValidationUtil.createFailure(FailureTypes.DATABASE_ERROR, new ArrayList<>(), message.getMessage(), failureList);

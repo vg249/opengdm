@@ -1,23 +1,22 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
-import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
-import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapset;
-import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.core.EntityProperties;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
+import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidtomapping.core.EntityProperties;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapset;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by Phil on 4/21/2016.

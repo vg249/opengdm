@@ -1,6 +1,6 @@
 {"metadata":
  {"gobiiJobStatus":"CV_PROGRESSSTATUS_NOSTATUS",
-  "dataset":null,
+  "dataset":{},
   "gobiiFile":
   {"source":
    "\/data\/gobii_bundle\/crops\/dev\/files\/data_20180622_155035_daw279",
@@ -13,14 +13,14 @@
   "project":{"id":17, "name":"Deb_Sim_Proj1"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":47, "name":"Deb_Sim_Proj1_Exp1_Illumina_IUPAC"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
   "mapset":{"id":1, "name":"Test_Genetic"},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MARKERS",
   "platform":{"id":1, "name":"Illumina_Infinium"},
   "gobiiCropType":"dev",
-  "datasetType":null},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

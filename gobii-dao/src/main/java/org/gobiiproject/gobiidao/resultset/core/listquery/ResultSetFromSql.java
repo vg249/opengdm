@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
-import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.hibernate.jdbc.Work;
 
@@ -8,8 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

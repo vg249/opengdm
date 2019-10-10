@@ -539,10 +539,6 @@ __|string
 |Name|Schema
 |**constantValue** +
 __|string
-|**dataSetOrientationType** +
-__|enum (SAMPLE_FAST, MARKER_FAST)
-|**dataSetType** +
-__|enum (NUCLEOTIDE_2_LETTER, IUPAC, SSR_ALLELE_SIZE, DOMINANT_NON_NUCLEOTIDE, CO_DOMINANT_NON_NUCLEOTIDE, VCF)
 |**filterFrom** +
 __|string
 |**filterTo** +

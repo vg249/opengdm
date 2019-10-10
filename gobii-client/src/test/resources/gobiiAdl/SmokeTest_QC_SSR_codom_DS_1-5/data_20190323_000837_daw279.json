@@ -13,14 +13,14 @@
   "project":{"id":"2", "name":"SmokeTest_QC_Proj"},
   "contactEmail":"rlp243@cornell.edu",
   "experiment":{"id":"2", "name":"SmokeTest_QC_Exp_SSR"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":true,
   "mapset":{"id":1, "name":"Test_Genetic"},
   "contactId":"34",
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":"10", "name":"SSR_STS_CAPS"},
   "gobiiCropType":"dev",
-  "datasetType":{"id":100, "name":"CO_DOMINANT_NON_NUCLEOTIDE"}},
+  "datasetType":"CO_DOMINANT_NON_NUCLEOTIDE"},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

@@ -1,6 +1,6 @@
 {"metadata":
  {"gobiiJobStatus":"CV_PROGRESSSTATUS_NOSTATUS",
-  "dataset":null,
+  "dataset":{},
   "gobiiFile":
   {"source":
    "\/data\/gobii_bundle\/crops\/dev\/files\/data_20180702_155909_daw279",
@@ -13,13 +13,14 @@
   "project":{"id":27, "name":"Deb_Sim_Proj3"},
   "contactEmail":"daw279@cornell.edu",
   "experiment":{"id":54, "name":"Deb_Sim_Proj3_Exp1_SSR"},
-  "datasetOrientationType":null,
+  "datasetOrientationType":"MARKER_FAST",
   "qcCheck":false,
+  "mapset":{},
   "contactId":19,
   "jobPayloadType":"CV_PAYLOADTYPE_MARKERS",
   "platform":{"id":10, "name":"SSR_STS_CAPS"},
   "gobiiCropType":"dev",
-  "datasetType":null},
+  "datasetType":"IUPAC"},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

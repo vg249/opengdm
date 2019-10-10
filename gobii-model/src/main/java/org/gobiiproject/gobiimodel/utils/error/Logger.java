@@ -4,12 +4,17 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.slf4j.LoggerFactory;
 
 /**
  * Horribly simplistic error logger.
@@ -20,9 +25,29 @@ import java.util.List;
  */
 
 
-public class ErrorLogger {
-	private static final Logger log = LoggerFactory.getLogger("org.gobiiproject.gobiimodel");
+public class Logger {
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger("GOBii");
 	public static List<Error> errors = new ArrayList();
+
+	private static final Set<String> nonRelevantClasses = new HashSet<>();
+	static {
+		nonRelevantClasses.add(Logger.class.getName());
+		nonRelevantClasses.add(Error.class.getName());
+		nonRelevantClasses.add(Thread.class.getName());
+	}
+
+	private static StackTraceElement getMostRecentStackTraceElement() {
+
+		return Arrays.stream(Thread.currentThread().getStackTrace())
+				.filter(ste -> ! nonRelevantClasses.contains(ste.getClassName()))
+				.findFirst()
+				.get();
+	}
+
+	protected static String generateLine(String msg) {
+		StackTraceElement ste = getMostRecentStackTraceElement();
+		return String.format("%s.%s:%s - %s", ste.getClassName(), ste.getMethodName(), ste.getLineNumber(), msg);
+	}
 
 	/**
 	 * Assuming Logback under slf4j, sets the log level to the logback item. Otherwise this will burn.
@@ -89,7 +114,7 @@ public static boolean setLogLevel(String level){
 	public static void logError(String name, String message, Throwable e){
 		Error err=new Error(name,message);
 		errors.add(err);
-		log.error(name+":"+message,e);
+		log.error(generateLine(name+":"+message),e);
 	}
 
 	public static void logError(String name, Throwable e){
@@ -103,7 +128,7 @@ public static boolean setLogLevel(String level){
 		}
 		//Error err=new Error(name,message);
 		//errors.add(err);
-		log.error(name+":"+message,e);
+		log.error(generateLine(name+":"+message),e);
 	}
 
 
@@ -135,7 +160,7 @@ public static boolean setLogLevel(String level){
 	}
 	/**
 	 * Logs an error through ErrorLogger, as well as notifying ErrorLogger that an important error
-	 * has occurred (see {@link ErrorLogger#success success})
+	 * has occurred (see {@link Logger#success success})
 	 * @param name Name of the component being logged
 	 * @param reason Reason given for error
 	 * @param file File containing additional error details (if exists) Nullable
@@ -151,20 +176,20 @@ public static boolean setLogLevel(String level){
 		log(Level.WARN,new Error(name,reason));
 	}
 	public static void logWarning(String name, String reason, Throwable e){
-		log.warn(name+": "+reason,e);
+		log.warn(generateLine(name+": "+reason),e);
 	}
 
 	private static void log(Level l, Error e){
 		if(l.equals(Level.ERROR))
-			log.error("{}: {}", e.name, e.reason);
+			log.error("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.WARN))
-			log.warn("{}: {}", e.name, e.reason);
+			log.warn("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.DEBUG))
-			log.debug("{}: {}", e.name, e.reason);
+			log.debug("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.INFO))
-			log.info("{}: {}", e.name, e.reason);
+			log.info("{}: {}", e.name, generateLine(e.reason));
 		else if(l.equals(Level.TRACE))
-			log.trace("{}: {}", e.name, e.reason);
+			log.trace("{}: {}", e.name, generateLine(e.reason));
 		else
 			log.error("Invalid log level",new Throwable());
 	}
@@ -226,13 +251,13 @@ public static boolean setLogLevel(String level){
 	String file;
 	Error(String name, String reason, String file){
 		this.name=name;
-		this.reason=reason;
+		this.reason= reason;
 		this.file=file;
 	}
 	Error(String name, String reason){
 		this(name,reason,null);
 	}
 	public String toString(){
-		return name+": "+reason+(file!=null?"\nAn log for this error may be available at "+file:"");
+		return name+": "+reason+(file!=null?"\nA log for this error may be available at "+file:"");
 	}
 }

@@ -1,8 +1,12 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.gobiiproject.gobiidao.cache.TableTrackingCache;
-import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapNameIdList;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapNameIdList;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -12,11 +16,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class is responsible for returning lists of NameIdDTO instances for
