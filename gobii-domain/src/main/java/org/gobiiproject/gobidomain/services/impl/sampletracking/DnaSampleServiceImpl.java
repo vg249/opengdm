@@ -83,11 +83,6 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
      *
      * Input file should be a tab delimited file with header as its first row.
      *
-     * The required fields for the prop tables are fetched from prop-table.properties file in config folder
-     * TODO: The file propcolumn-required.properties was created by referring to dnasample_prop.nmap and germplasm_prop.name
-     *   file used by the ifl(scripts to aid data loading). This might cause problems in future as there
-     *   are two source of reference for required fields and both needs to be updated when there is a change.
-     *   A request need to be raised to make Loader UI and IFL to use the same properties file in config folder.
      * @param is - input stream for the sample
      * @param sampleMetadata -  Meta data for sample upload, projectId and map object to map the
      *                       input file headers to the gdm system sample properties.
@@ -238,13 +233,32 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
     }
 
+    /**
+     * File columns in the input file headers need to mapped to Goibii Table File columns object
+     * used for building instruction file.
+     *
+     * In persistence layer, DNA sample and germplasm table has a jsonb column called "prop" for additional properties,
+     * Instruction file demands those column be defined as a seperate Table object with {tableName}_prop as name.
+     * Each prop value is mapped to their respective tuples using columns which could uniquely identify them.
+     * The required fields for the prop tables are fetched from prop-table.properties file in config folder.
+     * TODO: The file propcolumn-required.properties was created by referring to dnasample_prop.nmap and
+     *   germplasm_prop.name file used by the ifl(scripts to aid data loading).
+     *   This might cause problems in future as there are two source of reference for required fields and
+     *   both needs to be updated when there is a change. A request need to be raised to make Loader UI and IFL
+     *   to use the same properties file in config folder.
+     *
+     * @param fileHeader tab separated file header with each token representing the column header
+     * @param sampleMetadata - Object with projectId to identify the project to which samples belongs to. map object
+     *                       to map input file headers to the GDM defined sample properties.
+     * @return map of instruction file table to their gobii file columns
+     */
     private Map<String, List<GobiiFileColumn>> mapFileCoulumnToGobiiTable(
             String fileHeader,
             SampleMetadataDTO sampleMetadata) {
 
         Map<String, List<GobiiFileColumn>> fileColumnsByTableName = new HashMap<>();
 
-        Map<String, List<GobiiFileColumn>> propTableRequired = new HashMap<>();
+        Map<String, List<GobiiFileColumn>> propTableIdFields = new HashMap<>();
 
         try {
 
@@ -254,7 +268,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             //Add Project Id File column to dnasample table instruction
             fileColumnsByTableName.put("dnasample", new LinkedList<>());
-            propTableRequired.put("dnasample_prop", new LinkedList<>());
+            propTableIdFields.put("dnasample_prop", new LinkedList<>());
 
             GobiiFileColumn projectIdColumn = new GobiiFileColumn();
             projectIdColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
@@ -264,7 +278,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
 
             fileColumnsByTableName.get("dnasample").add(projectIdColumn);
-            propTableRequired.get("dnasample_prop").add(projectIdColumn);
+            propTableIdFields.get("dnasample_prop").add(projectIdColumn);
 
             String[] fileHeaderList = fileHeader.split("\t");
 
@@ -374,29 +388,19 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                         //The key name needs to be props other wise loading will fail
                         if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
+                            fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
                             gobiiFileKeyColumn.setName("props");
                             gobiiFileKeyColumn.setSubcolumn(false);
-                            fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
+                            gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
                         }
                         else {
 
+                            gobiiFileKeyColumn.setName("comma"+entityField.getColumnName());
                             gobiiFileKeyColumn.setSubcolumn(true);
-
-                            //Add a comma file column between two keys as required by instruction file
-                            GobiiFileColumn commaColumn = new GobiiFileColumn();
-
-                            commaColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
-                            commaColumn.setSubcolumn(true);
-                            commaColumn.setConstantValue(",");
-                            commaColumn.setName("comma"+entityField.getColumnName());
-
-                            fileColumnsByTableName.get(entityField.getTableName()).add(commaColumn);
-
+                            gobiiFileKeyColumn.setConstantValue(","+entityField.getColumnName());
                         }
 
                         gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
-                        gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
-
                         fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileKeyColumn);
 
                         //Add Value column
@@ -405,7 +409,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                         valueColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
                         valueColumn.setSubcolumn(true);
-                        valueColumn.setName("comma"+entityField.getColumnName());
+                        valueColumn.setName("value"+entityField.getColumnName());
                         //The file header needs to be the first line.
                         // TODO: file header position hard coded for now. Will be made configurable at some point
                         valueColumn.setRCoord(1);
@@ -438,11 +442,11 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                             String propTableName = entityField.getTableName()+"_prop";
 
-                            if(!propTableRequired.containsKey(propTableName)) {
-                                propTableRequired.put(propTableName, new LinkedList<>());
+                            if(!propTableIdFields.containsKey(propTableName)) {
+                                propTableIdFields.put(propTableName, new LinkedList<>());
                             }
 
-                            propTableRequired.get(propTableName).add(gobiiFileColumn);
+                            propTableIdFields.get(propTableName).add(gobiiFileColumn);
 
                         }
 
@@ -453,11 +457,11 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             for(String tableName : fileColumnsByTableName.keySet()) {
 
-                if(propTableRequired.containsKey(tableName)) {
+                if(propTableIdFields.containsKey(tableName)) {
 
                     List<GobiiFileColumn> propFileColumns =  fileColumnsByTableName.get(tableName);
 
-                    List<GobiiFileColumn> requiredFileColumns = propTableRequired.get(tableName);
+                    List<GobiiFileColumn> requiredFileColumns = propTableIdFields.get(tableName);
 
                     requiredFileColumns.addAll(propFileColumns);
 
@@ -474,6 +478,11 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         }
     }
 
+    /**
+     * Returns the prop table required properties for Germplasm and Dnasample table.
+     * @return map object with table name to which prop column belong to as key and
+     * a hash set of columns to uniquely identify the  table ot which it belongs to.
+     */
     private Map<String, HashSet<String>> getPropTableRequiredFields() {
 
         Map<String, HashSet<String>> returnVal = new HashMap<>();
