@@ -12,7 +12,7 @@ public interface DnaSampleService {
 
     ProjectSamplesDTO createSamples(ProjectSamplesDTO sampleListDTO) throws GobiiDomainException;
     JobDTO uploadSamples(
-            InputStream inputFileStream,
+            byte[] inputFileBytes,
             SampleMetadataDTO sampleMetadataDTO,
             String cropType) throws GobiiDomainException;
 

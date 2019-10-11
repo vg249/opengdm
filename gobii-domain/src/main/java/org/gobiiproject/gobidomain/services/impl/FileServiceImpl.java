@@ -103,6 +103,24 @@ public class FileServiceImpl implements FilesService {
     }
 
     @Override
+    public String makeDirInProcessDir(String cropType,
+                                    String dirName,
+                                    GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+
+
+        ConfigSettings configSettings = new ConfigSettings();
+
+        String processDir = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
+
+        String dirPath = LineUtils.terminateDirectoryPath(processDir) + dirName;
+
+        instructionFileAccess.makeDirectory(dirPath);
+
+        return dirPath;
+    }
+
+
+    @Override
     public void deleteFileFromProcessDir(String cropType,
                                          String fileName,
                                          GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
@@ -117,7 +135,7 @@ public class FileServiceImpl implements FilesService {
 
 
     @Override
-    public void writeJobFileForCrop(String cropType,
+    public String writeJobFileForCrop(String cropType,
                                     String jobId,
                                     String fileName,
                                     GobiiFileProcessDir gobiiFileProcessDir,
@@ -126,6 +144,8 @@ public class FileServiceImpl implements FilesService {
         String path = this.getFilePath(cropType, jobId, gobiiFileProcessDir);
 
         instructionFileAccess.writeFile(path, fileName, byteArray);
+
+        return path;
 
     }
 
@@ -182,5 +202,8 @@ public class FileServiceImpl implements FilesService {
         }
 
     }
+
+
+
 
 } // ExtractorInstructionFileServiceImpl

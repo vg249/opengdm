@@ -482,12 +482,12 @@ public class SampleTrackingController {
             HttpServletRequest request) {
         try {
 
-            InputStream is = sampleFile.getInputStream();
+            byte[] sampleInputBytes = sampleFile.getBytes();
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
             JobStatusDTO uploadSampleJob = (JobStatusDTO) (
-                    sampleTrackingDnasampleService.uploadSamples(is, sampleMetaData, cropType));
+                    sampleTrackingDnasampleService.uploadSamples(sampleInputBytes, sampleMetaData, cropType));
 
             return ResponseEntity.status(HttpStatus.CREATED).body(uploadSampleJob);
 

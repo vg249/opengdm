@@ -10,7 +10,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
  */
 public interface FilesService {
 
-    void writeJobFileForCrop(String cropType,
+    String writeJobFileForCrop(String cropType,
                              String jobId,
                              String fileName,
                              GobiiFileProcessDir gobiiFileProcessDir,
@@ -32,5 +32,8 @@ public interface FilesService {
 
     String writeExperimentDataFile(String cropType, String fileName, byte[] dataFileBytes) throws Exception;
 
+
+    String makeDirInProcessDir(String cropType, String dirName,
+                               GobiiFileProcessDir gobiiFileProcessDir) throws Exception;
 
 }

@@ -33,10 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 public class DnaSampleServiceImpl implements  DnaSampleService {
@@ -83,14 +80,19 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
      *
      * Input file should be a tab delimited file with header as its first row.
      *
-     * @param is - input stream for the sample
+     * @param sampleInputBytes - input file byte array for sample
      * @param sampleMetadata -  Meta data for sample upload, projectId and map object to map the
      *                       input file headers to the gdm system sample properties.
      * @param cropType - The crop database to which the samples needs to be uploaded
      * @return Job sttatus object with job id and other relevant details
      */
     @Override
-    public JobDTO uploadSamples(InputStream is, SampleMetadataDTO sampleMetadata, String cropType) {
+    public JobDTO uploadSamples(
+            byte[] sampleInputBytes,
+            SampleMetadataDTO sampleMetadata,
+            String cropType) {
+
+        final String sampleFileDelimiter = "\t";
 
         BufferedReader br;
 
@@ -113,7 +115,21 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             dnasampleLoadJob.setSubmittedDate(new Date(new Date().getTime()));
             this.createDnaSampleUploadJob(dnasampleLoadJob);
 
+            String sourceFileName = "samples.txt";
+
+            String sourceFilePath = fileService.writeJobFileForCrop(
+                    cropType, dnasampleLoadJob.getJobName(),
+                    sourceFileName, GobiiFileProcessDir.RAW_USER_FILES,
+                    sampleInputBytes);
+
+            String destinationDir = fileService.makeDirInProcessDir(
+                    cropType, dnasampleLoadJob.getJobName(),
+                    GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
+
             gobiiLoaderMetadata.setGobiiCropType(cropType);
+            gobiiLoaderMetadata.getGobiiFile().setSource(sourceFilePath);
+            gobiiLoaderMetadata.getGobiiFile().setDestination(destinationDir);
+            gobiiLoaderMetadata.getGobiiFile().setDelimiter(sampleFileDelimiter);
 
             gobiiLoaderMetadata.setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
 
@@ -130,7 +146,8 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             projectPropName.setName(projectDTO.getProjectName());
             gobiiLoaderMetadata.setProject(projectPropName);
 
-            br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            InputStream sampleInputStream = new ByteArrayInputStream(sampleInputBytes);
+            br = new BufferedReader(new InputStreamReader(sampleInputStream, "UTF-8"));
             String fileHeader = br.readLine();
 
             Map<String, List<GobiiFileColumn>> fileColumnsByTableName = this.mapFileCoulumnToGobiiTable(
@@ -143,8 +160,6 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                 gobiiLoaderInstruction.setGobiiFileColumns(fileColumnsByTableName.get(tableName));
                 gobiiLoaderInstructionList.add(gobiiLoaderInstruction);
             }
-
-
 
             gobiiLoaderProcedure.setMetadata(gobiiLoaderMetadata);
             gobiiLoaderProcedure.setInstructions(gobiiLoaderInstructionList);
@@ -232,6 +247,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         }
 
     }
+
 
     /**
      * File columns in the input file headers need to mapped to Goibii Table File columns object
