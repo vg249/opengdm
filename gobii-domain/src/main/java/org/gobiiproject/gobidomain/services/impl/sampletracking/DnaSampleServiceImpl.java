@@ -454,6 +454,11 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                             fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
                         }
 
+                        fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileColumn);
+
+                        GobiiFileColumn requiredFieldColumn = new GobiiFileColumn();
+                        GobiiFileColumn.copy(gobiiFileColumn, requiredFieldColumn);
+
                         if(requiredFieldProps.containsKey(entityField.getTableName())
                                 && ((HashMap) requiredFieldProps.get(
                                         entityField.getTableName())).containsKey(entityField.getColumnName())) {
@@ -467,19 +472,18 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                                 String propTableName = dependentField.getTableName();
 
                                 if (dependentField.getColumnName() != null && !dependentField.getColumnName().isEmpty()) {
-                                    gobiiFileColumn.setName(dependentField.getColumnName());
+                                    requiredFieldColumn.setName(dependentField.getColumnName());
                                 }
 
                                 if (!propTableIdFields.containsKey(propTableName)) {
                                     propTableIdFields.put(propTableName, new LinkedList<>());
                                 }
 
-                                propTableIdFields.get(propTableName).add(gobiiFileColumn);
+                                propTableIdFields.get(propTableName).add(requiredFieldColumn);
                             }
 
                         }
 
-                        fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileColumn);
                     }
                 }
             }
