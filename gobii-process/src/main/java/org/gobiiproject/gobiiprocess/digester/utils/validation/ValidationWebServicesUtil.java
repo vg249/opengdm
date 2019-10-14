@@ -132,6 +132,29 @@ public class ValidationWebServicesUtil {
     }
 
     /**
+     * Verifies whether the Project Id is valid or not
+     */
+    public static Map<String, String> validateProjectId(String projectId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_PROJECTS);
+            restUri.setParamValue("id", projectId);
+            GobiiEnvelopeRestResource<ProjectDTO, ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ProjectDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getProjectId().toString(), dto.getProjectName()));
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PROJECT_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
+            return mapsetDTOList;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            return mapsetDTOList;
+        }
+    }
+
+    /**
      * Web service call to validate CV and reference type
      *
      * @param nameIdDTOList       Items list
