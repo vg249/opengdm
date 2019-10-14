@@ -336,6 +336,7 @@ StringBuilder genoFileString=new StringBuilder();
         for(int i = 0; line !=null; i++){
             if(i==next){
                 out.write(line);
+                out.write(NEWLINE);
                 if(!iter.hasNext()){
                     break;
                 }
