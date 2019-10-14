@@ -1,5 +1,10 @@
 package org.gobiiproject.gobiimodel.modelmapper;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EntityFieldBean {
 
     public String getColumnName() {
@@ -22,6 +27,13 @@ public class EntityFieldBean {
 
     private String tableName;
 
+    private String instructionFileColumnName;
 
+    public String getInstructionFileColumnName() {
+        return instructionFileColumnName;
+    }
 
+    public void setInstructionFileColumnName(String instructionFileColumnName) {
+        this.instructionFileColumnName = instructionFileColumnName;
+    }
 }

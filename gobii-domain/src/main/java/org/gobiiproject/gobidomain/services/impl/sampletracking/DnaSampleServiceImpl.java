@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
@@ -127,6 +128,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                     GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
 
             gobiiLoaderMetadata.setGobiiCropType(cropType);
+            gobiiLoaderMetadata.getGobiiFile().setGobiiFileType(GobiiFileType.GENERIC);
             gobiiLoaderMetadata.getGobiiFile().setSource(sourceFilePath);
             gobiiLoaderMetadata.getGobiiFile().setDestination(destinationDir);
             gobiiLoaderMetadata.getGobiiFile().setDelimiter(sampleFileDelimiter);
@@ -256,7 +258,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
      * In persistence layer, DNA sample and germplasm table has a jsonb column called "prop" for additional properties,
      * Instruction file demands those column be defined as a seperate Table object with {tableName}_prop as name.
      * Each prop value is mapped to their respective tuples using columns which could uniquely identify them.
-     * The required fields for the prop tables are fetched from prop-table.properties file in config folder.
+     * The required fields for the prop tables are fetched from propcolumn-required.properties file in config folder.
      * TODO: The file propcolumn-required.properties was created by referring to dnasample_prop.nmap and
      *   germplasm_prop.name file used by the ifl(scripts to aid data loading).
      *   This might cause problems in future as there are two source of reference for required fields and
@@ -280,7 +282,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             Map<String, EntityFieldBean> dtoEntityMap = ModelMapper.getDtoEntityMap(DnaSampleDTO.class);
 
-            Map<String, HashSet<String>> requiredFieldProps = this.getPropTableRequiredFields();
+            Map<String, Object> requiredFieldProps = this.getPropTableRequiredFields();
 
             //Add Project Id File column to dnasample table instruction
             fileColumnsByTableName.put("dnasample", new LinkedList<>());
@@ -453,16 +455,27 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                         }
 
                         if(requiredFieldProps.containsKey(entityField.getTableName())
-                                && requiredFieldProps.get(entityField.getTableName()).contains(
-                                            entityField.getColumnName())) {
+                                && ((HashMap) requiredFieldProps.get(
+                                        entityField.getTableName())).containsKey(entityField.getColumnName())) {
 
-                            String propTableName = entityField.getTableName()+"_prop";
+                            //TODO: Add condition to check type before assignment
+                            List<EntityFieldBean> dependentFields =  (ArrayList) ((HashMap) requiredFieldProps.get(
+                                    entityField.getTableName())).get(entityField.getColumnName());
 
-                            if(!propTableIdFields.containsKey(propTableName)) {
-                                propTableIdFields.put(propTableName, new LinkedList<>());
+                            for(EntityFieldBean dependentField : dependentFields) {
+
+                                String propTableName = dependentField.getTableName();
+
+                                if (dependentField.getColumnName() != null && !dependentField.getColumnName().isEmpty()) {
+                                    gobiiFileColumn.setName(dependentField.getColumnName());
+                                }
+
+                                if (!propTableIdFields.containsKey(propTableName)) {
+                                    propTableIdFields.put(propTableName, new LinkedList<>());
+                                }
+
+                                propTableIdFields.get(propTableName).add(gobiiFileColumn);
                             }
-
-                            propTableIdFields.get(propTableName).add(gobiiFileColumn);
 
                         }
 
@@ -499,10 +512,10 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
      * @return map object with table name to which prop column belong to as key and
      * a hash set of columns to uniquely identify the  table ot which it belongs to.
      */
-    private Map<String, HashSet<String>> getPropTableRequiredFields() {
+    private Map<String, Object> getPropTableRequiredFields() {
 
-        Map<String, HashSet<String>> returnVal = new HashMap<>();
-        Properties propColumnRequiredProperties = new Properties();
+
+        Map<String, Object> dependencyMap = new HashMap<>();
 
         try {
 
@@ -510,34 +523,64 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             String fileSystemRoot = configSettings.getFileSystemRoot();
 
+            ObjectMapper objMapper = new ObjectMapper();
+
             /**
              * TODO: Make the file path configurable
              */
+
+            //Create config required field objects from json file
             String requiredFieldsFilePath = LineUtils.terminateDirectoryPath(fileSystemRoot)
-                    + "/config/propcolumn-required.properties";
+                    + "/config/required_columns.json";
 
-            FileInputStream inputStream = new FileInputStream(requiredFieldsFilePath);
+            InputStream jsonInputStream = new FileInputStream(requiredFieldsFilePath);
 
-            propColumnRequiredProperties.load(inputStream);
+            Map<String, List<EntityFieldBean> > requiredFieldMap = objMapper.readValue(
+                    jsonInputStream, new TypeReference<Map<String, List<EntityFieldBean>>>(){});
 
-            for(String tableName : propColumnRequiredProperties.stringPropertyNames()) {
-                HashSet<String> columnNamesSet = new HashSet();
 
-                //Comma seperated column names
-                String columnNames = propColumnRequiredProperties.getProperty(tableName);
-                StringTokenizer stColumnNames = new StringTokenizer(columnNames, ",");
-                while(stColumnNames.hasMoreTokens()) {
-                    columnNamesSet.add(stColumnNames.nextToken());
+            for(String dependentTableName : requiredFieldMap.keySet()) {
+
+                for(EntityFieldBean refIdField : requiredFieldMap.get(dependentTableName)) {
+
+                    Map dependentFieldsMap =  new HashMap();
+
+                    if(dependencyMap.containsKey(refIdField.getTableName())) {
+                        dependentFieldsMap = (HashMap) dependencyMap.get(refIdField.getTableName());
+                    }
+                    else {
+                        dependencyMap.put(refIdField.getTableName(), dependentFieldsMap);
+                    }
+
+                    List<EntityFieldBean> dependentFields = new ArrayList<>();
+
+                    if(dependentFieldsMap.containsKey(refIdField.getColumnName())) {
+                        dependentFields = (ArrayList) dependentFieldsMap.get(refIdField.getColumnName());
+                    }
+                    else {
+                        dependentFieldsMap.put(refIdField.getColumnName(), dependentFields);
+                    }
+
+                    EntityFieldBean dependentField = new EntityFieldBean();
+                    dependentField.setTableName(dependentTableName);
+                    if(refIdField.getInstructionFileColumnName() == null ||
+                            refIdField.getInstructionFileColumnName().isEmpty()) {
+                        dependentField.setColumnName(refIdField.getColumnName());
+                    }
+                    else {
+                        dependentField.setColumnName(refIdField.getInstructionFileColumnName());
+                    }
+
+                    dependentFields.add(dependentField);
                 }
-
-                returnVal.put(tableName, columnNamesSet);
             }
+
         }
         catch(Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, "Server error");
         }
 
-        return returnVal;
+        return dependencyMap;
     }
 }
