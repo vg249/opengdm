@@ -482,17 +482,50 @@ class ValidationUtil {
             Map<String, Set<String>> mapForeignkeyAndName = new HashMap<>();
             if (createForeignKeyGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
                 Map<String, String> foreignKeyValueFromDB = new HashMap<>();
-                if (foreignKeyList.size() != 1) {
+                if ((foreignKeyList.size() != 1) && condition.foreignKey.equalsIgnoreCase("platform_id")) {
                     multiplePlatformIdError(condition, failureList);
                     return;
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE)) {
-                    for (String platformId : foreignKeyList) {
-                        foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
-                        if (foreignKeyValueFromDB.size() == 0) {
-                            undefinedForeignKey(condition, platformId, failureList);
-                            return;
-                        }
+                    switch (condition.foreignKey.toLowerCase()){
+                        case "platform_id":
+                            for (String platformId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, platformId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        case "map_id":
+                            for (String mapId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateMapId(mapId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, mapId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        case "experiment_id":
+                            for (String experimentId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateExperimentId(experimentId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, experimentId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        case "project_id":
+                            for (String projectId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateProjectId(projectId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, projectId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        default:
+                            undefinedForeignKey(condition,condition.foreignKey,failureList);
                     }
                 } else {
                     foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);

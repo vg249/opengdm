@@ -155,6 +155,50 @@ public class ValidationWebServicesUtil {
     }
 
     /**
+     * Verifies whether the Experiment Id is valid or not
+     */
+    public static Map<String, String> validateExperimentId(String experimentId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS);
+            restUri.setParamValue("id", experimentId);
+            GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ExperimentDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentId().toString(), dto.getExperimentName()));
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_EXPERIMENT_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
+            return mapsetDTOList;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            return mapsetDTOList;
+        }
+    }
+
+    public static Map<String, String> validateMapId(String mapId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_MAPSET);
+            restUri.setParamValue("id", mapId);
+            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getMapsetId().toString(), dto.getName()));
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_MAP_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
+            return mapsetDTOList;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            return mapsetDTOList;
+        }
+    }
+
+
+    /**
      * Web service call to validate CV and reference type
      *
      * @param nameIdDTOList       Items list
