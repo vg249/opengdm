@@ -435,12 +435,12 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
                                 fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
                                 gobiiFileKeyColumn.setName("props");
                                 gobiiFileKeyColumn.setSubcolumn(false);
-                                gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
+                                gobiiFileKeyColumn.setConstantValue(entityField.getColumnName()+":");
                             } else {
 
                                 gobiiFileKeyColumn.setName("comma" + entityField.getColumnName());
                                 gobiiFileKeyColumn.setSubcolumn(true);
-                                gobiiFileKeyColumn.setConstantValue("," + entityField.getColumnName());
+                                gobiiFileKeyColumn.setConstantValue("," + entityField.getColumnName()+":");
                             }
 
                             gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
