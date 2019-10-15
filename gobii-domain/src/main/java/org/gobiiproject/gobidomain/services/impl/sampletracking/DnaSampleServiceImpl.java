@@ -286,6 +286,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             //Add Project Id File column to dnasample table instruction
             fileColumnsByTableName.put("dnasample", new LinkedList<>());
+            fileColumnsByTableName.put("germplasm", new LinkedList<>());
             propTableIdFields.put("dnasample_prop", new LinkedList<>());
 
             GobiiFileColumn projectIdColumn = new GobiiFileColumn();
@@ -297,6 +298,24 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             fileColumnsByTableName.get("dnasample").add(projectIdColumn);
             propTableIdFields.get("dnasample_prop").add(projectIdColumn);
+
+            // Set the Status of the project as newly created by getting it respective cvId
+            List<Cv> statusCvList = cvDao.getCvsByCvTermAndCvGroup(
+                    "new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                    GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+            //As CV term is unique under its CV group, there should be only
+            //one cv for term "new" under group "status"
+            if(statusCvList.size() > 0) {
+                Cv statusCv = statusCvList.get(0);
+                GobiiFileColumn statusColumn = new GobiiFileColumn();
+                statusColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
+                statusColumn.setSubcolumn(false);
+                statusColumn.setConstantValue(statusCv.getCvId().toString());
+                statusColumn.setName("status");
+                fileColumnsByTableName.get("dnasample").add(statusColumn);
+                fileColumnsByTableName.get("germplasm").add(statusColumn);
+            }
 
             String[] fileHeaderList = fileHeader.split("\t");
 
