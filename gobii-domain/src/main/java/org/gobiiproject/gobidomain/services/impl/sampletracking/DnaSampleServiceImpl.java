@@ -334,156 +334,162 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                 String columnHeader = fileHeaderList[i];
 
-                EntityFieldBean entityField = null;
+                List<EntityFieldBean> entityFields = new ArrayList<>();
 
                 if (sampleMetadata.getMap().containsKey(columnHeader)) {
 
-                    String dtoProp = sampleMetadata.getMap().get(columnHeader);
+                    List<String> dtoProps = sampleMetadata.getMap().get(columnHeader);
 
-                    if (dtoEntityMap.containsKey(dtoProp) && dtoEntityMap.get(dtoProp) != null) {
+                    for (String dtoProp : dtoProps) {
 
-                        entityField = dtoEntityMap.get(dtoProp);
+                        if (dtoEntityMap.containsKey(dtoProp) && dtoEntityMap.get(dtoProp) != null) {
 
-                    } else {
-
-                        entityField = new EntityFieldBean();
-
-                        String propField = dtoProp.substring(0, dtoProp.lastIndexOf("."));
-
-                        //TODO: More generalized solution where you can map properties to the instruction files
-                        // needs to be figured
-                        if (propField.equals("germplasm.properties")) {
-
-                            String germplasmPropField = dtoProp.substring(dtoProp.lastIndexOf(".")+1);
-
-                            if(germplasmPropByCvTerm.containsKey(germplasmPropField)) {
-
-                                entityField.setColumnName(
-                                        germplasmPropByCvTerm.get(germplasmPropField).getCvId().toString());
-                                entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
-
-                            }
-
-                        } else if (propField.equals("properties")) {
-
-                            String dnasamplePropField = dtoProp.substring(dtoProp.lastIndexOf(".")+1);
-
-                            if(dnasamplePropByCvTerm.containsKey(dnasamplePropField)) {
-
-                                entityField.setColumnName(dnasamplePropByCvTerm.get(
-                                        dnasamplePropField).getCvId().toString());
-                                entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
-
-                            }
-
-                        } else if (dtoProp.equals("germplasm.germplasmSpecies")) {
-
-                            entityField.setColumnName("species_name");
-
-                            entityField.setTableName("germplasm");
-
-                        } else if (dtoProp.equals("germplasm.germplasmType")) {
-
-                            entityField.setColumnName("type_name");
-
-                            entityField.setTableName("germplasm");
+                            entityFields.add(dtoEntityMap.get(dtoProp));
 
                         } else {
-                            entityField = null;
-                        }
-                    }
 
-                } else if (dtoEntityMap.containsKey(columnHeader)) {
-                    entityField = dtoEntityMap.get(columnHeader);
+                            EntityFieldBean entityField = new EntityFieldBean();
+
+                            String propField = dtoProp.substring(0, dtoProp.lastIndexOf("."));
+
+                            //TODO: More generalized solution where you can map properties to the instruction files
+                            // needs to be figured
+                            if (propField.equals("germplasm.properties")) {
+
+                                String germplasmPropField = dtoProp.substring(dtoProp.lastIndexOf(".") + 1);
+
+                                if (germplasmPropByCvTerm.containsKey(germplasmPropField)) {
+
+                                    entityField.setColumnName(
+                                            germplasmPropByCvTerm.get(germplasmPropField).getCvId().toString());
+                                    entityField.setTableName(CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName());
+
+                                }
+
+                            } else if (propField.equals("properties")) {
+
+                                String dnasamplePropField = dtoProp.substring(dtoProp.lastIndexOf(".") + 1);
+
+                                if (dnasamplePropByCvTerm.containsKey(dnasamplePropField)) {
+
+                                    entityField.setColumnName(dnasamplePropByCvTerm.get(
+                                            dnasamplePropField).getCvId().toString());
+                                    entityField.setTableName(CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName());
+
+                                }
+
+                            } else if (dtoProp.equals("germplasm.germplasmSpecies")) {
+
+                                entityField.setColumnName("species_name");
+
+                                entityField.setTableName("germplasm");
+
+                            } else if (dtoProp.equals("germplasm.germplasmType")) {
+
+                                entityField.setColumnName("type_name");
+
+                                entityField.setTableName("germplasm");
+
+                            } else {
+                                entityField = null;
+                            }
+
+                            entityFields.add(entityField);
+                        }
+
+                    }
+                }
+                else if (dtoEntityMap.containsKey(columnHeader)) {
+                    entityFields.add(dtoEntityMap.get(columnHeader));
                 }
 
-                if (entityField != null && entityField.getTableName() != null) {
+                for(EntityFieldBean entityField : entityFields) {
+                    if (entityField != null && entityField.getTableName() != null) {
 
 
-                    if(entityField.getTableName().endsWith("prop")) {
+                        if (entityField.getTableName().endsWith("prop")) {
 
-                        GobiiFileColumn gobiiFileKeyColumn = new GobiiFileColumn();
+                            GobiiFileColumn gobiiFileKeyColumn = new GobiiFileColumn();
 
-                        //The key name needs to be props other wise loading will fail
-                        if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
-                            fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
-                            gobiiFileKeyColumn.setName("props");
-                            gobiiFileKeyColumn.setSubcolumn(false);
-                            gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
-                        }
-                        else {
+                            //The key name needs to be props other wise loading will fail
+                            if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
+                                fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
+                                gobiiFileKeyColumn.setName("props");
+                                gobiiFileKeyColumn.setSubcolumn(false);
+                                gobiiFileKeyColumn.setConstantValue(entityField.getColumnName());
+                            } else {
 
-                            gobiiFileKeyColumn.setName("comma"+entityField.getColumnName());
-                            gobiiFileKeyColumn.setSubcolumn(true);
-                            gobiiFileKeyColumn.setConstantValue(","+entityField.getColumnName());
-                        }
+                                gobiiFileKeyColumn.setName("comma" + entityField.getColumnName());
+                                gobiiFileKeyColumn.setSubcolumn(true);
+                                gobiiFileKeyColumn.setConstantValue("," + entityField.getColumnName());
+                            }
 
-                        gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
-                        fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileKeyColumn);
+                            gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
+                            fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileKeyColumn);
 
-                        //Add Value column
-                        //Add a comma gobii file column as required by instruction file
-                        GobiiFileColumn valueColumn = new GobiiFileColumn();
+                            //Add Value column
+                            //Add a comma gobii file column as required by instruction file
+                            GobiiFileColumn valueColumn = new GobiiFileColumn();
 
-                        valueColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
-                        valueColumn.setSubcolumn(true);
-                        valueColumn.setName("value"+entityField.getColumnName());
-                        //The file header needs to be the first line.
-                        // TODO: file header position hard coded for now. Will be made configurable at some point
-                        valueColumn.setRCoord(1);
-                        valueColumn.setCCoord(i);
+                            valueColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
+                            valueColumn.setSubcolumn(true);
+                            valueColumn.setName("value" + entityField.getColumnName());
+                            //The file header needs to be the first line.
+                            // TODO: file header position hard coded for now. Will be made configurable at some point
+                            valueColumn.setRCoord(1);
+                            valueColumn.setCCoord(i);
 
-                        fileColumnsByTableName.get(entityField.getTableName()).add(valueColumn);
+                            fileColumnsByTableName.get(entityField.getTableName()).add(valueColumn);
 
 
-                    }
-                    else {
+                        } else {
 
-                        GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
+                            GobiiFileColumn gobiiFileColumn = new GobiiFileColumn();
 
-                        //The file header needs to be the first line.
-                        // TODO: file header position hard coded for now. Will be made configurable at some point
-                        gobiiFileColumn.setRCoord(1);
-                        gobiiFileColumn.setCCoord(i);
+                            //The file header needs to be the first line.
+                            // TODO: file header position hard coded for now. Will be made configurable at some point
+                            gobiiFileColumn.setRCoord(1);
+                            gobiiFileColumn.setCCoord(i);
 
-                        gobiiFileColumn.setName(entityField.getColumnName());
-                        gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
-                        gobiiFileColumn.setSubcolumn(false);
+                            gobiiFileColumn.setName(entityField.getColumnName());
+                            gobiiFileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
+                            gobiiFileColumn.setSubcolumn(false);
 
-                        if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
-                            fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
-                        }
+                            if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
+                                fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
+                            }
 
-                        fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileColumn);
+                            fileColumnsByTableName.get(entityField.getTableName()).add(gobiiFileColumn);
 
-                        GobiiFileColumn requiredFieldColumn = new GobiiFileColumn();
-                        GobiiFileColumn.copy(gobiiFileColumn, requiredFieldColumn);
+                            GobiiFileColumn requiredFieldColumn = new GobiiFileColumn();
+                            GobiiFileColumn.copy(gobiiFileColumn, requiredFieldColumn);
 
-                        if(requiredFieldProps.containsKey(entityField.getTableName())
-                                && ((HashMap) requiredFieldProps.get(
-                                        entityField.getTableName())).containsKey(entityField.getColumnName())) {
+                            if (requiredFieldProps.containsKey(entityField.getTableName())
+                                    && ((HashMap) requiredFieldProps.get(
+                                    entityField.getTableName())).containsKey(entityField.getColumnName())) {
 
-                            //TODO: Add condition to check type before assignment
-                            List<EntityFieldBean> dependentFields =  (ArrayList) ((HashMap) requiredFieldProps.get(
-                                    entityField.getTableName())).get(entityField.getColumnName());
+                                //TODO: Add condition to check type before assignment
+                                List<EntityFieldBean> dependentFields = (ArrayList) ((HashMap) requiredFieldProps.get(
+                                        entityField.getTableName())).get(entityField.getColumnName());
 
-                            for(EntityFieldBean dependentField : dependentFields) {
+                                for (EntityFieldBean dependentField : dependentFields) {
 
-                                String propTableName = dependentField.getTableName();
+                                    String propTableName = dependentField.getTableName();
 
-                                if (dependentField.getColumnName() != null && !dependentField.getColumnName().isEmpty()) {
-                                    requiredFieldColumn.setName(dependentField.getColumnName());
+                                    if (dependentField.getColumnName() != null && !dependentField.getColumnName().isEmpty()) {
+                                        requiredFieldColumn.setName(dependentField.getColumnName());
+                                    }
+
+                                    if (!propTableIdFields.containsKey(propTableName)) {
+                                        propTableIdFields.put(propTableName, new LinkedList<>());
+                                    }
+
+                                    propTableIdFields.get(propTableName).add(requiredFieldColumn);
                                 }
 
-                                if (!propTableIdFields.containsKey(propTableName)) {
-                                    propTableIdFields.put(propTableName, new LinkedList<>());
-                                }
-
-                                propTableIdFields.get(propTableName).add(requiredFieldColumn);
                             }
 
                         }
-
                     }
                 }
             }

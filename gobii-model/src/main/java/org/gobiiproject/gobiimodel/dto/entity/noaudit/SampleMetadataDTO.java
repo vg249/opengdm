@@ -3,6 +3,8 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,14 +19,14 @@ public class SampleMetadataDTO {
         this.projectId = projectId;
     }
 
-    public Map<String, String> getMap() {
+    public Map<String, List<String>> getMap() {
         return map;
     }
 
-    public void setMap(Map<String, String> map) {
+    public void setMap(Map<String, List<String>> map) {
         this.map = map;
     }
 
     private Integer projectId;
-    private Map<String, String> map;
+    private Map<String, List<String>> map;
 }
