@@ -436,17 +436,15 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                             GobiiFileColumn gobiiFileKeyColumn = new GobiiFileColumn();
 
-                            //The key name needs to be props other wise loading will fail
-                            if (!fileColumnsByTableName.containsKey(entityField.getTableName())) {
-                                fileColumnsByTableName.put(entityField.getTableName(), new LinkedList<>());
-                                gobiiFileKeyColumn.setName("props");
-                                gobiiFileKeyColumn.setSubcolumn(false);
-                                gobiiFileKeyColumn.setConstantValue(entityField.getColumnName()+":");
-                            } else {
-
+                            if (fileColumnsByTableName.get(entityField.getTableName()).size() > 0) {
                                 gobiiFileKeyColumn.setName("comma" + entityField.getColumnName());
                                 gobiiFileKeyColumn.setSubcolumn(true);
                                 gobiiFileKeyColumn.setConstantValue("," + entityField.getColumnName()+":");
+                            } else {
+                                //The key name needs to be props other wise loading will fail for first entry
+                                gobiiFileKeyColumn.setName("props");
+                                gobiiFileKeyColumn.setSubcolumn(false);
+                                gobiiFileKeyColumn.setConstantValue(entityField.getColumnName()+":");
                             }
 
                             gobiiFileKeyColumn.setGobiiColumnType(GobiiColumnType.CONSTANT);
