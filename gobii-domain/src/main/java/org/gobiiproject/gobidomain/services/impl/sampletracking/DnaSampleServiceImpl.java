@@ -274,9 +274,12 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             String fileHeader,
             SampleMetadataDTO sampleMetadata) {
 
-        Map<String, List<GobiiFileColumn>> fileColumnsByTableName = new HashMap<>();
+        Map<String, List<GobiiFileColumn>> fileColumnsByTableName = new LinkedHashMap<>();
 
         Map<String, List<GobiiFileColumn>> propTableIdFields = new HashMap<>();
+
+        //Instrction file needs tables in below order or it will fail
+        final String[] tableOrder = new String[]{"germplasm", "germplasm_prop", "dnasample", "dnasample_prop"};
 
         try {
 
@@ -284,9 +287,12 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             Map<String, Object> requiredFieldProps = this.getPropTableRequiredFields();
 
-            //Add Project Id File column to dnasample table instruction
-            fileColumnsByTableName.put("dnasample", new LinkedList<>());
-            fileColumnsByTableName.put("germplasm", new LinkedList<>());
+            //Adding table entries in order
+            for(String tableName : tableOrder) {
+                fileColumnsByTableName.put(tableName, new LinkedList<>());
+            }
+
+            //dnasample prop table needs projectId
             propTableIdFields.put("dnasample_prop", new LinkedList<>());
 
             GobiiFileColumn projectIdColumn = new GobiiFileColumn();
