@@ -103,7 +103,7 @@ public class ProcessMessage extends MailMessage {
         }
 
         body.append(statusLine+line);
-        body.append(String.format("<b>%s</b>", hostname));
+        body.append(String.format("<b>Hostname: %s</b>", hostname));
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
         if(identifierLine!=null)body.append(identifierLine+line);
