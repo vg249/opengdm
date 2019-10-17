@@ -524,7 +524,7 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
-    @RequestMapping(value = "/allelematrix-search",
+    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
             method = {RequestMethod.GET},
             produces = "application/json")
     @ApiOperation(
@@ -548,7 +548,7 @@ public class BRAPIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/allelematrix-search",
+    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
             method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
@@ -617,7 +617,7 @@ public class BRAPIIControllerV1 {
     }
 
 
-    @RequestMapping(value = "/allelematrix-search/status/{jobId}",
+    @RequestMapping(value = {"/allelematrix-search/status/{jobId}", "/allelematrices-search/status/{jobId}"},
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
