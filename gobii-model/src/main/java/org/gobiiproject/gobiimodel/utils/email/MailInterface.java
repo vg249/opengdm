@@ -26,6 +26,7 @@ public class MailInterface {
 	private String password;
 	private String protocol;
 	private AuthType authType=PASSWORD;
+	public static boolean noMail = false; // Flag for disabling email
 	
 	
 	public MailInterface(ConfigSettings config) {
@@ -66,6 +67,10 @@ public class MailInterface {
 
 	
 	public void send(MailMessage message ) throws Exception{
+		if(noMail == true){
+			Logger.logWarning("MailInterface","Ignoring all mail");
+		}
+
 		if(message.getUser()==null || message.getUser().equals(""))return;
 		
 		String username = this.getUser();
