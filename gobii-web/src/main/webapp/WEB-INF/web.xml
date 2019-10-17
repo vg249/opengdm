@@ -3,10 +3,10 @@
          xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:security="http://www.springframework.org/schema/security"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd
+         http://java.sun.com/xml/ns/javaee/web-app_3.0.xsd
          http://www.springframework.org/schema/security
 	     http:/www.springframework.org/schema/security/spring-security-4.2.xsd"
-         id="WebApp_ID" version="2.5">
+         id="WebApp_ID" version="3.0">
     <display-name>gobii-web</display-name>
 
     <context-param>
