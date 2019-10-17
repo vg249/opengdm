@@ -336,7 +336,7 @@ StringBuilder genoFileString=new StringBuilder();
         for(int i = 0; line !=null; i++){
             if(i==next){
                 out.write(line);
-                out.write(NEWLINE);
+                out.newLine();
                 if(!iter.hasNext()){
                     break;
                 }
@@ -344,6 +344,7 @@ StringBuilder genoFileString=new StringBuilder();
             }
             line=in.readLine();
         }
+        out.flush();
     }
 
     private static final String TAB="\t";
@@ -364,8 +365,10 @@ StringBuilder genoFileString=new StringBuilder();
                 outRow.append(split[i]);
                 first=false;
             }
-            out.write(outRow.toString()+NEWLINE);
+            out.write(outRow.toString());
+            out.newLine();
         }
+        out.flush();
     }
 
     /**
