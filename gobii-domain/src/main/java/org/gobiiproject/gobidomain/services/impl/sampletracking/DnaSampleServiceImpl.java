@@ -108,12 +108,15 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
         try {
 
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
             ContactDTO userContact = this.contactService.getContactByUserName(userName);
 
             gobiiLoaderMetadata.setContactEmail(userContact.getEmail());
 
             dnasampleLoadJob.setSubmittedBy(userContact.getContactId());
+
             dnasampleLoadJob.setSubmittedDate(new Date(new Date().getTime()));
+
             this.createDnaSampleUploadJob(dnasampleLoadJob);
 
             String sourceFileName = "samples.txt";
@@ -228,6 +231,7 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
             if (gobiiLoaderProcedure != null) {
 
                 jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
                 jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
                 String instruction = jsonMapper.writeValueAsString(gobiiLoaderProcedure);
@@ -258,9 +262,9 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
      * In persistence layer, DNA sample and germplasm table has a jsonb column called "prop" for additional properties,
      * Instruction file demands those column be defined as a seperate Table object with {tableName}_prop as name.
      * Each prop value is mapped to their respective tuples using columns which could uniquely identify them.
-     * The required fields for the prop tables are fetched from propcolumn-required.properties file in config folder.
-     * TODO: The file propcolumn-required.properties was created by referring to dnasample_prop.nmap and
-     *   germplasm_prop.name file used by the ifl(scripts to aid data loading).
+     * The required fields for the prop tables are fetched from required_columns.json in config folder.
+     * TODO: The file required_columns.json was created by referring to dnasample_prop.nmap and
+     *   germplasm_prop.nmap file used by the ifl(scripts to aid data loading).
      *   This might cause problems in future as there are two source of reference for required fields and
      *   both needs to be updated when there is a change. A request need to be raised to make Loader UI and IFL
      *   to use the same properties file in config folder.
@@ -430,7 +434,6 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
                 for(EntityFieldBean entityField : entityFields) {
                     if (entityField != null && entityField.getTableName() != null) {
-
 
                         if (entityField.getTableName().endsWith("prop")) {
 

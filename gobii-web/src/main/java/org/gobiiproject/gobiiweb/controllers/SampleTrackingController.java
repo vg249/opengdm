@@ -45,6 +45,7 @@ import java.util.Map;
 @Scope(value="request")
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_SAMPLE_TRACKING)
+@CrossOrigin
 public class SampleTrackingController {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SampleTrackingController.class);
