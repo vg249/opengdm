@@ -51,12 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -126,6 +121,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @Api()
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
+@CrossOrigin
 public class BRAPIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
@@ -524,7 +520,7 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
-    @RequestMapping(value = "/allelematrix-search",
+    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
             method = {RequestMethod.GET},
             produces = "application/json")
     @ApiOperation(
@@ -548,7 +544,7 @@ public class BRAPIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/allelematrix-search",
+    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
             method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
@@ -617,7 +613,7 @@ public class BRAPIIControllerV1 {
     }
 
 
-    @RequestMapping(value = "/allelematrix-search/status/{jobId}",
+    @RequestMapping(value = {"/allelematrix-search/status/{jobId}", "/allelematrices-search/status/{jobId}"},
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(

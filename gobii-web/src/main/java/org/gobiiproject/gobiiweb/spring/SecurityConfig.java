@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -84,6 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers(brapiCallsUrl);
 //                .antMatchers(gobiiFIlesUrl);
+
+        web.ignoring().antMatchers(HttpMethod.OPTIONS);
     }
 
 
@@ -95,14 +98,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         String allGobiimethods = GobiiControllerType.GOBII.getControllerPath() + "/**";
         http.addFilterAfter(this.filterBean(), BasicAuthenticationFilter.class);
         http.
-                csrf().disable().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-                and().
-                authorizeRequests().
-                antMatchers(allGobiimethods).permitAll().
-                anyRequest().authenticated().
-                and().
-                anonymous().disable();
+                csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers(allGobiimethods).permitAll()
+                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                .anyRequest().authenticated().
+                and()
+                .anonymous().disable();
 
     }
 
