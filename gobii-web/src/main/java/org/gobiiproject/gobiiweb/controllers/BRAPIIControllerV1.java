@@ -589,7 +589,7 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
-    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
+    @RequestMapping(value = {"/allelematrix-search"},
             method = {RequestMethod.GET},
             produces = "application/json")
     @ApiOperation(
@@ -614,7 +614,39 @@ public class BRAPIIControllerV1 {
 
     }
 
-    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
+    @RequestMapping(value = {"/allelematrices-search"},
+            method = {RequestMethod.GET, RequestMethod.POST},
+            produces = "application/json")
+    @ApiOperation(
+            value = "Search Allele Matrix",
+            notes = "Search allele matrix using marker profiles",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
+                    })
+            },
+            hidden = true
+    )
+    @ResponseBody
+    public String getAlleleMatrices(
+            @RequestBody AlleleMatricesSearchDTO alleleMatricesRequest ,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response
+    ) throws Exception {
+
+        List<String> matrixDbIdList = alleleMatricesRequest.getMatrixDbId();
+        List<String> markerprofileDbIdList = alleleMatricesRequest.getMarkerProfileDbId();
+
+        Optional<String> matrixDbId = Optional.of(String.join(",", matrixDbIdList));
+
+        Optional<String> markerprofileDbId = Optional.of(String.join(",", markerprofileDbIdList));
+
+        return this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+
+    }
+
+    @RequestMapping(value = {"/allelematrix-search"},
             method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
@@ -639,6 +671,7 @@ public class BRAPIIControllerV1 {
 
     }
 
+
     public String alleleMatrix(Optional<String> matrixDbId,
                                Optional<String> markerprofileDbId,
                                HttpServletRequest request,
@@ -654,13 +687,21 @@ public class BRAPIIControllerV1 {
                 String message = "Incorrect request format. At least one of matrixDbId or markerprofileDbId should be specified.";
                 brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
             } else if (matrixDbId.isPresent()) {
+
                 List<String> matrixDbIdList = Arrays.asList(matrixDbId.get().split(","));
+
                 if (matrixDbIdList.size() > 1) {
+
                     String message = "Incorrect request format. Only one matrixDbId is supported at the moment.";
+
                     brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+
                     return objectMapper.writeValueAsString(brapiResponseEnvelope);
                 }
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, matrixDbIdList.get(0)));
+
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(
+                        cropType, matrixDbIdList.get(0)));
+
             } else {
                 List<String> externalCodes = Arrays.asList(markerprofileDbId.get().split(","));
                 brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes));

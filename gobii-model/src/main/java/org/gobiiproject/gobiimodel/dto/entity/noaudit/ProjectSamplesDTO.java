@@ -13,10 +13,10 @@ import java.util.List;
 public class ProjectSamplesDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public Integer projectId;
+    private Integer projectId;
 
     @JsonUnwrapped
-    public List<DnaSampleDTO> samples;
+    private List<DnaSampleDTO> samples;
 
 
     public Integer getProjectId() {
