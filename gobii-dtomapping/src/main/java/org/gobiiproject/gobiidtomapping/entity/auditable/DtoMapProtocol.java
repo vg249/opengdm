@@ -1,12 +1,11 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
+import java.util.List;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
-
-import java.util.List;
 
 /**
  * Created by VCalaminos on 2016-12-14.

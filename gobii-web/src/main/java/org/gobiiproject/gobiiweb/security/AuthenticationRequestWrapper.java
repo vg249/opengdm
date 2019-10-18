@@ -1,18 +1,16 @@
 package org.gobiiproject.gobiiweb.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.misc.IOUtils;
-
-import javax.naming.AuthenticationException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import javax.naming.AuthenticationException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The need for this class was occasioned by the implementation of Authentication for BRAPI.

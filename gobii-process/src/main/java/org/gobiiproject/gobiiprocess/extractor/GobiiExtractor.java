@@ -1,19 +1,33 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
-import java.io.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.apache.commons.cli.*;
+import javax.ws.rs.core.MediaType;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -24,14 +38,26 @@ import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.types.*;
-import org.gobiiproject.gobiimodel.utils.*;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
+import org.gobiiproject.gobiimodel.types.ServerType;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
@@ -40,18 +66,14 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-
-import javax.ws.rs.core.MediaType;
-
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.*;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 /**
  * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
@@ -459,6 +481,14 @@ public class GobiiExtractor {
 			            esw.addItem("Marker List", markerListFileLocation);
 		            }
 
+		            //Marker groups (spelled out, unlike marker and sample files)
+		            List<PropNameId> mGroup = extract.getMarkerGroups();
+		            if((mGroup!= null && !mGroup.isEmpty())){
+		            	List<String> markerGroupNames = mGroup.stream().map(PropNameId::getName).collect(Collectors.toList());
+		            	pm.addCriteria("Marker Group", String.join(", ",markerGroupNames));
+			            esw.addPropList("Marker Group", mGroup);
+		            }
+
 		            if (type != null) {
 			            pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
 		            }
@@ -476,7 +506,9 @@ public class GobiiExtractor {
 			            pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 		            }
 
-		            pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration, false);
+		            //Note - link to place where it *will* be if there are no errors. Sadly, we won't know if it's right until we've sent all the emails already
+		            String finalIFPath= configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE) + FilenameUtils.getName(instructionFile);
+		            pm.addPath("Instruction File", finalIFPath , true, configuration, false);
 		            pm.addFolderPath("Output Directory", extractDir, configuration);
 		            pm.addPath("Error Log", logFile, true, configuration, false);
 		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration, false);

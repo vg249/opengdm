@@ -1,10 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Phil on 4/8/2016.

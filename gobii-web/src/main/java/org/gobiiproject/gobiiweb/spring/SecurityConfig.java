@@ -7,8 +7,8 @@ import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(brapiCallsUrl)
                 .antMatchers(brapiMapsUrl);
 //                .antMatchers(gobiiFIlesUrl);
-        
         web.ignoring().antMatchers(HttpMethod.OPTIONS);
     }
 

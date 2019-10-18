@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.SampleService;
 import org.gobiiproject.gobiidtomapping.DtoMapSample;
@@ -11,8 +12,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * Created by Phil on 4/21/2016.

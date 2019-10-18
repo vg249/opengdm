@@ -1,13 +1,11 @@
 package org.gobiiproject.gobiimodel.dto.system;
 
-import org.gobiiproject.gobiimodel.config.ServerConfigItem;
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
-
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 
 /**
  * Created by Phil on 4/8/2016.

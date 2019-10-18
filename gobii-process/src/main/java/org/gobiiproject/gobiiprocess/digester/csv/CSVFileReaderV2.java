@@ -7,9 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
@@ -533,6 +534,9 @@ class ReaderThread implements Runnable {
             reader.processCSV(procedure, instruction);
         } catch (Exception e) {
             Logger.logError("ReaderThread", "Error processing file read", e);
+        } catch(OutOfMemoryError e){
+            Logger.logError("ReaderThread","Out of memory processing instruction " + instruction.getTable(),e);
+            throw e;//Rethrow, as we can't deal with OOM
         }
     }
 }

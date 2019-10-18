@@ -3,7 +3,6 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 //Ignore if value is missed

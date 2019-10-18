@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
+import java.util.List;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
-
-import java.util.List;
 
 /**
  * Created by Phil on 4/21/2016.

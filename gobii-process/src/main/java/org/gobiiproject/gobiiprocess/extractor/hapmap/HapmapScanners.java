@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiiprocess.extractor.hapmap;
 
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 /**
  * Class that has the scanners required for the Hapmap.

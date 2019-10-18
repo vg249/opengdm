@@ -1,18 +1,17 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.types.ServerType;
-import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
-
 import java.io.File;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.types.ServerType;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
 
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)

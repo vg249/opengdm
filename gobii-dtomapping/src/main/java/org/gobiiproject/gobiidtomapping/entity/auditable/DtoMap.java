@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
+import java.util.List;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-
-import java.util.List;
 
 /***
  * This class must be implemented by all DtoMap* classes that deal with

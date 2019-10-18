@@ -1,11 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 
 public class ParameterizedSql {
 

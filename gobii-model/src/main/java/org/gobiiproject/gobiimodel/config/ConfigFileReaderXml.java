@@ -1,15 +1,9 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import java.io.File;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.StringWriter;
 
 /**
  * This class handles serialization of the modern configuration file format,

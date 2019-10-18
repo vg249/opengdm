@@ -1,25 +1,23 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
-import org.gobiiproject.gobiimodel.security.Decrypter;
-import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.RestMethodType;
-import org.gobiiproject.gobiimodel.types.ServerType;
-import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiimodel.utils.email.AuthType;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementMap;
-
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
+import org.gobiiproject.gobiimodel.security.Decrypter;
+import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.types.ServerType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.email.AuthType;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementMap;
 import static org.gobiiproject.gobiimodel.utils.email.AuthType.PASSWORD;
 
 

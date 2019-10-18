@@ -1,5 +1,8 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.JobService;
 import org.gobiiproject.gobiidtomapping.DtoMapSample;
@@ -12,10 +15,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by VCalaminos on 8/30/2017.

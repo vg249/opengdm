@@ -12,6 +12,20 @@ import org.gobiiproject.gobidomain.async.SearchExtract;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
@@ -30,7 +44,6 @@ import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiRespo
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
-
 import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
@@ -62,8 +75,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -578,7 +589,7 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
-    @RequestMapping(value = "/allelematrix-search",
+    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
             method = {RequestMethod.GET},
             produces = "application/json")
     @ApiOperation(
@@ -603,7 +614,7 @@ public class BRAPIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/allelematrix-search",
+    @RequestMapping(value = {"/allelematrix-search", "/allelematrices-search"},
             method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
@@ -673,7 +684,7 @@ public class BRAPIIControllerV1 {
     }
 
 
-    @RequestMapping(value = "/allelematrix-search/status/{jobId}",
+    @RequestMapping(value = {"/allelematrix-search/status/{jobId}", "/allelematrices-search/status/{jobId}"},
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(

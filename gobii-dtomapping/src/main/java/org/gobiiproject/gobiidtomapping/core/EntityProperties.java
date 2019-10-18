@@ -1,8 +1,5 @@
 package org.gobiiproject.gobiidtomapping.core;
 
-import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
-import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -10,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 
 /**
  * Created by Phil on 5/4/2016.

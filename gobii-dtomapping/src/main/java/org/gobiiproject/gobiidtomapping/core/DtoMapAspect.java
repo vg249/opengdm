@@ -1,17 +1,13 @@
 package org.gobiiproject.gobiidtomapping.core;
 
 
+import java.util.Date;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.gobiiproject.gobiidao.cache.TableTrackingCache;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-import org.hibernate.type.DateType;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
 
 /***
  * The intent of this class is to set the created/modified date and user values for all
