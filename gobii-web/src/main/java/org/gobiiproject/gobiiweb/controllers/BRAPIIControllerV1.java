@@ -44,6 +44,8 @@ import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiRespo
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
+import org.gobiiproject.gobiibrapi.core.common.BrapiAsynchStatus;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
@@ -52,6 +54,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -562,6 +565,7 @@ public class BRAPIIControllerV1 {
         try {
 
             BrapiResponseAlleleMatrices brapiResponseAlleleMatrices;
+
             if (studyDbIdd.isPresent()) {
                 Integer studyDbIdAsInteger = Integer.parseInt(studyDbIdd.get());
                 brapiResponseAlleleMatrices = brapiResponseMapAlleleMatrices.getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
@@ -589,33 +593,9 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
-    @RequestMapping(value = {"/allelematrix-search"},
-            method = {RequestMethod.GET},
-            produces = "application/json")
-    @ApiOperation(
-            value = "Search Allele Matrix",
-            notes = "Search allele matrix using marker profiles",
-            tags = {"BrAPI"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
-                    })
-            },
-            hidden = true
-    )
-    @ResponseBody
-    public String getAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
-                                  @RequestParam("matrixDbId") Optional<String> matrixDbId,
-                                  @ApiParam(value = "Marker Profile Id", required = false)
-                                  @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) throws Exception {
-        return this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
-
-    }
 
     @RequestMapping(value = {"/allelematrices-search"},
-            method = {RequestMethod.GET, RequestMethod.POST},
+            method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
             value = "Search Allele Matrix",
@@ -635,6 +615,8 @@ public class BRAPIIControllerV1 {
                                   HttpServletResponse response
     ) throws Exception {
 
+        BrapiResponseEnvelopeMaster<Map<String, String>> brapiResponseEnvelope = new BrapiResponseEnvelopeMaster<>();
+
         List<String> matrixDbIdList = alleleMatricesRequest.getMatrixDbId();
         List<String> markerprofileDbIdList = alleleMatricesRequest.getMarkerProfileDbId();
 
@@ -649,12 +631,39 @@ public class BRAPIIControllerV1 {
             markerprofileDbId = Optional.of(String.join(",", markerprofileDbIdList));
         }
 
-        return this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+        try {
+
+            String jobId = this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+            if(jobId == null || jobId.isEmpty()) {
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("400", "failed to submit job");
+            }
+            else {
+
+                BrapiAsynchStatus asynchStatus = new BrapiAsynchStatus();
+
+                asynchStatus.setAsynchId(jobId);
+
+                asynchStatus.setStatus("PENDING");
+
+                brapiResponseEnvelope.getBrapiMetaData().setAsynchStatus(asynchStatus);
+
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("2002", "Asynchronous call in progress");
+            }
+
+        }
+        catch (GobiiException gE) {
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("400", gE.getMessage());
+        }
+
+        brapiResponseEnvelope.setResult(new HashMap<>());
+
+        return objectMapper.writeValueAsString(brapiResponseEnvelope);
 
     }
 
     @RequestMapping(value = {"/allelematrix-search"},
-            method = {RequestMethod.POST},
+            method = {RequestMethod.POST, RequestMethod.GET},
             produces = "application/json")
     @ApiOperation(
             value = "Search Allele Matrix",
@@ -674,7 +683,30 @@ public class BRAPIIControllerV1 {
                                   @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) throws Exception {
-        return this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+
+
+
+        BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
+
+        try {
+
+            String jobId = this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+
+            if(jobId == null || jobId.isEmpty()) {
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", "failed to submit job");
+            }
+            else {
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("asynchid", jobId);
+            }
+
+
+        }
+        catch (GobiiException gE) {
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", gE.getMessage());
+        }
+
+        return objectMapper.writeValueAsString(brapiResponseEnvelope);
 
     }
 
@@ -684,15 +716,14 @@ public class BRAPIIControllerV1 {
                                HttpServletRequest request,
                                HttpServletResponse response) throws Exception {
 
-        String returnVal = null;
+        String returnVal = "";
 
-        BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             if (matrixDbId.isPresent() == markerprofileDbId.isPresent()) {
                 String message = "Incorrect request format. At least one of matrixDbId or markerprofileDbId should be specified.";
-                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+                throw new GobiiException(message);
             } else if (matrixDbId.isPresent()) {
 
                 List<String> matrixDbIdList = Arrays.asList(matrixDbId.get().split(","));
@@ -701,38 +732,37 @@ public class BRAPIIControllerV1 {
 
                     String message = "Incorrect request format. Only one matrixDbId is supported at the moment.";
 
-                    brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
-                    return objectMapper.writeValueAsString(brapiResponseEnvelope);
+                    throw new GobiiException(message);
+
                 }
 
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(
-                        cropType, matrixDbIdList.get(0)));
+                returnVal = brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, matrixDbIdList.get(0));
 
             } else {
+
                 List<String> externalCodes = Arrays.asList(markerprofileDbId.get().split(","));
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes));
+
+                returnVal =  brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes);
             }
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            throw new GobiiException(message);
+
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+            throw new GobiiException(message);
 
-            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
-
-        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);
-
         return returnVal;
     }
 
 
-    @RequestMapping(value = {"/allelematrix-search/status/{jobId}", "/allelematrices-search/status/{jobId}"},
+    @RequestMapping(value = {"/allelematrix-search/status/{jobId}"},
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
@@ -757,23 +787,41 @@ public class BRAPIIControllerV1 {
         BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
         try {
 
+            BrapiMetaData metaData = new BrapiMetaData();
+
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.getStatus(cropType,
-                    jobId,
-                    request));
+
+            String jobStatus = brapiResponseMapAlleleMatrixSearch.getStatus(cropType, jobId, request);
+
+            if(jobStatus == null) {
+                throw new GobiiException("Job id not valid");
+            }
+
+            metaData.addStatusMessage("aynchstatus", jobStatus);
+
+            if(jobStatus.equals("FINISHED")) {
+
+                List<String> dataFiles = brapiResponseMapAlleleMatrixSearch.getDatFiles(cropType, jobId, request);
+
+                metaData.setDatafiles(dataFiles);
+
+            }
+
+
+            brapiResponseEnvelope.setBrapiMetaData(metaData);
 
 
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("error", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("error", message);
         }
 
         returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);
@@ -781,6 +829,83 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+    @RequestMapping(value = {"/allelematrices-search/{jobId}"},
+            method = RequestMethod.GET,
+            produces = "application/json")
+    @ApiOperation(
+            value = "Get Allele Matrix Job status",
+            notes = "Get allele matrix Job status",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId"),
+                    })
+            },
+            hidden = true
+    )
+    @ResponseBody
+    public String getAlleleMatricesStatus(@ApiParam(value = "Job Id", required = true)
+                                        @PathVariable("jobId") String jobId,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) throws Exception {
+
+        String returnVal = null;
+
+        BrapiResponseEnvelopeMaster<Map<String, String>> brapiResponseEnvelope = new BrapiResponseEnvelopeMaster<>();
+
+        try {
+
+            BrapiMetaData metaData = new BrapiMetaData();
+            BrapiAsynchStatus asynchStatus = new BrapiAsynchStatus();
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            String jobStatus = brapiResponseMapAlleleMatrixSearch.getStatus(cropType, jobId, request);
+
+            if(jobStatus == null) {
+                throw new GobiiException("Job id not valid");
+            }
+
+            asynchStatus.setStatus(jobStatus);
+            asynchStatus.setAsynchId(jobId);
+
+            metaData.setAsynchStatus(asynchStatus);
+
+            if(jobStatus.equals("FINISHED")) {
+
+                metaData.addStatusMessage("200", jobStatus);
+
+                List<String> dataFiles = brapiResponseMapAlleleMatrixSearch.getDatFiles(cropType, jobId, request);
+
+                metaData.setDatafiles(dataFiles);
+
+            }
+            else {
+                metaData.addStatusMessage("2002", jobStatus);
+            }
+
+            brapiResponseEnvelope.setBrapiMetaData(metaData);
+
+
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("400", message);
+
+        } catch (Exception e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("400", message);
+        }
+
+        brapiResponseEnvelope.setResult(new HashMap<>());
+
+        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);
+
+        return returnVal;
+    }
 
     /***
      * Returns a stream for the at at the path specified by the query parameter. This method is not
