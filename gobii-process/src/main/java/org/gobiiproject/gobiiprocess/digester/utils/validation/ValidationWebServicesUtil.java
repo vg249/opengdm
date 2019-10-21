@@ -197,9 +197,12 @@ public class ValidationWebServicesUtil {
         }
     }
 
+    //TODO - this limit can be divined by another webservice call. Omitting this extra logic from 2.1 hotfix for space,
+    // readability, and to reduce error surface.
+    static final int MAX_NAMES_PER_CALL = 2000;
 
     /**
-     * Web service call to validate CV and reference type
+     * Web service call to validate CV and reference type. Will batch over the arbitrary limit.
      *
      * @param nameIdDTOList       Items list
      * @param gobiiEntityNameType CV or Reference
@@ -209,6 +212,57 @@ public class ValidationWebServicesUtil {
      * @throws MaximumErrorsValidationException exception
      */
     public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
+        int numEntities = nameIdDTOList.size();
+        List<NameIdDTO> results = new LinkedList<>();
+        for(int i=0;i < numEntities;i+=MAX_NAMES_PER_CALL){
+            List<NameIdDTO> sublist = getSubList(nameIdDTOList,i,i+MAX_NAMES_PER_CALL);
+            results.addAll(getNamesByShortNameList(sublist,gobiiEntityNameType,filterValue,failureList));
+        }
+        return results;
+    }
+
+    /**
+     * Works like ArrayList.getSubList, but if last argument is longer than the list length, truncates instead of warning.
+     * Works on both ArrayLists and LinkedLists, but only ArrayList implementation is efficient, so generates a warning
+     * on non-Array lists. Analysis of existing codebase suggests primarily Array Lists are being used.
+     * @param inList input list - preferably an ArrayList, but will work with other list types.
+     * @param fromList index 'from' to begin sublist at
+     * @param toList index 'to' to end sublist at. Sublist will end early if 'to' is too large
+     * @param <T>
+     * @return
+     */
+    private static<T> List<T> getSubList(List<T> inList, int fromList, int toList){
+        if(toList > inList.size()){
+            toList = inList.size();
+        }
+        if(inList instanceof ArrayList){
+            ArrayList<T> aList = (ArrayList<T>)inList;
+            return aList.subList(fromList,toList);
+        }
+
+        ErrorLogger.logWarning("Validation", "Inefficient call to getSubList on non-array list type");
+        List<T> outList = new LinkedList<T>();
+        Iterator<T> interator = inList.listIterator(fromList);
+        for(int i = 0; i < toList - fromList; i++){
+            if(!interator.hasNext()){
+                break;
+            }
+            outList.add(interator.next()); //bleugh
+        }
+        return outList;
+    }
+
+    /**
+     * Underlying web service call to validate CV and reference type
+     *
+     * @param nameIdDTOList       Items list
+     * @param gobiiEntityNameType CV or Reference
+     * @param filterValue         filter value
+     * @param failureList         failure list
+     * @return Items list with id
+     * @throws MaximumErrorsValidationException exception
+     */
+    public static List<NameIdDTO> getNamesByShortNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<NameIdDTO> nameIdDTOListResponse = new ArrayList<>();
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
