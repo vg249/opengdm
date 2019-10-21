@@ -213,7 +213,7 @@ public class ValidationWebServicesUtil {
      */
     public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
         int numEntities = nameIdDTOList.size();
-        List<NameIdDTO> results = new LinkedList<>();
+        List<NameIdDTO> results = new ArrayList<>(numEntities);
         for(int i=0;i < numEntities;i+=MAX_NAMES_PER_CALL){
             List<NameIdDTO> sublist = getSubList(nameIdDTOList,i,i+MAX_NAMES_PER_CALL);
             results.addAll(getNamesByShortNameList(sublist,gobiiEntityNameType,filterValue,failureList));
