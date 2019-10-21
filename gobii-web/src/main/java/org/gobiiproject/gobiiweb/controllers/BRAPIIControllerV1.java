@@ -638,8 +638,8 @@ public class BRAPIIControllerV1 {
         List<String> matrixDbIdList = alleleMatricesRequest.getMatrixDbId();
         List<String> markerprofileDbIdList = alleleMatricesRequest.getMarkerProfileDbId();
 
-        Optional<String> matrixDbId = Optional.of("");
-        Optional<String> markerprofileDbId = Optional.of("");
+        Optional<String> matrixDbId = Optional.empty();
+        Optional<String> markerprofileDbId = Optional.empty();
 
         if(matrixDbIdList != null) {
             matrixDbId = Optional.of(String.join(",", matrixDbIdList));
