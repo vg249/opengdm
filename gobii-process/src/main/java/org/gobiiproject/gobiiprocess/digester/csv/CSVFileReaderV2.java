@@ -190,7 +190,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;//Terrible hack to pass back to main thread the size of the file if it's a matrix file. There should be at most
             }
             else{
-                CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,new Addition());
+                CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,Integer::sum);
             }
             //One of these. It sucks, but passing it up the object chain doesn't make sense, as it goes through several layers of indirection.
         }
@@ -559,13 +559,7 @@ class RowColPair<I>{
         this.row=row;
         this.col=col;
     }
-    public RowColPair operateRows(RowColPair<I> other, BiFunction<I,I,I> function){
-        return new RowColPair(function.apply(row,other.row),this.col);
-    }
-}
-class Addition implements BiFunction<Integer,Integer,Integer>{
-    @Override
-    public Integer apply(Integer a, Integer b) {
-        return a+b;
+    public RowColPair<I> operateRows(RowColPair<I> other, BiFunction<I,I,I> function){
+        return new RowColPair<I>(function.apply(row,other.row),this.col);
     }
 }
