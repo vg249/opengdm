@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -184,7 +186,12 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             processCSV_COL(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_BOTH()) {
             RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
-            CSVFileReaderInterface.lastMatrixSizeRowCol=matrixSize;//Terrible hack to pass back to main thread the size of the file if it's a matrix file. There should be at most
+            if(CSVFileReaderInterface.lastMatrixSizeRowCol == null) {
+                CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;//Terrible hack to pass back to main thread the size of the file if it's a matrix file. There should be at most
+            }
+            else{
+                CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,new Addition());
+            }
             //One of these. It sucks, but passing it up the object chain doesn't make sense, as it goes through several layers of indirection.
         }
     }
@@ -551,5 +558,14 @@ class RowColPair<I>{
     RowColPair(I row, I col){
         this.row=row;
         this.col=col;
+    }
+    public RowColPair operateRows(RowColPair<I> other, BiFunction<I,I,I> function){
+        return new RowColPair(function.apply(row,other.row),this.col);
+    }
+}
+class Addition implements BiFunction<Integer,Integer,Integer>{
+    @Override
+    public Integer apply(Integer a, Integer b) {
+        return a+b;
     }
 }
