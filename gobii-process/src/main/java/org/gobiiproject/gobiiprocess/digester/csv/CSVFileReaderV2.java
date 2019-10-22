@@ -186,13 +186,13 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             processCSV_COL(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_BOTH()) {
             RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+            //Terrible hack to return size of matrix. There _can be more than one of these_, in which case they're stacked vertically
             if(CSVFileReaderInterface.lastMatrixSizeRowCol == null) {
-                CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;//Terrible hack to pass back to main thread the size of the file if it's a matrix file. There should be at most
+                CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;
             }
             else{
                 CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,Integer::sum);
             }
-            //One of these. It sucks, but passing it up the object chain doesn't make sense, as it goes through several layers of indirection.
         }
     }
 
