@@ -220,13 +220,20 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
-            value = "List of all calls",
+            value = "Get ServerInfo",
             notes = "List of all calls",
             tags = {"ServerInfo"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="ServerInfo"),
                     })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successful",
+                            response = BrapiResponseMapCalls.class
+                    )
             }
     )
     @ResponseBody
@@ -281,6 +288,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Authentication"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String postLogin(@RequestBody String loginRequestBody,
@@ -347,6 +356,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Search Studies**"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getStudies(@RequestBody String studiesRequestBody) throws Exception {
@@ -420,6 +431,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Germplasm : studyDbId"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getGermplasmByDbId(HttpServletRequest request,
@@ -476,6 +489,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="ObservationVariables"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getObservationVariables(HttpServletRequest request,
@@ -528,6 +543,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="AlleleMatrices**"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatrices(@ApiParam(value = "Study DB Id", required = false)
@@ -584,6 +601,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="AlleleMatricesSearch**"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatrices(
@@ -651,6 +670,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String postAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
@@ -750,6 +771,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId**"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatrixStatus(@ApiParam(value = "Job Id", required = true)
@@ -816,6 +839,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId**"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatricesStatus(@ApiParam(value = "Job Id", required = true)
@@ -904,6 +929,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Files**"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public void getFile(@ApiParam(value = "Fully qualified path name", required = true)
@@ -937,6 +964,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="MarkerProfiles"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String getMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
@@ -958,6 +987,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="MarkerProfiles"),
                     })
             }
+            ,
+            hidden = true
     )
     @ResponseBody
     public String postMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
@@ -1015,6 +1046,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Callsets")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1146,6 +1179,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Callsets : callSetDbId")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1203,6 +1238,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1304,6 +1341,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Variants")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1419,7 +1458,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Variants: variantDbId")
                     })
             }
-
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1467,7 +1507,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Maps")
                     })
             }
-
+            ,
+            hidden = true
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
@@ -1527,6 +1568,9 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Maps : mapId")
                     })
             }
+            ,
+            hidden = true
+
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
@@ -1582,6 +1626,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Markers")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
@@ -1669,6 +1715,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1769,6 +1817,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="VariantSets")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1888,6 +1938,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="VariantSets : variantSetDbId")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -1941,6 +1993,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Variants")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -2064,6 +2118,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="Callsets")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -2169,6 +2225,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="VariantSets")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -2216,6 +2274,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiResponses(
             value = {
@@ -2311,6 +2371,8 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
+            ,
+            hidden = true
     )
     @ApiImplicitParams({
             @ApiImplicitParam(

@@ -615,10 +615,10 @@
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
                             <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
-                            <basePath>/gobii-dev/brapi</basePath>
+                            <basePath>/gobii-dev</basePath>
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
-                                <title>GDM BrAPI</title>
+                                <title>GDM BrAPI Web Services</title>
                                 <version>1.0</version>
                                 <license>
                                     <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
