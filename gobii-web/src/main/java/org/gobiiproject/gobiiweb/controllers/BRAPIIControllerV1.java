@@ -209,33 +209,32 @@ public class BRAPIIControllerV1 {
     private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<DataSetBrapiDTO>>{}
 
 
-
-    // *********************************************
-    // *************************** CALLS
-    // *********************************************
-    @RequestMapping(value = "/calls",
+    /**
+     * List all BrApi compliant web services in GDM system
+     *
+     * Original /calls is deprecated in V2.0 as it is contracting with the same endpoint for genotype calls.
+     * so, /info is replacing the original /calls and the /calls will be used for genotype calls
+     *
+     * @param request - request object
+     * @return Json object with list of brapi calls in GDM
+     * @throws Exception
+     */
+    @RequestMapping(value = "/info",
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
-            value = "List all calls.",
-            notes = "List all calls",
-            tags = {"BrAPI"},
+            value = "List of all calls",
+            notes = "List of all calls",
+            tags = {"Calls"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Calls"),
-                            @ExtensionProperty(
-                                    name="tag-description",
-                                    value= "BrAPI is standards api calls. Below section list all" +
-                                            " the BrAPI calls supported by GDM."
-                            )
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public ResponseEntity getCalls(
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletRequest request) throws Exception {
 
         //String returnVal;
 
@@ -261,32 +260,33 @@ public class BRAPIIControllerV1 {
             brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        //returnVal = objectMapper.writeValueAsString(brapiResponseEnvelopeMasterDetail);
 
         return ResponseEntity.ok(brapiResponseEnvelopeMasterDetail);
     }
 
 
-    // *********************************************
-    // *************************** LOGIN (MASTER ONLY)
-    // *********************************************
+    /**
+     * Endpoint for authenticating users against GDM system
+     * @param loginRequestBody - BrAPI defined login request body
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/token",
             method = RequestMethod.POST,
             produces = "application/json")
     @ApiOperation(
-            value = "List all tokens.",
-            hidden = true,
-            notes = "List all tokens",
-            tags = {"BrAPI"},
+            value = "Authentication",
+            notes = "Returns a API Key if authentication is successful",
+            tags = {"Authentication"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Tokens"),
+                            @ExtensionProperty(name="summary", value="Authentication"),
                     })
             }
     )
     @ResponseBody
     public String postLogin(@RequestBody String loginRequestBody,
-                            HttpServletRequest request,
                             HttpServletResponse response) throws Exception {
 
         String returnVal;
@@ -331,23 +331,26 @@ public class BRAPIIControllerV1 {
     }
 
 
-    // *********************************************
-    // *************************** STUDIES_SEARCH (DETAILS ONLY)
-    // *************************** LIST ITEMS ONLY
-    // *********************************************
+    /**
+     * BrAPI v1.1 endpoint for searching studies
+     * @param studiesRequestBody
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/studies-search",
             method = RequestMethod.POST,
             produces = "application/json")
     @ApiOperation(
-            value = "Search the studies.",
-            notes = "Search studies.",
-            tags = {"BrAPI"},
+            value = "Search studies **deprecated in v1.3",
+            notes = "Search for studies ",
+            tags = {"Studies"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="StudiesSearch"),
+                            @ExtensionProperty(name="summary", value="Search Studies**"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getStudies(@RequestBody String studiesRequestBody,
@@ -411,13 +414,8 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
-    // *********************************************
-    // *************************** Germplasm details [GET]
-    // **************************** MASTER ONLY
-    // *********************************************
     @RequestMapping(value = "/germplasm/{studyDbId}",
             method = RequestMethod.GET,
-//            params = {"pageSize", "page"},
             produces = "application/json")
     @ApiOperation(
             value = "Get germplasm by study db id.",
@@ -427,17 +425,13 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Germplasm : studyDbId"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getGermplasmByDbId(HttpServletRequest request,
                                      HttpServletResponse response,
                                      @ApiParam(value = "Study DB Id", required = true)
                                      @PathVariable Integer studyDbId
-//            ,
-//                               @RequestParam(value = "pageSize",required = false) Integer pageSize,
-//                               @RequestParam(value = "page", required = false) Integer page
     ) throws Exception {
 
 
@@ -476,24 +470,18 @@ public class BRAPIIControllerV1 {
 
     }
 
-    // *********************************************
-    // *************************** Study obsefvation variables (GET)
-    // **************************** MASTER AND DETAIL
-    // *********************************************
     @RequestMapping(value = "/studies/{studyDbId}/observationVariables",
             method = RequestMethod.GET,
-//            params = {"pageSize", "page"},
             produces = "application/json")
     @ApiOperation(
-            value = "List all observation variables for given study db id",
+            value = "List all observation variables by styudyDbId",
             notes = "List all observation variables for given study db id",
-            tags = {"BrAPI"},
+            tags = {"Studies"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Studies.observationVariables"),
+                            @ExtensionProperty(name="summary", value="ObservationVariables"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getObservationVariables(HttpServletRequest request,
@@ -534,22 +522,18 @@ public class BRAPIIControllerV1 {
     }
 
 
-    // *********************************************
-    // *************************** ALLELE MATRICES
-    // *********************************************
     @RequestMapping(value = "/allelematrices",
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
-            value = "Get Allele Matrices",
+            value = "List Allele Matrices **deprecated in v2.0",
             notes = "Get allele matrices by given study db id",
-            tags = {"BrAPI"},
+            tags = {"AlleleMatrices"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="AlleleMatrices"),
+                            @ExtensionProperty(name="summary", value="AlleleMatrices**"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getAlleleMatrices(@ApiParam(value = "Study DB Id", required = false)
@@ -598,15 +582,14 @@ public class BRAPIIControllerV1 {
             method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
-            value = "Search Allele Matrix",
+            value = "Search Allele Matrix **deprecated in v2.0",
             notes = "Search allele matrix using marker profiles",
-            tags = {"BrAPI"},
+            tags = {"AlleleMatrices"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
+                            @ExtensionProperty(name="summary", value="AlleleMatricesSearch**"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getAlleleMatrices(
@@ -666,15 +649,14 @@ public class BRAPIIControllerV1 {
             method = {RequestMethod.POST, RequestMethod.GET},
             produces = "application/json")
     @ApiOperation(
-            value = "Search Allele Matrix",
+            value = "Search Allele Matrix **deprecated in v1.3",
             notes = "Search allele matrix using marker profiles",
             tags = {"BrAPI"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String postAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
@@ -766,15 +748,14 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
-            value = "Get Allele Matrix Job status",
+            value = "Get Allele Matrix Job status **deprecated in v1.3",
             notes = "Get allele matrix Job status",
             tags = {"BrAPI"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId"),
+                            @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId**"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getAlleleMatrixStatus(@ApiParam(value = "Job Id", required = true)
@@ -833,15 +814,14 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
-            value = "Get Allele Matrix Job status",
+            value = "Get Allele Matrices Job status **deprecated in v2.0",
             notes = "Get allele matrix Job status",
             tags = {"BrAPI"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId"),
+                            @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId**"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getAlleleMatricesStatus(@ApiParam(value = "Job Id", required = true)
@@ -922,15 +902,14 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ApiOperation(
-            value = "List all files",
+            value = "List all files **deprectaed",
             notes = "List all the files in a given path.",
-            tags = {"BrAPI"},
+            tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Files"),
+                            @ExtensionProperty(name="summary", value="Files**"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public void getFile(@ApiParam(value = "Fully qualified path name", required = true)
@@ -957,14 +936,13 @@ public class BRAPIIControllerV1 {
             produces = "application/json")
     @ApiOperation(
             value = "List all Marker Profiles",
-            notes = "List all Marker Profiles in given germplasm db..",
-            tags = {"BrAPI"},
+            notes = "List all Marker Profiles",
+            tags = {"MarkerProfiles"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="MarkerProfiles"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String getMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
@@ -978,15 +956,14 @@ public class BRAPIIControllerV1 {
             method = {RequestMethod.POST},
             produces = "application/json")
     @ApiOperation(
-            value = "List all Marker Profiles",
-            notes = "List all Marker Profiles in given germplasm db..",
-            tags = {"BrAPI"},
+            value = "Create Marker Profiles",
+            notes = "Create Marker Profiles",
+            tags = {"MarkerProfiles"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="MarkerProfiles"),
                     })
-            },
-            hidden = true
+            }
     )
     @ResponseBody
     public String postMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
@@ -1037,7 +1014,7 @@ public class BRAPIIControllerV1 {
      * @return Brapi response with list of dna runs/call sets
      */
     @ApiOperation(
-            value = "List all callsets",
+            value = "List all Callsets",
             notes = "List of all Callsets.",
             tags = {"Callsets"},
             extensions = {
@@ -1054,7 +1031,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required=true,
                 paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
@@ -1064,7 +1041,7 @@ public class BRAPIIControllerV1 {
                     "If pageNumber is specified pageToken will be ignored. " +
                     "pageToken can be used to sequentially get pages faster. " +
                     "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageToken", required = false) Integer pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @ApiParam(value = "ID of the CallSet to be retrieved.")
@@ -1083,20 +1060,6 @@ public class BRAPIIControllerV1 {
             @RequestParam(value = "sampleName", required = false) String sampleName
     ) {
         try {
-
-            Integer pageToken = null;
-
-            if (pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                }
-                catch(Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid Page Token");
-                }
-            }
 
             DnaRunDTO dnaRunDTOFilter = new DnaRunDTO();
 
@@ -1182,7 +1145,7 @@ public class BRAPIIControllerV1 {
      * Response body contains the requested callset information
      */
     @ApiOperation(
-            value = "Get a callset by callsetId",
+            value = "Get callset by callsetId",
             notes = "Retrieves the Callset entity having the specified ID",
             tags = {"Callsets"},
             extensions = {
@@ -1197,7 +1160,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
@@ -1257,7 +1220,7 @@ public class BRAPIIControllerV1 {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
@@ -1357,7 +1320,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required=true,
             paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variants", method=RequestMethod.GET)
@@ -1367,7 +1330,7 @@ public class BRAPIIControllerV1 {
                     "If pageNumber is specified pageToken will be ignored. " +
                     "pageToken can be used to sequentially get pages faster. " +
                     "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageToken", required = false) Integer pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageNum", required = false) Integer pageNum,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
@@ -1381,20 +1344,6 @@ public class BRAPIIControllerV1 {
             @RequestParam(value = "mapSetName", required = false) String mapSetName
     ) {
         try {
-
-            Integer pageToken = null;
-
-            if (pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                } catch (Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid Page Token"
-                    );
-                }
-            }
 
             MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
 
@@ -1487,7 +1436,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variants/{variantDbId:[\\d]+}", method=RequestMethod.GET)
@@ -1516,6 +1465,21 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    @ApiOperation(
+            value = "List Maps",
+            notes = "List Genome maps in the database",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Maps")
+                    })
+            }
+
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value="/maps", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMaps(
             @RequestParam(value = "page", required = false) Integer page,
@@ -1525,14 +1489,11 @@ public class BRAPIIControllerV1 {
         try {
 
             if(page == null) {
-
                 //First Page
                 page = getDefaultBrapiPage();
-
             }
 
             if(pageSize == null) {
-
                 //TODO: Using same resource limit as markers. But, Can be defined seperately
                 pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
             }
@@ -1564,6 +1525,20 @@ public class BRAPIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get Maps by mapId",
+            notes = "List Genome maps in the database",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Maps : mapId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMapByMapId(
             @RequestParam(value = "page", required = false) Integer page,
@@ -1605,6 +1580,20 @@ public class BRAPIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get Markers by mapId",
+            notes = "List Genome maps in the database",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Markers")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value="/maps/{mapId}/positions", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMarkersByMapId(
             @RequestParam(value = "page", required = false) Integer page,
@@ -1679,7 +1668,7 @@ public class BRAPIIControllerV1 {
      * TODO: Add page number parameter to comply BrApi standards.
      */
     @ApiOperation(
-            value = "List genotype calls",
+            value = "List Genotype Calls",
             notes = "List of all the genotype calls in a given Marker identified by Marker Id",
             tags = {"Variants"},
             extensions = {
@@ -1697,7 +1686,7 @@ public class BRAPIIControllerV1 {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
@@ -1779,7 +1768,7 @@ public class BRAPIIControllerV1 {
      * @return Brapi response with list of variantsets
      */
     @ApiOperation(
-            value = "List all variantsets",
+            value = "List Variantsets",
             notes = "List of all Variantsets",
             tags = {"VariantSets"},
             extensions = {
@@ -1796,7 +1785,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets", method=RequestMethod.GET)
@@ -1898,7 +1887,7 @@ public class BRAPIIControllerV1 {
      * Response body contains the requested variantset information
      */
     @ApiOperation(
-            value = "Get a variantset by variantSetDbId",
+            value = "Get Variantset by variantSetDbId",
             notes = "Retrieves the VariantSet entity having the specified ID",
             tags = {"VariantSets"},
             extensions = {
@@ -1915,7 +1904,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
@@ -1946,11 +1935,12 @@ public class BRAPIIControllerV1 {
      *
      * @param variantSetDbId - Integer ID of the VariantSet to be fetched
      * @param pageTokenParam - String page token
-     * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size, then the response will have maximum page size
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size,
+     *                 then the response will have maximum page size
      * @return Brapi response with list of CallSets
      */
     @ApiOperation(
-            value = "List all Variants for a given VariantSetDbId",
+            value = "List Variants by VariantSetDbId",
             notes = "List of all the Variants in a specific VariantSet",
             tags = {"VariantSets"},
             extensions = {
@@ -1967,7 +1957,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET)
@@ -2073,7 +2063,7 @@ public class BRAPIIControllerV1 {
      * @return Brapi response with list of CallSets
      */
     @ApiOperation(
-            value = "List all Callsets for a given VariantSetDbId",
+            value = "List Callsets by VariantSetDbId",
             notes = "List of all the CallSets in a specific VariantSet",
             tags = {"VariantSets"},
             extensions = {
@@ -2090,7 +2080,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
@@ -2178,7 +2168,7 @@ public class BRAPIIControllerV1 {
 
 
     @ApiOperation(
-            value = "Creates a extract",
+            value = "Create an extract ",
             notes = "Creates a variant set resource for given extract query",
             tags = {"VariantSets"},
             extensions = {
@@ -2189,7 +2179,7 @@ public class BRAPIIControllerV1 {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/extract", method=RequestMethod.POST)
@@ -2225,7 +2215,7 @@ public class BRAPIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "List genotype calls",
+            value = "List Genotype Calls",
             notes = "List of all the genotype calls in a given Variantset",
             tags = {"VariantSets"},
             extensions = {
@@ -2243,7 +2233,7 @@ public class BRAPIIControllerV1 {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(
@@ -2320,7 +2310,7 @@ public class BRAPIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "Download genotype calls",
+            value = "Download Genotype Calls",
             notes = "Download of all the genotype calls in a given Variantset",
             tags = {"VariantSets"},
             extensions = {
@@ -2331,7 +2321,7 @@ public class BRAPIIControllerV1 {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(
@@ -2380,14 +2370,18 @@ public class BRAPIIControllerV1 {
                else {
                    emitter.complete();
                }
+
                emitter.complete();
 
            } catch (Exception e) {
+
                e.printStackTrace();
                emitter.completeWithError(e);
                return;
            }
-            emitter.complete();
+
+           emitter.complete();
+
         });
 
         return ResponseEntity.ok().header(
