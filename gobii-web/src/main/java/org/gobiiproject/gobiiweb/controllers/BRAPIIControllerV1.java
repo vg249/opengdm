@@ -212,31 +212,26 @@ public class BRAPIIControllerV1 {
     /**
      * List all BrApi compliant web services in GDM system
      *
-     * Original /calls is deprecated in V2.0 as it is contracting with the same endpoint for genotype calls.
-     * so, /info is replacing the original /calls and the /calls will be used for genotype calls
-     *
      * @param request - request object
      * @return Json object with list of brapi calls in GDM
      * @throws Exception
      */
-    @RequestMapping(value = "/info",
+    @RequestMapping(value = "/serverinfo",
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
             value = "List of all calls",
             notes = "List of all calls",
-            tags = {"Calls"},
+            tags = {"ServerInfo"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Calls"),
+                            @ExtensionProperty(name="summary", value="ServerInfo"),
                     })
             }
     )
     @ResponseBody
     public ResponseEntity getCalls(
             HttpServletRequest request) throws Exception {
-
-        //String returnVal;
 
         BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
                 new BrapiResponseEnvelopeMasterDetail<>();
@@ -245,6 +240,7 @@ public class BRAPIIControllerV1 {
             BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
 
             BrapiResponseCalls brapiResponseCalls = brapiResponseMapCalls.getBrapiResponseCalls();
+
             brapiResponseEnvelopeMasterDetail.setResult(brapiResponseCalls);
 
         } catch (GobiiException e) {
@@ -258,10 +254,11 @@ public class BRAPIIControllerV1 {
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
             brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
+
         }
 
-
         return ResponseEntity.ok(brapiResponseEnvelopeMasterDetail);
+
     }
 
 
@@ -328,14 +325,13 @@ public class BRAPIIControllerV1 {
         returnVal = objectMapper.writeValueAsString(brapiResponseLogin);
 
         return returnVal;
+
     }
 
 
     /**
      * BrAPI v1.1 endpoint for searching studies
      * @param studiesRequestBody
-     * @param request
-     * @param response
      * @return
      * @throws Exception
      */
@@ -353,9 +349,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ResponseBody
-    public String getStudies(@RequestBody String studiesRequestBody,
-                             HttpServletRequest request,
-                             HttpServletResponse response) throws Exception {
+    public String getStudies(@RequestBody String studiesRequestBody) throws Exception {
 
         String returnVal;
 
@@ -1008,7 +1002,6 @@ public class BRAPIIControllerV1 {
     /**
      * Lists the dnaruns by page size and page token
      *
-     * @param pageTokenParam String page token
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size
      * @return Brapi response with list of dna runs/call sets
