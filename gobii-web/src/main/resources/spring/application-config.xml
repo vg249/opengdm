@@ -81,6 +81,9 @@
     <bean id="spRunnerCallable"
           class="org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable"/>
 
+    <bean id="spWorker"
+          class="org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker"/>
+
 
     <!-- **** Ping Beans *************************************** -->
     <bean id="dbMetaData"
@@ -314,6 +317,8 @@
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
     <bean id="sampleTrackingExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.sampletracking.ExperimentServiceImpl"/>
+    <bean id="sampleTrackingDnasampleService"
+          class="org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl"/>
 
 
     <!-- **** Analysis Beans *************************************** -->
@@ -323,7 +328,6 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisImpl"/>
     <bean id="AnalysisService"
           class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
-
 
     <!-- **** Platform Beans *************************************** -->
     <bean id="rsPlatformDao"
@@ -391,6 +395,14 @@
     <bean id="rsSampleTrackingProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsProjectDaoImpl"/>
 
+    <!-- **** New Project DAO for sample tracking use cases -->
+    <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
+
+    <!-- **** New Experiment DAO for sample tracking use cases -->
+    <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
+
+    <!-- **** New CV DAO for sample tracking use cases -->
+    <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
@@ -550,6 +562,7 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerNamesAll"/>
     <bean id="createStatementDnaSamples"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.modify.liststatement.CreateStatementDnaSamples"/>
+
 
     <!-- **** ListStatement queries paged *************************************** -->
     <bean id="listStatementDatasetAllPaged"
@@ -1195,7 +1208,12 @@
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSourceMulti"/>
-        <property name="packagesToScan" value="org.gobiiproject.gobiidao.entity"/>
+        <property name="packagesToScan">
+            <array>
+                <value>org.gobiiproject.gobiidao.entity</value>
+                <value>org.gobiiproject.gobiimodel.entity</value>
+            </array>
+        </property>
         <property name="mappingResources" value="META_INF/mapping.xml"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>

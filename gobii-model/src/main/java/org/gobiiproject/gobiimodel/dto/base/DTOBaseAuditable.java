@@ -1,9 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Date;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
@@ -24,14 +27,22 @@ public abstract class DTOBaseAuditable extends DTOBase {
         this.entityNameType = entityNameType;
     }
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName="createdBy", entity= Project.class)
     private Integer createdBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName="createdDate", entity= Project.class)
     private Date createdDate = null;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName="modifiedBy", entity= Project.class)
     private Integer modifiedBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName="modifiedDate", entity= Project.class)
     private Date modifiedDate = null;
 
     public GobiiEntityNameType getEntityNameType() {

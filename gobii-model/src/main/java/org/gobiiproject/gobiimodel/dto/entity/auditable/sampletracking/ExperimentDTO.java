@@ -2,80 +2,98 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
-/**
- * Created by VCalaminos on 5/1/2019.
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "allowedProcessTypes", "entityNameType", "properties"
+        "id", "allowedProcessTypes", "entityNameType",
+        "dataFilePath"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExperimentDTO extends DTOBaseAuditable {
 
-    private int id;
-    private String name;
-    private String code;
-    private String dataFile;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName="experimentId", entity = Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private int experimentId;
+
+    @GobiiEntityMap(paramName="experimentName", entity= Experiment.class)
+    private String experimentName;
+
+    @GobiiEntityMap(paramName="experimentCode", entity= Experiment.class)
+    private String experimentCode;
+
+    @GobiiEntityMap(paramName="dataFile", entity= Experiment.class)
+    private String dataFilePath;
+
+    @GobiiEntityMap(paramName="projectId", entity= Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer projectId;
+
+    @GobiiEntityMap(paramName="vendorProtocolId", entity= Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer vendorProtocolId;
+
+    @GobiiEntityMap(paramName="manifestId", entity= Experiment.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer manifestId;
-    private Integer status;
+
+    //Mapped by cvStatus
+    private String experimentStatus;
+
+    private String dataFileUrl;
 
     public ExperimentDTO() { super(GobiiEntityNameType.EXPERIMENT); }
 
     @Override
-    @GobiiEntityParam(paramName = "experimentId")
-    public Integer getId() { return this.id; }
+    public Integer getId() { return this.experimentId; }
 
     @Override
-    @GobiiEntityColumn(columnName = "experiment_id")
-    public void setId(Integer id) { this.id = id; }
+    public void setId(Integer id) { this.experimentId = id; }
 
-    @GobiiEntityParam(paramName = "experimentName")
-    public String getName() { return this.name; }
+    public Integer getExperimentId() { return this.experimentId; }
 
-    @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) { this.name = name; }
+    public void setExperimentId(Integer id) { this.experimentId = id; }
 
-    @GobiiEntityParam(paramName = "experimentCode")
-    public String getCode() { return this.code; }
+    public String getExperimentName() { return this.experimentName; }
 
-    @GobiiEntityColumn(columnName = "code")
-    public void setCode(String code) { this.code = code; }
+    public void setExperimentName(String name) { this.experimentName = name; }
 
-    @GobiiEntityParam(paramName = "experimentDataFile")
-    public String getDataFile() { return this.dataFile; }
+    public String getCode() { return this.experimentCode; }
 
-    @GobiiEntityColumn(columnName = "data_file")
-    public void setDataFile(String dataFile) { this.dataFile = dataFile; }
+    public void setCode(String code) { this.experimentCode = code; }
 
-    @GobiiEntityParam(paramName = "projectId")
+    public String getDataFilePath() { return this.dataFilePath; }
+
+    public void setDataFilePath(String dataFile) { this.dataFilePath = dataFile; }
+
+    public String getDataFileUrl() { return this.dataFileUrl; }
+
+    public void setDataFileUrl(String dataFileUrl) { this.dataFileUrl = dataFileUrl; }
+
     public Integer getProjectId() { return this.projectId; }
 
-    @GobiiEntityColumn(columnName = "project_id")
     public void setProjectId(Integer projectId) { this.projectId = projectId; }
 
-    @GobiiEntityParam(paramName = "vendorProtocolId")
     public Integer getVendorProtocolId() { return this.vendorProtocolId; }
 
-    @GobiiEntityColumn(columnName = "vendor_protocol_id")
     public void setVendorProtocolId(Integer vendorProtocolId) { this.vendorProtocolId = vendorProtocolId; }
 
-    @GobiiEntityParam(paramName = "manifestId")
     public Integer getManifestId() { return this.manifestId; }
 
-    @GobiiEntityColumn(columnName = "manifest_id")
     public void setManifestId(Integer manifestId) { this.manifestId = manifestId; }
 
-    @GobiiEntityParam(paramName = "status")
-    public Integer getStatus() { return this.status; }
+    public String getExperimentStatus() { return this.experimentStatus; }
 
-    @GobiiEntityColumn(columnName = "status")
-    public void setStatus(Integer status) { this.status = status; }
+    public void setExperimentStatus(String status) { this.experimentStatus = status; }
 
 }

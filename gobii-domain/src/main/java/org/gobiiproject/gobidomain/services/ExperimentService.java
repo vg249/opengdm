@@ -18,6 +18,7 @@ public interface ExperimentService<T> {
     T replaceExperiment(Integer experimentId, T experimentDTO) throws GobiiDomainException;
     List<T> getExperiments() throws GobiiDomainException;
     T getExperimentById(Integer experimentId) throws GobiiDomainException;
-    List<T> getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDomainException;
+    List<T> getExperimentsByProjectIdForLoadedDatasets(Integer experimentId) throws GobiiDomainException;
+    boolean updateExperimentDataFile(Integer experimentId, String dataFilePath) throws GobiiDomainException;
 
 }

@@ -80,6 +80,7 @@ public class ListStatementProjectAll implements ListStatement {
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         if(!pageCondition.isEmpty() && !pageSizeCondition.isEmpty()) {
+
             returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
             returnVal.setInt(2, pageSize);
             returnVal.setInt(3, (Integer) sqlParamVals.get("pageToken"));

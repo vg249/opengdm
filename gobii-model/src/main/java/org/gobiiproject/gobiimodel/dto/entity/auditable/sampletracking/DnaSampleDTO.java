@@ -1,12 +1,11 @@
 package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.HashMap;
@@ -22,83 +21,124 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DnaSampleDTO extends DTOBaseAuditable{
 
-    //@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonIgnore
-    private int id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @GobiiEntityMap(paramName = "dnaSampleId", entity = DnaSample.class)
+    private int sampleId;
+
+    @GobiiEntityMap(paramName = "projectId", entity = DnaSample.class)
     private Integer projectId;
+
+    @GobiiEntityMap(paramName = "dnaSampleUuid", entity = DnaSample.class)
     private String sampleUuid;
-    private String name;
-    private String code;
+
+    @GobiiEntityMap(paramName = "dnaSampleName", entity = DnaSample.class)
+    private String sampleName;
+
+    @GobiiEntityMap(paramName = "plateName", entity = DnaSample.class)
     private String plateName;
-    private String num;
+
+    @GobiiEntityMap(paramName = "dnaSampleNum", entity = DnaSample.class)
+    private String sampleNum;
+
+    @GobiiEntityMap(paramName = "wellRow", entity = DnaSample.class)
     private String wellRow;
+
+    @GobiiEntityMap(paramName = "wellCol", entity = DnaSample.class)
     private String wellCol;
+
+    private GermplasmDTO germplasm = new GermplasmDTO();
+
     private Map<String, Object> properties = new HashMap<>();
 
-    public DnaSampleDTO() { super(GobiiEntityNameType.DNASAMPLE); }
 
-    @Override
-    @GobiiEntityParam(paramName = "dnaSampleId")
-    public Integer getId() { return this.id; }
+    public int getDnaSampleId() {
+        return sampleId;
+    }
 
-    @Override
-    @GobiiEntityColumn(columnName = "dnasample_id")
-    public void setId(Integer id) { this.id = id; }
+    public void setDnaSampleId(int dnaSampleId) {
+        this.sampleId = dnaSampleId;
+    }
 
-    @GobiiEntityParam(paramName = "dnaSampleName")
-    public String getName() { return this.name; }
+    public Integer getProjectId() {
+        return projectId;
+    }
 
-    @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) { this.name = name; }
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
-    @GobiiEntityParam(paramName = "code")
-    public String getCode() { return this.code; }
+    public String getSampleUuid() {
+        return sampleUuid;
+    }
 
-    @GobiiEntityColumn(columnName = "code")
-    public void setCode(String code) { this.code = code; }
+    public void setSampleUuid(String sampleUuid) {
+        this.sampleUuid = sampleUuid;
+    }
 
-    @GobiiEntityParam(paramName = "plateName")
-    public String getPlateName() { return this.plateName; }
+    public String getSampleName() {
+        return sampleName;
+    }
 
-    @GobiiEntityColumn(columnName = "platename")
-    public void setPlateName(String plateName) { this.plateName = plateName; }
+    public void setSampleName(String sampleName) {
+        this.sampleName = sampleName;
+    }
 
-    @GobiiEntityParam(paramName = "num")
-    public String getNum() { return this.num; }
+    public String getPlateName() {
+        return plateName;
+    }
 
-    @GobiiEntityColumn(columnName = "num")
-    public void setNum(String num) { this.num = num; }
+    public void setPlateName(String plateName) {
+        this.plateName = plateName;
+    }
 
-    @GobiiEntityParam(paramName = "wellRow")
-    public String getWellRow() { return this.wellRow; }
+    public String getSampleNum() {
+        return sampleNum;
+    }
 
-    @GobiiEntityColumn(columnName = "well_row")
-    public void setWellRow(String wellRow) { this.wellRow = wellRow; }
+    public void setSampleNum(String sampleNum) {
+        this.sampleNum = sampleNum;
+    }
 
-    @GobiiEntityParam(paramName = "wellCol")
-    public String getWellCol() { return this.wellCol; }
+    public String getWellRow() {
+        return wellRow;
+    }
 
-    @GobiiEntityColumn(columnName = "well_col")
-    public void setWellCol(String wellCol) { this.wellCol = wellCol; }
+    public void setWellRow(String wellRow) {
+        this.wellRow = wellRow;
+    }
 
-    @GobiiEntityParam(paramName = "projectId")
-    public Integer getProjectId() { return this.projectId; }
+    public String getWellCol() {
+        return wellCol;
+    }
 
-    @GobiiEntityColumn(columnName = "project_id")
-    public void setProjectId(Integer projectId) { this.projectId = projectId; }
+    public void setWellCol(String wellCol) {
+        this.wellCol = wellCol;
+    }
 
-    @GobiiEntityParam(paramName = "sampleUuid")
-    public String getSampleUuid() { return this.sampleUuid; }
+    public GermplasmDTO getGermplasm() {
+        return germplasm;
+    }
 
-    @GobiiEntityColumn(columnName = "sample_uuid")
-    public void setSampleUuid(String sampleUuid) { this.sampleUuid = sampleUuid; }
+    public void setGermplasm(GermplasmDTO germplasm) {
+        this.germplasm = germplasm;
+    }
 
     public Map<String, Object> getProperties() {
-        return this.properties;
+        return properties;
     }
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
+
+    public DnaSampleDTO() { super(GobiiEntityNameType.DNASAMPLE); }
+
+    @Override
+    public Integer getId() { return this.sampleId; }
+
+    @Override
+    public void setId(Integer id) { this.sampleId = id; }
+
+
+
 }

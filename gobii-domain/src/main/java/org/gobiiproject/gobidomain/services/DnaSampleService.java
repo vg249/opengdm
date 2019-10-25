@@ -1,15 +1,19 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.SampleMetadataDTO;
 
+import java.io.InputStream;
 import java.util.List;
 
-/**
- * Created by VCalaminos on 5/2/2019.
- */
-public interface DnaSampleService<T> {
+public interface DnaSampleService {
 
-    ProjectSamplesDTO createSamples(List<T> sampleListDTO) throws GobiiDomainException;
+    ProjectSamplesDTO createSamples(ProjectSamplesDTO sampleListDTO) throws GobiiDomainException;
+    JobDTO uploadSamples(
+            byte[] inputFileBytes,
+            SampleMetadataDTO sampleMetadataDTO,
+            String cropType) throws GobiiDomainException;
 
 }

@@ -10,18 +10,137 @@
     }
   },
   "host" : "cbsugobiixvm11.biohpc.cornell.edu:8081",
-  "basePath" : "/gobii-dev/sample-tracking",
+  "basePath" : "/gobii-dev",
   "tags" : [ {
-    "name" : "Projects"
+    "name" : "Authentication"
+  }, {
+    "name" : "Dataset"
+  }, {
+    "name" : "Experiment"
+  }, {
+    "name" : "Project"
+  }, {
+    "name" : "Sample"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/sample-tracking/v1/projects" : {
+    "/sample-tracking/v1/auth" : {
+      "post" : {
+        "tags" : [ "Authentication" ],
+        "summary" : "Authentication",
+        "description" : "Authentication",
+        "operationId" : "authenticate",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-Username",
+          "in" : "header",
+          "description" : "User Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "X-Password",
+          "in" : "header",
+          "description" : "User password",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Auth-Token " : {
+                "type" : "string",
+                "description" : "API key to authenticate GDM api calls"
+              }
+            }
+          }
+        },
+        "x-summary" : "Authentication"
+      }
+    },
+    "/sample-tracking/v1/dataset" : {
+      "post" : {
+        "tags" : [ "Dataset" ],
+        "summary" : "Create new dataset",
+        "description" : "Creates a new dataset in the system.",
+        "operationId" : "createDataset",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/DataSetDTO"
+          }
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Dataset"
+      }
+    },
+    "/sample-tracking/v1/dataset/{datasetId}/data" : {
+      "post" : {
+        "tags" : [ "Dataset" ],
+        "summary" : "Upload data to dataset",
+        "description" : "Upload data to the dataset.",
+        "operationId" : "uploadDatasetData",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "datasetId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "datasetMetaData",
+          "in" : "formData",
+          "description" : "Metadata associated with data",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "genotypeFile",
+          "in" : "formData",
+          "description" : "The file to be uploaded",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Upload Data"
+      }
+    },
+    "/sample-tracking/v1/experiments" : {
       "get" : {
-        "tags" : [ "Projects" ],
-        "summary" : "List all projects",
-        "description" : "List of all Projects.",
-        "operationId" : "listProjects",
+        "tags" : [ "Experiment" ],
+        "summary" : "List all experiments",
+        "description" : "List of all Experiments.",
+        "operationId" : "listExperiment",
+        "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "pageToken",
           "in" : "query",
@@ -32,6 +151,76 @@
           "in" : "query",
           "required" : false,
           "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "pageNum",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ExperimentDTO"
+            }
+          }
+        },
+        "x-summary" : "Experiments"
+      },
+      "post" : {
+        "tags" : [ "Experiment" ],
+        "summary" : "Create new experiment",
+        "description" : "Creates new experiment in the system.",
+        "operationId" : "createExperiment",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "experimentMetaData",
+          "in" : "formData",
+          "description" : "The file to be uploaded",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "dataFile",
+          "in" : "formData",
+          "description" : "The file to be uploaded",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Experiments"
+      }
+    },
+    "/sample-tracking/v1/experiments/{experimentId}" : {
+      "get" : {
+        "tags" : [ "Experiment" ],
+        "summary" : "Get an experiment by experimentId",
+        "description" : "Retrieves the Experiment entity having the specified ID.",
+        "operationId" : "getExperimentById",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "experimentId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
           "format" : "int32"
         }, {
           "name" : "X-Auth-Token",
@@ -45,13 +234,56 @@
             "description" : "successful operation"
           }
         },
+        "x-summary" : "Experiment : experimentId"
+      }
+    },
+    "/sample-tracking/v1/projects" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "List all projects",
+        "description" : "List of all Projects.",
+        "operationId" : "listProjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "pageToken",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "pageNum",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ProjectDTO"
+            }
+          }
+        },
         "x-summary" : "Projects"
       },
       "post" : {
-        "tags" : [ "Projects" ],
-        "summary" : "Creates a new project",
+        "tags" : [ "Project" ],
+        "summary" : "Create new project",
         "description" : "Creates a new project in the system.",
         "operationId" : "createProject",
+        "consumes" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
@@ -71,16 +303,16 @@
             "description" : "successful operation"
           }
         },
-        "x-tag-description" : "A project consists of a group of samples that are, or will be, genotyped. A project belings to a Principal Investigator (PI), also called a PI contact. ",
         "x-summary" : "Projects"
       }
     },
     "/sample-tracking/v1/projects/{projectId}" : {
       "get" : {
-        "tags" : [ "Projects" ],
+        "tags" : [ "Project" ],
         "summary" : "Get a project by projectId",
         "description" : "Retrieves the Project entity having the specified ID.",
         "operationId" : "getProjectById",
+        "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "projectId",
           "in" : "path",
@@ -103,6 +335,69 @@
         },
         "x-summary" : "Projects : projectId"
       }
+    },
+    "/sample-tracking/v1/samples" : {
+      "post" : {
+        "tags" : [ "Sample" ],
+        "summary" : "Create new samples",
+        "description" : "Creates a new samples in the system.",
+        "operationId" : "createSamples",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ProjectSamplesDTO"
+          }
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Samples"
+      }
+    },
+    "/sample-tracking/v1/samples/upload" : {
+      "post" : {
+        "tags" : [ "Sample" ],
+        "summary" : "Upload new samples",
+        "description" : "Creates a new samples in the system.",
+        "operationId" : "uploadSamples",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "sampleMetaData",
+          "in" : "formData",
+          "description" : "The file to be uploaded",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "sampleFile",
+          "in" : "formData",
+          "description" : "The file to be uploaded",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Upload Samples"
+      }
     }
   },
   "securityDefinitions" : {
@@ -116,6 +411,214 @@
     }
   },
   "definitions" : {
+    "DataSetDTO" : {
+      "type" : "object",
+      "properties" : {
+        "datasetId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "datasetName" : {
+          "type" : "string"
+        },
+        "datatypeName" : {
+          "type" : "string"
+        },
+        "experimentId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "createdBy" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "createdDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "analysisIds" : {
+          "type" : "array",
+          "items" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "callingAnalysisName" : {
+          "type" : "string"
+        }
+      }
+    },
+    "DnaSampleDTO" : {
+      "type" : "object",
+      "properties" : {
+        "createdBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "createdDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "sampleId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "projectId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "sampleUuid" : {
+          "type" : "string"
+        },
+        "sampleName" : {
+          "type" : "string"
+        },
+        "plateName" : {
+          "type" : "string"
+        },
+        "sampleNum" : {
+          "type" : "string"
+        },
+        "wellRow" : {
+          "type" : "string"
+        },
+        "wellCol" : {
+          "type" : "string"
+        },
+        "germplasm" : {
+          "$ref" : "#/definitions/GermplasmDTO"
+        },
+        "properties" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object"
+          }
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "dnaSampleId" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ExperimentDTO" : {
+      "type" : "object",
+      "properties" : {
+        "createdBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "createdDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "code" : {
+          "type" : "string"
+        },
+        "projectId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "vendorProtocolId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "manifestId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "status" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "dataFileUrl" : {
+          "type" : "string"
+        },
+        "experimentId" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "GermplasmDTO" : {
+      "type" : "object",
+      "properties" : {
+        "createdBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "createdDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "germplasmName" : {
+          "type" : "string"
+        },
+        "externalCode" : {
+          "type" : "string"
+        },
+        "germplasmSpecies" : {
+          "type" : "string"
+        },
+        "germplasmType" : {
+          "type" : "string"
+        },
+        "germplasmId" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
     "ProjectDTO" : {
       "type" : "object",
       "properties" : {
@@ -148,11 +651,11 @@
           "type" : "string"
         },
         "projectStatus" : {
-          "type" : "integer",
-          "format" : "int32"
+          "type" : "string"
         },
         "projectCode" : {
-          "type" : "string"
+          "type" : "string",
+          "readOnly" : true
         },
         "projectDescription" : {
           "type" : "string"
@@ -161,6 +664,22 @@
           "type" : "object",
           "additionalProperties" : {
             "type" : "string"
+          }
+        }
+      }
+    },
+    "ProjectSamplesDTO" : {
+      "type" : "object",
+      "properties" : {
+        "projectId" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "samples" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DnaSampleDTO"
           }
         }
       }

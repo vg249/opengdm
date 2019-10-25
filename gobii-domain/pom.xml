@@ -18,6 +18,11 @@
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
+            <artifactId>gobii-sampletracking-dao</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-dtomapping</artifactId>
         </dependency>
 
