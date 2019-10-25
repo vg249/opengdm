@@ -131,7 +131,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             if (file.isDirectory()) {
                 listFilesFromFolder(file, tempFileBufferedWriter, loaderInstruction, outputFile);
             } else {
-                writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+                writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile,true);
             }
         } catch (FileNotFoundException e) {
             ErrorLogger.logError("CSVReader", "Unexpected Missing File", e);
@@ -155,11 +155,13 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             ErrorLogger.logWarning("CSVFileReader", "Read from null folder");
             return;
         }
+        boolean firstFile = true; //TODO - generation of metadata requires deduplication beyond 'dedup', placing here
         for (File file : folder.listFiles()) {
             // Sub folders are ignored
             if (file.isFile() & !file.getName().contains("digest")) {
                 try {
-                    writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+                    writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile, firstFile);
+                    firstFile=false;
                 } catch (IOException e) {
                     ErrorLogger.logError("CSVReader", "Failure to write digest files", e);
                 }
@@ -178,11 +180,16 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      * @throws IOException when the requisite file is missing or cannot be read
      */
     private void writeToOutputFile(File file, BufferedWriter tempFileBufferedWriter,
-                                   GobiiLoaderInstruction loaderInstruction, File outputFile) throws IOException {
+                                   GobiiLoaderInstruction loaderInstruction, File outputFile, boolean firstFile) throws IOException {
 
         if (processedInstruction.hasCSV_ROW()) {
             processCSV_ROW(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_COL()) {
+            if(!firstFile){
+                return; //TODO - assumption that this is a duplicated 'sample fast' file.
+                //Multiple files are stacked 'vertically'. This "feature" is very jank, and this bit'll have to be ripped
+                //out while replacing it.
+            }
             processCSV_COL(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_BOTH()) {
             RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
