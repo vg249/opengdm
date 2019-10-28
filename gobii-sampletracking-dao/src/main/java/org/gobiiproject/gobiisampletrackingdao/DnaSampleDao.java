@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface DnaSampleDao {
 
-    List<DnaSample> getDnaSamples();
+    List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize);
 
 }

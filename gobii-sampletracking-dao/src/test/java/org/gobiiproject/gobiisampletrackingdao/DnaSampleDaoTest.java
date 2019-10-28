@@ -23,9 +23,9 @@ public class DnaSampleDaoTest {
     @Test
     public void getDnaSamples() {
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples();
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(0, 10);
 
-        assertTrue(dnaSamples.size() > 0);
+        assertTrue(dnaSamples.size() == 10);
 
 
     }

@@ -1,15 +1,15 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.DnaSample;
-import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,15 +21,20 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
     protected EntityManager em;
 
     @Override
-    public List<DnaSample> getDnaSamples() {
+    @Transactional
+    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize) {
 
         List<DnaSample> dnaSamples = new ArrayList<>();
 
         try {
 
-            dnaSamples = em
-                    .createQuery("from DnaSample")
-                    .getResultList();
+            Session session = em.unwrap(Session.class);
+
+            dnaSamples = session
+                    .createQuery("SELECT dnasample FROM DnaSample dnasample")
+                    .setFirstResult(pageNum*pageSize)
+                    .setMaxResults(pageSize)
+                    .list();
 
         }
         catch(Exception e) {
