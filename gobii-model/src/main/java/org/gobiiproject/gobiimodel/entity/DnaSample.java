@@ -47,8 +47,9 @@ public class DnaSample extends BaseEntity {
     @Column(name="project_id")
     public String projectId;
 
-    @Column(name="germplasm_id")
-    public String germplasmId;
+    @ManyToOne
+    @JoinColumn(name = "germplasm_id")
+    public Germplasm germplasm;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
@@ -118,12 +119,12 @@ public class DnaSample extends BaseEntity {
         this.projectId = projectId;
     }
 
-    public String getGermplasmId() {
-        return germplasmId;
+    public Germplasm getGermplasm() {
+        return germplasm;
     }
 
-    public void setGermplasmId(String germplasmId) {
-        this.germplasmId = germplasmId;
+    public void setGermplasm(Germplasm germplasm) {
+        this.germplasm = germplasm;
     }
 
     public JsonNode getProperties() {

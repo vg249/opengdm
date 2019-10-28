@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class ProjectDaoImpl implements ProjectDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(SpWorker.class);
+    Logger LOGGER = LoggerFactory.getLogger(ProjectDao.class);
 
     @PersistenceContext
     protected EntityManager em;
@@ -35,7 +35,7 @@ public class ProjectDaoImpl implements ProjectDao {
 
     /**
      * Uses createprojectwithprops stored function in postgres database.
-     * Stored procedure arguments by index are, 1-based index
+     * Stored procedure arguments by index are below, (1-based index)
      * 1 - projectname
      * 2 - projectcode
      * 3 - projectdescription
