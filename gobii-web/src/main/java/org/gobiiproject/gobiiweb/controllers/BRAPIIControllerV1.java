@@ -1327,7 +1327,6 @@ public class BRAPIIControllerV1 {
     /**
      * Lists the variants by page size and page token
      *
-     * @param pageTokenParam String page token
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page sie
      * @return Brapi response with list of variants
