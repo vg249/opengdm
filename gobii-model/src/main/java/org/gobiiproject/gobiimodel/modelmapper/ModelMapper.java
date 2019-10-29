@@ -47,6 +47,10 @@ public class ModelMapper {
         }
     }
 
+    private static void mapField(Object entityInstance, Object dtoField, boolean dtoToEntity) {
+
+    }
+
     private static void maper(Object entityInstance, Object dtoInstance, boolean dtoToEntity) {
 
         try {
@@ -66,7 +70,6 @@ public class ModelMapper {
                             String dtoFieldName = dtoField.getName();
 
                             String entityFieldName = entityMap.paramName();
-
 
                             Field entityField = getDeclaredField(entityFieldName, entityInstance.getClass());
 

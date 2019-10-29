@@ -17,11 +17,11 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SamplesBrapiDTO {
 
-    @GobiiEntityMap(paramName="germplasmId", entity = Germplasm.class)
+    @GobiiEntityMap(paramName="germplasmId", entity = DnaSample.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer germplasmDbId;
 
-    @GobiiEntityMap(paramName="externalCode", entity = Germplasm.class)
+    @GobiiEntityMap(paramName="externalCode", entity = DnaSample.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer observationUnitDbId;
 
