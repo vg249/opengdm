@@ -22,7 +22,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":4, "name":"KASP"},
   "gobiiCropType":"dev",
-  "datasetType":"CO_DOMINANT_NON_NUCLEOTIDE"},
+  "datasetType":{"id":null, "name":"CO_DOMINANT_NON_NUCLEOTIDE"}},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

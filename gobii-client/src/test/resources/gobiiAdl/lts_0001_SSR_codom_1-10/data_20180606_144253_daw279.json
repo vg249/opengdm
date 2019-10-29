@@ -21,7 +21,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_SAMPLES",
   "platform":{"id":"34", "name":"SSR"},
   "gobiiCropType":"zoan",
-  "datasetType":"IUPAC"},
+  "datasetType":{"id":null, "name":"IUPAC"}},
  "instructions":
  [{"table":"germplasm",
    "gobiiFileColumns":
