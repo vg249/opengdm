@@ -64,7 +64,7 @@
 
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
     <bean id="markerBrapiService"
-          class="org.gobiiproject.gobidomain.services.impl.MarkerBrapiServiceImpl"/>
+          class="org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>

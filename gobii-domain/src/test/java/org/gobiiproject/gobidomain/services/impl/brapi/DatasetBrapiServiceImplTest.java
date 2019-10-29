@@ -1,4 +1,4 @@
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDatasetBrapi;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;

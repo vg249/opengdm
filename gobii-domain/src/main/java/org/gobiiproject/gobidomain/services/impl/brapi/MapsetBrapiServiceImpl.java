@@ -1,11 +1,9 @@
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;

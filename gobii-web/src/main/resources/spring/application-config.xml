@@ -404,6 +404,11 @@
     <!-- **** New CV DAO for sample tracking use cases -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
+
+    <!-- **** New Samples DAO for accessing DNA samples -->
+    <bean id="dnaSampleDao" class="org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl"/>
+
+
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
     <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapManifestImpl"/>
@@ -448,23 +453,23 @@
     <bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>
 
     <!-- *** MARKER BRAPI BEANS ************* -->
-    <bean id="markerBrapiService" class="org.gobiiproject.gobidomain.services.impl.MarkerBrapiServiceImpl"/>
+    <bean id="markerBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl"/>
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
     <bean id="rsMarkerBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerBrapiDaoImpl"/>
 
     <!-- *** DATASET BRAPI BEANS *********** -->
-    <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.DatasetBrapiServiceImpl"/>
+    <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.DatasetBrapiServiceImpl"/>
     <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
     <bean id="rsDatasetBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDatasetBrapiDaoImpl"/>
 
     <!-- *** MAPSET BRAPI BEANS *********** -->
-    <bean id="mapSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.MapsetBrapiServiceImpl"/>
+    <bean id="mapSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.MapsetBrapiServiceImpl"/>
     <bean id="dtoMapMapsetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetBrapiImpl"/>
     <bean id="rsMapBrapiDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapsetBrapiDaoImpl"/>
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
-    <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.LinkakgeGroupBrapiServiceImpl"/>
+    <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.LinkakgeGroupBrapiServiceImpl"/>
     <bean id="dtoMapLinkageGroupBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapLinkageGroupBrapiImpl"/>
 
     <!-- *** ANALYSIS BRAPI BEANS ********** -->

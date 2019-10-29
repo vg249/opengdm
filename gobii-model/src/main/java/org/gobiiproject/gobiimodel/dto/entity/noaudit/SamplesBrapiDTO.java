@@ -2,10 +2,11 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.Germplasm;
-import org.gobiiproject.gobiimodel.entity.Project;
 
 import java.util.Map;
 
@@ -16,21 +17,47 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SamplesBrapiDTO {
 
-    public String getGermplasmDbId() {
-        return germplasmDbId;
-    }
+    @GobiiEntityMap(paramName="germplasmId", entity = Germplasm.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer germplasmDbId;
 
-    public void setGermplasmDbId(String germplasmDbId) {
-        this.germplasmDbId = germplasmDbId;
-    }
+    @GobiiEntityMap(paramName="externalCode", entity = Germplasm.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer observationUnitDbId;
 
-    public String getObservationUnitDbId() {
-        return observationUnitDbId;
-    }
+    /** Sample Type is DNA for all GDM data **/
+    private String sampleType = "DNA";
 
-    public void setObservationUnitDbId(String observationUnitDbId) {
-        this.observationUnitDbId = observationUnitDbId;
-    }
+    private String tissueType;
+
+    @GobiiEntityMap(paramName="dnaSampleId", entity = DnaSample.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer sampleDbId;
+
+    @GobiiEntityMap(paramName="dnaSampleName", entity = DnaSample.class)
+    private String sampleName;
+
+    @GobiiEntityMap(paramName="dnaSampleUuid", entity = DnaSample.class)
+    private String samplePUI;
+
+    @GobiiEntityMap(paramName="plateName", entity = DnaSample.class)
+    private String plateName;
+
+    @GobiiEntityMap(paramName="wellRow", entity = DnaSample.class)
+    private String row;
+
+    @GobiiEntityMap(paramName="wellCol", entity = DnaSample.class)
+    private String column;
+
+    @GobiiEntityMap(paramName="dnaSampleNum", entity = DnaSample.class)
+    private String well;
+
+    @GobiiEntityMap(paramName="projectId", entity = DnaSample.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer sampleGroupDbId;
+
+
+    private Map<String, String> additionalInfo;
 
     public String getSampleType() {
         return sampleType;
@@ -48,13 +75,6 @@ public class SamplesBrapiDTO {
         this.tissueType = tissueType;
     }
 
-    public String getSampleDbId() {
-        return sampleDbId;
-    }
-
-    public void setSampleDbId(String sampleDbId) {
-        this.sampleDbId = sampleDbId;
-    }
 
     public String getSampleName() {
         return sampleName;
@@ -104,13 +124,6 @@ public class SamplesBrapiDTO {
         this.well = well;
     }
 
-    public String getSampleGroupDbId() {
-        return sampleGroupDbId;
-    }
-
-    public void setSampleGroupDbId(String sampleGroupDbId) {
-        this.sampleGroupDbId = sampleGroupDbId;
-    }
 
     public Map<String, String> getAdditionalInfo() {
         return additionalInfo;
@@ -121,42 +134,38 @@ public class SamplesBrapiDTO {
     }
 
 
-    @GobiiEntityMap(paramName="germplasmId", entity = Germplasm.class)
-    private String germplasmDbId;
 
-    @GobiiEntityMap(paramName="projectId", entity = Project.class)
-    private String observationUnitDbId;
+    public Integer getGermplasmDbId() {
+        return germplasmDbId;
+    }
 
-    /** Sample Type is DNA for all GDM data **/
-    private String sampleType = "DNA";
+    public void setGermplasmDbId(Integer germplasmDbId) {
+        this.germplasmDbId = germplasmDbId;
+    }
 
-    private String tissueType;
+    public Integer getObservationUnitDbId() {
+        return observationUnitDbId;
+    }
 
-    @GobiiEntityMap(paramName="dnaSampleId", entity = DnaSample.class)
-    private String sampleDbId;
+    public void setObservationUnitDbId(Integer observationUnitDbId) {
+        this.observationUnitDbId = observationUnitDbId;
+    }
 
-    @GobiiEntityMap(paramName="dnaSampleName", entity = DnaSample.class)
-    private String sampleName;
+    public Integer getSampleDbId() {
+        return sampleDbId;
+    }
 
-    @GobiiEntityMap(paramName="dnaSampleUuid", entity = DnaSample.class)
-    private String samplePUI;
+    public void setSampleDbId(Integer sampleDbId) {
+        this.sampleDbId = sampleDbId;
+    }
 
-    @GobiiEntityMap(paramName="plateName", entity = DnaSample.class)
-    private String plateName;
+    public Integer getSampleGroupDbId() {
+        return sampleGroupDbId;
+    }
 
-    @GobiiEntityMap(paramName="wellRow", entity = DnaSample.class)
-    private String row;
+    public void setSampleGroupDbId(Integer sampleGroupDbId) {
+        this.sampleGroupDbId = sampleGroupDbId;
+    }
 
-    @GobiiEntityMap(paramName="wellCol", entity = DnaSample.class)
-    private String column;
-
-    @GobiiEntityMap(paramName="dnaSampleNum", entity = DnaSample.class)
-    private String well;
-
-    @GobiiEntityMap(paramName="projectId", entity = DnaSample.class)
-    private String sampleGroupDbId;
-
-
-    private Map<String, String> additionalInfo;
 
 }

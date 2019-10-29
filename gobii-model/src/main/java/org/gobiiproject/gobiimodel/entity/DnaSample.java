@@ -49,7 +49,7 @@ public class DnaSample extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "germplasm_id")
-    public Germplasm germplasm;
+    public Germplasm germplasm = new Germplasm();
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
