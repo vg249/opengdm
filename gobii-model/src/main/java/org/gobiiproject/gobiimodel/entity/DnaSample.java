@@ -45,7 +45,7 @@ public class DnaSample extends BaseEntity {
     public String wellCol;
 
     @Column(name="project_id")
-    public String projectId;
+    public Integer projectId;
 
     @ManyToOne
     @JoinColumn(name = "germplasm_id")
@@ -111,11 +111,11 @@ public class DnaSample extends BaseEntity {
         this.wellCol = wellCol;
     }
 
-    public String getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(String projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
