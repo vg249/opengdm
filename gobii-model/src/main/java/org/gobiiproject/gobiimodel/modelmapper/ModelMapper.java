@@ -78,7 +78,23 @@ public class ModelMapper {
                             entityField.setAccessible(true);
 
                             if(dtoToEntity) {
-                                entityField.set(entityInstance, dtoField.get(dtoInstance));
+                                if(entityField.getType().equals(dtoField.getType())) {
+                                    entityField.set(entityInstance, dtoField.get(dtoInstance));
+                                }
+                                else {
+
+                                    LoggerFactory.getLogger(ModelMapper.class).error(
+                                            "Unable to map DTO to Entity: DTO field " + dtoFieldName +
+                                                    " of type " + dtoField.getType().toString() +
+                                            " is not mappable to Entity field" + entityFieldName +
+                                            " of type " + entityField.getType().toString());
+
+                                    throw new GobiiException(
+                                            GobiiStatusLevel.ERROR,
+                                            GobiiValidationStatusType.UNKNOWN,
+                                            "Unable to map DTO to Entity");
+
+                                }
                             }
                             else {
                                 dtoField.set(dtoInstance, entityField.get(entityInstance));

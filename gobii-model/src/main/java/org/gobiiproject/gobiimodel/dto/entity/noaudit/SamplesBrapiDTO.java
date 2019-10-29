@@ -1,7 +1,19 @@
 package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
+import org.gobiiproject.gobiimodel.entity.Germplasm;
+import org.gobiiproject.gobiimodel.entity.Project;
+
 import java.util.Map;
 
+/**
+ * Model for the Brapi Samples endpoint
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SamplesBrapiDTO {
 
     public String getGermplasmDbId() {
@@ -60,14 +72,6 @@ public class SamplesBrapiDTO {
         this.samplePUI = samplePUI;
     }
 
-    public String getSampleBarCode() {
-        return sampleBarCode;
-    }
-
-    public void setSampleBarCode(String sampleBarCode) {
-        this.sampleBarCode = sampleBarCode;
-    }
-
     public String getPlateName() {
         return plateName;
     }
@@ -116,31 +120,42 @@ public class SamplesBrapiDTO {
         this.additionalInfo = additionalInfo;
     }
 
+
+    @GobiiEntityMap(paramName="germplasmId", entity = Germplasm.class)
     private String germplasmDbId;
 
+    @GobiiEntityMap(paramName="projectId", entity = Project.class)
     private String observationUnitDbId;
 
+    /** Sample Type is DNA for all GDM data **/
     private String sampleType = "DNA";
 
     private String tissueType;
 
+    @GobiiEntityMap(paramName="dnaSampleId", entity = DnaSample.class)
     private String sampleDbId;
 
+    @GobiiEntityMap(paramName="dnaSampleName", entity = DnaSample.class)
     private String sampleName;
 
+    @GobiiEntityMap(paramName="dnaSampleUuid", entity = DnaSample.class)
     private String samplePUI;
 
-    private String sampleBarCode;
-
+    @GobiiEntityMap(paramName="plateName", entity = DnaSample.class)
     private String plateName;
 
+    @GobiiEntityMap(paramName="wellRow", entity = DnaSample.class)
     private String row;
 
+    @GobiiEntityMap(paramName="wellCol", entity = DnaSample.class)
     private String column;
 
+    @GobiiEntityMap(paramName="dnaSampleNum", entity = DnaSample.class)
     private String well;
 
+    @GobiiEntityMap(paramName="projectId", entity = DnaSample.class)
     private String sampleGroupDbId;
+
 
     private Map<String, String> additionalInfo;
 
