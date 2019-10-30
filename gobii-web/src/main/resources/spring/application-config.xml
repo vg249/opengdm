@@ -468,6 +468,10 @@
     <bean id="rsMapBrapiDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapsetBrapiDaoImpl"/>
 
+
+    <!-- ** SAMPLE BRAPI BEANS **-->
+    <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.SamplesBrapiServiceImpl"/>
+
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
     <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.LinkakgeGroupBrapiServiceImpl"/>
     <bean id="dtoMapLinkageGroupBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapLinkageGroupBrapiImpl"/>

@@ -77,6 +77,7 @@ public class ModelMapper {
                                     if(entityField == null) {
                                         break;
                                     }
+                                    entityField.setAccessible(true);
                                     entityToSet = entityField.get(entityToSet);
                                     entityField = getDeclaredField(deepParams[i], entityToSet.getClass());
                                 }

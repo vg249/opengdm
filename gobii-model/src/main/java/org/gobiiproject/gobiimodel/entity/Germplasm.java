@@ -84,28 +84,28 @@ public class Germplasm extends BaseEntity {
     @Id
     @Column(name="germplasm_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer germplasmId;
+    private Integer germplasmId;
 
     @Column(name="name")
-    public String germplasmName;
+    private String germplasmName;
 
     @Column(name="external_code")
-    public String externalCode;
+    private String externalCode;
 
     @Column(name="species_id")
-    public Integer germplasmSpecies;
+    private Integer germplasmSpecies;
 
     @Column(name="type_id")
-    public Integer germplasmTypeId;
+    private Integer germplasmTypeId;
 
     @Column(name="status")
-    public Integer status;
+    private Integer status;
 
     @Column(name="code")
-    public String code;
+    private String code;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
-    public JsonNode properties;
+    private JsonNode properties;
 
 }
