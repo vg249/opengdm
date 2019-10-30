@@ -18,10 +18,6 @@ public @interface GobiiEntityMap {
 
     Class entity() default void.class;
 
-    // Should be ignored if Entity is defined.
-    CvGroup cvGroup() default CvGroup.CVGROUP_STATUS;
-
-    // Should be ignored if cvGroup not provided
-    GobiiCvGroupType cvType() default GobiiCvGroupType.GROUP_TYPE_SYSTEM;
+    boolean deep() default false;
 
 }

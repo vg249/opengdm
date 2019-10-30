@@ -17,13 +17,12 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SamplesBrapiDTO {
 
-    @GobiiEntityMap(paramName="germplasmId", entity = DnaSample.class)
+    @GobiiEntityMap(paramName="germplasm.germplasmId", entity = DnaSample.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer germplasmDbId;
 
-    @GobiiEntityMap(paramName="externalCode", entity = DnaSample.class)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Integer observationUnitDbId;
+    @GobiiEntityMap(paramName="germplasm.externalCode", entity = DnaSample.class, deep=true)
+    private String observationUnitDbId;
 
     /** Sample Type is DNA for all GDM data **/
     private String sampleType = "DNA";
@@ -143,13 +142,6 @@ public class SamplesBrapiDTO {
         this.germplasmDbId = germplasmDbId;
     }
 
-    public Integer getObservationUnitDbId() {
-        return observationUnitDbId;
-    }
-
-    public void setObservationUnitDbId(Integer observationUnitDbId) {
-        this.observationUnitDbId = observationUnitDbId;
-    }
 
     public Integer getSampleDbId() {
         return sampleDbId;
@@ -166,6 +158,15 @@ public class SamplesBrapiDTO {
     public void setSampleGroupDbId(Integer sampleGroupDbId) {
         this.sampleGroupDbId = sampleGroupDbId;
     }
+
+    public String getObservationUnitDbId() {
+        return observationUnitDbId;
+    }
+
+    public void setObservationUnitDbId(String observationUnitDbId) {
+        this.observationUnitDbId = observationUnitDbId;
+    }
+
 
 
 }

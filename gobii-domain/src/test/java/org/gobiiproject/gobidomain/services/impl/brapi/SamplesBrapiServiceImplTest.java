@@ -77,7 +77,7 @@ public class SamplesBrapiServiceImplTest {
 
         List<DnaSample> samplesMock = new ArrayList<>();
 
-        samplesMock = getMockDnaSamples(10);
+        samplesMock = getMockDnaSamples(1000);
 
         when (
                 dnaSampleDao.getDnaSamples(

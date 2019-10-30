@@ -47,10 +47,6 @@ public class ModelMapper {
         }
     }
 
-    private static void mapField(Object entityInstance, Object dtoField, boolean dtoToEntity) {
-
-    }
-
     private static void maper(Object entityInstance, Object dtoInstance, boolean dtoToEntity) {
 
         try {
@@ -69,9 +65,23 @@ public class ModelMapper {
 
                             String dtoFieldName = dtoField.getName();
 
+                            Object entityToSet = entityInstance;
                             String entityFieldName = entityMap.paramName();
-
                             Field entityField = getDeclaredField(entityFieldName, entityInstance.getClass());
+
+                            if(entityMap.deep()) {
+                                //escape regular expression dot
+                                String[] deepParams = entityFieldName.split("\\.", 2);
+                                entityField = getDeclaredField(deepParams[0], entityToSet.getClass());
+                                for(int i = 1; i < deepParams.length; i++) {
+                                    if(entityField == null) {
+                                        break;
+                                    }
+                                    entityToSet = entityField.get(entityToSet);
+                                    entityField = getDeclaredField(deepParams[i], entityToSet.getClass());
+                                }
+                            }
+
 
                             if(entityField == null) {
                                 continue;
@@ -95,10 +105,10 @@ public class ModelMapper {
 
                             }
                             if(dtoToEntity) {
-                                entityField.set(entityInstance, dtoField.get(dtoInstance));
+                                entityField.set(entityToSet, dtoField.get(dtoInstance));
                             }
                             else {
-                                dtoField.set(dtoInstance, entityField.get(entityInstance));
+                                dtoField.set(dtoInstance, entityField.get(entityToSet));
                             }
 
                         }
