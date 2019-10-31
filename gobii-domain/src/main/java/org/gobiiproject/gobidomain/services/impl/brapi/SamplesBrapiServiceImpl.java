@@ -36,7 +36,7 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
                 germplasmDbId, observationUnitDbId);
 
         List<Cv> cvList = cvDao.getCvListByCvGroup(
-                CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+                CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
         for(DnaSample dnaSample : dnaSamples) {
 
