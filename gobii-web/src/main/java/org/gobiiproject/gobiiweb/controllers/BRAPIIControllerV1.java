@@ -1503,7 +1503,7 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value="/samples", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMaps(
             @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
-            @RequestParam(value="observationUnitId", required=false) Integer observationUnitId,
+            @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
             @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
@@ -1520,7 +1520,10 @@ public class BRAPIIControllerV1 {
                 pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
             }
 
-            List<SamplesBrapiDTO> samples = samplesBrapiService.getSamples(page, pageSize, sampleDbId);
+            List<SamplesBrapiDTO> samples = samplesBrapiService.getSamples(
+                    page, pageSize,
+                    sampleDbId, germplasmDbId,
+                    observationUnitDbId);
 
             Map<String, Object> brapiResult = new HashMap<>();
 

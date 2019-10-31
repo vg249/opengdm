@@ -7,6 +7,7 @@ import java.util.List;
 public interface SamplesBrapiService {
 
     List<SamplesBrapiDTO> getSamples(Integer pageNum, Integer pageSize,
-                                     Integer sampleDbId);
+                                     Integer sampleDbId, Integer germplasmDbId,
+                                     String observationUnitDbId);
 
 }

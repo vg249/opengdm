@@ -93,11 +93,13 @@ public class SamplesBrapiServiceImplTest {
 
         when (
                 dnaSampleDao.getDnaSamples(
-                        any(Integer.TYPE), any(Integer.TYPE), null)
+                        any(Integer.TYPE), any(Integer.TYPE))
         ).thenReturn(samplesMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE), null);
+        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE),
+                null, null,
+                null);
 
         assertEquals("Size mismatch", samplesMock.size(), samplesBrapi.size());
 
@@ -138,7 +140,7 @@ public class SamplesBrapiServiceImplTest {
     }
 
     @Test
-    public void testWithAdditionalInfo() throws Exception {
+    public void testAdditionalInfo() throws Exception {
 
         List<DnaSample> samplesMock = getMockDnaSamples(1000);
 
@@ -152,7 +154,7 @@ public class SamplesBrapiServiceImplTest {
 
         when (
                 dnaSampleDao.getDnaSamples(
-                        any(Integer.TYPE), any(Integer.TYPE), null)
+                        any(Integer.TYPE), any(Integer.TYPE))
         ).thenReturn(samplesMock);
 
         when (
@@ -161,7 +163,9 @@ public class SamplesBrapiServiceImplTest {
         ).thenReturn(cvListMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE), null);
+        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE),
+                null, null,
+                null);
 
         assertEquals(samplesMock.size(), samplesBrapi.size());
     }

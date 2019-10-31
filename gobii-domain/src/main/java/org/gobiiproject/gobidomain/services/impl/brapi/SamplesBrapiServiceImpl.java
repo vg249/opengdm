@@ -25,11 +25,15 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
     private CvDao cvDao;
 
     @Override
-    public List<SamplesBrapiDTO> getSamples(Integer pageNum, Integer pageSize, Integer sampleDbId) {
+    public List<SamplesBrapiDTO> getSamples(Integer pageNum, Integer pageSize,
+                                            Integer sampleDbId, Integer germplasmDbId,
+                                            String observationUnitDbId) {
 
         List<SamplesBrapiDTO> returnVal = new ArrayList<>();
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(pageNum, pageSize, sampleDbId);
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(pageNum, pageSize,
+                null, sampleDbId,
+                germplasmDbId, observationUnitDbId);
 
         List<Cv> cvList = cvDao.getCvListByCvGroup(
                 CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
