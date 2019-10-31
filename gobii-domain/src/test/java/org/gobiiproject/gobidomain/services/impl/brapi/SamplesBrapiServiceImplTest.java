@@ -93,7 +93,7 @@ public class SamplesBrapiServiceImplTest {
 
         when (
                 dnaSampleDao.getDnaSamples(
-                        any(Integer.TYPE), any(Integer.TYPE))
+                        any(Integer.TYPE), any(Integer.TYPE), null)
         ).thenReturn(samplesMock);
 
 
@@ -152,7 +152,7 @@ public class SamplesBrapiServiceImplTest {
 
         when (
                 dnaSampleDao.getDnaSamples(
-                        any(Integer.TYPE), any(Integer.TYPE))
+                        any(Integer.TYPE), any(Integer.TYPE), null)
         ).thenReturn(samplesMock);
 
         when (

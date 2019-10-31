@@ -3,6 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize) {
+    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize, Integer dnaSampleId) {
 
         List<DnaSample> dnaSamples = new ArrayList<>();
 
@@ -30,8 +31,16 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
             Session session = em.unwrap(Session.class);
 
-            dnaSamples = session
-                    .createQuery("SELECT dnasample FROM DnaSample dnasample")
+            Query dnaSamplesQuery = session
+                    .createQuery("SELECT dnasample FROM DnaSample dnasample" +
+                            " WHERE dnasample.dnaSampleId = :dnaSampleId");
+
+            if(dnaSampleId != null) {
+                dnaSamplesQuery
+                    .setInteger("dnaSampleId", dnaSampleId);
+            }
+
+            dnaSamples = dnaSamplesQuery
                     .setFirstResult(pageNum*pageSize)
                     .setMaxResults(pageSize)
                     .list();
