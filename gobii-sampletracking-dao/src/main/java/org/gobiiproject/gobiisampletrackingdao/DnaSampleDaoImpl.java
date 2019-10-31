@@ -3,6 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -31,19 +32,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
             Session session = em.unwrap(Session.class);
 
-            Query dnaSamplesQuery = session
-                    .createQuery("SELECT dnasample FROM DnaSample dnasample" +
-                            " WHERE dnasample.dnaSampleId = :dnaSampleId");
+            Criteria dnaSampleCriteria = session.createCriteria(DnaSample.class);
 
-            if(dnaSampleId != null) {
-                dnaSamplesQuery
-                    .setInteger("dnaSampleId", dnaSampleId);
-            }
-
-            dnaSamples = dnaSamplesQuery
-                    .setFirstResult(pageNum*pageSize)
-                    .setMaxResults(pageSize)
-                    .list();
+            dnaSamples = dnaSampleCriteria.list();
 
         }
         catch(Exception e) {

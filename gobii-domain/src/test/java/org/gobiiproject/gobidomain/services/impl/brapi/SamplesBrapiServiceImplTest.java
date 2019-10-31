@@ -97,7 +97,7 @@ public class SamplesBrapiServiceImplTest {
         ).thenReturn(samplesMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE));
+        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE), null);
 
         assertEquals("Size mismatch", samplesMock.size(), samplesBrapi.size());
 
@@ -161,7 +161,7 @@ public class SamplesBrapiServiceImplTest {
         ).thenReturn(cvListMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE));
+        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE), null);
 
         assertEquals(samplesMock.size(), samplesBrapi.size());
     }
