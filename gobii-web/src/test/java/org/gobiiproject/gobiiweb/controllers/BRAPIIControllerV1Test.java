@@ -173,11 +173,11 @@ public class BRAPIIControllerV1Test {
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
                         "/gobii-dev/brapi/v1/callsets/{callSetDbId}", callSetDTO.getCallSetDbId()
-                ).contextPath("/gobii-dev")).andDo(print()
-        ).andExpect(MockMvcResultMatchers.status().isOk()
-        ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.result.callSetDbId").value(callSetDTO.getCallSetDbId())
-        ).andExpect(jsonPath("$.result.callSetName").value(callSetDTO.getCallSetName()));
+                ).contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.result.callSetDbId").value(callSetDTO.getCallSetDbId()))
+                .andExpect(jsonPath("$.result.callSetName").value(callSetDTO.getCallSetName()));
     }
 
     @Test
@@ -197,11 +197,10 @@ public class BRAPIIControllerV1Test {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/variants"
-                ).contextPath("/gobii-dev")).andDo(print()
-        ).andExpect(MockMvcResultMatchers.status().isOk()
-        ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1));
+                        "/gobii-dev/brapi/v1/variants").contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1));
     }
 
     @Test
@@ -215,12 +214,12 @@ public class BRAPIIControllerV1Test {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/variants/{variantDbId}", variantDTO.getVariantDbId()
-                ).contextPath("/gobii-dev")).andDo(print()
-        ).andExpect(MockMvcResultMatchers.status().isOk()
-        ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.result.variantDbId").value(variantDTO.getVariantDbId())
-        ).andExpect(jsonPath("$.result.variantName").value(variantDTO.getVariantName()));
+                        "/gobii-dev/brapi/v1/variants/{variantDbId}", variantDTO.getVariantDbId())
+                        .contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.result.variantDbId").value(variantDTO.getVariantDbId()))
+                .andExpect(jsonPath("$.result.variantName").value(variantDTO.getVariantName()));
     }
 
     @Test
@@ -232,19 +231,17 @@ public class BRAPIIControllerV1Test {
 
         variantSets.add(dataSetBrapiDTO);
 
-        when (
-                datasetBrapiService.getDatasets(
-                        any(Integer.TYPE), any(Integer.TYPE), any(DataSetBrapiDTO.class)
-                )
-        ).thenReturn(variantSets);
+        when (datasetBrapiService.getDatasets(
+                        any(Integer.TYPE), any(Integer.TYPE), any(DataSetBrapiDTO.class)))
+                .thenReturn(variantSets);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/variantsets"
-                ).contextPath("/gobii-dev")).andDo(print()
-        ).andExpect(MockMvcResultMatchers.status().isOk()
-        ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1));
+                        "/gobii-dev/brapi/v1/variantsets")
+                        .contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1));
     }
 
     @Test
@@ -258,12 +255,12 @@ public class BRAPIIControllerV1Test {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/variantsets/{variantSetDbId}", variantSetDTO.getVariantSetDbId()
-                ).contextPath("/gobii-dev")).andDo(print()
-        ).andExpect(MockMvcResultMatchers.status().isOk()
-        ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.result.variantSetDbId").value(variantSetDTO.getVariantSetDbId())
-        ).andExpect(jsonPath("$.result.variantSetName").value(variantSetDTO.getVariantSetName()));
+                        "/gobii-dev/brapi/v1/variantsets/{variantSetDbId}",
+                        variantSetDTO.getVariantSetDbId()).contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.result.variantSetDbId").value(variantSetDTO.getVariantSetDbId()))
+                .andExpect(jsonPath("$.result.variantSetName").value(variantSetDTO.getVariantSetName()));
     }
 
     @Test
@@ -290,11 +287,13 @@ public class BRAPIIControllerV1Test {
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
                         "/gobii-dev/brapi/v1/variantsets/{variantSetDbId}/variants", dataSetBrapiDTO.getVariantSetDbId()
-                ).contextPath("/gobii-dev")).andDo(print()
-        ).andExpect(MockMvcResultMatchers.status().isOk()
-        ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1)
-        ).andExpect(jsonPath("$.result.data[0].variantSetDbId[0]").value(dataSetBrapiDTO.getVariantSetDbId()));
+                ).contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+                .andExpect(
+                        jsonPath("$.result.data[0].variantSetDbId[0]")
+                                .value(dataSetBrapiDTO.getVariantSetDbId()));
     }
 
     @Test
@@ -320,7 +319,8 @@ public class BRAPIIControllerV1Test {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/variantsets/{variantSetDbId}/callsets", dataSetBrapiDTO.getVariantSetDbId()
+                        "/gobii-dev/brapi/v1/variantsets/{variantSetDbId}/callsets",
+                        dataSetBrapiDTO.getVariantSetDbId()
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
