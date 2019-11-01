@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobidomain.security.UserContextLoader;
 import org.gobiiproject.gobidomain.services.DatasetBrapiService;
 import org.gobiiproject.gobidomain.services.DnaRunService;
@@ -10,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,6 +31,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
@@ -158,7 +162,7 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1));
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1));
     }
 
     @Test
@@ -201,7 +205,7 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1));
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1));
     }
 
     @Test
@@ -244,7 +248,7 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1));
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1));
     }
 
     @Test
@@ -293,7 +297,7 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1)
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1)
         ).andExpect(jsonPath("$.result.data[0].variantSetDbId[0]").value(dataSetBrapiDTO.getVariantSetDbId()));
     }
 
@@ -324,8 +328,49 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1)
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1)
         ).andExpect(jsonPath("$.result.data[0].variantSetIds[0]").value(dataSetBrapiDTO.getVariantSetDbId()));
+
+    }
+
+    private List<SamplesBrapiDTO> createMockSamples(Integer pageSize) {
+
+        List<SamplesBrapiDTO> returnVal = new ArrayList<>();
+
+        Random random = new Random();
+
+        for(int i = 0; i < pageSize; i++) {
+
+            SamplesBrapiDTO sample = new SamplesBrapiDTO();
+
+            sample.setTissueType(RandomStringUtils.random(5, true, false));
+
+            sample.setColumn(RandomStringUtils.random(1, true, true));
+
+            sample.setGermplasmDbId(random.nextInt(10));
+
+            sample.setObservationUnitDbId(UUID.randomUUID().toString());
+
+            sample.setPlateName(RandomStringUtils.random(5, true, true));
+
+            sample.setRow(RandomStringUtils.random(1, true, true));
+
+            sample.setSampleDbId(i);
+
+            sample.setSampleGroupDbId(random.nextInt(4));
+
+            sample.setSampleName(RandomStringUtils.random(5, true, true));
+
+        }
+
+        return returnVal;
+
+    }
+
+    @Test
+    public void testGetSamplesList() throws Exception {
+
+//        Integer pageSize = any
 
     }
 
