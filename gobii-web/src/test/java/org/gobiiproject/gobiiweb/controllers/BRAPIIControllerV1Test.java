@@ -5,6 +5,7 @@ import org.gobiiproject.gobidomain.security.UserContextLoader;
 import org.gobiiproject.gobidomain.services.DatasetBrapiService;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.MarkerBrapiService;
+import org.gobiiproject.gobidomain.services.SamplesBrapiService;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
@@ -24,7 +25,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,8 +34,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -58,10 +57,15 @@ public class BRAPIIControllerV1Test {
     @Mock
     private DatasetBrapiService datasetBrapiService;
 
+    @Mock
+    private SamplesBrapiService samplesBrapiService;
+
     @InjectMocks
     private BRAPIIControllerV1 brapiiControllerV1;
 
     private MockMvc mockMvc;
+
+    Random random = new Random();
 
     @BeforeClass
     public static void setupClass() {
@@ -337,7 +341,6 @@ public class BRAPIIControllerV1Test {
 
         List<SamplesBrapiDTO> returnVal = new ArrayList<>();
 
-        Random random = new Random();
 
         for(int i = 0; i < pageSize; i++) {
 
@@ -361,6 +364,14 @@ public class BRAPIIControllerV1Test {
 
             sample.setSampleName(RandomStringUtils.random(5, true, true));
 
+            sample.setSamplePUI(UUID.randomUUID().toString());
+
+            sample.setTissueType(RandomStringUtils.random(5, true, true));
+
+            sample.setSampleType(RandomStringUtils.random(4, true, true));
+
+            returnVal.add(sample);
+
         }
 
         return returnVal;
@@ -370,7 +381,28 @@ public class BRAPIIControllerV1Test {
     @Test
     public void testGetSamplesList() throws Exception {
 
-//        Integer pageSize = any
+        Integer pageSize = random.nextInt(100);
+
+        List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
+
+        when(
+                samplesBrapiService.getSamples(
+                        any(Integer.TYPE), eq(pageSize),
+                        isNull(Integer.class), isNull(Integer.class),
+                        isNull(String.class))
+        ).thenReturn(mockSamples);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(
+                        "/gobii-dev/brapi/v1/samples")
+                        .param("pageSize",  pageSize.toString())
+                        .contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
+                .andExpect(jsonPath("$.result.data[0].sampleDbId")
+                        .value(mockSamples.get(0).getSampleDbId().toString()));
+
 
     }
 

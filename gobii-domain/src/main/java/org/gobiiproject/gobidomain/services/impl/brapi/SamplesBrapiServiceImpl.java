@@ -31,7 +31,8 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
 
         List<SamplesBrapiDTO> returnVal = new ArrayList<>();
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(pageNum, pageSize,
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(
+                pageNum, pageSize,
                 null, sampleDbId,
                 germplasmDbId, observationUnitDbId);
 
