@@ -43,14 +43,14 @@ public class MarkerBrapiDTO extends DTOBase {
     public void setId(Integer id) { this.variantDbId = id; }
 
     @GobiiEntityParam(paramName = "variantDbId")
-    @JsonProperty("markerDbId")
+    @JsonProperty("variantDbId")
     public Integer getVariantDbId() { return this.variantDbId; }
 
     @GobiiEntityColumn(columnName = "marker_id")
     public void setVariantDbId(Integer variantDbId) { this.variantDbId = variantDbId; }
 
     @GobiiEntityParam(paramName = "variantName")
-    @JsonProperty("markerName")
+    @JsonProperty("variantName")
     public String getVariantName() { return this.variantName; }
 
     @GobiiEntityColumn(columnName = "name")

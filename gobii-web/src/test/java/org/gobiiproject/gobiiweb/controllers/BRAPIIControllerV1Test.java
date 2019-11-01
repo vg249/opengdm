@@ -217,6 +217,8 @@ public class BRAPIIControllerV1Test {
 
         MarkerBrapiDTO variantDTO = createMockMarkerDTO();
 
+        variantDTO.setVariantDbId(random.nextInt(10));
+
         when (
                 markerBrapiService.getMarkerById(variantDTO.getId())
         ).thenReturn(variantDTO);

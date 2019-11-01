@@ -32,7 +32,7 @@ public class DnaSampleDaoTest {
     }
 
     @Test
-    public void testGetDnaSamplesByDnaSampleId() {
+    public void testGetDnaSampleByDnaSampleId() {
 
         List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(0, 10);
 
@@ -44,19 +44,13 @@ public class DnaSampleDaoTest {
 
             assertNotNull("dnaSampleId should not be null", dnaSampleQueryId);
 
-            List<DnaSample> dnaSamplesByDnaSampleId = dnaSampleDao.getDnaSamplesByDnaSampleId(
-                    0,
-                    10,
-                    dnaSampleQueryId);
+            DnaSample dnaSamplesByDnaSampleId = dnaSampleDao.getDnaSampleByDnaSampleId(dnaSampleQueryId);
 
-            //Assert that there is only one dnaSample for dnaSampleId
-            assertTrue("more than one dna sample for dnasample id",
-                    dnaSamplesByDnaSampleId.size() == 1);
 
-            DnaSample dnaSampleResult = dnaSamplesByDnaSampleId.get(0);
+            assertNotNull(dnaSamplesByDnaSampleId);
 
             assertEquals("retreived dnaSample entity does not have dnaSampleId queried for",
-                    dnaSampleResult.getDnaSampleId(),
+                    dnaSamplesByDnaSampleId.getDnaSampleId(),
                     dnaSampleQueryId);
 
         }

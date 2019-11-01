@@ -14,7 +14,7 @@ public interface DnaSampleDao {
 
     List<DnaSample> getDnaSamplesByProjectId(Integer pageNum, Integer pageSize, Integer projectId);
 
-    List<DnaSample> getDnaSamplesByDnaSampleId(Integer pageNum, Integer pageSize, Integer dnaSampleId);
+    DnaSample getDnaSampleByDnaSampleId(Integer dnaSampleId);
 
     List<DnaSample> getDnaSamplesByGermplasmId(Integer pageNum, Integer pageSize, Integer germplasmId);
 
