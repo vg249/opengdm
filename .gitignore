@@ -22,7 +22,7 @@ gobii-web/src/main/ts/*.map
 gobii-web/src/main/ts/.baseDir.ts
 gobii-web/node_modules
 gobii-web/.tscache
-
+gobii-web/node_modules
 
 gobii-model/src/main/resources/gobii.properties
 gobii-client/gobii-web.xml
