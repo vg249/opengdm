@@ -4791,15 +4791,15 @@
         "open" : {
           "type" : "boolean"
         },
-        "readable" : {
-          "type" : "boolean"
-        },
         "uri" : {
           "type" : "string",
           "format" : "uri"
         },
         "filename" : {
           "type" : "string"
+        },
+        "readable" : {
+          "type" : "boolean"
         },
         "url" : {
           "type" : "string",
