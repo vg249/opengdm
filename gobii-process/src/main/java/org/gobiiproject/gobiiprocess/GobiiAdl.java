@@ -2091,11 +2091,12 @@ public class GobiiAdl {
                     checkStatus(resultEnvelopeForDatasetGet);
 
                     DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
-
                     // set datasetType fields in instruction file template
-                    if (metadata.has("datasetType")) {
-                        metadata.addProperty("datasetType", dataSetDTOGetResponse.getDatatypeName().toUpperCase());
-                    }
+                    JsonObject datasetTypeObj = (JsonObject) metadata.get("datasetType");
+                    datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName().toUpperCase());
+                    datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
+
+                    metadata.add("datasetType", datasetTypeObj);
                 }
 
                 JsonObject tempObject = (JsonObject) metadata.get(entityName);
