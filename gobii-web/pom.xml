@@ -335,6 +335,14 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+            <groupId>pl.allegro</groupId>
+            <artifactId>grunt-maven-plugin</artifactId>
+            <version>${grunt-plugin-version}</version>
+            <configuration>
+                <gruntBuildDirectory>${project.build.directory}/grunt</gruntBuildDirectory>
+            </configuration>
+            </plugin>
 
             <!-- Replacing deprecated grunt-maven-plugin with front-end-maven-plugin
                 https://github.com/allegro/grunt-maven-plugin
@@ -345,6 +353,8 @@
                 <version>${frontend-maven-plugin-version}</version>
 
                 <executions>
+
+
 
                     <execution>
                         <!-- optional: you don't really need execution ids,
