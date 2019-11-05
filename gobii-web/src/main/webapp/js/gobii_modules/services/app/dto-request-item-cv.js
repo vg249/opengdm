@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/cv"],
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_process_1, cv_1, DtoRequestItemCv;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -24,7 +24,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/cv"],
             }
         ],
         execute: function () {
-            DtoRequestItemCv = (function () {
+            DtoRequestItemCv = /** @class */ (function () {
                 function DtoRequestItemCv(cvId) {
                     this.cvId = cvId;
                     this.processType = type_process_1.ProcessType.READ;

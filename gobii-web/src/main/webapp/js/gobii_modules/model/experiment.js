@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Experiment;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Experiment = (function () {
+            Experiment = /** @class */ (function () {
                 function Experiment(experimentId, experimentName, experimentCode, experimentDataFile, projectId, platformId, manifestId, createdBy, createdstring, modifiedBy, modifiedstring, status, platformName) {
                     this.experimentId = experimentId;
                     this.experimentName = experimentName;

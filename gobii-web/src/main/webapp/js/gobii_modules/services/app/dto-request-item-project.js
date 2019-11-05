@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_process_1, project_1, DtoRequestItemProject;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -24,7 +24,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
             }
         ],
         execute: function () {
-            DtoRequestItemProject = (function () {
+            DtoRequestItemProject = /** @class */ (function () {
                 function DtoRequestItemProject(projectId) {
                     this.projectId = projectId;
                     this.processType = type_process_1.ProcessType.READ;

@@ -4093,18 +4093,18 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-      url:
-        type: "string"
-        format: "url"
-      file:
-        type: "file"
+      readable:
+        type: "boolean"
       uri:
         type: "string"
         format: "uri"
       filename:
         type: "string"
-      readable:
-        type: "boolean"
+      url:
+        type: "string"
+        format: "url"
+      file:
+        type: "file"
   JobDTO:
     type: "object"
     properties:

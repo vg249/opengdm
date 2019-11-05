@@ -1,17 +1,20 @@
 System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
     var __extends = (this && this.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     })();
-    var __moduleName = context_1 && context_1.id;
     var guid_1, type_extractor_filter_1, gobii_file_item_compound_id_1, ContainerType, GobiiTreeNode;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (guid_1_1) {
@@ -31,7 +34,7 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
                 ContainerType[ContainerType["DATA"] = 2] = "DATA";
             })(ContainerType || (ContainerType = {}));
             exports_1("ContainerType", ContainerType);
-            GobiiTreeNode = (function (_super) {
+            GobiiTreeNode = /** @class */ (function (_super) {
                 __extends(GobiiTreeNode, _super);
                 function GobiiTreeNode(parent, fileItemId, required) {
                     var _this = _super.call(this) || this;

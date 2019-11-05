@@ -19,6 +19,7 @@ gobii-web/target
 *.log
 gobii-web/src/main/ts/*.js
 gobii-web/src/main/ts/*.map
+gobii-web/src/main/webapp/js/gobii_modules/**/*.js
 gobii-web/src/main/ts/.baseDir.ts
 gobii-web/node_modules
 gobii-web/.tscache

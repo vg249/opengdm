@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/filte
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_process_1, filter_params_1, filter_type_1, file_item_param_names_1, paged_item_list_1, pagination_1, DtoRequestItemGfiPaged;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -36,7 +36,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/filte
             }
         ],
         execute: function () {
-            DtoRequestItemGfiPaged = (function () {
+            DtoRequestItemGfiPaged = /** @class */ (function () {
                 function DtoRequestItemGfiPaged(fileItemParams, id, jsonToGfi) {
                     if (id === void 0) { id = null; }
                     this.fileItemParams = fileItemParams;

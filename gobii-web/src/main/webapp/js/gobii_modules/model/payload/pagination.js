@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Pagination;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Pagination = (function () {
+            Pagination = /** @class */ (function () {
                 function Pagination(currentPage, pageSize, pagedQueryId, queryTime, totalPages) {
                     this.currentPage = currentPage;
                     this.pageSize = pageSize;

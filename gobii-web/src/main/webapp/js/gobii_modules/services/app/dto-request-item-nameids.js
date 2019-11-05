@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, name_id_1, type_entity_1, filter_type_1, DtoRequestItemNameIds;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -27,7 +27,7 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
             }
         ],
         execute: function () {
-            DtoRequestItemNameIds = (function () {
+            DtoRequestItemNameIds = /** @class */ (function () {
                 function DtoRequestItemNameIds(entityType, entityFilter, entityFilterValue) {
                     if (entityFilter === void 0) { entityFilter = null; }
                     if (entityFilterValue === void 0) { entityFilterValue = null; }

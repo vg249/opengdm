@@ -1,7 +1,7 @@
 System.register(["../../../model/gobii-file-item", "../../../model/type-entity", "../../../model/type-extractor-item", "../../../model/type-process", "../../../model/type-extractor-filter", "../../../model/analysis"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var gobii_file_item_1, type_entity_1, type_extractor_item_1, type_process_1, type_extractor_filter_1, analysis_1, JsonToGfiAnalysis;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (gobii_file_item_1_1) {
@@ -24,7 +24,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
             }
         ],
         execute: function () {
-            JsonToGfiAnalysis = (function () {
+            JsonToGfiAnalysis = /** @class */ (function () {
                 function JsonToGfiAnalysis(_filterParams, _filterParamsColl) {
                     this._filterParams = _filterParams;
                     this._filterParamsColl = _filterParamsColl;

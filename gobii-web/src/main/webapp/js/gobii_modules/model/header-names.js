@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var HeaderNames;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            HeaderNames = (function () {
+            HeaderNames = /** @class */ (function () {
                 function HeaderNames() {
                 }
                 HeaderNames.headerToken = "X-Auth-Token";

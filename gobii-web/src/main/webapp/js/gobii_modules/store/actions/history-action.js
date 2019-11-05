@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var ADD_STATUS, ADD_STATUS_MESSAGE, CLEAR_STATUS, ADD_FILTER_RETRIEVED, AddStatusAction, AddStatusMessageAction, AddFilterRetrieved, ClearStatusesAction;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -16,7 +16,7 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
-            AddStatusAction = (function () {
+            AddStatusAction = /** @class */ (function () {
                 function AddStatusAction(payload) {
                     this.payload = payload;
                     this.type = ADD_STATUS;
@@ -24,7 +24,7 @@ System.register([], function (exports_1, context_1) {
                 return AddStatusAction;
             }());
             exports_1("AddStatusAction", AddStatusAction);
-            AddStatusMessageAction = (function () {
+            AddStatusMessageAction = /** @class */ (function () {
                 function AddStatusMessageAction(payload) {
                     this.payload = payload;
                     this.type = ADD_STATUS_MESSAGE;
@@ -32,7 +32,7 @@ System.register([], function (exports_1, context_1) {
                 return AddStatusMessageAction;
             }());
             exports_1("AddStatusMessageAction", AddStatusMessageAction);
-            AddFilterRetrieved = (function () {
+            AddFilterRetrieved = /** @class */ (function () {
                 function AddFilterRetrieved(payload) {
                     this.payload = payload;
                     this.type = ADD_FILTER_RETRIEVED;
@@ -40,7 +40,7 @@ System.register([], function (exports_1, context_1) {
                 return AddFilterRetrieved;
             }());
             exports_1("AddFilterRetrieved", AddFilterRetrieved);
-            ClearStatusesAction = (function () {
+            ClearStatusesAction = /** @class */ (function () {
                 function ClearStatusesAction() {
                     this.type = CLEAR_STATUS;
                 }

@@ -9,8 +9,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, store_1, fileAction, historyAction, file_item_service_1, view_id_generator_service_1, NameIdListBoxComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -33,7 +33,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
             }
         ],
         execute: function () {
-            NameIdListBoxComponent = (function () {
+            NameIdListBoxComponent = /** @class */ (function () {
                 function NameIdListBoxComponent(store, fileItemService, viewIdGeneratorService) {
                     this.store = store;
                     this.fileItemService = fileItemService;
