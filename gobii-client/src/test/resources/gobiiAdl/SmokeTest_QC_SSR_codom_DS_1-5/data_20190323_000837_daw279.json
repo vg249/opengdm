@@ -20,7 +20,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":"10", "name":"SSR_STS_CAPS"},
   "gobiiCropType":"dev",
-  "datasetType":"CO_DOMINANT_NON_NUCLEOTIDE"},
+  "datasetType":{"id":null, "name":"CO_DOMINANT_NON_NUCLEOTIDE"}},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":
