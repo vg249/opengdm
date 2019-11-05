@@ -9,8 +9,8 @@ System.register(["@angular/core", "rxjs/Observable"], function (exports_1, conte
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, Observable_1, StatusDisplayComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -21,7 +21,7 @@ System.register(["@angular/core", "rxjs/Observable"], function (exports_1, conte
             }
         ],
         execute: function () {
-            StatusDisplayComponent = (function () {
+            StatusDisplayComponent = /** @class */ (function () {
                 function StatusDisplayComponent() {
                 } // ctor
                 // private handleClearMessages() {

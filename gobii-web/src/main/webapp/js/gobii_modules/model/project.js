@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Project;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Project = (function () {
+            Project = /** @class */ (function () {
                 function Project(projectId, projectName, projectCode, projectDescription, piContact, createdBy, createdstring, modifiedBy, modifiedstring, projectStatus) {
                     this.projectId = projectId;
                     this.projectName = projectName;

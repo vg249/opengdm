@@ -1,7 +1,7 @@
 System.register(["./dto-header-status-message"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var dto_header_status_message_1, DtoHeaderResponse;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (dto_header_status_message_1_1) {
@@ -9,7 +9,7 @@ System.register(["./dto-header-status-message"], function (exports_1, context_1)
             }
         ],
         execute: function () {
-            DtoHeaderResponse = (function () {
+            DtoHeaderResponse = /** @class */ (function () {
                 function DtoHeaderResponse(succeeded, statusMessages) {
                     this.succeeded = succeeded;
                     this.statusMessages = statusMessages;

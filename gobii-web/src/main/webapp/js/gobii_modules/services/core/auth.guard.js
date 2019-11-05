@@ -9,8 +9,8 @@ System.register(["@angular/core", "@angular/router", "./authentication.service"]
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, router_1, authentication_service_1, AuthGuard;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -24,7 +24,7 @@ System.register(["@angular/core", "@angular/router", "./authentication.service"]
             }
         ],
         execute: function () {
-            AuthGuard = (function () {
+            AuthGuard = /** @class */ (function () {
                 function AuthGuard(router, authenticationService) {
                     this.router = router;
                     this.authenticationService = authenticationService;

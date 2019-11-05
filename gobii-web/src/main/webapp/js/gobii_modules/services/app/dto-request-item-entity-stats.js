@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/entity-stats", "../../model/type-
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, entity_stats_1, type_entity_1, EntityRequestType, DtoRequestItemEntityStats;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -30,7 +30,7 @@ System.register(["@angular/core", "../../model/entity-stats", "../../model/type-
                 EntityRequestType[EntityRequestType["LasetUpdated"] = 2] = "LasetUpdated";
             })(EntityRequestType || (EntityRequestType = {}));
             exports_1("EntityRequestType", EntityRequestType);
-            DtoRequestItemEntityStats = (function () {
+            DtoRequestItemEntityStats = /** @class */ (function () {
                 function DtoRequestItemEntityStats(requestType, entityType, parentEntityType, parentId) {
                     this.requestType = requestType;
                     this.entityType = entityType;

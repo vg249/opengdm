@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var HeaderStatusMessage;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            HeaderStatusMessage = (function () {
+            HeaderStatusMessage = /** @class */ (function () {
                 function HeaderStatusMessage(message, statusLevel, validationStatusType) {
                     this.message = message;
                     this.statusLevel = statusLevel;

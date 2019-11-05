@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_BY_ITEM_ID, REPLACE_ITEM_OF_SAME_COMPOUND_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST_WITH_FILTER, LOAD_FILE_ITEM, LOAD_FILTER, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListWithFilterAction, LoadFilterAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceByItemIdAction, ReplaceItemOfSameCompoundIdAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -23,7 +23,7 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
-            LoadFileItemListWithFilterAction = (function () {
+            LoadFileItemListWithFilterAction = /** @class */ (function () {
                 function LoadFileItemListWithFilterAction(payload) {
                     this.payload = payload;
                     this.type = LOAD_FILE_ITEM_LIST_WITH_FILTER;
@@ -39,7 +39,7 @@ System.register([], function (exports_1, context_1) {
             //     }) {
             //     }
             // }
-            LoadFilterAction = (function () {
+            LoadFilterAction = /** @class */ (function () {
                 function LoadFilterAction(payload) {
                     this.payload = payload;
                     this.type = LOAD_FILTER;
@@ -47,7 +47,7 @@ System.register([], function (exports_1, context_1) {
                 return LoadFilterAction;
             }());
             exports_1("LoadFilterAction", LoadFilterAction);
-            LoadFileItemtAction = (function () {
+            LoadFileItemtAction = /** @class */ (function () {
                 function LoadFileItemtAction(payload) {
                     this.payload = payload;
                     this.type = LOAD_FILE_ITEM;
@@ -55,7 +55,7 @@ System.register([], function (exports_1, context_1) {
                 return LoadFileItemtAction;
             }());
             exports_1("LoadFileItemtAction", LoadFileItemtAction);
-            RemoveFromExtractAction = (function () {
+            RemoveFromExtractAction = /** @class */ (function () {
                 function RemoveFromExtractAction(payload) {
                     this.payload = payload;
                     this.type = REMOVE_FROM_EXTRACT;
@@ -63,7 +63,7 @@ System.register([], function (exports_1, context_1) {
                 return RemoveFromExtractAction;
             }());
             exports_1("RemoveFromExtractAction", RemoveFromExtractAction);
-            AddToExtractAction = (function () {
+            AddToExtractAction = /** @class */ (function () {
                 function AddToExtractAction(payload) {
                     this.payload = payload;
                     this.type = ADD_TO_EXTRACT;
@@ -71,7 +71,7 @@ System.register([], function (exports_1, context_1) {
                 return AddToExtractAction;
             }());
             exports_1("AddToExtractAction", AddToExtractAction);
-            AddToExtractByItemIdAction = (function () {
+            AddToExtractByItemIdAction = /** @class */ (function () {
                 function AddToExtractByItemIdAction(payload) {
                     this.payload = payload;
                     this.type = ADD_TO_EXTRACT_BY_ITEM_ID;
@@ -79,7 +79,7 @@ System.register([], function (exports_1, context_1) {
                 return AddToExtractByItemIdAction;
             }());
             exports_1("AddToExtractByItemIdAction", AddToExtractByItemIdAction);
-            ReplaceByItemIdAction = (function () {
+            ReplaceByItemIdAction = /** @class */ (function () {
                 function ReplaceByItemIdAction(payload) {
                     this.payload = payload;
                     this.type = REPLACE_BY_ITEM_ID;
@@ -87,7 +87,7 @@ System.register([], function (exports_1, context_1) {
                 return ReplaceByItemIdAction;
             }());
             exports_1("ReplaceByItemIdAction", ReplaceByItemIdAction);
-            ReplaceItemOfSameCompoundIdAction = (function () {
+            ReplaceItemOfSameCompoundIdAction = /** @class */ (function () {
                 function ReplaceItemOfSameCompoundIdAction(payload) {
                     this.payload = payload;
                     this.type = REPLACE_ITEM_OF_SAME_COMPOUND_ID;
@@ -95,7 +95,7 @@ System.register([], function (exports_1, context_1) {
                 return ReplaceItemOfSameCompoundIdAction;
             }());
             exports_1("ReplaceItemOfSameCompoundIdAction", ReplaceItemOfSameCompoundIdAction);
-            SetExtractType = (function () {
+            SetExtractType = /** @class */ (function () {
                 function SetExtractType(payload) {
                     this.payload = payload;
                     this.type = SET_EXTRACT_TYPE;
@@ -103,7 +103,7 @@ System.register([], function (exports_1, context_1) {
                 return SetExtractType;
             }());
             exports_1("SetExtractType", SetExtractType);
-            RemoveFromExractByItemIdAction = (function () {
+            RemoveFromExractByItemIdAction = /** @class */ (function () {
                 function RemoveFromExractByItemIdAction(payload) {
                     this.payload = payload;
                     this.type = REMOVE_FROM_EXTRACT_BY_ITEM_ID;
@@ -111,7 +111,7 @@ System.register([], function (exports_1, context_1) {
                 return RemoveFromExractByItemIdAction;
             }());
             exports_1("RemoveFromExractByItemIdAction", RemoveFromExractByItemIdAction);
-            RemoveAllFromExtractAction = (function () {
+            RemoveAllFromExtractAction = /** @class */ (function () {
                 function RemoveAllFromExtractAction(payload) {
                     this.payload = payload;
                     this.type = REMOVE_ALL_FROM_EXTRACT;

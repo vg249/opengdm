@@ -1,7 +1,7 @@
 System.register(["./header", "./payload"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var header_1, payload_1, PayloadEnvelope;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (header_1_1) {
@@ -12,7 +12,7 @@ System.register(["./header", "./payload"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            PayloadEnvelope = (function () {
+            PayloadEnvelope = /** @class */ (function () {
                 function PayloadEnvelope(header, payload) {
                     this.header = header;
                     this.payload = payload;

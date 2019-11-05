@@ -9,8 +9,8 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, http_1, Observable_1, dto_header_auth_1, http_values_1, AuthenticationService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -32,7 +32,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
             }
         ],
         execute: function () {
-            AuthenticationService = (function () {
+            AuthenticationService = /** @class */ (function () {
                 function AuthenticationService(_http) {
                     this._http = _http;
                     this.defaultUser = 'USER_READER';
