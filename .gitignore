@@ -25,7 +25,7 @@ gobii-web/src/main/ts/.baseDir.ts
 gobii-web/node_modules
 gobii-web/.tscache
 gobii-web/node_modules
-gobii-wev/node
+gobii-web/node
 gobii-web/main/resources/docs/*
 
 gobii-model/src/main/resources/gobii.properties
