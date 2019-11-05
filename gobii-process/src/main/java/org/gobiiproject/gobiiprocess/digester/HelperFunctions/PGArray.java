@@ -37,6 +37,9 @@ public class PGArray {
     public void process(){
         try {
             Scanner input = new Scanner(new File(strMarkerFile));
+            if(!input.hasNext()){
+                Logger.logError("PGArray", "File " + strMarkerFile + " is missing or empty");
+            }
             String strHeader = input.nextLine();
             String[] arrHeader = strHeader.split("\t");
             for(int i=0; i<arrHeader.length; i++){

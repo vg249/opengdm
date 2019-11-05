@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,17 +9,25 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
+import org.gobiiproject.gobiiprocess.extractor.ExtractorGlobalConfigs;
+
+import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logDebug;
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logWarning;
 
 /**
  * A repository of methods designed to interface with HDF5 files, both in the creation and in the execution of 
@@ -256,7 +265,16 @@ StringBuilder genoFileString=new StringBuilder();
 
         }
         if(sampleList!=null){
-            filterBySampleList(genoFile,sampleList,markerFast, errorFile);
+            logWarning("HDF5Interface","Beginning List Filtering");
+            SimpleTimer.start("Extract List Filter");
+            if(ExtractorGlobalConfigs.newSampleFilter){
+                filterDirectional(genoFile,sampleList,markerFast);
+            }
+            else {
+                filterBySampleList(genoFile, sampleList, markerFast, errorFile);
+            }
+        Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
+            logWarning("HDF5Interface","List Filtering Duration: " + SimpleTimer.stop("Extract List Filter"));
         }
         Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
         return genoFile;
@@ -283,6 +301,79 @@ StringBuilder genoFileString=new StringBuilder();
             tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
         }
         rmIfExist(tmpFile);
+    }
+
+    private static void filterDirectional(String filename, String elementList, boolean vertical){
+        //Take all positive integers from this list as cut values. See cutString.
+        //Ex 0,1,2,-1,4,5 -> 0,1,2,4,5
+        List<Integer> elements= Arrays.stream(elementList.split(","))
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .filter(n -> n > -1)
+                .collect(toList());
+
+        String tmpFileStr=filename+".tmp";
+
+        FileSystemInterface.mv(filename,tmpFileStr);
+
+        File tmpFile = new File(tmpFileStr),
+                outFile = new File(filename);
+
+        try {
+            if (vertical) {
+                filterLines(tmpFile, outFile, elements);
+            }
+            else{
+                filterRows(tmpFile,outFile,elements);
+            }
+        }
+        catch(Exception e) {
+        }
+        rmIfExist(tmpFile);
+    }
+
+    private static void filterLines(File from, File to, List<Integer> elements) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader(from));
+        BufferedWriter out = new BufferedWriter(new FileWriter(to));
+        String line=in.readLine();
+        Iterator<Integer> iter = elements.iterator();
+        int next = iter.next();
+        for(int i = 0; line !=null; i++){
+            if(i==next){
+                out.write(line);
+                out.newLine();
+                if(!iter.hasNext()){
+                    break;
+                }
+                next=iter.next();
+            }
+            line=in.readLine();
+        }
+        out.flush();
+    }
+
+    private static final String TAB="\t";
+    private static final String NEWLINE="\n";
+
+    private static void filterRows(File from, File to, List<Integer> elements) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader(from));
+        BufferedWriter out = new BufferedWriter(new FileWriter(to));
+        String line = in.readLine();
+        while(line !=null) {
+            line = in.readLine();
+            String[] split = line.split(TAB);
+            StringBuilder outRow = new StringBuilder();
+            boolean first = true;
+
+            for (Integer i : elements) {
+                if (!first) outRow.append(TAB);
+                outRow.append(split[i]);
+                first=false;
+            }
+            out.write(outRow.toString());
+            out.newLine();
+        }
+        out.flush();
     }
 
     /**
