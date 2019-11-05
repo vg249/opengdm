@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/extra
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_process_1, dto_extractor_instruction_files_1, payload_envelope_1, DtoRequestItemExtractorSubmission;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -27,7 +27,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/extra
             }
         ],
         execute: function () {
-            DtoRequestItemExtractorSubmission = (function () {
+            DtoRequestItemExtractorSubmission = /** @class */ (function () {
                 function DtoRequestItemExtractorSubmission(extractorInstructionFilesDTO) {
                     this.extractorInstructionFilesDTO = extractorInstructionFilesDTO;
                     this.processType = type_process_1.ProcessType.CREATE;

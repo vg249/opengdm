@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var EntityStats;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            EntityStats = (function () {
+            EntityStats = /** @class */ (function () {
                 function EntityStats(count, lastModified) {
                     this.count = count;
                     this.lastModified = lastModified;

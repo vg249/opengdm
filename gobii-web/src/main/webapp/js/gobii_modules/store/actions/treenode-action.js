@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var INIT, INIT_TREE, PLACE_TREE_NODE, ACTIVATE, DEACTIVATE, SELECT_EXTRACT_TYPE, CLEAR_ALL, SET_NODE_STATUS, InitAction, InitTree, PlaceTreeNodeAction, ActivateForExtractAction, DeActivateFromExtractAction, ClearAll, SelectExtractType, SetTreeNodeLook;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -13,7 +13,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("SELECT_EXTRACT_TYPE", SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type');
             exports_1("CLEAR_ALL", CLEAR_ALL = '[GobiiTreeNode] Clear All');
             exports_1("SET_NODE_STATUS", SET_NODE_STATUS = '[GobiiTreeNode] Set Node Status');
-            InitAction = (function () {
+            InitAction = /** @class */ (function () {
                 function InitAction() {
                     this.type = INIT;
                 }
@@ -27,7 +27,7 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
-            InitTree = (function () {
+            InitTree = /** @class */ (function () {
                 function InitTree(payload) {
                     this.payload = payload;
                     this.type = INIT_TREE;
@@ -35,7 +35,7 @@ System.register([], function (exports_1, context_1) {
                 return InitTree;
             }());
             exports_1("InitTree", InitTree);
-            PlaceTreeNodeAction = (function () {
+            PlaceTreeNodeAction = /** @class */ (function () {
                 function PlaceTreeNodeAction(payload) {
                     this.payload = payload;
                     this.type = PLACE_TREE_NODE;
@@ -43,7 +43,7 @@ System.register([], function (exports_1, context_1) {
                 return PlaceTreeNodeAction;
             }());
             exports_1("PlaceTreeNodeAction", PlaceTreeNodeAction);
-            ActivateForExtractAction = (function () {
+            ActivateForExtractAction = /** @class */ (function () {
                 function ActivateForExtractAction(payload) {
                     this.payload = payload;
                     this.type = ACTIVATE;
@@ -51,7 +51,7 @@ System.register([], function (exports_1, context_1) {
                 return ActivateForExtractAction;
             }());
             exports_1("ActivateForExtractAction", ActivateForExtractAction);
-            DeActivateFromExtractAction = (function () {
+            DeActivateFromExtractAction = /** @class */ (function () {
                 //fileitemuniqueid
                 function DeActivateFromExtractAction(payload) {
                     this.payload = payload;
@@ -60,7 +60,7 @@ System.register([], function (exports_1, context_1) {
                 return DeActivateFromExtractAction;
             }());
             exports_1("DeActivateFromExtractAction", DeActivateFromExtractAction);
-            ClearAll = (function () {
+            ClearAll = /** @class */ (function () {
                 function ClearAll(payload) {
                     this.payload = payload;
                     this.type = CLEAR_ALL;
@@ -68,7 +68,7 @@ System.register([], function (exports_1, context_1) {
                 return ClearAll;
             }());
             exports_1("ClearAll", ClearAll);
-            SelectExtractType = (function () {
+            SelectExtractType = /** @class */ (function () {
                 function SelectExtractType(payload) {
                     this.payload = payload;
                     this.type = SELECT_EXTRACT_TYPE;
@@ -76,7 +76,7 @@ System.register([], function (exports_1, context_1) {
                 return SelectExtractType;
             }());
             exports_1("SelectExtractType", SelectExtractType);
-            SetTreeNodeLook = (function () {
+            SetTreeNodeLook = /** @class */ (function () {
                 function SetTreeNodeLook(payload) {
                     this.payload = payload;
                     this.type = SET_NODE_STATUS;

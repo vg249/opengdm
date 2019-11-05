@@ -9,8 +9,8 @@ System.register(["@angular/core", "@angular/router", "../services/core/authentic
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, router_1, authentication_service_1, dto_request_service_1, dto_request_item_serverconfigs_1, common_1, view_id_generator_service_1, type_control_1, LoginComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -39,7 +39,7 @@ System.register(["@angular/core", "@angular/router", "../services/core/authentic
             }
         ],
         execute: function () {
-            LoginComponent = (function () {
+            LoginComponent = /** @class */ (function () {
                 function LoginComponent(route, router, locationStrategy, authenticationService, dtoRequestServiceServerConfigs, viewIdGeneratorService) {
                     this.route = route;
                     this.router = router;

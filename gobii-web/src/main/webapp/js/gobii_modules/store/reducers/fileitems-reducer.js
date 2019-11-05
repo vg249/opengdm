@@ -1,5 +1,13 @@
 System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-entity", "../../model/file-item-param-names", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type", "../../model/type-extractor-sample-list"], function (exports_1, context_1) {
     "use strict";
+    var __spreadArrays = (this && this.__spreadArrays) || function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional;
     _this = this;
     var __moduleName = context_1 && context_1.id;
     function addToExtractItems(state, gobiiFileItem) {
@@ -101,7 +109,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                    allFileItems: state.allFileItems.concat(newGobiiFileItems),
+                    allFileItems: __spreadArrays(state.allFileItems, newGobiiFileItems),
                     filters: newFilterState
                 };
                 break;
@@ -286,7 +294,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional;
     return {
         setters: [
             function (reselect_1_1) {
@@ -589,6 +596,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         returnVal = fileItems.filter(function (e) {
                             return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                 && (e.getEntityType() === type_entity_1.EntityType.EXPERIMENT)
+                                //                && (e.getParentItemId() === projectId )
                                 && e.getProcessType() === type_process_1.ProcessType.DUMMY;
                         })
                             .map(function (fi) { return fi; });
@@ -611,6 +619,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         returnVal = fileItems.filter(function (e) {
                             return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                                 && e.getEntityType() === type_entity_1.EntityType.DATASET
+                                //                    && e.getParentItemId() === experimentId
                                 && e.getProcessType() === type_process_1.ProcessType.DUMMY);
                         })
                             .map(function (fi) { return fi; });

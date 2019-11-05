@@ -1,7 +1,7 @@
 System.register(["../model/type-entity", "../model/cv-filter-type", "../model/type-extractor-filter", "../model//type-extractor-item", "../model/type-extract-format"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var type_entity_1, cv_filter_type_1, type_extractor_filter_1, type_extractor_item_1, type_extract_format_1, Labels;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (type_entity_1_1) {
@@ -21,7 +21,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
             }
         ],
         execute: function () {
-            Labels = (function () {
+            Labels = /** @class */ (function () {
                 function Labels() {
                     this.entityNodeLabels = new Map();
                     this.entitySubtypeNodeLabels = new Map();

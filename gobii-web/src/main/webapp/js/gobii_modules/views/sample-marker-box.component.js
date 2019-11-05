@@ -9,8 +9,8 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, entity_labels_1, file_item_param_names_1, fromRoot, file_item_service_1, store_1, type_status_level_1, historyAction, type_entity_1, view_id_generator_service_1, SampleMarkerBoxComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -60,7 +60,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
             }
         ],
         execute: function () {
-            SampleMarkerBoxComponent = (function () {
+            SampleMarkerBoxComponent = /** @class */ (function () {
                 function SampleMarkerBoxComponent(store, fileItemService, viewIdGeneratorService) {
                     this.store = store;
                     this.fileItemService = fileItemService;

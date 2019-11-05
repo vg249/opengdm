@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var FilterParamNames;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            FilterParamNames = (function () {
+            FilterParamNames = /** @class */ (function () {
                 // The problem with using an enum is that in the debugger
                 // you cannot readily see what the enum type value means
                 // Knowing the nameidfilterparam type on debugger inspection is

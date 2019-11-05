@@ -9,8 +9,8 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, router_1, effects_1, tree_structure_service_1, treeNodeActions, TreeEffects;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (_1) {
@@ -40,7 +40,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
             }
         ],
         execute: function () {
-            TreeEffects = (function () {
+            TreeEffects = /** @class */ (function () {
                 function TreeEffects(actions$, treeStructureService, router) {
                     var _this = this;
                     this.actions$ = actions$;
