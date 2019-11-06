@@ -385,6 +385,8 @@ public class BRAPIIControllerV1Test {
 
         Integer pageSize = random.nextInt(100);
 
+        final Integer defaultPageNum =  0;
+
         List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
 
         when(
@@ -405,7 +407,8 @@ public class BRAPIIControllerV1Test {
                 .andExpect(jsonPath("$.metadata.pagination").exists())
                 .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
                 .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
-                .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+                //Current page should be zero as page param is null
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").value(defaultPageNum))
                 .andExpect(jsonPath("$.result.data[0].sampleDbId")
                         .value(mockSamples.get(0).getSampleDbId().toString()))
                 .andExpect(jsonPath("$.result.data[0].column")
@@ -430,6 +433,39 @@ public class BRAPIIControllerV1Test {
                         .value(mockSamples.get(0).getSampleType()))
                 .andExpect(jsonPath("$.result.data[0].tissueType")
                         .value(mockSamples.get(0).getTissueType()));
+
+
+    }
+
+    @Test
+    public void testGetSamplesListPageNum() throws Exception {
+
+        Integer pageSize = random.nextInt(100);
+        Integer pageNum = random.nextInt(10);
+
+        List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
+
+        when(
+                samplesBrapiService.getSamples(
+                        any(Integer.TYPE), eq(pageSize),
+                        isNull(Integer.class), isNull(Integer.class),
+                        isNull(String.class))
+        ).thenReturn(mockSamples);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(
+                        "/gobii-dev/brapi/v1/samples")
+                        .param("pageSize",  pageSize.toString())
+                        .param("page",  pageNum.toString())
+                        .contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$metadata").exists())
+                .andExpect(jsonPath("$.metadata.pagination").exists())
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").value(pageNum));
+
 
 
     }
