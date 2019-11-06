@@ -1,5 +1,13 @@
 System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTreeNode", "../../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
+    var __spreadArrays = (this && this.__spreadArrays) || function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
+    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
     var __moduleName = context_1 && context_1.id;
     function placeNodeInTree(nodeToPlace, treeNodes, gobiiExtractFilterType) {
         var returnVal = false;
@@ -83,7 +91,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 var fileItemUniqueId = action.payload;
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
-                    gobiiTreeNodesActive: state.gobiiTreeNodesActive.concat([fileItemUniqueId]),
+                    gobiiTreeNodesActive: __spreadArrays(state.gobiiTreeNodesActive, [fileItemUniqueId]),
                     gobiiTreeNodes: state.gobiiTreeNodes
                 };
                 break;
@@ -163,7 +171,6 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         return returnVal;
     }
     exports_1("gobiiTreeNodesReducer", gobiiTreeNodesReducer);
-    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
     return {
         setters: [
             function (reselect_1_1) {

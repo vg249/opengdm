@@ -1,7 +1,7 @@
 System.register(["@angular/http", "./header-names"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var http_1, header_names_1, HttpValues;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (http_1_1) {
@@ -12,7 +12,7 @@ System.register(["@angular/http", "./header-names"], function (exports_1, contex
             }
         ],
         execute: function () {
-            HttpValues = (function () {
+            HttpValues = /** @class */ (function () {
                 function HttpValues() {
                 }
                 HttpValues.makeTokenHeaders = function (token, gobiiCropType) {

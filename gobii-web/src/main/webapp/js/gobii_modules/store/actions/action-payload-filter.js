@@ -1,21 +1,24 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __extends = (this && this.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     })();
-    var __moduleName = context_1 && context_1.id;
     var PayloadFilter, ExtractReadyPayloadFilter;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            PayloadFilter = (function () {
+            PayloadFilter = /** @class */ (function () {
                 function PayloadFilter(gobiiExtractFilterType, targetEntityUniqueId, relatedEntityUniqueId, relatedEntityFilterValue, targetEntityFilterValue, entityLasteUpdated, pagination) {
                     this.gobiiExtractFilterType = gobiiExtractFilterType;
                     this.targetEntityUniqueId = targetEntityUniqueId;
@@ -40,7 +43,7 @@ System.register([], function (exports_1, context_1) {
              * checked.
              * @param jobStatusFilterValues
              */
-            ExtractReadyPayloadFilter = (function (_super) {
+            ExtractReadyPayloadFilter = /** @class */ (function (_super) {
                 __extends(ExtractReadyPayloadFilter, _super);
                 function ExtractReadyPayloadFilter(gobiiExtractFilterType, targetEntityUniqueId, relatedEntityUniqueId, relatedEntityFilterValue, targetEntityFilterValue, entityLasteUpdated, pagination, jobStatusFilterValues) {
                     var _this = _super.call(this, gobiiExtractFilterType, targetEntityUniqueId, relatedEntityUniqueId, relatedEntityFilterValue, targetEntityFilterValue, entityLasteUpdated, pagination) || this;

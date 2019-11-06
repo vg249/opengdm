@@ -6,8 +6,8 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __moduleName = context_1 && context_1.id;
     var type_control_1, core_1, type_extract_format_1, type_extractor_sample_list_1, ViewIdGeneratorService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (type_control_1_1) {
@@ -24,7 +24,7 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
             }
         ],
         execute: function () {
-            ViewIdGeneratorService = (function () {
+            ViewIdGeneratorService = /** @class */ (function () {
                 function ViewIdGeneratorService() {
                 }
                 ViewIdGeneratorService.prototype.makeIdNameIdListBoxId = function (filterParamName) {

@@ -9,8 +9,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, type_extractor_item_1, Observable_1, store_1, file_item_service_1, file_item_param_names_1, filter_params_coll_1, FileItemEffects;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -65,7 +65,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             }
         ],
         execute: function () {
-            FileItemEffects = (function () {
+            FileItemEffects = /** @class */ (function () {
                 // @Effect()
                 // setEntityFilter$ = this.actions$
                 //     .ofType(fileItemActions.SET_FILTER_VALUE)

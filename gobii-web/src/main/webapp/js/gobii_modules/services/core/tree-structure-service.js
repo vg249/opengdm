@@ -9,8 +9,15 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
+    var __spreadArrays = (this && this.__spreadArrays) || function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
     var core_1, GobiiTreeNode_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, type_process_1, treeNodeActions, store_1, TreeStructureService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -48,7 +55,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
             }
         ],
         execute: function () {
-            TreeStructureService = (function () {
+            TreeStructureService = /** @class */ (function () {
                 function TreeStructureService(store) {
                     this.store = store;
                 }
@@ -75,7 +82,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                 // one of these original structural nodes. See the tree nodes reducer for how the
                 // container types are actually used
                 TreeStructureService.prototype.getInitialTree = function () {
-                    var returnVal = this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET).concat([
+                    var returnVal = __spreadArrays(this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), [
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.DATASET)
                             .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
@@ -394,7 +401,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     if (gobiiTreeNode.getContainerType() === GobiiTreeNode_1.ContainerType.DATA) {
                         gobiiTreeNode.label = gobiiFileItem.getItemName();
                     }
-                    else {
+                    else { // coves the LEAF node use case
                         if (gobiiFileItem.getExtractorItemType() == type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT) {
                             var gobiiExtractFormat = type_extract_format_1.GobiiExtractFormat[gobiiFileItem.getItemId()];
                             gobiiTreeNode.label += ": " + entity_labels_1.Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];

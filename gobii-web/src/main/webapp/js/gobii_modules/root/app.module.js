@@ -6,8 +6,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, forms_1, http_1, platform_browser_1, animations_1, export_format_component_1, status_display_box_component_1, checklist_box_component_1, sample_marker_box_component_1, ng2_file_upload_1, app_extractorroot_1, dto_request_service_1, authentication_service_1, text_area_component_1, uploader_component_1, sample_list_type_component_1, primeng_1, status_display_tree_component_1, name_id_list_box_component_1, name_id_service_1, app_component_1, login_component_1, app_routing_1, common_1, auth_guard_1, button_1, page_by_samples_component_1, store_1, reducers_1, store_devtools_1, effects_1, tree_effects_1, tree_structure_service_1, file_item_effects_1, file_item_service_1, instruction_submission_service_1, dataset_datatable_component_1, filter_params_coll_1, view_id_generator_service_1, AppModule;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -129,7 +129,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
             }
         ],
         execute: function () {
-            AppModule = (function () {
+            AppModule = /** @class */ (function () {
                 function AppModule() {
                 }
                 AppModule = __decorate([

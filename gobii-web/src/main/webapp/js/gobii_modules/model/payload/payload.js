@@ -1,7 +1,7 @@
 System.register(["./links"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var links_1, Payload;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (links_1_1) {
@@ -9,7 +9,7 @@ System.register(["./links"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            Payload = (function () {
+            Payload = /** @class */ (function () {
                 function Payload(data, links) {
                     this.data = data;
                     this.links = links;

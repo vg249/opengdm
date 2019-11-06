@@ -20,7 +20,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_MARKERS",
   "platform":{"id":"8", "name":"Dart_clone"},
   "gobiiCropType":"zoan",
-  "datasetType":"IUPAC"},
+  "datasetType":{"id":null, "name":"IUPAC"}},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

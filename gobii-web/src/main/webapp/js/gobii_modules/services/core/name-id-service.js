@@ -9,8 +9,8 @@ System.register(["@angular/core", "./dto-request.service", "../../model/filter-t
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, dto_request_service_1, filter_type_1, cv_filter_type_1, type_entity_1, Observable_1, dto_request_item_nameids_1, NameIdService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -36,7 +36,7 @@ System.register(["@angular/core", "./dto-request.service", "../../model/filter-t
             }
         ],
         execute: function () {
-            NameIdService = (function () {
+            NameIdService = /** @class */ (function () {
                 function NameIdService(_dtoRequestService) {
                     this._dtoRequestService = _dtoRequestService;
                 } // ctor

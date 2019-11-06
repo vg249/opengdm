@@ -566,22 +566,26 @@
         "parameters" : [ {
           "name" : "email",
           "in" : "query",
-          "required" : false,
+          "description" : "contact's email",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "lastName",
           "in" : "query",
-          "required" : false,
+          "description" : "contact's last name",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "firstName",
           "in" : "query",
-          "required" : false,
+          "description" : "contact's first name",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "userName",
           "in" : "query",
-          "required" : false,
+          "description" : "contact's user name",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "X-Auth-Token",
@@ -3749,23 +3753,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "analysisId" : {
           "type" : "integer",
@@ -3873,23 +3873,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "contactId" : {
           "type" : "integer",
@@ -4190,23 +4186,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "includeDetailsList" : {
           "type" : "boolean"
@@ -4375,23 +4367,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "experimentId" : {
           "type" : "integer",
@@ -4803,6 +4791,13 @@
         "open" : {
           "type" : "boolean"
         },
+        "uri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "filename" : {
+          "type" : "string"
+        },
         "readable" : {
           "type" : "boolean"
         },
@@ -4812,13 +4807,6 @@
         },
         "file" : {
           "type" : "file"
-        },
-        "uri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "filename" : {
-          "type" : "string"
         }
       }
     },
@@ -4990,23 +4978,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "manifestId" : {
           "type" : "integer",
@@ -5044,23 +5028,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "mapsetId" : {
           "type" : "integer",
@@ -5183,23 +5163,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "markerGroupId" : {
           "type" : "integer",
@@ -5327,23 +5303,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "organizationId" : {
           "type" : "integer",
@@ -6197,23 +6169,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "projectId" : {
           "type" : "integer",
@@ -6283,23 +6251,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "protocolId" : {
           "type" : "integer",
@@ -6358,23 +6322,19 @@
         },
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "referenceId" : {
           "type" : "integer",

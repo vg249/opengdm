@@ -1,7 +1,7 @@
 System.register(["./gobii-extractor-instruction"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var gobii_extractor_instruction_1, ExtractorInstructionFilesDTO;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (gobii_extractor_instruction_1_1) {
@@ -9,7 +9,7 @@ System.register(["./gobii-extractor-instruction"], function (exports_1, context_
             }
         ],
         execute: function () {
-            ExtractorInstructionFilesDTO = (function () {
+            ExtractorInstructionFilesDTO = /** @class */ (function () {
                 function ExtractorInstructionFilesDTO(gobiiExtractorInstructions, instructionFileName) {
                     this.gobiiExtractorInstructions = gobiiExtractorInstructions;
                     this.instructionFileName = instructionFileName;

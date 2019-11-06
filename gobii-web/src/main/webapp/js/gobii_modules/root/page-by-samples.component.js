@@ -9,8 +9,8 @@ System.register(["@angular/core"], function (exports_1, context_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, SearchCriteriaBySamplesComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -18,8 +18,11 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            SearchCriteriaBySamplesComponent = (function () {
-                function SearchCriteriaBySamplesComponent() {
+            SearchCriteriaBySamplesComponent = /** @class */ (function () {
+                function SearchCriteriaBySamplesComponent(
+                //	  private _heroService: HeroService,
+                //	  private _routeParams: RouteParams
+                ) {
                 } // ctor
                 SearchCriteriaBySamplesComponent.prototype.ngOnInit = function () {
                     /*

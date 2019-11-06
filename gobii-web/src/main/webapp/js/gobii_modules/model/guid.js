@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Guid;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Guid = (function () {
+            Guid = /** @class */ (function () {
                 function Guid() {
                 }
                 Guid.generateUUID = function () {

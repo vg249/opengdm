@@ -21,7 +21,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":5, "name":"Sequencing"},
   "gobiiCropType":"dev",
-  "datasetType":"IUPAC"},
+  "datasetType":{"id":null, "name":"IUPAC"}},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

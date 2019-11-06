@@ -20,7 +20,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_SAMPLES",
   "platform":{"id":"6", "name":"Affymetrix_Axiom"},
   "gobiiCropType":"zoan",
-  "datasetType":"IUPAC"},
+  "datasetType":{"id":null, "name":"IUPAC"}},
  "instructions":
  [{"table":"germplasm",
    "gobiiFileColumns":

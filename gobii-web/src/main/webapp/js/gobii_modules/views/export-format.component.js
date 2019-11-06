@@ -9,8 +9,8 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, type_extractor_item_1, type_extractor_filter_1, store_1, file_item_service_1, Observable_1, view_id_generator_service_1, ExportFormatComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -45,7 +45,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
             }
         ],
         execute: function () {
-            ExportFormatComponent = (function () {
+            ExportFormatComponent = /** @class */ (function () {
                 function ExportFormatComponent(store, fileItemService, viewIdGeneratorService) {
                     this.store = store;
                     this.fileItemService = fileItemService;
