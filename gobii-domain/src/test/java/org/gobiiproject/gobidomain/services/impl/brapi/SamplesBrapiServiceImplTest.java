@@ -1,21 +1,15 @@
 package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobidomain.services.SamplesBrapiService;
-import org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl;
-import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.Germplasm;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;
-import org.gobiiproject.gobiisampletrackingdao.DnaSampleDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +44,8 @@ public class SamplesBrapiServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    Random random = new Random();
+
     private List<DnaSample> getMockDnaSamples(Integer listSize) {
 
         List<DnaSample> returnVal = new ArrayList();
@@ -73,7 +69,6 @@ public class SamplesBrapiServiceImplTest {
 
             dnaSample.setGermplasm(germplasm);
 
-            ((ObjectNode)properties).put("1", "testValue");
 
             dnaSample.setProperties(properties);
 
@@ -86,18 +81,66 @@ public class SamplesBrapiServiceImplTest {
         return returnVal;
    }
 
+   public List<Cv> createMockCvList() {
+
+        List cvListMock = new ArrayList();
+
+        Integer numberOfCvs = random.nextInt(10);
+
+        for(int i = 0; i < numberOfCvs; i++) {
+
+            Cv cv = new Cv();
+
+            cv.setCvId(i);
+            cv.setTerm(RandomStringUtils.random(5, true, false));
+
+            cvListMock.add(cv);
+
+        }
+
+        return cvListMock;
+    }
+
+    public void addMockCvToSampleProperties(List<DnaSample> sampleList, List<Cv> cvList) {
+
+        for(DnaSample dnaSample : sampleList) {
+
+            Integer numberOfDnaSampleProperties = random.nextInt(cvList.size());
+
+            JsonNode jsonbObject = JsonNodeFactory.instance.objectNode();
+
+
+            for(int i = 0; i < numberOfDnaSampleProperties; i++) {
+
+                Integer cvId = random.nextInt(cvList.size());
+
+                ((ObjectNode) jsonbObject).put(cvId.toString(),
+                        RandomStringUtils.random(4, true, true));
+
+            }
+
+            dnaSample.setProperties(jsonbObject);
+
+        }
+
+    }
+
     @Test
     public void testMappableFields() throws Exception {
 
-        List<DnaSample> samplesMock = getMockDnaSamples(1000);
+        final Integer pageSize = 1000;
+
+        List<DnaSample> samplesMock = getMockDnaSamples(pageSize);
 
         when (
-                dnaSampleDao.getDnaSamples(
-                        any(Integer.TYPE), any(Integer.TYPE))
+                dnaSampleDao.getDnaSamples(any(Integer.TYPE), any(Integer.TYPE),
+                        isNull(Integer.TYPE), any(Integer.TYPE),
+                        any(Integer.TYPE), any(String.class))
         ).thenReturn(samplesMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE),
+        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(
+                0, pageSize,
                 null, null,
                 null);
 
@@ -139,35 +182,59 @@ public class SamplesBrapiServiceImplTest {
 
     }
 
+
     @Test
     public void testAdditionalInfo() throws Exception {
 
-        List<DnaSample> samplesMock = getMockDnaSamples(1000);
+        final Integer pageSize = 1000;
 
-        List cvListMock = new ArrayList();
+        List<DnaSample> samplesMock = getMockDnaSamples(pageSize);
 
-        Cv dnaSampleCv = new Cv();
-        dnaSampleCv.setCvId(1);
-        dnaSampleCv.setTerm("testTerm");
+        List<Cv> cvsMock = createMockCvList();
 
-        cvListMock.add(dnaSampleCv);
+        addMockCvToSampleProperties(samplesMock, cvsMock);
 
         when (
-                dnaSampleDao.getDnaSamples(
-                        any(Integer.TYPE), any(Integer.TYPE))
+                dnaSampleDao.getDnaSamples(any(Integer.TYPE), any(Integer.TYPE),
+                        isNull(Integer.TYPE), any(Integer.TYPE),
+                        any(Integer.TYPE), any(String.class))
         ).thenReturn(samplesMock);
 
         when (
                 cvDao.getCvListByCvGroup(
                         any(String.class), any(GobiiCvGroupType.class))
-        ).thenReturn(cvListMock);
+        ).thenReturn(cvsMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(any(Integer.TYPE), any(Integer.TYPE),
+        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(
+                0, pageSize,
                 null, null,
                 null);
 
         assertEquals(samplesMock.size(), samplesBrapi.size());
+
+        for(int i = 0; i < 10; i++) {
+
+            Integer assertIndex = random.nextInt(pageSize);
+
+            assertEquals("AdditionalInfor object size is not equal to persistance object",
+                    samplesMock.get(assertIndex).getProperties().size(),
+                    samplesBrapi.get(assertIndex).getAdditionalInfo().size());
+
+            if (samplesMock.get(assertIndex).getProperties().size() > 0) {
+
+                Integer cvAssertIndex = random.nextInt(samplesMock.get(assertIndex).getProperties().size());
+
+
+
+                assertEquals(
+                    "additionalInfo mapping failed",
+                    samplesMock.get(assertIndex).getProperties().get(cvAssertIndex),
+                    samplesBrapi.get(assertIndex).getAdditionalInfo().get(
+                            cvsMock.get(samplesMock.get(assertIndex).getProperties()).getTerm()) );
+            }
+        }
+
     }
 
 

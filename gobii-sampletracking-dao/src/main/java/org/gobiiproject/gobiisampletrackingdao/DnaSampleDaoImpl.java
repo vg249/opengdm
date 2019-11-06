@@ -44,9 +44,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize, Integer projectId,
-                                         Integer dnaSampleId, Integer germplasmId,
-                                         String germplasmExternalCode) {
+    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize,
+                                         Integer projectId, Integer dnaSampleId,
+                                         Integer germplasmId, String germplasmExternalCode) {
 
         List<DnaSample> dnaSamples;
 
