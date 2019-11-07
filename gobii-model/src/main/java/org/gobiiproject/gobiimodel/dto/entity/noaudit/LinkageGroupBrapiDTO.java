@@ -2,6 +2,8 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 
+import java.math.BigDecimal;
+
 /**
  * Brapi DTO for LinkageGroups
  */
@@ -10,7 +12,7 @@ public class LinkageGroupBrapiDTO {
 
     private String linkageGroupName;
 
-    private Integer maxPosition;
+    private BigDecimal maxPosition;
 
     private Long markerCount;
 
@@ -23,12 +25,12 @@ public class LinkageGroupBrapiDTO {
         this.linkageGroupName = linkageGroupName;
     }
 
-    public Integer getMaxPosition() {
+    public BigDecimal getMaxPosition() {
         return maxPosition;
     }
 
     @GobiiEntityColumn(columnName = "max_position")
-    public void setMaxPosition(Integer maxPosition) {
+    public void setMaxPosition(BigDecimal maxPosition) {
         this.maxPosition = maxPosition;
     }
 
