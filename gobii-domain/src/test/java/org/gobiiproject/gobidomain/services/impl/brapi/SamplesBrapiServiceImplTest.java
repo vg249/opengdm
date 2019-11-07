@@ -1,6 +1,8 @@
 package org.gobiiproject.gobidomain.services.impl.brapi;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
@@ -21,6 +23,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,6 +48,8 @@ public class SamplesBrapiServiceImplTest {
     }
 
     Random random = new Random();
+
+    ObjectMapper mapper = new ObjectMapper();
 
     private List<DnaSample> getMockDnaSamples(Integer listSize) {
 
@@ -85,7 +90,7 @@ public class SamplesBrapiServiceImplTest {
 
         List cvListMock = new ArrayList();
 
-        Integer numberOfCvs = random.nextInt(10);
+        Integer numberOfCvs = random.nextInt(9) + 1 ;
 
         for(int i = 0; i < numberOfCvs; i++) {
 
@@ -126,7 +131,7 @@ public class SamplesBrapiServiceImplTest {
     }
 
     @Test
-    public void testMappableFields() throws Exception {
+    public void testMainFieldsMapping() throws Exception {
 
         final Integer pageSize = 1000;
 
@@ -184,7 +189,7 @@ public class SamplesBrapiServiceImplTest {
 
 
     @Test
-    public void testAdditionalInfo() throws Exception {
+    public void testAdditionalInfoMapping() throws Exception {
 
         final Integer pageSize = 1000;
 
@@ -217,21 +222,30 @@ public class SamplesBrapiServiceImplTest {
 
             Integer assertIndex = random.nextInt(pageSize);
 
-            assertEquals("AdditionalInfor object size is not equal to persistance object",
-                    samplesMock.get(assertIndex).getProperties().size(),
-                    samplesBrapi.get(assertIndex).getAdditionalInfo().size());
 
             if (samplesMock.get(assertIndex).getProperties().size() > 0) {
+                assertEquals("AdditionalInfor object size is not equal to persistance object",
+                        samplesMock.get(assertIndex).getProperties().size(),
+                        samplesBrapi.get(assertIndex).getAdditionalInfo().size());
 
-                Integer cvAssertIndex = random.nextInt(samplesMock.get(assertIndex).getProperties().size());
+                Map<String, Object> samplesPropertiesMap =  mapper.convertValue(
+                        samplesMock.get(assertIndex).getProperties(),
+                        new TypeReference<Map<String, Object>>(){});
 
+                for(String cvId : samplesPropertiesMap.keySet()) {
 
+                    String cvTerm = cvsMock.get(Integer.parseInt(cvId)).term;
 
-                assertEquals(
-                    "additionalInfo mapping failed",
-                    samplesMock.get(assertIndex).getProperties().get(cvAssertIndex),
-                    samplesBrapi.get(assertIndex).getAdditionalInfo().get(
-                            cvsMock.get(samplesMock.get(assertIndex).getProperties()).getTerm()) );
+                    assertEquals(
+                            "additionalInfo mapping failed",
+                            samplesPropertiesMap.get(cvId).toString(),
+                            samplesBrapi.get(assertIndex).getAdditionalInfo().get(cvTerm));
+
+                }
+
+            }
+            else {
+               assertNull(samplesBrapi.get(assertIndex).getAdditionalInfo());
             }
         }
 
