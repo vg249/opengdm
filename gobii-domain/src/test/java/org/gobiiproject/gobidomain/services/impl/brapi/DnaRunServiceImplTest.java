@@ -1,5 +1,6 @@
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.impl.brapi;
 
+import org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.junit.Before;

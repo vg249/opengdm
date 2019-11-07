@@ -1,10 +1,10 @@
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.DatasetBrapiService;
-import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDatasetBrapi;
+import org.gobiiproject.gobidomain.services.MarkerBrapiService;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapMarkerBrapi;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -14,23 +14,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
- * Created by VCalaminos on 7/10/2019.
+ * Created by VCalaminos on 7/7/2019.
  */
-public class DatasetBrapiServiceImpl implements DatasetBrapiService {
+public class MarkerBrapiServiceImpl implements MarkerBrapiService {
 
-    Logger LOGGER = LoggerFactory.getLogger(DatasetBrapiServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(MarkerBrapiServiceImpl.class);
 
     @Autowired
-    private DtoMapDatasetBrapi dtoMapDatasetBrapi = null;
+    private DtoMapMarkerBrapi dtoMapMarkerBrapi = null;
 
     @Override
-    public List<DataSetBrapiDTO> getDatasets(Integer pageToken, Integer pageSize, DataSetBrapiDTO dataSetBrapiDTOFilter) throws GobiiDomainException {
+    public List<MarkerBrapiDTO> getMarkers(Integer pageToken, Integer pageNum, Integer pageSize, MarkerBrapiDTO markerBrapiDTOFilter) throws GobiiDomainException {
 
-        List<DataSetBrapiDTO> returnVal;
+        List<MarkerBrapiDTO> returnVal;
 
         try {
 
-            returnVal = dtoMapDatasetBrapi.getList(pageToken, pageSize, dataSetBrapiDTOFilter);
+            returnVal = dtoMapMarkerBrapi.getList(pageToken, pageNum, pageSize, markerBrapiDTOFilter);
 
         } catch (GobiiException gE) {
 
@@ -47,21 +47,22 @@ public class DatasetBrapiServiceImpl implements DatasetBrapiService {
         }
 
         return returnVal;
+
     }
 
     @Override
-    public DataSetBrapiDTO getDatasetById(Integer datasetId) throws GobiiDomainException {
+    public MarkerBrapiDTO getMarkerById(Integer markerId) throws GobiiDomainException {
 
-        DataSetBrapiDTO returnVal;
+        MarkerBrapiDTO returnVal;
 
         try {
 
-            returnVal = dtoMapDatasetBrapi.get(datasetId);
+            returnVal = dtoMapMarkerBrapi.get(markerId);
 
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Dataset not found for given id.");
+                        "Marker not found for given id.");
             }
 
             return returnVal;
@@ -81,4 +82,5 @@ public class DatasetBrapiServiceImpl implements DatasetBrapiService {
         }
 
     }
+
 }

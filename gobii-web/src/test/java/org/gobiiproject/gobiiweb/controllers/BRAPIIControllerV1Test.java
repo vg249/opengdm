@@ -1,15 +1,18 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobidomain.security.UserContextLoader;
 import org.gobiiproject.gobidomain.services.DatasetBrapiService;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.MarkerBrapiService;
+import org.gobiiproject.gobidomain.services.SamplesBrapiService;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,16 +25,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,10 +57,15 @@ public class BRAPIIControllerV1Test {
     @Mock
     private DatasetBrapiService datasetBrapiService;
 
+    @Mock
+    private SamplesBrapiService samplesBrapiService;
+
     @InjectMocks
     private BRAPIIControllerV1 brapiiControllerV1;
 
     private MockMvc mockMvc;
+
+    Random random = new Random();
 
     @BeforeClass
     public static void setupClass() {
@@ -158,7 +166,7 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1));
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1));
     }
 
     @Test
@@ -207,6 +215,8 @@ public class BRAPIIControllerV1Test {
     public void getVariantById() throws Exception {
 
         MarkerBrapiDTO variantDTO = createMockMarkerDTO();
+
+        variantDTO.setVariantDbId(random.nextInt(10));
 
         when (
                 markerBrapiService.getMarkerById(variantDTO.getId())
@@ -324,8 +334,139 @@ public class BRAPIIControllerV1Test {
                 ).contextPath("/gobii-dev")).andDo(print()
         ).andExpect(MockMvcResultMatchers.status().isOk()
         ).andExpect(content().contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(jsonPath("$.metaData.pagination.pageSize").value(1)
+        ).andExpect(jsonPath("$.metadata.pagination.pageSize").value(1)
         ).andExpect(jsonPath("$.result.data[0].variantSetIds[0]").value(dataSetBrapiDTO.getVariantSetDbId()));
+
+    }
+
+    private List<SamplesBrapiDTO> createMockSamples(Integer pageSize) {
+
+        List<SamplesBrapiDTO> returnVal = new ArrayList<>();
+
+
+        for(int i = 0; i < pageSize; i++) {
+
+            SamplesBrapiDTO sample = new SamplesBrapiDTO();
+
+            sample.setTissueType(RandomStringUtils.random(5, true, false));
+
+            sample.setColumn(RandomStringUtils.random(1, true, true));
+
+            sample.setGermplasmDbId(random.nextInt(10));
+
+            sample.setObservationUnitDbId(UUID.randomUUID().toString());
+
+            sample.setPlateName(RandomStringUtils.random(5, true, true));
+
+            sample.setRow(RandomStringUtils.random(1, true, true));
+
+            sample.setSampleDbId(i);
+
+            sample.setSampleGroupDbId(random.nextInt(4));
+
+            sample.setSampleName(RandomStringUtils.random(5, true, true));
+
+            sample.setSamplePUI(UUID.randomUUID().toString());
+
+            sample.setTissueType(RandomStringUtils.random(5, true, true));
+
+            sample.setSampleType(RandomStringUtils.random(4, true, true));
+
+            returnVal.add(sample);
+
+        }
+
+        return returnVal;
+
+    }
+
+    @Test
+    public void testGetSamplesList() throws Exception {
+
+        Integer pageSize = random.nextInt(100);
+
+        final Integer defaultPageNum =  0;
+
+        List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
+
+        when(
+                samplesBrapiService.getSamples(
+                        any(Integer.TYPE), eq(pageSize),
+                        isNull(Integer.class), isNull(Integer.class),
+                        isNull(String.class))
+        ).thenReturn(mockSamples);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(
+                        "/gobii-dev/brapi/v1/samples")
+                        .param("pageSize",  pageSize.toString())
+                        .contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$metadata").exists())
+                .andExpect(jsonPath("$.metadata.pagination").exists())
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
+                //Current page should be zero as page param is null
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").value(defaultPageNum))
+                .andExpect(jsonPath("$.result.data[0].sampleDbId")
+                        .value(mockSamples.get(0).getSampleDbId().toString()))
+                .andExpect(jsonPath("$.result.data[0].column")
+                        .value(mockSamples.get(0).getColumn()))
+                .andExpect(jsonPath("$.result.data[0].germplasmDbId")
+                        .value(mockSamples.get(0).getGermplasmDbId().toString()))
+                .andExpect(jsonPath("$.result.data[0].observationUnitDbId")
+                        .value(mockSamples.get(0).getObservationUnitDbId()))
+                .andExpect(jsonPath("$.result.data[0].plateName")
+                        .value(mockSamples.get(0).getPlateName()))
+                .andExpect(jsonPath("$.result.data[0].row")
+                        .value(mockSamples.get(0).getRow()))
+                .andExpect(jsonPath("$.result.data[0].sampleDbId")
+                        .value(mockSamples.get(0).getSampleDbId().toString()))
+                .andExpect(jsonPath("$.result.data[0].sampleGroupDbId")
+                        .value(mockSamples.get(0).getSampleGroupDbId().toString()))
+                .andExpect(jsonPath("$.result.data[0].sampleName")
+                        .value(mockSamples.get(0).getSampleName()))
+                .andExpect(jsonPath("$.result.data[0].samplePUI")
+                        .value(mockSamples.get(0).getSamplePUI()))
+                .andExpect(jsonPath("$.result.data[0].sampleType")
+                        .value(mockSamples.get(0).getSampleType()))
+                .andExpect(jsonPath("$.result.data[0].tissueType")
+                        .value(mockSamples.get(0).getTissueType()));
+
+
+    }
+
+    @Test
+    public void testGetSamplesListPageNum() throws Exception {
+
+        Integer pageSize = random.nextInt(100);
+        Integer pageNum = random.nextInt(10);
+
+        List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
+
+        when(
+                samplesBrapiService.getSamples(
+                        any(Integer.TYPE), eq(pageSize),
+                        isNull(Integer.class), isNull(Integer.class),
+                        isNull(String.class))
+        ).thenReturn(mockSamples);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(
+                        "/gobii-dev/brapi/v1/samples")
+                        .param("pageSize",  pageSize.toString())
+                        .param("page",  pageNum.toString())
+                        .contextPath("/gobii-dev")).andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$metadata").exists())
+                .andExpect(jsonPath("$.metadata.pagination").exists())
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
+                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
+                .andExpect(jsonPath("$.metadata.pagination.currentPage").value(pageNum));
+
+
 
     }
 

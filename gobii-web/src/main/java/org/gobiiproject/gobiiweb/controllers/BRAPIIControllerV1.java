@@ -196,6 +196,9 @@ public class BRAPIIControllerV1 {
     @Autowired
     private MapsetBrapiService mapsetBrapiService;
 
+    @Autowired
+    private SamplesBrapiService samplesBrapiService;
+
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 
@@ -1327,7 +1330,6 @@ public class BRAPIIControllerV1 {
     /**
      * Lists the variants by page size and page token
      *
-     * @param pageTokenParam String page token
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page sie
      * @return Brapi response with list of variants
@@ -1497,6 +1499,56 @@ public class BRAPIIControllerV1 {
             );
         }
     }
+
+    @RequestMapping(value="/samples", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getMaps(
+            @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
+            @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
+            @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+
+        try {
+
+            if(page == null) {
+                //First Page
+                page = getDefaultBrapiPage();
+            }
+
+            if(pageSize == null) {
+                //TODO: Using same resource limit as markers. But, Can be defined seperately
+                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
+            }
+
+            List<SamplesBrapiDTO> samples = samplesBrapiService.getSamples(
+                    page, pageSize,
+                    sampleDbId, germplasmDbId,
+                    observationUnitDbId);
+
+            Map<String, Object> brapiResult = new HashMap<>();
+
+            brapiResult.put("data", samples);
+
+            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
+
+            payload.getMetadata().getPagination().setCurrentPage(page);
+
+            payload.getMetadata().getPagination().setPageSize(pageSize);
+
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+
+
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
+    }
+
 
     @ApiOperation(
             value = "List Maps",

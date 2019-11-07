@@ -20,39 +20,40 @@ public class DnaSample extends BaseEntity {
     @Id
     @Column(name="dnasample_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer dnaSampleId;
+    private Integer dnaSampleId;
 
     @Column(name="name")
-    public String dnaSampleName;
+    private String dnaSampleName;
 
 
     @Column(name="uuid")
-    public String dnaSampleUuid;
+    private String dnaSampleUuid;
 
     @Column(name="code")
-    public Integer dnaSampleCode;
+    private Integer dnaSampleCode;
 
     @Column(name="platename")
-    public String plateName;
+    private String plateName;
 
     @Column(name="num")
-    public String dnaSampleNum;
+    private String dnaSampleNum;
 
     @Column(name="well_row")
-    public String wellRow;
+    private String wellRow;
 
     @Column(name="well_col")
-    public String wellCol;
+    private String wellCol;
 
     @Column(name="project_id")
-    public String projectId;
+    private Integer projectId;
 
-    @Column(name="germplasm_id")
-    public String germplasmId;
+    @ManyToOne
+    @JoinColumn(name = "germplasm_id")
+    private Germplasm germplasm = new Germplasm();
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
-    public JsonNode properties;
+    private JsonNode properties;
 
     public Integer getDnaSampleId() {
         return dnaSampleId;
@@ -110,20 +111,20 @@ public class DnaSample extends BaseEntity {
         this.wellCol = wellCol;
     }
 
-    public String getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(String projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
-    public String getGermplasmId() {
-        return germplasmId;
+    public Germplasm getGermplasm() {
+        return germplasm;
     }
 
-    public void setGermplasmId(String germplasmId) {
-        this.germplasmId = germplasmId;
+    public void setGermplasm(Germplasm germplasm) {
+        this.germplasm = germplasm;
     }
 
     public JsonNode getProperties() {

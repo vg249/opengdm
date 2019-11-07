@@ -183,6 +183,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
     @Override
     public List<ProjectDTO> getProjects(Integer pageNum, Integer pageSize) {
+
         List<ProjectDTO> returnVal = new ArrayList<>();
 
         try {
