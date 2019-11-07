@@ -90,15 +90,5 @@ public class Experiment extends BaseEntity{
     @Column(name="vendor_protocol_id")
     private Integer vendorProtocolId;
 
-    public Integer getExperimentStatus() {
-        return experimentStatus;
-    }
-
-    public void setExperimentStatus(Integer experimentStatus) {
-        this.experimentStatus = experimentStatus;
-    }
-
-    @Column(name = "status")
-    private Integer experimentStatus;
 
 }

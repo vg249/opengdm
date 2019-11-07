@@ -73,7 +73,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             //one cv for term "new" under group "status"
             if(statusCvList.size() > 0) {
                 Cv statusCv = statusCvList.get(0);
-                newProject.setProjectStatus(statusCv.getCvId());
+                newProject.getStatus().setCvId(statusCv.getCvId());
             }
 
             if(newProjectDto.getProperties() != null & !newProjectDto.getProperties().isEmpty()) {
@@ -145,12 +145,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
             ModelMapper.mapEntityToDto(project, returnVal);
 
-            //Set Project Status by cvId
-            Cv statusCv = cvDao.getCvByCvId(project.getProjectStatus());
-
-            if(statusCv != null) {
-                returnVal.setProjectStatus(statusCv.getTerm());
-            }
 
             if(project.getProperties() != null && project.getProperties().size() > 0) {
                 List<Cv> cvList = cvDao.getCvListByCvGroup(
@@ -194,14 +188,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             List<Cv> cvList = cvDao.getCvListByCvGroup(
                     CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
 
-            List<Cv> cvStatusList = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_STATUS.getCvGroupName(), null);
-
-            Map<Integer, String> cvStatusMap = new HashMap<>();
-
-            for(Cv cvStatus : cvStatusList) {
-                cvStatusMap.put(cvStatus.getCvId(), cvStatus.getTerm());
-            }
 
             for(Project project : projectList) {
 
@@ -211,11 +197,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
                     ModelMapper.mapEntityToDto(project, projectDto);
 
-                    String projectStatus = cvStatusMap.getOrDefault(project.getProjectStatus(), null);
 
-                    if (projectStatus != null) {
-                        projectDto.setProjectStatus(projectStatus);
-                    }
 
                     if (project.getProperties() != null && project.getProperties().size() > 0) {
                         projectDto.setProperties(CvIdCvTermMapper.mapCvIdToCvTerms(cvList, project.getProperties()));

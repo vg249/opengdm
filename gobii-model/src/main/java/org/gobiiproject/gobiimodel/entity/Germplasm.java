@@ -57,14 +57,6 @@ public class Germplasm extends BaseEntity {
         this.germplasmTypeId = germplasmTypeId;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     public String getCode() {
         return code;
     }
@@ -97,9 +89,6 @@ public class Germplasm extends BaseEntity {
 
     @Column(name="type_id")
     private Integer germplasmTypeId;
-
-    @Column(name="status")
-    private Integer status;
 
     @Column(name="code")
     private String code;

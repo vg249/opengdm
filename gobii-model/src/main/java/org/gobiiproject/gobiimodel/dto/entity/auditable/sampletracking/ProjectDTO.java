@@ -22,7 +22,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="projectId", entity = Project.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private int projectId;
+    private Integer projectId;
 
     @GobiiEntityMap(paramName="piContactId", entity=Project.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -31,6 +31,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="projectName", entity=Project.class)
     private String projectName;
 
+    @GobiiEntityMap(paramName="status.term", entity = Project.class, deep=true)
     private String projectStatus;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

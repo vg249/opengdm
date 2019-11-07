@@ -27,7 +27,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
     @PersistenceContext
     protected EntityManager em;
 
-    private final Integer defaultPageSize = 1000;
 
     /**
      * Gets list of dnaSample entities that match the given filter parameters.
@@ -49,6 +48,8 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
                                          Integer germplasmId, String germplasmExternalCode) {
 
         List<DnaSample> dnaSamples;
+        final int defaultPageSize = 1000;
+        final int defaultPageNum = 0;
 
         try {
 
@@ -86,7 +87,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
                 //and fetch the first page
                 dnaSampleCriteria
                         .setMaxResults(defaultPageSize)
-                        .setFirstResult(0);
+                        .setFirstResult(defaultPageNum);
             }
 
             dnaSamples = dnaSampleCriteria.list();

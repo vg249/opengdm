@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
@@ -18,6 +20,19 @@ public class BaseEntity {
 
     @Column(name="modified_date")
     private Date modifiedDate;
+
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
+
 
     public Integer getCreatedBy() {
         return createdBy;

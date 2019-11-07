@@ -38,8 +38,6 @@ public class Project extends BaseEntity {
     @Column(name="description")
     private String projectDescription;
 
-    @Column(name="status")
-    private Integer projectStatus;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
@@ -85,14 +83,6 @@ public class Project extends BaseEntity {
 
     public void  setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
-    }
-
-    public Integer getProjectStatus() {
-        return this.projectStatus;
-    }
-
-    public void setProjectStatus(Integer projectStatus) {
-        this.projectStatus = projectStatus;
     }
 
     public JsonNode getProperties() {
