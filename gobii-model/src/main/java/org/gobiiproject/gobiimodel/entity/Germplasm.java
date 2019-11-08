@@ -17,6 +17,30 @@ import javax.persistence.*;
 @Table(name = "germplasm")
 public class Germplasm extends BaseEntity {
 
+    @Id
+    @Column(name="germplasm_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer germplasmId;
+
+    @Column(name="name")
+    private String germplasmName;
+
+    @Column(name="external_code")
+    private String externalCode;
+
+    @Column(name="species_id")
+    private Integer germplasmSpecies;
+
+    @Column(name="type_id")
+    private Integer germplasmTypeId;
+
+    @Column(name="code")
+    private String code;
+
+    @Column(name="props", columnDefinition = "jsonb")
+    @Convert(converter = JsonbConverter.class)
+    private JsonNode properties;
+
     public Integer getGermplasmId() {
         return germplasmId;
     }
@@ -41,12 +65,12 @@ public class Germplasm extends BaseEntity {
         this.externalCode = externalCode;
     }
 
-    public Integer getSpeciesId() {
+    public Integer getGermplasmSpecies() {
         return germplasmSpecies;
     }
 
-    public void setSpeciesId(Integer species) {
-        this.germplasmSpecies = species;
+    public void setGermplasmSpecies(Integer germplasmSpecies) {
+        this.germplasmSpecies = germplasmSpecies;
     }
 
     public Integer getGermplasmTypeId() {
@@ -72,29 +96,4 @@ public class Germplasm extends BaseEntity {
     public void setProperties(JsonNode properties) {
         this.properties = properties;
     }
-
-    @Id
-    @Column(name="germplasm_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer germplasmId;
-
-    @Column(name="name")
-    private String germplasmName;
-
-    @Column(name="external_code")
-    private String externalCode;
-
-    @Column(name="species_id")
-    private Integer germplasmSpecies;
-
-    @Column(name="type_id")
-    private Integer germplasmTypeId;
-
-    @Column(name="code")
-    private String code;
-
-    @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
-    private JsonNode properties;
-
 }
