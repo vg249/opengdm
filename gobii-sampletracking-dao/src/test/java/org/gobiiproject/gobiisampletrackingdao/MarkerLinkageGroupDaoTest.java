@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
