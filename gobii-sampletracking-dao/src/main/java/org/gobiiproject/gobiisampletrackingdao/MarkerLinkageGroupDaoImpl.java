@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
@@ -24,6 +25,7 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
 
     @Override
+    @Transactional
     public List<MarkerLinkageGroup> getMarkerLinkageGroups(Integer pageNum, Integer pageSize,
                                                            Integer markerId, Integer linkageGroupId,
                                                            Integer datasetId) {

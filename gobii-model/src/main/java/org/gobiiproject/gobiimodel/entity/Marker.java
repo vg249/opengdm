@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonArray;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "marker")
-public class Marker extends BaseEntity {
+public class Marker {
 
     @Id
     @Column(name="marker_id")
@@ -37,7 +38,7 @@ public class Marker extends BaseEntity {
     private String ref;
 
     @Column(name="alts")
-    private List<String> alts;
+    private String[] alts;
 
     @Column(name="sequence")
     private String sequence;
@@ -106,11 +107,11 @@ public class Marker extends BaseEntity {
         this.ref = ref;
     }
 
-    public List<String> getAlts() {
+    public String[] getAlts() {
         return alts;
     }
 
-    public void setAlts(List<String> alts) {
+    public void setAlts(String[] alts) {
         this.alts = alts;
     }
 
@@ -169,4 +170,18 @@ public class Marker extends BaseEntity {
     public void setReference(Reference reference) {
         this.reference = reference;
     }
+
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
+
+
 }

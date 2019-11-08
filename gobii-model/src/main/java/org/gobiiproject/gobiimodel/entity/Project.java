@@ -90,5 +90,16 @@ public class Project extends BaseEntity {
         this.properties = properties;
     }
 
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
 }

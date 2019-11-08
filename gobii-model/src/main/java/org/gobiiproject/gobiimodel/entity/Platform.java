@@ -86,4 +86,16 @@ public class Platform extends BaseEntity{
     public void setProperties(JsonNode properties) {
         this.properties = properties;
     }
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
+
 }

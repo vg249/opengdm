@@ -21,17 +21,6 @@ public class BaseEntity {
     @Column(name="modified_date")
     private Date modifiedDate;
 
-    public Cv getStatus() {
-        return status;
-    }
-
-    public void setStatus(Cv status) {
-        this.status = status;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
 
 
     public Integer getCreatedBy() {

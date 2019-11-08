@@ -19,8 +19,9 @@ public class MarkerLinkageGroup {
     @Column(name = "marker_linkage_group_id")
     private Integer makrerLinkageGroupId;
 
-    @Column(name = "marker_id")
-    private Integer markerId;
+    @ManyToOne
+    @JoinColumn(name = "marker_id")
+    private Marker marker = new Marker();
 
     @Column(name = "start")
     private BigDecimal start;
@@ -40,12 +41,13 @@ public class MarkerLinkageGroup {
         this.makrerLinkageGroupId = makrerLinkageGroupId;
     }
 
-    public Integer getMarkerId() {
-        return markerId;
+
+    public Marker getMarker() {
+        return marker;
     }
 
-    public void setMarkerId(Integer markerId) {
-        this.markerId = markerId;
+    public void setMarker(Marker marker) {
+        this.marker = marker;
     }
 
     public BigDecimal getStart() {
