@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiimodel.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 import javax.persistence.*;
 
