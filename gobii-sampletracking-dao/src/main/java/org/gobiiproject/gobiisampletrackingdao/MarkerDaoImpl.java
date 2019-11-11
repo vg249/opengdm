@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerStartStopDTO;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -12,10 +13,7 @@ import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -91,23 +89,23 @@ public class MarkerDaoImpl implements MarkerDao {
 
     @Override
     @Transactional
-    public List<Tuple> getMarkerWithStartStopTuples(Integer pageNum, Integer pageSize,
-                                                    Integer markerId, Integer datasetId) {
+    public List<MarkerStartStopDTO> getMarkerStartStopDTOs(Integer pageNum, Integer pageSize,
+                                                           Integer markerId, Integer datasetId) {
 
 
-        List<Tuple> markerStartStops = new ArrayList<>();
+        List<MarkerStartStopDTO> markerStartStops = new ArrayList<>();
 
         try {
 
             Session session = em.unwrap(Session.class);
 
-            String queryString = "SELECT marker.* from marker as marker " +
+            String queryString = "SELECT marker.*, markerli.start, markerli.stop from marker as marker " +
                     " LEFT JOIN marker_linkage_group AS markerli " +
                     " ON marker.marker_id = markerli.marker_id " +
                     " WHERE marker.dataset_marker_idx -> ? IS NOT NULL OR ? = '' ";
 
 
-            Query markerStartStopsQuery = session.createNativeQuery(queryString, Marker.class);
+            Query markerStartStopsQuery = session.createNativeQuery(queryString, MarkerStartStopDTO.class);
 
             String datasetIdParam = "";
 
@@ -119,9 +117,8 @@ public class MarkerDaoImpl implements MarkerDao {
             markerStartStopsQuery.setParameter(2, datasetIdParam);
 
 
-            List<Marker> markers = markerStartStopsQuery.getResultList();
+            markerStartStops = markerStartStopsQuery.getResultList();
 
-            System.out.println(markers.size());
 
         }
         catch(Exception e) {

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerStartStopDTO;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.junit.Test;
@@ -42,16 +43,10 @@ public class MarkerDaoTest {
         final Integer pageSize = 200;
         final Integer pageNum = 0;
 
-        List<Tuple> markers = markerDao.getMarkerWithStartStopTuples(
+        List<MarkerStartStopDTO> markers = markerDao.getMarkerStartStopDTOs(
                 pageNum, pageSize,
                 null, 24);
 
-        for(Tuple markerTuple : markers) {
-
-            Marker marker = (Marker) markerTuple.get("marker");
-            MarkerLinkageGroup markerLi = (MarkerLinkageGroup) markerTuple.get("markerli");
-
-        }
 
 
 
