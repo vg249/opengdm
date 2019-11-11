@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Marker;
+import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Criteria;
@@ -12,7 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
@@ -22,6 +26,8 @@ public class MarkerDaoImpl implements MarkerDao {
     @PersistenceContext
     protected EntityManager em;
 
+    final int defaultPageSize = 1000;
+    final int defaultPageNum = 0;
 
 
     @Override
@@ -31,8 +37,6 @@ public class MarkerDaoImpl implements MarkerDao {
 
         List<Marker> markers;
 
-        final int defaultPageSize = 1000;
-        final int defaultPageNum = 0;
 
         try {
 
@@ -81,6 +85,37 @@ public class MarkerDaoImpl implements MarkerDao {
 
         return markers;
 
+    }
+
+    @Override
+    @Transactional
+    public List<Tuple> getMarkerWithStartStopTuples(Integer pageNum, Integer pageSize,
+                                                    Integer markerId, Integer datasetId) {
+
+
+        List<Tuple> markerStartStops = new ArrayList<>();
+
+        try {
+
+            Session session = em.unwrap(Session.class);
+
+            String queryString = "SELECT marker as marker, markerli AS markerli from Marker as marker " +
+                    " LEFT JOIN MarkerLinkageGroup AS markerli " +
+                    " ON marker.markerId = markerli.marker.markerId ";
+
+            markerStartStops = session.createQuery(queryString).getResultList();
+
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+
+        return markerStartStops;
 
     }
 

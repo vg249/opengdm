@@ -21,12 +21,12 @@ public class MarkerLinkageGroupDaoTest {
     @Test
     public void testGetMarkerLinkageGroups() {
 
-        Integer pageSize = 10;
+        Integer pageSize = 100;
 
         List<MarkerLinkageGroup> markerLinkageGroups = markerLinkageGroupDao.getMarkerLinkageGroups(
                 0, pageSize,
                 null, null,
-                24);
+                null);
 
         assertTrue("Empty dnasample list",markerLinkageGroups.size() > 0);
         assertTrue("dnaSamples result list size not equal to the page size",

@@ -2,11 +2,9 @@ package org.gobiiproject.gobiimodel.entity;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.JsonArray;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * Model for Marker Entity.

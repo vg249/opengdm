@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.persistence.Tuple;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -22,10 +23,11 @@ public class MarkerDaoTest {
     @Test
     public void testGetMarkers() {
 
-        Integer pageSize = 100;
+        final Integer pageSize = 100;
+        final Integer pageNum = 0;
 
         List<Marker> markers = markerDao.getMarkers(
-                0, pageSize,
+                pageNum, pageSize,
                 null, null);
 
         assertTrue("Empty marker list",markers.size() > 0);
@@ -34,5 +36,22 @@ public class MarkerDaoTest {
 
     }
 
+    @Test
+    public void testGetMarkerStartStops() {
+
+        final Integer pageSize = 200;
+        final Integer pageNum = 0;
+
+        List<Tuple> markers = markerDao.getMarkerWithStartStopTuples(
+                pageNum, pageSize,
+                null, null);
+
+
+
+        assertTrue("Empty marker list",markers.size() > 0);
+        assertTrue("marker result list size not equal to the page size",
+                markers.size() <= pageSize);
+
+    }
 
 }

@@ -23,7 +23,7 @@ public class DbMetaData {
 
 
         HibernateEntityManagerFactory entityManagerFactory = (HibernateEntityManagerFactory) em.getEntityManagerFactory();
-        SessionFactoryImpl sessionFactory = (SessionFactoryImpl) entityManagerFactory.getSessionFactory();
+        SessionFactoryImpl sessionFactory = (SessionFactoryImpl) em.getEntityManagerFactory();
         DatasourceConnectionProviderImpl datasourceConnectionProviderImplj = (DatasourceConnectionProviderImpl) sessionFactory.getConnectionProvider();
         DataSource dataSource = datasourceConnectionProviderImplj.getDataSource();
 
