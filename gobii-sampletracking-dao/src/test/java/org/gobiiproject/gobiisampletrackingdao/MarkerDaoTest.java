@@ -44,7 +44,14 @@ public class MarkerDaoTest {
 
         List<Tuple> markers = markerDao.getMarkerWithStartStopTuples(
                 pageNum, pageSize,
-                null, null);
+                null, 24);
+
+        for(Tuple markerTuple : markers) {
+
+            Marker marker = (Marker) markerTuple.get("marker");
+            MarkerLinkageGroup markerLi = (MarkerLinkageGroup) markerTuple.get("markerli");
+
+        }
 
 
 

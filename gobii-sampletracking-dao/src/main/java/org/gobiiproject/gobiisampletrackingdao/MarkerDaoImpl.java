@@ -7,12 +7,14 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
@@ -99,11 +101,27 @@ public class MarkerDaoImpl implements MarkerDao {
 
             Session session = em.unwrap(Session.class);
 
-            String queryString = "SELECT marker as marker, markerli AS markerli from Marker as marker " +
-                    " LEFT JOIN MarkerLinkageGroup AS markerli " +
-                    " ON marker.markerId = markerli.marker.markerId ";
+            String queryString = "SELECT marker.* from marker as marker " +
+                    " LEFT JOIN marker_linkage_group AS markerli " +
+                    " ON marker.marker_id = markerli.marker_id " +
+                    " WHERE marker.dataset_marker_idx -> ? IS NOT NULL OR ? = '' ";
 
-            markerStartStops = session.createQuery(queryString).getResultList();
+
+            Query markerStartStopsQuery = session.createNativeQuery(queryString, Marker.class);
+
+            String datasetIdParam = "";
+
+            if(datasetId != null) {
+               datasetIdParam = datasetId.toString();
+            }
+
+            markerStartStopsQuery.setParameter(1, datasetIdParam);
+            markerStartStopsQuery.setParameter(2, datasetIdParam);
+
+
+            List<Marker> markers = markerStartStopsQuery.getResultList();
+
+            System.out.println(markers.size());
 
         }
         catch(Exception e) {
