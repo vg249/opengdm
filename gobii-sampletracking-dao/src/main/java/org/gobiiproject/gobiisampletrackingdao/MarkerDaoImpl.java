@@ -8,6 +8,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(DnaSampleDao.class);
+    Logger LOGGER = LoggerFactory.getLogger(MarkerDao.class);
 
     @PersistenceContext
     protected EntityManager em;
@@ -115,7 +117,12 @@ public class MarkerDaoImpl implements MarkerDao {
             String queryString = "SELECT {marker.*}, markerli.start, markerli.stop from marker as marker " +
                     " LEFT JOIN marker_linkage_group AS markerli " +
                     " ON marker.marker_id = markerli.marker_id " +
-                    " WHERE marker.dataset_marker_idx -> :datasetId IS NOT NULL OR :datasetId = '' ";
+                    " WHERE (marker.dataset_marker_idx -> :datasetId IS NOT NULL OR :datasetId = '') ";
+
+            if(markerId != null) {
+
+                queryString += " AND (marker.marker_id = :markerId) ";
+            }
 
 
             Query markerStartStopsQuery = session.createNativeQuery(queryString);
@@ -130,9 +137,11 @@ public class MarkerDaoImpl implements MarkerDao {
             if(datasetId != null) {
                datasetIdParam = datasetId.toString();
             }
-
             markerStartStopsQuery.setParameter("datasetId", datasetIdParam);
 
+            if(markerId != null) {
+                markerStartStopsQuery.setParameter("markerId", markerId);
+            }
 
             markerStartStopsQuery
                     .setMaxResults(pageSize)

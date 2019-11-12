@@ -44,9 +44,9 @@ public class MarkerDaoTest {
         Integer pageSize = 200;
         Integer pageNum = 0;
 
-        List<Object[]> markers = markerDao.getMarkerStartStopDTOs(
+        List<Object[]> markers = markerDao.getMarkerStartStopTuples(
                 pageNum, pageSize,
-                null, null);
+                284, null);
 
 
         assertTrue("Empty marker list",markers.size() > 0);
@@ -55,7 +55,7 @@ public class MarkerDaoTest {
 
             pageSize = markers.size() - 1;
 
-            List<Object[]> markersPaged = markerDao.getMarkerStartStopDTOs(
+            List<Object[]> markersPaged = markerDao.getMarkerStartStopTuples(
                     pageNum, pageSize,
                     null, null);
 

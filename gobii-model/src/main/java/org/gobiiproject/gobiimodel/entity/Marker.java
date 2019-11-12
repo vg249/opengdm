@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.gobiiproject.gobiimodel.entity.JpaConverters.StringArrayConverter;
 
 import javax.persistence.*;
 
@@ -36,6 +37,7 @@ public class Marker {
     private String ref;
 
     @Column(name="alts")
+    @Convert(converter = StringArrayConverter.class)
     private String[] alts;
 
     @Column(name="sequence")

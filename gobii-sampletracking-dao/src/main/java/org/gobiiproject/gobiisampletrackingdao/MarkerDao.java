@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerStartStopDTO;
 import org.gobiiproject.gobiimodel.entity.Marker;
 
 import javax.persistence.Tuple;
