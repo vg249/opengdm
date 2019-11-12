@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -241,7 +239,7 @@ public class ValidationWebServicesUtil {
             return aList.subList(fromList,toList);
         }
 
-        ErrorLogger.logWarning("Validation", "Inefficient call to getSubList on non-array list type");
+        Logger.logWarning("Validation", "Inefficient call to getSubList on non-array list type");
         List<T> outList = new LinkedList<T>();
         Iterator<T> interator = inList.listIterator(fromList);
         for(int i = 0; i < toList - fromList; i++){

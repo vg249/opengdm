@@ -179,7 +179,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      * @throws IOException when the requisite file is missing or cannot be read
      */
     private void writeToOutputFile(File file, BufferedWriter tempFileBufferedWriter,
-                                   GobiiLoaderProcedure procedure, File outputFile) throws IOException {
+                                   GobiiLoaderProcedure procedure, File outputFile, boolean firstFile) throws IOException {
 
         if (processedInstruction.hasCSV_ROW()) {
             processCSV_ROW(file, tempFileBufferedWriter, procedure);
