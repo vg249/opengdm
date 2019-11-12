@@ -133,7 +133,77 @@ public class ValidationWebServicesUtil {
     }
 
     /**
-     * Web service call to validate CV and reference type
+     * Verifies whether the Project Id is valid or not
+     */
+    public static Map<String, String> validateProjectId(String projectId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_PROJECTS);
+            restUri.setParamValue("id", projectId);
+            GobiiEnvelopeRestResource<ProjectDTO, ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ProjectDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getProjectId().toString(), dto.getProjectName()));
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PROJECT_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
+            return mapsetDTOList;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            return mapsetDTOList;
+        }
+    }
+
+    /**
+     * Verifies whether the Experiment Id is valid or not
+     */
+    public static Map<String, String> validateExperimentId(String experimentId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS);
+            restUri.setParamValue("id", experimentId);
+            GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ExperimentDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentId().toString(), dto.getExperimentName()));
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_EXPERIMENT_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
+            return mapsetDTOList;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            return mapsetDTOList;
+        }
+    }
+
+    public static Map<String, String> validateMapId(String mapId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_MAPSET);
+            restUri.setParamValue("id", mapId);
+            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getMapsetId().toString(), dto.getName()));
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_MAP_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
+            return mapsetDTOList;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            return mapsetDTOList;
+        }
+    }
+
+    //TODO - this limit can be divined by another webservice call. Omitting this extra logic from 2.1 hotfix for space,
+    // readability, and to reduce error surface.
+    static final int MAX_NAMES_PER_CALL = 2000;
+
+    /**
+     * Web service call to validate CV and reference type. Will batch over the arbitrary limit.
      *
      * @param nameIdDTOList       Items list
      * @param gobiiEntityNameType CV or Reference
@@ -143,6 +213,57 @@ public class ValidationWebServicesUtil {
      * @throws MaximumErrorsValidationException exception
      */
     public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
+        int numEntities = nameIdDTOList.size();
+        List<NameIdDTO> results = new ArrayList<>(numEntities);
+        for(int i=0;i < numEntities;i+=MAX_NAMES_PER_CALL){
+            List<NameIdDTO> sublist = getSubList(nameIdDTOList,i,i+MAX_NAMES_PER_CALL);
+            results.addAll(getNamesByShortNameList(sublist,gobiiEntityNameType,filterValue,failureList));
+        }
+        return results;
+    }
+
+    /**
+     * Works like ArrayList.getSubList, but if last argument is longer than the list length, truncates instead of warning.
+     * Works on both ArrayLists and LinkedLists, but only ArrayList implementation is efficient, so generates a warning
+     * on non-Array lists. Analysis of existing codebase suggests primarily Array Lists are being used.
+     * @param inList input list - preferably an ArrayList, but will work with other list types.
+     * @param fromList index 'from' to begin sublist at
+     * @param toList index 'to' to end sublist at. Sublist will end early if 'to' is too large
+     * @param <T>
+     * @return
+     */
+    private static<T> List<T> getSubList(List<T> inList, int fromList, int toList){
+        if(toList > inList.size()){
+            toList = inList.size();
+        }
+        if(inList instanceof ArrayList){
+            ArrayList<T> aList = (ArrayList<T>)inList;
+            return aList.subList(fromList,toList);
+        }
+
+        ErrorLogger.logWarning("Validation", "Inefficient call to getSubList on non-array list type");
+        List<T> outList = new LinkedList<T>();
+        Iterator<T> interator = inList.listIterator(fromList);
+        for(int i = 0; i < toList - fromList; i++){
+            if(!interator.hasNext()){
+                break;
+            }
+            outList.add(interator.next()); //bleugh
+        }
+        return outList;
+    }
+
+    /**
+     * Underlying web service call to validate CV and reference type
+     *
+     * @param nameIdDTOList       Items list
+     * @param gobiiEntityNameType CV or Reference
+     * @param filterValue         filter value
+     * @param failureList         failure list
+     * @return Items list with id
+     * @throws MaximumErrorsValidationException exception
+     */
+    public static List<NameIdDTO> getNamesByShortNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<NameIdDTO> nameIdDTOListResponse = new ArrayList<>();
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();

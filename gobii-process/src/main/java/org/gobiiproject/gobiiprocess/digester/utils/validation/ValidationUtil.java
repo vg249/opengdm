@@ -446,17 +446,17 @@ class ValidationUtil {
         Set<String> foreignKeyList = new HashSet<>();
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
             Map<String, Set<List<String>>> mapForeignkeyAndName = new HashMap<>();
-            if (createPlatformIdSampleNameAndNumGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
+            if (createProjectIdSampleNameAndNumGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
                 Map<String, String> foreignKeyValueFromDB;
                 if (foreignKeyList.size() != 1) {
-                    multiplePlatformIdError(condition, failureList);
+                    multipleProjectIdError(condition, failureList);
                     return;
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
-                    String platformId = foreignKeyList.iterator().next();//There's only 1
-                    foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                    String projectId = foreignKeyList.iterator().next();//There's only 1
+                    foreignKeyValueFromDB = ValidationWebServicesUtil.validateProjectId(projectId, failureList);
                     if (foreignKeyValueFromDB.size() == 0) {
-                        undefinedForeignKey(condition, platformId, failureList);
+                        undefinedForeignKey(condition, projectId, failureList);
                         return;
                     }
                 } else {
@@ -489,17 +489,50 @@ class ValidationUtil {
             Map<String, Set<String>> mapForeignkeyAndName = new HashMap<>();
             if (createForeignKeyGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
                 Map<String, String> foreignKeyValueFromDB = new HashMap<>();
-                if (foreignKeyList.size() != 1) {
+                if ((foreignKeyList.size() != 1) && condition.foreignKey.equalsIgnoreCase("platform_id")) {
                     multiplePlatformIdError(condition, failureList);
                     return;
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE)) {
-                    for (String platformId : foreignKeyList) {
-                        foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
-                        if (foreignKeyValueFromDB.size() == 0) {
-                            undefinedForeignKey(condition, platformId, failureList);
-                            return;
-                        }
+                    switch (condition.foreignKey.toLowerCase()){
+                        case "platform_id":
+                            for (String platformId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, platformId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        case "map_id":
+                            for (String mapId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateMapId(mapId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, mapId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        case "experiment_id":
+                            for (String experimentId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateExperimentId(experimentId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, experimentId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        case "project_id":
+                            for (String projectId : foreignKeyList) {
+                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateProjectId(projectId, failureList);
+                                if (foreignKeyValueFromDB.size() == 0) {
+                                    undefinedForeignKey(condition, projectId, failureList);
+                                    return;
+                                }
+                            }
+                            break;
+                        default:
+                            undefinedForeignKey(condition,condition.foreignKey,failureList);
                     }
                 } else {
                     foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);
@@ -564,6 +597,14 @@ class ValidationUtil {
         ValidationUtil.addMessageToList(failure, failureList);
     }
 
+    private static void multipleProjectIdError(ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Failure failure = new Failure();
+        failure.reason = FailureTypes.MULTIPLE_PROJECT_ID;
+        failure.columnName.add(condition.fieldToCompare.get(0));
+        failure.columnName.add(condition.foreignKey);
+        ValidationUtil.addMessageToList(failure, failureList);
+    }
+
     /**
      * Go through the file and creates a foreignKey Id.
      * Result will be a map with one key and several values to it
@@ -603,7 +644,7 @@ class ValidationUtil {
      * @param failureList          failure list
      * @return status
      */
-    private static boolean createPlatformIdSampleNameAndNumGroup(String fileName, ConditionUnit condition, Map<String, Set<List<String>>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static boolean createProjectIdSampleNameAndNumGroup(String fileName, ConditionUnit condition, Map<String, Set<List<String>>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
         List<String> fileColumn1 = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
         List<String> fileColumn2 = getFileColumn(fileName, condition.fieldToCompare.get(1), failureList);
