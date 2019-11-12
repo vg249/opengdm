@@ -15,19 +15,15 @@ import java.util.List;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
-import org.gobiiproject.gobiiprocess.extractor.ExtractorGlobalConfigs;
 
 import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logDebug;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logWarning;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.*;
 
 /**
  * A repository of methods designed to interface with HDF5 files, both in the creation and in the execution of 
@@ -154,7 +150,7 @@ public class HDF5Interface {
             sampR=new BufferedReader(new FileReader(samplePosFile));
             samplePos=getSamplePosFromFile(samplePosFile);
         }
-StringBuilder genoFileString=new StringBuilder();
+        StringBuilder genoFileString=new StringBuilder();
         try{
             posR.readLine();//header
             if(sampR!=null)sampR.readLine();
@@ -265,16 +261,7 @@ StringBuilder genoFileString=new StringBuilder();
 
         }
         if(sampleList!=null){
-            logWarning("HDF5Interface","Beginning List Filtering");
-            SimpleTimer.start("Extract List Filter");
-            if(ExtractorGlobalConfigs.newSampleFilter){
-                filterDirectional(genoFile,sampleList,markerFast);
-            }
-            else {
-                filterBySampleList(genoFile, sampleList, markerFast, errorFile);
-            }
-        Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
-            logWarning("HDF5Interface","List Filtering Duration: " + SimpleTimer.stop("Extract List Filter"));
+            filterDirectional(genoFile,sampleList,markerFast);
         }
         Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
         return genoFile;
@@ -285,128 +272,92 @@ StringBuilder genoFileString=new StringBuilder();
     }
 
     /**
-     * Filters a matrix passed back by the HDF5 extractor by a sample list
-     * @param filename path to extract naked matrix
-     * @param sampleList Comma separated list of sample positions
+     * Filter out a list of elements across a direction. If markerFast is true, removes all rows not in the element list.
+     * If markerFast is fales, removes all columns not in the element list.
+     * Element list is sorted, and all negative numbers are ignored, to correspond to existing functionality.
+     *
+     * 2,-1,0 will return an output file with the first[0th] column followed by the third[2nd] column, for example.
+     * @param filename File to be modified. Will move to a 'filename.tmp', and then modify the original, deleting the temp
+     * @param elementList String containing comma separated list of integers, corresponding to 0 based row/column entities
+     * @param markerFast if true, filter by rows. Corresponds to the 'sample list' marker fast nature
      */
-    private static void filterBySampleList(String filename, String sampleList, boolean markerFast, String errorFile){
-        String tmpFile=filename+".tmp";
-        FileSystemInterface.mv(filename,tmpFile);
-        String cutString=getCutString(sampleList);
-        if(!markerFast) {
-            String sedString=cutString.replaceAll(",","p;");//1,2,3 => 1p;2p;3   (p added later)
-            tryExec("sed -n "+sedString+"p",filename,errorFile,tmpFile); //Sed parameters need double quotes to be a single parameter
-        }
-        else{
-            tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
-        }
-        rmIfExist(tmpFile);
-    }
-
-    private static void filterDirectional(String filename, String elementList, boolean vertical){
+    private static void filterDirectional(String filename, String elementList, boolean markerFast){
         //Take all positive integers from this list as cut values. See cutString.
         //Ex 0,1,2,-1,4,5 -> 0,1,2,4,5
-        List<Integer> elements= Arrays.stream(elementList.split(","))
-                .map(String::trim)
-                .map(Integer::parseInt)
-                .filter(n -> n > -1)
-                .collect(toList());
+        List<Integer> elements;
+            elements = Arrays.stream(elementList.split(","))
+                    .map(String::trim)
+                    .map(Integer::parseInt)
+                    .filter(n -> n > -1)
+                    .sorted().collect(toList());
 
         String tmpFileStr=filename+".tmp";
 
+        //Move original to temp
         FileSystemInterface.mv(filename,tmpFileStr);
 
-        File tmpFile = new File(tmpFileStr),
-                outFile = new File(filename);
+        File tmpFile = new File(tmpFileStr);
+        File outFile = new File(filename);
 
         try {
-            if (vertical) {
-                filterLines(tmpFile, outFile, elements);
+            if (markerFast) {
+                filterRows(tmpFile,outFile,elements);
             }
             else{
-                filterRows(tmpFile,outFile,elements);
+                filterLines(tmpFile, outFile, elements);
             }
         }
         catch(Exception e) {
+            Logger.logError("HDF5 Interface","Error filtering",e);
         }
         rmIfExist(tmpFile);
     }
 
     private static void filterLines(File from, File to, List<Integer> elements) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(from));
-        BufferedWriter out = new BufferedWriter(new FileWriter(to));
-        String line=in.readLine();
-        Iterator<Integer> iter = elements.iterator();
-        int next = iter.next();
-        for(int i = 0; line !=null; i++){
-            if(i==next){
-                out.write(line);
-                out.newLine();
-                if(!iter.hasNext()){
-                    break;
+        try(BufferedReader in = new BufferedReader(new FileReader(from));
+        BufferedWriter out = new BufferedWriter(new FileWriter(to))) {
+            String line = in.readLine();
+
+            Iterator<Integer> iter = elements.iterator();
+            int next = iter.next();
+            for (int i = 0; line != null; i++) {
+                if (i == next) {
+                    out.write(line);
+                    out.newLine();
+                    if (!iter.hasNext()) {
+                        break;
+                    }
+                    next = iter.next();
                 }
-                next=iter.next();
+                line = in.readLine();
             }
-            line=in.readLine();
         }
-        out.flush();
     }
 
     private static final String TAB="\t";
-    private static final String NEWLINE="\n";
 
     private static void filterRows(File from, File to, List<Integer> elements) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(from));
-        BufferedWriter out = new BufferedWriter(new FileWriter(to));
-        String line = in.readLine();
-        while(line !=null) {
-            line = in.readLine();
-            String[] split = line.split(TAB);
-            StringBuilder outRow = new StringBuilder();
-            boolean first = true;
+        try(BufferedReader in = new BufferedReader(new FileReader(from));
+            BufferedWriter out = new BufferedWriter(new FileWriter(to))) {
+            String line = in.readLine();
+            while (line != null) {
+                String[] split = line.split(TAB);
+                StringBuilder outRow = new StringBuilder();
+                boolean first = true;
 
-            for (Integer i : elements) {
-                if (!first) outRow.append(TAB);
-                outRow.append(split[i]);
-                first=false;
+                for (Integer i : elements) {
+                    if (!first) outRow.append(TAB);
+                    outRow.append(split[i]);
+                    first = false;
+                }
+                out.write(outRow.toString());
+                out.newLine();
+                try {
+                    line = in.readLine();
+                } catch (Exception e) {
+                    Logger.logWarning("HDF5Interface", "Error reading from file system", e);
+                }
             }
-            out.write(outRow.toString());
-            out.newLine();
         }
-        out.flush();
-    }
-
-    /**
-     * Converts a string of 1,2,-1,4,5,6,-1,2 (Arbitrary -1's and NOT -1's into a comma delimited set
-     * excluding positions where a -1 esists of one higher than the input value.
-     *
-     * Note: Since input is zero-based list, and the output to SED/CUT is one based, all numbers are incremented here.
-     *
-     * Examples:
-     * 0,1,2,-1,4,5 -> 1,2,3,5,6
-     * 7,-1,7,-1,7,-1 -> 8,8,8
-     * @param sampleList Input string
-     * @return Output string (see above)
-     */
-    private static String getCutString(String sampleList){
-        String[] entries=sampleList.split(",");
-        StringBuilder cutString=new StringBuilder();//Cutstring -> 1,2,4,5,6
-        int i=1;
-        for(String entry:entries){
-            int val=-1;
-            try {
-                //For some reason, spaces are everywhere, and Integer.parseInt is not very lenient
-                String entryWithoutSpaces=entry.trim().replaceAll(" ","");
-                val=Integer.parseInt(entryWithoutSpaces);
-            }catch(Exception e){
-                Logger.logDebug("GobiiExtractor NFE",e.toString());
-            }
-            if( val != -1){
-                cutString.append((val+1)+",");
-            }
-            i++;
-        }
-        cutString.deleteCharAt(cutString.length()-1);
-        return cutString.toString();
     }
 }
