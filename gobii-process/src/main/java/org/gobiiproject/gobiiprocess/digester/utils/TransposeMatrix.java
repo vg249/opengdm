@@ -88,8 +88,6 @@ public class TransposeMatrix {
      * @return success
      */
     protected static boolean transposeMatrix(String sep, String iFile, String oFile){
-        //TODO; debugging trace
-        Logger.logTrace("TransposeMatrix", "\nInFile: " + iFile+ "\n" + "OutFile: " + iFile);
         int lineNumber = lineCount(iFile);//Todo - line count doesn't equate to buffered read line list, wc -l could be more or less 'lines'
         int lineNo=0, colNo=0;
         String inLine;
@@ -98,10 +96,9 @@ public class TransposeMatrix {
             Logger.logError("Transpose Matrix", "Input file does not contain any content.\n");
         }
         String[][] matrix = new String[columnNumber][lineNumber];
-        try{
-            BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile));
-            BufferedReader buffIn=new BufferedReader(new FileReader(iFile));
-            while ((inLine = buffIn.readLine()) != null){
+        try(BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile));
+            BufferedReader buffIn=new BufferedReader(new FileReader(iFile)))
+            { while ((inLine = buffIn.readLine()) != null){
                 String [] iBase = inLine.split(sep);
                 colNo = 0;
                 for (String base:iBase){
@@ -120,9 +117,6 @@ public class TransposeMatrix {
             }
             endTime = System.currentTimeMillis();
             duration = endTime-startTime;
-            buffOut.flush();
-            buffOut.close();
-            buffIn.close();
             Logger.logTrace("Transpose Matrix","Time taken" + "(" + iFile + "):" + duration/1000 + " Seconds");
             return true;
         } catch (FileNotFoundException e){
