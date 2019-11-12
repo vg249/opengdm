@@ -20,7 +20,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.allowedExtensions;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginIntoServer;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginToServer;
 
 public class DigestFileValidator {
 
@@ -65,7 +65,7 @@ public class DigestFileValidator {
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
             List<Failure> failures = new ArrayList<>();
-            if (loginIntoServer(url, username, password, null, failures)) {
+            if (loginToServer(url, username, password, null, failures)) {
                 try {
                     List<ValidationError> validationErrorList = doValidations(validations);
                     writer.write(validationErrorList);

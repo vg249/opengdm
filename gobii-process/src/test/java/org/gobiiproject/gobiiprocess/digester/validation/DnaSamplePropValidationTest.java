@@ -70,7 +70,7 @@ public class DnaSamplePropValidationTest {
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
         digestFileValidator.performValidation();
@@ -95,7 +95,7 @@ public class DnaSamplePropValidationTest {
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
         digestFileValidator.performValidation();
@@ -127,7 +127,7 @@ public class DnaSamplePropValidationTest {
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
         digestFileValidator.performValidation();
@@ -165,7 +165,7 @@ public class DnaSamplePropValidationTest {
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
         digestFileValidator.performValidation();
@@ -194,7 +194,7 @@ public class DnaSamplePropValidationTest {
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
         digestFileValidator.performValidation();

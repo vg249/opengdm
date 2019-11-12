@@ -7,13 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -185,7 +180,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             processCSV_ROW(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_COL()) {
             if(!firstFile){
-                return; //TODO - assumption that this is a duplicated 'sample fast' file.
+                return; //TODO - assumption that this is a duplicated 'normal' oriented file.
                 //Multiple files are stacked 'vertically'. This "feature" is very jank, and this bit'll have to be ripped
                 //out while replacing it.
             }

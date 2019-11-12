@@ -28,7 +28,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 
 public class ValidationWebServicesUtil {
 
-    public static boolean loginIntoServer(String url, String username, String password, String crop, List<Failure> failures) {
+    public static boolean loginToServer(String url, String username, String password, String crop, List<Failure> failures) {
         try {
             GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
             String contextRoot = new URL(url).getPath();
