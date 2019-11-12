@@ -27,7 +27,7 @@ public interface MarkerDao {
      * as ManyToOne association is defined in the MarkerLinkageGroup Entity
      * @return List of Tuple(MarkerEntity, MarkerLinkageGroupEntity)
      */
-    List<MarkerStartStopDTO> getMarkerStartStopDTOs(Integer pageNum, Integer pageSize,
-                                                    Integer markerId, Integer datasetId);
+    List<Object[]> getMarkerStartStopTuples(Integer pageNum, Integer pageSize,
+                                            Integer markerId, Integer datasetId);
 
 }

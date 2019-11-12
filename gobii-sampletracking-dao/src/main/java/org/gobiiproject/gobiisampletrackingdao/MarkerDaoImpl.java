@@ -1,22 +1,19 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerStartStopDTO;
 import org.gobiiproject.gobiimodel.entity.Marker;
-import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
-import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
@@ -40,6 +37,12 @@ public class MarkerDaoImpl implements MarkerDao {
 
         try {
 
+            //If either page size or page number is not provided, use default maximum limit which is 1000
+            //and fetch the first page
+            if(pageSize == null || pageNum == null) {
+                pageNum = defaultPageNum;
+                pageSize = defaultPageSize;
+            }
 
             Session session = em.unwrap(Session.class);
 
@@ -58,18 +61,9 @@ public class MarkerDaoImpl implements MarkerDao {
 
 
 
-            if(pageSize != null && pageNum != null) {
-                markerCriteria
-                        .setMaxResults(pageSize)
-                        .setFirstResult(pageSize * pageNum);
-            }
-            else {
-                //If either page size or page number is not provided, use default maximum limit which is 1000
-                //and fetch the first page
-                markerCriteria
-                        .setMaxResults(defaultPageSize)
-                        .setFirstResult(defaultPageNum);
-            }
+            markerCriteria
+                    .setMaxResults(pageSize)
+                    .setFirstResult(pageNum*pageSize);
 
             markers = markerCriteria.list();
 
@@ -87,25 +81,49 @@ public class MarkerDaoImpl implements MarkerDao {
 
     }
 
+    /**
+     * Returns the object tuple of Marker Entity with Satrt and Stop from MarkerLinkageGroup Entity.
+     * A given marker id may have more than one rows with different start stops
+     * @param pageNum - Page Number to be fetched
+     * @param pageSize -Page size to be fetched
+     * @param markerId - Marker Id for which marker need to be fetched.
+     * @param datasetId - To fetch the markers belonging to the dataset Id.
+     * @return Tuple consists of below objects with respect to index,
+     * 0 - Marker Entity
+     * 1 - Start Position. Bigdecimal type.
+     * 2 - Stop Position. Bigdecimal type.
+     */
     @Override
     @Transactional
-    public List<MarkerStartStopDTO> getMarkerStartStopDTOs(Integer pageNum, Integer pageSize,
+    public List<Object[]> getMarkerStartStopTuples(Integer pageNum, Integer pageSize,
                                                            Integer markerId, Integer datasetId) {
 
 
-        List<MarkerStartStopDTO> markerStartStops = new ArrayList<>();
+        List<Object[]> markerStartStops;
 
         try {
 
+            //If either page size or page number is not provided, use default maximum limit which is 1000
+            //and fetch the first page
+            if(pageSize == null || pageNum == null) {
+                pageNum = defaultPageNum;
+                pageSize = defaultPageSize;
+            }
+
             Session session = em.unwrap(Session.class);
 
-            String queryString = "SELECT marker.*, markerli.start, markerli.stop from marker as marker " +
+            String queryString = "SELECT {marker.*}, markerli.start, markerli.stop from marker as marker " +
                     " LEFT JOIN marker_linkage_group AS markerli " +
                     " ON marker.marker_id = markerli.marker_id " +
-                    " WHERE marker.dataset_marker_idx -> ? IS NOT NULL OR ? = '' ";
+                    " WHERE marker.dataset_marker_idx -> :datasetId IS NOT NULL OR :datasetId = '' ";
 
 
-            Query markerStartStopsQuery = session.createNativeQuery(queryString, MarkerStartStopDTO.class);
+            Query markerStartStopsQuery = session.createNativeQuery(queryString);
+
+            ((NativeQuery) markerStartStopsQuery)
+                    .addEntity("marker", Marker.class)
+                    .addScalar("start", BigDecimalType.INSTANCE)
+                    .addScalar("stop", BigDecimalType.INSTANCE);
 
             String datasetIdParam = "";
 
@@ -113,11 +131,14 @@ public class MarkerDaoImpl implements MarkerDao {
                datasetIdParam = datasetId.toString();
             }
 
-            markerStartStopsQuery.setParameter(1, datasetIdParam);
-            markerStartStopsQuery.setParameter(2, datasetIdParam);
+            markerStartStopsQuery.setParameter("datasetId", datasetIdParam);
 
 
-            markerStartStops = markerStartStopsQuery.getResultList();
+            markerStartStopsQuery
+                    .setMaxResults(pageSize)
+                    .setFirstResult(pageNum*pageSize);
+
+            markerStartStops = ((NativeQuery) markerStartStopsQuery).list();
 
 
         }

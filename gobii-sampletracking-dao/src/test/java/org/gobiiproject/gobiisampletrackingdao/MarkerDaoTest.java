@@ -1,19 +1,20 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerStartStopDTO;
 import org.gobiiproject.gobiimodel.entity.Marker;
-import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.persistence.Tuple;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
+/**
+ * Tests are constructed with only test cases required for development tests.
+ * Tests will be made complete once other required DAO objects are added.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class MarkerDaoTest {
@@ -24,8 +25,8 @@ public class MarkerDaoTest {
     @Test
     public void testGetMarkers() {
 
-        final Integer pageSize = 100;
-        final Integer pageNum = 0;
+        Integer pageSize = 100;
+        Integer pageNum = 0;
 
         List<Marker> markers = markerDao.getMarkers(
                 pageNum, pageSize,
@@ -38,21 +39,30 @@ public class MarkerDaoTest {
     }
 
     @Test
-    public void testGetMarkerStartStops() {
+    public void testGetMarkerStartStopTuples() {
 
-        final Integer pageSize = 200;
-        final Integer pageNum = 0;
+        Integer pageSize = 200;
+        Integer pageNum = 0;
 
-        List<MarkerStartStopDTO> markers = markerDao.getMarkerStartStopDTOs(
+        List<Object[]> markers = markerDao.getMarkerStartStopDTOs(
                 pageNum, pageSize,
-                null, 24);
-
-
+                null, null);
 
 
         assertTrue("Empty marker list",markers.size() > 0);
-        assertTrue("marker result list size not equal to the page size",
-                markers.size() <= pageSize);
+
+        if(markers.size() > 0) {
+
+            pageSize = markers.size() - 1;
+
+            List<Object[]> markersPaged = markerDao.getMarkerStartStopDTOs(
+                    pageNum, pageSize,
+                    null, null);
+
+            assertTrue("marker result list size not equal to the page size",
+                    markersPaged.size() == pageSize);
+        }
+
 
     }
 
