@@ -1,7 +1,7 @@
 System.register(["@angular/router", "./app.extractorroot", "../views/login.component", "../services/core/auth.guard"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var router_1, app_extractorroot_1, login_component_1, auth_guard_1, appRoutes, routing;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (router_1_1) {

@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var GobiiDataSetExtract;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            GobiiDataSetExtract = (function () {
+            GobiiDataSetExtract = /** @class */ (function () {
                 function GobiiDataSetExtract(gobiiFileType, accolate, extractDestinationDirectory, gobiiExtractFilterType, markerList, sampleList, listFileName, gobiiSampleListType, gobiiDatasetType, platforms, principleInvestigator, project, dataSet, markerGroups) {
                     // this.setGobiiFileType(gobiiFileType);
                     // this.setAccolate(accolate);

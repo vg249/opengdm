@@ -20,7 +20,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_SAMPLES",
   "platform":{},
   "gobiiCropType":"dev",
-  "datasetType":"IUPAC"},
+  "datasetType":{"id":null, "name":"IUPAC"}},
  "instructions":
  [{"table":"germplasm",
    "gobiiFileColumns":

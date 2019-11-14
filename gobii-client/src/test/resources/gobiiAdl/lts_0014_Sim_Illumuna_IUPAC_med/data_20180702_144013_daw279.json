@@ -20,7 +20,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_MARKERS",
   "platform":{"id":1, "name":"Illumina_Infinium"},
   "gobiiCropType":"dev",
-  "datasetType":"IUPAC"},
+  "datasetType":{"id":null, "name":"IUPAC"}},
  "instructions":
  [{"table":"marker",
    "gobiiFileColumns":

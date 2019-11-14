@@ -1,7 +1,7 @@
 System.register(["./data-set-extract"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var data_set_extract_1, GobiiExtractorInstruction;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (data_set_extract_1_1) {
@@ -9,7 +9,7 @@ System.register(["./data-set-extract"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            GobiiExtractorInstruction = (function () {
+            GobiiExtractorInstruction = /** @class */ (function () {
                 function GobiiExtractorInstruction(dataSetExtracts, contactId, contactEmail, mapsetIds) {
                     this.dataSetExtracts = dataSetExtracts;
                     this.contactId = contactId;

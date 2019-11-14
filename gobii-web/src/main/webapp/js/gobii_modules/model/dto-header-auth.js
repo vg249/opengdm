@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var DtoHeaderAuth;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            DtoHeaderAuth = (function () {
+            DtoHeaderAuth = /** @class */ (function () {
                 function DtoHeaderAuth(userName, password, token, gobiiCropType) {
                     this.userName = userName;
                     this.password = password;

@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Link;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Link = (function () {
+            Link = /** @class */ (function () {
                 function Link(href, description, allowedMethods) {
                     this.href = href;
                     this.description = description;
