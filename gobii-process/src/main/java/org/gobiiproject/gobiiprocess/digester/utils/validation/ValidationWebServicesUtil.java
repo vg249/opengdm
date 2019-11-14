@@ -4,13 +4,19 @@ import java.net.URL;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.payload.Status;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiPayloadResponse;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
@@ -19,9 +25,8 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
@@ -196,9 +201,8 @@ public class ValidationWebServicesUtil {
         }
     }
 
-    //TODO - this limit can be divined by another webservice call. Omitting this extra logic from 2.1 hotfix for space,
-    // readability, and to reduce error surface.
-    static final int MAX_NAMES_PER_CALL = 2000;
+    //TODO - this limit can be divined by another webservice call
+    static final int DEFAULT_MAX_NAMES_PER_CALL = 2000;
 
     /**
      * Web service call to validate CV and reference type. Will batch over the arbitrary limit.
@@ -213,11 +217,36 @@ public class ValidationWebServicesUtil {
     public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
         int numEntities = nameIdDTOList.size();
         List<NameIdDTO> results = new ArrayList<>(numEntities);
-        for(int i=0;i < numEntities;i+=MAX_NAMES_PER_CALL){
-            List<NameIdDTO> sublist = getSubList(nameIdDTOList,i,i+MAX_NAMES_PER_CALL);
+        int maxEntitiesPerCall = DEFAULT_MAX_NAMES_PER_CALL;
+
+        Integer limit = getEntityLimit(gobiiEntityNameType,null/*TODO - pass in a crop config*/);
+        if((limit!=null) && (limit > 0)){
+            maxEntitiesPerCall = limit;
+        }
+
+        for(int i=0;i < numEntities;i+=maxEntitiesPerCall){
+            List<NameIdDTO> sublist = getSubList(nameIdDTOList,i,i+maxEntitiesPerCall);
             results.addAll(getNamesByShortNameList(sublist,gobiiEntityNameType,filterValue,failureList));
         }
         return results;
+    }
+
+    private static Integer getEntityLimit(String gobiiEntityNameType, GobiiCropConfig cropConfig) {
+        Integer limit = null;
+        try {
+            limit = cropConfig.getServer(ServerType.GOBII_WEB).getRestResourceLimit(RestResourceId.GOBII_NAMES,RestMethodType.GET,gobiiEntityNameType);
+        }catch(Exception e){
+            //Program flow - getRestResourceLimit follows success or exception paradigm
+        }
+        if(limit != null){
+            return limit;
+        }
+        try{
+            limit = cropConfig.getServer(ServerType.GOBII_WEB).getRestResourceLimit(RestResourceId.GOBII_NAMES,RestMethodType.GET,gobiiEntityNameType);
+        }catch(Exception e){
+            //Program flow - getRestResourceLimit follows success or exception paradigm
+        }
+        return limit;
     }
 
     /**
