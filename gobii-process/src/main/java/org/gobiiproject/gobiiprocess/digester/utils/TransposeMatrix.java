@@ -88,14 +88,14 @@ public class TransposeMatrix {
      * @return success
      */
     protected static boolean transposeMatrix(String sep, String iFile, String oFile){
-        int lineNumber = lineCount(iFile);//Todo - line count doesn't equate to buffered read line list, wc -l could be more or less 'lines'
+        int estimatedNumberOfLines = lineCount(iFile);//Todo - line count doesn't equate to buffered read line list, wc -l could be more or less 'lines'
         int lineNo=0, colNo=0;
         String inLine;
         int columnNumber = getColumnNumber(iFile, sep);
         if(columnNumber < 0){
             Logger.logError("Transpose Matrix", "Input file does not contain any content.\n");
         }
-        String[][] matrix = new String[columnNumber][lineNumber];
+        String[][] matrix = new String[columnNumber][estimatedNumberOfLines];
         try(BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile));
             BufferedReader buffIn=new BufferedReader(new FileReader(iFile)))
             { while ((inLine = buffIn.readLine()) != null){
@@ -106,8 +106,9 @@ public class TransposeMatrix {
                     colNo++;
                 }
                 lineNo++;
-                if(lineNo > lineNumber){
-                    Logger.logWarning("TransposeMatrix", "Lines in file exceeded 'linecount'");
+                if(lineNo > estimatedNumberOfLines){
+                    //Turns out our estimate was short. Not enough space in the matrix for the transposition
+                    Logger.logError("TransposeMatrix", "Lines in file exceeded 'linecount' for file. Transposition failed.");
                     break;
                 }
             }

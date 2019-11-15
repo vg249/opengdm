@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
@@ -273,7 +274,7 @@ public class HDF5Interface {
 
     /**
      * Filter out a list of elements across a direction. If markerFast is true, removes all rows not in the element list.
-     * If markerFast is fales, removes all columns not in the element list.
+     * If markerFast is false, removes all columns not in the element list.
      * Element list is sorted, and all negative numbers are ignored, to correspond to existing functionality.
      *
      * 2,-1,0 will return an output file with the first[0th] column followed by the third[2nd] column, for example.
@@ -301,7 +302,7 @@ public class HDF5Interface {
 
         try {
             if (markerFast) {
-                filterRows(tmpFile,outFile,elements);
+                projectRows(tmpFile,outFile,elements);
             }
             else{
                 filterLines(tmpFile, outFile, elements);
@@ -336,27 +337,23 @@ public class HDF5Interface {
 
     private static final String TAB="\t";
 
-    private static void filterRows(File from, File to, List<Integer> elements) throws IOException {
+    /**
+     * Projects a subset of rows onto the output file (cutting out vertical slices)
+     * @from source file
+     * @to destination of output projection
+     * @throws IOException
+     */
+    private static void projectRows(File from, File to, List<Integer> elements) throws IOException {
         try(BufferedReader in = new BufferedReader(new FileReader(from));
             BufferedWriter out = new BufferedWriter(new FileWriter(to))) {
             String line = in.readLine();
             while (line != null) {
                 String[] split = line.split(TAB);
-                StringBuilder outRow = new StringBuilder();
-                boolean first = true;
 
-                for (Integer i : elements) {
-                    if (!first) outRow.append(TAB);
-                    outRow.append(split[i]);
-                    first = false;
-                }
-                out.write(outRow.toString());
+                //Elements in specified order separated by tabs
+                out.write(elements.stream().map(i -> split[i]).collect(Collectors.joining(TAB)));
                 out.newLine();
-                try {
-                    line = in.readLine();
-                } catch (Exception e) {
-                    Logger.logWarning("HDF5Interface", "Error reading from file system", e);
-                }
+                line = in.readLine();
             }
         }
     }

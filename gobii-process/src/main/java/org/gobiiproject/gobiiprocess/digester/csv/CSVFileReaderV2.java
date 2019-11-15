@@ -195,7 +195,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
     private void processCSV_ROW(File file, BufferedWriter tempFileBufferedWriter, GobiiLoaderProcedure procedure) throws IOException {
         readCSV_ROWS(file, procedure);
         // Added for consistency in flow. For CSV_ROW this variable is not used. So empty list is passed
-        List<String> rowList = new ArrayList<>();
+        ArrayList<String> rowList = new ArrayList<>();
         if (processedInstruction.isFirstLine()) {
             writeFirstLine(tempFileBufferedWriter);
             processedInstruction.setFirstLine(false);
@@ -235,7 +235,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 String[] row = fileRow.split(procedure.getMetadata().getGobiiFile().getDelimiter(), -1);//Need to capture blank trailing values
 
                 if (rowNo >= rowNoInGobiiColumn) {
-                    List<String> rowList = new ArrayList<>();
+                    ArrayList<String> rowList = new ArrayList<>();
                     for (Integer colNo : reqCols) {
                         rowList.add(row[colNo]);
                     }
@@ -284,7 +284,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;
                 String fileRow;
-                List<String> inputRowList, outputRowList;
+                ArrayList<String> inputRowList, outputRowList;
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
@@ -367,7 +367,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
      * @throws IOException I/O Exception
      * TODO: this method only works performantly in an array list, and see below TODO which does not even do that.
      */
-    private void writeOutputLine(BufferedWriter tempFileBufferedWriter, /*ARRAY*/List<String> rowList) throws IOException {
+    private void writeOutputLine(BufferedWriter tempFileBufferedWriter, ArrayList<String> rowList) throws IOException {
         StringBuilder outputLine = new StringBuilder();
         // Used in traversing requiredRows
         int rowNo = 0;
@@ -419,9 +419,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
     private void readCSV_ROWS(File file, GobiiLoaderProcedure procedure) {
         int maxRequiredRowNo = maxRequiredRow();
 
-        if(maxRequiredRowNo==0){
-            maxRequiredRowNo=1; //need to read at least one row to know maxLines.
-        }
+
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
@@ -509,8 +507,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
     }
 
     /**
-     * Max row no required.
-     *
+     * Max row number required to be read for the 'required' rows to all fit into what was read.
+     * Synonomous with the highest numbered row of metadata, with exception of if no row exists, one row is returned
+     * to read at least one row. (Required for the correct calculation of matrix sizes).
      * @return max required row no.
      */
     private int maxRequiredRow() {
@@ -519,6 +518,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             if ((gobiiFileColumn.getGobiiColumnType().equals(GobiiColumnType.CSV_ROW))
                     && (maxRowNo < gobiiFileColumn.getrCoord()))
                 maxRowNo = gobiiFileColumn.getrCoord();
+        }
+        if(maxRowNo==0){
+            maxRowNo=1; //need to read at least one row to know maxLines.
         }
         return maxRowNo;
     }

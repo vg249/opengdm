@@ -32,7 +32,7 @@ public abstract class MobileTransform {
     public static MobileTransform getTransposeMatrix(String dest) {
         return new MobileTransform() {
             public void transform(String fromFile, String toFile, String errorPath) {
-                    transposeMatrix("tab", fromFile, toFile, dest);
+                transposeMatrix("tab", fromFile, toFile, dest);
             }
         };
     }
