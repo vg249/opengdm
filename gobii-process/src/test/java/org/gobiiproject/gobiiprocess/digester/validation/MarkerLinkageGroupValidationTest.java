@@ -113,7 +113,7 @@ public class MarkerLinkageGroupValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -172,7 +172,7 @@ public class MarkerLinkageGroupValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -235,7 +235,7 @@ public class MarkerLinkageGroupValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/linkageGroupFail"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -302,7 +302,7 @@ public class MarkerLinkageGroupValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -369,7 +369,7 @@ public class MarkerLinkageGroupValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/markerNameFailTest"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -396,12 +396,12 @@ public class MarkerLinkageGroupValidationTest {
             PowerMockito
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("linkage_group"), any())).thenReturn(foreignKeyValueFromDBMapset);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("linkage_group"), eq("1"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("linkage_group"), eq("1"), any(),null))
                     .thenReturn(referenceResponseLG);
             PowerMockito
                     .when(ValidationWebServicesUtil.validatePlatformId(eq("8"), any())).thenReturn(foreignKeyValueFromDBPlatformId);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("marker"), eq("8"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("marker"), eq("8"), any(),null))
                     .thenReturn(referenceResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();

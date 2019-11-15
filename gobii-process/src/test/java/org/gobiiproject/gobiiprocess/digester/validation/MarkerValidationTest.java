@@ -113,15 +113,15 @@ public class MarkerValidationTest {
         }
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.REFERENCE.toString()), eq("reference_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.REFERENCE.toString()), eq("reference_name"), any(),null))
                     .thenReturn(referenceResponse);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("strand_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("strand_name"), any(),null))
                     .thenReturn(strandResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -181,15 +181,15 @@ public class MarkerValidationTest {
 
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("reference"), eq("reference_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("reference"), eq("reference_name"), any(),null))
                     .thenReturn(referenceResponse);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("strand_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("strand_name"), any(),null))
                     .thenReturn(strandResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/cvFail"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -232,7 +232,7 @@ public class MarkerValidationTest {
                 .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -261,7 +261,7 @@ public class MarkerValidationTest {
                 .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());

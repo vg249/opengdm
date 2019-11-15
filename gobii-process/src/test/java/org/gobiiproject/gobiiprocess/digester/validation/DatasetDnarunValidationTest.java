@@ -107,12 +107,12 @@ public class DatasetDnarunValidationTest {
                     .thenReturn(experimentForeignKeyReturn);
 
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.DNARUN.toString()), eq("1"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.DNARUN.toString()), eq("1"), any(), null))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -174,12 +174,12 @@ public class DatasetDnarunValidationTest {
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any(),null))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/dnarunName/missingNames"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -248,12 +248,12 @@ public class DatasetDnarunValidationTest {
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any(),null))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/dnarunName/skipdnaNameVerification"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -302,13 +302,13 @@ public class DatasetDnarunValidationTest {
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any(),null))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
 
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -363,12 +363,12 @@ public class DatasetDnarunValidationTest {
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any(),null))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());

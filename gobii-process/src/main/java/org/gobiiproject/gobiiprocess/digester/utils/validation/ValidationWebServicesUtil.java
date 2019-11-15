@@ -214,12 +214,13 @@ public class ValidationWebServicesUtil {
      * @return Items list with id
      * @throws MaximumErrorsValidationException exception
      */
-    public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList, GobiiCropConfig cropConfig) throws MaximumErrorsValidationException {
         int numEntities = nameIdDTOList.size();
         List<NameIdDTO> results = new ArrayList<>(numEntities);
         int maxEntitiesPerCall = DEFAULT_MAX_NAMES_PER_CALL;
 
-        Integer limit = getEntityLimit(gobiiEntityNameType,null/*TODO - pass in a crop config*/);
+        //Determine limit from configuration if possible
+        Integer limit = cropConfig != null ? getEntityLimit(gobiiEntityNameType,cropConfig):null;
         if((limit!=null) && (limit > 0)){
             maxEntitiesPerCall = limit;
         }

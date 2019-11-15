@@ -108,7 +108,7 @@ public class DatasetMarkerValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -159,7 +159,7 @@ public class DatasetMarkerValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -217,7 +217,7 @@ public class DatasetMarkerValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -275,7 +275,7 @@ public class DatasetMarkerValidationTest {
         }
 
         mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
-        digestFileValidator.performValidation();
+        digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/markerNameFailTest"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
@@ -298,7 +298,7 @@ public class DatasetMarkerValidationTest {
             PowerMockito
                     .when(ValidationWebServicesUtil.validatePlatformId(eq("8"), any())).thenReturn(foreignKeyValueFromDBPlatformId);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("marker"), eq("8"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("marker"), eq("8"), any(),null))
                     .thenReturn(referenceResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
