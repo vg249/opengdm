@@ -125,7 +125,6 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
         Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
-        tempFolder.delete();
     }
 
     @Test
@@ -250,8 +249,12 @@ public class CSVFileReader_CSV_BOTHV2Test {
 		Util.createAndSetGobiiFile(procedure, tempFolderLocation);
 
         File srcFolder;
-        srcFolder = tempFolder.newFolder("IUPAC");
-        tempFolder.newFolder("dest");
+        try {
+            srcFolder = tempFolder.newFolder("IUPAC");
+        }catch(Exception e){
+            srcFolder=new File(tempFolder.getRoot(),"IUPAC");
+        }
+        try{tempFolder.newFolder("dest");}catch(Exception e){}
 
         tempFolderLocation = tempFolder.getRoot().getPath();
         File resourceDest = new File("src/test/resources/csvBoth");
@@ -270,6 +273,10 @@ public class CSVFileReader_CSV_BOTHV2Test {
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 11, DataSetType.IUPAC));
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(98, "IUPAC"));
+
+        List instructionList = new LinkedList();
+        instructionList.add(instruction);
+        procedure.setInstructions(instructionList);
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(procedure, instruction);
@@ -365,11 +372,11 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         File srcFolder;
         try{srcFolder = tempFolder.newFolder("SSR_ALLELE");}catch(Exception e){
-            new File(tempFolderLocation,"SSR_ALLELE").delete();
-            tempFolder.delete();
-            srcFolder=tempFolder.newFolder("SSR_ALLELE");
+            srcFolder=new File(tempFolder.getRoot(),"SSR_ALLELE");
         }
-        tempFolder.newFolder("dest");
+        try{tempFolder.newFolder("dest");}
+        catch(Exception e){
+        }
 
         tempFolderLocation = tempFolder.getRoot().getPath();
         File resourceDest = new File("src/test/resources/csvBoth");
@@ -462,7 +469,7 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Files.copy(resourceSource.toPath(), dest.toPath());
 
 
-        String table = "CSV_BOTH_VCF";
+        String table = "CSV_BOTH_VCF_1";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
         procedure.getMetadata().getGobiiFile().setSource(tempFolderLocation + "/VCF");
         procedure.getMetadata().getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
@@ -473,12 +480,14 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
 
+        List instructionList = new LinkedList();
+        instructionList.add(instruction);
+        procedure.setInstructions(instructionList);
+
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-        Util.deleteDirectory(srcFolder);
-        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
 
     @Test
@@ -489,7 +498,11 @@ public class CSVFileReader_CSV_BOTHV2Test {
 		Util.createAndSetGobiiFile(procedure, tempFolderLocation);
 
         File srcFolder;
-        srcFolder = tempFolder.newFolder("VCF");
+        try {
+            srcFolder = tempFolder.newFolder("VCF");
+        }catch(Exception e){
+            srcFolder = new File(tempFolder.getRoot(),"VCF");
+        }
         try{tempFolder.newFolder("dest");}catch(Exception e){}
 
         tempFolderLocation = tempFolder.getRoot().getPath();
@@ -500,11 +513,11 @@ public class CSVFileReader_CSV_BOTHV2Test {
         File dest = new File(srcFolder.getAbsolutePath() + "\\100Testwithperiods_inAlt_071118_S2_fail.vcf");
         Files.copy(resourceSource.toPath(), dest.toPath());
         resourceSource = new File("src/test/resources/csvBoth/digest.marker");
-        dest = new File(srcFolder.getAbsolutePath() + "\\digest.marker");
+        dest = new File(srcFolder.getAbsolutePath() + "\\digest.marker2");
         Files.copy(resourceSource.toPath(), dest.toPath());
 
 
-        String table = "CSV_BOTH_VCF";
+        String table = "CSV_BOTH_VCF_2";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
         procedure.getMetadata().getGobiiFile().setSource(tempFolderLocation + "/VCF");
         procedure.getMetadata().getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
@@ -514,6 +527,10 @@ public class CSVFileReader_CSV_BOTHV2Test {
         gobiiColumns.add(Util.createGobiiCSV_BOTH(10, 9, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        List instructionList = new LinkedList();
+        instructionList.add(instruction);
+        procedure.setInstructions(instructionList);
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(procedure, instruction);
