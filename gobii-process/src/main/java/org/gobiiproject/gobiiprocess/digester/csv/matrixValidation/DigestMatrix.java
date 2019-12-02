@@ -24,6 +24,8 @@ class DigestMatrix {
             case DOMINANT_NON_NUCLEOTIDE:
                 allowedCharacters = initDominantList();
                 break;
+          case NUCLEOTIDE_4_LETTER:
+               allowedCharacters = initNucleotide4letterList();
             case SSR_ALLELE_SIZE:
                 /*
                  * since ssr data has only digits (upto 8)
@@ -56,6 +58,18 @@ class DigestMatrix {
         List<String> elements = new ArrayList<>(Arrays.asList("AA", "TT", "CC", "GG", "AT", "TA", "AG", "GA", "AC", "CA", "TG", "GT", "TC", "CT", "GC", "CG", "NN",
                 "++", "--", "+-", "-+", "AN", "NA", "CN", "NC", "GN", "NG", "TN", "NT"));
         for (char c : "ACGTN".toCharArray()) {
+            elements.add(c + "+");
+            elements.add(c + "-");
+            elements.add("+" + c);
+            elements.add("-" + c);
+        }
+        return elements;
+    }
+  
+      private static List<String> initNucleotide4letterList() { \\TODO - fix for 4 letters
+        List<String> elements = new ArrayList<>(Arrays.asList("AA", "TT", "CC", "GG", "AT", "TA", "AG", "GA", "AC", "CA", "TG", "GT", "TC", "CT", "GC", "CG", "NN",
+                "++", "--", "+-", "-+", "AN", "NA", "CN", "NC", "GN", "NG", "TN", "NT"));
+        for (char c : "ACGTN+-".toCharArray()) {
             elements.add(c + "+");
             elements.add(c + "-");
             elements.add("+" + c);
