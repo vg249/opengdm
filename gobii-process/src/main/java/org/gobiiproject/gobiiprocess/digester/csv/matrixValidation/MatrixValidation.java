@@ -77,7 +77,12 @@ public class MatrixValidation {
             if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
                 return ret.success(false);
             }
-
+      
+      if (datasetType.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")){
+            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) { //TODO - IUPAC Matrix to BI - > 4 letter conversion with separator checks
+                return ret.success(false);
+            }
+      }
         /*
          *   SNP sep removal
          *   Tried SNP Separator Removal.
