@@ -28,7 +28,7 @@ public class ProjectDaoTest {
 
         newProject.setProjectName("test10");
 
-        newProject.setProjectStatus(1);
+        newProject.getStatus().setCvId(1);
 
         ObjectMapper mapper = new ObjectMapper();
 

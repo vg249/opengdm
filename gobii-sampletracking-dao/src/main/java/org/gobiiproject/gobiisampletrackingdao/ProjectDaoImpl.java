@@ -69,7 +69,7 @@ public class ProjectDaoImpl implements ProjectDao {
                     .addParamDef(6, Date.class, newProject.getCreatedDate())
                     .addParamDef(7, Integer.class, newProject.getModifiedBy())
                     .addParamDef(8, Date.class, newProject.getModifiedDate())
-                    .addParamDef(9, Integer.class, newProject.getProjectStatus())
+                    .addParamDef(9, Integer.class, newProject.getStatus().getCvId())
                     .addParamDef(10, JsonNode.class, newProject.getProperties());
 
             spWorker.run(spDef);

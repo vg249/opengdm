@@ -3,10 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.NullNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 
@@ -38,8 +35,6 @@ public class Project extends BaseEntity {
     @Column(name="description")
     private String projectDescription;
 
-    @Column(name="status")
-    private Integer projectStatus;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
@@ -87,14 +82,6 @@ public class Project extends BaseEntity {
         this.projectDescription = projectDescription;
     }
 
-    public Integer getProjectStatus() {
-        return this.projectStatus;
-    }
-
-    public void setProjectStatus(Integer projectStatus) {
-        this.projectStatus = projectStatus;
-    }
-
     public JsonNode getProperties() {
         return this.properties;
     }
@@ -103,5 +90,16 @@ public class Project extends BaseEntity {
         this.properties = properties;
     }
 
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
 }
