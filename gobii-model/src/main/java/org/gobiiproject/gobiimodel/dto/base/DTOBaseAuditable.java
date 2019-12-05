@@ -27,21 +27,17 @@ public abstract class DTOBaseAuditable extends DTOBase {
         this.entityNameType = entityNameType;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="createdBy", entity= Project.class)
     private Integer createdBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="createdDate", entity= Project.class)
     private Date createdDate = null;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="modifiedBy", entity= Project.class)
     private Integer modifiedBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GobiiEntityMap(paramName="modifiedDate", entity= Project.class)
     private Date modifiedDate = null;
 

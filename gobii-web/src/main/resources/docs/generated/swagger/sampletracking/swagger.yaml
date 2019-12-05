@@ -210,10 +210,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "pageToken"
-        in: "query"
-        required: false
-        type: "string"
       - name: "pageSize"
         in: "query"
         required: false
@@ -383,19 +379,15 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       sampleId:
         type: "integer"
         format: "int32"
@@ -432,22 +424,20 @@ definitions:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+      experimentId:
+        type: "integer"
+        format: "int32"
         readOnly: true
-      name:
-        type: "string"
-      code:
+      experimentName:
         type: "string"
       projectId:
         type: "integer"
@@ -458,44 +448,39 @@ definitions:
       manifestId:
         type: "integer"
         format: "int32"
-      status:
-        type: "integer"
-        format: "int32"
+      experimentStatus:
+        type: "string"
       dataFileUrl:
         type: "string"
-      experimentId:
-        type: "integer"
-        format: "int32"
+      code:
+        type: "string"
   GermplasmDTO:
     type: "object"
     properties:
       createdBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       createdDate:
         type: "string"
         format: "date-time"
-        readOnly: true
       modifiedBy:
         type: "integer"
         format: "int32"
-        readOnly: true
       modifiedDate:
         type: "string"
         format: "date-time"
+      germplasmId:
+        type: "integer"
+        format: "int32"
         readOnly: true
       germplasmName:
         type: "string"
       externalCode:
         type: "string"
-      germplasmSpecies:
+      speciesName:
         type: "string"
-      germplasmType:
+      typeName:
         type: "string"
-      germplasmId:
-        type: "integer"
-        format: "int32"
   ProjectDTO:
     type: "object"
     properties:
