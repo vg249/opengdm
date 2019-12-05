@@ -29,6 +29,8 @@ class SNPSepRemoval {
         missingFromFile = new ArrayList<>();
         missingFromFile.addAll(missingFileElements);
         missingFromFile.remove("");//Just in case
+
+        missingAlts.addAll(missingFromFile);
     }
 
     boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
