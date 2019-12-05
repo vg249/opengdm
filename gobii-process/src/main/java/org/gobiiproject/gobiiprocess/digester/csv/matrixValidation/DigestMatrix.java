@@ -28,13 +28,14 @@ class DigestMatrix {
                break;
             case SSR_ALLELE_SIZE:
                 allowedEntities = new AllowedSSRAlleleSize(8);
+                break;
             default:
                 matrixErrorUtil.setError("Validate Dataset Matrix. Invalid dataset type " + dataSetType);
                 return false;
         }
 
         for (String element : rowList)
-            if (element == null || element.equals("") || !allowedEntities.isAllowed(element)) {
+            if (!allowedEntities.isAllowed(element) || element == null || element.equals("")) {
                 matrixErrorUtil.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
                 returnStatus = false;
             }
@@ -81,7 +82,7 @@ class DigestMatrix {
     }
     private static class AllowedNucleotides implements AllowedEntities{
         private int numberOfElements;
-        private String allowedCharacters = "ACGTN+-";
+        Set<String> allowedSet = new HashSet<String>(Arrays.asList("A","C","G","T","N","+","-"));
         private AllowedNucleotides(int numberOfElements){
             this.numberOfElements = numberOfElements;
         }
@@ -90,8 +91,8 @@ class DigestMatrix {
             //There are the right number of elements
             if(entity.length()!=numberOfElements) return false;
             //Each element is a valid element
-            for(char c: entity.toCharArray()){
-                if(!allowedCharacters.contains(""+c)){
+            for(String s: entity.split("")){
+                if(!allowedSet.contains(s)){
                     return false;
                 }
             }
