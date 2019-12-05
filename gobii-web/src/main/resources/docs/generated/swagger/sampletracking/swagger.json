@@ -245,11 +245,6 @@
         "operationId" : "listProjects",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "pageToken",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "pageSize",
           "in" : "query",
           "required" : false,
@@ -461,23 +456,19 @@
       "properties" : {
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "sampleId" : {
           "type" : "integer",
@@ -529,28 +520,26 @@
       "properties" : {
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "experimentId" : {
           "type" : "integer",
           "format" : "int32",
           "readOnly" : true
         },
-        "modifiedDate" : {
-          "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
-        },
-        "name" : {
-          "type" : "string"
-        },
-        "code" : {
+        "experimentName" : {
           "type" : "string"
         },
         "projectId" : {
@@ -565,16 +554,14 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "status" : {
-          "type" : "integer",
-          "format" : "int32"
+        "experimentStatus" : {
+          "type" : "string"
         },
         "dataFileUrl" : {
           "type" : "string"
         },
-        "experimentId" : {
-          "type" : "integer",
-          "format" : "int32"
+        "code" : {
+          "type" : "string"
         }
       }
     },
@@ -583,22 +570,23 @@
       "properties" : {
         "createdBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "createdDate" : {
           "type" : "string",
-          "format" : "date-time",
-          "readOnly" : true
+          "format" : "date-time"
         },
         "modifiedBy" : {
           "type" : "integer",
-          "format" : "int32",
-          "readOnly" : true
+          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
-          "format" : "date-time",
+          "format" : "date-time"
+        },
+        "germplasmId" : {
+          "type" : "integer",
+          "format" : "int32",
           "readOnly" : true
         },
         "germplasmName" : {
@@ -607,15 +595,11 @@
         "externalCode" : {
           "type" : "string"
         },
-        "germplasmSpecies" : {
+        "speciesName" : {
           "type" : "string"
         },
-        "germplasmType" : {
+        "typeName" : {
           "type" : "string"
-        },
-        "germplasmId" : {
-          "type" : "integer",
-          "format" : "int32"
         }
       }
     },
