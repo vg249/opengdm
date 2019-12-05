@@ -30,7 +30,9 @@ class SNPSepRemoval {
         missingFromFile.addAll(missingFileElements);
         missingFromFile.remove("");//Just in case
 
+        //fileMissingElements
         missingAlts.addAll(missingFromFile);
+        alleles.addAll(missingFromFile);
     }
 
     boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
