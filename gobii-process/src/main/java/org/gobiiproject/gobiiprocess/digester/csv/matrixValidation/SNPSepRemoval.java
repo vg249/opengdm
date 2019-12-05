@@ -20,12 +20,10 @@ class SNPSepRemoval {
         alleles.add("N");
         alleles.add("+");
         alleles.add("-");
-        alleles.add("?");
         alleles.add("0");
         alleles.add("");
 
         missingAlts = new ArrayList<>();
-        missingAlts.add("?");
         missingAlts.add("0");
 
         missingFromFile = new ArrayList<>();
@@ -44,12 +42,14 @@ class SNPSepRemoval {
                 if (missingFromFile.contains(element)) {
                     outrow.add("NN");
                 } else {
-                    final String s = "SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo;
+                    char firstChar = element.charAt(0);
+                    char lastChar = element.charAt(element.length() - 1);
+                    final String s = "SNPSepRemoval Unsupported Allele Call " + firstChar + " " + lastChar + " in row " + rowNo;
 
                     String allele1, allele2;
-                    if (alleles.contains(String.valueOf(element.charAt(0))) && alleles.contains(String.valueOf(element.charAt(element.length() - 1)))) {
-                        allele1 = String.valueOf(element.charAt(0));
-                        allele2 = String.valueOf(element.charAt(element.length() - 1));
+                    if (alleles.contains(String.valueOf(firstChar)) && alleles.contains(String.valueOf(lastChar))) {
+                        allele1 = String.valueOf(firstChar);
+                        allele2 = String.valueOf(lastChar);
                         if (missingAlts.contains(allele1)) allele1 = "N";
                         if (missingAlts.contains(allele2)) allele2 = "N";
                         outrow.add(allele1 + allele2);
