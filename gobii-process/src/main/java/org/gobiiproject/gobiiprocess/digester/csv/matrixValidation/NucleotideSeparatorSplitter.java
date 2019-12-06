@@ -11,8 +11,9 @@ import java.util.*;
 class NucleotideSeparatorSplitter {
 
     private int nucleotideCount;
-    private String unknownAllele = "N";
-    private Set<String> validAlleles = new HashSet<>(Arrays.asList(
+    private static String unknownAllele = "N";
+    private String unknownSegment;
+    private static Set<String> validAlleles = new HashSet<>(Arrays.asList(
             "A",
             "C",
             "G",
@@ -21,40 +22,22 @@ class NucleotideSeparatorSplitter {
             "+",
             "-"
     ));
-    private Set<String> validSeparators = new HashSet<>(Arrays.asList(
+    private static Set<String> validSeparators = new HashSet<>(Arrays.asList(
             ",",
             "/",
             "|"
-    ))
+    ));
 
-    private List<String>  missingAlts, missingFromFile;
+    private Set<String> missingSegmentsFromFile;
 
-    NucleotideSeparatorSplitter(List<String> missingFileElements) {
-        alleles = new ArrayList<>();
-        alleles.add("A");
-        alleles.add("C");
-        alleles.add("G");
-        alleles.add("T");
-        alleles.add("N");
-        alleles.add("+");
-        alleles.add("-");
-        alleles.add("0");
-        alleles.add("");
-
-        missingAlts = new ArrayList<>();
-        missingAlts.add("0");
-
-        missingFromFile = new ArrayList<>();
-        missingFromFile.addAll(missingFileElements);
-        missingFromFile.remove("");//Just in case
-
-        //fileMissingElements
-        missingAlts.addAll(missingFromFile);
-        alleles.addAll(missingFromFile);
+    public NucleotideSeparatorSplitter(int nucleotideCount, Set<String> missingSegmentsFromFile){
+        this.nucleotideCount = nucleotideCount;
+        this.missingSegmentsFromFile = missingSegmentsFromFile;
+        this.unknownSegment = StringUtils.repeat(unknownAllele,nucleotideCount);
     }
 
     public NucleotideSeparatorSplitter(int nucleotideCount){
-        this.nucleotideCount = nucleotideCount;
+        this(nucleotideCount, readSegmentsFromFile());
     }
 
     boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
@@ -65,54 +48,73 @@ class NucleotideSeparatorSplitter {
                 matrixErrorUtil.setError(errMsg);
                 returnStatus = false;
             } else {
-                if (missingFromFile.contains(element)) {
-                    outrow.add("NN");
+                ProcessResult result = processElement(element);
+                if (result.success) {
+                    outrow.add(result.element);
                 } else {
-                    char firstChar = element.charAt(0);
-                    char lastChar = element.charAt(element.length() - 1);
-                    final String s = "SNPSepRemoval Unsupported Allele Call " + firstChar + " " + lastChar + " in row " + rowNo;
-
-                    String allele1, allele2;
-                    if (alleles.contains(String.valueOf(firstChar)) && alleles.contains(String.valueOf(lastChar))) {
-                        allele1 = String.valueOf(firstChar);
-                        allele2 = String.valueOf(lastChar);
-                        if (missingAlts.contains(allele1)) allele1 = "N";
-                        if (missingAlts.contains(allele2)) allele2 = "N";
-                        outrow.add(allele1 + allele2);
-                    } else {
-                        matrixErrorUtil.setError(s);
-                        returnStatus = false;
-                    }
+                    String baseErrMsg = result.errorMsg + "  in row " + rowNo;
+                    matrixErrorUtil.setError(baseErrMsg);
+                    outrow.add(result.element);
+                    returnStatus = false;
                 }
             }
         }
         return returnStatus;
     }
-    private String processElement(String element){
-        if(missingFromFile.contains(element)){
-            return StringUtils.repeat(unknownAllele,nucleotideCount); // A full string of undelimited unknown characters. 4 and N -> NNNN
+
+    // Important assumptions - element is already whitespace stripped.
+    //missingSegmentsFromFile is all lowercase, so 'contains' becomes case insensitive
+    private ProcessResult processElement(String element){
+        if(missingSegmentsFromFile.contains(element.toLowerCase())){
+            return new ProcessResult(true,unknownSegment,null); // A full string of undelimited unknown characters. 4 and N -> NNNN
         }
         int expectedLengthWithSeparators = (nucleotideCount * 2) - 1;
         int length = element.length();
         if(length != nucleotideCount && (length != expectedLengthWithSeparators)){
-            return null; // incorrect length
+            return new ProcessResult(false,unknownSegment,"Unexpected Length Element " + element); // incorrect length
         }
         boolean noSeparators=(length == nucleotideCount);
         if(!noSeparators && length > 1) { //If nucleotideCount=1, there's no separator character
             char separator = element.charAt(1);
             if(!validSeparators.contains(separator)){
-                return null; // incorrect separator character OR wrongly sized element
+                return new ProcessResult(false,unknownSegment,"Unexpected Separator in " + element + ": " + separator + " Expected:" + Arrays.deepToString(validSeparators.toArray())); // incorrect separator character OR wrongly sized element
                 //Expected separator from <list>, recieved garbage
             }
             element = element.replaceAll(""+separator,"");
+            if(element.length() != nucleotideCount){
+                return new ProcessResult(false,unknownSegment,"Unexpected Segment Count after split in " + element);
+            }
         }
         StringBuilder outElement = new StringBuilder();
         //element is now separatorless
-        for(char c: element.toCharArray()){
-            if()
-            outElement.append(c);
+        for(char c: element.toCharArray()) {
+            if (validAlleles.contains("" + c)) {
+                outElement.append(c);
+            } else {
+                return new ProcessResult(false, null, );
+            }
         }
+        return new ProcessResult(true,outElement.toString(),null);
+    }
 
-        return outElement.toString();
+    //reads segments from input file
+    private static Set<String> readSegmentsFromFile(){
+        Set<String> ret = new HashSet<String>();
+        while(true) { //TODO - this
+            String segment;
+            ret.add(segment.toLowerCase());
+        }
+        return ret;
+    }
+
+    private class ProcessResult{
+        boolean success;
+        String element;
+        String errorMsg;
+        ProcessResult(boolean success, String element, String errorMsg){
+            this.success = success;
+            this.element = element;
+            this.errorMsg = errorMsg;
+        }
     }
 }
