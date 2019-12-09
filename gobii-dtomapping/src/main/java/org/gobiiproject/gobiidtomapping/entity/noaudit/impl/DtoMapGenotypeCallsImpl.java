@@ -1193,8 +1193,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             }
             else {
                 genotype.append(genotypesChar);
-                if(genotype.length() == 1) {
-                    genotype.append('/');
+                if(genotype.length() == 2) {
+                    genotype.insert(1, '/');
                 }
             }
 

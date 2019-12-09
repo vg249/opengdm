@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
+import antlr.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
@@ -2363,6 +2364,13 @@ public class BRAPIIControllerV1 {
             List<GenotypeCallsDTO> genotypeCallsList = new ArrayList<>();
 
             Integer variantSetDbId;
+
+            if(pageSize == null) {
+                pageSize = 1000;
+            }
+            else if(pageSize > 100000) {
+                pageSize = 100000;
+            }
 
             try {
 
