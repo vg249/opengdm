@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -56,8 +57,96 @@ public class NucleotideSeparatorSplitterTest {
         List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
 
         List<String> output = runSplitter(input);
-        assertFalse("No error expected",runnerHadError );
+        noErrorsExpected();
         assertEquals("Transform equals input",expectedOutput,output);
 
+    }
+
+    @Test
+    public void testNormalSeparatorsCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
+        List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+    }
+
+    @Test
+    public void testExtraSeparatorsCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C//G/T","C/C/G/T","G/T/T/T","A/C/G/T");
+       // List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        expectedError("Unexpected Length Element A/C//G/T  in row 0");
+    }
+
+    @Test
+    public void testFewerSeparatorsCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C/G/T","C/C/G/T","GT/T/T","A/C/G/T");
+       // List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        expectedError("Unexpected Length Element GT/T/T  in row 0");
+    }
+
+    @Test
+    public void testUnknownElementCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C/G/T","?","G/T/T/T","A/C/G/T");
+        List<String> expectedOutput = Arrays.asList("AAAA","ACGT","NNNN","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+    }
+
+    @Test
+    public void testLongUnknownElementCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C/G/T","Uncallable","G/T/T/T","A/C/G/T");
+        List<String> expectedOutput = Arrays.asList("AAAA","ACGT","NNNN","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+    }
+
+
+    @Test
+    public void testUnknownInAlleleCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/?/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
+        //List<String> expectedOutput = Arrays.asList("AAAA","NNNN","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        expectedError("Unexpected allele ? in A?GT  in row 0");
+    }
+
+    @Test
+    public void testUnknownInAlleleStartCase(){
+        List<String> input = Arrays.asList("?/A/A/A","A/C/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
+        //List<String> expectedOutput = Arrays.asList("NNNN","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+
+        expectedError("Unexpected allele ? in ?AAA  in row 0");
+    }
+
+    @Test
+    public void testAllUnknownElementsCase(){
+        List<String> input = Arrays.asList("?","?","Uncallable","uNcAlLAblE","UNC");
+        List<String> expectedOutput = Arrays.asList("NNNN","NNNN","NNNN","NNNN","NNNN");
+
+        List<String> output = runSplitter(input);
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+    }
+
+    private void noErrorsExpected(){
+        String firstMessage = "no messagte";
+        if(runnerErrorMessage.size()>0) firstMessage = runnerErrorMessage.get(0);
+        assertFalse("No error expected, received " + firstMessage,runnerHadError );
+    }
+    private void expectedError(String expected){
+        assertTrue("Errors expected in test" , runnerHadError);
+        assertEquals("Error messages are equal", expected, runnerErrorMessage.get(0));
     }
 }

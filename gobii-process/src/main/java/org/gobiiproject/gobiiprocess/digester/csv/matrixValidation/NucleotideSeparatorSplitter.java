@@ -72,7 +72,7 @@ public class NucleotideSeparatorSplitter {
         boolean noSeparators=(length == nucleotideCount);
         if(!noSeparators && length > 1) { //If nucleotideCount=1, there's no separator character
             char separator = element.charAt(1);
-            if(!validSeparators.contains(separator)){
+            if(!validSeparators.contains(""+separator)){
                 return new ProcessResult(false,unknownSegment,"Unexpected Separator in " + element + ": " + separator + " Expected:" + Arrays.deepToString(validSeparators.toArray())); // incorrect separator character OR wrongly sized element
                 //Expected separator from <list>, recieved garbage
             }
