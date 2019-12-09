@@ -7,9 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 
@@ -20,6 +19,9 @@ public class MatrixValidation {
     private IUPACmatrixToBi iupacMatrixToBi;
     private SNPSepRemoval snpSepRemoval;
     private MatrixErrorUtil matrixErrorUtil;
+    private NucleotideSeparatorSplitter tetraploidSplitter;
+
+   // private static Set<String> allowedDatasetTypes =
 
     public MatrixErrorUtil getMatrixErrorUtil() {
         return matrixErrorUtil;
@@ -53,6 +55,11 @@ public class MatrixValidation {
             return false;
         }
         snpSepRemoval = new SNPSepRemoval(missingFileElements);
+
+        //Set of missing file entries, in lowercase to enable easy case insensitive mapping
+        Set<String> missingFileSet = missingFileElements.stream().map(String::toLowerCase).collect(Collectors.toSet());
+
+        tetraploidSplitter = new NucleotideSeparatorSplitter(4,missingFileSet);
         return true;
     }
 
@@ -79,7 +86,7 @@ public class MatrixValidation {
             }
       
       if (datasetType.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")){
-            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) { //TODO - IUPAC Matrix to BI - > 4 letter conversion with separator checks
+            if (!tetraploidSplitter.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
                 return ret.success(false);
             }
       }
@@ -141,9 +148,11 @@ public class MatrixValidation {
          * VALIDATION.
          * Validates each element is a valid value or not based on the datasetType.
          * */
-        if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("IUPAC") ||
+        if (datasetType.equalsIgnoreCase("NUCLEOTIDE_4_LETTER") || datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("IUPAC") ||
                 datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE") ||
                 datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") || datasetType.equalsIgnoreCase("VCF")) {
+
+            //Pass through to output
             if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE"))
                 outputRowList.addAll(inputRowList);
 

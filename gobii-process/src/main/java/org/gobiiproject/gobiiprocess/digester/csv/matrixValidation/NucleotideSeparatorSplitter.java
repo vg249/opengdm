@@ -8,7 +8,7 @@ import java.util.*;
  * A separation routine for multi-allelic nucleotides for GDM-446. Takes a delimited string and converts it into an
  * undelimited N character string of alleles, with N being the number of alleles its looking for.
  */
-class NucleotideSeparatorSplitter {
+public class NucleotideSeparatorSplitter {
 
     private int nucleotideCount;
     private static String unknownAllele = "N";
@@ -36,11 +36,7 @@ class NucleotideSeparatorSplitter {
         this.unknownSegment = StringUtils.repeat(unknownAllele,nucleotideCount);
     }
 
-    public NucleotideSeparatorSplitter(int nucleotideCount){
-        this(nucleotideCount, readSegmentsFromFile());
-    }
-
-    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
+    public boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
             if (element.length() < 1) {
@@ -91,20 +87,10 @@ class NucleotideSeparatorSplitter {
             if (validAlleles.contains("" + c)) {
                 outElement.append(c);
             } else {
-                return new ProcessResult(false, null, );
+                return new ProcessResult(false, null, "Unexpected allele " + c + " in " + element );
             }
         }
         return new ProcessResult(true,outElement.toString(),null);
-    }
-
-    //reads segments from input file
-    private static Set<String> readSegmentsFromFile(){
-        Set<String> ret = new HashSet<String>();
-        while(true) { //TODO - this
-            String segment;
-            ret.add(segment.toLowerCase());
-        }
-        return ret;
     }
 
     private class ProcessResult{
