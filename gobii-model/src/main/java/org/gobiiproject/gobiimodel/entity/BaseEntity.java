@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
