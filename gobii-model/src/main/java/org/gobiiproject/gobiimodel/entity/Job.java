@@ -16,7 +16,7 @@ import java.util.Date;
  * user defined hibernate converter class.
  */
 @Entity
-@Table(name = "dataset")
+@Table(name = "job")
 public class Job {
 
     @Id

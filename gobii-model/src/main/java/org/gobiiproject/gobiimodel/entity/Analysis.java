@@ -40,11 +40,11 @@ public class Analysis {
     @Column(name = "sourceversion")
     private String sourceVersion;
 
-    @Column(name = "sourceui")
-    private String sourceUi;
+    @Column(name = "sourceuri")
+    private String sourceUri;
 
     @ManyToOne
-    @JoinColumn(name = "reference", referencedColumnName = "cv_id")
+    @JoinColumn(name = "reference_id", referencedColumnName = "reference_id")
     private Reference reference = new Reference();
 
     @Column(name="parameters", columnDefinition = "jsonb")
@@ -114,12 +114,12 @@ public class Analysis {
         this.sourceVersion = sourceVersion;
     }
 
-    public String getSourceUi() {
-        return sourceUi;
+    public String getSourceUri() {
+        return sourceUri;
     }
 
-    public void setSourceUi(String sourceUi) {
-        this.sourceUi = sourceUi;
+    public void setSourceUri(String sourceUri) {
+        this.sourceUri = sourceUri;
     }
 
     public Reference getReference() {
