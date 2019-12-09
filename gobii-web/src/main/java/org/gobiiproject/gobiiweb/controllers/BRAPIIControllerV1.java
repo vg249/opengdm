@@ -2361,6 +2361,7 @@ public class BRAPIIControllerV1 {
     ){
 
         try {
+
             List<GenotypeCallsDTO> genotypeCallsList = new ArrayList<>();
 
             Integer variantSetDbId;
@@ -2368,6 +2369,7 @@ public class BRAPIIControllerV1 {
             if(pageSize == null) {
                 pageSize = 1000;
             }
+            //Maximum page size is 100000
             else if(pageSize > 100000) {
                 pageSize = 100000;
             }
@@ -2396,7 +2398,9 @@ public class BRAPIIControllerV1 {
 
 
             BrApiResult result = new BrApiResult();
+
             result.setData(genotypeCallsList);
+
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (genotypeCallsList.size() > 0) {

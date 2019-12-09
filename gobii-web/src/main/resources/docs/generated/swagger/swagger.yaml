@@ -3832,18 +3832,18 @@ definitions:
         type: "string"
       open:
         type: "boolean"
+      readable:
+        type: "boolean"
+      filename:
+        type: "string"
+      uri:
+        type: "string"
+        format: "uri"
       url:
         type: "string"
         format: "url"
       file:
         type: "file"
-      uri:
-        type: "string"
-        format: "uri"
-      filename:
-        type: "string"
-      readable:
-        type: "boolean"
   JobDTO:
     type: "object"
     properties:
