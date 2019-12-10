@@ -71,7 +71,7 @@ public class ModelMapper {
 
                             if(entityMap.deep()) {
                                 //escape regular expression dot
-                                String[] deepParams = entityFieldName.split("\\.", 2);
+                                String[] deepParams = entityFieldName.split("\\.");
                                 entityField = getDeclaredField(deepParams[0], entityToSet.getClass());
                                 for(int i = 1; i < deepParams.length; i++) {
                                     if(entityField == null) {

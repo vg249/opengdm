@@ -23,18 +23,18 @@ public class VariantSetDTO extends DTOBaseAuditable {
         super(GobiiEntityNameType.DATASET);
     }
 
-    @GobiiEntityMap(paramName="datasetId", entity = Dataset.class, deep=true)
+    @GobiiEntityMap(paramName="datasetId", entity = Dataset.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer variantSetDbId;
 
-    @GobiiEntityMap(paramName="datasetName", entity = Dataset.class, deep=true)
+    @GobiiEntityMap(paramName="datasetName", entity = Dataset.class)
     private String variantSetName;
 
-    @GobiiEntityMap(paramName="experimentId", entity = Experiment.class)
+    @GobiiEntityMap(paramName="experiment.experimentId", entity = Dataset.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer studyDbId;
 
-    @GobiiEntityMap(paramName="referenceDbId", entity = Reference.class, deep=true)
+    @GobiiEntityMap(paramName="callingAnalysis.reference.referenceId", entity = Dataset.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceSetDbId;
 
@@ -46,9 +46,13 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private List<Object> availableFormats;
 
-    @GobiiEntityMap(paramName="type", entity = Analysis.class, deep=true)
+    @GobiiEntityMap(paramName="callingAnalysis.type.term", entity = Dataset.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private String type;
+
+    @GobiiEntityMap(paramName="callingAnalysis.description", entity = Dataset.class, deep=true)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private String description;
 
     public Integer getId() {
         return 0;

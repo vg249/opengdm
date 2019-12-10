@@ -3832,13 +3832,13 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-      uri:
-        type: "string"
-        format: "uri"
       readable:
         type: "boolean"
       filename:
         type: "string"
+      uri:
+        type: "string"
+        format: "uri"
       url:
         type: "string"
         format: "url"
