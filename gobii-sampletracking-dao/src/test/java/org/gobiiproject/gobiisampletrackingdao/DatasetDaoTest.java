@@ -1,10 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.Project;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +21,7 @@ public class DatasetDaoTest {
 
 
     @Test
-    public void listDatasets() {
+    public void testListDatasets() {
 
         List<Dataset> datasets = datasetDao.listDatasetsByPageNum(null, null, null);
 
@@ -35,6 +31,49 @@ public class DatasetDaoTest {
 
     }
 
+    @Test
+    public void testListDatasetsWithPageSize() {
 
+        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(0, 10, null);
+
+
+        assertTrue(datasets.size() == 10);
+
+
+    }
+
+
+    @Test
+    public void testListDatasetsByCursor() {
+
+        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(0, 10, null);
+
+        assertTrue(datasets.size() == 10);
+
+        Integer pageCursor = datasets.get(9).getDatasetId();
+
+        List<Dataset> datasetsByPageCursor = datasetDao.listDatasetsByPageCursor(pageCursor.toString(), 5);
+
+        assertTrue(datasetsByPageCursor.get(0).getDatasetId() > pageCursor);
+
+        assertTrue(datasetsByPageCursor.size() == 5);
+
+    }
+
+    @Test
+    public void testGetDatasetById() {
+
+        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(0, 10, null);
+
+        assertTrue(datasets.size() == 10);
+
+        Integer datasetId = datasets.get(9).getDatasetId();
+
+        Dataset dataset = datasetDao.getDatasetById(datasetId);
+
+        assertTrue(dataset.getDatasetId() == datasetId);
+
+
+    }
 
 }
