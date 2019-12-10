@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Date;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;

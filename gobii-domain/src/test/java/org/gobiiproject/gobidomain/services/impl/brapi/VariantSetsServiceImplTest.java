@@ -56,7 +56,14 @@ public class VariantSetsServiceImplTest {
             dataset.getCallingAnalysis().getReference().setReferenceId(i);
 
             dataset.getCallingAnalysis().getType().setCvId(i*10);
-            dataset.getCallingAnalysis().getType().setTerm(RandomStringUtils.random(7, true, true));
+            dataset.getCallingAnalysis().getType().setTerm(
+                    RandomStringUtils.random(7, true, true));
+
+            dataset.getCallingAnalysis().setDescription(RandomStringUtils.random(7, true, true));
+
+            dataset.getCallingAnalysis().setAnalysisName(RandomStringUtils.random(7, true, true));
+
+            dataset.getCallingAnalysis().setAnalysisId(i);
 
             returnVal.add(dataset);
         }
@@ -82,39 +89,23 @@ public class VariantSetsServiceImplTest {
 
         assertEquals("Size mismatch", datasetsMock.size(), variantSets.size());
 
-        //for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 10; i++) {
 
-        //    Integer assertIndex = new Random().nextInt(1000);
+            Integer assertIndex = new Random().nextInt(1000);
 
-        //    assertEquals("germplasmDbId check failed",
-        //            samplesMock.get(assertIndex).getGermplasm().getGermplasmId(),
-        //            samplesBrapi.get(assertIndex).getGermplasmDbId());
+            assertEquals("variansetName check failed",
+                    datasetsMock.get(assertIndex).getDatasetName(),
+                    variantSets.get(assertIndex).getVariantSetName());
 
-        //    assertEquals("sampleDbId check failed!",
-        //            samplesMock.get(assertIndex).getDnaSampleId(),
-        //            samplesBrapi.get(assertIndex).getSampleDbId());
+            assertEquals("variansetid check failed",
+                    datasetsMock.get(assertIndex).getDatasetId(),
+                    variantSets.get(assertIndex).getVariantSetDbId());
 
-        //    assertEquals("observationUnitDbId check failed!",
-        //            samplesMock.get(assertIndex).getGermplasm().getExternalCode(),
-        //            samplesBrapi.get(assertIndex).getObservationUnitDbId());
+            assertEquals("studyDbId check failed",
+                    datasetsMock.get(assertIndex).getExperiment().getExperimentId(),
+                    variantSets.get(assertIndex).getStudyDbId());
 
-        //    assertEquals("sampelName check failed!",
-        //            samplesMock.get(assertIndex).getDnaSampleName(),
-        //            samplesBrapi.get(assertIndex).getSampleName());
-
-
-        //    assertEquals("sampleNum check failed!",
-        //            samplesMock.get(assertIndex).getDnaSampleNum(),
-        //            samplesBrapi.get(assertIndex).getWell());
-
-        //    assertEquals("samplePUI check failed!",
-        //            samplesMock.get(assertIndex).getDnaSampleUuid(),
-        //            samplesBrapi.get(assertIndex).getSamplePUI());
-
-        //    assertEquals("projectId check failed!",
-        //            samplesMock.get(assertIndex).getProjectId(),
-        //            samplesBrapi.get(assertIndex).getSampleGroupDbId());
-        //}
+        }
 
     }
 

@@ -9,14 +9,17 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Model for the Brapi Samples endpoint
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true, value={
+        "id", "allowedProcessTypes", "entityNameType", "createdDate", "modifiedDate"
+})
 public class VariantSetDTO extends DTOBaseAuditable {
 
     public VariantSetDTO() {
@@ -54,11 +57,25 @@ public class VariantSetDTO extends DTOBaseAuditable {
     @JsonSerialize(using = ToStringSerializer.class)
     private String description;
 
+    @GobiiEntityMap(paramName="callingAnalysis.analysisName", entity = Dataset.class, deep=true)
+    private String analysisName;
+
+    @GobiiEntityMap(paramName="callingAnalysis.analysisId", entity = Dataset.class, deep=true)
+    private String analysisDbId;
+
     public Integer getId() {
         return 0;
     }
 
     public void setId(Integer i) {
+    }
+
+    public Date getModified() {
+        return this.getModifiedDate();
+    }
+
+    public Date getCreated() {
+        return this.getCreatedDate();
     }
 
     public Integer getVariantSetDbId() {
@@ -131,5 +148,29 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAnalysisName() {
+        return analysisName;
+    }
+
+    public void setAnalysisName(String analysisName) {
+        this.analysisName = analysisName;
+    }
+
+    public String getAnalysisDbId() {
+        return analysisDbId;
+    }
+
+    public void setAnalysisDbId(String analysisDbId) {
+        this.analysisDbId = analysisDbId;
     }
 }
