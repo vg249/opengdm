@@ -25,7 +25,7 @@ public class GenotypeCallsDTO extends DTOBase{
 
     private String variantName;
 
-    private Map<String, String> genotype;
+    private Map<String, Object> genotype;
 
     private String genotypeLiklihood;
 
@@ -66,9 +66,13 @@ public class GenotypeCallsDTO extends DTOBase{
     @GobiiEntityColumn(columnName = "marker_name")
     public void setVariantName(String variantName) { this.variantName = variantName; }
 
-    public Map<String, String> getGenotype() { return this.genotype; }
+    public Map<String, Object> getGenotype() {
+        return genotype;
+    }
 
-    public void setGenotype(Map<String, String> genotype) { this.genotype = genotype; }
+    public void setGenotype(Map<String, Object> genotype) {
+        this.genotype = genotype;
+    }
 
     public String getGenotypeLiklihood() { return this.genotypeLiklihood; }
 
