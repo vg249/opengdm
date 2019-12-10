@@ -1178,7 +1178,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                 genotypeCall.setVariantSetDbId(datasetId);
 
                 genotypeCall.setGenotype(new HashMap<>());
-                genotypeCall.getGenotype().put("string_value", genotype.toString());
+                String[] genotypeValues = new String[] {genotype.toString()};
+                genotypeCall.getGenotype().put("values", genotypeValues);
 
                 returnVal.add(genotypeCall);
 
