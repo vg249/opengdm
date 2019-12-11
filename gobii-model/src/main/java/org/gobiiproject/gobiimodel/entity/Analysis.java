@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "analysis")
-public class Analysis {
+public class Analysis extends BaseEntity {
 
     @Id
     @Column(name="analysis_id")

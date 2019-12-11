@@ -61,7 +61,8 @@ public class VariantSetDTO extends DTOBaseAuditable {
     private String analysisName;
 
     @GobiiEntityMap(paramName="callingAnalysis.analysisId", entity = Dataset.class, deep=true)
-    private String analysisDbId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer analysisDbId;
 
     public Integer getId() {
         return 0;
@@ -70,7 +71,7 @@ public class VariantSetDTO extends DTOBaseAuditable {
     public void setId(Integer i) {
     }
 
-    public Date getModified() {
+    public Date getUpdated() {
         return this.getModifiedDate();
     }
 
@@ -166,11 +167,11 @@ public class VariantSetDTO extends DTOBaseAuditable {
         this.analysisName = analysisName;
     }
 
-    public String getAnalysisDbId() {
+    public Integer getAnalysisDbId() {
         return analysisDbId;
     }
 
-    public void setAnalysisDbId(String analysisDbId) {
+    public void setAnalysisDbId(Integer analysisDbId) {
         this.analysisDbId = analysisDbId;
     }
 }

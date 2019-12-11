@@ -17,7 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "dataset")
-public class Dataset {
+public class Dataset extends BaseEntity {
 
     @Id
     @Column(name="dataset_id")

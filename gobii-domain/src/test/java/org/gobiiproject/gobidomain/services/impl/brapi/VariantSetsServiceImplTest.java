@@ -105,6 +105,35 @@ public class VariantSetsServiceImplTest {
                     datasetsMock.get(assertIndex).getExperiment().getExperimentId(),
                     variantSets.get(assertIndex).getStudyDbId());
 
+            assertEquals("ReferenceDbId check failed",
+                    datasetsMock.get(assertIndex).getCallingAnalysis().getReference().getReferenceId(),
+                    variantSets.get(assertIndex).getReferenceSetDbId());
+
+            assertEquals("created check failed",
+                    datasetsMock.get(assertIndex).getCreatedDate(),
+                    variantSets.get(assertIndex).getCreated());
+
+            assertEquals("updated check failed",
+                    datasetsMock.get(assertIndex).getModifiedDate(),
+                    variantSets.get(assertIndex).getUpdated());
+
+            assertEquals("analysis type check failed",
+                    datasetsMock.get(assertIndex).getCallingAnalysis().getType().getTerm(),
+                    variantSets.get(assertIndex).getType());
+
+            assertEquals("analysis description",
+                    datasetsMock.get(assertIndex).getCallingAnalysis().getDescription(),
+                    variantSets.get(assertIndex).getDescription());
+
+            assertEquals("analysis name",
+                    datasetsMock.get(assertIndex).getCallingAnalysis().getAnalysisName(),
+                    variantSets.get(assertIndex).getAnalysisName());
+
+            assertEquals("analysis id",
+                    datasetsMock.get(assertIndex).getCallingAnalysis().getAnalysisId(),
+                    variantSets.get(assertIndex).getAnalysisDbId());
+
+
         }
 
     }
