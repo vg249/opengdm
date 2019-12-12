@@ -65,7 +65,7 @@ public class DatasetDaoImpl implements DatasetDao {
 
             listQuery
                     .setMaxResults(pageSize)
-                    .setFirstResult(pageNum);
+                    .setFirstResult(pageNum*pageSize);
 
             datasets = listQuery.getResultList();
 

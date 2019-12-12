@@ -1923,9 +1923,13 @@ public class BRAPIIControllerV1 {
                 pageSize = maxPageSize;
             }
 
-            List<VariantSetDTO> variantSets = variantSetsService.listVariantSets(pageNum, pageNum, variantSetDbId);
+            List<VariantSetDTO> variantSets = variantSetsService.listVariantSets(pageNum, pageSize, variantSetDbId);
 
             BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(variantSets);
+
+            payload.getMetadata().getPagination().setPageSize(pageSize);
+
+            payload.getMetadata().getPagination().setCurrentPage(pageNum);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
@@ -1980,10 +1984,10 @@ public class BRAPIIControllerV1 {
         try {
 
             DataSetBrapiDTO dataSetBrapiDTO = dataSetBrapiService.getDatasetById(variantSetDbId);
+
             BrApiMasterPayload<DataSetBrapiDTO> payload = new BrApiMasterPayload<>(dataSetBrapiDTO);
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (Exception e) {

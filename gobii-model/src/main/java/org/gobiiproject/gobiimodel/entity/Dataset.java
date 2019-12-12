@@ -4,7 +4,6 @@ package org.gobiiproject.gobiimodel.entity;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.StringArrayConverter;
 
 import javax.persistence.*;
 
@@ -49,7 +48,7 @@ public class Dataset extends BaseEntity {
     private String qualityTable;
 
     @Column(name="quality_file")
-    private String quality_file;
+    private String qualityFile;
 
     @Column(name="scores")
     @Convert(converter = JsonbConverter.class)
@@ -65,7 +64,7 @@ public class Dataset extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
-    private Job job;
+    private Job job = new Job();
 
     public Integer getDatasetId() {
         return datasetId;
@@ -131,14 +130,6 @@ public class Dataset extends BaseEntity {
         this.qualityTable = qualityTable;
     }
 
-    public String getQuality_file() {
-        return quality_file;
-    }
-
-    public void setQuality_file(String quality_file) {
-        this.quality_file = quality_file;
-    }
-
     public JsonNode getScores() {
         return scores;
     }
@@ -161,5 +152,21 @@ public class Dataset extends BaseEntity {
 
     public void setType(Cv type) {
         this.type = type;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public String getQualityFile() {
+        return qualityFile;
+    }
+
+    public void setQualityFile(String qualityFile) {
+        this.qualityFile = qualityFile;
     }
 }

@@ -25,8 +25,9 @@ public class VariantSetsServiceImpl implements VariantSetsService {
     @Autowired
     private DatasetDao datasetDao;
 
-    @Autowired
-    private CvDao cvDao;
+    private String fileMimeType = "text/tab-seperated-values";
+
+    private String fileUrlFormat = "/variantsets/{variantSetDbId}/calls/download";
 
     @Override
     public List<VariantSetDTO> listVariantSets(Integer pageNum, Integer pageSize,
@@ -37,17 +38,19 @@ public class VariantSetsServiceImpl implements VariantSetsService {
         List<Dataset> datasets = datasetDao.listDatasetsByPageNum(
                 pageNum, pageSize, varianSetDbID);
 
-
         for(Dataset dataset : datasets) {
 
             if(dataset != null) {
-
 
                 VariantSetDTO variantSetDTO = new VariantSetDTO();
 
                 ModelMapper.mapEntityToDto(dataset, variantSetDTO);
 
+                //IANA MIME TYPE
+                variantSetDTO.setFileFormat(fileMimeType);
+
                 returnVal.add(variantSetDTO);
+
             }
         }
 

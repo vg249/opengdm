@@ -2,13 +2,11 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobidomain.security.UserContextLoader;
-import org.gobiiproject.gobidomain.services.DatasetBrapiService;
-import org.gobiiproject.gobidomain.services.DnaRunService;
-import org.gobiiproject.gobidomain.services.MarkerBrapiService;
-import org.gobiiproject.gobidomain.services.SamplesBrapiService;
+import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
@@ -59,6 +57,9 @@ public class BRAPIIControllerV1Test {
 
     @Mock
     private SamplesBrapiService samplesBrapiService;
+
+    @Mock
+    private VariantSetsService variantSetsBrapiService;
 
     @InjectMocks
     private BRAPIIControllerV1 brapiiControllerV1;
@@ -467,6 +468,26 @@ public class BRAPIIControllerV1Test {
                 .andExpect(jsonPath("$.metadata.pagination.currentPage").value(pageNum));
 
 
+
+    }
+
+    private List<VariantSetDTO> createMockVariantSets(Integer pageSize) {
+
+        List<VariantSetDTO> returnVal = new ArrayList<>();
+
+
+        for(int i = 0; i < pageSize; i++) {
+
+            VariantSetDTO variant = new VariantSetDTO();
+
+            variant.setAnalysisDbId(random.nextInt(10));
+            variant.setAnalysisName(RandomStringUtils.random(10, true, true));
+
+            returnVal.add(variant);
+
+        }
+
+        return returnVal;
 
     }
 
