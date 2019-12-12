@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.async.SearchExtract;
 import org.gobiiproject.gobidomain.services.*;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
 import io.swagger.annotations.Api;
@@ -53,6 +54,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -157,6 +159,8 @@ public class BRAPIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
 
+    private final Integer brapiDefaultPageSize = 1000;
+
     @Autowired
     private PingService pingService = null;
 
@@ -198,6 +202,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private SamplesBrapiService samplesBrapiService;
+
+    @Autowired
+    private VariantSetsService variantSetsService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -1893,40 +1900,12 @@ public class BRAPIIControllerV1 {
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageNum", required = false) Integer pageNum,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             @RequestParam(value = "variantSetName", required = false) String variantSetName,
             @RequestParam(value = "studyDbId", required = false) String studyDbId
     ) {
         try {
-
-            Integer pageToken = null;
-
-            if (pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                }
-                catch (Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid Page Token"
-                    );
-                }
-            }
-
-            DataSetBrapiDTO dataSetBrapiDTOFilter = new DataSetBrapiDTO();
-
-            if (variantSetDbId != null) {
-                dataSetBrapiDTOFilter.setVariantSetDbId(variantSetDbId);
-            }
-
-            if (variantSetName != null) {
-                dataSetBrapiDTOFilter.setVariantSetName(variantSetName);
-            }
-
-            if (studyDbId != null) {
-                dataSetBrapiDTOFilter.setStudyDbId(Integer.parseInt(studyDbId));
-            }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_DATASETS,
@@ -1934,30 +1913,19 @@ public class BRAPIIControllerV1 {
             );
 
             if (maxPageSize == null) {
-                maxPageSize = 1000;
+                maxPageSize = this.brapiDefaultPageSize;
             }
 
-            if (pageSize == null || pageSize > maxPageSize) {
+            if (pageSize == null) {
+                pageSize = this.brapiDefaultPageSize;
+            }
+            else if(pageSize > maxPageSize) {
                 pageSize = maxPageSize;
             }
 
-            List<DataSetBrapiDTO> dataSetBrapiDTOList = dataSetBrapiService.getDatasets(
-                    pageToken, pageSize,
-                    dataSetBrapiDTOFilter);
+            List<VariantSetDTO> variantSets = variantSetsService.listVariantSets(pageNum, pageNum, variantSetDbId);
 
-            BrApiResult result = new BrApiResult();
-            result.setData(dataSetBrapiDTOList);
-
-            BrApiMasterPayload payload = new BrApiMasterPayload(result);
-
-            if (dataSetBrapiDTOList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(dataSetBrapiDTOList.size());
-                if (dataSetBrapiDTOList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            dataSetBrapiDTOList.get(dataSetBrapiDTOList.size() - 1).getVariantSetDbId().toString()
-                    );
-                }
-            }
+            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(variantSets);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 

@@ -3840,9 +3840,11 @@ public class GOBIIControllerV1 {
             HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
+
         try {
 
             PayloadReader<ProjectDTO> payloadReader = new PayloadReader<>(ProjectDTO.class);
+
             ProjectDTO projectDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
 
             ProjectDTO projectDTONew = projectService.createProject(projectDTOToCreate);
