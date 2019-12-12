@@ -47,7 +47,7 @@ public class ModelMapper {
         }
     }
 
-    private static void maper(Object entityInstance, Object dtoInstance, boolean dtoToEntity) {
+    private static void mapper(Object entityInstance, Object dtoInstance, boolean dtoToEntity) {
 
         try {
 
@@ -65,26 +65,38 @@ public class ModelMapper {
 
                             String dtoFieldName = dtoField.getName();
 
-                            Object entityToSet = entityInstance;
+                            Object entityToSetOrGet = entityInstance;
+
                             String entityFieldName = entityMap.paramName();
+
                             Field entityField = getDeclaredField(entityFieldName, entityInstance.getClass());
 
                             if(entityMap.deep()) {
                                 //escape regular expression dot
                                 String[] deepParams = entityFieldName.split("\\.");
-                                entityField = getDeclaredField(deepParams[0], entityToSet.getClass());
+
+                                entityField = getDeclaredField(deepParams[0], entityToSetOrGet.getClass());
+
                                 for(int i = 1; i < deepParams.length; i++) {
+
                                     if(entityField == null) {
                                         break;
                                     }
+
                                     entityField.setAccessible(true);
-                                    entityToSet = entityField.get(entityToSet);
-                                    entityField = getDeclaredField(deepParams[i], entityToSet.getClass());
+                                    entityToSetOrGet = entityField.get(entityToSetOrGet);
+
+                                    if(entityToSetOrGet == null) {
+                                        break;
+                                    }
+
+                                    entityField = getDeclaredField(deepParams[i], entityToSetOrGet.getClass());
+
                                 }
                             }
 
 
-                            if(entityField == null) {
+                            if(entityField == null || entityToSetOrGet == null) {
                                 continue;
                             }
 
@@ -106,10 +118,10 @@ public class ModelMapper {
 
                             }
                             if(dtoToEntity) {
-                                entityField.set(entityToSet, dtoField.get(dtoInstance));
+                                entityField.set(entityToSetOrGet, dtoField.get(dtoInstance));
                             }
                             else {
-                                dtoField.set(dtoInstance, entityField.get(entityToSet));
+                                dtoField.set(dtoInstance, entityField.get(entityToSetOrGet));
                             }
 
                         }
@@ -130,11 +142,11 @@ public class ModelMapper {
     }
 
     public static void mapDtoToEntity(Object dtoInstance, Object entityInstance) throws  GobiiException {
-        ModelMapper.maper(entityInstance, dtoInstance, true);
+        ModelMapper.mapper(entityInstance, dtoInstance, true);
     }
 
     public static void mapEntityToDto(Object entityInstance, Object dtoInstance) throws GobiiException {
-        ModelMapper.maper(entityInstance, dtoInstance, false);
+        ModelMapper.mapper(entityInstance, dtoInstance, false);
     }
 
     private static void getDtoEntityMap(
