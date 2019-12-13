@@ -50,12 +50,15 @@ public class VariantSetsServiceImplTest {
             Dataset dataset = new Dataset();
 
             dataset.setDatasetId(i+1);
+
             dataset.setDatasetName(RandomStringUtils.random(7, true, true));
+
             dataset.getExperiment().setExperimentId(i);
 
             dataset.getCallingAnalysis().getReference().setReferenceId(i);
 
             dataset.getCallingAnalysis().getType().setCvId(i*10);
+
             dataset.getCallingAnalysis().getType().setTerm(
                     RandomStringUtils.random(7, true, true));
 
@@ -64,6 +67,9 @@ public class VariantSetsServiceImplTest {
             dataset.getCallingAnalysis().setAnalysisName(RandomStringUtils.random(7, true, true));
 
             dataset.getCallingAnalysis().setAnalysisId(i);
+
+            dataset.setCreatedDate(new Date(random.nextLong()));
+            dataset.setModifiedDate(new Date(random.nextLong()));
 
             returnVal.add(dataset);
         }

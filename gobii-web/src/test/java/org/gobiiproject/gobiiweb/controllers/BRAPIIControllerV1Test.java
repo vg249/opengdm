@@ -478,12 +478,16 @@ public class BRAPIIControllerV1Test {
 
         for(int i = 0; i < pageSize; i++) {
 
-            VariantSetDTO variant = new VariantSetDTO();
+            VariantSetDTO variantSet = new VariantSetDTO();
 
-            variant.setAnalysisDbId(random.nextInt(10));
-            variant.setAnalysisName(RandomStringUtils.random(10, true, true));
+            variantSet.setAnalysisDbId(random.nextInt(10));
+            variantSet.setAnalysisName(RandomStringUtils.random(10, true, true));
 
-            returnVal.add(variant);
+            variantSet.setStudyDbId(random.nextInt(10));
+
+
+
+            returnVal.add(variantSet);
 
         }
 
