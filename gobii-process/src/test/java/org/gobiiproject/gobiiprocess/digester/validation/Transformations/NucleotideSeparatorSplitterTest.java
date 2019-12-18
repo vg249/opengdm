@@ -82,6 +82,15 @@ public class NucleotideSeparatorSplitterTest {
     }
 
     @Test
+    public void testMissingAlleleCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C//T","C/C/G/T","G/T/T/T","A/C/G/T");
+        // List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        expectedError("Unexpected Length Element A/C//T  in row 0");
+    }
+
+    @Test
     public void testFewerSeparatorsCase(){
         List<String> input = Arrays.asList("A/A/A/A","A/C/G/T","C/C/G/T","GT/T/T","A/C/G/T");
        // List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
