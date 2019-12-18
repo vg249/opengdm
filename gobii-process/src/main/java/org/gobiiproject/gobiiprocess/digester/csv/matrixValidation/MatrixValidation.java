@@ -21,8 +21,6 @@ public class MatrixValidation {
     private MatrixErrorUtil matrixErrorUtil;
     private NucleotideSeparatorSplitter tetraploidSplitter;
 
-   // private static Set<String> allowedDatasetTypes =
-
     public MatrixErrorUtil getMatrixErrorUtil() {
         return matrixErrorUtil;
     }
