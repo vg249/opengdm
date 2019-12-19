@@ -192,7 +192,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;
             }
             else{
-                CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,Integer::sum);
+                //Add columns
+                CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateCols(matrixSize,Integer::sum);
             }
         }
     }
@@ -572,5 +573,8 @@ class RowColPair<I>{
     }
     public RowColPair<I> operateRows(RowColPair<I> other, BiFunction<I,I,I> function){
         return new RowColPair<I>(function.apply(row,other.row),this.col);
+    }
+    public RowColPair<I> operateCols(RowColPair<I> other, BiFunction<I,I,I> function){
+        return new RowColPair<I>(this.row,function.apply(col,other.col));
     }
 }
