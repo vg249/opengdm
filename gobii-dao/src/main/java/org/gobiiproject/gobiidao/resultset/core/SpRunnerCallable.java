@@ -13,7 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.util.async.Promise;
 import org.hibernate.Session;
@@ -31,16 +32,15 @@ public class SpRunnerCallable {
 
     public SpRunnerCallable() {}
 
-    public SpRunnerCallable(EntityManager entityManager) {
-        this.em = entityManager;
-    }
-
-    @PersistenceContext
-    protected EntityManager em;
+    @PersistenceUnit
+    protected EntityManagerFactory emf;
 
     public Integer run(SpDef spDef, Map<String, Object> paramVals) throws SQLGrammarException {
 
         Promise<Integer> result = new Promise<>();
+
+        EntityManager em = null;
+        Session session = null;
 
         try {
 
@@ -75,11 +75,19 @@ public class SpRunnerCallable {
 
             } // iterate param defs
 
-            Session session = (Session) em.getDelegate();
+            em = emf.createEntityManager();
+            session = (Session) em.getDelegate();
             session.doWork(createWorkFunction(spDef, result));
 
-
         } finally {
+
+            if (em != null) {
+                em.close();
+            }
+
+            if (session != null) {
+                session.close();
+            }
 
         }
 
