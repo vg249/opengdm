@@ -26,9 +26,8 @@ public class RsJobDaoImpl implements RsJobDao {
     @Autowired
     private StoredProcExec storedProcExec = null;
 
-    @Autowired()
+    @Autowired
     private SpRunnerCallable spRunnerCallable;
-
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -47,10 +46,6 @@ public class RsJobDaoImpl implements RsJobDao {
 
     }
 
-
-    @PersistenceContext
-    protected EntityManager em;
-
     @Transactional(propagation = Propagation.REQUIRED
 //    ,isolation = Isolation.SERIALIZABLE
     )
@@ -59,7 +54,7 @@ public class RsJobDaoImpl implements RsJobDao {
 
         try {
 
-            (new SpRunnerCallable(this.em)).run(new SpUpdJobByCvTerms(), parameters);
+            spRunnerCallable.run(new SpUpdJobByCvTerms(), parameters);
 
         } catch (SQLGrammarException e) {
 
