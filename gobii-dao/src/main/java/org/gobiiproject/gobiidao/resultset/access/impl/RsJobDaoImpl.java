@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
