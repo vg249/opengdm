@@ -34,12 +34,9 @@ public class RsJobDaoImpl implements RsJobDao {
     @Override
     public Integer createJobWithCvTerms(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal = null;
-
         try {
 
-            spRunnerCallable.run(new SpInsJobByCvTerms(), parameters);
-            returnVal = spRunnerCallable.getResult();
+            return spRunnerCallable.run(new SpInsJobByCvTerms(), parameters);
 
         } catch (SQLGrammarException e) {
 
@@ -48,7 +45,6 @@ public class RsJobDaoImpl implements RsJobDao {
 
         }
 
-        return returnVal;
     }
 
 
