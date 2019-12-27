@@ -3,6 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,6 +141,24 @@ public class DatasetDaoImpl implements DatasetDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
 
         }
+
+        return datasets;
+    }
+
+    @Override
+    @Transactional
+    public List<Dataset> listDatasetsAnalyses() {
+
+        List<Dataset> datasets;
+
+        Session session = em.unwrap(Session.class);
+
+        String queryString = "SELECT {ds.*}, {anas.*} " +
+                "FROM dataset " +
+                "LEFT JOIN analyses ON(anas.analysis_id = ANY(ds.analyses)";
+
+
+        datasets = session.createNativeQuery(queryString).getResultList();
 
         return datasets;
     }

@@ -11,6 +11,7 @@ public interface DatasetDao {
 
     List<Dataset> listDatasetsByPageNum(Integer pageNum, Integer pageSize, Integer datasetId);
     List<Dataset> listDatasetsByPageCursor(String pageCursor, Integer pageSize);
+    List<Dataset> listDatasetsAnalyses();
     Dataset getDatasetById(Integer datasetId);
 
 }

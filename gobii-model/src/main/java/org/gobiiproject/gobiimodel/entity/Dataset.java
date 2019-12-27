@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Model for Dataset Entity.
@@ -34,9 +35,9 @@ public class Dataset extends BaseEntity {
     @JoinColumn(name = "callinganalysis_id", referencedColumnName = "analysis_id")
     private Analysis callingAnalysis = new Analysis();
 
-    @Column(name="analyses")
-    @Convert(converter = IntegerArrayConverter.class)
-    private Integer[] analyses;
+    @ManyToOne
+    @JoinColumn(name = "analyses", referencedColumnName = "analysis_id")
+    private List<Analysis> analyses;
 
     @Column(name="data_table")
     private String dataTable;
@@ -98,11 +99,11 @@ public class Dataset extends BaseEntity {
         this.callingAnalysis = callingAnalysis;
     }
 
-    public Integer[] getAnalyses() {
+    public List<Analysis> getAnalyses() {
         return analyses;
     }
 
-    public void setAnalyses(Integer[] analyses) {
+    public void setAnalyses(List<Analysis> analyses) {
         this.analyses = analyses;
     }
 

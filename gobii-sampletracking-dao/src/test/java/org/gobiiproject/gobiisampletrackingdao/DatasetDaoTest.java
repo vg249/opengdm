@@ -21,6 +21,17 @@ public class DatasetDaoTest {
 
 
     @Test
+    public void testListDatasetsAnalyses() {
+
+        List<Dataset> datasets = datasetDao.listDatasetsAnalyses();
+
+
+        assertTrue(datasets.size() > 0);
+
+
+    }
+
+    @Test
     public void testListDatasets() {
 
         List<Dataset> datasets = datasetDao.listDatasetsByPageNum(null, null, null);
