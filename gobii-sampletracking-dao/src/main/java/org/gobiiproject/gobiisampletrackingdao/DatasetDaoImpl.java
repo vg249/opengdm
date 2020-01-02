@@ -1,9 +1,11 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
+import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -145,23 +149,81 @@ public class DatasetDaoImpl implements DatasetDao {
         return datasets;
     }
 
+    /**
+     * Returns list of tuple with Dataset entities joined with respective analysis entities.
+     * Tuple also contains
+     * @param datasetId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @Override
     @Transactional
-    public List<Dataset> listDatasetsAnalyses() {
+    public List<Object[]> listDatasetsWithMarkersAndSamplesCounts(Integer pageNum, Integer pageSize, Integer datasetId) {
 
-        List<Dataset> datasets;
+        List<Object[]> resultTuplesList = new ArrayList<>();
+
+        List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
+
+        HashMap<String, Dataset> datasetsBin = new HashMap<>();
 
         Session session = em.unwrap(Session.class);
 
-        String queryString = "SELECT {ds.*}, {anas.*} " +
+        Integer pageOffset = null;
+
+        if(pageNum != null && pageSize != null) {
+            pageOffset = pageNum * pageSize;
+        }
+
+        String queryString = "WITH ds AS (" +
+                "SELECT * " +
                 "FROM dataset " +
-                "LEFT JOIN analyses ON(anas.analysis_id = ANY(ds.analyses)";
+                "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
+                "LIMIT :pageSize OFFSET :pageOffset) " +
+                "SELECT ds.* , anas.*, " +
+                "(SELECT COUNT(marker_id) " +
+                "FROM marker WHERE dataset_marker_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+                "AS marker_count, " +
+                "(SELECT COUNT(dnarun_id) " +
+                "FROM dnarun WHERE dataset_dnarun_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+                "AS dnarun_count " +
+                "FROM ds " +
+                "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
 
 
-        datasets = session.createNativeQuery(queryString).getResultList();
+        resultTuplesList = session
+                .createNativeQuery(queryString)
+                .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                .setParameter("pageSize", pageSize)
+                .setParameter("pageOffset", pageOffset)
+                .addEntity("ds", Dataset.class)
+                .addEntity("anas", Analysis.class)
+                .addScalar("marker_count")
+                .addScalar("dnarun_count")
+                .list();
 
-        return datasets;
+
+
+
+        for(Object[] tuple : resultTuplesList) {
+            Dataset dataset = (Dataset) tuple[0];
+
+            if(dataset == null) {
+                continue;
+            }
+
+            if(datasetsBin.containsKey(dataset.getDatasetId())) {
+                datasetsBin.getAnalysesMapped().add((Analysis) tuple[1]);
+            }
+            else {
+
+            }
+        }
+
+        return resultTuplesList;
+
     }
+
 
     @Override
     @Transactional

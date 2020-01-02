@@ -6,7 +6,9 @@ import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Model for Dataset Entity.
@@ -35,9 +37,12 @@ public class Dataset extends BaseEntity {
     @JoinColumn(name = "callinganalysis_id", referencedColumnName = "analysis_id")
     private Analysis callingAnalysis = new Analysis();
 
-    @ManyToOne
-    @JoinColumn(name = "analyses", referencedColumnName = "analysis_id")
-    private List<Analysis> analyses;
+    @Column(name = "analyses")
+    @Convert(converter = IntegerArrayConverter.class)
+    private Integer[] analyses;
+
+    @Transient
+    private Set<Analysis> analysesMapped = new HashSet<>();
 
     @Column(name="data_table")
     private String dataTable;
@@ -99,11 +104,12 @@ public class Dataset extends BaseEntity {
         this.callingAnalysis = callingAnalysis;
     }
 
-    public List<Analysis> getAnalyses() {
+
+    public Integer[] getAnalyses() {
         return analyses;
     }
 
-    public void setAnalyses(List<Analysis> analyses) {
+    public void setAnalyses(Integer[] analyses) {
         this.analyses = analyses;
     }
 
@@ -169,5 +175,13 @@ public class Dataset extends BaseEntity {
 
     public void setQualityFile(String qualityFile) {
         this.qualityFile = qualityFile;
+    }
+
+    public Set<Analysis> getAnalysesMapped() {
+        return analysesMapped;
+    }
+
+    public void setAnalysesMapped(Set<Analysis> analysesMapped) {
+        this.analysesMapped = analysesMapped;
     }
 }

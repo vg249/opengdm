@@ -23,7 +23,7 @@ public class DatasetDaoTest {
     @Test
     public void testListDatasetsAnalyses() {
 
-        List<Dataset> datasets = datasetDao.listDatasetsAnalyses();
+        List<Object[]> datasets = datasetDao.listDatasetsWithMarkersAndSamplesCounts(0, 5, null);
 
 
         assertTrue(datasets.size() > 0);
