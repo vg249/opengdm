@@ -42,7 +42,7 @@ public class Dataset extends BaseEntity {
     private Integer[] analyses;
 
     @Transient
-    private Set<Analysis> analysesMapped = new HashSet<>();
+    private Set<Analysis> mappedAnalyses = new HashSet<>();
 
     @Column(name="data_table")
     private String dataTable;
@@ -177,11 +177,11 @@ public class Dataset extends BaseEntity {
         this.qualityFile = qualityFile;
     }
 
-    public Set<Analysis> getAnalysesMapped() {
-        return analysesMapped;
+    public Set<Analysis> getMappedAnalyses() {
+        return mappedAnalyses;
     }
 
-    public void setAnalysesMapped(Set<Analysis> analysesMapped) {
-        this.analysesMapped = analysesMapped;
+    public void setMappedAnalyses(Set<Analysis> mappedAnalyses) {
+        this.mappedAnalyses = mappedAnalyses;
     }
 }

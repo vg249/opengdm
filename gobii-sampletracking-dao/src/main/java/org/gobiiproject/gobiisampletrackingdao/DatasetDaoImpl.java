@@ -213,10 +213,10 @@ public class DatasetDaoImpl implements DatasetDao {
             }
 
             if(datasetsBin.containsKey(dataset.getDatasetId())) {
-                datasetsBin.getAnalysesMapped().add((Analysis) tuple[1]);
+                datasetsBin.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
             }
             else {
-
+                
             }
         }
 
