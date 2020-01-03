@@ -13,16 +13,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.util.async.Promise;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Created by Phil on 4/18/2016.
@@ -33,14 +32,13 @@ public class SpRunnerCallable {
 
     public SpRunnerCallable() {}
 
-    @Autowired @Qualifier("entityManagerFactory")
-    private EntityManagerFactory emf;
+    @PersistenceContext
+    private EntityManager em;
 
     public Integer run(SpDef spDef, Map<String, Object> paramVals) throws SQLGrammarException {
 
         Promise<Integer> result = new Promise<>();
 
-        EntityManager em = null;
         Session session = null;
 
         try {
@@ -76,9 +74,7 @@ public class SpRunnerCallable {
 
             } // iterate param defs
 
-            em = emf.createEntityManager();
-
-            session = (Session) em.getDelegate();
+            session = em.getEntityManagerFactory().unwrap(SessionFactory.class).openSession();
             session.doWork(createWorkFunction(spDef, result));
 
 
