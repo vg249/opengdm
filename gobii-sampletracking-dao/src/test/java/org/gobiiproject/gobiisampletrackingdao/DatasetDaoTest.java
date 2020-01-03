@@ -19,17 +19,29 @@ public class DatasetDaoTest {
     private DatasetDao datasetDao;
 
 
-
+    /**
+     * This tests are created with knowledge of exisiting data in cbsuxvm11 gobii-dev database
+     * TODO: Setup class to create required data in the test database needs to be completed in future.
+     */
     @Test
-    public void testListDatasetsAnalyses() {
+    public void testListDatasetsWithMarkerSamplesCount() {
 
-        List<Object[]> datasets = datasetDao.listDatasetsWithMarkersAndSamplesCounts(0, 5, null);
+        Integer testPageSize = 5;
 
+        List<Object[]> datasetTuples = datasetDao.listDatasetsWithMarkersAndSamplesCounts(
+                0, testPageSize, null);
 
-        assertTrue(datasets.size() > 0);
+        //As test database table has ananlyses greater than 0, assert the same
+        for(Object[] datasetTuple : datasetTuples) {
+            assertTrue(((Dataset)datasetTuple[0]).getMappedAnalyses().size() > 0);
+            assertTrue((Integer)datasetTuple[1] == 0);
+            assertTrue((Integer)datasetTuple[2] == 0);
+        }
 
+        assertTrue(datasetTuples.size() <= testPageSize);
 
     }
+
 
     @Test
     public void testListDatasets() {

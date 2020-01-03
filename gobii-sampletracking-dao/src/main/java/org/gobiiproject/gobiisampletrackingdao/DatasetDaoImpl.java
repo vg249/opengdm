@@ -159,13 +159,15 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
-    public List<Object[]> listDatasetsWithMarkersAndSamplesCounts(Integer pageNum, Integer pageSize, Integer datasetId) {
+    public List<Object[]> listDatasetsWithMarkersAndSamplesCounts(Integer pageNum,
+                                                                  Integer pageSize,
+                                                                  Integer datasetId) {
 
         List<Object[]> resultTuplesList = new ArrayList<>();
 
         List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 
-        HashMap<String, Dataset> datasetsBin = new HashMap<>();
+        HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
 
         Session session = em.unwrap(Session.class);
 
@@ -206,21 +208,26 @@ public class DatasetDaoImpl implements DatasetDao {
 
 
         for(Object[] tuple : resultTuplesList) {
+
             Dataset dataset = (Dataset) tuple[0];
 
             if(dataset == null) {
                 continue;
             }
 
-            if(datasetsBin.containsKey(dataset.getDatasetId())) {
-                datasetsBin.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
+            if(datasetsMapById.containsKey(dataset.getDatasetId())) {
+                datasetsMapById.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
             }
             else {
-                
+                dataset.getMappedAnalyses().add((Analysis) tuple[1]);
+                dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
+                datasetsMapById.put(dataset.getDatasetId(), dataset);
+                Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
+                datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
             }
         }
 
-        return resultTuplesList;
+        return datasetsWithMarkersAndSamplesCount;
 
     }
 
