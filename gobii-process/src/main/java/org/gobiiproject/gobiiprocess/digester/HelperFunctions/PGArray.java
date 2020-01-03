@@ -81,7 +81,7 @@ public class PGArray {
     }
 
     public static String delimiterSeparatedStringToPgArrayString(String dss){
-        return String.format("{%s}", Arrays.stream(dss.split("[^A-Za-z\\-+.]"))
+        return String.format("{%s}", Arrays.stream(dss.split("[^0-9A-Za-z\\-+.]"))
                                            .filter(StringUtils::isNotEmpty)
                                            .map(m -> String.format("\"\"%s\"\"", m))
                                            .collect(Collectors.joining(",")));

@@ -21,5 +21,6 @@ public class PGArrayTest {
 		Assert.assertEquals("{\"\"+\"\",\"\"-\"\",\"\"z\"\"}", PGArray.delimiterSeparatedStringToPgArrayString("[+:-:z]"));
 		Assert.assertEquals("{\"\"+\"\",\"\"-\"\",\"\"z\"\"}", PGArray.delimiterSeparatedStringToPgArrayString("[+:::::-::\\|/,z}"));
 		Assert.assertEquals("{\"\"+\"\",\"\"-\"\",\"\"z\"\"}", PGArray.delimiterSeparatedStringToPgArrayString("(+;-;z}"));
+		Assert.assertEquals("{\"\"0\"\",\"\"1\"\",\"\"9\"\"}", PGArray.delimiterSeparatedStringToPgArrayString("(0,1,9}"));
 	}
 }
