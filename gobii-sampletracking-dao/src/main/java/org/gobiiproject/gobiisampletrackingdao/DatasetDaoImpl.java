@@ -2,12 +2,13 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
+import org.gobiiproject.gobiimodel.entity.QueryParameterBean;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,6 +31,7 @@ public class DatasetDaoImpl implements DatasetDao {
 
     @PersistenceContext
     protected EntityManager em;
+
 
     /**
      * Gets list of dataset entities that match the given filter parameters.
@@ -149,12 +151,73 @@ public class DatasetDaoImpl implements DatasetDao {
         return datasets;
     }
 
+
+
+
+    //public List<Object[]> listDatasetsWithMarkersAndSamplesCounts(String pageCursor,
+    //                                                              Integer pageSize) {
+
+    //    List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
+
+    //    HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
+
+
+    //    Integer pageOffset = null;
+
+
+    //    String queryString = "WITH ds AS (" +
+    //            "SELECT * " +
+    //            "FROM dataset " +
+    //            "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
+    //            "LIMIT :pageSize OFFSET :pageOffset) " +
+    //            "SELECT ds.* , anas.*, " +
+    //            "(SELECT COUNT(marker_id) " +
+    //            "FROM marker WHERE dataset_marker_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+    //            "AS marker_count, " +
+    //            "(SELECT COUNT(dnarun_id) " +
+    //            "FROM dnarun WHERE dataset_dnarun_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+    //            "AS dnarun_count " +
+    //            "FROM ds " +
+    //            "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
+
+
+
+    //    for(Object[] tuple : resultTuplesList) {
+
+    //        Dataset dataset = (Dataset) tuple[0];
+
+    //        if(dataset == null) {
+    //            continue;
+    //        }
+
+    //        if(datasetsMapById.containsKey(dataset.getDatasetId())) {
+    //            datasetsMapById.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
+    //        }
+    //        else {
+    //            dataset.getMappedAnalyses().add((Analysis) tuple[1]);
+    //            dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
+    //            datasetsMapById.put(dataset.getDatasetId(), dataset);
+    //            Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
+    //            datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
+    //        }
+    //    }
+
+    //    return datasetsWithMarkersAndSamplesCount;
+
+
+    //}
+
+
+
+
+
     /**
      * Returns list of tuple with Dataset entities joined with respective analysis entities.
-     * Tuple also contains
-     * @param datasetId
-     * @param pageNum
-     * @param pageSize
+     * Tuple contains values in the same order as below,
+     * (Dataset, markerCount, dnasampleCount)
+     * @param datasetId - Id for dataset. Unique identifier.
+     * @param pageNum - Page number
+     * @param pageSize - size of the page
      * @return
      */
     @Override
@@ -163,13 +226,21 @@ public class DatasetDaoImpl implements DatasetDao {
                                                                   Integer pageSize,
                                                                   Integer datasetId) {
 
-        List<Object[]> resultTuplesList = new ArrayList<>();
+
+        NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
 
         List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 
+
+        List<QueryParameterBean> queryParameterBeanList = new ArrayList<>();
+        HashMap<String, Class> entityMap = new HashMap<>();
+        List<String> scalarFiledsAlaises = new ArrayList<>();
+
+       // List<Object[]> resultTuplesList = new ArrayList<>();
+
+
         HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
 
-        Session session = em.unwrap(Session.class);
 
         Integer pageOffset = null;
 
@@ -192,20 +263,22 @@ public class DatasetDaoImpl implements DatasetDao {
                 "FROM ds " +
                 "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
 
+        // Add query parameters
+        queryParameterBeanList.add(new QueryParameterBean("pageSize", pageSize));
+        queryParameterBeanList.add(new QueryParameterBean("pageOffset", pageOffset));
+        queryParameterBeanList.add(new QueryParameterBean("datasetId", datasetId, IntegerType.INSTANCE));
 
-        resultTuplesList = session
-                .createNativeQuery(queryString)
-                .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
-                .setParameter("pageSize", pageSize)
-                .setParameter("pageOffset", pageOffset)
-                .addEntity("ds", Dataset.class)
-                .addEntity("anas", Analysis.class)
-                .addScalar("marker_count")
-                .addScalar("dnarun_count")
-                .list();
+        // Add entity map
+        entityMap.put("ds", Dataset.class);
+        entityMap.put("anas", Analysis.class);
 
+        // Add scalar field alaises
+        scalarFiledsAlaises.add("marker_count");
+        scalarFiledsAlaises.add("dnarun_count");
 
-
+        List<Object[]> resultTuplesList = nativerQueryRunner.run(
+                queryString, queryParameterBeanList,
+                entityMap, scalarFiledsAlaises);
 
         for(Object[] tuple : resultTuplesList) {
 
