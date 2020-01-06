@@ -177,13 +177,13 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                                    GobiiLoaderProcedure procedure, File outputFile, boolean firstFile) throws IOException {
 
         if (processedInstruction.hasCSV_ROW()) {
-            processCSV_ROW(file, tempFileBufferedWriter, procedure);
-        } else if (processedInstruction.hasCSV_COL()) {
             if(!firstFile){
                 return; //TODO - assumption that this is a duplicated 'normal' oriented file.
                 //Multiple files are stacked 'vertically'. This "feature" is very jank, and this bit'll have to be ripped
                 //out while replacing it.
             }
+            processCSV_ROW(file, tempFileBufferedWriter, procedure);
+        } else if (processedInstruction.hasCSV_COL()) {
             processCSV_COL(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_BOTH()) {
             RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, procedure, outputFile);
