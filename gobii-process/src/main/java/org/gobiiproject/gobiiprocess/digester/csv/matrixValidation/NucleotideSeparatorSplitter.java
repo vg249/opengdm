@@ -8,7 +8,7 @@ import java.util.*;
  * A separation routine for multi-allelic nucleotides for GDM-446. Takes a delimited string and converts it into an
  * undelimited N character string of alleles, with N being the number of alleles its looking for.
  */
-public class NucleotideSeparatorSplitter {
+public class NucleotideSeparatorSplitter implements RowProcessor {
 
     private int nucleotideCount;
     private static String unknownAllele = "N";

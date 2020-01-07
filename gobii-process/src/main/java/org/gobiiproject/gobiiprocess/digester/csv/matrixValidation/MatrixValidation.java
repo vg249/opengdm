@@ -11,13 +11,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 
 public class MatrixValidation {
 
     private final String datasetType, missingFile, markerFile;
     private int noOfElements;
     private IUPACmatrixToBi iupacMatrixToBi;
-    private SNPSepRemoval snpSepRemoval;
+    private RowProcessor diploidProcessor;
     private MatrixErrorUtil matrixErrorUtil;
     private NucleotideSeparatorSplitter tetraploidSplitter;
 
@@ -52,12 +53,18 @@ public class MatrixValidation {
             Logger.logError("SNPSepRemoval", "Exception in reading SNSSepRemoval missing values.");
             return false;
         }
-        snpSepRemoval = new SNPSepRemoval(missingFileElements);
 
         //Set of missing file entries, in lowercase to enable easy case insensitive mapping
         Set<String> missingFileSet = missingFileElements.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
-        tetraploidSplitter = new NucleotideSeparatorSplitter(4,missingFileSet);
+	    if(LoaderGlobalConfigs.getTwoLetterNucleotideParse()){
+		    diploidProcessor =  new NucleotideSeparatorSplitter(2,missingFileSet);
+	    }
+	    else {
+		    diploidProcessor = new SNPSepRemoval(missingFileElements);
+	    }
+
+	    tetraploidSplitter = new NucleotideSeparatorSplitter(4,missingFileSet);
         return true;
     }
 
@@ -78,16 +85,16 @@ public class MatrixValidation {
          *   Reason being, as it is already a failure we are processing further to identify all errors once.
          *
          * */
-        if (datasetType.equalsIgnoreCase("IUPAC"))
-            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
-                return ret.success(false);
-            }
+	    if (datasetType.equalsIgnoreCase("IUPAC"))
+		    if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
+			    return ret.success(false);
+		    }
       
-      if (datasetType.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")){
-            if (!tetraploidSplitter.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
-                return ret.success(false);
-            }
-      }
+	    if (datasetType.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")){
+		    if (!tetraploidSplitter.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
+			    return ret.success(false);
+		    }
+	    }
         /*
          *   SNP sep removal
          *   Tried SNP Separator Removal.
@@ -96,7 +103,7 @@ public class MatrixValidation {
          *
          * */
         if (datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") && !isVCF)
-            if (!snpSepRemoval.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
+            if (!diploidProcessor.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
                 return ret.success(false);
             }
 
