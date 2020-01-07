@@ -81,15 +81,9 @@ public class PGArray {
     }
 
     public static String delimiterSeparatedStringToPgArrayString(String dss){
-        Matcher m = Pattern.compile("(\\(|\\{|\\[)(.*?)(\\)|\\}|\\])").matcher(dss);
-        String content = dss;
-        if (m.matches()) {
-            content = m.group(2);
-        }
-
-        return String.format("{%s}", Arrays.stream(content.split("\\\\|/|\\||;|:|,"))
-                                                          .filter(s -> ! s.isEmpty())
-                                                          .map(s -> String.format("\"\"%s\"\"", s))
-                                                          .collect(Collectors.joining(",")));
+        return String.format("{%s}", Arrays.stream(dss.split("[^0-9A-Za-z\\-+.]"))
+                                           .filter(StringUtils::isNotEmpty)
+                                           .map(m -> String.format("\"\"%s\"\"", m))
+                                           .collect(Collectors.joining(",")));
     }
 }
