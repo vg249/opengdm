@@ -67,8 +67,6 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                 for(Analysis analysis : dataset.getMappedAnalyses()) {
 
-                    HashSet<Analysis> analysesSet = new HashSet<>();
-
                     if(analysisBrapiDTOMap.containsKey(analysis.getAnalysisId())) {
 
                         variantSetDTO.getAnalyses().add(analysisBrapiDTOMap.get(analysis.getAnalysisId()));

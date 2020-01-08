@@ -138,4 +138,8 @@ public class VariantSetDTO extends DTOBaseAuditable {
     public void setAnalyses(Set<AnalysisBrapiDTO> analyses) {
         this.analyses = analyses;
     }
+
+    public Date created() {
+        return this.getCreatedDate();
+    }
 }
