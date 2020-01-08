@@ -25,11 +25,9 @@ public class VariantSetsServiceImpl implements VariantSetsService {
     @Autowired
     private DatasetDao datasetDao;
 
-    private String fileMimeType = "text/tab-seperated-values";
-
     private String fileUrlFormat = "/gobii-{0}/variantsets/{1, number}/calls/download";
 
-    private String cropType;
+    private String cropType = "";
 
     public String getCropType() {
         return cropType;
