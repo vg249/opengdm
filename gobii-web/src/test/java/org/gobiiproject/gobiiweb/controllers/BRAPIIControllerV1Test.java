@@ -480,8 +480,6 @@ public class BRAPIIControllerV1Test {
 
             VariantSetDTO variantSet = new VariantSetDTO();
 
-            variantSet.setAnalysisDbId(random.nextInt(10));
-            variantSet.setAnalysisName(RandomStringUtils.random(10, true, true));
 
             variantSet.setStudyDbId(random.nextInt(10));
 

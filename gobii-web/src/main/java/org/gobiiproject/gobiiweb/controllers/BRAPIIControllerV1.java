@@ -1903,7 +1903,8 @@ public class BRAPIIControllerV1 {
             @RequestParam(value = "pageNum", required = false) Integer pageNum,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             @RequestParam(value = "variantSetName", required = false) String variantSetName,
-            @RequestParam(value = "studyDbId", required = false) String studyDbId
+            @RequestParam(value = "studyDbId", required = false) String studyDbId,
+            HttpServletRequest request
     ) {
         try {
 
@@ -1922,6 +1923,8 @@ public class BRAPIIControllerV1 {
             else if(pageSize > maxPageSize) {
                 pageSize = maxPageSize;
             }
+
+            variantSetsService.setCropType(CropRequestAnalyzer.getGobiiCropType(request));
 
             List<VariantSetDTO> variantSets = variantSetsService.listVariantSets(pageNum, pageSize, variantSetDbId);
 

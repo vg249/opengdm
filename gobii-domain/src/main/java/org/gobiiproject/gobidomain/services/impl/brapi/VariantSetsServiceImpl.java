@@ -1,21 +1,21 @@
 package org.gobiiproject.gobidomain.services.impl.brapi;
 
-import org.gobiiproject.gobidomain.CvIdCvTermMapper;
-import org.gobiiproject.gobidomain.services.SamplesBrapiService;
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.VariantSetsService;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
-import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
-import org.gobiiproject.gobiisampletrackingdao.DnaSampleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -27,7 +27,17 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     private String fileMimeType = "text/tab-seperated-values";
 
-    private String fileUrlFormat = "/variantsets/{variantSetDbId}/calls/download";
+    private String fileUrlFormat = "/gobii-{0}/variantsets/{1, number}/calls/download";
+
+    private String cropType;
+
+    public String getCropType() {
+        return cropType;
+    }
+
+    public void setCropType(String cropType) {
+        this.cropType = cropType;
+    }
 
     @Override
     public List<VariantSetDTO> listVariantSets(Integer pageNum, Integer pageSize,
@@ -35,26 +45,71 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
         List<VariantSetDTO> returnVal = new ArrayList<>();
 
-        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(
-                pageNum, pageSize, varianSetDbID);
+        HashMap<Integer, AnalysisBrapiDTO> analysisBrapiDTOMap = new HashMap<>();
 
-        for(Dataset dataset : datasets) {
+        try {
 
-            if(dataset != null) {
+            List<Object[]> datasetsWithMarkerAndSampleCounts = datasetDao.listDatasetsWithMarkersAndSamplesCounts(
+                   pageNum,
+                   pageSize,
+                   varianSetDbID);
+
+            for (Object[] resultTuple : datasetsWithMarkerAndSampleCounts) {
 
                 VariantSetDTO variantSetDTO = new VariantSetDTO();
 
+                Dataset dataset = (Dataset) resultTuple[0];
+
                 ModelMapper.mapEntityToDto(dataset, variantSetDTO);
 
-                //IANA MIME TYPE
-                variantSetDTO.setFileFormat(fileMimeType);
+                variantSetDTO.setFileUrl(
+                        MessageFormat.format(this.fileUrlFormat,
+                                this.getCropType(),
+                                dataset.getDatasetId()));
+
+                for(Analysis analysis : dataset.getMappedAnalyses()) {
+
+                    HashSet<Analysis> analysesSet = new HashSet<>();
+
+                    if(analysisBrapiDTOMap.containsKey(analysis.getAnalysisId())) {
+
+                        variantSetDTO.getAnalyses().add(analysisBrapiDTOMap.get(analysis.getAnalysisId()));
+
+
+                    }
+                    else {
+
+                        AnalysisBrapiDTO analysisBrapiDTO = new AnalysisBrapiDTO();
+
+                        if(variantSetDTO.getAnalyses() == null) {
+                            variantSetDTO.setAnalyses(new HashSet<>());
+                        }
+
+                        ModelMapper.mapEntityToDto(analysis, analysisBrapiDTO);
+
+                        variantSetDTO.getAnalyses().add(analysisBrapiDTO);
+
+                        analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisBrapiDTO);
+
+                    }
+
+                }
 
                 returnVal.add(variantSetDTO);
-
             }
-        }
 
-        return returnVal;
+       }
+       catch (Exception e) {
+
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Bad Request");
+
+       }
+
+       return returnVal;
+
     }
 
 

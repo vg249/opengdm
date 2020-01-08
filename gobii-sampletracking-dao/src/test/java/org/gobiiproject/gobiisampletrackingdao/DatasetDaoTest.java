@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -29,13 +30,16 @@ public class DatasetDaoTest {
         Integer testPageSize = 5;
 
         List<Object[]> datasetTuples = datasetDao.listDatasetsWithMarkersAndSamplesCounts(
-                0, testPageSize, null);
+                0, 100, null);
 
         //As test database table has ananlyses greater than 0, assert the same
         for(Object[] datasetTuple : datasetTuples) {
+
             assertTrue(((Dataset)datasetTuple[0]).getMappedAnalyses().size() > 0);
-            assertTrue((Integer)datasetTuple[1] == 0);
-            assertTrue((Integer)datasetTuple[2] == 0);
+
+            assertTrue(datasetTuple[1] == BigInteger.valueOf(0));
+            assertTrue(datasetTuple[2] == BigInteger.valueOf(0));
+
         }
 
         assertTrue(datasetTuples.size() <= testPageSize);
@@ -47,7 +51,6 @@ public class DatasetDaoTest {
     public void testListDatasets() {
 
         List<Dataset> datasets = datasetDao.listDatasetsByPageNum(null, null, null);
-
 
         assertTrue(datasets.size() > 0);
 

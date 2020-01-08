@@ -3,9 +3,6 @@ package org.gobiiproject.gobiidao.hdf5;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Phil on 5/25/2016.
- */
 public abstract class AbstractHdf5ProcessPathSelector {
 
     Map<String, Object> hdf5ProcessingPathByCrop = new HashMap<>();

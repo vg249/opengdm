@@ -123,22 +123,6 @@ public class VariantSetsServiceImplTest {
                     datasetsMock.get(assertIndex).getModifiedDate(),
                     variantSets.get(assertIndex).getUpdated());
 
-            assertEquals("analysis type check failed",
-                    datasetsMock.get(assertIndex).getCallingAnalysis().getType().getTerm(),
-                    variantSets.get(assertIndex).getType());
-
-            assertEquals("analysis description",
-                    datasetsMock.get(assertIndex).getCallingAnalysis().getDescription(),
-                    variantSets.get(assertIndex).getDescription());
-
-            assertEquals("analysis name",
-                    datasetsMock.get(assertIndex).getCallingAnalysis().getAnalysisName(),
-                    variantSets.get(assertIndex).getAnalysisName());
-
-            assertEquals("analysis id",
-                    datasetsMock.get(assertIndex).getCallingAnalysis().getAnalysisId(),
-                    variantSets.get(assertIndex).getAnalysisDbId());
-
 
         }
 

@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Model for the Brapi Samples endpoint
@@ -43,26 +44,13 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private String fileUrl;
 
-    private String fileFormat;
+    private String fileFormat = "text/tab-seperated-values";
 
-    private String dataFormat;
+    private String dataFormat = "tabular";
 
     private List<Object> availableFormats;
 
-    @GobiiEntityMap(paramName="callingAnalysis.type.term", entity = Dataset.class, deep=true)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private String type;
-
-    @GobiiEntityMap(paramName="callingAnalysis.description", entity = Dataset.class, deep=true)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private String description;
-
-    @GobiiEntityMap(paramName="callingAnalysis.analysisName", entity = Dataset.class, deep=true)
-    private String analysisName;
-
-    @GobiiEntityMap(paramName="callingAnalysis.analysisId", entity = Dataset.class, deep=true)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Integer analysisDbId;
+    private Set<AnalysisBrapiDTO> analyses;
 
     public Integer getId() {
         return 0;
@@ -143,35 +131,11 @@ public class VariantSetDTO extends DTOBaseAuditable {
         this.availableFormats = availableFormats;
     }
 
-    public String getType() {
-        return type;
+    public Set<AnalysisBrapiDTO> getAnalyses() {
+        return analyses;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAnalysisName() {
-        return analysisName;
-    }
-
-    public void setAnalysisName(String analysisName) {
-        this.analysisName = analysisName;
-    }
-
-    public Integer getAnalysisDbId() {
-        return analysisDbId;
-    }
-
-    public void setAnalysisDbId(Integer analysisDbId) {
-        this.analysisDbId = analysisDbId;
+    public void setAnalyses(Set<AnalysisBrapiDTO> analyses) {
+        this.analyses = analyses;
     }
 }

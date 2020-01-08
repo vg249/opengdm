@@ -2,10 +2,14 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.text.SimpleDateFormat;
@@ -22,17 +26,25 @@ import java.util.TimeZone;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AnalysisBrapiDTO extends DTOBaseAuditable {
 
-    private int analysisDbId;
-    private String analysisName;
-    private String type;
-    private String description;
-    private String software;
 
-    private SimpleDateFormat dateStringFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss z");
+    @GobiiEntityMap(paramName="analysisId", entity = Analysis.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer analysisDbId;
+
+    @GobiiEntityMap(paramName="analysisName", entity = Analysis.class)
+    private String analysisName;
+
+    @GobiiEntityMap(paramName="type.term", entity = Analysis.class, deep = true)
+    private String type;
+
+    @GobiiEntityMap(paramName="description", entity = Analysis.class)
+    private String description;
+
+    @GobiiEntityMap(paramName="software", entity = Analysis.class)
+    private String software;
 
     public AnalysisBrapiDTO() {
         super(GobiiEntityNameType.ANALYSIS);
-        dateStringFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override

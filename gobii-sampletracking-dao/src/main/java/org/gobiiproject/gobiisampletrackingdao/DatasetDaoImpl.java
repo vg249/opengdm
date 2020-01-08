@@ -8,7 +8,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +18,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -151,66 +151,6 @@ public class DatasetDaoImpl implements DatasetDao {
         return datasets;
     }
 
-
-
-
-    //public List<Object[]> listDatasetsWithMarkersAndSamplesCounts(String pageCursor,
-    //                                                              Integer pageSize) {
-
-    //    List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
-
-    //    HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
-
-
-    //    Integer pageOffset = null;
-
-
-    //    String queryString = "WITH ds AS (" +
-    //            "SELECT * " +
-    //            "FROM dataset " +
-    //            "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
-    //            "LIMIT :pageSize OFFSET :pageOffset) " +
-    //            "SELECT ds.* , anas.*, " +
-    //            "(SELECT COUNT(marker_id) " +
-    //            "FROM marker WHERE dataset_marker_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
-    //            "AS marker_count, " +
-    //            "(SELECT COUNT(dnarun_id) " +
-    //            "FROM dnarun WHERE dataset_dnarun_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
-    //            "AS dnarun_count " +
-    //            "FROM ds " +
-    //            "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
-
-
-
-    //    for(Object[] tuple : resultTuplesList) {
-
-    //        Dataset dataset = (Dataset) tuple[0];
-
-    //        if(dataset == null) {
-    //            continue;
-    //        }
-
-    //        if(datasetsMapById.containsKey(dataset.getDatasetId())) {
-    //            datasetsMapById.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
-    //        }
-    //        else {
-    //            dataset.getMappedAnalyses().add((Analysis) tuple[1]);
-    //            dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
-    //            datasetsMapById.put(dataset.getDatasetId(), dataset);
-    //            Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
-    //            datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
-    //        }
-    //    }
-
-    //    return datasetsWithMarkersAndSamplesCount;
-
-
-    //}
-
-
-
-
-
     /**
      * Returns list of tuple with Dataset entities joined with respective analysis entities.
      * Tuple contains values in the same order as below,
@@ -218,7 +158,7 @@ public class DatasetDaoImpl implements DatasetDao {
      * @param datasetId - Id for dataset. Unique identifier.
      * @param pageNum - Page number
      * @param pageSize - size of the page
-     * @return
+     * @return List of tuples with Dataset, marker count, sample count
      */
     @Override
     @Transactional
@@ -226,23 +166,19 @@ public class DatasetDaoImpl implements DatasetDao {
                                                                   Integer pageSize,
                                                                   Integer datasetId) {
 
-
         NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
 
         List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 
-
         List<QueryParameterBean> queryParameterBeanList = new ArrayList<>();
-        HashMap<String, Class> entityMap = new HashMap<>();
+        LinkedHashMap<String, Class> entityMap = new LinkedHashMap<>();
         List<String> scalarFiledsAlaises = new ArrayList<>();
 
-       // List<Object[]> resultTuplesList = new ArrayList<>();
-
-
-        HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
-
-
         Integer pageOffset = null;
+
+        if(pageNum == null) {
+            pageNum = 0;
+        }
 
         if(pageNum != null && pageSize != null) {
             pageOffset = pageNum * pageSize;
@@ -280,6 +216,19 @@ public class DatasetDaoImpl implements DatasetDao {
                 queryString, queryParameterBeanList,
                 entityMap, scalarFiledsAlaises);
 
+        datasetsWithMarkersAndSamplesCount = mapAnalysesToDataset(resultTuplesList);
+
+        return datasetsWithMarkersAndSamplesCount;
+
+    }
+
+
+    public List<Object[]> mapAnalysesToDataset(List<Object[]> resultTuplesList) {
+
+        List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
+
+        HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
+
         for(Object[] tuple : resultTuplesList) {
 
             Dataset dataset = (Dataset) tuple[0];
@@ -289,21 +238,26 @@ public class DatasetDaoImpl implements DatasetDao {
             }
 
             if(datasetsMapById.containsKey(dataset.getDatasetId())) {
+
                 datasetsMapById.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
+
             }
             else {
+
                 dataset.getMappedAnalyses().add((Analysis) tuple[1]);
                 dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
+
                 datasetsMapById.put(dataset.getDatasetId(), dataset);
+
                 Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
+
                 datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
+
             }
         }
 
         return datasetsWithMarkersAndSamplesCount;
-
     }
-
 
     @Override
     @Transactional
