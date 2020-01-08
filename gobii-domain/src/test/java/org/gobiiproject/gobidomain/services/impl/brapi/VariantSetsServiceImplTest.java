@@ -2,7 +2,9 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.RandomStringUtils;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
+import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl;
@@ -36,13 +38,29 @@ public class VariantSetsServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
+
+
     Random random = new Random();
 
     ObjectMapper mapper = new ObjectMapper();
 
-    private List<Dataset> getMockDatasets(Integer listSize) {
 
-        List<Dataset> returnVal = new ArrayList();
+    private Analysis createMockAnalysis(Integer analysisId) {
+
+        Analysis analysis = new Analysis();
+
+        analysis.setAnalysisId(analysisId);
+        analysis.setAnalysisName("test-analysis-"+analysisId.toString());
+        analysis.getType().setTerm("calling");
+
+        return analysis;
+
+    }
+
+
+    private List<Object[]> getMockDatasets(Integer listSize) {
+
+        List<Object[]> returnVal = new ArrayList();
 
 
         for(int i = 0; i < listSize; i++) {
@@ -70,8 +88,9 @@ public class VariantSetsServiceImplTest {
 
             dataset.setCreatedDate(new Date(random.nextLong()));
             dataset.setModifiedDate(new Date(random.nextLong()));
+            Object[] resultTuple = {dataset, 1000, 100};
 
-            returnVal.add(dataset);
+            returnVal.add(resultTuple);
         }
 
 
@@ -83,10 +102,10 @@ public class VariantSetsServiceImplTest {
 
         final Integer pageSize = 1000;
 
-        List<Dataset> datasetsMock = getMockDatasets(pageSize);
+        List<Object[]> datasetsMock = getMockDatasets(pageSize);
 
         when (
-                datasetDao.listDatasetsByPageNum(any(Integer.TYPE), any(Integer.TYPE), any(Integer.TYPE))
+                datasetDao.listDatasetsWithMarkersAndSamplesCounts(any(Integer.TYPE), any(Integer.TYPE), any(Integer.TYPE))
         ).thenReturn(datasetsMock);
 
 
@@ -100,27 +119,27 @@ public class VariantSetsServiceImplTest {
             Integer assertIndex = new Random().nextInt(1000);
 
             assertEquals("variansetName check failed",
-                    datasetsMock.get(assertIndex).getDatasetName(),
+                    ((Dataset)datasetsMock.get(assertIndex)[0]).getDatasetName(),
                     variantSets.get(assertIndex).getVariantSetName());
 
             assertEquals("variansetid check failed",
-                    datasetsMock.get(assertIndex).getDatasetId(),
+                    ((Dataset)datasetsMock.get(assertIndex)[0]).getDatasetId(),
                     variantSets.get(assertIndex).getVariantSetDbId());
 
             assertEquals("studyDbId check failed",
-                    datasetsMock.get(assertIndex).getExperiment().getExperimentId(),
+                    ((Dataset)datasetsMock.get(assertIndex)[0]).getExperiment().getExperimentId(),
                     variantSets.get(assertIndex).getStudyDbId());
 
             assertEquals("ReferenceDbId check failed",
-                    datasetsMock.get(assertIndex).getCallingAnalysis().getReference().getReferenceId(),
+                    ((Dataset)datasetsMock.get(assertIndex)[0]).getCallingAnalysis().getReference().getReferenceId(),
                     variantSets.get(assertIndex).getReferenceSetDbId());
 
             assertEquals("created check failed",
-                    datasetsMock.get(assertIndex).getCreatedDate(),
+                    ((Dataset)datasetsMock.get(assertIndex)[0]).getCreatedDate(),
                     variantSets.get(assertIndex).getCreated());
 
             assertEquals("updated check failed",
-                    datasetsMock.get(assertIndex).getModifiedDate(),
+                    ((Dataset)datasetsMock.get(assertIndex)[0]).getModifiedDate(),
                     variantSets.get(assertIndex).getUpdated());
 
 

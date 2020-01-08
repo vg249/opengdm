@@ -71,15 +71,10 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                         variantSetDTO.getAnalyses().add(analysisBrapiDTOMap.get(analysis.getAnalysisId()));
 
-
                     }
                     else {
 
                         AnalysisBrapiDTO analysisBrapiDTO = new AnalysisBrapiDTO();
-
-                        if(variantSetDTO.getAnalyses() == null) {
-                            variantSetDTO.setAnalyses(new HashSet<>());
-                        }
 
                         ModelMapper.mapEntityToDto(analysis, analysisBrapiDTO);
 

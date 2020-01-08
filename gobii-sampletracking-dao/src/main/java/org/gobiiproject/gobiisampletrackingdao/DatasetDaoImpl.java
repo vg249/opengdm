@@ -237,22 +237,31 @@ public class DatasetDaoImpl implements DatasetDao {
                 continue;
             }
 
-            if(datasetsMapById.containsKey(dataset.getDatasetId())) {
+            Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
 
-                datasetsMapById.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
+            if(tuple[1] == null) {
+
+                dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
+
+                datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
 
             }
             else {
 
-                dataset.getMappedAnalyses().add((Analysis) tuple[1]);
-                dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
+                if (datasetsMapById.containsKey(dataset.getDatasetId())) {
 
-                datasetsMapById.put(dataset.getDatasetId(), dataset);
+                    datasetsMapById.get(dataset.getDatasetId()).getMappedAnalyses().add((Analysis) tuple[1]);
 
-                Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
+                } else {
 
-                datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
+                    dataset.getMappedAnalyses().add((Analysis) tuple[1]);
+                    dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
 
+                    datasetsMapById.put(dataset.getDatasetId(), dataset);
+
+                    datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
+
+                }
             }
         }
 

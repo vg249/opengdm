@@ -9,17 +9,15 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Model for the Brapi Samples endpoint
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType", "createdDate", "modifiedDate"
+        "id", "allowedProcessTypes", "entityNameType",
+        "createdDate", "modifiedDate"
 })
 public class VariantSetDTO extends DTOBaseAuditable {
 
@@ -50,7 +48,7 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private List<Object> availableFormats;
 
-    private Set<AnalysisBrapiDTO> analyses;
+    private Set<AnalysisBrapiDTO> analyses = new HashSet<>();
 
     public Integer getId() {
         return 0;
@@ -139,7 +137,4 @@ public class VariantSetDTO extends DTOBaseAuditable {
         this.analyses = analyses;
     }
 
-    public Date created() {
-        return this.getCreatedDate();
-    }
 }
