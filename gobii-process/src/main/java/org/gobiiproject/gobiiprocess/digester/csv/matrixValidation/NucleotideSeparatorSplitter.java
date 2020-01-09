@@ -11,14 +11,14 @@ import java.util.*;
 public class NucleotideSeparatorSplitter implements RowProcessor {
 
     private int nucleotideCount;
-    private static String unknownAllele = "N";
+    private static String UNKNOWN_ALLELE = "N";
     private String unknownSegment;
     private static Set<String> validAlleles = new HashSet<>(Arrays.asList(
             "A",
             "C",
             "G",
             "T",
-            unknownAllele,
+            UNKNOWN_ALLELE,
             "+",
             "-"
     ));
@@ -33,7 +33,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     public NucleotideSeparatorSplitter(int nucleotideCount, Set<String> missingSegmentsFromFile){
         this.nucleotideCount = nucleotideCount;
         this.missingSegmentsFromFile = missingSegmentsFromFile;
-        this.unknownSegment = StringUtils.repeat(unknownAllele,nucleotideCount);
+        this.unknownSegment = StringUtils.repeat(UNKNOWN_ALLELE,nucleotideCount);
     }
 
     public boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
