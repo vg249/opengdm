@@ -80,11 +80,7 @@ public class SpRunnerCallable {
 
         } finally {
 
-            if (em != null) {
-                em.close();
-            }
-
-            if (session != null) {
+            if (session != null && ! session.isConnected()) {
                 session.close();
             }
         }
