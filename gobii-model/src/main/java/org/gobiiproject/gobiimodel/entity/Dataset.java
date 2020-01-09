@@ -72,6 +72,12 @@ public class Dataset extends BaseEntity {
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
     private Job job = new Job();
 
+    @Transient
+    private Integer markerCount;
+
+    @Transient
+    private Integer dnaRunCount;
+
     public Integer getDatasetId() {
         return datasetId;
     }
@@ -183,5 +189,21 @@ public class Dataset extends BaseEntity {
 
     public void setMappedAnalyses(Set<Analysis> mappedAnalyses) {
         this.mappedAnalyses = mappedAnalyses;
+    }
+
+    public Integer getMarkerCount() {
+        return markerCount;
+    }
+
+    public void setMarkerCount(Integer markerCount) {
+        this.markerCount = markerCount;
+    }
+
+    public Integer getDnaRunCount() {
+        return dnaRunCount;
+    }
+
+    public void setDnaRunCount(Integer dnaRunCount) {
+        this.dnaRunCount = dnaRunCount;
     }
 }

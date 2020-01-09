@@ -2,7 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.QueryParameterBean;
+import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.type.IntegerType;
@@ -18,7 +18,6 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -32,63 +31,6 @@ public class DatasetDaoImpl implements DatasetDao {
     @PersistenceContext
     protected EntityManager em;
 
-
-    /**
-     * Gets list of dataset entities that match the given filter parameters.
-     * @param pageNum page number to be fetched. 0 based page index.
-     * @param pageSize size of the page to be fetched.
-     * @param datasetId to filter list of datasets by datasetId. When used return value should be list of size 1
-     * @return List of dataset entity
-     */
-    @Override
-    @Transactional
-    public List<Dataset> listDatasetsByPageNum(Integer pageNum, Integer pageSize,
-                                       Integer datasetId) {
-
-        List<Dataset> datasets;
-
-        final int defaultPageSize = 1000;
-        final int defaultPageNum = 0;
-
-        if (pageNum == null) pageNum = defaultPageNum;
-        if (pageSize == null) pageSize = defaultPageSize;
-
-        try {
-
-
-            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-
-            CriteriaQuery<Dataset> criteriaQuery = criteriaBuilder.createQuery(Dataset.class);
-
-            Root<Dataset> dataset = criteriaQuery.from(Dataset.class);
-
-            criteriaQuery.select(dataset);
-
-            if(datasetId != null) {
-                criteriaQuery.where(criteriaBuilder.equal(dataset.get("datasetId"), datasetId));
-            }
-
-            Query listQuery = em.createQuery(criteriaQuery);
-
-            listQuery
-                    .setMaxResults(pageSize)
-                    .setFirstResult(pageNum*pageSize);
-
-            datasets = listQuery.getResultList();
-
-        }
-        catch(Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-        }
-
-        return datasets;
-
-    }
 
     /**
      * Gets list of dataset entities that match the given filter parameters.
@@ -152,27 +94,29 @@ public class DatasetDaoImpl implements DatasetDao {
     }
 
     /**
-     * Returns list of tuple with Dataset entities joined with respective analysis entities.
-     * Tuple contains values in the same order as below,
-     * (Dataset, markerCount, dnasampleCount)
+     * In database, Analyses for a given dataset are saved as an array of reference ids to the analysis table.
+     * Not able to map using hibernate ManytoOne relation as the array datatype is not supported in hibernate.
+     * Using native query to left join analysis entities along with other required scalar fields
+     * Returns list of Dataset entities joined with respective analysis entities.
+     * The respective analysis entities are added to the mappedAnalyses hashset
      * @param datasetId - Id for dataset. Unique identifier.
      * @param pageNum - Page number
      * @param pageSize - size of the page
-     * @return List of tuples with Dataset, marker count, sample count
+     * @return List of DatsetEntity
      */
     @Override
     @Transactional
-    public List<Object[]> listDatasetsWithMarkersAndSamplesCounts(Integer pageNum,
-                                                                  Integer pageSize,
-                                                                  Integer datasetId) {
+    public List<Dataset> listDatasets(Integer pageNum,
+                                      Integer pageSize,
+                                      Integer datasetId) {
 
         NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
 
-        List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
+        List<Dataset> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 
-        List<QueryParameterBean> queryParameterBeanList = new ArrayList<>();
-        LinkedHashMap<String, Class> entityMap = new LinkedHashMap<>();
-        List<String> scalarFiledsAlaises = new ArrayList<>();
+        List<QueryField> queryParameters = new ArrayList<>();
+        List<QueryField> entityFields = new ArrayList<>();
+        List<QueryField> scalarFileds = new ArrayList<>();
 
         Integer pageOffset = null;
 
@@ -200,21 +144,21 @@ public class DatasetDaoImpl implements DatasetDao {
                 "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
 
         // Add query parameters
-        queryParameterBeanList.add(new QueryParameterBean("pageSize", pageSize));
-        queryParameterBeanList.add(new QueryParameterBean("pageOffset", pageOffset));
-        queryParameterBeanList.add(new QueryParameterBean("datasetId", datasetId, IntegerType.INSTANCE));
+        queryParameters.add(new QueryField("pageSize", pageSize, IntegerType.INSTANCE));
+        queryParameters.add(new QueryField("pageOffset", pageOffset, IntegerType.INSTANCE));
+        queryParameters.add(new QueryField("datasetId", datasetId, IntegerType.INSTANCE));
 
         // Add entity map
-        entityMap.put("ds", Dataset.class);
-        entityMap.put("anas", Analysis.class);
+        entityFields.add(new QueryField("ds", Dataset.class));
+        entityFields.add(new QueryField("anas", Analysis.class));
 
         // Add scalar field alaises
-        scalarFiledsAlaises.add("marker_count");
-        scalarFiledsAlaises.add("dnarun_count");
+        scalarFileds.add(new QueryField("marker_count", null, IntegerType.INSTANCE));
+        scalarFileds.add(new QueryField("dnarun_count", null, IntegerType.INSTANCE));
 
         List<Object[]> resultTuplesList = nativerQueryRunner.run(
-                queryString, queryParameterBeanList,
-                entityMap, scalarFiledsAlaises);
+                queryString, queryParameters,
+                entityFields, scalarFileds);
 
         datasetsWithMarkersAndSamplesCount = mapAnalysesToDataset(resultTuplesList);
 
@@ -222,10 +166,14 @@ public class DatasetDaoImpl implements DatasetDao {
 
     }
 
+    /**
+     * Map Analysis entities in the result tuple to their respective Dataset Entity.
+     * @param resultTuplesList - Result tuple with dataset left joined with analysis and other scalar fields
+     * @return tuple list with Dataset Entity and other scalar fields,
+     */
+    public List<Dataset> mapAnalysesToDataset(List<Object[]> resultTuplesList) {
 
-    public List<Object[]> mapAnalysesToDataset(List<Object[]> resultTuplesList) {
-
-        List<Object[]> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
+        List<Dataset> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 
         HashMap<Integer, Dataset> datasetsMapById = new HashMap<>();
 
@@ -237,13 +185,15 @@ public class DatasetDaoImpl implements DatasetDao {
                 continue;
             }
 
-            Object[] datasetWithMarkerAndSampleCountTuple = {dataset, tuple[2], tuple[3]};
+
+            dataset.setMarkerCount((Integer) tuple[2]);
+            dataset.setDnaRunCount((Integer) tuple[3]);
 
             if(tuple[1] == null) {
 
                 dataset.getMappedAnalyses().add(dataset.getCallingAnalysis());
 
-                datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
+                datasetsWithMarkersAndSamplesCount.add(dataset);
 
             }
             else {
@@ -259,7 +209,7 @@ public class DatasetDaoImpl implements DatasetDao {
 
                     datasetsMapById.put(dataset.getDatasetId(), dataset);
 
-                    datasetsWithMarkersAndSamplesCount.add(datasetWithMarkerAndSampleCountTuple);
+                    datasetsWithMarkersAndSamplesCount.add(dataset);
 
                 }
             }
@@ -268,11 +218,16 @@ public class DatasetDaoImpl implements DatasetDao {
         return datasetsWithMarkersAndSamplesCount;
     }
 
+    /**
+     * Gets the dataset entity by dataset id.
+     * @param datasetId - Dataset Id
+     * @return
+     */
     @Override
     @Transactional
     public Dataset getDatasetById(Integer datasetId) {
 
-        List<Dataset> datasetsById  = this.listDatasetsByPageNum(null, null, datasetId);
+        List<Dataset> datasetsById  = this.listDatasets(null, null, datasetId);
 
         if(datasetsById.size() > 1) {
             LOGGER.error("More than one duplicate entries found.");

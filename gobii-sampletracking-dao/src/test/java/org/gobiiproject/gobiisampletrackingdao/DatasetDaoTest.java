@@ -12,6 +12,10 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
+/**
+ * This tests are created with knowledge of exisiting data in api.gobii.org:gobii-dev database
+ * TODO: Setup class to create required data in the test database needs to be completed in future.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class DatasetDaoTest {
@@ -20,48 +24,34 @@ public class DatasetDaoTest {
     private DatasetDao datasetDao;
 
 
-    /**
-     * This tests are created with knowledge of exisiting data in cbsuxvm11 gobii-dev database
-     * TODO: Setup class to create required data in the test database needs to be completed in future.
-     */
-    @Test
-    public void testListDatasetsWithMarkerSamplesCount() {
-
-        Integer testPageSize = 5;
-
-        List<Object[]> datasetTuples = datasetDao.listDatasetsWithMarkersAndSamplesCounts(
-                0, 100, null);
-
-        //As test database table has ananlyses greater than 0, assert the same
-        for(Object[] datasetTuple : datasetTuples) {
-
-            assertTrue(((Dataset)datasetTuple[0]).getMappedAnalyses().size() > 0);
-
-            assertTrue(datasetTuple[1] == BigInteger.valueOf(0));
-            assertTrue(datasetTuple[2] == BigInteger.valueOf(0));
-
-        }
-
-        assertTrue(datasetTuples.size() <= testPageSize);
-
-    }
-
-
     @Test
     public void testListDatasets() {
 
-        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(null, null, null);
+        Integer testPageSize = 100;
 
-        assertTrue(datasets.size() > 0);
+        List<Dataset> datasets = datasetDao.listDatasets(
+                0, testPageSize, null);
 
+        //As test database table has ananlyses greater than 0, assert the same
+        for( Dataset dataset : datasets) {
+
+            assertTrue(dataset.getMappedAnalyses().size() > 0);
+
+            assertTrue(dataset.getMarkerCount() >= 0);
+            assertTrue(dataset.getDnaRunCount() >= 0);
+
+        }
+
+        assertTrue(datasets.size() <= testPageSize);
 
     }
+
+
 
     @Test
     public void testListDatasetsWithPageSize() {
 
-        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(0, 10, null);
-
+        List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
 
         assertTrue(datasets.size() == 10);
 
@@ -72,7 +62,7 @@ public class DatasetDaoTest {
     @Test
     public void testListDatasetsByCursor() {
 
-        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(0, 10, null);
+        List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
 
         assertTrue(datasets.size() == 10);
 
@@ -89,7 +79,7 @@ public class DatasetDaoTest {
     @Test
     public void testGetDatasetById() {
 
-        List<Dataset> datasets = datasetDao.listDatasetsByPageNum(0, 10, null);
+        List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
 
         assertTrue(datasets.size() == 10);
 
@@ -98,7 +88,6 @@ public class DatasetDaoTest {
         Dataset dataset = datasetDao.getDatasetById(datasetId);
 
         assertTrue(dataset.getDatasetId() == datasetId);
-
 
     }
 

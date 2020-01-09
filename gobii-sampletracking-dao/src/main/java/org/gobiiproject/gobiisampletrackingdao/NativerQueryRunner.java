@@ -1,10 +1,11 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.QueryParameterBean;
+import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,9 @@ public class NativerQueryRunner {
 
     @Transactional
     public List<Object[]> run(String queryString,
-                              List<QueryParameterBean> parameterList,
-                              HashMap<String, Class> entityMap,
-                              List<String> scalarAliasList) {
+                              List<QueryField> queryParamters,
+                              List<QueryField> entityFields,
+                              List<QueryField> scalarFields) {
 
             try {
 
@@ -45,17 +46,17 @@ public class NativerQueryRunner {
                 NativeQuery nativeQuery = session
                         .createNativeQuery(queryString);
 
-                for (QueryParameterBean queryParameter : parameterList) {
+                for (QueryField queryParameter : queryParamters) {
                     nativeQuery.setParameter(queryParameter.getParameterName(),
                             queryParameter.getParameterValue(), queryParameter.getParamterType());
                 }
 
-                for (String entityAlias : entityMap.keySet()) {
-                    nativeQuery.addEntity(entityAlias, entityMap.get(entityAlias));
+                for (QueryField entityAlias : entityFields) {
+                    nativeQuery.addEntity(entityAlias.getParameterName(), (Class) entityAlias.getParameterValue());
                 }
 
-                for (String scalarAlias : scalarAliasList) {
-                    nativeQuery.addScalar(scalarAlias);
+                for (QueryField scalarAlias : scalarFields) {
+                    nativeQuery.addScalar(scalarAlias.getParameterName(), scalarAlias.getParamterType());
                 }
 
 

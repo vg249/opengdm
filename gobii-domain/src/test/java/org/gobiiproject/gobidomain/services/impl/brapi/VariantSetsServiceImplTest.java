@@ -15,9 +15,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -58,9 +60,9 @@ public class VariantSetsServiceImplTest {
     }
 
 
-    private List<Object[]> getMockDatasets(Integer listSize) {
+    private List<Dataset> getMockDatasets(Integer listSize) {
 
-        List<Object[]> returnVal = new ArrayList();
+        List<Dataset> returnVal = new ArrayList();
 
 
         for(int i = 0; i < listSize; i++) {
@@ -80,17 +82,29 @@ public class VariantSetsServiceImplTest {
             dataset.getCallingAnalysis().getType().setTerm(
                     RandomStringUtils.random(7, true, true));
 
-            dataset.getCallingAnalysis().setDescription(RandomStringUtils.random(7, true, true));
+            //Only one analysis added in mock, so, just check the mapping for that one is correct
+            Analysis analysis = new Analysis();
 
-            dataset.getCallingAnalysis().setAnalysisName(RandomStringUtils.random(7, true, true));
+            analysis.setDescription(RandomStringUtils.random(7, true, true));
+            analysis.setAnalysisName(RandomStringUtils.random(7, true, true));
+            analysis.setAnalysisId(i);
 
-            dataset.getCallingAnalysis().setAnalysisId(i);
+            dataset.setCallingAnalysis(analysis);
+
+            dataset.getMappedAnalyses().add(analysis);
+
+            Integer[] analyses = {i};
+
+            dataset.setAnalyses(analyses);
 
             dataset.setCreatedDate(new Date(random.nextLong()));
             dataset.setModifiedDate(new Date(random.nextLong()));
-            Object[] resultTuple = {dataset, 1000, 100};
 
-            returnVal.add(resultTuple);
+            dataset.setDnaRunCount(100);
+            dataset.setMarkerCount(1000);
+
+
+            returnVal.add(dataset);
         }
 
 
@@ -102,10 +116,10 @@ public class VariantSetsServiceImplTest {
 
         final Integer pageSize = 1000;
 
-        List<Object[]> datasetsMock = getMockDatasets(pageSize);
+        List<Dataset> datasetsMock = getMockDatasets(pageSize);
 
         when (
-                datasetDao.listDatasetsWithMarkersAndSamplesCounts(any(Integer.TYPE), any(Integer.TYPE), any(Integer.TYPE))
+                datasetDao.listDatasets(any(Integer.TYPE), any(Integer.TYPE), any(Integer.TYPE))
         ).thenReturn(datasetsMock);
 
 
@@ -119,28 +133,53 @@ public class VariantSetsServiceImplTest {
             Integer assertIndex = new Random().nextInt(1000);
 
             assertEquals("variansetName check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getDatasetName(),
+                    datasetsMock.get(assertIndex).getDatasetName(),
                     variantSets.get(assertIndex).getVariantSetName());
 
             assertEquals("variansetid check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getDatasetId(),
+                    datasetsMock.get(assertIndex).getDatasetId(),
                     variantSets.get(assertIndex).getVariantSetDbId());
 
             assertEquals("studyDbId check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getExperiment().getExperimentId(),
+                    datasetsMock.get(assertIndex).getExperiment().getExperimentId(),
                     variantSets.get(assertIndex).getStudyDbId());
 
-            assertEquals("ReferenceDbId check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getCallingAnalysis().getReference().getReferenceId(),
+            assertEquals("referenceDbId check failed",
+                    datasetsMock.get(assertIndex).getCallingAnalysis().getReference().getReferenceId(),
                     variantSets.get(assertIndex).getReferenceSetDbId());
 
             assertEquals("created check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getCreatedDate(),
+                    datasetsMock.get(assertIndex).getCreatedDate(),
                     variantSets.get(assertIndex).getCreated());
 
             assertEquals("updated check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getModifiedDate(),
+                    datasetsMock.get(assertIndex).getModifiedDate(),
                     variantSets.get(assertIndex).getUpdated());
+
+            assertEquals("analysis size check",
+                    datasetsMock.get(assertIndex).getMappedAnalyses().size(),
+                    variantSets.get(assertIndex).getAnalyses().size());
+
+            //Only one analysis added in mock, so, just check the mapping for that one is correct
+            assertTrue("Analysis got mapped to the Variantset Analysis",
+                    variantSets.get(assertIndex).getAnalyses().iterator().hasNext());
+
+            Analysis analysis = datasetsMock.get(assertIndex).getMappedAnalyses().iterator().next();
+
+            AnalysisBrapiDTO analysisBrapiDTO = variantSets.get(assertIndex).getAnalyses().iterator().next();
+            assertEquals("check analysisDbId is mapped",
+                    analysis.getAnalysisId(),
+                    analysisBrapiDTO.getAnalysisDbId());
+
+
+            assertEquals("check analysisName is mapped",
+                    analysis.getAnalysisName(),
+                    analysisBrapiDTO.getAnalysisName());
+
+            assertEquals("check analysis description is mapped",
+                    analysis.getDescription(),
+                    analysisBrapiDTO.getDescription());
+
 
 
         }

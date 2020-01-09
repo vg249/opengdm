@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -47,44 +46,16 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
         try {
 
-            List<Object[]> datasetsWithMarkerAndSampleCounts = datasetDao.listDatasetsWithMarkersAndSamplesCounts(
+            List<Dataset> datasets = datasetDao.listDatasets(
                    pageNum,
                    pageSize,
                    varianSetDbID);
 
-            for (Object[] resultTuple : datasetsWithMarkerAndSampleCounts) {
+            for (Dataset dataset : datasets) {
 
                 VariantSetDTO variantSetDTO = new VariantSetDTO();
 
-                Dataset dataset = (Dataset) resultTuple[0];
-
-                ModelMapper.mapEntityToDto(dataset, variantSetDTO);
-
-                variantSetDTO.setFileUrl(
-                        MessageFormat.format(this.fileUrlFormat,
-                                this.getCropType(),
-                                dataset.getDatasetId()));
-
-                for(Analysis analysis : dataset.getMappedAnalyses()) {
-
-                    if(analysisBrapiDTOMap.containsKey(analysis.getAnalysisId())) {
-
-                        variantSetDTO.getAnalyses().add(analysisBrapiDTOMap.get(analysis.getAnalysisId()));
-
-                    }
-                    else {
-
-                        AnalysisBrapiDTO analysisBrapiDTO = new AnalysisBrapiDTO();
-
-                        ModelMapper.mapEntityToDto(analysis, analysisBrapiDTO);
-
-                        variantSetDTO.getAnalyses().add(analysisBrapiDTO);
-
-                        analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisBrapiDTO);
-
-                    }
-
-                }
+                mapDatasetEntityToVariantSetDto(dataset, variantSetDTO, analysisBrapiDTOMap);
 
                 returnVal.add(variantSetDTO);
             }
@@ -103,5 +74,86 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     }
 
+    public VariantSetDTO getVariantSetById(Integer variantSetDbId) {
 
+        VariantSetDTO variantSetDTO = new VariantSetDTO();
+
+        try {
+
+            Dataset dataset = datasetDao.getDatasetById(variantSetDbId);
+
+
+            mapDatasetEntityToVariantSetDto(dataset, variantSetDTO);
+
+
+        }
+        catch (Exception e) {
+
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Bad Request");
+
+        }
+
+        return variantSetDTO;
+
+    }
+
+    /**
+     * Maps Dataset entity to variantSetDTO.
+     *
+     * @param dataset - Dataset Entity
+     * @param variantSetDTO - VariantSetDTO
+     * @param analysisBrapiDTOMap - HashMap of Analysis Entity with analysisId as their key.
+     *                            The map is used to keep track of analysis which are already model mapped.
+     *                            If the parameter is null, then all the analysis are mapped irrsespective of
+     *                            whether they are already mapped or not
+     */
+    public void mapDatasetEntityToVariantSetDto(Dataset dataset,
+                                                VariantSetDTO variantSetDTO,
+                                                HashMap<Integer, AnalysisBrapiDTO> analysisBrapiDTOMap) {
+
+        ModelMapper.mapEntityToDto(dataset, variantSetDTO);
+
+        variantSetDTO.setFileUrl(
+                MessageFormat.format(this.fileUrlFormat,
+                        this.getCropType(),
+                        dataset.getDatasetId()));
+
+        for(Analysis analysis : dataset.getMappedAnalyses()) {
+
+            if(analysisBrapiDTOMap == null || analysisBrapiDTOMap.containsKey(analysis.getAnalysisId()) == false) {
+
+                AnalysisBrapiDTO analysisBrapiDTO = new AnalysisBrapiDTO();
+
+                ModelMapper.mapEntityToDto(analysis, analysisBrapiDTO);
+
+                variantSetDTO.getAnalyses().add(analysisBrapiDTO);
+
+                analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisBrapiDTO);
+            }
+            else {
+
+                variantSetDTO.getAnalyses().add(
+                        analysisBrapiDTOMap.get(analysis.getAnalysisId()));
+
+
+            }
+
+        }
+
+
+    }
+
+    /**
+     * Override for function with same name where the last argument has to be null
+     * @param dataset
+     * @param variantSetDTO
+     */
+    public void mapDatasetEntityToVariantSetDto(Dataset dataset,
+                                                VariantSetDTO variantSetDTO) {
+        mapDatasetEntityToVariantSetDto(dataset, variantSetDTO, null);
+
+    }
 }

@@ -3,14 +3,14 @@ package org.gobiiproject.gobiimodel.entity;
 
 import org.hibernate.type.Type;
 
-public class QueryParameterBean {
+public class QueryField {
 
-    public QueryParameterBean(String parameterName, Object parameterValue) {
+    public QueryField(String parameterName, Object parameterValue) {
         this.parameterName = parameterName;
         this.parameterValue = parameterValue;
     }
 
-    public QueryParameterBean(String parameterName, Object parameterValue, Type parameterType) {
+    public QueryField(String parameterName, Object parameterValue, Type parameterType) {
         this(parameterName, parameterValue);
         this.paramterType = parameterType;
     }
