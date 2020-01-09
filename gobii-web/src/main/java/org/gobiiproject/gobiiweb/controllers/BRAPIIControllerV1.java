@@ -1980,18 +1980,24 @@ public class BRAPIIControllerV1 {
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantSetsByVariantSetDbId(
+    public @ResponseBody ResponseEntity getVariantSetById(
             @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
-            @PathVariable("variantSetDbId") Integer variantSetDbId) {
+            @PathVariable("variantSetDbId") Integer variantSetDbId,
+            HttpServletRequest request) {
 
         try {
 
-            DataSetBrapiDTO dataSetBrapiDTO = dataSetBrapiService.getDatasetById(variantSetDbId);
+            variantSetsService.setCropType(CropRequestAnalyzer.getGobiiCropType(request));
 
-            BrApiMasterPayload<DataSetBrapiDTO> payload = new BrApiMasterPayload<>(dataSetBrapiDTO);
+            VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
+
+            BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
 
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
+        }
+        catch (GobiiException gE) {
+            throw gE;
         }
         catch (Exception e) {
             throw new GobiiException(

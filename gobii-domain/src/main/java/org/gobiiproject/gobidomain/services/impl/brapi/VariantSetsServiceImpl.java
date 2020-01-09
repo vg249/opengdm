@@ -131,7 +131,9 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                 variantSetDTO.getAnalyses().add(analysisBrapiDTO);
 
-                analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisBrapiDTO);
+                if(analysisBrapiDTOMap != null) {
+                    analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisBrapiDTO);
+                }
             }
             else {
 
