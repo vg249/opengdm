@@ -13,15 +13,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private int nucleotideCount;
     private static String UNKNOWN_ALLELE = "N";
     private String unknownSegment;
-    private static Set<String> validAlleles = new HashSet<>(Arrays.asList(
-            "A",
-            "C",
-            "G",
-            "T",
-            UNKNOWN_ALLELE,
-            "+",
-            "-"
-    ));
+
     private static Set<String> validSeparators = new HashSet<>(Arrays.asList(
             ",",
             "/",
@@ -80,19 +72,25 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
         int expectedLengthWithSeparators = (nucleotideCount * 2) - 1;
         int length = element.length();
         boolean hasSeparators=(length != nucleotideCount);
-        if(hasSeparators) { //If nucleotideCount=1, there's no separator character
-            if(length != expectedLengthWithSeparators){
-                return "Unexpected Length Element " + element; // incorrect length
+        if((length != nucleotideCount) && (length != expectedLengthWithSeparators)){
+            return "Unexpected Length Element " + element; // incorrect length
+        }
 
+        if(hasSeparators) {
+            char separatorCharacter = element.charAt(1);
+            if(!validSeparators.contains(""+separatorCharacter)){
+                return "Unexpected separator in " + element + ": " + separatorCharacter + " Expected:" + Arrays.deepToString(validSeparators.toArray()); // incorrect separator character OR wrongly sized element
+                //Expected separator from <list>, received garbage
             }
-            char separator = element.charAt(1);
-            if(!validSeparators.contains(""+separator)){
-                return "Unexpected Separator in " + element + ": " + separator + " Expected:" + Arrays.deepToString(validSeparators.toArray()); // incorrect separator character OR wrongly sized element
-                //Expected separator from <list>, recieved garbage
+            for(int i = 1; i < element.length();i+=2){
+                if(element.charAt(i) != separatorCharacter){
+                    return "Unexpected character in separator slot in " + element + ": " + element.charAt(i) + " Expected:" + separatorCharacter; // incorrect separator character OR wrongly sized element
+                    //Expected more of the same separator, received garbage
+                }
             }
         }
-        return null;
 
+        return null;
     }
 
     /**
