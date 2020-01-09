@@ -448,7 +448,6 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
 
-    @Ignore
     @Test
     public void testCSV_BOTH_VCF() throws IOException{
 

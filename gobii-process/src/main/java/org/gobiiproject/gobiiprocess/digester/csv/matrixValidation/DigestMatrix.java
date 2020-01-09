@@ -35,7 +35,7 @@ class DigestMatrix {
         }
 
         for (String element : rowList)
-            if (!allowedEntities.isAllowed(element) || element == null || element.equals("")) {
+            if (!allowedEntities.isAllowed(element)) {
                 matrixErrorUtil.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
                 returnStatus = false;
             }
