@@ -483,6 +483,16 @@ public class BRAPIIControllerV1Test {
 
             variantSet.setStudyDbId(random.nextInt(10));
 
+            variantSet.setVariantCount(100);
+            variantSet.setCallSetCount(1000);
+
+            variantSet.setFileUrl(RandomStringUtils.random(10, true, true));
+            variantSet.setFileFormat(RandomStringUtils.random(4, true, true));
+            variantSet.setVariantSetDbId(random.nextInt(2));
+            variantSet.setDataFormat(RandomStringUtils.random(4, true, true));
+
+            variantSet.setReferenceSetDbId(random.nextInt(2));
+            variantSet.setVariantSetName(RandomStringUtils.random(5, true, true));
 
 
             returnVal.add(variantSet);

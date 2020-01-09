@@ -1934,7 +1934,7 @@ public class BRAPIIControllerV1 {
 
             payload.getMetadata().getPagination().setCurrentPage(pageNum);
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok().body(payload);
 
         }
         catch (GobiiException gE) {
@@ -1993,7 +1993,7 @@ public class BRAPIIControllerV1 {
 
             BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok().body(payload);
 
         }
         catch (GobiiException gE) {
