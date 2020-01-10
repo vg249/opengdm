@@ -514,7 +514,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) Integer pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageNum", required = false) Integer pageNum,
+            @RequestParam(value = "page", required = false) Integer pageNum,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @ApiParam(value = "ID of the variant to be extracted")
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
@@ -1040,7 +1040,7 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @RequestParam(value = "pageNum", required = false) Integer pageNum,
+            @RequestParam(value = "page", required = false) Integer pageNum,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             @RequestParam(value = "variantSetName", required = false) String variantSetName,
             @RequestParam(value = "studyDbId", required = false) String studyDbId,
@@ -1190,7 +1190,7 @@ public class BRAPIIControllerV2 {
                     "pageToken can be used to sequentially get pages faster. " +
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
-            @RequestParam(value = "pageNum", required = false) Integer pageNum,
+            @RequestParam(value = "page", required = false) Integer pageNum,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @ApiParam(value = "ID of the mapset to be retrieved")
