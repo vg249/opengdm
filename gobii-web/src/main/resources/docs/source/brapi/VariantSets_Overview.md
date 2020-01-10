@@ -2,7 +2,7 @@
 VariantSet corresponds to Dataset in GDM system.
 A dataset belongs to an experiment (study in BrAPI) and describes the suite of analyses applied to the vendor-delivered data to generate the dataset, as well as the dataset type.
 
-**Resource Description**
+<a name="variantsetresource">**Resource Description**</a>
 
 Field | Type | Description
 ------|------|------------

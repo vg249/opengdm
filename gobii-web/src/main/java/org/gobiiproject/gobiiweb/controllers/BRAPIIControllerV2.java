@@ -8,6 +8,7 @@ import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
@@ -56,6 +57,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -64,10 +66,10 @@ import java.util.concurrent.Executors;
 
 @Scope(value = "request")
 @Controller
-@Api()
 @EnableAsync
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI_V2)
 @CrossOrigin
+@Api
 public class BRAPIIControllerV2 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV2.class);
@@ -1021,9 +1023,18 @@ public class BRAPIIControllerV2 {
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of VariantSets",
-                            response = VariantSetListResponse.class
-                    )
+                    @ApiResponse(code = 200, message = "Success",
+                            response = VariantSetListResponse.class),
+                    @ApiResponse(code = 500, message = "Internal Server Error",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 400, message = "Bad Request",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "Unauthorized",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 403, message = "Forbidden",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "Internal Server Error",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
@@ -1032,6 +1043,11 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/variantsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantSets(
+            @ApiParam(value = "Id of the VariantSet to be fetched. Also, corresponds to dataset Id")
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
+            @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. studyDbID " +
+                    "also corresponds to experiment")
+            @RequestParam(value = "studyDbId", required = false) String studyDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -1040,10 +1056,8 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(value = "Page number to be fetched")
             @RequestParam(value = "page", required = false) Integer pageNum,
-            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            @RequestParam(value = "variantSetName", required = false) String variantSetName,
-            @RequestParam(value = "studyDbId", required = false) String studyDbId,
             HttpServletRequest request
     ) {
         try {
@@ -1105,14 +1119,24 @@ public class BRAPIIControllerV2 {
                             @ExtensionProperty(name="summary", value="VariantSets : variantSetDbId")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "Successful retrieval of VariantSet By ID",
                             response = VariantSetResponse.class
-                    )
+                    ),
+                    @ApiResponse(code = 500, message = "Internal Server Error",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 400, message = "Bad Request",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "Unauthorized",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 403, message = "Forbidden",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "Resource Not Found",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "Internal Server Error",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
