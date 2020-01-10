@@ -3,7 +3,6 @@ package org.gobiiproject.gobiimodel.utils.email;
 
 import java.io.File;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -45,9 +44,9 @@ public class ProcessMessage extends MailMessage {
     List<HTMLTableEntity> paths=new ArrayList<>();
     List<HTMLTableEntity> validations=new ArrayList<>();
 
-    private String hostname = System.getProperty("org.gobii.environment.name") != null
+    private String environmentName = System.getProperty("org.gobii.environment.name") != null
                             ? System.getProperty("org.gobii.environment.name")
-                            : "UNKNOWN_HOSTNAME";
+                            : "UNKNOWN_ENVIRONMENT_NAME";
 
     /**
      * Sets the BODY of the mail message with TABLEs
@@ -98,7 +97,7 @@ public class ProcessMessage extends MailMessage {
         }
 
         body.append(statusLine+line);
-        body.append(String.format("<b>Hostname: %s</b>", hostname));
+        body.append(String.format("<b>Environment Name: %s</b>", environmentName));
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
         if(identifierLine!=null)body.append(identifierLine+line);
