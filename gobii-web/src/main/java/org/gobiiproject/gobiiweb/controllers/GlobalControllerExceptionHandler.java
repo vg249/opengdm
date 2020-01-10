@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity NotReadableRequestBodyException(HttpMessageNotReadableException httpEx) {
         JsonMappingException jmEx = (JsonMappingException) httpEx.getCause();
         ErrorPayload errorPayload = new ErrorPayload();
-        errorPayload.setError("Request does not comply to the Input specification. " +
+        errorPayload.setError("Request does not comply with Input specification. " +
                 "Please refer to API document to make sure request body complies to API specification");
         LOGGER.error(jmEx.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
@@ -90,11 +91,8 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity HttpMethodNotSupportedExceptionHandler(Exception e) {
 
         ErrorPayload errorPayload = new ErrorPayload();
-
         errorPayload.setError("Request method not supported!");
-
         LOGGER.error(e.getMessage());
-
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorPayload);
     }
 
@@ -129,12 +127,13 @@ public class GlobalControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
     }
 
-    @ExceptionHandler(NullPointerException.class)
+    @ExceptionHandler({NullPointerException.class,ResourceDoesNotExistException.class})
     public ResponseEntity NullPointerExceptionHandler(NullPointerException e) {
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Resource not found");
         LOGGER.error(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorPayload);
     }
+
 
 }

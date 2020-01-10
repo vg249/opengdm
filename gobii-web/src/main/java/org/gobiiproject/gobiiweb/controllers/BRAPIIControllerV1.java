@@ -8,11 +8,6 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
-import org.gobiiproject.gobidomain.async.SearchExtract;
-import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -176,7 +171,7 @@ public class BRAPIIControllerV1 {
      * @return Json object with list of brapi calls in GDM
      * @throws Exception
      */
-    @RequestMapping(value = "/serverinfo",
+    @RequestMapping(value = "/calls",
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(

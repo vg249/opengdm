@@ -1656,4 +1656,9 @@ public class BRAPIIControllerV2 {
         return pageSize;
     }
 
+    @RequestMapping("/error")
+    public String handleError(HttpServletRequest request) {
+        return "error";
+    }
+
 }// BRAPIController
