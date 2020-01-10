@@ -165,20 +165,15 @@ public class RsCvDaoImpl implements RsCvDao {
     @Override
     public Integer createCv(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal = null;
-
         try {
 
-            spRunnerCallable.run(new SpInsCv(), parameters);
-            returnVal = spRunnerCallable.getResult();
+            return spRunnerCallable.run(new SpInsCv(), parameters);
 
         } catch (SQLGrammarException e) {
 
             LOGGER.error("Error creating cv with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
         }
-
-        return returnVal;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
