@@ -48,7 +48,7 @@ public class ProcessMessage extends MailMessage {
     private String hostname = "HOSTNAME_NOT_FOUND";
     {
         try {
-            hostname = InetAddress.getLocalHost().getHostName();
+            hostname = System.getProperty("org.gobii.environment.name");
         } catch (Exception e){
             Logger.logWarning("ProcessMessage", "Hostname for machine could not be determined");
         }
