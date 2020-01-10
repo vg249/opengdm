@@ -45,14 +45,9 @@ public class ProcessMessage extends MailMessage {
     List<HTMLTableEntity> paths=new ArrayList<>();
     List<HTMLTableEntity> validations=new ArrayList<>();
 
-    private String hostname = "HOSTNAME_NOT_FOUND";
-    {
-        try {
-            hostname = System.getProperty("org.gobii.environment.name");
-        } catch (Exception e){
-            Logger.logWarning("ProcessMessage", "Hostname for machine could not be determined");
-        }
-    }
+    private String hostname = System.getProperty("org.gobii.environment.name") != null
+                            ? System.getProperty("org.gobii.environment.name")
+                            : "UNKNOWN_HOSTNAME";
 
     /**
      * Sets the BODY of the mail message with TABLEs
