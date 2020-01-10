@@ -1507,6 +1507,7 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    @ApiOperation(value="List samples", hidden = true)
     @RequestMapping(value="/samples", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMaps(
             @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
@@ -1868,7 +1869,7 @@ public class BRAPIIControllerV1 {
      * @return Brapi response with list of variantsets
      */
     @ApiOperation(
-            value = "List Variantsets",
+            value = "List variantsets",
             notes = "List of all Variantsets",
             tags = {"VariantSets"},
             extensions = {
@@ -1876,8 +1877,6 @@ public class BRAPIIControllerV1 {
                             @ExtensionProperty(name="summary", value="VariantSets")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
