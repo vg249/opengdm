@@ -90,8 +90,6 @@ public class ProcessMessage extends MailMessage {
         StringBuilder body=new StringBuilder();
         body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
 
-        body.append(String.format("Hostname: %s", hostname));
-
         if(type!=null){
             body.append("<font size = 4><b>"+type+"</b></font> Duration: "+(time>=1000?time/1000+" secs":time+" ms")+"<br/><br/>");
         }
