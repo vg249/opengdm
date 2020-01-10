@@ -12,7 +12,7 @@ public class Promise<T> {
 
 	private T t = null;
 
-	private Boolean isSet = false;
+	private boolean isSet = false;
 
 	/***
 	 Sets the value of the promise. If a value has already been delivered, nothing will happen
