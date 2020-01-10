@@ -9,8 +9,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_extractor_filter_1, fileAction, store_1, file_item_service_1, view_id_generator_service_1, type_control_1, CheckListBoxComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -36,7 +36,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
             }
         ],
         execute: function () {
-            CheckListBoxComponent = (function () {
+            CheckListBoxComponent = /** @class */ (function () {
                 function CheckListBoxComponent(store, fileItemService, differs, viewIdGeneratorService) {
                     this.store = store;
                     this.fileItemService = fileItemService;

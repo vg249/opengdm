@@ -9,8 +9,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, store_1, fromRoot, historyAction, type_extractor_filter_1, file_item_service_1, file_item_param_names_1, fileAction, dto_request_service_1, json_to_gfi_dataset_1, filter_params_coll_1, dto_request_item_gfi_1, json_to_gfi_analysis_1, cv_filter_type_1, type_entity_1, gobii_file_item_compound_id_1, type_extractor_item_1, Subject_1, action_payload_filter_1, view_id_generator_service_1, DatasetDatatableComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -77,7 +77,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
             }
         ],
         execute: function () {
-            DatasetDatatableComponent = (function () {
+            DatasetDatatableComponent = /** @class */ (function () {
                 function DatasetDatatableComponent(store, fileItemService, filterParamsColl, fileItemRequestService, viewIdGeneratorService) {
                     var _this = this;
                     this.store = store;

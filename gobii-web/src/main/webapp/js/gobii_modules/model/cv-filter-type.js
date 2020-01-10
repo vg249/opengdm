@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var CvFilterType, CvFilters;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -13,7 +13,7 @@ System.register([], function (exports_1, context_1) {
             })(CvFilterType || (CvFilterType = {}));
             exports_1("CvFilterType", CvFilterType);
             ;
-            CvFilters = (function () {
+            CvFilters = /** @class */ (function () {
                 function CvFilters() {
                 }
                 // These are the cvgroup values for the terms that are to be retrieved

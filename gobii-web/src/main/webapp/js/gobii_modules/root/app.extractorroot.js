@@ -9,8 +9,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_request_item_serverconfigs_1, type_extractor_filter_1, cv_filter_type_1, type_extractor_item_1, type_extract_format_1, dto_header_status_message_1, file_name_1, dto_request_item_contact_1, authentication_service_1, type_status_level_1, store_1, fromRoot, fileItemAction, historyAction, file_item_param_names_1, file_item_service_1, instruction_submission_service_1, type_extractor_sample_list_1, view_id_generator_service_1, type_control_1, ExtractorRoot;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -93,7 +93,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             }
         ],
         execute: function () {
-            ExtractorRoot = (function () {
+            ExtractorRoot = /** @class */ (function () {
                 function ExtractorRoot(_dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, fileItemService, instructionSubmissionService, changeDetectorRef, viewIdGeneratorService) {
                     var _this = this;
                     this._dtoRequestServiceContact = _dtoRequestServiceContact;
@@ -215,7 +215,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.handleTabPanelChange = function (event) {
                     var tabIndex = event.index;
-                    if (tabIndex === 0) {
+                    if (tabIndex === 0) { // By Dataset
                         this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET;
                     }
                     else if (tabIndex == 1) {

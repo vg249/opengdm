@@ -1,17 +1,20 @@
 System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./type-extractor-item", "./gobii-file-item-compound-id", "./gobii-file-item-entity-relation"], function (exports_1, context_1) {
     "use strict";
     var __extends = (this && this.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     })();
-    var __moduleName = context_1 && context_1.id;
     var type_process_1, guid_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, type_extractor_item_1, gobii_file_item_compound_id_1, gobii_file_item_entity_relation_1, GobiiFileItem;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (type_process_1_1) {
@@ -40,7 +43,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
             }
         ],
         execute: function () {
-            GobiiFileItem = (function (_super) {
+            GobiiFileItem = /** @class */ (function (_super) {
                 __extends(GobiiFileItem, _super);
                 function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _itemId, _itemName, _selected, _required, _parentItemId, _entity, _entityRelations, _hasEntity, _pageNumber, _isEphemeral) {
                     if (_entity === void 0) { _entity = null; }

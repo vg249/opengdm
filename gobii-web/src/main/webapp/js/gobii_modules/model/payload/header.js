@@ -1,7 +1,7 @@
 System.register(["../dto-header-auth", "./status", "./pagination"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var dto_header_auth_1, status_1, pagination_1, Header;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (dto_header_auth_1_1) {
@@ -15,7 +15,7 @@ System.register(["../dto-header-auth", "./status", "./pagination"], function (ex
             }
         ],
         execute: function () {
-            Header = (function () {
+            Header = /** @class */ (function () {
                 function Header(cropType, dtoHeaderAuth, status, gobiiVersion, pagination) {
                     this.cropType = cropType;
                     this.dtoHeaderAuth = dtoHeaderAuth;

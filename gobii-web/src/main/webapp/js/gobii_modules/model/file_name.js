@@ -1,7 +1,7 @@
 System.register(["./type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var type_extractor_filter_1, FileName;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (type_extractor_filter_1_1) {
@@ -9,7 +9,7 @@ System.register(["./type-extractor-filter"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            FileName = (function () {
+            FileName = /** @class */ (function () {
                 function FileName() {
                 }
                 FileName.makeUniqueFileId = function () {

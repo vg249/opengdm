@@ -20,7 +20,7 @@
   "jobPayloadType":"CV_PAYLOADTYPE_MATRIX",
   "platform":{"id":10, "name":"SSR_STS_CAPS"},
   "gobiiCropType":"dev",
-  "datasetType":"SSR_ALLELE_SIZE"},
+  "datasetType":{"id":null, "name":"SSR_ALLELE_SIZE"}},
  "instructions":
  [{"table":"dataset_marker",
    "gobiiFileColumns":

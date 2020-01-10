@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var DataSet;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            DataSet = (function () {
+            DataSet = /** @class */ (function () {
                 function DataSet(id, piContactId, projectId, experimentId, datasetName, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, datatypeId, analysesIds, createdDate, jobStatusId, jobStatusName, jobTypeId, jobTypeName, jobSubmittedDate, experimentName, projectName, protocolId, protocolName, platformId, platformName, callingAnalysisName, piEmail, piFirstName, piLastName, datatypeName, totalSamples, totalMarkers, loadedDate, loaderLastName, loaderFirstName) {
                     this.id = id;
                     this.piContactId = piContactId;

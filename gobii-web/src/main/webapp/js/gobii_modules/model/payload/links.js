@@ -1,7 +1,7 @@
 System.register(["./link"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var link_1, Links;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (link_1_1) {
@@ -9,7 +9,7 @@ System.register(["./link"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            Links = (function () {
+            Links = /** @class */ (function () {
                 function Links(exploreLinksPerDataItem, linksPerDataItem) {
                     this.exploreLinksPerDataItem = exploreLinksPerDataItem;
                     this.linksPerDataItem = linksPerDataItem;

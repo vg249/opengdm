@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, type_status_level_1, action_payload_filter_1, FileItemService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -91,7 +91,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             }
         ],
         execute: function () {
-            FileItemService = (function () {
+            FileItemService = /** @class */ (function () {
                 function FileItemService(nameIdService, entityStatsService, fileItemRequestService, store, filterParamsColl) {
                     // For non-hierarchically filtered request params, we just create them simply
                     // as we add them to the flat map
@@ -465,6 +465,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                                     .setItemId(nameIdItem.id)
                                                     .setItemName(nameIdItem.name)
+                                                    //.setSelected(false)
                                                     .setRequired(false)
                                                     .setParentItemId(filterValue)
                                                     .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
@@ -516,15 +517,18 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 //.selectedFileItemId = "0";
                                             }
                                         }
-                                        var noneFileItem = gobii_file_item_1.GobiiFileItem
-                                            .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
-                                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                                            .setEntityType(filterParamsToLoad.getEntityType())
-                                            .setItemId(_this.NONE_ITEM_ITEM_ID)
-                                            .setItemName("<none>")
-                                            .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                            .setParentItemId(filterValue);
-                                        fileItems.push(noneFileItem);
+                                        //With reference to GSD-70, Not loading None type just for marker groups.
+                                        if (filterParamsToLoad.getQueryName() !== file_item_param_names_1.FilterParamNames.MARKER_GROUPS) {
+                                            var noneFileItem = gobii_file_item_1.GobiiFileItem
+                                                .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
+                                                .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                                                .setEntityType(filterParamsToLoad.getEntityType())
+                                                .setItemId(_this.NONE_ITEM_ITEM_ID)
+                                                .setItemName("<none>")
+                                                .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
+                                                .setParentItemId(filterValue);
+                                            fileItems.push(noneFileItem);
+                                        }
                                         var parentId = fileItems[0].getItemId();
                                         //filterParamsToLoad.setTargetEntityFilterValue(parentId && +parentId > 0 ? parentId : null);
                                         var targetEntityFilterValue = parentId && +parentId > 0 ? parentId : null;
@@ -553,7 +557,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         } // if we are recursing
                                     }, // Observer=>next
                                     function (// Observer=>next
-                                        responseHeader) {
+                                    responseHeader) {
                                         _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                                     }); // subscribe
                                 }
@@ -623,6 +627,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         if (recurse) {
                             if (filterParamsToLoad
                                 .getChildFileItemParams()
+                                //.filter(rqp => rqp.getFilterType() === FilterType.NAMES_BY_TYPEID)
                                 .length > 0) {
                                 // we need to set the current filter in state, but with respect to
                                 // gobiiFileItems, it should be a null op
