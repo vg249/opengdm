@@ -1411,6 +1411,75 @@ public class BRAPIIControllerV2 {
 
 
 
+    @ApiOperation(
+            value = "Creates a searchResultDbId for Genotype Calls search",
+            notes = "Creates ",
+            tags = {"GenotypeCalls"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Search")
+                    })
+            },
+            hidden = true
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/*", method = RequestMethod.POST)
+    public ResponseEntity searchGenotypeCalls(
+            HttpEntity<String> searchQuery,
+            HttpServletRequest request
+    ) {
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            String processingId = UUID.randomUUID().toString();
+
+            if (searchQuery.hasBody()) {
+
+                String extractQueryPath = LineUtils.terminateDirectoryPath(
+                        configSettingsService.getConfigSettings().getServerConfigs().get(
+                                cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
+                ) + processingId + LineUtils.PATH_TERMINATOR + "extractQuery.json";
+
+                File extractQueryFile = new File(extractQueryPath);
+
+                extractQueryFile.getParentFile().mkdirs();
+
+                BufferedWriter bw = new BufferedWriter(new FileWriter(extractQueryFile));
+
+                bw.write(searchQuery.getBody());
+
+                bw.close();
+
+                SearchResultDTO searchResultDTO = new SearchResultDTO();
+
+                searchResultDTO.setSearchResultDbId(processingId);
+
+                return ResponseEntity.ok(processingId);
+            }
+            else {
+                throw new GobiiException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Missing Request body"
+                );
+            }
+
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage()
+            );
+
+        }
+    }
+
 
 
     @ApiOperation(
@@ -1435,31 +1504,7 @@ public class BRAPIIControllerV2 {
             HttpEntity<String> extractQuery,
             HttpServletRequest request) throws Exception {
 
-        String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-
-        String processingId = UUID.randomUUID().toString();
-
-        if(extractQuery.hasBody()) {
-
-            String extractQueryPath = LineUtils.terminateDirectoryPath(
-                    configSettingsService.getConfigSettings().getServerConfigs().get(
-                            cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
-            ) + processingId + LineUtils.PATH_TERMINATOR + "extractQuery.json";
-
-            File extractQueryFile = new File(extractQueryPath);
-
-            extractQueryFile.getParentFile().mkdirs();
-
-            BufferedWriter bw = new BufferedWriter(new FileWriter(extractQueryFile));
-
-            bw.write(extractQuery.getBody());
-
-            bw.close();
-        }
-
-        searchExtract.asyncMethod();
-
-        return ResponseEntity.ok(processingId);
+        return ResponseEntity.ok("");
     }
 
     @ApiOperation(
@@ -1533,7 +1578,9 @@ public class BRAPIIControllerV2 {
 
 
             BrApiResult result = new BrApiResult();
+
             result.setData(genotypeCallsList);
+
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
             if (genotypeCallsList.size() > 0) {
