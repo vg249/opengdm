@@ -100,6 +100,15 @@ public class NucleotideSeparatorSplitterTest {
     }
 
     @Test
+    public void testUnusualSeparatorsCase(){
+        List<String> input = Arrays.asList("A/A/A/A","A/C|G|T","C/C/G/T","G/T/T/T","A/C/G/T");
+        //List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        expectedError("Unexpected character in separator slot in A/C|G|T: | Expected:/  in row 0");
+    }
+
+    @Test
     public void testUnknownElementCase(){
         List<String> input = Arrays.asList("A/A/A/A","A/C/G/T","?","G/T/T/T","A/C/G/T");
         List<String> expectedOutput = Arrays.asList("AAAA","ACGT","NNNN","GTTT","ACGT");
@@ -123,20 +132,30 @@ public class NucleotideSeparatorSplitterTest {
     @Test
     public void testUnknownInAlleleCase(){
         List<String> input = Arrays.asList("A/A/A/A","A/?/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
-        //List<String> expectedOutput = Arrays.asList("AAAA","NNNN","CCGT","GTTT","ACGT");
+        List<String> expectedOutput = Arrays.asList("AAAA","A?GT","CCGT","GTTT","ACGT");
 
         List<String> output = runSplitter(input);
-        expectedError("Unexpected allele ? in A?GT  in row 0");
+        //expectedError("Unexpected allele ? in A?GT  in row 0");
+        //This case now caught downstream
+
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+
     }
 
     @Test
     public void testUnknownInAlleleStartCase(){
         List<String> input = Arrays.asList("?/A/A/A","A/C/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
-        //List<String> expectedOutput = Arrays.asList("NNNN","ACGT","CCGT","GTTT","ACGT");
+        List<String> expectedOutput = Arrays.asList("?AAA","ACGT","CCGT","GTTT","ACGT");
 
         List<String> output = runSplitter(input);
 
-        expectedError("Unexpected allele ? in ?AAA  in row 0");
+        //expectedError("Unexpected allele ? in ?AAA  in row 0");
+        //This case now caught downstream
+
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+
     }
 
     @Test

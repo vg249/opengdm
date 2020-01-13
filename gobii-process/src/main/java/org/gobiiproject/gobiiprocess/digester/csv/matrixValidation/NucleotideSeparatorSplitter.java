@@ -38,14 +38,14 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
             } else {
                 String result=unknownSegment;
                 String error = null;
-                if(missingSegmentsFromFile.contains(element)){
+                if(missingSegmentsFromFile.contains(element.toLowerCase())){
                     //noinspection ConstantConditions - This is for readability
                     result = unknownSegment;
                 }else{
                     error = validateInputElement(element);
                     if(error==null) {
                         result = processInputElement(element);
-                        error = validateOutputElement(element);
+                        error = validateOutputElement(result);
                     }
                 }
                 outrow.add(result);
