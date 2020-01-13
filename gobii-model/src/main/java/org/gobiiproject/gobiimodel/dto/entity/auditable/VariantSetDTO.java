@@ -54,6 +54,8 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private Set<AnalysisBrapiDTO> analyses = new HashSet<>();
 
+    private boolean extractReady;
+
     @GobiiEntityMap(paramName="dnaRunCount", entity = Dataset.class)
     private Integer callSetCount = 0;
 
@@ -171,5 +173,13 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     public void setVariantSetType(String variantSetType) {
         this.variantSetType = variantSetType;
+    }
+
+    public boolean isExtractReady() {
+        return extractReady;
+    }
+
+    public void setExtractReady(boolean extractReady) {
+        this.extractReady = extractReady;
     }
 }

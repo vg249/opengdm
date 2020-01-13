@@ -2,11 +2,14 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.VariantSetsService;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
@@ -57,7 +60,19 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                 mapDatasetEntityToVariantSetDto(dataset, variantSetDTO, analysisBrapiDTOMap);
 
+                if(dataset.getJob() == null) {
+                    variantSetDTO.setExtractReady(false);
+                }
+                else {
+                    variantSetDTO.setExtractReady(
+                            (dataset.getJob().getType().getTerm() == JobType.CV_JOBTYPE_LOAD.getCvName() &&
+                                    dataset.getJob().getStatus().getTerm() == GobiiJobStatus.COMPLETED.getCvTerm()) ||
+                                    (dataset.getJob().getType().getTerm() != JobType.CV_JOBTYPE_LOAD.getCvName()));
+
+                }
+
                 returnVal.add(variantSetDTO);
+
             }
 
        }
