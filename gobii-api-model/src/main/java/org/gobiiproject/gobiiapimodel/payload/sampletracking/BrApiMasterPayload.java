@@ -12,7 +12,6 @@ public class BrApiMasterPayload<T> {
     public BrApiMasterPayload() {
     }
 
-
     public BrApiMasterPayload(T result) {
         this.result = result;
     }

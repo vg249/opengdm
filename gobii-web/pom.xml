@@ -18,7 +18,7 @@
     <properties>
 
         <!-- Generic properties -->
-        <java.version>1.8</java.version>
+        <java.version>1.13</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -194,6 +194,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.2.8.Final</version>
         </dependency>
 
         <!-- Test Artifacts -->
@@ -274,7 +275,6 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-
         <!-- UPLOADS -->
         <!-- Apache Commons FileUpload -->
         <dependency>
@@ -315,6 +315,29 @@
             <artifactId>tika-core</artifactId>
             <version>1.22</version>
         </dependency>
+
+        <!-- To resolve jaxb exception with java 13 upgrade -->
+        <!-- https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j -->
+        <!-- API, java.xml.bind module -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <!-- Runtime, com.sun.xml.bind module -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>5.3.6.Final</version>
+        </dependency>
+
 
 
     </dependencies>
@@ -643,17 +666,17 @@
                             <springmvc>true</springmvc>
                             <locations>
                                 <location>
-                                    org.gobiiproject.gobiiweb.controllers.BRAPIIControllerV1
+                                    org.gobiiproject.gobiiweb.controllers.BRAPIIControllerV2
                                 </location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
-                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <host>api.gobii.org:8081</host>
                             <basePath>/gobii-dev</basePath>
-                            <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
+                            <descriptionFile>${doc-location-source}/brapi/Overview.md</descriptionFile>
                             <info>
                                 <title>GDM BrAPI Web Services</title>
-                                <version>1.0</version>
+                                <version>2.0</version>
                                 <license>
                                     <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
                                     <name>Apache 2.0</name>
@@ -674,6 +697,15 @@
                         </apiSource>
                     </apiSources>
                 </configuration>
+
+                <dependencies>
+                    <dependency>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                    <version>2.3.1</version>
+                </dependency>
+                </dependencies>
+
                 <executions>
                     <execution>
                         <phase>package</phase>

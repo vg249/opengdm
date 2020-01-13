@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Date;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
@@ -27,18 +26,18 @@ public abstract class DTOBaseAuditable extends DTOBase {
         this.entityNameType = entityNameType;
     }
 
-    @GobiiEntityMap(paramName="createdBy", entity= Project.class)
+    @GobiiEntityMap(paramName="createdBy", base=true)
     private Integer createdBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
-    @GobiiEntityMap(paramName="createdDate", entity= Project.class)
+    @GobiiEntityMap(paramName="createdDate", base=true)
     private Date createdDate = null;
 
-    @GobiiEntityMap(paramName="modifiedBy", entity= Project.class)
+    @GobiiEntityMap(paramName="modifiedBy", base=true)
     private Integer modifiedBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
-    @GobiiEntityMap(paramName="modifiedDate", entity= Project.class)
+    @GobiiEntityMap(paramName="modifiedDate", base=true)
     private Date modifiedDate = null;
 
     public GobiiEntityNameType getEntityNameType() {

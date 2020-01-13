@@ -31,7 +31,7 @@ public class ExperimentDaoTest {
 
         newExperiment.setExperimentCode("test");
 
-        newExperiment.setExperimentStatus(57);
+        newExperiment.getStatus().setCvId(57);
 
         Integer newExperimentId = experimentDao.createExperiment(newExperiment);
 

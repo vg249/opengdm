@@ -142,4 +142,17 @@ public class DnaSample extends BaseEntity {
     public void setDnaSampleUuid(String dnaSampleUuid) {
         this.dnaSampleUuid = dnaSampleUuid;
     }
+
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
+
 }

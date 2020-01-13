@@ -9,7 +9,7 @@ import java.util.List;
  * Created by VCalaminos on 7/22/2019.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BrApiResult<T>{
+public class BrApiResult<T> {
 
     private List<T> data = new ArrayList<T>();
 

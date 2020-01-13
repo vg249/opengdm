@@ -12,6 +12,7 @@ public enum GobiiControllerType {
     // annotation in the Controllers themselves.
     public static final String SERVICE_PATH_GOBII = "/gobii/v1/";
     public static final String SERVICE_PATH_BRAPI = "/brapi/v1/";
+    public static final String SERVICE_PATH_BRAPI_V2 = "/brapi/v2/";
     public static final String SERVICE_PATH_SAMPLE_TRACKING = "/sample-tracking/v1/";
 
     private String controllerPath;

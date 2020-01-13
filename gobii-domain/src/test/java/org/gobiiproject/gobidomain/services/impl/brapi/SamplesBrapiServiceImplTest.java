@@ -234,7 +234,7 @@ public class SamplesBrapiServiceImplTest {
 
                 for(String cvId : samplesPropertiesMap.keySet()) {
 
-                    String cvTerm = cvsMock.get(Integer.parseInt(cvId)).term;
+                    String cvTerm = cvsMock.get(Integer.parseInt(cvId)).getTerm();
 
                     assertEquals(
                             "additionalInfo mapping failed",

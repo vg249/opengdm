@@ -2,16 +2,14 @@ package org.gobiiproject.gobiiweb.spring;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.DataSourceSelector;
 import org.gobiiproject.gobiiweb.Hdf5ProcessPathSelector;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,10 +62,6 @@ public class ConfigSupplement {
             currentDataSource.setPassword(currentPostGresConfig.getPassword());
 
             targetDataSources.put(currentGobiiCropConfig.getGobiiCropType(),currentDataSource);
-
-            //Sets HDF5 Settings.
-            //HDF5Interface.setPathToHDF5Files(
-            //        currentGobiiCropConfig.getGobiiCropType(), "");
 
 
         } // iterate crop configs

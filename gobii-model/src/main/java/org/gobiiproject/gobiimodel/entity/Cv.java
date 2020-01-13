@@ -11,32 +11,32 @@ public class Cv {
 
     @Id
     @Column(name = "cv_id")
-    public Integer cvId;
+    private Integer cvId;
 
     @Column(name="term")
-    public String term;
+    private String term;
 
     @Column(name="definition")
-    public String definition;
+    private String definition;
 
     @Column(name = "rank")
-    public Integer rank;
+    private Integer rank;
 
     @Column(name = "cvgroup_id")
-    public Integer cvGroupId;
+    private Integer cvGroupId;
 
     @Column(name = "abbreviation")
-    public String abbreviation;
+    private String abbreviation;
 
     @Column(name = "dbxref_id")
-    public Integer dbxrefId;
+    private Integer dbxrefId;
 
     @Column(name = "status")
-    public String status;
+    private String status;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
-    public JsonNode props;
+    private JsonNode props;
 
     public Integer getCvId() {
         return cvId;

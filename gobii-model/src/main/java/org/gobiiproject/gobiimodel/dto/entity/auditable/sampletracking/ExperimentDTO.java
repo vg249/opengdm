@@ -48,6 +48,7 @@ public class ExperimentDTO extends DTOBaseAuditable {
     private Integer manifestId;
 
     //Mapped by cvStatus
+    @GobiiEntityMap(paramName="status.term", entity = Project.class, deep=true)
     private String experimentStatus;
 
     private String dataFileUrl;

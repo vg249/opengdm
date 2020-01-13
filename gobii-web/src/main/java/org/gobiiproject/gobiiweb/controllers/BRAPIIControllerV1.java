@@ -9,10 +9,6 @@ import antlr.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
-import org.gobiiproject.gobidomain.async.SearchExtract;
-import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -53,19 +49,11 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
-import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -77,12 +65,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
-import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**
@@ -158,6 +142,8 @@ public class BRAPIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
 
+    private final Integer brapiDefaultPageSize = 1000;
+
     @Autowired
     private PingService pingService = null;
 
@@ -176,41 +162,7 @@ public class BRAPIIControllerV1 {
     @Autowired
     private BrapiResponseMapAlleleMatrices brapiResponseMapAlleleMatrices = null;
 
-    @Autowired
-    private DnaRunService dnaRunService = null;
-
-    @Autowired
-    private MarkerBrapiService markerBrapiService = null;
-
-    @Autowired
-    private GenotypeCallsService genotypeCallsService = null;
-
-    @Autowired
-    private DatasetBrapiService dataSetBrapiService = null;
-
-    @Autowired
-    private SearchExtract searchExtract = null;
-
-    @Autowired
-    private ConfigSettingsService configSettingsService;
-
-    @Autowired
-    private MapsetBrapiService mapsetBrapiService;
-
-    @Autowired
-    private SamplesBrapiService samplesBrapiService;
-
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-
-    private class CallSetResponse extends BrApiMasterPayload<DnaRunDTO>{}
-    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<DnaRunDTO>>{}
-    private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
-    private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
-    private class VariantResponse extends BrApiMasterPayload<MarkerBrapiDTO>{}
-    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<MarkerBrapiDTO>>{}
-    private class VariantSetResponse extends  BrApiMasterPayload<DataSetBrapiDTO>{}
-    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<DataSetBrapiDTO>>{}
 
 
     /**
@@ -220,7 +172,7 @@ public class BRAPIIControllerV1 {
      * @return Json object with list of brapi calls in GDM
      * @throws Exception
      */
-    @RequestMapping(value = "/serverinfo",
+    @RequestMapping(value = "/calls",
             method = RequestMethod.GET,
             produces = "application/json")
     @ApiOperation(
@@ -1034,6 +986,7 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+<<<<<<< HEAD
     /**
      * Lists the dnaruns by page size and page token
      *
@@ -2548,3 +2501,6 @@ public class BRAPIIControllerV1 {
     }
 
 }// BRAPIController
+=======
+}
+>>>>>>> feature/GDM-596

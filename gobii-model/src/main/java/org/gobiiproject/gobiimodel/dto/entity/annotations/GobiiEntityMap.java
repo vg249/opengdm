@@ -6,9 +6,7 @@ import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import java.lang.annotation.*;
 
 /**
- * Annotation to Map DTO Object to Database Entity or CV term.
- * If Entity Class is given, CvGroup and Cv type will be ignored.
- * Cv type default to system type.
+ * Annotation to Map DTO Object to Database Entity.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -19,5 +17,7 @@ public @interface GobiiEntityMap {
     Class entity() default void.class;
 
     boolean deep() default false;
+
+    boolean base() default false;
 
 }

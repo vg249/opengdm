@@ -90,15 +90,16 @@ public class Experiment extends BaseEntity{
     @Column(name="vendor_protocol_id")
     private Integer vendorProtocolId;
 
-    public Integer getExperimentStatus() {
-        return experimentStatus;
+    public Cv getStatus() {
+        return status;
     }
 
-    public void setExperimentStatus(Integer experimentStatus) {
-        this.experimentStatus = experimentStatus;
+    public void setStatus(Cv status) {
+        this.status = status;
     }
 
-    @Column(name = "status")
-    private Integer experimentStatus;
+    @ManyToOne
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
 }

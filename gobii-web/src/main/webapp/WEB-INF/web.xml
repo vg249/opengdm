@@ -3,10 +3,11 @@
          xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:security="http://www.springframework.org/schema/security"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-         http://java.sun.com/xml/ns/javaee/web-app_3.0.xsd
+         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd
          http://www.springframework.org/schema/security
 	     http:/www.springframework.org/schema/security/spring-security-4.2.xsd"
          id="WebApp_ID" version="3.0">
+
     <display-name>gobii-web</display-name>
 
     <context-param>
@@ -98,5 +99,8 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
+    <error-page>
+        <location>/error</location>
+    </error-page>
 
 </web-app>

@@ -71,7 +71,7 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
             //one cv for term "new" under group "status"
             if(statusCvList.size() > 0) {
                 Cv statusCv = statusCvList.get(0);
-                newExperiment.setExperimentStatus(statusCv.getCvId());
+                newExperiment.getStatus().setCvId(statusCv.getCvId());
             }
 
             Integer newExperimentId = experimentDao.createExperiment(newExperiment);
@@ -131,12 +131,7 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
 
             ModelMapper.mapEntityToDto(experiment, returnVal);
 
-            //Set Experiment Status by cvId
-            Cv statusCv = cvDao.getCvByCvId(experiment.getExperimentStatus());
 
-            if(statusCv != null) {
-                returnVal.setExperimentStatus(statusCv.getTerm());
-            }
 
             return returnVal;
         }

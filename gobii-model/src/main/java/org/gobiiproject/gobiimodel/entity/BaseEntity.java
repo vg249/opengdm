@@ -19,6 +19,8 @@ public class BaseEntity {
     @Column(name="modified_date")
     private Date modifiedDate;
 
+
+
     public Integer getCreatedBy() {
         return createdBy;
     }

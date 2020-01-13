@@ -47,7 +47,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
                     .addParamDef(8, Date.class, newExperiment.getCreatedDate())
                     .addParamDef(9, Integer.class, newExperiment.getModifiedBy())
                     .addParamDef(10, Date.class, newExperiment.getModifiedDate())
-                    .addParamDef(11, Integer.class, newExperiment.getExperimentStatus());
+                    .addParamDef(11, Integer.class, newExperiment.getStatus().getCvId());
 
             spWorker.run(spDef);
 
