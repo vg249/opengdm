@@ -30,8 +30,7 @@ public class UtcDateSerializer extends StdSerializer<Date> {
 
     @Override
     public void serialize(Date dateValue, JsonGenerator generator,
-                          SerializerProvider provider)
-    throws IOException, JsonProcessingException {
+                          SerializerProvider provider) throws IOException, JsonProcessingException {
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         generator.writeString(formatter.format(dateValue));
     }

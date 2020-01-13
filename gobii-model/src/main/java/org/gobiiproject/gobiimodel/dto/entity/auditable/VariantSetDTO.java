@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
 import java.util.*;
 
@@ -40,6 +41,9 @@ public class VariantSetDTO extends DTOBaseAuditable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceSetDbId;
 
+    @GobiiEntityMap(paramName="type.term", entity = Dataset.class, deep=true)
+    private String variantSetType;
+
     private String fileUrl;
 
     private String fileFormat = "text/tab-seperated-values";
@@ -63,10 +67,12 @@ public class VariantSetDTO extends DTOBaseAuditable {
     public void setId(Integer i) {
     }
 
+    @JsonSerialize(using=UtcDateSerializer.class)
     public Date getUpdated() {
         return this.getModifiedDate();
     }
 
+    @JsonSerialize(using= UtcDateSerializer.class)
     public Date getCreated() {
         return this.getCreatedDate();
     }
@@ -157,5 +163,13 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     public void setVariantCount(Integer variantCount) {
         this.variantCount = variantCount;
+    }
+
+    public String getVariantSetType() {
+        return variantSetType;
+    }
+
+    public void setVariantSetType(String variantSetType) {
+        this.variantSetType = variantSetType;
     }
 }

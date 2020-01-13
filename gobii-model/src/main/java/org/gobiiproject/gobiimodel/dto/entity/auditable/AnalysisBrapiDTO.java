@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -74,6 +75,7 @@ public class AnalysisBrapiDTO extends DTOBaseAuditable {
 
     public void setSoftware(String software) { this.software = software; }
 
+    @JsonSerialize(using= UtcDateSerializer.class)
     public Date getCreated() {
         return this.getCreatedDate();
     }
