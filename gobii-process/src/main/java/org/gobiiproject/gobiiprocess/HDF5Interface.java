@@ -56,6 +56,7 @@ public class HDF5Interface {
         String HDF5File= getFileLoc(dataSetId);
         int size=8;
         switch(dst.toUpperCase()){
+            case "NUCLEOTIDE_4_LETTER": size = 4; break;
             case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
                 size=2;break;
             case "SSR_ALLELE_SIZE":size=8;break;
