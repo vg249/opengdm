@@ -142,12 +142,9 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Override
     public Integer createProject(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal = null;
-
         try {
 
-            spRunnerCallable.run(new SpInsProject(), parameters);
-            returnVal = spRunnerCallable.getResult();
+            return spRunnerCallable.run(new SpInsProject(), parameters);
 
         } catch (SQLGrammarException e) {
 
@@ -155,8 +152,6 @@ public class RsProjectDaoImpl implements RsProjectDao {
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
-
-        return returnVal;
 
     } // createProject
 
@@ -181,11 +176,8 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Override
     public Integer createUpdateProjectProperty(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal;
-
         try {
-            spRunnerCallable.run(new SpInsProjectProperties(), parameters);
-            returnVal = spRunnerCallable.getResult();
+            return spRunnerCallable.run(new SpInsProjectProperties(), parameters);
 
         } catch (SQLGrammarException e) {
 
@@ -193,8 +185,6 @@ public class RsProjectDaoImpl implements RsProjectDao {
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
-
-        return returnVal;
 
     } // createUpdateMapSetProperty
 
