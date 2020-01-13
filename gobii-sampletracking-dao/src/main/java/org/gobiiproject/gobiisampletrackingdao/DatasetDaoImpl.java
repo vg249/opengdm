@@ -134,11 +134,11 @@ public class DatasetDaoImpl implements DatasetDao {
                 "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
                 "LIMIT :pageSize OFFSET :pageOffset) " +
                 "SELECT ds.* , anas.*, " +
-                "(SELECT COUNT(marker_id) " +
-                "FROM marker WHERE dataset_marker_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+                "(SELECT gettotalmarkersindataset " +
+                "FROM gettotalmarkersindataset(CAST(ds.dataset_id AS TEXT))) " +
                 "AS marker_count, " +
-                "(SELECT COUNT(dnarun_id) " +
-                "FROM dnarun WHERE dataset_dnarun_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+                "(SELECT gettotaldnarunsindataset " +
+                "FROM gettotaldnarunsindataset(CAST(ds.dataset_id AS TEXT))) " +
                 "AS dnarun_count " +
                 "FROM ds " +
                 "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";

@@ -59,22 +59,22 @@ public class DatasetDaoTest {
     }
 
 
-    @Test
-    public void testListDatasetsByCursor() {
+    //@Test
+    //public void testListDatasetsByCursor() {
 
-        List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
+    //    List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
 
-        assertTrue(datasets.size() == 10);
+    //    assertTrue(datasets.size() == 10);
 
-        Integer pageCursor = datasets.get(9).getDatasetId();
+    //    Integer pageCursor = datasets.get(9).getDatasetId();
 
-        List<Dataset> datasetsByPageCursor = datasetDao.listDatasetsByPageCursor(pageCursor.toString(), 5);
+    //    List<Dataset> datasetsByPageCursor = datasetDao.listDatasetsByPageCursor(pageCursor.toString(), 5);
 
-        assertTrue(datasetsByPageCursor.get(0).getDatasetId() > pageCursor);
+    //    assertTrue(datasetsByPageCursor.get(0).getDatasetId() > pageCursor);
 
-        assertTrue(datasetsByPageCursor.size() == 5);
+    //    assertTrue(datasetsByPageCursor.size() == 5);
 
-    }
+    //}
 
     @Test
     public void testGetDatasetById() {

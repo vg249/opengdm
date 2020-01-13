@@ -1432,8 +1432,7 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value = {
             "/search/calls",
             "/search/variantsets/",
-            "/search"
-    },
+            "/search/callsets"},
             method = RequestMethod.POST,
             consumes = "application/json",
             produces = "application/json")
@@ -1478,6 +1477,13 @@ public class BRAPIIControllerV2 {
         }
     }
 
+    @RequestMapping(value = "/search/calls/{searchResultDbId}")
+    public ResponseEntity getSearchCalls(
+            @ApiParam()
+            @PathVariable String searchResultDbId,
+            HttpServletRequest request) {
+        return ResponseEntity.ok("");
+    }
 
 
     @ApiOperation(
