@@ -48,6 +48,7 @@ import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -59,6 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,7 +89,7 @@ public class BRAPIIControllerV2 {
     private GenotypeCallsService genotypeCallsService = null;
 
     @Autowired
-    private SearchExtract searchExtract = null;
+    private SearchService searchService = null;
 
     @Autowired
     private ConfigSettingsService configSettingsService;
@@ -1427,7 +1429,14 @@ public class BRAPIIControllerV2 {
                     name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
-    @RequestMapping(value = "/search/*", method = RequestMethod.POST)
+    @RequestMapping(value = {
+            "/search/calls",
+            "/search/variantsets/",
+            "/search"
+    },
+            method = RequestMethod.POST,
+            consumes = "application/json",
+            produces = "application/json")
     public ResponseEntity searchGenotypeCalls(
             HttpEntity<String> searchQuery,
             HttpServletRequest request
@@ -1436,30 +1445,16 @@ public class BRAPIIControllerV2 {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            String processingId = UUID.randomUUID().toString();
 
             if (searchQuery.hasBody()) {
 
-                String extractQueryPath = LineUtils.terminateDirectoryPath(
-                        configSettingsService.getConfigSettings().getServerConfigs().get(
-                                cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
-                ) + processingId + LineUtils.PATH_TERMINATOR + "extractQuery.json";
+                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(cropType,
+                        searchQuery.getBody());
 
-                File extractQueryFile = new File(extractQueryPath);
+                BrApiMasterPayload<SearchResultDTO> payload = new BrApiMasterPayload<>(searchResultDTO);
 
-                extractQueryFile.getParentFile().mkdirs();
+                return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
 
-                BufferedWriter bw = new BufferedWriter(new FileWriter(extractQueryFile));
-
-                bw.write(searchQuery.getBody());
-
-                bw.close();
-
-                SearchResultDTO searchResultDTO = new SearchResultDTO();
-
-                searchResultDTO.setSearchResultDbId(processingId);
-
-                return ResponseEntity.ok(processingId);
             }
             else {
                 throw new GobiiException(
@@ -1470,11 +1465,14 @@ public class BRAPIIControllerV2 {
             }
 
         }
+        catch (GobiiException ge) {
+            throw ge;
+        }
         catch (Exception e) {
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage()
+                    GobiiValidationStatusType.NONE,
+                    "Internal Server Error " + e.getMessage()
             );
 
         }

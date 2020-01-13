@@ -1276,6 +1276,6 @@
         <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>
 
-    <bean id="searchExtract" class="org.gobiiproject.gobidomain.async.SearchExtract"/>
+    <bean id="searchService" class="org.gobiiproject.gobidomain.services.impl.brapi.SearchServiceImpl"/>
 
 </beans>
