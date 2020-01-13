@@ -192,8 +192,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;
             }
             else{
-                //Add columns
-                CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateCols(matrixSize,Integer::sum);
+                //Add rows
+                CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,Integer::sum);
             }
         }
     }
