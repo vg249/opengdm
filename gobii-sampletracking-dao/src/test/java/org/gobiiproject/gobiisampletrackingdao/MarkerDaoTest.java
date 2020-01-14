@@ -15,7 +15,7 @@ import static junit.framework.TestCase.assertTrue;
  * Tests are constructed with only test cases required for development tests.
  * Tests will be made complete once other required DAO objects are added.
  *
- * TODO: The dataset test are written with knowledge on undelying data in
+ * TODO: The dataset test are written with knowledge of undelying data in
  *   api.gobii.org. Need to refactor in future with Test databases and setup data
  */
 @RunWith(SpringJUnit4ClassRunner.class)

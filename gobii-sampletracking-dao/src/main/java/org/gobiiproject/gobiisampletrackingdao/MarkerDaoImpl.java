@@ -30,6 +30,11 @@ public class MarkerDaoImpl implements MarkerDao {
 
         List<Marker> markers = new ArrayList<>();
 
+        String queryString = "SELECT marker.* " +
+                " FROM marker AS marker " +
+                " WHERE (:datasetId IS NULL OR marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
+                " AND (:markerId IS NULL OR marker.marker_id = :markerId) " +
+                " LIMIT :pageSize OFFSET :rowOffset ";
 
         try {
 
@@ -43,11 +48,6 @@ public class MarkerDaoImpl implements MarkerDao {
                 rowOffset = 0;
             }
 
-            String queryString = "SELECT marker.* " +
-                    " FROM marker AS marker " +
-                    " WHERE (:datasetId IS NULL OR marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
-                    " AND (:markerId IS NULL OR marker.marker_id = :markerId) " +
-                    " LIMIT :pageSize OFFSET :rowOffset ";
 
             markers = session.createNativeQuery(queryString)
                     .addEntity(Marker.class)
@@ -86,7 +86,7 @@ public class MarkerDaoImpl implements MarkerDao {
      * to markerStart and markerStop transient fields in the Marker Entity.
      * A given marker id may have more than one rows with different start stops.
      * Used only for BrAPI /variants Web service.
-     * Avoid using it for internal Gentoyp Extraction as markerId will not be unique in a given list.
+     * Avoid using it for Genotype Extraction or other use cases where markerId is expected to be unique.
      * @param pageSize -Page size to be fetched
      * @param rowOffset - Row offset after which the pages need to be fetched
      * @param markerId - Marker Id for which marker need to be fetched.
@@ -98,57 +98,38 @@ public class MarkerDaoImpl implements MarkerDao {
     public List<Marker> getMarkersWithStartAndStop(Integer pageSize, Integer rowOffset,
                                    Integer markerId, Integer datasetId) {
 
-        if(pageSize == null) {
-            pageSize = defaultPageSize;
-        }
-
-        if(rowOffset == null) {
-            rowOffset = 0;
-        }
-
-        List<QueryField> queryParameters = new ArrayList<>();
-        List<QueryField> entityFields = new ArrayList<>();
-        List<QueryField> scalarFileds = new ArrayList<>();
-
         List<Marker> markers = new ArrayList<>();
+
+        String queryString = "SELECT {marker.*}, markerli.start AS start, markerli.stop AS stop " +
+                " FROM marker AS marker " +
+                " LEFT JOIN marker_linkage_group AS markerli " +
+                " USING(marker_id) " +
+                " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
+                " AND (marker.marker_id = :markerId OR :markerId IS NULL) " +
+                " LIMIT :pageSize OFFSET :rowOffset ";
 
         try {
 
-            NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
+            if(pageSize == null) {
+                pageSize = defaultPageSize;
+            }
 
-            String queryString = "SELECT {marker.*}, markerli.start AS start, markerli.stop AS stop " +
-                    " FROM marker AS marker " +
-                    " LEFT JOIN marker_linkage_group AS markerli " +
-                    " USING(marker_id) " +
-                    " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
-                    " AND (marker.marker_id = :markerId OR :markerId IS NULL) " +
-                    " LIMIT :pageSize OFFSET :rowOffset ";
+            if(rowOffset == null) {
+                rowOffset = 0;
+            }
 
-            // Add query parameters
-            queryParameters.add(new QueryField("pageSize", pageSize, IntegerType.INSTANCE));
-            queryParameters.add(new QueryField("rowOffset", rowOffset, IntegerType.INSTANCE));
-            queryParameters.add(new QueryField("datasetId", datasetId, IntegerType.INSTANCE));
-            queryParameters.add(new QueryField("markerId", markerId, IntegerType.INSTANCE));
+            Session session = em.unwrap(Session.class);
 
-            // Add Entity map fields
-            entityFields.add(new QueryField("marker", Marker.class));
+            List<Object[]> resultTuples = session.createNativeQuery(queryString)
+                    .addEntity("marker", Marker.class)
+                    .addScalar("start", IntegerType.INSTANCE)
+                    .addScalar("stop", IntegerType.INSTANCE)
+                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                    .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
+                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .setParameter("markerId", markerId, IntegerType.INSTANCE)
+                    .list();
 
-            //Add scalar fields
-            scalarFileds.add(new QueryField("start", null, IntegerType.INSTANCE));
-            scalarFileds.add(new QueryField("stop", null, IntegerType.INSTANCE));
-
-
-            /**
-             * TODO: ResultTransformer function is deprecated in hibernate 5.4 without alternative.
-             * The ResultTranformer is going to be repalced by FunctionalInterface in Hibernate 6.0
-             * Maybe need to refactor the mapping tuples to the DataModel using FunctionalInterface,
-             * once Hibernate 6.0 is released
-             */
-
-            List<Object[]> resultTuples = nativerQueryRunner.run(queryString,
-                    queryParameters,
-                    entityFields,
-                    scalarFileds);
 
             for(Object[] tuple : resultTuples) {
                 Marker marker = (Marker) tuple[0];
