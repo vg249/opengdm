@@ -16,4 +16,6 @@ public interface MarkerDao {
     List<Marker> getMarkersWithStartAndStop(Integer pageSize, Integer rowOffset,
                             Integer markerId, Integer datasetId);
 
+    List<Marker> getMarkersByMarkerIds(int[] markerIds);
+
 }

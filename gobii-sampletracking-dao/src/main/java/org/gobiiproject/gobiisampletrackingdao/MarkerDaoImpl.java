@@ -154,4 +154,11 @@ public class MarkerDaoImpl implements MarkerDao {
 
     }
 
+    @Transactional
+    @Override
+    public List<Marker> getMarkersByMarkerIds(int[] markerIds) {
+        List<Marker> markers = new ArrayList<>();
+        return markers;
+    }
+
 }
