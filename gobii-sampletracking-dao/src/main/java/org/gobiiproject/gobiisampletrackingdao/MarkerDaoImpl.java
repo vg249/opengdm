@@ -4,14 +4,8 @@ import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.IntegerType;
-import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +33,8 @@ public class MarkerDaoImpl implements MarkerDao {
 
         try {
 
+            Session session = em.unwrap(Session.class);
+
             if(pageSize == null) {
                 pageSize = defaultPageSize;
             }
@@ -47,18 +43,19 @@ public class MarkerDaoImpl implements MarkerDao {
                 rowOffset = 0;
             }
 
-            String queryString = "SELECT {marker.*} " +
+            String queryString = "SELECT marker.* " +
                     " FROM marker AS marker " +
-                    " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NOT NULL) " +
-                    " AND marker.marker_id = :markerId OR :markerId IS NULL " +
+                    " WHERE (:datasetId IS NULL OR marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
+                    " AND (:markerId IS NULL OR marker.marker_id = :markerId) " +
                     " LIMIT :pageSize OFFSET :rowOffset ";
 
-            markers = em.createNativeQuery(queryString, Marker.class)
-                    .setParameter("pageSize", pageSize)
-                    .setParameter("rowOffset", rowOffset)
-                    .setParameter("markerId", markerId)
-                    .setParameter("datasetId", datasetId)
-                    .getResultList();
+            markers = session.createNativeQuery(queryString)
+                    .addEntity(Marker.class)
+                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                    .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
+                    .setParameter("markerId", markerId, IntegerType.INSTANCE)
+                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .list();
 
             return markers;
 
@@ -123,8 +120,8 @@ public class MarkerDaoImpl implements MarkerDao {
                     " FROM marker AS marker " +
                     " LEFT JOIN marker_linkage_group AS markerli " +
                     " USING(marker_id) " +
-                    " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NOT NULL) " +
-                    " AND marker.marker_id = :markerId OR :markerId IS NULL " +
+                    " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
+                    " AND (marker.marker_id = :markerId OR :markerId IS NULL) " +
                     " LIMIT :pageSize OFFSET :rowOffset ";
 
             // Add query parameters
