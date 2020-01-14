@@ -485,7 +485,7 @@
     <bean id="dtoMapAnalysisBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisBrapiImpl"/>
 
     <!-- *** Genotype Calls Beans ************************************* -->
-    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.GenotypeCallsServiceImpl"/>
+    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.brapi.GenotypeCallsServiceImpl"/>
     <bean id="dtoMapGenotypeCalls" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapGenotypeCallsImpl"/>
     <!--<bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>-->
 
@@ -1271,7 +1271,7 @@
 
     <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
 
-    <bean id="hdf5Interface" class="org.gobiiproject.gobiidao.hdf5.HDF5Interface">
+    <bean id="hdf5Interface" class="org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface">
         <constructor-arg index="0" ref="pathToHdf5Exe"/>
         <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>

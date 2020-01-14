@@ -1,27 +1,18 @@
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.GenotypeCallsService;
 import org.gobiiproject.gobidomain.services.MarkerBrapiService;
-import org.gobiiproject.gobiidao.hdf5.HDF5Interface;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GenotypeCallsServiceImpl implements GenotypeCallsService {

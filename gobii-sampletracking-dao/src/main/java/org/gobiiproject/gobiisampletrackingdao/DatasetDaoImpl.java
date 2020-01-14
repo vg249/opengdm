@@ -132,7 +132,7 @@ public class DatasetDaoImpl implements DatasetDao {
                 "SELECT * " +
                 "FROM dataset " +
                 "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
-                "LIMIT :pageSize OFFSET :pageOffset) " +
+                "LIMIT :pageSize OFFSET :rowOffset) " +
                 "SELECT ds.* , anas.*, " +
                 "(SELECT gettotalmarkersindataset " +
                 "FROM gettotalmarkersindataset(CAST(ds.dataset_id AS TEXT))) " +

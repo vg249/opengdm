@@ -23,7 +23,7 @@ public class DnaSampleDaoTest {
 
         Integer pageSize = 10;
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(0, pageSize);
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(pageSize, null);
 
         assertTrue("Empty dnasample list",dnaSamples.size() > 0);
         assertTrue("dnaSamples result list size not equal to the page size",
@@ -34,7 +34,7 @@ public class DnaSampleDaoTest {
     @Test
     public void testGetDnaSampleByDnaSampleId() {
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(0, 10);
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(10, null);
 
         assertTrue(dnaSamples.size() > 0);
 
@@ -60,7 +60,7 @@ public class DnaSampleDaoTest {
     @Test
     public void testGetDnaSamplesByGermplasmId() {
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(0, 10);
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(10, null);
 
         assertTrue(dnaSamples.size() > 0);
 
@@ -71,9 +71,9 @@ public class DnaSampleDaoTest {
             assertNotNull("germplasmId should not be null", germplasmQueryId);
 
             List<DnaSample> dnaSamplesByGermplasmId = dnaSampleDao.getDnaSamplesByGermplasmId(
-                    0,
+                    germplasmQueryId,
                     100,
-                    germplasmQueryId);
+                    null);
 
             //Assert that there is only one dnaSample for dnaSampleId
             assertTrue("atleast one dnasample should be there as per test preparation",
@@ -93,7 +93,7 @@ public class DnaSampleDaoTest {
     @Test
     public void testGetDnaSamplesByGermplasmExternalCode() {
 
-        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(0, 10);
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(100, 0);
 
         assertTrue(dnaSamples.size() > 0);
 
@@ -104,9 +104,9 @@ public class DnaSampleDaoTest {
             assertNotNull("germplasmId should not be null", queryGermplasmCode);
 
             List<DnaSample> dnaSamplesByGermplasmCode = dnaSampleDao.getDnaSamplesByGermplasmExternalCode(
-                    0,
+                    queryGermplasmCode,
                     100,
-                    queryGermplasmCode);
+                    null);
 
             //Assert that there is only one dnaSample for dnaSampleId
             assertTrue("atleast one dnasample should be there as per test preparation",

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Marker;
+import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Criteria;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
@@ -26,48 +28,39 @@ public class MarkerDaoImpl implements MarkerDao {
     protected EntityManager em;
 
     final int defaultPageSize = 1000;
-    final int defaultPageNum = 0;
-
 
     @Override
     @Transactional
-    public List<Marker> getMarkers(Integer pageNum, Integer pageSize,
+    public List<Marker> getMarkers(Integer pageSize, Integer rowOffset,
                                    Integer markerId, Integer datasetId) {
 
-        List<Marker> markers;
+        List<Marker> markers = new ArrayList<>();
 
 
         try {
 
-            //If either page size or page number is not provided, use default maximum limit which is 1000
-            //and fetch the first page
-            if(pageSize == null || pageNum == null) {
-                pageNum = defaultPageNum;
+            if(pageSize == null) {
                 pageSize = defaultPageSize;
             }
 
-            Session session = em.unwrap(Session.class);
-
-            Criteria markerCriteria = session.createCriteria(Marker.class);
-
-
-            if(markerId != null) {
-                markerCriteria.add(Restrictions.eq("markerId", markerId));
+            if(rowOffset == null) {
+                rowOffset = 0;
             }
 
-            if(datasetId != null) {
-                markerCriteria.add(Restrictions.sqlRestriction(
-                        "{alias}.dataset_marker_idx ?? ?", datasetId.toString(),
-                        StringType.INSTANCE));
-            }
+            String queryString = "SELECT {marker.*} " +
+                    " FROM marker AS marker " +
+                    " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NOT NULL) " +
+                    " AND marker.marker_id = :markerId OR :markerId IS NULL " +
+                    " LIMIT :pageSize OFFSET :rowOffset ";
 
+            markers = em.createNativeQuery(queryString, Marker.class)
+                    .setParameter("pageSize", pageSize)
+                    .setParameter("rowOffset", rowOffset)
+                    .setParameter("markerId", markerId)
+                    .setParameter("datasetId", datasetId)
+                    .getResultList();
 
-
-            markerCriteria
-                    .setMaxResults(pageSize)
-                    .setFirstResult(pageNum*pageSize);
-
-            markers = markerCriteria.list();
+            return markers;
 
         }
         catch(Exception e) {
@@ -79,75 +72,95 @@ public class MarkerDaoImpl implements MarkerDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
-        return markers;
+
 
     }
 
+    @Override
+    @Transactional
+    public List<Marker> getMarkersByDatasetId(Integer datasetId,
+                                   Integer pageSize,
+                                   Integer rowOffset) {
+        return getMarkers(pageSize, rowOffset, null, datasetId);
+    }
+
     /**
-     * Returns the object tuple of Marker Entity with Satrt and Stop from MarkerLinkageGroup Entity.
-     * A given marker id may have more than one rows with different start stops
-     * @param pageNum - Page Number to be fetched
+     * Returns List of Marker Entity with scalar fields Satrt and Stop from MarkerLinkageGroup Entity mapped
+     * to markerStart and markerStop transient fields in the Marker Entity.
+     * A given marker id may have more than one rows with different start stops.
+     * Used only for BrAPI /variants Web service.
+     * Avoid using it for internal Gentoyp Extraction as markerId will not be unique in a given list.
      * @param pageSize -Page size to be fetched
+     * @param rowOffset - Row offset after which the pages need to be fetched
      * @param markerId - Marker Id for which marker need to be fetched.
      * @param datasetId - To fetch the markers belonging to the dataset Id.
-     * @return Tuple consists of below objects with respect to index,
-     * 0 - Marker Entity
-     * 1 - Start Position. Bigdecimal type.
-     * 2 - Stop Position. Bigdecimal type.
+     * @return Lits of Marker Entity which match the filter criteria
      */
     @Override
     @Transactional
-    public List<Object[]> getMarkerStartStopTuples(Integer pageNum, Integer pageSize,
-                                                           Integer markerId, Integer datasetId) {
+    public List<Marker> getMarkersWithStartAndStop(Integer pageSize, Integer rowOffset,
+                                   Integer markerId, Integer datasetId) {
 
+        if(pageSize == null) {
+            pageSize = defaultPageSize;
+        }
 
-        List<Object[]> markerStartStops;
+        if(rowOffset == null) {
+            rowOffset = 0;
+        }
+
+        List<QueryField> queryParameters = new ArrayList<>();
+        List<QueryField> entityFields = new ArrayList<>();
+        List<QueryField> scalarFileds = new ArrayList<>();
+
+        List<Marker> markers = new ArrayList<>();
 
         try {
 
-            //If either page size or page number is not provided, use default maximum limit which is 1000
-            //and fetch the first page
-            if(pageSize == null || pageNum == null) {
-                pageNum = defaultPageNum;
-                pageSize = defaultPageSize;
-            }
+            NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
 
-            Session session = em.unwrap(Session.class);
-
-            String queryString = "SELECT {marker.*}, markerli.start, markerli.stop from marker as marker " +
+            String queryString = "SELECT {marker.*}, markerli.start AS start, markerli.stop AS stop " +
+                    " FROM marker AS marker " +
                     " LEFT JOIN marker_linkage_group AS markerli " +
-                    " ON marker.marker_id = markerli.marker_id " +
-                    " WHERE (marker.dataset_marker_idx -> :datasetId IS NOT NULL OR :datasetId = '') ";
+                    " USING(marker_id) " +
+                    " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NOT NULL) " +
+                    " AND marker.marker_id = :markerId OR :markerId IS NULL " +
+                    " LIMIT :pageSize OFFSET :rowOffset ";
 
-            if(markerId != null) {
+            // Add query parameters
+            queryParameters.add(new QueryField("pageSize", pageSize, IntegerType.INSTANCE));
+            queryParameters.add(new QueryField("rowOffset", rowOffset, IntegerType.INSTANCE));
+            queryParameters.add(new QueryField("datasetId", datasetId, IntegerType.INSTANCE));
+            queryParameters.add(new QueryField("markerId", markerId, IntegerType.INSTANCE));
 
-                queryString += " AND (marker.marker_id = :markerId) ";
+            // Add Entity map fields
+            entityFields.add(new QueryField("marker", Marker.class));
+
+            //Add scalar fields
+            scalarFileds.add(new QueryField("start", null, IntegerType.INSTANCE));
+            scalarFileds.add(new QueryField("stop", null, IntegerType.INSTANCE));
+
+
+            /**
+             * TODO: ResultTransformer function is deprecated in hibernate 5.4 without alternative.
+             * The ResultTranformer is going to be repalced by FunctionalInterface in Hibernate 6.0
+             * Maybe need to refactor the mapping tuples to the DataModel using FunctionalInterface,
+             * once Hibernate 6.0 is released
+             */
+
+            List<Object[]> resultTuples = nativerQueryRunner.run(queryString,
+                    queryParameters,
+                    entityFields,
+                    scalarFileds);
+
+            for(Object[] tuple : resultTuples) {
+                Marker marker = (Marker) tuple[0];
+                marker.setMarkerStart((Integer) tuple[1]);
+                marker.setMarkerStop((Integer) tuple[2]);
+                markers.add(marker);
             }
 
-
-            Query markerStartStopsQuery = session.createNativeQuery(queryString);
-
-            ((NativeQuery) markerStartStopsQuery)
-                    .addEntity("marker", Marker.class)
-                    .addScalar("start", BigDecimalType.INSTANCE)
-                    .addScalar("stop", BigDecimalType.INSTANCE);
-
-            String datasetIdParam = "";
-
-            if(datasetId != null) {
-               datasetIdParam = datasetId.toString();
-            }
-            markerStartStopsQuery.setParameter("datasetId", datasetIdParam);
-
-            if(markerId != null) {
-                markerStartStopsQuery.setParameter("markerId", markerId);
-            }
-
-            markerStartStopsQuery
-                    .setMaxResults(pageSize)
-                    .setFirstResult(pageNum*pageSize);
-
-            markerStartStops = ((NativeQuery) markerStartStopsQuery).list();
+            return markers;
 
 
         }
@@ -160,7 +173,6 @@ public class MarkerDaoImpl implements MarkerDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
-        return markerStartStops;
 
     }
 

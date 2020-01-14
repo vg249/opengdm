@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.gobiiproject.gobiidao.hdf5.HDF5Interface;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -15,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.sql.Array;
 import java.util.*;
 
 public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
@@ -26,8 +23,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
 
-    @Autowired
-    private HDF5Interface hdf5Interface;
+    //@Autowired
+    //private HDF5Interface hdf5Interface;
 
     private String nextPageOffset;
 
@@ -766,6 +763,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             dnarunMetadataList = this.getDnarunMetaDataByDnarunIdLimit(datasetId, pageOffset, pageSize);
 
             if(pageToken != null) {
+
                 String[] pageTokenSplit = pageToken.split("-", 2);
 
                 if (pageTokenSplit.length == 2) {
@@ -894,7 +892,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         Map<String, Object> extractQuery = new HashMap<String, Object>();
 
         List<GenotypeCallsMarkerMetadataDTO> markerMetadataList = new ArrayList<>();
-
         List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList = new ArrayList<>();
 
         List<Integer> markerIdList = new ArrayList<Integer>();
@@ -1064,9 +1061,10 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        String genotypCallsFilePath = hdf5Interface.getHDF5Genotypes(
-                true, markerHdf5IndexMap,
-                sampleHdf5IndexMap, tempFolder);
+        String genotypCallsFilePath = "";
+                //hdf5Interface.getHDF5Genotypes(
+                //true, markerHdf5IndexMap,
+                //sampleHdf5IndexMap, tempFolder);
 
         return genotypCallsFilePath;
 

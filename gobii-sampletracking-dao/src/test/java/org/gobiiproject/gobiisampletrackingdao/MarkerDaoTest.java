@@ -23,31 +23,15 @@ public class MarkerDaoTest {
     private MarkerDao markerDao;
 
     @Test
-    public void testGetMarkers() {
-
-        Integer pageSize = 100;
-        Integer pageNum = 0;
-
-        List<Marker> markers = markerDao.getMarkers(
-                pageNum, pageSize,
-                null, null);
-
-        assertTrue("Empty marker list",markers.size() > 0);
-        assertTrue("marker result list size not equal to the page size",
-                markers.size() <= pageSize);
-
-    }
-
-    @Test
     public void testGetMarkerStartStopTuples() {
 
         Integer pageSize = 200;
-        Integer pageNum = 0;
 
-        List<Object[]> markers = markerDao.getMarkerStartStopTuples(
-                pageNum, pageSize,
-                284, null);
+        Integer rowOffset = 0;
 
+        List<Marker> markers = markerDao.getMarkersWithStartAndStop(
+                pageSize, rowOffset,
+                null, null);
 
         assertTrue("Empty marker list",markers.size() > 0);
 
@@ -55,14 +39,23 @@ public class MarkerDaoTest {
 
             pageSize = markers.size() - 1;
 
-            List<Object[]> markersPaged = markerDao.getMarkerStartStopTuples(
-                    pageNum, pageSize,
+            List<Marker> markersPaged = markerDao.getMarkersWithStartAndStop(
+                    pageSize, rowOffset,
                     null, null);
+
+            boolean atleastOneStartStopIsMapped = false;
+
+            for(Marker marker : markersPaged) {
+                if(marker.getMarkerStart() != null || marker.getMarkerStop() != null) {
+                    atleastOneStartStopIsMapped = true;
+                }
+            }
+
+            assertTrue(atleastOneStartStopIsMapped);
 
             assertTrue("marker result list size not equal to the page size",
                     markersPaged.size() == pageSize);
         }
-
 
     }
 
