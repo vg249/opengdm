@@ -167,6 +167,7 @@ public class VariantSetsServiceImplTest {
             Analysis analysis = datasetsMock.get(assertIndex).getMappedAnalyses().iterator().next();
 
             AnalysisBrapiDTO analysisBrapiDTO = variantSets.get(assertIndex).getAnalyses().iterator().next();
+
             assertEquals("check analysisDbId is mapped",
                     analysis.getAnalysisId(),
                     analysisBrapiDTO.getAnalysisDbId());

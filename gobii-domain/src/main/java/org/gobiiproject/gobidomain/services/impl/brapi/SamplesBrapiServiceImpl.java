@@ -29,7 +29,6 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
     @Autowired
     private CvDao cvDao;
 
-
     /**
      * Gets the list of dna sample for given search criteria
      * @param pageNum

@@ -8,10 +8,7 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,11 +44,21 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
         HashMap<Integer, AnalysisBrapiDTO> analysisBrapiDTOMap = new HashMap<>();
 
+        Integer rowOffset = 0;
+
+        if(pageSize == null) {
+            pageSize = BrapiDefaults.pageSize;
+        }
+
+        if(pageNum != null && pageSize != null) {
+            rowOffset = pageNum*pageSize;
+        }
+
         try {
 
             List<Dataset> datasets = datasetDao.listDatasets(
-                   pageNum,
                    pageSize,
+                   rowOffset,
                    varianSetDbID);
 
             for (Dataset dataset : datasets) {

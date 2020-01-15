@@ -91,8 +91,6 @@
 
     <bean id="pingDaoRs"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
-    <bean id="pingDaoEntity"
-          class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
     <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapPingImpl"/>
     <bean id="pingService"
           class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>

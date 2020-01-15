@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Marker;
-import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
@@ -15,7 +14,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
@@ -116,10 +114,6 @@ public class MarkerDaoImpl implements MarkerDao {
 
             if(pageSize == null) {
                 pageSize = defaultPageSize;
-            }
-
-            if(rowOffset == null) {
-                rowOffset = 0;
             }
 
             Session session = em.unwrap(Session.class);

@@ -27,16 +27,15 @@ public class DatasetDaoTest {
     @Test
     public void testListDatasets() {
 
-        Integer testPageSize = 100;
+        Integer testPageSize = 10;
 
         List<Dataset> datasets = datasetDao.listDatasets(
-                0, testPageSize, null);
+                testPageSize, null, null);
 
         //As test database table has ananlyses greater than 0, assert the same
         for( Dataset dataset : datasets) {
 
             assertTrue(dataset.getMappedAnalyses().size() > 0);
-
             assertTrue(dataset.getMarkerCount() >= 0);
             assertTrue(dataset.getDnaRunCount() >= 0);
 
@@ -51,35 +50,18 @@ public class DatasetDaoTest {
     @Test
     public void testListDatasetsWithPageSize() {
 
-        List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
+        List<Dataset> datasets = datasetDao.listDatasets(10, null, null);
 
         assertTrue(datasets.size() == 10);
-
 
     }
 
 
-    //@Test
-    //public void testListDatasetsByCursor() {
-
-    //    List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
-
-    //    assertTrue(datasets.size() == 10);
-
-    //    Integer pageCursor = datasets.get(9).getDatasetId();
-
-    //    List<Dataset> datasetsByPageCursor = datasetDao.listDatasetsByPageCursor(pageCursor.toString(), 5);
-
-    //    assertTrue(datasetsByPageCursor.get(0).getDatasetId() > pageCursor);
-
-    //    assertTrue(datasetsByPageCursor.size() == 5);
-
-    //}
 
     @Test
     public void testGetDatasetById() {
 
-        List<Dataset> datasets = datasetDao.listDatasets(0, 10, null);
+        List<Dataset> datasets = datasetDao.listDatasets(10, null, null);
 
         assertTrue(datasets.size() == 10);
 

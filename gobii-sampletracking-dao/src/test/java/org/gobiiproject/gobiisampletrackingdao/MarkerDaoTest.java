@@ -14,9 +14,7 @@ import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 
 /**
- * Tests are constructed with only test cases required for development tests.
- * Tests will be made complete once other required DAO objects are added.
- *
+ * Test cases for MarkerDaoImpl
  * TODO: The dataset test are written with knowledge of undelying data in
  *   api.gobii.org. Need to refactor in future with Test databases and setup data
  */
