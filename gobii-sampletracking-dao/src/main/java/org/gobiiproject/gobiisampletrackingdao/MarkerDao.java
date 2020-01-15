@@ -17,5 +17,6 @@ public interface MarkerDao {
                             Integer markerId, Integer datasetId);
 
     List<Marker> getMarkersByMarkerIds(List<Integer> markerIds);
+    List<Marker> getMarkersByMarkerNames(List<String> markerNames);
 
 }

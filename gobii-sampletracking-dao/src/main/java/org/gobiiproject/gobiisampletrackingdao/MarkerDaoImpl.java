@@ -158,6 +158,11 @@ public class MarkerDaoImpl implements MarkerDao {
 
     }
 
+    /**
+     * Returns List of Marker Entities for given markerIds
+     * @param markerIds - List of Marker Ids
+     * @return Lis of Marker Entities
+     */
     @Transactional
     @Override
     public List<Marker> getMarkersByMarkerIds(List<Integer> markerIds) {
@@ -167,10 +172,16 @@ public class MarkerDaoImpl implements MarkerDao {
 
             CriteriaBuilder cb  = em.getCriteriaBuilder();
 
+            // Initialize criteria with Marker Entity as Result
             CriteriaQuery<Marker> criteria = cb.createQuery(Marker.class);
+
+            //Set Root entity and selected entities
             Root<Marker> root = criteria.from(Marker.class);
             criteria.select(root);
+
+
             criteria.where(root.get("markerId").in(markerIds));
+
             criteria.orderBy(cb.asc(root.get("markerId")));
 
             markers = em.createQuery(criteria).getResultList();
@@ -184,6 +195,47 @@ public class MarkerDaoImpl implements MarkerDao {
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+    }
+
+    /**
+     * Retruns List of Marker Entities for given Marker Names
+     * @param markerNames - Marker
+     * @return
+     */
+    @Transactional
+    @Override
+    public List<Marker> getMarkersByMarkerNames(List<String> markerNames) {
+
+        List<Marker> markers = new ArrayList<>();
+
+        try {
+
+            CriteriaBuilder cb  = em.getCriteriaBuilder();
+
+            CriteriaQuery<Marker> criteria = cb.createQuery(Marker.class);
+
+            Root<Marker> root = criteria.from(Marker.class);
+            criteria.select(root);
+
+            criteria.where(root.get("markerName").in(markerNames));
+
+            criteria.orderBy(cb.asc(root.get("markerName")));
+
+            markers = em.createQuery(criteria).getResultList();
+
+            return markers;
+
+
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
 
         }
     }

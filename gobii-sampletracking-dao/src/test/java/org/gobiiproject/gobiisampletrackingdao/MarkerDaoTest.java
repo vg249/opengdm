@@ -134,12 +134,15 @@ public class MarkerDaoTest {
 
     }
 
-
     @Test
     public void testGetMarkersByMarkerIds() {
 
 
-        List<Integer> markerIds = new ArrayList<>(Arrays.asList(6,7, 8, 9, 10, 11, 12, 13, 14, 15));
+        List<Integer> markerIds = new ArrayList<>(Arrays.asList(
+                6, 7, 8, 9, 10,
+                11, 12, 13, 14,
+                15
+        ));
 
         List<Marker> markers = markerDao.getMarkersByMarkerIds(markerIds);
 
@@ -147,6 +150,28 @@ public class MarkerDaoTest {
 
         for(Marker marker : markers) {
             assertTrue(markerIds.contains(marker.getMarkerId()));
+        }
+
+    }
+
+
+    @Test
+    public void testGetMarkersByMarkerNames() {
+
+
+        List<String> markerNames = new ArrayList<>(Arrays.asList(
+                "BS00062676", "kw004_Sbm1", "TaMoc-7A_2433",
+                "Tsn1", "TaCKX-D1", "TaCwi-4A_1523",
+                "TaCwi-A1a/b", "snp3BS-8", "TaGASR-A1", "TaGS-D1",
+                "TaGW2-HAP-A/G", "TaSus2-2B_SNP", "TaTGW6-A1_1050",
+                "snpOS0312", "Xsnp3BS-2"));
+
+        List<Marker> markers = markerDao.getMarkersByMarkerNames(markerNames);
+
+        assertTrue(markers.size() > 0);
+
+        for(Marker marker : markers) {
+            assertTrue(markerNames.contains(marker.getMarkerName()));
         }
 
     }
