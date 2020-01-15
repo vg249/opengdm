@@ -221,7 +221,7 @@ public class MarkerDaoImpl implements MarkerDao {
 
             criteria.where(root.get("markerName").in(markerNames));
 
-            criteria.orderBy(cb.asc(root.get("markerName")));
+            criteria.orderBy(cb.asc(root.get("markerId")));
 
             markers = em.createQuery(criteria).getResultList();
 
