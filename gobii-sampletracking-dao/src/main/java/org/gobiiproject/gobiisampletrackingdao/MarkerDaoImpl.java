@@ -10,8 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
@@ -156,9 +160,32 @@ public class MarkerDaoImpl implements MarkerDao {
 
     @Transactional
     @Override
-    public List<Marker> getMarkersByMarkerIds(int[] markerIds) {
+    public List<Marker> getMarkersByMarkerIds(List<Integer> markerIds) {
         List<Marker> markers = new ArrayList<>();
-        return markers;
+
+        try {
+
+            CriteriaBuilder cb  = em.getCriteriaBuilder();
+
+            CriteriaQuery<Marker> criteria = cb.createQuery(Marker.class);
+            Root<Marker> root = criteria.from(Marker.class);
+            criteria.select(root);
+            criteria.where(root.get("markerId").in(markerIds));
+            criteria.orderBy(cb.asc(root.get("markerId")));
+
+            markers = em.createQuery(criteria).getResultList();
+
+            return markers;
+
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
     }
 
 }

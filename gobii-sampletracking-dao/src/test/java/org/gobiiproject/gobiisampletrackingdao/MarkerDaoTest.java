@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -128,6 +130,23 @@ public class MarkerDaoTest {
 
             assertTrue("marker result list size not equal to the page size",
                     markersPaged.size() == pageSize);
+        }
+
+    }
+
+
+    @Test
+    public void testGetMarkersByMarkerIds() {
+
+
+        List<Integer> markerIds = new ArrayList<>(Arrays.asList(6,7, 8, 9, 10, 11, 12, 13, 14, 15));
+
+        List<Marker> markers = markerDao.getMarkersByMarkerIds(markerIds);
+
+        assertTrue(markers.size() > 0);
+
+        for(Marker marker : markers) {
+            assertTrue(markerIds.contains(marker.getMarkerId()));
         }
 
     }
