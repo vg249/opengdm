@@ -3938,41 +3938,31 @@ definitions:
         type: "boolean"
       subcolumnDelimiter:
         type: "string"
+      dataSetType:
+        type: "string"
+        enum:
+        - "NUCLEOTIDE_2_LETTER"
+        - "IUPAC"
+        - "SSR_ALLELE_SIZE"
+        - "DOMINANT_NON_NUCLEOTIDE"
+        - "CO_DOMINANT_NON_NUCLEOTIDE"
+        - "VCF"
+      dataSetOrientationType:
+        type: "string"
+        enum:
+        - "SAMPLE_FAST"
+        - "MARKER_FAST"
       metaDataId:
         type: "string"
   GobiiLoaderInstruction:
     type: "object"
     properties:
-      table:
-        type: "string"
-      gobiiFileColumns:
-        type: "array"
-        items:
-          $ref: "#/definitions/GobiiFileColumn"
-  GobiiLoaderMetadata:
-    type: "object"
-    properties:
-      project:
-        $ref: "#/definitions/PropNameId"
-      platform:
-        $ref: "#/definitions/PropNameId"
-      experiment:
-        $ref: "#/definitions/PropNameId"
-      datasetOrientationType:
-        type: "string"
-        enum:
-        - "SAMPLE_FAST"
-        - "MARKER_FAST"
-      dataset:
-        $ref: "#/definitions/PropNameId"
-      datasetType:
-        $ref: "#/definitions/PropNameId"
-      mapset:
-        $ref: "#/definitions/PropNameId"
-      gobiiFile:
-        $ref: "#/definitions/GobiiFile"
-      gobiiCropType:
-        type: "string"
+      columnsByTableName:
+        type: "object"
+        additionalProperties:
+          type: "array"
+          items:
+            $ref: "#/definitions/GobiiFileColumn"
       jobPayloadType:
         type: "string"
         enum:
@@ -3981,6 +3971,26 @@ definitions:
         - "CV_PAYLOADTYPE_MATRIX"
         - "CV_PAYLOADTYPE_MARKERSAMPLES"
         - "CV_PAYLOADTYPE_ALLMETA"
+      gobiiFile:
+        $ref: "#/definitions/GobiiFile"
+      table:
+        type: "string"
+      gobiiFileColumns:
+        type: "array"
+        items:
+          $ref: "#/definitions/GobiiFileColumn"
+      vcfParameters:
+        $ref: "#/definitions/VcfParameters"
+      dataSetId:
+        type: "integer"
+        format: "int32"
+      gobiiCropType:
+        type: "string"
+      contactId:
+        type: "integer"
+        format: "int32"
+      contactEmail:
+        type: "string"
       gobiiJobStatus:
         type: "string"
         enum:
@@ -3998,22 +4008,22 @@ definitions:
         - "CV_PROGRESSSTATUS_FINALASSEMBLY"
         - "CV_PROGRESSSTATUS_QCPROCESSING"
         - "CV_PROGRESSSTATUS_NOSTATUS"
-      contactId:
-        type: "integer"
-        format: "int32"
-      contactEmail:
+      logMessage:
         type: "string"
       qcCheck:
         type: "boolean"
-  GobiiLoaderProcedure:
-    type: "object"
-    properties:
-      metadata:
-        $ref: "#/definitions/GobiiLoaderMetadata"
-      instructions:
-        type: "array"
-        items:
-          $ref: "#/definitions/GobiiLoaderInstruction"
+      project:
+        $ref: "#/definitions/PropNameId"
+      platform:
+        $ref: "#/definitions/PropNameId"
+      dataSet:
+        $ref: "#/definitions/PropNameId"
+      datasetType:
+        $ref: "#/definitions/PropNameId"
+      mapset:
+        $ref: "#/definitions/PropNameId"
+      experiment:
+        $ref: "#/definitions/PropNameId"
   Header:
     type: "object"
     properties:
@@ -4093,13 +4103,13 @@ definitions:
         type: "string"
       open:
         type: "boolean"
+      readable:
+        type: "boolean"
       uri:
         type: "string"
         format: "uri"
       filename:
         type: "string"
-      readable:
-        type: "boolean"
       url:
         type: "string"
         format: "url"
@@ -4223,8 +4233,10 @@ definitions:
           - "UPDATE"
           - "DELETE"
           - "NONE"
-      procedure:
-        $ref: "#/definitions/GobiiLoaderProcedure"
+      gobiiLoaderInstructions:
+        type: "array"
+        items:
+          $ref: "#/definitions/GobiiLoaderInstruction"
       instructionFileName:
         type: "string"
       id:
@@ -5612,6 +5624,22 @@ definitions:
       rank:
         type: "integer"
         format: "int32"
+  VcfParameters:
+    type: "object"
+    properties:
+      maf:
+        type: "number"
+        format: "float"
+      minQ:
+        type: "number"
+        format: "float"
+      minDp:
+        type: "number"
+        format: "float"
+      removeIndels:
+        type: "boolean"
+      toIupac:
+        type: "boolean"
   VendorProtocolDTO:
     type: "object"
     properties:

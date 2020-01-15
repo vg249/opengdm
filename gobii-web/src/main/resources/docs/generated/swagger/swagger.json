@@ -4623,6 +4623,14 @@
         "subcolumnDelimiter" : {
           "type" : "string"
         },
+        "dataSetType" : {
+          "type" : "string",
+          "enum" : [ "NUCLEOTIDE_2_LETTER", "IUPAC", "SSR_ALLELE_SIZE", "DOMINANT_NON_NUCLEOTIDE", "CO_DOMINANT_NON_NUCLEOTIDE", "VCF" ]
+        },
+        "dataSetOrientationType" : {
+          "type" : "string",
+          "enum" : [ "SAMPLE_FAST", "MARKER_FAST" ]
+        },
         "metaDataId" : {
           "type" : "string"
         }
@@ -4631,6 +4639,22 @@
     "GobiiLoaderInstruction" : {
       "type" : "object",
       "properties" : {
+        "columnsByTableName" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/GobiiFileColumn"
+            }
+          }
+        },
+        "jobPayloadType" : {
+          "type" : "string",
+          "enum" : [ "CV_PAYLOADTYPE_SAMPLES", "CV_PAYLOADTYPE_MARKERS", "CV_PAYLOADTYPE_MATRIX", "CV_PAYLOADTYPE_MARKERSAMPLES", "CV_PAYLOADTYPE_ALLMETA" ]
+        },
+        "gobiiFile" : {
+          "$ref" : "#/definitions/GobiiFile"
+        },
         "table" : {
           "type" : "string"
         },
@@ -4639,47 +4663,16 @@
           "items" : {
             "$ref" : "#/definitions/GobiiFileColumn"
           }
-        }
-      }
-    },
-    "GobiiLoaderMetadata" : {
-      "type" : "object",
-      "properties" : {
-        "project" : {
-          "$ref" : "#/definitions/PropNameId"
         },
-        "platform" : {
-          "$ref" : "#/definitions/PropNameId"
+        "vcfParameters" : {
+          "$ref" : "#/definitions/VcfParameters"
         },
-        "experiment" : {
-          "$ref" : "#/definitions/PropNameId"
-        },
-        "datasetOrientationType" : {
-          "type" : "string",
-          "enum" : [ "SAMPLE_FAST", "MARKER_FAST" ]
-        },
-        "dataset" : {
-          "$ref" : "#/definitions/PropNameId"
-        },
-        "datasetType" : {
-          "$ref" : "#/definitions/PropNameId"
-        },
-        "mapset" : {
-          "$ref" : "#/definitions/PropNameId"
-        },
-        "gobiiFile" : {
-          "$ref" : "#/definitions/GobiiFile"
+        "dataSetId" : {
+          "type" : "integer",
+          "format" : "int32"
         },
         "gobiiCropType" : {
           "type" : "string"
-        },
-        "jobPayloadType" : {
-          "type" : "string",
-          "enum" : [ "CV_PAYLOADTYPE_SAMPLES", "CV_PAYLOADTYPE_MARKERS", "CV_PAYLOADTYPE_MATRIX", "CV_PAYLOADTYPE_MARKERSAMPLES", "CV_PAYLOADTYPE_ALLMETA" ]
-        },
-        "gobiiJobStatus" : {
-          "type" : "string",
-          "enum" : [ "CV_PROGRESSSTATUS_PENDING", "CV_PROGRESSSTATUS_INPROGRESS", "CV_PROGRESSSTATUS_COMPLETED", "CV_PROGRESSSTATUS_FAILED", "CV_PROGRESSSTATUS_VALIDATION", "CV_PROGRESSSTATUS_DIGEST", "CV_PROGRESSSTATUS_TRANSFORMATION", "CV_PROGRESSSTATUS_METADATALOAD", "CV_PROGRESSSTATUS_MATRIXLOAD", "CV_PROGRESSSTATUS_ABORTED", "CV_PROGRESSSTATUS_METADATAEXTRACT", "CV_PROGRESSSTATUS_FINALASSEMBLY", "CV_PROGRESSSTATUS_QCPROCESSING", "CV_PROGRESSSTATUS_NOSTATUS" ]
         },
         "contactId" : {
           "type" : "integer",
@@ -4688,22 +4681,33 @@
         "contactEmail" : {
           "type" : "string"
         },
+        "gobiiJobStatus" : {
+          "type" : "string",
+          "enum" : [ "CV_PROGRESSSTATUS_PENDING", "CV_PROGRESSSTATUS_INPROGRESS", "CV_PROGRESSSTATUS_COMPLETED", "CV_PROGRESSSTATUS_FAILED", "CV_PROGRESSSTATUS_VALIDATION", "CV_PROGRESSSTATUS_DIGEST", "CV_PROGRESSSTATUS_TRANSFORMATION", "CV_PROGRESSSTATUS_METADATALOAD", "CV_PROGRESSSTATUS_MATRIXLOAD", "CV_PROGRESSSTATUS_ABORTED", "CV_PROGRESSSTATUS_METADATAEXTRACT", "CV_PROGRESSSTATUS_FINALASSEMBLY", "CV_PROGRESSSTATUS_QCPROCESSING", "CV_PROGRESSSTATUS_NOSTATUS" ]
+        },
+        "logMessage" : {
+          "type" : "string"
+        },
         "qcCheck" : {
           "type" : "boolean"
-        }
-      }
-    },
-    "GobiiLoaderProcedure" : {
-      "type" : "object",
-      "properties" : {
-        "metadata" : {
-          "$ref" : "#/definitions/GobiiLoaderMetadata"
         },
-        "instructions" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/GobiiLoaderInstruction"
-          }
+        "project" : {
+          "$ref" : "#/definitions/PropNameId"
+        },
+        "platform" : {
+          "$ref" : "#/definitions/PropNameId"
+        },
+        "dataSet" : {
+          "$ref" : "#/definitions/PropNameId"
+        },
+        "datasetType" : {
+          "$ref" : "#/definitions/PropNameId"
+        },
+        "mapset" : {
+          "$ref" : "#/definitions/PropNameId"
+        },
+        "experiment" : {
+          "$ref" : "#/definitions/PropNameId"
         }
       }
     },
@@ -4791,15 +4795,15 @@
         "open" : {
           "type" : "boolean"
         },
+        "readable" : {
+          "type" : "boolean"
+        },
         "uri" : {
           "type" : "string",
           "format" : "uri"
         },
         "filename" : {
           "type" : "string"
-        },
-        "readable" : {
-          "type" : "boolean"
         },
         "url" : {
           "type" : "string",
@@ -4949,8 +4953,11 @@
             "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
           }
         },
-        "procedure" : {
-          "$ref" : "#/definitions/GobiiLoaderProcedure"
+        "gobiiLoaderInstructions" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/GobiiLoaderInstruction"
+          }
         },
         "instructionFileName" : {
           "type" : "string"
@@ -6453,6 +6460,29 @@
         "rank" : {
           "type" : "integer",
           "format" : "int32"
+        }
+      }
+    },
+    "VcfParameters" : {
+      "type" : "object",
+      "properties" : {
+        "maf" : {
+          "type" : "number",
+          "format" : "float"
+        },
+        "minQ" : {
+          "type" : "number",
+          "format" : "float"
+        },
+        "minDp" : {
+          "type" : "number",
+          "format" : "float"
+        },
+        "removeIndels" : {
+          "type" : "boolean"
+        },
+        "toIupac" : {
+          "type" : "boolean"
         }
       }
     },

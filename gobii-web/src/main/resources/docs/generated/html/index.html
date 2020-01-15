@@ -597,8 +597,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_gobiifile">GobiiFile</a></li>
 <li><a href="#_gobiifilecolumn">GobiiFileColumn</a></li>
 <li><a href="#_gobiiloaderinstruction">GobiiLoaderInstruction</a></li>
-<li><a href="#_gobiiloadermetadata">GobiiLoaderMetadata</a></li>
-<li><a href="#_gobiiloaderprocedure">GobiiLoaderProcedure</a></li>
 <li><a href="#_header">Header</a></li>
 <li><a href="#_headerauth">HeaderAuth</a></li>
 <li><a href="#_headerstatusmessage">HeaderStatusMessage</a></li>
@@ -682,6 +680,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_serverconfigitem">ServerConfigItem</a></li>
 <li><a href="#_status">Status</a></li>
 <li><a href="#_tablecoldisplay">TableColDisplay</a></li>
+<li><a href="#_vcfparameters">VcfParameters</a></li>
 <li><a href="#_vendorprotocoldto">VendorProtocolDTO</a></li>
 </ul>
 </li>
@@ -12091,6 +12090,16 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dataSetOrientationType</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (SAMPLE_FAST, MARKER_FAST)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dataSetType</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (NUCLEOTIDE_2_LETTER, IUPAC, SSR_ALLELE_SIZE, DOMINANT_NON_NUCLEOTIDE, CO_DOMINANT_NON_NUCLEOTIDE, VCF)</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>filterFrom</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
@@ -12168,32 +12177,10 @@ __</p></td>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiFileColumns</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>columnsByTableName</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_gobiifilecolumn">GobiiFileColumn</a> &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, &lt; <a href="#_gobiifilecolumn">GobiiFileColumn</a> &gt; array &gt; map</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>table</strong><br>
-__</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_gobiiloadermetadata">GobiiLoaderMetadata</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 42.8571%;">
-<col style="width: 57.1429%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contactEmail</strong><br>
 __</p></td>
@@ -12205,14 +12192,14 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dataset</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dataSet</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_propnameid">PropNameId</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>datasetOrientationType</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dataSetId</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (SAMPLE_FAST, MARKER_FAST)</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>datasetType</strong><br>
@@ -12235,6 +12222,11 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_gobiifile">GobiiFile</a></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiFileColumns</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_gobiifilecolumn">GobiiFileColumn</a> &gt; array</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiJobStatus</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)</p></td>
@@ -12243,6 +12235,11 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>jobPayloadType</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">enum (CV_PAYLOADTYPE_SAMPLES, CV_PAYLOADTYPE_MARKERS, CV_PAYLOADTYPE_MATRIX, CV_PAYLOADTYPE_MARKERSAMPLES, CV_PAYLOADTYPE_ALLMETA)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>logMessage</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>mapset</strong><br>
@@ -12264,32 +12261,15 @@ __</p></td>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
 </tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_gobiiloaderprocedure">GobiiLoaderProcedure</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 42.8571%;">
-<col style="width: 57.1429%;">
-</colgroup>
-<thead>
 <tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>instructions</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>table</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_gobiiloaderinstruction">GobiiLoaderInstruction</a> &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>metadata</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>vcfParameters</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_gobiiloadermetadata">GobiiLoaderMetadata</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_vcfparameters">VcfParameters</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -12686,6 +12666,11 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; enum (CREATE, READ, UPDATE, DELETE, NONE) &gt; array</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiLoaderInstructions</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_gobiiloaderinstruction">GobiiLoaderInstruction</a> &gt; array</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
@@ -12694,11 +12679,6 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>instructionFileName</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>procedure</strong><br>
-__</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_gobiiloaderprocedure">GobiiLoaderProcedure</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -15340,6 +15320,48 @@ __</p></td>
 </table>
 </div>
 <div class="sect2">
+<h3 id="_vcfparameters">VcfParameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 42.8571%;">
+<col style="width: 57.1429%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>maf</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">number (float)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>minDp</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">number (float)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>minQ</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">number (float)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>removeIndels</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>toIupac</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_vendorprotocoldto">VendorProtocolDTO</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -15396,7 +15418,7 @@ __</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-17 10:44:36 EDT
+Last updated 2020-01-15 11:47:39 EST
 </div>
 </div>
 </body>
