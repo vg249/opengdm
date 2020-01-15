@@ -136,6 +136,8 @@ public class MarkerDaoTest {
     public void testGetMarkersByMarkerIds() {
 
 
+        // TODO: Hardcoded list from api.gobii.ord:gobii-dev marker table
+        //  Need to replace this with a standard setupcalss functionality in future.
         List<Integer> markerIds = new ArrayList<>(Arrays.asList(
                 6, 7, 8, 9, 10,
                 11, 12, 13, 14,
@@ -144,7 +146,7 @@ public class MarkerDaoTest {
 
         List<Marker> markers = markerDao.getMarkersByMarkerIds(markerIds);
 
-        assertTrue(markers.size() > 0);
+        assertTrue(markers.size() <= markerIds.size());
 
         for(Marker marker : markers) {
             assertTrue(markerIds.contains(marker.getMarkerId()));
@@ -166,7 +168,7 @@ public class MarkerDaoTest {
 
         List<Marker> markers = markerDao.getMarkersByMarkerNames(markerNames);
 
-        assertTrue(markers.size() > 0);
+        assertTrue(markers.size() <= markerNames.size());
 
         for(Marker marker : markers) {
             assertTrue(markerNames.contains(marker.getMarkerName()));

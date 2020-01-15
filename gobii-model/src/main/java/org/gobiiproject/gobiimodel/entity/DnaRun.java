@@ -35,7 +35,7 @@ public class DnaRun {
 
     @Column(name="dataset_dnarun_idx", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
-    private JsonNode datasetMarkerIdx;
+    private JsonNode datasetDnaRunIdx;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
@@ -75,12 +75,12 @@ public class DnaRun {
     }
 
 
-    public JsonNode getDatasetMarkerIdx() {
-        return datasetMarkerIdx;
+    public JsonNode getDatasetDnaRunIdx() {
+        return datasetDnaRunIdx;
     }
 
-    public void setDatasetMarkerIdx(JsonNode datasetMarkerIdx) {
-        this.datasetMarkerIdx = datasetMarkerIdx;
+    public void setDatasetDnaRunIdx(JsonNode datasetDnaRunIdx) {
+        this.datasetDnaRunIdx = datasetDnaRunIdx;
     }
 
     public JsonNode getProperties() {

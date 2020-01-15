@@ -29,10 +29,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     /**
      * Lists the DnaRun Entities which matches the given criterias.
-     * @param pageSize - Si
-     * @param rowOffset
-     * @param dnaRunId
-     * @param datasetId
+     * @param pageSize - Number of rows to be fetched
+     * @param rowOffset - Number of rows to be offseted before fetching tuples
+     * @param dnaRunId - Dna Run Id which uniquely identifies dna run
+     * @param datasetId - Dataset Id to which dnaruns belong to.
      * @return
      */
     @Override
@@ -44,7 +44,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         String queryString = "SELECT {dnarun.*} " +
                 " FROM dnarun AS dnarun " +
-                " WHERE (:datasetId IS NULL OR danrun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
+                " WHERE (:datasetId IS NULL OR dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
                 " AND (:dnaRunId IS NULL OR dnarun.dnarun_id = :dnaRunId) " +
                 " LIMIT :pageSize OFFSET :rowOffset ";
 
@@ -76,9 +76,112 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
+    }
 
+    /**
+     * Lists DnaRun entities for given dataset Id
+     * @param datasetId - ID of dataset to which dnaruns belong.
+     * @param pageSize - Number of rows to be fetched
+     * @param rowOffset - Number of rows to offset before fetching
+     * @return - List of result DnaRun Entities.
+     */
+    @Override
+    @Transactional
+    public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
+                                              Integer rowOffset) {
+
+        return getDnaRuns(pageSize, rowOffset, null, datasetId);
 
     }
+
+
+    /**
+     * Lists DnaRun Entitis with given DnaRun Id
+     * @param dnaRunIds - List of IDs of dnaRun.
+     * @return - List of DnaRun Entity result
+     */
+    @Override
+    @Transactional
+    public List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds) {
+
+        List<DnaRun> dnaruns = new ArrayList<>();
+
+        try {
+
+            CriteriaBuilder cb  = em.getCriteriaBuilder();
+
+            // Initialize criteria with Marker Entity as Result
+            CriteriaQuery<DnaRun> criteria = cb.createQuery(DnaRun.class);
+
+            //Set Root entity and selected entities
+            Root<DnaRun> root = criteria.from(DnaRun.class);
+            criteria.select(root);
+
+
+            criteria.where(root.get("dnaRunId").in(dnaRunIds));
+
+            criteria.orderBy(cb.asc(root.get("dnaRunId")));
+
+            dnaruns = em.createQuery(criteria).getResultList();
+
+            return dnaruns;
+
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+
+    }
+
+
+    /**
+     * Lists DnaRun Entities with given DnaRun Names
+     * @param dnaRunNames - List of Names for which dnaRuns need to be fecthed.
+     * @return - List of DnaRun Entity result.
+     */
+    @Override
+    @Transactional
+    public List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames) {
+
+        List<DnaRun> dnaruns = new ArrayList<>();
+
+        try {
+
+            CriteriaBuilder cb  = em.getCriteriaBuilder();
+
+            // Initialize criteria with Marker Entity as Result
+            CriteriaQuery<DnaRun> criteria = cb.createQuery(DnaRun.class);
+
+            //Set Root entity and selected entities
+            Root<DnaRun> root = criteria.from(DnaRun.class);
+            criteria.select(root);
+
+
+            criteria.where(root.get("dnaRunName").in(dnaRunNames));
+
+            criteria.orderBy(cb.asc(root.get("dnaRunName")));
+
+            dnaruns = em.createQuery(criteria).getResultList();
+
+            return dnaruns;
+
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+
+    }
+
 
 
 }
