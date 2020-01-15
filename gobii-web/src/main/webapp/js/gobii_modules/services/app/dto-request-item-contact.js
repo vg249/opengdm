@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/conta
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_process_1, contact_1, ContactSearchType, DtoRequestItemContact;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -30,7 +30,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/conta
                 ContactSearchType[ContactSearchType["BY_USERNAME"] = 2] = "BY_USERNAME";
             })(ContactSearchType || (ContactSearchType = {}));
             exports_1("ContactSearchType", ContactSearchType);
-            DtoRequestItemContact = (function () {
+            DtoRequestItemContact = /** @class */ (function () {
                 function DtoRequestItemContact(contactSearchType, contactSearchTerm) {
                     this.contactSearchType = contactSearchType;
                     this.contactSearchTerm = contactSearchTerm;

@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Cv;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Cv = (function () {
+            Cv = /** @class */ (function () {
                 function Cv(cv_id, group, term, definition, rank) {
                     this.cv_id = cv_id;
                     this.group = group;

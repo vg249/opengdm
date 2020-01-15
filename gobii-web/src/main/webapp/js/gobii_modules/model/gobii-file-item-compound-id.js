@@ -1,7 +1,7 @@
 System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var type_entity_1, cv_filter_type_1, type_extractor_item_1, GobiiFileItemCompoundId;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (type_entity_1_1) {
@@ -15,7 +15,7 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
             }
         ],
         execute: function () {
-            GobiiFileItemCompoundId = (function () {
+            GobiiFileItemCompoundId = /** @class */ (function () {
                 function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _isExtractCriterion) {
                     if (_extractorItemType === void 0) { _extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }

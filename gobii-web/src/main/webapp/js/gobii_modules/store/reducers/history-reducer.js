@@ -1,5 +1,6 @@
 System.register(["reselect", "../actions/history-action", "../../model/dto-header-status-message", "../../model/type-status-level"], function (exports_1, context_1) {
     "use strict";
+    var reselect_1, gobiiHistoryAction, dto_header_status_message_1, type_status_level_1, initialState, getStatuses, getJobSubmissions, getFiltersRetrieved, getStatusMessages, getLastMessage;
     var __moduleName = context_1 && context_1.id;
     function historyReducer(state, action) {
         if (state === void 0) { state = initialState; }
@@ -56,7 +57,6 @@ System.register(["reselect", "../actions/history-action", "../../model/dto-heade
         return returnVal;
     }
     exports_1("historyReducer", historyReducer);
-    var reselect_1, gobiiHistoryAction, dto_header_status_message_1, type_status_level_1, initialState, getStatuses, getJobSubmissions, getFiltersRetrieved, getStatusMessages, getLastMessage;
     return {
         setters: [
             function (reselect_1_1) {

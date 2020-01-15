@@ -9,8 +9,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/re
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_extractor_filter_1, fromRoot, store_1, view_id_generator_service_1, type_control_1, StatusDisplayTreeComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -33,7 +33,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/re
             }
         ],
         execute: function () {
-            StatusDisplayTreeComponent = (function () {
+            StatusDisplayTreeComponent = /** @class */ (function () {
                 function StatusDisplayTreeComponent(store, viewIdGeneratorService) {
                     this.store = store;
                     this.viewIdGeneratorService = viewIdGeneratorService;

@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, type_entity_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, gobii_file_item_compound_id_1, gobii_file_item_criterion_1, tree_structure_service_1, InstructionSubmissionService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -78,7 +78,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             }
         ],
         execute: function () {
-            InstructionSubmissionService = (function () {
+            InstructionSubmissionService = /** @class */ (function () {
                 function InstructionSubmissionService(store, dtoRequestServiceExtractorFile, treeStructureService) {
                     this.store = store;
                     this.dtoRequestServiceExtractorFile = dtoRequestServiceExtractorFile;

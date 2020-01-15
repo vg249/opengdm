@@ -9,8 +9,8 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, ng2_file_upload_1, authentication_service_1, header_names_1, dto_header_status_message_1, file_name_1, gobii_file_item_1, type_extractor_filter_1, type_process_1, type_extractor_item_1, store_1, fromRoot, file_item_service_1, historyAction, view_id_generator_service_1, type_control_1, URL, UploaderComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -64,7 +64,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
         ],
         execute: function () {
             URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
-            UploaderComponent = (function () {
+            UploaderComponent = /** @class */ (function () {
                 function UploaderComponent(_authenticationService, store, fileItemService, viewIdGeneratorService) {
                     this._authenticationService = _authenticationService;
                     this.store = store;

@@ -9,8 +9,8 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __moduleName = context_1 && context_1.id;
     var core_1, http_values_1, http_1, authentication_service_1, payload_envelope_1, Observable_1, header_1, status_1, dto_header_status_message_1, DtoRequestService;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
@@ -44,7 +44,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
             }
         ],
         execute: function () {
-            DtoRequestService = (function () {
+            DtoRequestService = /** @class */ (function () {
                 function DtoRequestService(_http, _authenticationService) {
                     this._http = _http;
                     this._authenticationService = _authenticationService;
