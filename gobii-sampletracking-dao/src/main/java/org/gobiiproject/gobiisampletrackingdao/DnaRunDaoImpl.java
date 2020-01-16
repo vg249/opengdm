@@ -86,6 +86,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @param dnaRunId - dna run id for which DnaRun Entity needs to be fetched.
      * @return - DnaRun Entity with the given id
      */
+    @Override
+    @Transactional
     public DnaRun getDnaRunById(Integer dnaRunId) {
 
         try {

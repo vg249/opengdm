@@ -109,7 +109,19 @@ public class MarkerDaoTest {
 
         Integer markerIdCursor = markers.get(random.nextInt(markers.size())).getMarkerId();
 
+        List<Marker> markersByMarkerIdCursor = markerDao.getMarkersByMarkerIdCursor(
+                markerIdCursor,
+                datasetId,
+                pageSize);
 
+
+        for(Marker marker : markersByMarkerIdCursor) {
+
+            assertTrue(marker.getMarkerId() > markerIdCursor);
+
+            assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
+
+        }
 
 
     }

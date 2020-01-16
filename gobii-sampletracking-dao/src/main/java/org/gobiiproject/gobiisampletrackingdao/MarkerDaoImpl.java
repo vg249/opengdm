@@ -84,19 +84,11 @@ public class MarkerDaoImpl implements MarkerDao {
         String queryString = "SELECT {marker.*} " +
                 " FROM marker AS marker " +
                 " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
-                " AND (marker.marker_id > :markerIdCursor) " +
+                " AND (:markerIdCursor IS NULL OR marker.marker_id > :markerIdCursor) " +
                 " ORDER BY marker.marker_id " +
                 " LIMIT :pageSize ";
 
         try {
-
-            if(markerIdCursor == null) {
-
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.NONE,
-                        " Cause Message: Invalid page cursor or token");
-
-            }
 
             if(pageSize == null) {
                 pageSize = defaultPageSize;

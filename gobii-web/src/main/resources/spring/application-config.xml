@@ -461,6 +461,9 @@
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
     <bean id="rsMarkerBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerBrapiDaoImpl"/>
 
+    <!-- *** Marker Sample Tracking Beans ************************************* -->
+    <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
+
     <!-- *** DATASET BRAPI BEANS *********** -->
     <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.DatasetBrapiServiceImpl"/>
     <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
