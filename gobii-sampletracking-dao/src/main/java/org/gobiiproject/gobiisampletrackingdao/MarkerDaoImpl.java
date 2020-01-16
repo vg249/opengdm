@@ -77,6 +77,55 @@ public class MarkerDaoImpl implements MarkerDao {
 
     @Override
     @Transactional
+    public List<Marker> getMarkersByMarkerIdCursor(Integer markerIdCursor, Integer datasetId, Integer pageSize) {
+
+        List<Marker> markers;
+
+        String queryString = "SELECT {marker.*} " +
+                " FROM marker AS marker " +
+                " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
+                " AND (marker.marker_id > :markerIdCursor) " +
+                " ORDER BY marker.marker_id " +
+                " LIMIT :pageSize ";
+
+        try {
+
+            if(markerIdCursor == null) {
+
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        " Cause Message: Invalid page cursor or token");
+
+            }
+
+            if(pageSize == null) {
+                pageSize = defaultPageSize;
+            }
+
+            Session session = em.unwrap(Session.class);
+
+            markers = session.createNativeQuery(queryString)
+                    .addEntity("marker", Marker.class)
+                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .setParameter("markerIdCursor", markerIdCursor, IntegerType.INSTANCE)
+                    .list();
+
+            return markers;
+
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
     public List<Marker> getMarkersByDatasetId(Integer datasetId,
                                    Integer pageSize,
                                    Integer rowOffset) {

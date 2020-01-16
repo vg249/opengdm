@@ -10,6 +10,10 @@ public interface MarkerDao {
     List<Marker> getMarkers(Integer pageSize, Integer rowOffset,
                             Integer markerId, Integer datasetId);
 
+    List<Marker> getMarkersByMarkerIdCursor(Integer markerId,
+                                            Integer datasetId,
+                                            Integer pageSize);
+
     List<Marker> getMarkersByDatasetId(Integer datasetId,
                                        Integer pageSize, Integer rowOffset);
 
