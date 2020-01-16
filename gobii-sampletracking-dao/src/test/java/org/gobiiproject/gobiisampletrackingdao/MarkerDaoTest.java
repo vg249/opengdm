@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -24,6 +25,8 @@ public class MarkerDaoTest {
 
     @Autowired
     private MarkerDao markerDao;
+
+    Random random = new Random();
 
     @Test
     public void testGetMarkers() {
@@ -67,30 +70,46 @@ public class MarkerDaoTest {
 
         assertTrue("Empty marker list",markers.size() > 0);
 
-        if(markers.size() > 0) {
 
-            for(Marker marker : markers) {
+        for(Marker marker : markers) {
 
-                assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
-
-            }
+            assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
 
         }
 
+
         //Test Get MarkerStartAndStop by datasetId
-         markers = markerDao.getMarkersWithStartAndStop(pageSize, rowOffset, null, datasetId);
+        markers = markerDao.getMarkersWithStartAndStop(pageSize, rowOffset, null, datasetId);
 
         assertTrue("Empty marker list",markers.size() > 0);
 
-        if(markers.size() > 0) {
 
-            for(Marker marker : markers) {
+        for(Marker marker : markers) {
 
-                assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
-
-            }
+            assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
 
         }
+
+
+    }
+
+    @Test
+    public void testGetMarkersByMarkerIdCursor() {
+
+        Integer pageSize = 200;
+
+        Integer rowOffset = 0;
+
+        Integer datasetId  = 17;
+
+        List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId,
+                pageSize, rowOffset);
+
+        assertTrue("Empty marker list",markers.size() > 0);
+
+        Integer markerIdCursor = markers.get(random.nextInt(markers.size())).getMarkerId();
+
+
 
 
     }
