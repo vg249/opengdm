@@ -59,7 +59,7 @@ public class BRAPIIControllerV1Test {
     private SamplesBrapiService samplesBrapiService;
 
     @Mock
-    private VariantSetsService variantSetsBrapiService;
+    private VariantSetsBrapiService variantSetsBrapiService;
 
     @InjectMocks
     private BRAPIIControllerV1 brapiiControllerV1;

@@ -8,9 +8,9 @@ import java.util.Map;
 
 public interface GenotypeCallsService {
 
-    List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
-            Integer dnarunId, String pageToken,
-            Integer pageSize) throws GobiiDomainException;
+    List<GenotypeCallsDTO> getGenotypeCallsByCallSetId(
+            Integer callSetDbId, Integer pageSize,
+            String pageToken) throws GobiiDomainException;
 
     List<GenotypeCallsDTO> getGenotypeCallsByMarkerId(
             Integer markerId, String pageToken,

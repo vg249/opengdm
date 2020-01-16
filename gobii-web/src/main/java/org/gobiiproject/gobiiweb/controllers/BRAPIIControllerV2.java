@@ -3,37 +3,13 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
-import org.gobiiproject.gobidomain.async.SearchExtract;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
-import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
-import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmByDbId;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseLogin;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseMapLogin;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMapMarkerProfiles;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMarkerProfilesMaster;
-import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseMapObservationVariables;
-import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
-import org.gobiiproject.gobiibrapi.core.common.BrapiAsynchStatus;
-import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
-import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
-import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
@@ -58,9 +34,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
-import java.io.*;
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -101,7 +74,7 @@ public class BRAPIIControllerV2 {
     private SamplesBrapiService samplesBrapiService;
 
     @Autowired
-    private VariantSetsService variantSetsService;
+    private VariantSetsBrapiService variantSetsService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 

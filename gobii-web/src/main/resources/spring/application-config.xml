@@ -452,6 +452,10 @@
     <bean id="dtoMapDnaRun" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapDnaRunImpl"/>
     <bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>
 
+    <!-- *** DNA RUN Sample Tracking Beans ************************************* -->
+    <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
+
+
     <!-- *** MARKER BRAPI BEANS ************* -->
     <bean id="markerBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl"/>
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
@@ -473,7 +477,7 @@
     <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.SamplesBrapiServiceImpl"/>
 
     <!-- ** VariantSets BRAPI BEANS **-->
-    <bean id="variantSetsBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.VariantSetsServiceImpl"/>
+    <bean id="variantSetsBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.VariantSetsBrapiServiceImpl"/>
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
     <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.LinkakgeGroupBrapiServiceImpl"/>

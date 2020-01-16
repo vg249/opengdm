@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.VariantSetsService;
+import org.gobiiproject.gobidomain.services.VariantSetsBrapiService;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class VariantSetsServiceImpl implements VariantSetsService {
+public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
 
     @Autowired
