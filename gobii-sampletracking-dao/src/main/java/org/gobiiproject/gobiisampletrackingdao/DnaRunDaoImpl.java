@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -75,6 +76,53 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
+
+    }
+
+
+    /**
+     * Get DnaRun Entity by dnaRun Id.
+     * dnaRunId is unique id for dnaRunEntity.
+     * @param dnaRunId - dna run id for which DnaRun Entity needs to be fetched.
+     * @return - DnaRun Entity with the given id
+     */
+    public DnaRun getDnaRunById(Integer dnaRunId) {
+
+        try {
+
+            List<DnaRun> dnaRunsById = this.getDnaRuns(null, null,
+                    dnaRunId, null);
+
+            if (dnaRunsById.size() > 1) {
+
+                LOGGER.error("More than one duplicate entries found.");
+
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "More than one dataset entity exists for the same Id");
+
+            } else if (dnaRunsById.size() == 0) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Dataset Entity for given id does not exist");
+            }
+
+            return dnaRunsById.get(0);
+
+        }
+        catch(GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+
 
     }
 

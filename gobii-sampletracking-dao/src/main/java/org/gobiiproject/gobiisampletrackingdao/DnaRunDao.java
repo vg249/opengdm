@@ -10,9 +10,12 @@ public interface DnaRunDao {
                             Integer dnaRunId, Integer datasetId);
 
 
+    DnaRun getDnaRunById(Integer dnaRunId);
+
     List<DnaRun> getDnaRunsByDatasetId(Integer datasetId,
                                        Integer pageSize,
                                        Integer rowOffset);
+
 
     List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds);
 

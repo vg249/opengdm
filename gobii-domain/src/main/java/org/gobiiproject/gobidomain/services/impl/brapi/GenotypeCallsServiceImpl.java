@@ -80,17 +80,25 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
     /**
-     * Get Genotypes to callSetDbId
-     * @param callSetDbId
-     * @param pageSize
-     * @param pageToken
-     * @return
+     * Get Genotypes to callSetDbId.
+     * BrAPI field callSetDbId corresponds to dnaRunId in GDM system
+     * @param callSetDbId - Corresponds to dnaRunId. Get Genotypes calls belonging to the callSetId.
+     * @param pageSize - Number of genotype calls per page.
+     * @param pageToken - Cursor to indetify where the next page start. DnaRun can be ibn multiple dataset.
+     *                  Assume, a given dnaRun is in multiple datasets {7,5,6} and each have set of markers of their own.
+     *                  {datasetId-markerId} pageToken means, fetch Genotypes from datasetIds greater
+     *                  than or equal to given datasetId and markerId ascending order cursors until the page fills.
+     *                  nextPageToken will be where datasetId and markerId starts for next page.
+     * @return List of Genotype calls for given page.
      */
     @Override
     public List<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
                                                               Integer pageSize,
                                                               String pageToken) {
+
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+        DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
 
         //List<Integer> dnarunDatasets = dnarun.getVariantSetIds();
