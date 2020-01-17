@@ -192,8 +192,13 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         }
         catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error. Please check the error log");
+
         }
 
     }
@@ -213,8 +218,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             return datasetIds;
         }
         catch (Exception e) {
+
             LOGGER.error(e.getMessage(), e);
-            throw new GobiiDomainException(e);
+
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error. Please check the error log");
         }
     }
 
