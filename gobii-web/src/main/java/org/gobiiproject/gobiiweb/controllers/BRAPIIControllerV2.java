@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
+import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -399,11 +400,16 @@ public class BRAPIIControllerV2 {
         try {
 
 
-            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
+            PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
                     callSetDbId,
                     pageSize, pageToken);
 
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
+                    genotypeCallsList.getListData());
+
+            if(genotypeCallsList.getNextPageToken() != null) {
+                payload.getMetadata().getPagination().setNextPageToken(genotypeCallsList.getNextPageToken());
+            }
 
 
             return ResponseEntity.ok(payload);

@@ -45,13 +45,18 @@ public class PageToken {
     public static Map<String, Integer> decode(String pageToken) {
 
         try {
-           byte[] decodedBytes = Base64.getDecoder().decode(pageToken);
-           String cursorMapJsonString = new String(decodedBytes);
 
-           Map<String, Integer> cursorMap = (new ObjectMapper()).readValue(cursorMapJsonString,
-                   new TypeReference<HashMap<String, Integer>>(){});
+            if(pageToken == null || pageToken.isEmpty()) {
+                return null;
+            }
 
-           return cursorMap;
+            byte[] decodedBytes = Base64.getDecoder().decode(pageToken);
+            String cursorMapJsonString = new String(decodedBytes);
+
+            Map<String, Integer> cursorMap = (new ObjectMapper()).readValue(cursorMapJsonString,
+                    new TypeReference<HashMap<String, Integer>>(){});
+
+            return cursorMap;
 
         }
         catch(InvalidFormatException je) {

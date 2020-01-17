@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -63,9 +64,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given page.
      */
     @Override
-    public List<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
-                                                              Integer pageSize,
-                                                              String pageToken) {
+    public PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
+                                                                           Integer pageSize,
+                                                                           String pageToken) {
+
+        PagedListByCursor<GenotypeCallsDTO>  returnVal = new PagedListByCursor<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
@@ -73,17 +76,22 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         Integer startDatasetId = null;
 
+        String nextPageToken = null;
+
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
+
 
         try {
 
             Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
 
-            startDatasetId = pageTokenParts.get("startDatasetID");
+            if(pageTokenParts != null ) {
+                startDatasetId = pageTokenParts.getOrDefault("datasetID", null);
 
-            markerIdCursor = pageTokenParts.get("markerIdCursor");
+                markerIdCursor = pageTokenParts.getOrDefault("markerId", null);
+            }
 
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
@@ -146,9 +154,37 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
 
+                if(pageSize >= markers.size()) {
+                    break;
+                }
+                else {
+                    pageSize -= markers.size();
+                }
+
+
             }
 
-            return genotypeCalls;
+            if(genotypeCalls.size() >= pageSize) {
+
+                Map<String ,Integer> nextPageCursorMap = new HashMap<>();
+
+                nextPageCursorMap.put("datasetId",
+                        genotypeCalls.get(genotypeCalls.size() - 1).getVariantSetDbId());
+
+                nextPageCursorMap.put("markerId",
+                        genotypeCalls.get(genotypeCalls.size() - 1).getVariantDbId());
+
+
+                nextPageToken = PageToken.encode(nextPageCursorMap);
+
+                returnVal.setNextPageToken(nextPageToken);
+
+            }
+
+            returnVal.setListData(genotypeCalls);
+
+            return returnVal;
+
         }
         catch (GobiiException gE) {
 
@@ -285,8 +321,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             Integer pageSize) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
-
-
 
         try {
 
