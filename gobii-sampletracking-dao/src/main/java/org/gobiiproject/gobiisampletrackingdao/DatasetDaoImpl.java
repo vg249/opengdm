@@ -224,7 +224,7 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
-    public Dataset getDatasetById(Integer datasetId) {
+    public Dataset getDatasetById(Integer datasetId) throws GobiiException {
 
         try {
 

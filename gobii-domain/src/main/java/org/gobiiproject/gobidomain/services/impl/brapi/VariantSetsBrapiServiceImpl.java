@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.VariantSetsBrapiService;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
@@ -10,6 +11,8 @@ import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.MessageFormat;
@@ -20,6 +23,7 @@ import java.util.List;
 
 public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
+    Logger LOGGER = LoggerFactory.getLogger(VariantSetsBrapiServiceImpl.class);
 
     @Autowired
     private DatasetDao datasetDao;
@@ -82,17 +86,22 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
             }
 
-       }
-       catch (Exception e) {
+            return returnVal;
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
 
             throw new GobiiDomainException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Bad Request");
+                     GobiiStatusLevel.ERROR,
+                     GobiiValidationStatusType.BAD_REQUEST,
+                     "Bad Request");
 
-       }
+        }
 
-       return returnVal;
 
     }
 
@@ -107,9 +116,15 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
             mapDatasetEntityToVariantSetDto(dataset, variantSetDTO);
 
+            return variantSetDTO;
 
         }
+        catch (GobiiException ge) {
+            throw ge;
+        }
         catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
 
             throw new GobiiDomainException(
                     GobiiStatusLevel.ERROR,
@@ -118,7 +133,6 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
         }
 
-        return variantSetDTO;
 
     }
 
