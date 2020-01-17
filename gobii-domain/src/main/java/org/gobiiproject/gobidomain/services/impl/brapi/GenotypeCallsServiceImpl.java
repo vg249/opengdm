@@ -2,13 +2,11 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.Utils;
-import org.gobiiproject.gobidomain.services.DnaRunService;
+import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobidomain.services.GenotypeCallsService;
 import org.gobiiproject.gobidomain.services.MarkerBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
@@ -19,7 +17,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface;
-import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,13 +79,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         try {
 
-            /**
-             * {datasetId-markerId} cursor
-             */
-            String[] tokenParts = {"startDatasetId", "markerIdCursor"};
-
-            Map<String, Integer> pageTokenParts = Utils.pageTokenParser(
-                    pageToken, tokenParts);
+            Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
 
             startDatasetId = pageTokenParts.get("startDatasetID");
 
