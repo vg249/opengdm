@@ -161,8 +161,8 @@ public class DtoListQuery<T> {
             throw (new GobiiDaoException(message, e.getSQLException()));
 
         } catch (Exception e) {
-
-            String message = "Error retrieving dto list " + this.listStatementPaged.getListSqlId().name();
+            //The message in e is important - it's probably the _only_ part of this thing that is!
+            String message = "Error retrieving dto list " + this.listStatementPaged.getListSqlId().name() + " " + e.getMessage();
             LOGGER.error(message, e);
             throw (new GobiiDaoException(message, e));
 
@@ -190,7 +190,8 @@ public class DtoListQuery<T> {
 
         } catch (Exception e) {
 
-            String message = "Error retrieving dto list " + this.listStatement.getListSqlId().name();
+            //The message in e is important - it's probably the _only_ part of this thing that is!
+            String message = "Error retrieving dto list " + this.listStatementPaged.getListSqlId().name() + " " + e.getMessage();
             LOGGER.error(message, e);
             throw (new GobiiDaoException(message, e));
 
