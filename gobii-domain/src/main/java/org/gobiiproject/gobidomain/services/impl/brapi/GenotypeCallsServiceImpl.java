@@ -94,6 +94,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             if(pageSize == null) {
                 pageSize = BrapiDefaults.pageSize;
             }
+
+            Integer genotypesToBeRead = pageSize;
+
             //Get DNA run
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
@@ -128,7 +131,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         dnaRun.getDatasetDnaRunIdx().get(datasetId.toString()).textValue());
 
 
-                List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(markerIdCursor, datasetId, pageSize);
+                List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(
+                        markerIdCursor,
+                        datasetId,
+                        genotypesToBeRead);
 
                 // Add Marker and DnaRun Metadata associated with genotype calls.
                 // Extract HdF5 index for each marker and map it by dataset id.
@@ -162,11 +168,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
 
-                if(markers.size() >= pageSize) {
+                if(markers.size() >= genotypesToBeRead) {
                     break;
                 }
                 else {
-                    pageSize -= markers.size();
+                    genotypesToBeRead -= markers.size();
                 }
 
 
@@ -277,6 +283,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 pageSize = BrapiDefaults.pageSize;
             }
 
+            Integer genotypesToBeRead = pageSize;
+
             Marker marker = markerDao.getMarkerById(markerId);
 
 
@@ -311,7 +319,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
                 List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDnaRunIdCursor(dnaRunIdCursor,
-                        datasetId, pageSize);
+                        datasetId, genotypesToBeRead);
 
                 // Add Marker and DnaRun Metadata associated with genotype calls.
                 // Extract HdF5 index for each marker and map it by dataset id.
@@ -339,16 +347,20 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     genotypeCalls.add(genotypeCall);
 
                 }
+                if(dnaRuns.size() > 0) {
+                    String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-                String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+                    readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
+                }
+                else {
+                    continue;
+                }
 
-                readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
-
-                if(dnaRuns.size() >= pageSize) {
+                if(dnaRuns.size() >= genotypesToBeRead) {
                     break;
                 }
                 else {
-                    pageSize -= dnaRuns.size();
+                    genotypesToBeRead -= dnaRuns.size();
                 }
 
 

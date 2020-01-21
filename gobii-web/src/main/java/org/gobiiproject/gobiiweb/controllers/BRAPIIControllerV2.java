@@ -393,7 +393,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false) int pageSize,
             HttpServletRequest request) throws Exception {
 
 
@@ -890,7 +890,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false) int pageSize,
             HttpServletRequest request) throws Exception {
         try {
 
@@ -1462,7 +1462,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false) int pageSize,
             HttpServletRequest request
     ){
 
