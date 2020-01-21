@@ -13,7 +13,7 @@ public interface GenotypeCallsService {
             Integer callSetDbId, Integer pageSize,
             String pageToken) throws GobiiDomainException;
 
-    List<GenotypeCallsDTO> getGenotypeCallsByMarkerId(
+    PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
             Integer markerId, String pageToken,
             Integer pageSize) throws GobiiDomainException;
 

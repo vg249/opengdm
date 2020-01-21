@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.BrapiDefaults;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
@@ -48,9 +49,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     private HDF5Interface hdf5Interface;
 
 
-    ///**
-
-
     /**
      * Get Genotypes to callSetDbId.
      * BrAPI field callSetDbId corresponds to dnaRunId in GDM system
@@ -78,9 +76,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         String nextPageToken = null;
 
-        Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
+        Map<String, ArrayList<String>> markerHdf5IndexMap;
 
-        Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
+        Map<String, ArrayList<String>> dnarunHdf5IndexMap;
 
 
         try {
@@ -93,11 +91,17 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 markerIdCursor = pageTokenParts.getOrDefault("markerId", null);
             }
 
+            if(pageSize == null) {
+                pageSize = BrapiDefaults.pageSize;
+            }
+            //Get DNA run
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
+            // Parse list of datasetIds the dnarun belongs to
             List<Integer> dnaRunDatasetIds = this.getDatasetIdsFromDatasetJsonIndex(
                     dnaRun.getDatasetDnaRunIdx());
 
+            // Sort dataset ids
             Collections.sort(dnaRunDatasetIds);
 
             Integer datasetIdCursorStart = 0;
@@ -106,10 +110,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 datasetIdCursorStart = dnaRunDatasetIds.indexOf(startDatasetId);
             }
 
-            // Get Genotypes for makers in dataset until page is filled
+            // Read Genotypes for makers in dataset until page is filled
             for(int datasetIdCursor = datasetIdCursorStart;
                 datasetIdCursor < dnaRunDatasetIds.size();
                 datasetIdCursor++) {
+
+                markerHdf5IndexMap = new HashMap<>();
+
+                dnarunHdf5IndexMap = new HashMap<>();
 
                 Integer datasetId = dnaRunDatasetIds.get(datasetIdCursor);
 
@@ -154,7 +162,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
 
-                if(pageSize >= markers.size()) {
+                if(markers.size() >= pageSize) {
                     break;
                 }
                 else {
@@ -236,41 +244,152 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public List<GenotypeCallsDTO> getGenotypeCallsByMarkerId(
+    public PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
             Integer markerId, String pageToken,
             Integer pageSize) {
 
-        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+        PagedListByCursor<GenotypeCallsDTO>  returnVal = new PagedListByCursor<>();
 
+        List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
-        MarkerBrapiDTO marker = null;
+        Integer dnaRunIdCursor = null;
+
+        Integer startDatasetId = null;
+
+        String nextPageToken = null;
+
+        Map<String, ArrayList<String>> markerHdf5IndexMap;
+
+        Map<String, ArrayList<String>> dnarunHdf5IndexMap;
+
 
         try {
 
-            marker = markerService.getMarkerById(markerId);
+            Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
 
-            String outputDirPath = "";
+            if(pageTokenParts != null ) {
+                startDatasetId = pageTokenParts.getOrDefault("datasetId", null);
 
-            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(
-                    marker, pageToken, pageSize);
+                dnaRunIdCursor = pageTokenParts.getOrDefault("dnaRunId", null);
+            }
+
+            if(pageSize == null) {
+                pageSize = BrapiDefaults.pageSize;
+            }
+
+            Marker marker = markerDao.getMarkerById(markerId);
+
+
+            // Parse list of datasetIds the dnarun belongs to
+            List<Integer> markerDatasetIds = this.getDatasetIdsFromDatasetJsonIndex(marker.getDatasetMarkerIdx());
+
+            // Sort dataset ids
+            Collections.sort(markerDatasetIds);
+
+            Integer datasetIdCursorStart = 0;
+
+            if(startDatasetId != null) {
+                datasetIdCursorStart = markerDatasetIds.indexOf(startDatasetId);
+            }
+
+            // Read Genotypes for makers in dataset until page is filled
+            for(int datasetIdCursor = datasetIdCursorStart;
+                datasetIdCursor < markerDatasetIds.size();
+                datasetIdCursor++) {
+
+                markerHdf5IndexMap = new HashMap<>();
+
+                dnarunHdf5IndexMap = new HashMap<>();
+
+                Integer datasetId = markerDatasetIds.get(datasetIdCursor);
+
+                markerHdf5IndexMap.put(datasetId.toString(),
+                        new ArrayList<>());
+
+                markerHdf5IndexMap.get(datasetId.toString()).add(
+                        marker.getDatasetMarkerIdx().get(datasetId.toString()).textValue());
+
+
+                List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDnaRunIdCursor(dnaRunIdCursor,
+                        datasetId, pageSize);
+
+                // Add Marker and DnaRun Metadata associated with genotype calls.
+                // Extract HdF5 index for each marker and map it by dataset id.
+                for(DnaRun dnaRun : dnaRuns) {
+
+                    GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+
+                    ModelMapper.mapEntityToDto(marker, genotypeCall);
+
+                    ModelMapper.mapEntityToDto(dnaRun, genotypeCall);
+
+                    genotypeCall.setVariantSetDbId(datasetId);
+
+                    if(!dnarunHdf5IndexMap.containsKey(datasetId.toString())) {
+
+                        dnarunHdf5IndexMap.put(
+                                datasetId.toString(),
+                                new ArrayList<>());
+                    }
+
+                    dnarunHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            dnaRun.getDatasetDnaRunIdx().get(datasetId.toString()).textValue());
+
+                    genotypeCalls.add(genotypeCall);
+
+                }
+
+                String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+                readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
+
+                if(dnaRuns.size() >= pageSize) {
+                    break;
+                }
+                else {
+                    pageSize -= dnaRuns.size();
+                }
+
+
+            }
+
+            if(genotypeCalls.size() >= pageSize) {
+
+                Map<String ,Integer> nextPageCursorMap = new HashMap<>();
+
+                nextPageCursorMap.put("datasetId",
+                        genotypeCalls.get(genotypeCalls.size() - 1).getVariantSetDbId());
+
+                nextPageCursorMap.put("dnaRunId",
+                        genotypeCalls.get(genotypeCalls.size() - 1).getCallSetDbId());
+
+
+                nextPageToken = PageToken.encode(nextPageCursorMap);
+
+                returnVal.setNextPageToken(nextPageToken);
+
+            }
+
+            returnVal.setListData(genotypeCalls);
+
+            return returnVal;
 
         }
         catch (GobiiException gE) {
 
-            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw gE;
 
-            throw new GobiiDomainException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage()
-            );
         }
         catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
 
-        return returnVal;
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error. Please check the error log");
+
+        }
     }
 
     /**
@@ -288,11 +407,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
-
-
         try {
-
-
             String outputDirPath = "";
 
             returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(datasetId, pageToken, pageSize);

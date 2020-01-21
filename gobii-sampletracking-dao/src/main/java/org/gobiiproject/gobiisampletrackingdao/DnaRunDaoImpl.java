@@ -2,7 +2,6 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
-import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
@@ -41,9 +40,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
     public List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
                                    Integer dnaRunId, Integer datasetId) {
 
-        List<DnaRun> dnaRuns = new ArrayList<>();
+        List<DnaRun> dnaRuns;
 
-        String queryString = "SELECT {dnarun.*} " +
+        String queryString = "SELECT dnarun.* " +
                 " FROM dnarun AS dnarun " +
                 " WHERE (:datasetId IS NULL OR dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
                 " AND (:dnaRunId IS NULL OR dnarun.dnarun_id = :dnaRunId) " +
@@ -52,6 +51,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
         try {
 
             Session session = em.unwrap(Session.class);
+            session.enableFetchProfile("dnarun-experiment-dnasample");
 
             if(pageSize == null) {
                 pageSize = defaultPageSize;
@@ -79,6 +79,49 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     }
 
+    @Override
+    @Transactional
+    public List<DnaRun> getDnaRunsByDnaRunIdCursor(
+            Integer dnaRunIdCursor,
+            Integer datasetId,
+            Integer pageSize) {
+
+        List<DnaRun> dnaRuns;
+
+        String queryString = "SELECT {dnarun.*} " +
+                " FROM dnarun AS dnarun " +
+                " WHERE (dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
+                " AND (:dnaRunIdCursor IS NULL OR dnarun.dnarun_id > :dnaRunIdCursor) " +
+                " ORDER BY dnarun.dnarun_id " +
+                " LIMIT :pageSize ";
+
+        try {
+
+            if(pageSize == null) {
+                pageSize = defaultPageSize;
+            }
+
+            Session session = em.unwrap(Session.class);
+
+            dnaRuns = session.createNativeQuery(queryString)
+                    .addEntity("dnarun", DnaRun.class)
+                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .setParameter("dnaRunIdCursor",dnaRunIdCursor, IntegerType.INSTANCE)
+                    .list();
+
+            return dnaRuns;
+
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+    }
 
     /**
      * Get DnaRun Entity by dnaRun Id.
@@ -101,12 +144,12 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
                 throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
-                        "More than one dataset entity exists for the same Id");
+                        "More than one dnarun entity exists for the same Id");
 
             } else if (dnaRunsById.size() == 0) {
                 throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Dataset Entity for given id does not exist");
+                        "Dna run Entity for given id does not exist");
             }
 
             return dnaRunsById.get(0);
@@ -172,7 +215,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             criteria.orderBy(cb.asc(root.get("dnaRunId")));
 
-            dnaruns = em.createQuery(criteria).getResultList();
+            dnaruns =  em.createQuery(criteria).getResultList();
 
             return dnaruns;
 

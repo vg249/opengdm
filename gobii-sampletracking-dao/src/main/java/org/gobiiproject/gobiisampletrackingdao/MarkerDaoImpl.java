@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -72,6 +74,46 @@ public class MarkerDaoImpl implements MarkerDao {
         }
 
 
+
+    }
+
+    @Override
+    @Transactional
+    public Marker getMarkerById(Integer markerId) {
+        try {
+
+            List<Marker> markersById = this.getMarkers(null, null,
+                    markerId, null);
+
+            if (markersById.size() > 1) {
+
+                LOGGER.error("More than one duplicate entries found.");
+
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "More than one marker entity exists for the same Id");
+
+            } else if (markersById.size() == 0) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Marker Entity for given id does not exist");
+            }
+
+            return markersById.get(0);
+
+        }
+        catch(GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
 
     }
 

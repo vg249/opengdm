@@ -866,8 +866,6 @@ public class BRAPIIControllerV2 {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
@@ -884,7 +882,7 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByVariant(
             @ApiParam(value = "Id for marker to be fetched")
-            @PathVariable(value="variantDbId") String variantDbId,
+            @PathVariable(value="variantDbId") Integer variantDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -894,48 +892,17 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             HttpServletRequest request) throws Exception {
-
-        Integer variantDbIdInt;
-
         try {
 
-            try {
-                variantDbIdInt = Integer.parseInt(variantDbId);
-            } catch (Exception e) {
-                throw new GobiiException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Invalid marker Id");
-            }
+            PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
+                    variantDbId,
+                    pageToken, pageSize);
 
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
+                    genotypeCallsList.getListData());
 
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_DNARUN,
-                    RestMethodType.GET);
-
-            if(maxPageSize == null) {
-                //As per initial standards
-                maxPageSize = 10000;
-            }
-
-            if (pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByMarkerId(
-                    variantDbIdInt, pageToken, pageSize);
-
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
-
-            if (genotypeCallsList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
-                if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantSetDbId().toString() +
-                                    "-" +
-                            genotypeCallsList.get(genotypeCallsList.size() - 1).getCallSetDbId().toString()
-                    );
-                }
+            if(genotypeCallsList.getNextPageToken() != null) {
+                payload.getMetadata().getPagination().setNextPageToken(genotypeCallsList.getNextPageToken());
             }
 
             return ResponseEntity.ok(payload);

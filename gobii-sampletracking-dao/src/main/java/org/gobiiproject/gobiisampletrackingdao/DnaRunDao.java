@@ -10,6 +10,10 @@ public interface DnaRunDao {
                             Integer dnaRunId, Integer datasetId);
 
 
+    List<DnaRun> getDnaRunsByDnaRunIdCursor(Integer dnaRunId,
+                                                Integer datasetId,
+                                                Integer pageSize);
+
     DnaRun getDnaRunById(Integer dnaRunId);
 
     List<DnaRun> getDnaRunsByDatasetId(Integer datasetId,
