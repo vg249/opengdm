@@ -38,6 +38,8 @@
         <doc-location-source>${project.basedir}/src/main/resources/docs/source</doc-location-source>
         <doc-location-generated>${project.basedir}/src/main/resources/docs/generated</doc-location-generated>
 
+        <maven.exec.skip>false</maven.exec.skip> <!-- default -->
+
     </properties>
 
     <repositories>
@@ -405,6 +407,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
+                            <skip>${maven.exec.skip}</skip>
                             <arguments>run build</arguments>
                         </configuration>
                     </execution>
