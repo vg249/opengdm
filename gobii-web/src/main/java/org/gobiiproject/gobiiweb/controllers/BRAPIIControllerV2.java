@@ -865,7 +865,7 @@ public class BRAPIIControllerV2 {
 
             PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
                     variantDbId,
-                    pageToken, pageSize);
+                    pageSize, pageToken);
 
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
                     genotypeCallsList.getListData());
@@ -1445,7 +1445,7 @@ public class BRAPIIControllerV2 {
                 variantSetDbId = Integer.parseInt(variantSetDbIdVar);
 
                 genotypeCallsList = genotypeCallsService.getGenotypeCallsByDatasetId(
-                        variantSetDbId, pageToken, pageSize);
+                        variantSetDbId, pageSize, pageToken);
 
             }
             catch(NumberFormatException | NullPointerException ne) {
@@ -1459,7 +1459,7 @@ public class BRAPIIControllerV2 {
 
                 genotypeCallsList =
                         genotypeCallsService.getGenotypeCallsByExtractQuery(
-                                extractQueryPath, pageToken, pageSize);
+                                extractQueryPath, pageSize, pageToken);
             }
 
 
