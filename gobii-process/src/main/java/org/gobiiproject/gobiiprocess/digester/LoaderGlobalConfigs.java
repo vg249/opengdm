@@ -9,6 +9,7 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
     private static boolean singleThreadFileRead=false;
     private static boolean deleteIntermediateFiles=false;
     private static boolean enableValidation=true;//TODO- make true to enable validation by default
+    private static boolean newTwoLetterNucleotideParse=true;
 
     /**
      * Adds options to an Options object which will be read in 'setFromFlags'.
@@ -17,7 +18,8 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
         ProcessGlobalConfigs.addOptions(o);
         o.addOption("str", "singleThreadRead", false, "Use a single thread for file reading");
         o.addOption("dif","deleteIntermediateFiles", false, "Delete intermediate files (and save some space)");
-        o.addOption("ev","enableValidation",true,"Enable data validation [true/[false]]");
+        o.addOption("ev","enableValidation",true,"Enable data validation [[true]/false]");
+        o.addOption("ntlnp","newTwoLetterNucleotideParse",true,"Use the new parser for two letter parsing [[true]/false]");
     }
     public static void setFromFlags(CommandLine cli){
         ProcessGlobalConfigs.setFromFlags(cli);
@@ -26,6 +28,10 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
         if(cli.hasOption("enableValidation")){
             enableValidation=Boolean.parseBoolean(cli.getOptionValue("enableValidation"));//True on 'true' 'TRUE' 'tRuE', false on anything else.
         }
+        if(cli.hasOption("newTwoLetterNucleotideParse")){
+            newTwoLetterNucleotideParse=Boolean.parseBoolean(cli.getOptionValue("newTwoLetterNucleotideParse"));//True on 'true' 'TRUE' 'tRuE', false on anything else.
+        }
+
     }
 
     public static boolean getSingleThreadFileRead(){
@@ -33,4 +39,5 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
     }
     public static boolean getDeleteIntermediateFiles() { return deleteIntermediateFiles; }
     public static boolean getValidation() { return enableValidation; }
+    public static boolean getTwoLetterNucleotideParse(){return newTwoLetterNucleotideParse;}
 }
