@@ -2,6 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.hibernate.type.IntegerType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import static junit.framework.TestCase.assertTrue;
  *   api.gobii.org. Need to refactor in future with Test databases and setup data
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@Ignore
 public class DnaRunDaoTest {
 
     @Autowired
