@@ -189,6 +189,7 @@ public class RsCvDaoImpl implements RsCvDao {
             LOGGER.error("Error creating cv with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
         }
+
     }
 
 
@@ -204,5 +205,6 @@ public class RsCvDaoImpl implements RsCvDao {
             LOGGER.error("Error creating cv with SQL ", e.getSQL());
             throw (new GobiiDaoException(e.getSQLException()));
         }
+
     }
 } // RsProjectDaoImpl

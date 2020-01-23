@@ -10,6 +10,9 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.exception.ConstraintViolationException;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjectByNameAndPIContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjectDetailsByProjectId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjectNames;
@@ -150,9 +153,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
             LOGGER.error("Error creating project with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
-
         }
-
     } // createProject
 
     @Transactional(propagation = Propagation.REQUIRED)

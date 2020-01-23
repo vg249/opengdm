@@ -113,8 +113,8 @@ public class HDF5Interface {
                     String sampLine = sampR.readLine();
                     if (sampLine != null) {
                         String[] sampSplit = sampLine.split("\t");
-                        if(sampSplit.length>1){
-                            map.put(sampSplit[0],sampSplit[1]);
+                        if(sampSplit.length>1) {
+                            map.put(sampSplit[0], sampSplit[1]);
                         }
                     }
                 }
@@ -165,9 +165,13 @@ public class HDF5Interface {
                 int dsID=Integer.parseInt(line[0]);
 
                 String positionList=line[1].replace(',','\n');
+
                 String positionListFileLoc=tempFolder+"position.list";
+
                 FileSystemInterface.rmIfExist(positionListFileLoc);
+
                 FileWriter w = new FileWriter(positionListFileLoc);
+
                 w.write(positionList);
                 w.close();
 
@@ -177,7 +181,9 @@ public class HDF5Interface {
                 }
                 String genoFile=null;
                 if(!hasSampleList || (sampleList!=null)) {
+
                     genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList);
+
                     if(genoFile==null)return null;
                 }
                 else{

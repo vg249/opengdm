@@ -388,9 +388,11 @@ public class ConfigSettings {
         this.configValues.setProvidesBackend(providesBackend);
     }
 
+    public String getHdf5ExePath() {
+        return this.configValues.getHdf5ExePath();
+    }
     public AuthType getEmailAuth(){return this.configValues.getEmailAuthEnum();}
 
     public void setEmailAuth(String auth){ this.configValues.setEmailAuthType(auth);}
-
 
 }

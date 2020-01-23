@@ -1,6 +1,13 @@
 package org.gobiiproject.gobiidao.resultset.core;
 
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.hibernate.Session;
+import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.jdbc.Work;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.Type;
 import java.sql.Array;
 import java.sql.CallableStatement;
@@ -12,14 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.util.async.Promise;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.SQLGrammarException;
-import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +77,6 @@ public class SpRunnerCallable {
 
             session = em.getEntityManagerFactory().unwrap(SessionFactory.class).openSession();
             session.doWork(createWorkFunction(spDef, result));
-
-
         } finally {
 
             if (session != null && session.isConnected()) {
