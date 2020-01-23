@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.QueryField;
@@ -40,7 +41,7 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
-    public List<Dataset> listDatasetsByPageCursor(String pageCursor, Integer pageSize) {
+    public List<Dataset> listDatasetsByPageCursor(String pageCursor, Integer pageSize) throws GobiiException {
 
         List<Dataset> datasets;
 
@@ -108,7 +109,7 @@ public class DatasetDaoImpl implements DatasetDao {
     @Transactional
     public List<Dataset> listDatasets(Integer pageNum,
                                       Integer pageSize,
-                                      Integer datasetId) {
+                                      Integer datasetId) throws GobiiException {
 
         NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
 
@@ -171,7 +172,7 @@ public class DatasetDaoImpl implements DatasetDao {
      * @param resultTuplesList - Result tuple with dataset left joined with analysis and other scalar fields
      * @return tuple list with Dataset Entity and other scalar fields,
      */
-    public List<Dataset> mapAnalysesToDataset(List<Object[]> resultTuplesList) {
+    public List<Dataset> mapAnalysesToDataset(List<Object[]> resultTuplesList) throws GobiiException {
 
         List<Dataset> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 
@@ -225,7 +226,7 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
-    public Dataset getDatasetById(Integer datasetId) {
+    public Dataset getDatasetById(Integer datasetId) throws GobiiException {
 
         List<Dataset> datasetsById  = this.listDatasets(null, null, datasetId);
 

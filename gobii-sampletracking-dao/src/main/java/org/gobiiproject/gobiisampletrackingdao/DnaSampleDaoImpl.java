@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -45,7 +46,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
     @Transactional
     public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize,
                                          Integer projectId, Integer dnaSampleId,
-                                         Integer germplasmId, String germplasmExternalCode) {
+                                         Integer germplasmId, String germplasmExternalCode) throws GobiiException {
 
         List<DnaSample> dnaSamples;
         final int defaultPageSize = 1000;
@@ -115,7 +116,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize) {
+    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize) throws GobiiException {
 
         Objects.requireNonNull(pageNum);
         Objects.requireNonNull(pageSize);
@@ -133,7 +134,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public DnaSample getDnaSampleByDnaSampleId(Integer dnaSampleId) {
+    public DnaSample getDnaSampleByDnaSampleId(Integer dnaSampleId) throws GobiiException {
 
         List<DnaSample> dnaSamples = getDnaSamples(null, null,
                 null, dnaSampleId,
@@ -165,7 +166,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamplesByProjectId(Integer pageNum, Integer pageSize, Integer projectId) {
+    public List<DnaSample> getDnaSamplesByProjectId(Integer pageNum,
+                                                    Integer pageSize,
+                                                    Integer projectId) throws GobiiException {
 
         return getDnaSamples(pageNum, pageSize,
                 projectId, null,
@@ -182,7 +185,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamplesByGermplasmId(Integer pageNum, Integer pageSize, Integer germplasmId) {
+    public List<DnaSample> getDnaSamplesByGermplasmId(Integer pageNum,
+                                                      Integer pageSize,
+                                                      Integer germplasmId) throws GobiiException {
 
         return getDnaSamples(pageNum, pageSize,
                 null, null,
@@ -199,8 +204,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamplesByGermplasmExternalCode(Integer pageNum, Integer pageSize,
-                                                                String germplasmExternalCode) {
+    public List<DnaSample> getDnaSamplesByGermplasmExternalCode(Integer pageNum,
+                                                                Integer pageSize,
+                                                                String germplasmExternalCode) throws GobiiException {
 
         return getDnaSamples(pageNum, pageSize,
                 null, null,

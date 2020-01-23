@@ -19,10 +19,10 @@ public class ModelMapper {
     }
 
     /**
-     * stockoverflow.com/1042798
-     * @param fields
-     * @param type
-     * @return
+     * stackoverflow.com/questions/1042798
+     * @param fields - Fields of a given model
+     * @param type - type of the fileds
+     * @return - List of mapped fields.
      */
     private static List<Field> getAllDeclaredFields(List<Field> fields, Class<?> type) {
 

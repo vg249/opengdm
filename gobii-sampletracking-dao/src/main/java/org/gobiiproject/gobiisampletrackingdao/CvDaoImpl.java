@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
@@ -23,7 +24,7 @@ public class CvDaoImpl implements CvDao {
     protected EntityManager em;
 
     @Override
-    public Cv getCvByCvId(Integer cvId) {
+    public Cv getCvByCvId(Integer cvId) throws GobiiException {
 
 
         Objects.requireNonNull(cvId, "Cv Id should not be null");
@@ -37,8 +38,15 @@ public class CvDaoImpl implements CvDao {
             if(cvList.size() == 1) {
                 return cvList.get(0);
             }
+            else {
+                LOGGER.error("More than one entity for same Id");
 
-            return null;
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNIQUE_KEY_VIOLATION,
+                        "More than one entity with same id found. ");
+
+            }
+
         }
         catch(Exception e) {
 
@@ -53,7 +61,7 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) {
+    public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) throws GobiiException {
 
         List<Cv> cvList = new ArrayList<>();
 
@@ -97,7 +105,9 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public List<Cv> getCvsByCvTermAndCvGroup(String cvTerm, String cvGroupName, GobiiCvGroupType cvType) {
+    public List<Cv> getCvsByCvTermAndCvGroup(String cvTerm,
+                                             String cvGroupName,
+                                             GobiiCvGroupType cvType) throws GobiiException {
 
         List<Cv> cvList = new ArrayList<>();
 

@@ -49,9 +49,6 @@ public class UserContextLoader implements ApplicationContextAware {
     //Test comment
     public void loadUser(String userName) {
 
-//        InMemoryUserDetailsManager userDetailsService = applicationContext.getBean(InMemoryUserDetailsManager.class);
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-//        Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
         UserDao userDao =((UserDao) applicationContext.getBean(UserDao.class));
         User user = userDao.getByLogin(userName);
 

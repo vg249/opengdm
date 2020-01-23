@@ -22,7 +22,7 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
      * Gets the list of LinkageGroups in the database by Page Number and Page Size
      * @param pageNum - Page Number to be fetched
      * @param pageSize - Page Size to be fetched
-     * @return List of Brapi Specified Genome Maps DTO
+     * @return List of Brapi Specified Linkage Group DTO
      * @throws GobiiDomainException
      */
     @Override
@@ -37,7 +37,7 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
 
         } catch (Exception e) {
 
-            LOGGER.error("Gobii service error", e);
+            LOGGER.error("Gobii service error: Unknown system error. ", e);
             throw new GobiiDomainException(e);
 
         }
@@ -46,10 +46,10 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
 
     /**
      * Gets the list of LinkageGroups in the database by MapId, Page Number and Page Size
-     * @param mapId - Mapset Id
+     * @param mapId - Linkage Group Id
      * @param pageNum - Page Number to be fetched
      * @param pageSize - Page Size to be fetched
-     * @return List of Brapi Specified Genome Maps DTO
+     * @return List of Brapi Linkage Group DTO
      * @throws GobiiDomainException
      */
     @Override
@@ -64,7 +64,7 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
 
         } catch (Exception e) {
 
-            LOGGER.error("Gobii service error", e);
+            LOGGER.error("Gobii service error: Unknown system error", e);
             throw new GobiiDomainException(e);
 
         }
