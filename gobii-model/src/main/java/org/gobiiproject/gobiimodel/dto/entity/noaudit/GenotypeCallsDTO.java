@@ -2,9 +2,12 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.Marker;
 
 import java.util.Map;
 
@@ -15,14 +18,19 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GenotypeCallsDTO extends DTOBase{
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer variantSetDbId;
 
+    @GobiiEntityMap(paramName="dnaRunId", entity = DnaRun.class)
     private Integer callSetDbId;
 
+    @GobiiEntityMap(paramName="dnaRunName", entity = DnaRun.class)
     private String callSetName;
 
+    @GobiiEntityMap(paramName="markerId", entity = Marker.class)
     private Integer variantDbId;
 
+    @GobiiEntityMap(paramName="markerName", entity = Marker.class)
     private String variantName;
 
     private Map<String, Object> genotype;
@@ -30,10 +38,6 @@ public class GenotypeCallsDTO extends DTOBase{
     private String genotypeLiklihood;
 
     private String phaseSet;
-
-    private String hdf5MarkerIdx;
-
-    private String hdf5SampleIdx;
 
     @Override
     public Integer getId() { return null; }
@@ -43,27 +47,22 @@ public class GenotypeCallsDTO extends DTOBase{
 
     public Integer getVariantSetDbId() { return this.variantSetDbId; }
 
-    @GobiiEntityColumn(columnName = "dataset_id")
     public void setVariantSetDbId(Integer variantSetDbId) { this.variantSetDbId = variantSetDbId; }
 
     public Integer getCallSetDbId() { return this.callSetDbId; }
 
-    @GobiiEntityColumn(columnName = "dnarun_id")
     public void setCallSetDbId(Integer id) { this.callSetDbId = id; }
 
     public String getCallSetName() { return this.callSetName; }
 
-    @GobiiEntityColumn(columnName = "dnarun_name")
     public void setCallSetName(String callSetName) { this.callSetName = callSetName; }
 
     public Integer getVariantDbId() { return this.variantDbId; }
 
-    @GobiiEntityColumn(columnName = "marker_id")
     public void setVariantDbId(Integer variantDbId) { this.variantDbId = variantDbId; }
 
     public String getVariantName() { return this.variantName; }
 
-    @GobiiEntityColumn(columnName = "marker_name")
     public void setVariantName(String variantName) { this.variantName = variantName; }
 
     public Map<String, Object> getGenotype() {
@@ -82,21 +81,4 @@ public class GenotypeCallsDTO extends DTOBase{
 
     public void setPhaseSet(String phaseSet) { this.phaseSet = phaseSet; }
 
-    public String getHdf5MarkerIdx() {
-        return this.hdf5MarkerIdx;
-    }
-
-    @GobiiEntityColumn(columnName = "hdf5_marker_idx")
-    public void setHdf5MarkerIdx(String hdf5MarkerIdx) {
-        this.hdf5MarkerIdx = hdf5MarkerIdx;
-    }
-
-    public String getHdf5SampleIdx() {
-        return this.hdf5SampleIdx;
-    }
-
-    @GobiiEntityColumn(columnName = "hdf5_dnarun_idx")
-    public void setHdf5SampleIdx(String hdf5SampleIdx) {
-        this.hdf5SampleIdx = hdf5SampleIdx;
-    }
 }

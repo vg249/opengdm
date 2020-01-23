@@ -2,17 +2,18 @@ package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
 
 import java.util.List;
 import java.util.Map;
 
 public interface GenotypeCallsService {
 
-    List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
-            Integer dnarunId, String pageToken,
-            Integer pageSize) throws GobiiDomainException;
+    PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByCallSetId(
+            Integer callSetDbId, Integer pageSize,
+            String pageToken) throws GobiiDomainException;
 
-    List<GenotypeCallsDTO> getGenotypeCallsByMarkerId(
+    PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
             Integer markerId, String pageToken,
             Integer pageSize) throws GobiiDomainException;
 
@@ -25,7 +26,5 @@ public interface GenotypeCallsService {
             Integer pageSize) throws GobiiDomainException;
 
     Map<String, String> getGenotypeCallsAsString(Integer datasetId, String pageToken);
-
-    String getNextPageToken();
 
 }

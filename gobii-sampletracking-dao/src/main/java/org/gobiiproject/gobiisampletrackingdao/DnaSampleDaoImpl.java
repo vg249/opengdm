@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Data access object Implementation for dnaSample Entity in the database
+ * Data access object Implementation for dnaSample Entity in the database.
+ * Only gets paged results for result set of size more than one.
+ * Default page size is 1000. Page Size and row offset can be set as function parameters
  *
  */
 public class DnaSampleDaoImpl implements DnaSampleDao {
@@ -28,11 +30,14 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
     @PersistenceContext
     protected EntityManager em;
 
+    // Use default pageSize when the pageSize is null.
+    // To avoid load all the result tuples in case search result is huge.
+    private final Integer defaultPageSize = 1000;
 
     /**
      * Gets list of dnaSample entities that match the given filter parameters.
-     * @param pageNum page number to be fetched. 0 based page index.
      * @param pageSize size of the page to be fetched.
+     * @param rowOffset Row Limit Offset.
      * @param projectId to filter dnaSamples belonging to given project id
      *                   Foreign key with ManyToOne relation(Many DnaSample to one germplasm).
      * @param dnaSampleId to filter dnaSamples by dnaSampleId. this filter should fetch only one value as it is primary key.
@@ -44,13 +49,20 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize,
+    public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset,
                                          Integer projectId, Integer dnaSampleId,
                                          Integer germplasmId, String germplasmExternalCode) throws GobiiException {
 
+
+        if(pageSize == null) {
+            pageSize = defaultPageSize;
+        }
+
+        if(rowOffset == null) {
+            rowOffset = 0;
+        }
+
         List<DnaSample> dnaSamples;
-        final int defaultPageSize = 1000;
-        final int defaultPageNum = 0;
 
         try {
 
@@ -78,18 +90,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
                 germplasmCriteria.add(Restrictions.eq("externalCode", germplasmExternalCode));
             }
 
-            if(pageSize != null && pageNum != null) {
-                dnaSampleCriteria
-                        .setMaxResults(pageSize)
-                        .setFirstResult(pageSize * pageNum);
-            }
-            else {
-                //If either page size or page number is not provided, use default maximum limit which is 1000
-                //and fetch the first page
-                dnaSampleCriteria
-                        .setMaxResults(defaultPageSize)
-                        .setFirstResult(defaultPageNum);
-            }
+            dnaSampleCriteria
+                    .setMaxResults(pageSize)
+                    .setFirstResult(rowOffset);
 
             dnaSamples = dnaSampleCriteria.list();
 
@@ -109,19 +112,16 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     /**
      * Gets list of dnaSample entities by pageNum and pageSize.
-     * @param pageNum page number to be fetched. required
+     * @param rowOffset rowOffset for dnasample rows
      * @param pageSize size of the page to be fetched. required
      *
      * @return List of dnaSample entity
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamples(Integer pageNum, Integer pageSize) throws GobiiException {
+    public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset) {
 
-        Objects.requireNonNull(pageNum);
-        Objects.requireNonNull(pageSize);
-
-        return getDnaSamples(pageNum, pageSize,
+        return getDnaSamples(pageSize, rowOffset,
                 null, null,
                 null, null);
 
@@ -159,18 +159,16 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     /**
      * Gets list of dnaSample entities that match the given filter criteria.
-     * @param pageNum page number to be fetched.
-     * @param pageSize size of the page to be fetched
      * @param projectId project id for which samples need to be fetched
+     * @param pageSize size of the page to be fetched
+     * @param rowOffset - Offset of rows after which page should start.
      * @return List of dnaSample entity
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamplesByProjectId(Integer pageNum,
-                                                    Integer pageSize,
-                                                    Integer projectId) throws GobiiException {
+    public List<DnaSample> getDnaSamplesByProjectId(Integer projectId, Integer pageSize, Integer rowOffset) {
 
-        return getDnaSamples(pageNum, pageSize,
+        return getDnaSamples(pageSize, rowOffset,
                 projectId, null,
                 null, null);
 
@@ -178,18 +176,16 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     /**
      * Gets list of dnaSample entities that match the given filter criteria.
-     * @param pageNum page number to be fetched.
-     * @param pageSize size of the page to be fetched
      * @param germplasmId germplasm id for which samples need to be fetched
+     * @param pageSize size of the page to be fetched
+     * @param rowOffset - Offset of rows after which page should start.
      * @return List of dnaSample entity
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamplesByGermplasmId(Integer pageNum,
-                                                      Integer pageSize,
-                                                      Integer germplasmId) throws GobiiException {
+    public List<DnaSample> getDnaSamplesByGermplasmId(Integer germplasmId, Integer pageSize, Integer rowOffset) {
 
-        return getDnaSamples(pageNum, pageSize,
+        return getDnaSamples(pageSize, rowOffset,
                 null, null,
                 germplasmId,  null);
 
@@ -197,18 +193,17 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     /**
      * Gets list of dnaSample entities that match the given filter criteria.
-     * @param pageNum page number to be fetched.
-     * @param pageSize size of the page to be fetched
      * @param germplasmExternalCode  germplasm external code for which samples need to be fetched
+     * @param pageSize size of the page to be fetched
+     * @param rowOffset - Offset of rows after which page should start.
      * @return List of dnaSample entity
      */
     @Override
     @Transactional
-    public List<DnaSample> getDnaSamplesByGermplasmExternalCode(Integer pageNum,
+    public List<DnaSample> getDnaSamplesByGermplasmExternalCode(String germplasmExternalCode,
                                                                 Integer pageSize,
-                                                                String germplasmExternalCode) throws GobiiException {
-
-        return getDnaSamples(pageNum, pageSize,
+                                                                Integer rowOffset) {
+        return getDnaSamples(pageSize, rowOffset,
                 null, null,
                 null, germplasmExternalCode);
 

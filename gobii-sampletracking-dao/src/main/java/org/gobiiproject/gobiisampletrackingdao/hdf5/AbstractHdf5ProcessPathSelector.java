@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.hdf5;
+package org.gobiiproject.gobiisampletrackingdao.hdf5;
 
 import java.util.HashMap;
 import java.util.Map;

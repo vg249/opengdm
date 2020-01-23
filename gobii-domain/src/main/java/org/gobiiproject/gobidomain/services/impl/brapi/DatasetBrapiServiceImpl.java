@@ -24,7 +24,8 @@ public class DatasetBrapiServiceImpl implements DatasetBrapiService {
     private DtoMapDatasetBrapi dtoMapDatasetBrapi = null;
 
     @Override
-    public List<DataSetBrapiDTO> getDatasets(Integer pageToken, Integer pageSize, DataSetBrapiDTO dataSetBrapiDTOFilter) throws GobiiDomainException {
+    public List<DataSetBrapiDTO> getDatasets(Integer pageToken, Integer pageSize,
+                                             DataSetBrapiDTO dataSetBrapiDTOFilter) throws GobiiDomainException {
 
         List<DataSetBrapiDTO> returnVal;
 

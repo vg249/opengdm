@@ -20,7 +20,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * Handles the exceptions thrown in all the Controllers
  * in this project and returns appropriate HTTP response.
  */
-@ControllerAdvice(assignableTypes = {SampleTrackingController.class, BRAPIIControllerV1.class})
+@ControllerAdvice(assignableTypes = {
+        SampleTrackingController.class,
+        BRAPIIControllerV1.class,
+        BRAPIIControllerV2.class
+})
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);

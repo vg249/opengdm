@@ -5,7 +5,7 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
 
 import java.util.List;
 
-public interface VariantSetsService {
+public interface VariantSetsBrapiService {
 
     //TODO: If cropType only dependency in this service. Leave it like this.
     // If more than one service happens to have cropType dependency, move it to constructor agrument

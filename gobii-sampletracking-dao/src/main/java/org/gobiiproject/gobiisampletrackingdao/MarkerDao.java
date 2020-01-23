@@ -7,26 +7,22 @@ import java.util.List;
 
 public interface MarkerDao {
 
-    /**
-     *
-     * @param pageNum
-     * @param pageSize
-     * @param markerId
-     * @param datasetId
-     * @return
-     */
-    List<Marker> getMarkers(Integer pageNum, Integer pageSize,
+    List<Marker> getMarkers(Integer pageSize, Integer rowOffset,
                             Integer markerId, Integer datasetId);
 
-    /**
-     * Gets the DTO of Marker Entity with Start and Stop from MarkerLinkageGroup Entities
-     * with MarkerLinkageGroups Left Joined to the Markers
-     *
-     * For InnerJoin use the getMarkerLinkageGroups method in MarkerLinkageGroupDao,
-     * as ManyToOne association is defined in the MarkerLinkageGroup Entity
-     * @return List of Tuple(MarkerEntity, MarkerLinkageGroupEntity)
-     */
-    List<Object[]> getMarkerStartStopTuples(Integer pageNum, Integer pageSize,
-                                            Integer markerId, Integer datasetId);
+    Marker getMarkerById(Integer markerId);
+
+    List<Marker> getMarkersByMarkerIdCursor(Integer markerId,
+                                            Integer datasetId,
+                                            Integer pageSize);
+
+    List<Marker> getMarkersByDatasetId(Integer datasetId,
+                                       Integer pageSize, Integer rowOffset);
+
+    List<Marker> getMarkersWithStartAndStop(Integer pageSize, Integer rowOffset,
+                            Integer markerId, Integer datasetId);
+
+    List<Marker> getMarkersByMarkerIds(List<Integer> markerIds);
+    List<Marker> getMarkersByMarkerNames(List<String> markerNames);
 
 }

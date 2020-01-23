@@ -1,12 +1,10 @@
 package org.gobiiproject.gobiiweb;
 
-import org.gobiiproject.gobiidao.hdf5.AbstractHdf5ProcessPathSelector;
+import org.gobiiproject.gobiisampletrackingdao.hdf5.AbstractHdf5ProcessPathSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Phil on 5/25/2016.

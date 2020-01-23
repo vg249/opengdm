@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface DatasetDao {
 
-    List<Dataset> listDatasets(Integer pageNum, Integer pageSize, Integer datasetId);
+    List<Dataset> listDatasets(Integer pageSize, Integer rowOffset, Integer datasetId);
     List<Dataset> listDatasetsByPageCursor(String pageCursor, Integer pageSize);
     Dataset getDatasetById(Integer datasetId);
 

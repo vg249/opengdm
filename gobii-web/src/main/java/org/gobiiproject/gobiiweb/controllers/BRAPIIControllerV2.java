@@ -3,41 +3,18 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
-import org.gobiiproject.gobidomain.async.SearchExtract;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
-import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
-import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmByDbId;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseLogin;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseMapLogin;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMapMarkerProfiles;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMarkerProfilesMaster;
-import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseMapObservationVariables;
-import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
-import org.gobiiproject.gobiibrapi.core.common.BrapiAsynchStatus;
-import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
-import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
-import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
+import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -48,6 +25,7 @@ import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -57,8 +35,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,7 +63,7 @@ public class BRAPIIControllerV2 {
     private GenotypeCallsService genotypeCallsService = null;
 
     @Autowired
-    private SearchExtract searchExtract = null;
+    private SearchService searchService = null;
 
     @Autowired
     private ConfigSettingsService configSettingsService;
@@ -99,7 +75,7 @@ public class BRAPIIControllerV2 {
     private SamplesBrapiService samplesBrapiService;
 
     @Autowired
-    private VariantSetsService variantSetsService;
+    private VariantSetsBrapiService variantSetsService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -409,7 +385,7 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByCallset(
             @ApiParam(value = "Id for dna run to be fetched")
-            @PathVariable(value="callSetDbId") String callSetDbId,
+            @PathVariable(value="callSetDbId") Integer callSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -417,52 +393,24 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false) int pageSize,
             HttpServletRequest request) throws Exception {
 
-        Integer callSetDbIdInt;
 
         try {
 
-            try {
-                callSetDbIdInt = Integer.parseInt(callSetDbId);
-            } catch (Exception e) {
-                throw new GobiiException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Invalid dna run Id");
+
+            PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
+                    callSetDbId,
+                    pageSize, pageToken);
+
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
+                    genotypeCallsList.getListData());
+
+            if(genotypeCallsList.getNextPageToken() != null) {
+                payload.getMetadata().getPagination().setNextPageToken(genotypeCallsList.getNextPageToken());
             }
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_DNARUN,
-                    RestMethodType.GET);
-
-            if(maxPageSize == null) {
-                //As per brapi initial standards
-                maxPageSize = 10000;
-            }
-
-            if (pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByDnarunId(
-                    callSetDbIdInt, pageToken,
-                    pageSize
-            );
-
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
-
-            if (genotypeCallsList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
-                if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantDbId().toString()
-                    );
-                }
-            }
 
             return ResponseEntity.ok(payload);
         }
@@ -918,8 +866,6 @@ public class BRAPIIControllerV2 {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
@@ -936,7 +882,7 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByVariant(
             @ApiParam(value = "Id for marker to be fetched")
-            @PathVariable(value="variantDbId") String variantDbId,
+            @PathVariable(value="variantDbId") Integer variantDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -944,50 +890,19 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false) int pageSize,
             HttpServletRequest request) throws Exception {
-
-        Integer variantDbIdInt;
-
         try {
 
-            try {
-                variantDbIdInt = Integer.parseInt(variantDbId);
-            } catch (Exception e) {
-                throw new GobiiException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Invalid marker Id");
-            }
+            PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
+                    variantDbId,
+                    pageToken, pageSize);
 
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
+                    genotypeCallsList.getListData());
 
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_DNARUN,
-                    RestMethodType.GET);
-
-            if(maxPageSize == null) {
-                //As per initial standards
-                maxPageSize = 10000;
-            }
-
-            if (pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByMarkerId(
-                    variantDbIdInt, pageToken, pageSize);
-
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
-
-            if (genotypeCallsList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
-                if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantSetDbId().toString() +
-                                    "-" +
-                            genotypeCallsList.get(genotypeCallsList.size() - 1).getCallSetDbId().toString()
-                    );
-                }
+            if(genotypeCallsList.getNextPageToken() != null) {
+                payload.getMetadata().getPagination().setNextPageToken(genotypeCallsList.getNextPageToken());
             }
 
             return ResponseEntity.ok(payload);
@@ -1411,6 +1326,77 @@ public class BRAPIIControllerV2 {
 
 
 
+    @ApiOperation(
+            value = "Creates a searchResultDbId for Genotype Calls search",
+            notes = "Creates ",
+            tags = {"GenotypeCalls"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Search")
+                    })
+            },
+            hidden = true
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = {
+            "/search/calls",
+            "/search/variantsets/",
+            "/search/callsets"},
+            method = RequestMethod.POST,
+            consumes = "application/json",
+            produces = "application/json")
+    public ResponseEntity searchGenotypeCalls(
+            HttpEntity<String> searchQuery,
+            HttpServletRequest request
+    ) {
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+
+            if (searchQuery.hasBody()) {
+
+                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(cropType,
+                        searchQuery.getBody());
+
+                BrApiMasterPayload<SearchResultDTO> payload = new BrApiMasterPayload<>(searchResultDTO);
+
+                return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
+
+            }
+            else {
+                throw new GobiiException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Missing Request body"
+                );
+            }
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.NONE,
+                    "Internal Server Error " + e.getMessage()
+            );
+
+        }
+    }
+
+    @RequestMapping(value = "/search/calls/{searchResultDbId}")
+    public ResponseEntity getSearchCalls(
+            @ApiParam()
+            @PathVariable String searchResultDbId,
+            HttpServletRequest request) {
+        return ResponseEntity.ok("");
+    }
 
 
     @ApiOperation(
@@ -1435,31 +1421,7 @@ public class BRAPIIControllerV2 {
             HttpEntity<String> extractQuery,
             HttpServletRequest request) throws Exception {
 
-        String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-
-        String processingId = UUID.randomUUID().toString();
-
-        if(extractQuery.hasBody()) {
-
-            String extractQueryPath = LineUtils.terminateDirectoryPath(
-                    configSettingsService.getConfigSettings().getServerConfigs().get(
-                            cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
-            ) + processingId + LineUtils.PATH_TERMINATOR + "extractQuery.json";
-
-            File extractQueryFile = new File(extractQueryPath);
-
-            extractQueryFile.getParentFile().mkdirs();
-
-            BufferedWriter bw = new BufferedWriter(new FileWriter(extractQueryFile));
-
-            bw.write(extractQuery.getBody());
-
-            bw.close();
-        }
-
-        searchExtract.asyncMethod();
-
-        return ResponseEntity.ok(processingId);
+        return ResponseEntity.ok("");
     }
 
     @ApiOperation(
@@ -1500,7 +1462,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false) int pageSize,
             HttpServletRequest request
     ){
 
@@ -1533,16 +1495,11 @@ public class BRAPIIControllerV2 {
 
 
             BrApiResult result = new BrApiResult();
+
             result.setData(genotypeCallsList);
+
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
-            if (genotypeCallsList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
-                if (genotypeCallsList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            genotypeCallsService.getNextPageToken());
-                }
-            }
 
             return ResponseEntity.ok(payload);
 

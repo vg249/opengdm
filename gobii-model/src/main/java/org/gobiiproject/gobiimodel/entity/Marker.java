@@ -67,6 +67,12 @@ public class Marker {
     @Convert(converter = JsonbConverter.class)
     private JsonNode properties;
 
+    @Transient
+    private Integer markerStart;
+
+    @Transient
+    private Integer markerStop;
+
     public Integer getMarkerId() {
         return markerId;
     }
@@ -177,6 +183,22 @@ public class Marker {
 
     public void setStatus(Cv status) {
         this.status = status;
+    }
+
+    public Integer getMarkerStart() {
+        return markerStart;
+    }
+
+    public void setMarkerStart(Integer markerStart) {
+        this.markerStart = markerStart;
+    }
+
+    public Integer getMarkerStop() {
+        return markerStop;
+    }
+
+    public void setMarkerStop(Integer markerStop) {
+        this.markerStop = markerStop;
     }
 
     @ManyToOne

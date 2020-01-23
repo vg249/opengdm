@@ -91,8 +91,6 @@
 
     <bean id="pingDaoRs"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
-    <bean id="pingDaoEntity"
-          class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
     <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapPingImpl"/>
     <bean id="pingService"
           class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
@@ -454,10 +452,17 @@
     <bean id="dtoMapDnaRun" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapDnaRunImpl"/>
     <bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>
 
+    <!-- *** DNA RUN Sample Tracking Beans ************************************* -->
+    <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
+
+
     <!-- *** MARKER BRAPI BEANS ************* -->
     <bean id="markerBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl"/>
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
     <bean id="rsMarkerBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerBrapiDaoImpl"/>
+
+    <!-- *** Marker Sample Tracking Beans ************************************* -->
+    <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
 
     <!-- *** DATASET BRAPI BEANS *********** -->
     <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.DatasetBrapiServiceImpl"/>
@@ -475,7 +480,7 @@
     <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.SamplesBrapiServiceImpl"/>
 
     <!-- ** VariantSets BRAPI BEANS **-->
-    <bean id="variantSetsBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.VariantSetsServiceImpl"/>
+    <bean id="variantSetsBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.VariantSetsBrapiServiceImpl"/>
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
     <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.LinkakgeGroupBrapiServiceImpl"/>
@@ -485,7 +490,7 @@
     <bean id="dtoMapAnalysisBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisBrapiImpl"/>
 
     <!-- *** Genotype Calls Beans ************************************* -->
-    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.GenotypeCallsServiceImpl"/>
+    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.brapi.GenotypeCallsServiceImpl"/>
     <bean id="dtoMapGenotypeCalls" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapGenotypeCallsImpl"/>
     <!--<bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>-->
 
@@ -1271,11 +1276,11 @@
 
     <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
 
-    <bean id="hdf5Interface" class="org.gobiiproject.gobiidao.hdf5.HDF5Interface">
+    <bean id="hdf5Interface" class="org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface">
         <constructor-arg index="0" ref="pathToHdf5Exe"/>
         <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>
 
-    <bean id="searchExtract" class="org.gobiiproject.gobidomain.async.SearchExtract"/>
+    <bean id="searchService" class="org.gobiiproject.gobidomain.services.impl.brapi.SearchServiceImpl"/>
 
 </beans>

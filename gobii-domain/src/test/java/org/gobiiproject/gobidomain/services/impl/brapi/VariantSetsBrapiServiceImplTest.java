@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -24,10 +23,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @WebAppConfiguration
-public class VariantSetsServiceImplTest {
+public class VariantSetsBrapiServiceImplTest {
 
     @InjectMocks
-    private VariantSetsServiceImpl variansetService;
+    private VariantSetsBrapiServiceImpl variansetService;
 
     @Mock
     private DatasetDaoImpl datasetDao;
@@ -167,6 +166,7 @@ public class VariantSetsServiceImplTest {
             Analysis analysis = datasetsMock.get(assertIndex).getMappedAnalyses().iterator().next();
 
             AnalysisBrapiDTO analysisBrapiDTO = variantSets.get(assertIndex).getAnalyses().iterator().next();
+
             assertEquals("check analysisDbId is mapped",
                     analysis.getAnalysisId(),
                     analysisBrapiDTO.getAnalysisDbId());

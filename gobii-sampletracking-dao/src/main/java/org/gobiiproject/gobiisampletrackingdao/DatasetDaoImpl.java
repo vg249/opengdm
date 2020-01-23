@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,8 @@ public class DatasetDaoImpl implements DatasetDao {
 
     @PersistenceContext
     protected EntityManager em;
+
+    final int defaultPageSize = 1000;
 
 
     /**
@@ -100,71 +103,66 @@ public class DatasetDaoImpl implements DatasetDao {
      * Using native query to left join analysis entities along with other required scalar fields
      * Returns list of Dataset entities joined with respective analysis entities.
      * The respective analysis entities are added to the mappedAnalyses hashset
-     * @param datasetId - Id for dataset. Unique identifier.
-     * @param pageNum - Page number
      * @param pageSize - size of the page
+     * @param rowOffset - Row offset after which the pages need to be fetched
+     * @param datasetId - Id for dataset. Unique identifier.
      * @return List of DatsetEntity
      */
     @Override
     @Transactional
-    public List<Dataset> listDatasets(Integer pageNum,
-                                      Integer pageSize,
-                                      Integer datasetId) throws GobiiException {
-
-        NativerQueryRunner nativerQueryRunner = new NativerQueryRunner(em);
+    public List<Dataset> listDatasets(Integer pageSize,
+                                      Integer rowOffset,
+                                      Integer datasetId) {
 
         List<Dataset> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
-
-        List<QueryField> queryParameters = new ArrayList<>();
-        List<QueryField> entityFields = new ArrayList<>();
-        List<QueryField> scalarFileds = new ArrayList<>();
-
-        Integer pageOffset = null;
-
-        if(pageNum == null) {
-            pageNum = 0;
-        }
-
-        if(pageNum != null && pageSize != null) {
-            pageOffset = pageNum * pageSize;
-        }
 
         String queryString = "WITH ds AS (" +
                 "SELECT * " +
                 "FROM dataset " +
                 "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
-                "LIMIT :pageSize OFFSET :pageOffset) " +
+                "LIMIT :pageSize OFFSET :rowOffset) " +
                 "SELECT ds.* , anas.*, " +
-                "(SELECT COUNT(marker_id) " +
-                "FROM marker WHERE dataset_marker_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+                "(SELECT gettotalmarkersindataset " +
+                "FROM gettotalmarkersindataset(CAST(ds.dataset_id AS TEXT))) " +
                 "AS marker_count, " +
-                "(SELECT COUNT(dnarun_id) " +
-                "FROM dnarun WHERE dataset_dnarun_idx -> CAST(ds.dataset_id AS TEXT) IS NOT NULL) " +
+                "(SELECT gettotaldnarunsindataset " +
+                "FROM gettotaldnarunsindataset(CAST(ds.dataset_id AS TEXT))) " +
                 "AS dnarun_count " +
                 "FROM ds " +
                 "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
 
-        // Add query parameters
-        queryParameters.add(new QueryField("pageSize", pageSize, IntegerType.INSTANCE));
-        queryParameters.add(new QueryField("pageOffset", pageOffset, IntegerType.INSTANCE));
-        queryParameters.add(new QueryField("datasetId", datasetId, IntegerType.INSTANCE));
+        try {
 
-        // Add entity map
-        entityFields.add(new QueryField("ds", Dataset.class));
-        entityFields.add(new QueryField("anas", Analysis.class));
+            if (pageSize == null) {
+                pageSize = defaultPageSize;
+            }
 
-        // Add scalar field alaises
-        scalarFileds.add(new QueryField("marker_count", null, IntegerType.INSTANCE));
-        scalarFileds.add(new QueryField("dnarun_count", null, IntegerType.INSTANCE));
+            Session session = em.unwrap(Session.class);
 
-        List<Object[]> resultTuplesList = nativerQueryRunner.run(
-                queryString, queryParameters,
-                entityFields, scalarFileds);
+            List<Object[]> resultTupleList = session.createNativeQuery(queryString)
+                    .addEntity("ds", Dataset.class)
+                    .addEntity("anas", Analysis.class)
+                    .addScalar("marker_count", IntegerType.INSTANCE)
+                    .addScalar("dnarun_count", IntegerType.INSTANCE)
+                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                    .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
+                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .list();
 
-        datasetsWithMarkersAndSamplesCount = mapAnalysesToDataset(resultTuplesList);
+            datasetsWithMarkersAndSamplesCount = mapAnalysesToDataset(resultTupleList);
 
-        return datasetsWithMarkersAndSamplesCount;
+            return datasetsWithMarkersAndSamplesCount;
 
+        }
+        catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
     }
 
     /**
@@ -228,25 +226,39 @@ public class DatasetDaoImpl implements DatasetDao {
     @Transactional
     public Dataset getDatasetById(Integer datasetId) throws GobiiException {
 
-        List<Dataset> datasetsById  = this.listDatasets(null, null, datasetId);
+        try {
 
-        if(datasetsById.size() > 1) {
-            LOGGER.error("More than one duplicate entries found.");
+            List<Dataset> datasetsById = this.listDatasets(null, null, datasetId);
+
+            if (datasetsById.size() > 1) {
+                LOGGER.error("More than one duplicate entries found.");
+
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "More than one dataset entity exists for the same Id");
+
+            } else if (datasetsById.size() == 0) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Dataset Entity for given id does not exist");
+            }
+
+            return datasetsById.get(0);
+        }
+        catch(GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "More than one dataset entity exists for the same Id");
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
 
         }
-        else if(datasetsById.size() == 0) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Dataset Entity for given id does not exist");
-        }
-
-        return datasetsById.get(0);
 
     }
+
 
 
 }
