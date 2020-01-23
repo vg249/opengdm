@@ -20,7 +20,6 @@ import static junit.framework.TestCase.assertTrue;
  *   api.gobii.org. Need to refactor in future with Test databases and setup data
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class DnaRunDaoTest {
 
     @Autowired

@@ -13,7 +13,6 @@ import java.util.List;
 import static junit.framework.TestCase.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 @Ignore
 public class DnaSampleDaoTest {
 
