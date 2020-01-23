@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/application-config.xml"})
 public class SampleTrackingControllerTest {
 
 
@@ -31,11 +30,5 @@ public class SampleTrackingControllerTest {
         UserContextLoader userContextLoader = new UserContextLoader();
         userContextLoader.loadUser(testExecConfig.getLdapUserForUnitTest());
     }
-
-    @Test
-    public void createProject() {
-        assertTrue( 1 > 0);
-    }
-
 
 }

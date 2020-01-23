@@ -145,40 +145,15 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Override
     public Integer createProject(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal = null;
-
         try {
-            spRunnerCallable.run(new SpInsProject(), parameters);
-            returnVal = spRunnerCallable.getResult();
-        }
-        catch (ConstraintViolationException constraintViolation) {
 
-            String errorMsg;
-            GobiiValidationStatusType statusType = GobiiValidationStatusType.BAD_REQUEST;
-            // Postgresql error code for Unique Constraint Violation is 23505
-            if(constraintViolation.getSQLException() != null) {
-                if(constraintViolation.getSQLException().getSQLState().equals("23505")) {
-                    statusType = GobiiValidationStatusType.ENTITY_ALREADY_EXISTS;
-                    errorMsg = "Project already exists";
-                }
-                else {
-                    errorMsg = "Bad request";
-                }
-            }
-            else {
-                errorMsg = constraintViolation.getMessage();
-            }
-            throw (new GobiiDaoException(
-                    GobiiStatusLevel.ERROR,
-                    statusType,
-                    errorMsg)
-            );
-        }
-        catch (SQLGrammarException e) {
+            return spRunnerCallable.run(new SpInsProject(), parameters);
+
+        } catch (SQLGrammarException e) {
+
             LOGGER.error("Error creating project with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
         }
-        return returnVal;
     } // createProject
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -202,11 +177,8 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Override
     public Integer createUpdateProjectProperty(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal;
-
         try {
-            spRunnerCallable.run(new SpInsProjectProperties(), parameters);
-            returnVal = spRunnerCallable.getResult();
+            return spRunnerCallable.run(new SpInsProjectProperties(), parameters);
 
         } catch (SQLGrammarException e) {
 
@@ -214,8 +186,6 @@ public class RsProjectDaoImpl implements RsProjectDao {
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
-
-        return returnVal;
 
     } // createUpdateMapSetProperty
 
