@@ -9,6 +9,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import javax.sound.sampled.Line;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -175,7 +176,7 @@ public class HDF5Interface {
         ErrorLogger.debug("Extractor","HDF5 Ordering is "+ordering);
 
         if(markerList!=null) {
-            String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
+            String hdf5Extractor= Paths.get(pathToHDF5,"fetchmarkerlist").toString();
             ErrorLogger.info(
                     "Extractor","Executing: " + hdf5Extractor+" "
                             + ordering +" "+HDF5File+" "+markerList+" "+genoFile);
@@ -187,7 +188,7 @@ public class HDF5Interface {
             }
         }
         else {
-            String hdf5Extractor=pathToHDF5+"dumpdataset";
+            String hdf5Extractor=Paths.get(pathToHDF5,"dumpdataset").toString();
             ErrorLogger.info("Extractor","Executing: " + hdf5Extractor+" "
                     +ordering+" "+HDF5File+" "+genoFile);
             boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " "
