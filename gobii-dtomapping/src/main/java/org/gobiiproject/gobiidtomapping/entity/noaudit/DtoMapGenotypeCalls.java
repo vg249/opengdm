@@ -9,12 +9,6 @@ import java.util.Map;
 public interface DtoMapGenotypeCalls {
 
 
-    List<GenotypeCallsDTO> getGenotypeCallsList(DnaRunDTO dnarun, String pageToken,
-                                                Integer pageSize);
-
-    List<GenotypeCallsDTO> getGenotypeCallsList(MarkerBrapiDTO marker, String pageToken,
-                                                Integer pageSize);
-
     List<GenotypeCallsDTO> getGenotypeCallsList(Integer datasetId, String pageToken,
                                                 Integer pageSize);
 
@@ -26,5 +20,4 @@ public interface DtoMapGenotypeCalls {
     String getNextPageOffset();
 
     String getNextColumnOffset();
-
 }

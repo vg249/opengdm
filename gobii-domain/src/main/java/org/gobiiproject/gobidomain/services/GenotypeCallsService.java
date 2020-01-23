@@ -27,4 +27,6 @@ public interface GenotypeCallsService {
 
     Map<String, String> getGenotypeCallsAsString(Integer datasetId, String pageToken);
 
+    String getNextPageToken();
+
 }

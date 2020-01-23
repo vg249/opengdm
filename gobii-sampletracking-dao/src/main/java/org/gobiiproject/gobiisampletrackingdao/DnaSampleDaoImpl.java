@@ -130,7 +130,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
     /**
      * Gets dnaSample entity by dnaSampleId.
      *
-     * @return dnaSample entity for given dnaSampleId
+     * @return dnaSample entity for given dnaSampleId or null
      */
     @Override
     @Transactional

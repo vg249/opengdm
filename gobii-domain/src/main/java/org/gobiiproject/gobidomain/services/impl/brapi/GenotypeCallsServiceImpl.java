@@ -420,6 +420,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
         try {
+
             String outputDirPath = "";
 
             returnVal =  dtoMapGenotypeCalls.getGenotypeCallsList(datasetId, pageToken, pageSize);
@@ -441,6 +442,20 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         }
 
         return returnVal;
+    }
+
+    @Override
+    public String getNextPageToken() {
+        if(dtoMapGenotypeCalls.getNextPageOffset() == null || dtoMapGenotypeCalls.getNextColumnOffset() == null) {
+            if(dtoMapGenotypeCalls.getNextColumnOffset() == null) {
+                return dtoMapGenotypeCalls.getNextPageOffset();
+            }
+            return null;
+        }
+        else {
+            return (dtoMapGenotypeCalls.getNextPageOffset() +
+                    "-" + dtoMapGenotypeCalls.getNextColumnOffset());
+        }
     }
 
     /**
@@ -465,6 +480,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             returnVal =  dtoMapGenotypeCalls.getGenotypeCallsListByExtractQuery(
                     extractQueryFilePath, pageToken, pageSize);
+
+
+
 
         }
         catch (GobiiException gE) {
