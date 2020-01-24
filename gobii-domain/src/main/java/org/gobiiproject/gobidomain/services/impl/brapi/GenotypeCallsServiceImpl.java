@@ -8,7 +8,7 @@ import org.gobiiproject.gobidomain.services.MarkerBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.system.PagedList;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -61,11 +61,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given page.
      */
     @Override
-    public PagedList<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
-                                                                           Integer pageSize,
-                                                                           String pageToken) {
+    public PagedResult<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
+                                                                     Integer pageSize,
+                                                                     String pageToken) {
 
-        PagedList<GenotypeCallsDTO> returnVal = new PagedList<>();
+        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
@@ -249,11 +249,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public PagedList<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
+    public PagedResult<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
             Integer markerId, String pageToken,
             Integer pageSize) {
 
-        PagedList<GenotypeCallsDTO>  returnVal = new PagedList<>();
+        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 

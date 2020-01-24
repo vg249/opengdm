@@ -9,6 +9,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
 
-    //@Autowired
-    //private HDF5Interface hdf5Interface;
+    @Autowired
+    private HDF5Interface hdf5Interface;
 
     private String nextPageOffset;
 
@@ -1061,10 +1062,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        String genotypCallsFilePath = "";
-                //hdf5Interface.getHDF5Genotypes(
-                //true, markerHdf5IndexMap,
-                //sampleHdf5IndexMap, tempFolder);
+        String genotypCallsFilePath = hdf5Interface.getHDF5Genotypes(true, markerHdf5IndexMap,
+                sampleHdf5IndexMap, tempFolder);
 
         return genotypCallsFilePath;
 
@@ -1073,37 +1072,37 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     private void readHdf5GenotypesFromResult (List<GenotypeCallsDTO> returnVal,
                                               String extractListPath)  throws Exception {
 
-        //File genotypCallsFile = new File(extractListPath);
+        File genotypCallsFile = new File(extractListPath);
 
-        //FileInputStream fstream = new FileInputStream(genotypCallsFile);
+        FileInputStream fstream = new FileInputStream(genotypCallsFile);
 
-        //BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-        //int i = 0;
+        int i = 0;
 
-        //int chrEach;
+        int chrEach;
 
-        //StringBuilder genotype = new StringBuilder();
+        StringBuilder genotype = new StringBuilder();
 
-        //while ((chrEach = br.read()) != -1) {
+        while ((chrEach = br.read()) != -1) {
 
-        //    char genotypesChar = (char) chrEach;
+            char genotypesChar = (char) chrEach;
 
-        //    if(genotypesChar == '\t' || genotypesChar == '\n') {
+            if(genotypesChar == '\t' || genotypesChar == '\n') {
 
-        //        returnVal.get(i).setGenotype(new HashMap<>());
-        //        String[] genotypeValues = new String[] {genotype.toString()};
-        //        returnVal.get(i).getGenotype().put("values", genotypeValues);
-        //        i++;
-        //        genotype.setLength(0);
+                returnVal.get(i).setGenotype(new HashMap<>());
+                String[] genotypeValues = new String[] {genotype.toString()};
+                returnVal.get(i).getGenotype().put("values", genotypeValues);
+                i++;
+                genotype.setLength(0);
 
-        //    }
-        //    else {
-        //       genotype.append(genotypesChar);
-        //    }
-        //}
+            }
+            else {
+               genotype.append(genotypesChar);
+            }
+        }
 
-        //fstream.close();
+        fstream.close();
 
     }
 

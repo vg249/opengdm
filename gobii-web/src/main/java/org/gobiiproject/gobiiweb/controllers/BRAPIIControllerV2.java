@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -321,7 +322,7 @@ public class BRAPIIControllerV2 {
         try {
 
 
-            PagedList<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
+            PagedResult<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
                     callSetDbId,
                     pageSize, pageToken);
 
@@ -815,7 +816,7 @@ public class BRAPIIControllerV2 {
             HttpServletRequest request) throws Exception {
         try {
 
-            PagedList<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
+            PagedResult<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
                     variantDbId,
                     pageToken, pageSize);
 

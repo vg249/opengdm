@@ -3,23 +3,24 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 import org.gobiiproject.gobidomain.services.CallSetBrapiService;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public class CallSetBrapiServiceImpl implements CallSetBrapiService {
 
-    public PagedList<CallSetBrapiDTO> getCallSets(Integer pageSize,
-                                                  Integer pageNum,
-                                                  CallSetBrapiDTO callSetsFilter) {
+    public PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
+                                                    Integer pageNum,
+                                                    CallSetBrapiDTO callSetsFilter) {
 
-        PagedList<CallSetBrapiDTO> callSets = new PagedList<>();
+        PagedResult<CallSetBrapiDTO> callSets = new PagedResult<>();
 
         return callSets;
     }
 
-    public PagedList<CallSetBrapiDTO> getCallSets(Integer pageSize,
+    public PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
                                                   String pageToken,
                                                   CallSetBrapiDTO callSetsFilter) {
 
-        PagedList<CallSetBrapiDTO> callSets = new PagedList<>();
+        PagedResult<CallSetBrapiDTO> callSets = new PagedResult<>();
 
         return callSets;
     }

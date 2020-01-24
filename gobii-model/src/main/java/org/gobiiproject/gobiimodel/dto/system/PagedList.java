@@ -6,43 +6,44 @@ import java.util.List;
 
 public class PagedList<T> {
 
-    private List<T> result = new ArrayList<>();
 
-    private Integer pageSize;
-
-    private Integer currentPageNum;
-
-    private String nextPageToken;
-
-    public List<T> getResult() {
-        return result;
+    public PagedList(Date queryTime, List<T> dtoList, Integer pageSize, Integer currentPageNo, Integer totalPages, String pagingQueryId) {
+        this.queryTime = queryTime;
+        this.dtoList = dtoList;
+        this.pageSize = pageSize;
+        this.currentPageNo = currentPageNo;
+        this.totalPages = totalPages;
+        this.pagingQueryId = pagingQueryId;
     }
 
-    public void setResult(List<T> result) {
-        this.result = result;
+    private Date queryTime;
+    private List<T> dtoList = new ArrayList<>();
+    private Integer pageSize;
+    private Integer currentPageNo;
+    private Integer totalPages;
+    private String pagingQueryId;
+
+    public Date getQueryTime() {
+        return queryTime;
+    }
+
+    public List<T> getDtoList() {
+        return dtoList;
     }
 
     public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+    public Integer getCurrentPageNo() {
+        return currentPageNo;
     }
 
-    public Integer getCurrentPageNum() {
-        return currentPageNum;
+    public Integer getTotalPages() {
+        return totalPages;
     }
 
-    public void setCurrentPageNum(Integer currentPageNum) {
-        this.currentPageNum = currentPageNum;
-    }
-
-    public String getNextPageToken() {
-        return nextPageToken;
-    }
-
-    public void setNextPageToken(String nextPageToken) {
-        this.nextPageToken = nextPageToken;
+    public String getPagingQueryId() {
+        return pagingQueryId;
     }
 }
