@@ -36,6 +36,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -74,66 +75,42 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
  *
  * @author jdl232 Josh L.S.
  */
-public class GobiiFileReader {
-    private static String rootDir = "../";
-    private static String loaderScriptPath;
-    private static String extractorScriptPath;
-    private static final String VARIANT_CALL_TABNAME = "matrix";
-    private static final String LINKAGE_GROUP_TABNAME = "linkage_group";
-    private static final String GERMPLASM_PROP_TABNAME = "germplasm_prop";
-    private static final String GERMPLASM_TABNAME = "germplasm";
-    private static final String MARKER_TABNAME = "marker";
-    private static final String DS_MARKER_TABNAME = "dataset_marker";
-    private static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
-    private static final String SAMPLE_TABNAME = "dnarun";
-    private static String pathToHDF5Files;
-    private static boolean verbose;
-    private static String errorLogOverride;
-    private static String propertiesFile;
-    private static GobiiUriFactory gobiiUriFactory;
-    private static GobiiExtractorInstruction qcExtractInstruction = null;
+public class Digester {
+
+    private final String VARIANT_CALL_TABNAME = "matrix";
+    private final String LINKAGE_GROUP_TABNAME = "linkage_group";
+    private final String GERMPLASM_PROP_TABNAME = "germplasm_prop";
+    private final String GERMPLASM_TABNAME = "germplasm";
+    private final String MARKER_TABNAME = "marker";
+    private final String DS_MARKER_TABNAME = "dataset_marker";
+    private final String DS_SAMPLE_TABNAME = "dataset_dnarun";
+    private final String SAMPLE_TABNAME = "dnarun";
+
+    private final DigesterConfig config;
+
+    private String loaderScriptPath;
+    private String extractorScriptPath;
+    private GobiiUriFactory gobiiUriFactory;
+    private GobiiExtractorInstruction qcExtractInstruction = null;
 
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
-    public static Boolean isMarkerFast=null;
+    public Boolean isMarkerFast=null;
 
-    /**
-     * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
-     *
-     * @param args See Digester.jar -? to get a list of arguments
-     * throws FileNotFoundException, IOException, ParseException, InterruptedException
-     */
-    public static void main(String[] args) throws Exception {
-        //Section - Setup
-        Options o = new Options()
-                .addOption("v", "verbose", false, "Verbose output")
-                .addOption("e", "errlog", true, "Error log override location")
-                .addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
-                .addOption("c", "config", true, "Fully qualified path to gobii configuration file")
-                .addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
-        LoaderGlobalConfigs.addOptions(o);
-        ProcessMessage pm = new ProcessMessage();
-        CommandLineParser parser = new DefaultParser();
-        try {
-            CommandLine cli = parser.parse(o, args);
-            if (cli.hasOption("rootDir")) rootDir = cli.getOptionValue("rootDir");
-            if (cli.hasOption("verbose")) verbose = true;
-            if (cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
-            if (cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
-            LoaderGlobalConfigs.setFromFlags(cli);
-            args = cli.getArgs();//Remaining args passed through
 
-        } catch (org.apache.commons.cli.ParseException exp) {
-            new HelpFormatter().printHelp("java -jar Digester.jar ", "Also accepts input file directly after arguments\n" +
-                    "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json", o, null, true);
-            System.exit(2);
-        }
+    public Digester(DigesterConfig config) {
 
-        extractorScriptPath = rootDir + "extractors/";
-        loaderScriptPath = rootDir + "loaders/";
+        this.config = config;
+    }
+    
+    public void run(LoaderInstructionFilesDTO instruction) throws Exception {
+
+        final GobiiLoaderProcedure procedure = instruction.getProcedure();
+
+        final ProcessMessage pm = new ProcessMessage();
+
+        extractorScriptPath = config + "extractors/";
+        loaderScriptPath = config.getRootDir() + "loaders/";
         HDF5Interface.setPathToHDF5(loaderScriptPath + "hdf5/bin/");
-
-        if (propertiesFile == null) propertiesFile = rootDir + "config/gobii-web.xml";
 
         boolean success = true;
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
@@ -141,8 +118,8 @@ public class GobiiFileReader {
 
         ConfigSettings configuration = null;
         try {
-            configuration = new ConfigSettings(propertiesFile);
-            Logger.logDebug("Config file path", "Opened config settings at " + propertiesFile);
+            configuration = new ConfigSettings(config.getPropertiesFile());
+            Logger.logDebug("Config file path", "Opened config settings at " + config.getPropertiesFile());
 
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -150,36 +127,9 @@ public class GobiiFileReader {
 
         MailInterface mailInterface = new MailInterface(configuration);
 
-        String instructionFile;
-        if (args.length == 0 || "".equals(args[0])) {
-            Scanner s = new Scanner(System.in);
-            System.out.println("Enter Loader Instruction File Location:");
-            instructionFile = s.nextLine();
-        } else {
-            instructionFile = args[0];
-        }
-
-        //Error logs go to a file based on crop (for human readability) and
-        Logger.logInfo("Digester", "Beginning read of " + instructionFile);
-
-        final String instructionFileContents = HelperFunctions.readFile(instructionFile);
-
-        GobiiLoaderProcedure procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
-
-        if (procedure == null || procedure.getInstructions() == null || procedure.getInstructions().isEmpty()) {
-            logError("Digester", "No instruction for file " + instructionFile);
-            return;
-        }
-
-
         Integer dataSetId = procedure.getMetadata().getDataset().getId();
 
-        if (procedure.getMetadata().getGobiiCropType() == null)
-            procedure.getMetadata().setGobiiCropType(divineCrop(instructionFile));
-
-        //Job Id is the 'name' part of the job file  /asd/de/name.json
-        String filename = new File(instructionFile).getName();
-        String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
+        String jobFileName = instruction.getInstructionFileName().substring(0, instruction.getInstructionFileName().lastIndexOf('.'));
         JobStatus jobStatus = null;
         try {
             jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobFileName);
@@ -203,7 +153,7 @@ public class GobiiFileReader {
         pm.addFolderPath("Destination Directory", dstDir.getAbsolutePath()+"/",configuration);//Convert to directory
         pm.addFolderPath("Input Directory", procedure.getMetadata().getGobiiFile().getSource()+"/", configuration);
 
-        Path cropPath = Paths.get(rootDir + "crops/" + procedure.getMetadata().getGobiiCropType().toLowerCase());
+        Path cropPath = Paths.get(config.getRootDir() + "crops/" + procedure.getMetadata().getGobiiCropType().toLowerCase());
         if (!(Files.exists(cropPath) &&
                 Files.isDirectory(cropPath))) {
             logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType());
@@ -253,7 +203,7 @@ public class GobiiFileReader {
         String logDir = configuration.getFileSystemLog();
         String logFile = null;
         if (logDir != null) {
-            String instructionName = new File(instructionFile).getName();
+            String instructionName = instruction.getInstructionFileName();
             instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
             logFile = logDir + "/" + instructionName + ".log";
             String oldLogFile = Logger.getLogFilepath();
@@ -276,17 +226,17 @@ public class GobiiFileReader {
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
             if (inst == null) {
-                logError("Digester", "Missing or malformed instruction in " + instructionFile);
+                logError("Digester", "Missing or malformed instruction in " + instruction.getInstructionFileName());
                 continue;
             }
         }
 
         if (procedure.getMetadata().getGobiiFile() == null) {
-            logError("Digester", "Instruction " + instructionFile + " has bad 'file' column");
+            logError("Digester", "Instruction " + instruction.getInstructionFileName() + " has bad 'file' column");
         }
         GobiiFileType instructionFileType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
         if (instructionFileType == null) {
-            logError("Digester", "Instruction " + instructionFile + " has missing file format");
+            logError("Digester", "Instruction " + instruction.getInstructionFileName() + " has missing file format");
         }
 
 
@@ -434,7 +384,7 @@ public class GobiiFileReader {
 
                     Logger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
                     //Lines affected returned by method call - THIS IS NOW IGNORED
-                    HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", verbose ? dstDir.getAbsolutePath() + "/iflOut" : null, errorPath);
+                    HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", config.isVerbose() ? dstDir.getAbsolutePath() + "/iflOut" : null, errorPath);
 
                     IFLLineCounts counts = calculateTableStats(pm, loaderInstructionMap, dstDir, key);
 
@@ -494,9 +444,8 @@ public class GobiiFileReader {
         }
 
         //Send Email
-        finalizeProcessing(pm, configuration, mailInterface, instructionFile,
+        finalizeProcessing(pm, configuration, mailInterface, instruction.getInstructionFileName(),
                 procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
-
 
     }
 
@@ -515,9 +464,9 @@ public class GobiiFileReader {
      * @param logFile
      * @throws Exception
      */
-    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
-            String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
-                try {
+    private void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
+        String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+        try {
             GobiiFileType loadType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
             String loadTypeName = "";//No load type name if default
             if (loadType != GobiiFileType.GENERIC) loadTypeName = loadType.name();
@@ -531,7 +480,7 @@ public class GobiiFileReader {
 
     }
 
-    private static void databaseValidation(Map<String, File> loaderInstructionMap, GobiiLoaderMetadata metadata, GobiiCropConfig gobiiCropConfig) {
+    private void databaseValidation(Map<String, File> loaderInstructionMap, GobiiLoaderMetadata metadata, GobiiCropConfig gobiiCropConfig) {
         DatabaseQuerier querier = new DatabaseQuerier(gobiiCropConfig.getServer(ServerType.GOBII_PGSQL));
 
         //If we're doing a DS upload and there is no DS_Marker
@@ -553,7 +502,7 @@ public class GobiiFileReader {
         querier.close();
     }
 
-    private static GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderMetadata metadata, String crop) {
+    private GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderMetadata metadata, String crop) {
         GobiiExtractorInstruction gobiiExtractorInstruction;
         Logger.logInfo("Digester", "qcCheck detected");
         Logger.logInfo("Digester", "Entering into the QC Subsection #1 of 3...");
@@ -567,7 +516,7 @@ public class GobiiFileReader {
         return gobiiExtractorInstruction;
     }
 
-    private static void setQCExtractPaths(GobiiLoaderMetadata metadata) {
+    private void setQCExtractPaths(GobiiLoaderMetadata metadata) {
         Logger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
@@ -583,7 +532,7 @@ public class GobiiFileReader {
         Logger.logInfo("Digester", "Done with the QC Subsection #2 of 3!");
     }
 
-    private static void sendQCExtract(ConfigSettings configuration, String crop) throws Exception {
+    private void sendQCExtract(ConfigSettings configuration, String crop) throws Exception {
         Logger.logInfo("Digester", "Entering into the QC Subsection #3 of 3...");
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
         extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
@@ -634,7 +583,7 @@ public class GobiiFileReader {
      * @param key                  Key in loaderInstructionMap
      * @return
      */
-    private static IFLLineCounts calculateTableStats(ProcessMessage pm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
+    private IFLLineCounts calculateTableStats(ProcessMessage pm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
 
         String ppdFile = new File(dstDir, "ppd_digest." + key).getAbsolutePath();
         //If there is a deduplicated PPD file, use it instead of the ppd file
@@ -716,7 +665,7 @@ public class GobiiFileReader {
      * @param cropName Name of the crop being run
      * @return a human readable name for the job
      */
-    private static String getJobReadableIdentifier(String cropName, GobiiLoaderProcedure procedure) {
+    private String getJobReadableIdentifier(String cropName, GobiiLoaderProcedure procedure) {
         cropName = cropName.charAt(0) + cropName.substring(1).toLowerCase();// MAIZE -> Maize
         String jobName = "[GOBII - Loader]: " + cropName + " - digest of \"" + getSourceFileName(procedure.getMetadata().getGobiiFile()) + "\"";
         return jobName;
@@ -728,7 +677,7 @@ public class GobiiFileReader {
      * @param file Reference to Instruction's File object.
      * @return String representation of first of source files
      */
-    public static String getSourceFileName(GobiiFile file) {
+    public String getSourceFileName(GobiiFile file) {
         String source = file.getSource();
         File sourceFolder = new File(source);
         File[] f = sourceFolder.listFiles();
@@ -746,7 +695,7 @@ public class GobiiFileReader {
      *
      * @return The logfile location for this process
      */
-    private static String getLogName(GobiiLoaderProcedure procedure, String cropName) {
+    private String getLogName(GobiiLoaderProcedure procedure, String cropName) {
         String destination = procedure.getMetadata().getGobiiFile().getDestination();
         String table = procedure.getInstructions().get(0).getTable();
         return destination + "/" + cropName + "_Table-" + table + ".log";
@@ -759,7 +708,7 @@ public class GobiiFileReader {
      *
      * @return The logfile location for this process
      */
-    private static String getLogName(GobiiLoaderMetadata metadata, String cropName, String process) {
+    private String getLogName(GobiiLoaderMetadata metadata, String cropName, String process) {
         String destination = metadata.getGobiiFile().getDestination();
         return destination + "/" + cropName + "_Process-" + process + ".log";
     }
@@ -787,7 +736,7 @@ public class GobiiFileReader {
      * @param monetTableName Name of the table in the monetDB database for this dataset.
      * @param hdfFileName    Name of the HDF5 file for this dataset (Note, these should be obvious)
      */
-    public static void updateValues(ConfigSettings config, String cropName, Integer dataSetId, String monetTableName, String hdfFileName) {
+    public void updateValues(ConfigSettings config, String cropName, Integer dataSetId, String monetTableName, String hdfFileName) {
         try {
             // set up authentication and so forth
             // you'll need to get the current from the instruction file
@@ -842,7 +791,7 @@ public class GobiiFileReader {
         }
     }
 
-    private static String getJDBCConnectionString(GobiiCropConfig config) {
+    private String getJDBCConnectionString(GobiiCropConfig config) {
         return HelperFunctions.getJdbcConnectionString(config);
     }
 
@@ -853,7 +802,7 @@ public class GobiiFileReader {
      * @param tableKey
      * @return true if the table will have different PPD rows than input rows
      */
-    private static boolean isVariableLengthTable(String tableKey) {
+    private boolean isVariableLengthTable(String tableKey) {
         return tableKey.contains("_prop");
     }
 
@@ -863,7 +812,7 @@ public class GobiiFileReader {
      * @param directory
      * @param tableName
      */
-    private static void deleteIFLFiles(File directory, String tableName) {
+    private void deleteIFLFiles(File directory, String tableName) {
         File[] fileList = directory.listFiles();
         if (fileList == null) return;
         for (File f : fileList) {
@@ -872,6 +821,81 @@ public class GobiiFileReader {
             }
         }
     }
+    /**
+     * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
+     *
+     * @param args See Digester.jar -? to get a list of arguments
+     * throws FileNotFoundException, IOException, ParseException, InterruptedException
+     */
+    public static void main(String[] args) throws Exception {
+
+        //Section - Setup
+        Options o = new Options()
+                .addOption("v", "verbose", false, "Verbose output")
+                .addOption("e", "errlog", true, "Error log override location")
+                .addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
+                .addOption("c", "config", true, "Fully qualified path to gobii configuration file")
+                .addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
+        LoaderGlobalConfigs.addOptions(o);
+
+        DigesterConfig config = new DigesterConfig();
+
+        CommandLineParser parser = new DefaultParser();
+        try {
+            CommandLine cli = parser.parse(o, args);
+            if (cli.hasOption("rootDir")) config.setRootDir(cli.getOptionValue("rootDir"));
+            if (cli.hasOption("verbose")) config.setVerbose(true);
+            if (cli.hasOption("errLog")) config.setErrorLogOverride(cli.getOptionValue("errLog"));
+            if (cli.hasOption("config")) config.setPropertiesFile(cli.getOptionValue("config"));
+            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
+            LoaderGlobalConfigs.setFromFlags(cli);
+            args = cli.getArgs();//Remaining args passed through
+
+        } catch (org.apache.commons.cli.ParseException exp) {
+            new HelpFormatter().printHelp("java -jar Digester.jar ", "Also accepts input file directly after arguments\n" +
+                    "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json", o, null, true);
+            System.exit(2);
+        }
+
+        if (config.getPropertiesFile() == null)
+            config.setPropertiesFile(config.getRootDir() + "config/gobii-web.xml");
+
+        String instructionFile;
+        if (args.length == 0 || "".equals(args[0])) {
+            Scanner s = new Scanner(System.in);
+            System.out.println("Enter Loader Instruction File Location:");
+            instructionFile = s.nextLine();
+        } else {
+            instructionFile = args[0];
+        }
+
+        //Error logs go to a file based on crop (for human readability) and
+        Logger.logInfo("Digester", "Beginning read of " + instructionFile);
+
+        final String instructionFileContents = HelperFunctions.readFile(instructionFile);
+
+        GobiiLoaderProcedure procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
+
+        if (procedure.getMetadata().getGobiiCropType() == null)
+            procedure.getMetadata().setGobiiCropType(divineCrop(instructionFile));
+
+        //Job Id is the 'name' part of the job file  /asd/de/name.json
+        String filename = new File(instructionFile).getName();
+
+        LoaderInstructionFilesDTO instruction = new LoaderInstructionFilesDTO();
+        instruction.setGobiiLoaderProcedure(procedure);
+        instruction.setInstructionFileName(filename);
+
+        if (procedure == null || procedure.getInstructions() == null || procedure.getInstructions().isEmpty()) {
+            logError("Digester", "No instruction for file " + instructionFile);
+            return;
+        }
+
+        Digester digester = new Digester(config);
+
+        digester.run(procedure);
+    }
+
 }
 
 class IFLLineCounts {
