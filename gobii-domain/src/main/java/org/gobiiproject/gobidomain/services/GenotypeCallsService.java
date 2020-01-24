@@ -10,20 +10,24 @@ import java.util.Map;
 public interface GenotypeCallsService {
 
     PagedResult<GenotypeCallsDTO> getGenotypeCallsByCallSetId(
-            Integer callSetDbId, Integer pageSize,
+            Integer callSetDbId,
+            Integer pageSize,
             String pageToken) throws GobiiDomainException;
 
     PagedResult<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
-            Integer markerId, String pageToken,
-            Integer pageSize) throws GobiiDomainException;
+            Integer markerId,
+            Integer pageSize,
+            String pageToken) throws GobiiDomainException;
 
     List<GenotypeCallsDTO> getGenotypeCallsByDatasetId(
-            Integer datasetId, String pageToken,
-            Integer pageSize) throws GobiiDomainException;
+            Integer datasetId,
+            Integer pageSize,
+            String pageToken) throws GobiiDomainException;
 
     List<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
-            String extractQueryFilePath, String pageToken,
-            Integer pageSize) throws GobiiDomainException;
+            String extractQueryFilePath,
+            Integer pageSize,
+            String pageToken) throws GobiiDomainException;
 
     Map<String, String> getGenotypeCallsAsString(Integer datasetId, String pageToken);
 

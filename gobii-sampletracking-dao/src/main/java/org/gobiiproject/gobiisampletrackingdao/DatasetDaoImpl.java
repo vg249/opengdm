@@ -44,7 +44,7 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
-    public List<Dataset> listDatasetsByPageCursor(String pageCursor, Integer pageSize) {
+    public List<Dataset> listDatasetsByPageCursor(String pageCursor, Integer pageSize) throws GobiiException {
 
         List<Dataset> datasets;
 
@@ -170,7 +170,7 @@ public class DatasetDaoImpl implements DatasetDao {
      * @param resultTuplesList - Result tuple with dataset left joined with analysis and other scalar fields
      * @return tuple list with Dataset Entity and other scalar fields,
      */
-    private List<Dataset> mapAnalysesToDataset(List<Object[]> resultTuplesList) {
+    public List<Dataset> mapAnalysesToDataset(List<Object[]> resultTuplesList) throws GobiiException {
 
         List<Dataset> datasetsWithMarkersAndSamplesCount = new ArrayList<>();
 

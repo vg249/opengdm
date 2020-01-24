@@ -42,7 +42,7 @@ public class RsMarkerBrapiDaoImpl implements RsMarkerBrapiDao {
 
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving marker", e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving MapSet", e.getSQL(), e.getSQLException());
             throw new GobiiDaoException(e.getSQLException());
         }
 

@@ -250,8 +250,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public PagedResult<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
-            Integer markerId, String pageToken,
-            Integer pageSize) {
+            Integer markerId, Integer pageSize, String pageToken) {
 
         PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
 
@@ -413,8 +412,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public List<GenotypeCallsDTO> getGenotypeCallsByDatasetId(
-            Integer datasetId, String pageToken,
-            Integer pageSize) {
+            Integer datasetId,
+            Integer pageSize,
+            String pageToken) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 
@@ -452,8 +452,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public List<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
-            String extractQueryFilePath, String pageToken,
-            Integer pageSize) {
+            String extractQueryFilePath, Integer pageSize,
+            String pageToken) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
 

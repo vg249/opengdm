@@ -473,7 +473,7 @@ class ValidationUtil {
                         for (List<String> name : ent.getValue()) {
                             NameIdDTO nameIdDTO = new NameIdDTO();
                             nameIdDTO.setName(name.get(0));
-                            nameIdDTO.getParameters().put(paramName, Integer.parseInt(name.get(1)));
+                            nameIdDTO.getParameters().put(paramName, ""+name.get(1));//Num is stringly typed
                             nameIdDTOList.add(nameIdDTO);
                         }
                         List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, GobiiEntityNameType.DNASAMPLE.toString(), ent.getKey(), failureList, cropConfig);

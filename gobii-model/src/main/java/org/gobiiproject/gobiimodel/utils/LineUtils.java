@@ -36,21 +36,5 @@ public class LineUtils {
         return returnVal;
     }
 
-    public static String concatAsDirectoryPath(List<String> pathList) {
-        String concatedPath = "";
-        for(String path : pathList) {
-
-            if (path != null) {
-                if (path.charAt(0) != PATH_TERMINATOR) {
-                    concatedPath = PATH_TERMINATOR + path;
-                }
-
-                if(concatedPath.charAt(concatedPath.length() - 1) == PATH_TERMINATOR) {
-                    concatedPath = concatedPath.substring(0, concatedPath.length() -1);
-                }
-            }
-        }
-        return LineUtils.terminateDirectoryPath(concatedPath);
-    }
 
 }

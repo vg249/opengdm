@@ -14,7 +14,6 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
-import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -123,37 +122,6 @@ public class BRAPIIControllerV2 {
 
     }
 
-
-    /**
-     * Endpoint for authenticating users against GDM system
-     * @param loginRequestBody - BrAPI defined login request body
-     * @param response
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/token",
-            method = RequestMethod.POST,
-            produces = "application/json")
-    @ApiOperation(
-            value = "Authentication",
-            notes = "Returns a API Key if authentication is successful",
-            tags = {"Authentication"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Authentication"),
-                    })
-            }
-            ,
-            hidden = true
-    )
-    @ResponseBody
-    public String postLogin(@RequestBody String loginRequestBody,
-                            HttpServletResponse response) throws Exception {
-
-
-        return "";
-
-    }
 
 
     /**
@@ -315,7 +283,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) int pageSize,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
             HttpServletRequest request) throws Exception {
 
 
@@ -812,13 +780,13 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) int pageSize,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
             HttpServletRequest request) throws Exception {
         try {
 
             PagedResult<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
                     variantDbId,
-                    pageToken, pageSize);
+                    pageSize, pageToken);
 
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
                     genotypeCallsList.getResult());
@@ -1350,7 +1318,7 @@ public class BRAPIIControllerV2 {
                 variantSetDbId = Integer.parseInt(variantSetDbIdVar);
 
                 genotypeCallsList = genotypeCallsService.getGenotypeCallsByDatasetId(
-                        variantSetDbId, pageToken, pageSize);
+                        variantSetDbId, pageSize, pageToken);
 
             }
             catch(NumberFormatException | NullPointerException ne) {
@@ -1364,7 +1332,7 @@ public class BRAPIIControllerV2 {
 
                 genotypeCallsList =
                         genotypeCallsService.getGenotypeCallsByExtractQuery(
-                                extractQueryPath, pageToken, pageSize);
+                                extractQueryPath, pageSize, pageToken);
             }
 
 
@@ -1374,6 +1342,13 @@ public class BRAPIIControllerV2 {
 
             BrApiMasterPayload payload = new BrApiMasterPayload(result);
 
+            //if (genotypeCallsList.size() > 0) {
+            //    payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
+            //    if (genotypeCallsList.size() >= pageSize) {
+            //        payload.getMetadata().getPagination().setNextPageToken(
+            //                genotypeCallsService.getNextPageToken());
+            //    }
+            //}
 
             return ResponseEntity.ok(payload);
 

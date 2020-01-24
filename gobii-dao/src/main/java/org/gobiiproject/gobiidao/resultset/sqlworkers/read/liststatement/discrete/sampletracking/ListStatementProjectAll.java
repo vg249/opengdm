@@ -74,7 +74,7 @@ public class ListStatementProjectAll implements ListStatement {
                 "FROM project " + pageCondition +
                 "ORDER BY project_id "+ pageSizeCondition +") AS p " +
                 "INNER JOIN cv AS cv ON (cv.cv_id = p.props_keys) GROUP BY 1) AS project_prop " +
-                "USING(project_id)" + pageCondition + "ORDER BY project.project_id " + pageSizeCondition;
+                "USING(project_id) " + pageCondition + " ORDER BY project.project_id " + pageSizeCondition;
 
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);

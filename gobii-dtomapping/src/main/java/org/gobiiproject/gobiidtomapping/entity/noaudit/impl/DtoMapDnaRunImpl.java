@@ -44,39 +44,6 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     @Autowired
     private DtoMapCv dtoMapCv;
 
-//    @Transactional
-//    @Override
-//    public String createSearchQuery(String searchQuery) throws GobiiDtoMappingException {
-//
-//        String uuid = UUID.randomUUID().toString();
-//        String type = "callset";
-//
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("uuid", uuid);
-//        parameters.put("type", type);
-//        parameters.put("search_query", searchQuery);
-//
-//        try {
-//
-//            ResultSet resultSet = rsDnaRunDao.createSearchQuery(parameters);
-//        }
-//        catch (GobiiException gE) {
-//            LOGGER.error(gE.getMessage(), gE);
-//            throw new GobiiDtoMappingException(
-//                    gE.getGobiiStatusLevel(),
-//                    gE.getGobiiValidationStatusType(),
-//                    gE.getMessage());
-//        }
-//        catch (Exception e) {
-//            LOGGER.error("Gobii Mapping error", e);
-//            throw new GobiiDtoMappingException(e);
-//        }
-//
-//        return uuid;
-//
-//
-//    }
-
     @Transactional
     @Override
     public CallSetBrapiDTO get(Integer dnaRunId) throws GobiiDtoMappingException {
