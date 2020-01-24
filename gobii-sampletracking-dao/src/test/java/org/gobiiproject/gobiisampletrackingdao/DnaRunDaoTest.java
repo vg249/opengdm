@@ -35,7 +35,10 @@ public class DnaRunDaoTest {
 
         List<DnaRun> dnaruns = dnaRunDao.getDnaRuns(
                 pageSize, rowOffset,
-                null, null);
+                null, null,
+                null, null,
+                null, null,
+                null);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
 
@@ -45,7 +48,10 @@ public class DnaRunDaoTest {
 
             List<DnaRun> dnaRunsPaged = dnaRunDao.getDnaRuns(
                     pageSize, rowOffset,
-                    null, null);
+                    null, null,
+                    null, null,
+                    null, null,
+                    null);
 
 
             assertTrue("dnarun result list size not equal to the page size",
@@ -62,7 +68,10 @@ public class DnaRunDaoTest {
 
         List<DnaRun> dnaruns = dnaRunDao.getDnaRuns(
                 pageSize, rowOffset,
-                null, null);
+                null, null,
+                null, null,
+                null, null,
+                null);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
 

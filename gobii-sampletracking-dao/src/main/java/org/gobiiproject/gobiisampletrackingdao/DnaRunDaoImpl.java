@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,24 +34,37 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @param rowOffset - Number of rows to be offseted before fetching tuples
      * @param dnaRunId - Dna Run Id which uniquely identifies dna run
      * @param datasetId - Dataset Id to which dnaruns belong to.
+     * @param dnaSampleId - dnaSampleId filter. to fetch only dnaruns for given dnasample Id.
+     * @param dnaSampleName - dnaSample Id filter. to fetch only dnaruns for given dnasample Name.
      * @return
      */
     @Override
     @Transactional
     public List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
-                                   Integer dnaRunId, Integer datasetId) {
+                                   Integer dnaRunId, String dnaRunName,
+                                   Integer datasetId, Integer dnaSampleId,
+                                   String dnaSampleName, Integer germplasmId,
+                                   String germplasmName) {
 
         List<DnaRun> dnaRuns;
 
         String queryString = "SELECT dnarun.* " +
                 " FROM dnarun AS dnarun " +
+                " INNER JOIN dnasample ON(dnarun.dnasample_id = dnasample.dnasample_id " +
+                "   AND (:dnaSampleId IS NULL OR dnasample.dnasample_id = :dnaSampleId) " +
+                "   AND (:dnaSampleName IS NULL OR dnasample.name = :dnaSampleName)) " +
+                " INNER JOIN germplasm ON(dnasample.germplasm_id = germplasm.germplasm_id " +
+                "   AND (:germplasmId IS NULL OR :germplasmId = germplasm.germplasm_id)" +
+                "   AND (:germplasmName IS NULL OR :germplasmName = germplasm.name)) " +
                 " WHERE (:datasetId IS NULL OR dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
                 " AND (:dnaRunId IS NULL OR dnarun.dnarun_id = :dnaRunId) " +
+                " AND (:dnaRunName IS NULL OR dnarun.name = :dnaRunName) " +
                 " LIMIT :pageSize OFFSET :rowOffset ";
 
         try {
 
             Session session = em.unwrap(Session.class);
+
             session.enableFetchProfile("dnarun-experiment-dnasample");
 
             if(pageSize == null) {
@@ -62,6 +76,11 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                     .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
                     .setParameter("dnaRunId", dnaRunId, IntegerType.INSTANCE)
+                    .setParameter("dnaRunName", dnaRunName, StringType.INSTANCE)
+                    .setParameter("dnaSampleId", dnaSampleId, IntegerType.INSTANCE)
+                    .setParameter("dnaSampleName", dnaSampleName, StringType.INSTANCE)
+                    .setParameter("germplasmId", germplasmId, IntegerType.INSTANCE)
+                    .setParameter("germplasmName", germplasmName, StringType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
                     .list();
 
@@ -107,7 +126,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     .addEntity("dnarun", DnaRun.class)
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
-                    .setParameter("dnaRunIdCursor",dnaRunIdCursor, IntegerType.INSTANCE)
+                    .setParameter("dnaRunIdCursor", dnaRunIdCursor, IntegerType.INSTANCE)
                     .list();
 
             return dnaRuns;
@@ -136,7 +155,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
         try {
 
             List<DnaRun> dnaRunsById = this.getDnaRuns(null, null,
-                    dnaRunId, null);
+                    dnaRunId, null,
+                    null, null,
+                    null, null,
+                    null);
 
             if (dnaRunsById.size() > 1) {
 
@@ -183,7 +205,11 @@ public class DnaRunDaoImpl implements DnaRunDao {
     public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
                                               Integer rowOffset) {
 
-        return getDnaRuns(pageSize, rowOffset, null, datasetId);
+        return getDnaRuns(pageSize, rowOffset,
+                null, null,
+                datasetId, null,
+                null, null,
+                null);
 
     }
 
@@ -208,6 +234,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             //Set Root entity and selected entities
             Root<DnaRun> root = criteria.from(DnaRun.class);
+
             criteria.select(root);
 
 
@@ -274,7 +301,4 @@ public class DnaRunDaoImpl implements DnaRunDao {
         }
 
     }
-
-
-
 }

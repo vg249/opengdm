@@ -7,12 +7,15 @@ import java.util.List;
 public interface DnaRunDao {
 
     List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
-                            Integer dnaRunId, Integer datasetId);
+                            Integer dnaRunId, String dnaRunName,
+                            Integer datasetId, Integer dnaSampleId,
+                            String dnaSampleName, Integer germplasmId,
+                            String germplasmName);
 
 
     List<DnaRun> getDnaRunsByDnaRunIdCursor(Integer dnaRunId,
-                                                Integer datasetId,
-                                                Integer pageSize);
+                                            Integer datasetId,
+                                            Integer pageSize);
 
     DnaRun getDnaRunById(Integer dnaRunId);
 
