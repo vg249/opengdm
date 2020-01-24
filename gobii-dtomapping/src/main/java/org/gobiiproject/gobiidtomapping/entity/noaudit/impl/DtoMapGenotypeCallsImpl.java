@@ -405,7 +405,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
      */
     @Override
     public List<GenotypeCallsDTO> getGenotypeCallsList(
-            DnaRunDTO dnarun, String pageToken,
+            CallSetBrapiDTO dnarun, String pageToken,
             Integer pageSize) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();

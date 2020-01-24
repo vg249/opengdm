@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,52 +37,52 @@ public class DnaRunServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    private DnaRunDTO createMockDnaRunDTO() {
+    private CallSetBrapiDTO createMockDnaRunDTO() {
 
-        DnaRunDTO callSetDTO = new DnaRunDTO();
+        CallSetBrapiDTO callSetBrapiDTO = new CallSetBrapiDTO();
 
-        callSetDTO.setCallSetDbId(34);
-        callSetDTO.setCallSetName("test-callset");
-        callSetDTO.setDnaRunCode("test-code");
-        callSetDTO.setGermplasmDbId(1);
+        callSetBrapiDTO.setCallSetDbId(34);
+        callSetBrapiDTO.setCallSetName("test-callset");
+        //callSetBrapiDTO.setDnaRunCode("test-code");
+        callSetBrapiDTO.setGermplasmDbId(1);
 
-        return callSetDTO;
+        return callSetBrapiDTO;
     }
 
     @Test
     public void getCallsets() throws Exception {
 
-        List<DnaRunDTO> callsetsMock = new ArrayList<>();
+        List<CallSetBrapiDTO> callsetsMock = new ArrayList<>();
 
-        DnaRunDTO callset1 = createMockDnaRunDTO();
+        CallSetBrapiDTO callset1 = createMockDnaRunDTO();
         callsetsMock.add(callset1);
 
         when (
                 dtoMapDnaRun.getList(
-                        any(Integer.TYPE), any(Integer.TYPE), any(DnaRunDTO.class)
+                        any(Integer.TYPE), any(Integer.TYPE), any(CallSetBrapiDTO.class)
                 )
         ).thenReturn(callsetsMock);
 
-        List<DnaRunDTO> callsetsList = dnaRunService.getDnaRuns(any(Integer.TYPE), any(Integer.TYPE), any(DnaRunDTO.class));
+        List<CallSetBrapiDTO> callsetsList = dnaRunService.getDnaRuns(any(Integer.TYPE), any(Integer.TYPE), any(CallSetBrapiDTO.class));
 
         assertEquals(callsetsMock.size(), callsetsList.size());
-        verify(dtoMapDnaRun, times(1)).getList(any(Integer.TYPE), any(Integer.TYPE), any(DnaRunDTO.class));
+        verify(dtoMapDnaRun, times(1)).getList(any(Integer.TYPE), any(Integer.TYPE), any(CallSetBrapiDTO.class));
     }
 
     @Test
     public void getCallsetById() throws Exception {
 
-        DnaRunDTO callSetDTOMock = createMockDnaRunDTO();
+        CallSetBrapiDTO callSetBrapiDTOMock = createMockDnaRunDTO();
 
         when (
-                dtoMapDnaRun.get(callSetDTOMock.getCallSetDbId())
-        ).thenReturn(callSetDTOMock);
+                dtoMapDnaRun.get(callSetBrapiDTOMock.getCallSetDbId())
+        ).thenReturn(callSetBrapiDTOMock);
 
-        DnaRunDTO callSetResult = dnaRunService.getDnaRunById(callSetDTOMock.getCallSetDbId());
+        CallSetBrapiDTO callSetResult = dnaRunService.getDnaRunById(callSetBrapiDTOMock.getCallSetDbId());
 
-        assertEquals(callSetDTOMock.getCallSetDbId(), callSetResult.getCallSetDbId());
-        assertEquals(callSetDTOMock.getCallSetName(), callSetResult.getCallSetName());
-        verify(dtoMapDnaRun, times(1)).get(callSetDTOMock.getCallSetDbId());
+        assertEquals(callSetBrapiDTOMock.getCallSetDbId(), callSetResult.getCallSetDbId());
+        assertEquals(callSetBrapiDTOMock.getCallSetName(), callSetResult.getCallSetName());
+        verify(dtoMapDnaRun, times(1)).get(callSetBrapiDTOMock.getCallSetDbId());
     }
 
 }

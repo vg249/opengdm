@@ -38,7 +38,7 @@ public class DnaRunDaoTest {
                 null, null,
                 null, null,
                 null, null,
-                null);
+                null, null);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
 
@@ -51,7 +51,7 @@ public class DnaRunDaoTest {
                     null, null,
                     null, null,
                     null, null,
-                    null);
+                    null, null);
 
 
             assertTrue("dnarun result list size not equal to the page size",
@@ -71,7 +71,7 @@ public class DnaRunDaoTest {
                 null, null,
                 null, null,
                 null, null,
-                null);
+                null, null);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
 

@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
-import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Map;
 public interface DtoMapGenotypeCalls {
 
 
-    List<GenotypeCallsDTO> getGenotypeCallsList(DnaRunDTO dnarun, String pageToken,
+    List<GenotypeCallsDTO> getGenotypeCallsList(CallSetBrapiDTO dnarun, String pageToken,
                                                 Integer pageSize);
 
     List<GenotypeCallsDTO> getGenotypeCallsList(MarkerBrapiDTO marker, String pageToken,

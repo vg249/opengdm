@@ -14,7 +14,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
-import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -52,10 +52,6 @@ public class BRAPIIControllerV2 {
 
     private final Integer brapiDefaultPageSize = 1000;
 
-
-    @Autowired
-    private DnaRunService dnaRunService = null;
-
     @Autowired
     private MarkerBrapiService markerBrapiService = null;
 
@@ -80,8 +76,8 @@ public class BRAPIIControllerV2 {
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 
-    private class CallSetResponse extends BrApiMasterPayload<DnaRunDTO>{}
-    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<DnaRunDTO>>{}
+    private class CallSetResponse extends BrApiMasterPayload<CallSetBrapiDTO>{}
+    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<CallSetBrapiDTO>>{}
     private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
     private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
     private class VariantResponse extends BrApiMasterPayload<MarkerBrapiDTO>{}
@@ -199,83 +195,12 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageToken", required = false) Integer pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(value = "ID of the CallSet to be retrieved.")
-            @RequestParam(value = "callSetDbId", required = false) Integer callSetDbId,
-            @ApiParam(value = "The human readable name of the CallSet to be retrieved.")
-            @RequestParam(value = "callSetName", required = false) String callSetName,
-            @ApiParam(value = "The ID of the VariantSet to be retrieved.")
-            @RequestParam(value = "variantSetDbId", required = false) String variantSetDbId,
-            @ApiParam(value = "The ID of the Sample to be retrieved.")
-            @RequestParam(value = "sampleDbId", required = false) String sampleDbId,
-            @ApiParam(value = "The ID of the Germplasm to be retrieved.")
-            @RequestParam(value = "germplasmDbId", required = false) String germplasmDbId,
-            @ApiParam(value = "The ID of the study to be retrieved.")
-            @RequestParam(value = "studyDbId", required = false) String studyDbId,
-            @ApiParam(value = "The name of the sample to be retrieved.")
-            @RequestParam(value = "sampleName", required = false) String sampleName
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
+            CallSetBrapiDTO callSetsFilter
     ) {
         try {
 
-            DnaRunDTO dnaRunDTOFilter = new DnaRunDTO();
-
-            if (callSetDbId != null) {
-                dnaRunDTOFilter.setCallSetDbId(callSetDbId);
-            }
-
-            if (callSetName != null) {
-                dnaRunDTOFilter.setCallSetName(callSetName);
-            }
-
-            if (variantSetDbId != null) {
-                List<Integer> variantDbArr = new ArrayList<>();
-                variantDbArr.add(Integer.parseInt(variantSetDbId));
-                dnaRunDTOFilter.setVariantSetIds(variantDbArr);
-            }
-
-            if (sampleDbId != null) {
-                dnaRunDTOFilter.setSampleDbId(Integer.parseInt(sampleDbId));
-            }
-
-            if (germplasmDbId != null) {
-                dnaRunDTOFilter.setGermplasmDbId(Integer.parseInt(germplasmDbId));
-            }
-
-            if (studyDbId != null) {
-                dnaRunDTOFilter.setStudyDbId(Integer.parseInt(studyDbId));
-            }
-
-            if (sampleName != null) {
-                dnaRunDTOFilter.setSampleName(sampleName);
-            }
-
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_DNARUN,
-                    RestMethodType.GET
-            );
-
-            if(maxPageSize == null) {
-                //As per brapi initial standards
-                maxPageSize = 1000;
-            }
-
-            if (pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize, dnaRunDTOFilter);
-
-            BrApiResult result = new BrApiResult();
-            result.setData(dnaRunList);
-            BrApiMasterPayload payload = new BrApiMasterPayload(result);
-
-            if (dnaRunList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(dnaRunList.size());
-                if(dnaRunList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            dnaRunList.get(dnaRunList.size() - 1).getCallSetDbId().toString()
-                    );
-                }
-            }
+            BrApiMasterPayload payload = new BrApiMasterPayload(callSetsFilter);
 
             return ResponseEntity.ok().contentType(
                     MediaType.APPLICATION_JSON).body(payload);
@@ -328,12 +253,8 @@ public class BRAPIIControllerV2 {
         Integer callSetDbIdInt;
 
         try {
-            callSetDbIdInt = callSetDbId;
-            DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbIdInt);
-            BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
-
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+                    MediaType.APPLICATION_JSON).body("");
         }
         catch(Exception e) {
             throw new GobiiException(
@@ -400,12 +321,12 @@ public class BRAPIIControllerV2 {
         try {
 
 
-            PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
+            PagedList<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByCallSetId(
                     callSetDbId,
                     pageSize, pageToken);
 
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
-                    genotypeCallsList.getListData());
+                    genotypeCallsList.getResult());
 
             if(genotypeCallsList.getNextPageToken() != null) {
                 payload.getMetadata().getPagination().setNextPageToken(genotypeCallsList.getNextPageToken());
@@ -894,12 +815,12 @@ public class BRAPIIControllerV2 {
             HttpServletRequest request) throws Exception {
         try {
 
-            PagedListByCursor<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
+            PagedList<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
                     variantDbId,
                     pageToken, pageSize);
 
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(
-                    genotypeCallsList.getListData());
+                    genotypeCallsList.getResult());
 
             if(genotypeCallsList.getNextPageToken() != null) {
                 payload.getMetadata().getPagination().setNextPageToken(genotypeCallsList.getNextPageToken());
@@ -1260,56 +1181,8 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            Integer pageToken = null;
-
-            if (pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                } catch (Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid Page Token"
-                    );
-                }
-            }
-
-            DnaRunDTO dnaRunDTOFilter = new DnaRunDTO();
-
-            List<Integer> variantSetDbIdArr = new ArrayList<>();
-            variantSetDbIdArr.add(variantSetDbId);
-            dnaRunDTOFilter.setVariantSetIds(variantSetDbIdArr);
-
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_MARKERS,
-                    RestMethodType.GET
-            );
-
-            if (maxPageSize == null){
-                maxPageSize = 1000;
-            }
-
-            if (pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize, dnaRunDTOFilter);
-
-            BrApiResult result = new BrApiResult();
-            result.setData(dnaRunList);
-            BrApiMasterPayload payload = new BrApiMasterPayload(result);
-
-            if (dnaRunList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(dnaRunList.size());
-                if (dnaRunList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            dnaRunList.get(dnaRunList.size() -1).getCallSetDbId().toString()
-                    );
-                }
-            }
-
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+                    MediaType.APPLICATION_JSON).body("");
 
         }
         catch (GobiiException gE) {

@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface DtoMapDnaRun {
 
-    DnaRunDTO get(Integer dnaRunId) throws GobiiDtoMappingException;
-    List<DnaRunDTO> getList(Integer pageToken, Integer pageSize, DnaRunDTO dnaRunDTOFilter) throws GobiiDtoMappingException;
+    CallSetBrapiDTO get(Integer dnaRunId) throws GobiiDtoMappingException;
+    List<CallSetBrapiDTO> getList(Integer pageToken, Integer pageSize, CallSetBrapiDTO callSetBrapiDTOFilter) throws GobiiDtoMappingException;
 
 }

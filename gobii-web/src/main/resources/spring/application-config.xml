@@ -448,7 +448,6 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
 
     <!-- *** DNA RUN Beans ************************************* -->
-    <bean id="dnaRunService" class="org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl"/>
     <bean id="dtoMapDnaRun" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapDnaRunImpl"/>
     <bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>
 
@@ -465,7 +464,6 @@
     <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
 
     <!-- *** DATASET BRAPI BEANS *********** -->
-    <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.DatasetBrapiServiceImpl"/>
     <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
     <bean id="rsDatasetBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDatasetBrapiDaoImpl"/>
 
@@ -898,7 +896,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnaRunAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>

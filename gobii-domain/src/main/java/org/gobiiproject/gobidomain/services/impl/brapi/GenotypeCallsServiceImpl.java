@@ -8,8 +8,7 @@ import org.gobiiproject.gobidomain.services.MarkerBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -62,11 +61,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given page.
      */
     @Override
-    public PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
+    public PagedList<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
                                                                            Integer pageSize,
                                                                            String pageToken) {
 
-        PagedListByCursor<GenotypeCallsDTO>  returnVal = new PagedListByCursor<>();
+        PagedList<GenotypeCallsDTO> returnVal = new PagedList<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
@@ -195,7 +194,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
-            returnVal.setListData(genotypeCalls);
+            returnVal.setResult(genotypeCalls);
 
             return returnVal;
 
@@ -250,11 +249,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public PagedListByCursor<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
+    public PagedList<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
             Integer markerId, String pageToken,
             Integer pageSize) {
 
-        PagedListByCursor<GenotypeCallsDTO>  returnVal = new PagedListByCursor<>();
+        PagedList<GenotypeCallsDTO>  returnVal = new PagedList<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
@@ -383,7 +382,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
-            returnVal.setListData(genotypeCalls);
+            returnVal.setResult(genotypeCalls);
 
             return returnVal;
 

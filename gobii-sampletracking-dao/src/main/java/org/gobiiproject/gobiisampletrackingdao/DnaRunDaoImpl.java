@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 public class DnaRunDaoImpl implements DnaRunDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MarkerDao.class);
@@ -39,12 +40,11 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
                                    Integer dnaRunId, String dnaRunName,
-                                   Integer datasetId, Integer dnaSampleId,
-                                   String dnaSampleName, Integer germplasmId,
-                                   String germplasmName) {
+                                   Integer datasetId, Integer experimentId,
+                                   Integer dnaSampleId, String dnaSampleName,
+                                   Integer germplasmId, String germplasmName) {
 
         List<DnaRun> dnaRuns;
 
@@ -59,6 +59,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 " WHERE (:datasetId IS NULL OR dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
                 " AND (:dnaRunId IS NULL OR dnarun.dnarun_id = :dnaRunId) " +
                 " AND (:dnaRunName IS NULL OR dnarun.name = :dnaRunName) " +
+                " AND (:experimentId IS NULL OR dnarun.experiment_id = :experimentId) " +
                 " LIMIT :pageSize OFFSET :rowOffset ";
 
         try {
@@ -82,6 +83,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     .setParameter("germplasmId", germplasmId, IntegerType.INSTANCE)
                     .setParameter("germplasmName", germplasmName, StringType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .setParameter("experimentId", experimentId, IntegerType.INSTANCE)
                     .list();
 
             return dnaRuns;
@@ -99,7 +101,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDnaRunIdCursor(
             Integer dnaRunIdCursor,
             Integer datasetId,
@@ -149,7 +150,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    @Transactional
     public DnaRun getDnaRunById(Integer dnaRunId) {
 
         try {
@@ -158,7 +158,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     dnaRunId, null,
                     null, null,
                     null, null,
-                    null);
+                    null, null);
 
             if (dnaRunsById.size() > 1) {
 
@@ -201,7 +201,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of result DnaRun Entities.
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
                                               Integer rowOffset) {
 
@@ -209,7 +208,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 null, null,
                 datasetId, null,
                 null, null,
-                null);
+                null, null);
 
     }
 
@@ -220,7 +219,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of DnaRun Entity result
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds) {
 
         List<DnaRun> dnaruns = new ArrayList<>();
@@ -265,7 +263,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of DnaRun Entity result.
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames) {
 
         List<DnaRun> dnaruns = new ArrayList<>();
