@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiiprocess.digester.Digester;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
@@ -25,6 +27,14 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.verifyEqualMatrixSizeMarker;
 
 class Validator {
+
+    @Getter @Setter
+    private Boolean isMarkerFast;
+
+    public Validator(Boolean isMarkerFast) {
+        this.isMarkerFast = isMarkerFast;
+    }
+
     boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList, GobiiCropConfig cropConfig) {
         try {
             if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), failureList)) {
@@ -145,7 +155,6 @@ class Validator {
     private List<Failure> validateMatrixSizeColumns(String fileName, List<ConditionUnit> conditions) {
         List<Failure> failureList = new ArrayList<>();
 
-        Boolean isMarkerFast= Digester.isMarkerFast;//AUTHORS NOTE- this check will never run in stand-alone mode
         if(isMarkerFast==null)return failureList;
         List<String> requiredMatrixMarkerSizeColumns = new ArrayList<>();
         List<String> requiredMatrixSampleSizeColumns = new ArrayList<>();

@@ -9,4 +9,5 @@ public class DigesterConfig {
 	private boolean verbose;
 	private String errorLogOverride;
 	private String propertiesFile;
+	private String pathToHDF5Files;
 }

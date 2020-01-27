@@ -378,7 +378,9 @@ class ValidationUtil {
         return verifyEqualMatrixSizeMarker(failureList,fileColumns,!markerFast);
     }
      static boolean verifyEqualMatrixSizeMarker(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException{
-        Integer size = markerFast?CSVFileReaderInterface.getLastMatrixRowSize():CSVFileReaderInterface.getLastMatrixColSize();
+        Integer size = markerFast
+                ? CSVFileReaderInterface.getLastMatrixRowSize()
+                : CSVFileReaderInterface.getLastMatrixColSize();
         return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
     }
 

@@ -31,6 +31,11 @@ public class DigestFileValidator {
 
     private String rootDir, rulesFile, url, password, username;
 
+
+    public DigestFileValidator(String rootDir, String url, String username, String password) {
+        this(rootDir, null, url, username, password);
+    }
+
     public DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
         this.rootDir = rootDir;
         this.url = url;
@@ -39,21 +44,18 @@ public class DigestFileValidator {
         this.password = password;
     }
 
-    public DigestFileValidator(String rootDir, String url, String username, String password) {
-        this.rootDir = rootDir;
-        this.url = url;
-        this.username = username;
-        this.password = password;
-    }
-
     public static void main(String[] args) {
         InputParameters inputParameters = new InputParameters();
         readInputParameters(args, inputParameters);
         DigestFileValidator digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
-        digestFileValidator.performValidation(null);
+        digestFileValidator.performValidation(null, null);
     }
 
     public void performValidation(GobiiCropConfig cropConfig) {
+        this.performValidation(cropConfig, null);
+    }
+
+    public void performValidation(GobiiCropConfig cropConfig, Boolean isMarkerFast) {
         String validationOutput = rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
         /*
          * Read validation Rules
@@ -68,7 +70,7 @@ public class DigestFileValidator {
             List<Failure> failures = new ArrayList<>();
             if (loginToServer(url, username, password, null, failures)) {
                 try {
-                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig);
+                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig, isMarkerFast);
                     writer.write(validationErrorList);
                 } catch (Exception e) {
                     validationError.status = ValidationConstants.FAILURE;
@@ -99,12 +101,12 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig) {
+    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig, Boolean isMarkerFast) {
         List<ValidationError> validationErrorList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-            List<Failure> failureList = validate(validation, cropConfig);
+            List<Failure> failureList = validate(validation, cropConfig, isMarkerFast);
             if (failureList != null) {
                 if (failureList.size() > 0) {
                     validationError.status = ValidationConstants.FAILURE;
@@ -232,7 +234,7 @@ public class DigestFileValidator {
         return true;
     }
 
-    public List<Failure> validate(ValidationUnit validation, GobiiCropConfig cropConfig) {
+    public List<Failure> validate(ValidationUnit validation, GobiiCropConfig cropConfig, Boolean isMarkerFast) {
         trimSpaces(validation);
         List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
@@ -248,7 +250,7 @@ public class DigestFileValidator {
             case "marker_linkage_group":
             case "dataset_dnarun":
             case "dataset_marker":
-                if (!new Validator().validate(validation, rootDir, failureList, cropConfig)) failureList = null;
+                if (!new Validator(isMarkerFast).validate(validation, rootDir, failureList, cropConfig)) failureList = null;
                 break;
             default:
                 try {

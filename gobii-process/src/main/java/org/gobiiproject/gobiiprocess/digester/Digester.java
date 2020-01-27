@@ -61,6 +61,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.springframework.beans.factory.annotation.Autowired;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getWebserviceConnectionString;
@@ -86,6 +87,8 @@ public class Digester {
     private final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     private final String SAMPLE_TABNAME = "dnarun";
 
+    private HDF5Interface hdf5Interface = new HDF5Interface();
+
     private final DigesterConfig config;
 
     private String loaderScriptPath;
@@ -94,7 +97,7 @@ public class Digester {
     private GobiiExtractorInstruction qcExtractInstruction = null;
 
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
-    public Boolean isMarkerFast=null;
+    private Boolean isMarkerFast=null;
 
 
     public Digester(DigesterConfig config) {
@@ -110,7 +113,8 @@ public class Digester {
 
         extractorScriptPath = config + "extractors/";
         loaderScriptPath = config.getRootDir() + "loaders/";
-        HDF5Interface.setPathToHDF5(loaderScriptPath + "hdf5/bin/");
+        hdf5Interface.setPathToHDF5(loaderScriptPath + "hdf5/bin/");
+        hdf5Interface.setPathToHDF5Files(config.getPathToHDF5Files());
 
         boolean success = true;
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
@@ -170,8 +174,8 @@ public class Digester {
             logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType() + " in the Configuration File");
             return;
         }
-        if (HDF5Interface.getPathToHDF5Files() == null)
-            HDF5Interface.setPathToHDF5Files(cropPath.toString() + "/hdf5/");
+        if (hdf5Interface.getPathToHDF5Files() == null)
+            hdf5Interface.setPathToHDF5Files(cropPath.toString() + "/hdf5/");
 
         String errorPath = getLogName(procedure, procedure.getMetadata().getGobiiCropType());
 
@@ -337,7 +341,7 @@ public class Digester {
         boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.getValidation()) {
             DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
-            digestFileValidator.performValidation(gobiiCropConfig);
+            digestFileValidator.performValidation(gobiiCropConfig, isMarkerFast);
             //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
             List<Path> pathList =
                     Files.list(Paths.get(directory))
@@ -418,7 +422,7 @@ public class Digester {
             }
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
                 jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
-                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, procedure.getMetadata().getDatasetType().getName(),
+                boolean HDF5Success = hdf5Interface.createHDF5FromDataset(pm, procedure.getMetadata().getDatasetType().getName(),
                         configuration, dataSetId, procedure.getMetadata().getGobiiCropType(), errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
@@ -727,70 +731,6 @@ public class Digester {
         return crop;
     }
 
-    /**
-     * Updates Postgresql through the webservices to update the DataSet's monetDB and HDF5File references.
-     *
-     * @param config         Configuration settings, used to determine connections
-     * @param cropName       Name of the crop
-     * @param dataSetId      Data set to update
-     * @param monetTableName Name of the table in the monetDB database for this dataset.
-     * @param hdfFileName    Name of the HDF5 file for this dataset (Note, these should be obvious)
-     */
-    public void updateValues(ConfigSettings config, String cropName, Integer dataSetId, String monetTableName, String hdfFileName) {
-        try {
-            // set up authentication and so forth
-            // you'll need to get the current from the instruction file
-            GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
-
-            if (LineUtils.isNullOrEmpty(context.getUserToken())) {
-                logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
-                return;
-            }
-
-            String currentCropContextRoot = context.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-
-            RestUri projectsUri = gobiiUriFactory
-                    .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-            projectsUri.setParamValue("id", dataSetId.toString());
-            GobiiEnvelopeRestResource<DataSetDTO, DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
-            PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                    .get(DataSetDTO.class);
-
-            DataSetDTO dataSetResponse;
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                System.out.println();
-                logError("Digester", "Data set response response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return;
-            } else {
-                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
-            }
-
-            dataSetResponse.setDataTable(monetTableName);
-            dataSetResponse.setDataFile(hdfFileName);
-
-            resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                    .put(DataSetDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
-
-
-            //dataSetResponse = dtoProcessor.process(dataSetResponse);
-            // if you didn't succeed, do not pass go, but do log errors to your log file
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                logError("Digester", "Data set response response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return;
-            }
-        } catch (Exception e) {
-            logError("Digester", "Exception while referencing data sets in Postgresql", e);
-            return;
-        }
-    }
-
     private String getJDBCConnectionString(GobiiCropConfig config) {
         return HelperFunctions.getJdbcConnectionString(config);
     }
@@ -847,7 +787,7 @@ public class Digester {
             if (cli.hasOption("verbose")) config.setVerbose(true);
             if (cli.hasOption("errLog")) config.setErrorLogOverride(cli.getOptionValue("errLog"));
             if (cli.hasOption("config")) config.setPropertiesFile(cli.getOptionValue("config"));
-            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
+            if (cli.hasOption("hdfFiles")) config.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
 
@@ -893,7 +833,7 @@ public class Digester {
 
         Digester digester = new Digester(config);
 
-        digester.run(procedure);
+        digester.run(instruction);
     }
 
 }
