@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.BiFunction;
 
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -131,11 +130,11 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
                 //Multiple files are stacked 'vertically'. This "feature" is very jank, and this bit'll have to be ripped
                 //out while replacing it.
             }
-            processCSV_ROW(file, tempFileBufferedWriter, procedure);
+            processCsvRow(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_COL()) {
-            processCSV_COL(file, tempFileBufferedWriter, procedure);
+            processCsvColumn(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_BOTH()) {
-            return processCSV_BOTH(file, tempFileBufferedWriter, procedure, outputFile);
+            return processCsvBoth(file, tempFileBufferedWriter, procedure, outputFile);
         }
 
         return null;
@@ -148,8 +147,8 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
      * @param tempFileBufferedWriter Output file writer.
      * @throws IOException Exception in I/O operations
      */
-    private void processCSV_ROW(File file, BufferedWriter tempFileBufferedWriter, GobiiLoaderProcedure procedure) throws IOException {
-        readCSV_ROWS(file, procedure);
+    private void processCsvRow(File file, BufferedWriter tempFileBufferedWriter, GobiiLoaderProcedure procedure) throws IOException {
+        readCsvRows(file, procedure);
         // Added for consistency in flow. For CSV_ROW this variable is not used. So empty list is passed
         ArrayList<String> rowList = new ArrayList<>();
         if (processedInstruction.isFirstLine()) {
@@ -168,8 +167,8 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
      * @param tempFileBufferedWriter Output file writer.
      */
 
-    private void processCSV_COL(File file, BufferedWriter tempFileBufferedWriter,
-                                GobiiLoaderProcedure procedure) {
+    private void processCsvColumn(File file, BufferedWriter tempFileBufferedWriter,
+                                  GobiiLoaderProcedure procedure) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
             String fileRow;
@@ -217,16 +216,16 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
      * @throws IOException Exception in I/O operations
      */
 
-    private MatrixProcessorResult processCSV_BOTH(File file, BufferedWriter tempFileBufferedWriter,
-												  GobiiLoaderProcedure procedure, File outputFile) throws IOException {
+    private MatrixProcessorResult processCsvBoth(File file, BufferedWriter tempFileBufferedWriter,
+                                                 GobiiLoaderProcedure procedure, File outputFile) throws IOException {
         Integer totalCols=null;
         Integer totalRows=null;
         boolean skipValidation = !LoaderGlobalConfigs.getValidation();
 
-        GobiiFileColumn csv_BothColumn = null;
+        GobiiFileColumn csvBothColumn = null;
         for (GobiiFileColumn gobiiFileColumn : processedInstruction.getColumnList()) {
             if (gobiiFileColumn.getGobiiColumnType().equals(GobiiColumnType.CSV_BOTH)) {
-                csv_BothColumn = gobiiFileColumn;
+                csvBothColumn = gobiiFileColumn;
                 break;
             }
         }
@@ -244,11 +243,11 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
-                    if (rowNo >= csv_BothColumn.getrCoord()) {
+                    if (rowNo >= csvBothColumn.getrCoord()) {
                         inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
                         outputRowList = new ArrayList<>();
-                        getRow(inputRowList, csv_BothColumn);
-                        ValidationResult validationResult=matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
+                        getRow(inputRowList, csvBothColumn);
+                        ValidationResult validationResult=matrixValidation.validate(rowNo, csvBothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
                         if (validationResult.success) {
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
                             totalCols=validationResult.numRows;
@@ -267,7 +266,7 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
                     }
                     rowNo++;
                 }
-                totalRows = rowNo - csv_BothColumn.getrCoord();
+                totalRows = rowNo - csvBothColumn.getrCoord();
             }
         }
         if (matrixValidation.getErrorCount() != 0) {
@@ -378,7 +377,7 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
      *
      * @param file              Input file.
      */
-    private void readCSV_ROWS(File file, GobiiLoaderProcedure procedure) {
+    private void readCsvRows(File file, GobiiLoaderProcedure procedure) {
         int maxRequiredRowNo = maxRequiredRow();
 
 
