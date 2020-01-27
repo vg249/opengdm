@@ -6,15 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
-import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
@@ -25,7 +22,7 @@ import org.junit.rules.TemporaryFolder;
  * after processing. Generated o/p file is verified that it is as expected.
  */
 @Ignore //TODO - fix for non-windows file endings
-public class CSVFileReaderV2Test {
+public class CSVInstructionProcessorTest {
 
     private static String tempFolderLocation, resourceDestFolderLocation, loaderScriptPath;
 
@@ -79,9 +76,9 @@ public class CSVFileReaderV2Test {
         gobiiColumns.add(Util.createGobiiCSV_ROW(1, 0));
         instruction.setGobiiFileColumns(gobiiColumns);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
 
-        csvReader.processCSV(procedure, instruction);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
@@ -103,8 +100,8 @@ public class CSVFileReaderV2Test {
         gobiiColumns.add(Util.createGobiiCSV_COL(0, 1));
         instruction.setGobiiFileColumns(gobiiColumns);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
@@ -125,8 +122,8 @@ public class CSVFileReaderV2Test {
         gobiiColumns.add(Util.createGobiiCSV_SUB(0, 0));
         instruction.setGobiiFileColumns(gobiiColumns);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
@@ -155,8 +152,8 @@ public class CSVFileReaderV2Test {
         gobiiColumns.add(Util.createGobiiCSV_ROW(0, 0));
         instruction.setGobiiFileColumns(gobiiColumns);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         file2.delete();

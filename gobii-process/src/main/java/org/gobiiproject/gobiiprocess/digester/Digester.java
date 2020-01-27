@@ -19,7 +19,6 @@ import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -28,7 +27,6 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -57,11 +55,10 @@ import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
-import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
+import org.gobiiproject.gobiiprocess.digester.csv.CsvInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
-import org.springframework.beans.factory.annotation.Autowired;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getWebserviceConnectionString;
@@ -70,7 +67,7 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
  * The File Reader runs off the Instruction Files, which tell it where the input files are, and how to process them.
- * {@link CSVFileReaderV2} and deal with specific file formats. Overall logic and program flow come from this class.
+ * {@link CsvInstructionProcessor} and deal with specific file formats. Overall logic and program flow come from this class.
  * <p>
  * This class deals with external commands and scripts, and coordinates uploads to the IFL and directly talks to HDF5 and MonetDB.
  *
@@ -253,7 +250,7 @@ public class Digester {
             case VCF:
                 //INTENTIONAL FALLTHROUGH
             case GENERIC:
-                CSVFileReaderV2.parseInstructionFile(procedure, loaderScriptPath);
+                new DigesterFileProcessor(new CsvInstructionProcessor(loaderScriptPath)).parseInstructionFile(procedure);
                 break;
             default:
                 System.err.println("Unable to deal with file type " + procedure.getMetadata().getGobiiFile().getGobiiFileType());

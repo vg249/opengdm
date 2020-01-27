@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.csv;
 
-import org.aspectj.lang.annotation.AfterReturning;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -8,8 +7,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
-import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
-import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.junit.AfterClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -81,8 +78,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(99, "DOMINANT_NON_NUCLEOTIDE"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -121,8 +118,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -158,8 +155,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -199,8 +196,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -236,8 +233,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(98, "IUPAC"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -280,8 +277,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -316,8 +313,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -357,8 +354,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -398,8 +395,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instruction.setGobiiFileColumns(gobiiColumns);
         procedure.getMetadata().setDatasetType(new PropNameId(101, "SSR_ALLELE_SIZE"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -439,8 +436,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         List instructionList = new LinkedList();
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -486,8 +483,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
     }
@@ -535,8 +532,8 @@ public class CSVFileReader_CSV_BOTHV2Test {
         instructionList.add(instruction);
         procedure.setInstructions(instructionList);
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(procedure, instruction);
+        CsvInstructionProcessor csvReader = new CsvInstructionProcessor(loaderScriptPath);
+        csvReader.process(procedure, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);

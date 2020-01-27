@@ -23,7 +23,7 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
-import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
+import org.gobiiproject.gobiiprocess.digester.csv.DigesterInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
@@ -379,8 +379,8 @@ class ValidationUtil {
     }
      static boolean verifyEqualMatrixSizeMarker(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException{
         Integer size = markerFast
-                ? CSVFileReaderInterface.getLastMatrixRowSize()
-                : CSVFileReaderInterface.getLastMatrixColSize();
+                ? DigesterInstructionProcessor.getLastMatrixRowSize()
+                : DigesterInstructionProcessor.getLastMatrixColSize();
         return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
     }
 
