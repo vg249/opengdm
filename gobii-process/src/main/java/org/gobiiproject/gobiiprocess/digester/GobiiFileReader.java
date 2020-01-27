@@ -449,7 +449,7 @@ public class GobiiFileReader {
                         //If there are no issues in the load, clean up temporary intermediate files
                         if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
                             //And if 'delete intermediate files' is true, clean up all IFL files (we don't need them any more
-                            deleteIFLFiles(dstDir, key,LoaderGlobalConfigs.isDeleteIntermediateFiles());
+                            deleteIFLFiles(dstDir, key,!LoaderGlobalConfigs.isDeleteIntermediateFiles());
                         }
                     }
 
