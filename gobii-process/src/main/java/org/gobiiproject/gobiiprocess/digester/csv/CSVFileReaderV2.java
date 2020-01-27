@@ -54,7 +54,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
 
     public static void parseInstructionFile(GobiiLoaderProcedure procedure, String loaderScriptPath) {
         CSVFileReaderInterface reader;
-        if (LoaderGlobalConfigs.getSingleThreadFileRead()) {
+        if (LoaderGlobalConfigs.isSingleThreadFileRead()) {
             for (GobiiLoaderInstruction i : procedure.getInstructions()) {
                 try {
                     reader = new CSVFileReaderV2(loaderScriptPath);
@@ -278,7 +278,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                                  GobiiLoaderProcedure procedure, File outputFile) throws IOException {
         Integer totalCols=null;
         Integer totalRows=null;
-        boolean skipValidation = !LoaderGlobalConfigs.getValidation();
+        boolean skipValidation = !LoaderGlobalConfigs.isEnableValidation();
 
         GobiiFileColumn csv_BothColumn = null;
         for (GobiiFileColumn gobiiFileColumn : processedInstruction.getColumnList()) {
