@@ -2,10 +2,11 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiParam;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,21 +24,32 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallSetBrapiDTO extends DTOBase {
 
+    @GobiiEntityMap(paramName = "dnaRunId", entity = DnaRun.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer callSetDbId;
 
+    @GobiiEntityMap(paramName = "dnaRunName", entity = DnaRun.class)
+    private String callSetName;
+
+    @GobiiEntityMap(paramName = "experimentId", entity = DnaRun.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer studyDbId;
 
+    @GobiiEntityMap(paramName = "dnaSample.dnaSampleId", entity = DnaRun.class, deep = true)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer sampleDbId;
 
-    private String callSetName;
+    @GobiiEntityMap(paramName = "dnaSample.dnaSampleName", entity = DnaRun.class, deep = true)
+    private String sampleName;
 
     private List<Integer> variantSetIds = new ArrayList<>();
 
+    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmId", entity = DnaRun.class, deep = true)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer germplasmDbId;
 
+    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmName", entity = DnaRun.class, deep = true)
     private String germplasmName;
-
-    private String sampleName;
 
     private Map<String, String> additionalInfo = new HashMap<>();
 

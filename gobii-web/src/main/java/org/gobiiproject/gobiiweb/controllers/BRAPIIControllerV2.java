@@ -15,10 +15,7 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
@@ -72,6 +69,9 @@ public class BRAPIIControllerV2 {
 
     @Autowired
     private VariantSetsBrapiService variantSetsService;
+
+    @Autowired
+    private CallSetBrapiService callSetBrapiService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -156,6 +156,10 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSets(
+            @ApiParam(value = "Used to request a specific page of data to be returned. " +
+                    "The page indexing starts at 0 (the first page is 'page'= 0). " +
+                    "Default is 0")
+            @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageStr) Integer page,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -163,13 +167,24 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) Integer pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            CallSetBrapiDTO callSetsFilter
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSizeStr)
+                    Integer pageSize,
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
+            //CallSetBrapiDTO callSetsFilter
     ) {
         try {
 
-            BrApiMasterPayload payload = new BrApiMasterPayload(callSetsFilter);
+            CallSetBrapiDTO callSetsFilter = new CallSetBrapiDTO();
+
+            PagedResult<CallSetBrapiDTO> callSets = callSetBrapiService.getCallSets(
+                    pageSize, page,
+                    variantSetDbId, callSetsFilter
+            );
+
+
+            BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(callSets.getResult());
+
+            payload.getMetadata().getPagination().setCurrentPage(callSets.getCurrentPageNum());
 
             return ResponseEntity.ok().contentType(
                     MediaType.APPLICATION_JSON).body(payload);

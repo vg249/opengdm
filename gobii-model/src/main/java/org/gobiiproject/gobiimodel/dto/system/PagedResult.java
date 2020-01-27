@@ -15,6 +15,7 @@ public class PagedResult<T> {
 
     private List<T> result = new ArrayList<>();
     private String nextPageToken;
+    private Integer currentPageNum;
 
     public List<T> getResult() {
         return result;
@@ -30,5 +31,13 @@ public class PagedResult<T> {
 
     public void setNextPageToken(String nextPageToken) {
         this.nextPageToken = nextPageToken;
+    }
+
+    public Integer getCurrentPageNum() {
+        return currentPageNum;
+    }
+
+    public void setCurrentPageNum(Integer currentPageNum) {
+        this.currentPageNum = currentPageNum;
     }
 }

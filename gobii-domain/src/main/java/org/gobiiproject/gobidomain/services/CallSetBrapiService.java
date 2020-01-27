@@ -7,10 +7,12 @@ public interface CallSetBrapiService {
 
     PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
                                              Integer pageNum,
+                                             Integer variantSetDbId,
                                              CallSetBrapiDTO callSetsFilter);
 
     PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
                                            String pageToken,
+                                           Integer variantSetDbId,
                                            CallSetBrapiDTO callSetsFilter);
 
     CallSetBrapiDTO getCallSetById(Integer callSetDbId);
