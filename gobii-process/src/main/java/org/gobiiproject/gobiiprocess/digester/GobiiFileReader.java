@@ -385,7 +385,7 @@ public class GobiiFileReader {
 
         //Metadata Validation
         boolean reportedValidationFailures = false;
-        if(LoaderGlobalConfigs.getValidation()) {
+        if(LoaderGlobalConfigs.isEnableValidation()) {
             DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
             digestFileValidator.performValidation(gobiiCropConfig);
             //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
@@ -446,8 +446,10 @@ public class GobiiFileReader {
                     if (counts.invalidData > 0 && !isVariableLengthTable(key)) {
                         Logger.logWarning("FileReader", "Invalid data in table " + key);
                     } else {
-                        if (LoaderGlobalConfigs.getDeleteIntermediateFiles()) {
-                            deleteIFLFiles(dstDir, key);
+                        //If there are no issues in the load, clean up temporary intermediate files
+                        if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
+                            //And if 'delete intermediate files' is true, clean up all IFL files (we don't need them any more
+                            deleteIFLFiles(dstDir, key,!LoaderGlobalConfigs.isDeleteIntermediateFiles());
                         }
                     }
 
@@ -863,12 +865,14 @@ public class GobiiFileReader {
      * @param directory
      * @param tableName
      */
-    private static void deleteIFLFiles(File directory, String tableName) {
+    private static void deleteIFLFiles(File directory, String tableName, boolean onlyTemps) {
         File[] fileList = directory.listFiles();
         if (fileList == null) return;
         for (File f : fileList) {
             if (f.getName().endsWith("." + tableName)) {
-                rmIfExist(f);
+                if(!onlyTemps || (f.getName().startsWith("digest."))) {
+                    rmIfExist(f);
+                }
             }
         }
     }
