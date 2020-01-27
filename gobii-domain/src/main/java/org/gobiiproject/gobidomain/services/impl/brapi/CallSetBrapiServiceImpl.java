@@ -56,6 +56,7 @@ public class CallSetBrapiServiceImpl implements CallSetBrapiService {
         }
 
         pagedResult.setResult(callSets);
+        pagedResult.setCurrentPageSize(callSets.size());
         pagedResult.setCurrentPageNum(pageNum);
 
 

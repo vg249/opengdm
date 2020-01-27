@@ -16,6 +16,7 @@ public class PagedResult<T> {
     private List<T> result = new ArrayList<>();
     private String nextPageToken;
     private Integer currentPageNum;
+    private Integer currentPageSize;
 
     public List<T> getResult() {
         return result;
@@ -39,5 +40,13 @@ public class PagedResult<T> {
 
     public void setCurrentPageNum(Integer currentPageNum) {
         this.currentPageNum = currentPageNum;
+    }
+
+    public Integer getCurrentPageSize() {
+        return currentPageSize;
+    }
+
+    public void setCurrentPageSize(Integer currentPageSize) {
+        this.currentPageSize = currentPageSize;
     }
 }

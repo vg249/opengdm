@@ -180,9 +180,10 @@ public class BRAPIIControllerV2 {
             );
 
 
-            BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(callSets.getResult());
-
-            payload.getMetadata().getPagination().setCurrentPage(callSets.getCurrentPageNum());
+            BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(
+                    callSets.getResult(),
+                    callSets.getCurrentPageSize(),
+                    callSets.getCurrentPageNum());
 
             return ResponseEntity.ok().contentType(
                     MediaType.APPLICATION_JSON).body(payload);
