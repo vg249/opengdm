@@ -56,6 +56,7 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
 import org.gobiiproject.gobiiprocess.digester.csv.CsvInstructionProcessor;
+import org.gobiiproject.gobiiprocess.digester.csv.DigesterInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
@@ -244,13 +245,18 @@ public class Digester {
         //Section - Processing
         Logger.logTrace("Digester", "Beginning List Processing");
         success = true;
+
+        DigesterInstructionProcessor instructionProcessor = (p, i) ->
+                new CsvInstructionProcessor(loaderScriptPath).process(p, i);
+        DigesterFileProcessor digesterFileProcessor = new DigesterFileProcessor(instructionProcessor);
+
         switch (procedure.getMetadata().getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type, all file types go through CSVFileReader(V2)
             case HAPMAP:
                 //INTENTIONAL FALLTHROUGH
             case VCF:
                 //INTENTIONAL FALLTHROUGH
             case GENERIC:
-                new DigesterFileProcessor(new CsvInstructionProcessor(loaderScriptPath)).parseInstructionFile(procedure);
+                digesterFileProcessor.parseInstructionFile(procedure);
                 break;
             default:
                 System.err.println("Unable to deal with file type " + procedure.getMetadata().getGobiiFile().getGobiiFileType());

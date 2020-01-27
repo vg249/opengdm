@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiprocess.digester.ProcessorResult;
 /**
  * Created by jdl232 on 3/28/2017.
  */
+@FunctionalInterface
 public interface DigesterInstructionProcessor {
 
     ProcessorResult process(GobiiLoaderProcedure procedure, GobiiLoaderInstruction instruction) throws IOException, InterruptedException;
