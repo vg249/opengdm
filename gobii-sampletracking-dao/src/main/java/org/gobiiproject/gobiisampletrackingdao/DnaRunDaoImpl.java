@@ -2,6 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
@@ -46,9 +47,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
                                    Integer dnaSampleId, String dnaSampleName,
                                    Integer germplasmId, String germplasmName) {
 
-        List<DnaRun> dnaRuns;
+        List<DnaRun> dnaRuns = new ArrayList<>();
 
-        String queryString = "SELECT dnarun.* " +
+        String queryString = "SELECT dnarun.*, dnasample.*, germplasm.* " +
                 " FROM dnarun AS dnarun " +
                 " INNER JOIN dnasample ON(dnarun.dnasample_id = dnasample.dnasample_id " +
                 "   AND (:dnaSampleId IS NULL OR dnasample.dnasample_id = :dnaSampleId) " +
@@ -65,14 +66,13 @@ public class DnaRunDaoImpl implements DnaRunDao {
         try {
 
             Session session = em.unwrap(Session.class);
-
-            session.enableFetchProfile("dnarun-experiment-dnasample");
+            //session.enableFetchProfile("dnarun-experiment-dnasample");
 
             if(pageSize == null) {
                 pageSize = defaultPageSize;
             }
 
-            dnaRuns = session.createNativeQuery(queryString)
+            List<Object[]> tuples = session.createNativeQuery(queryString)
                     .addEntity("dnarun", DnaRun.class)
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                     .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
@@ -84,7 +84,13 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     .setParameter("germplasmName", germplasmName, StringType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
                     .setParameter("experimentId", experimentId, IntegerType.INSTANCE)
+                    .addJoin("dnasample", "dnarun.dnaSample")
+                    .addJoin("germplasm", "dnasample.germplasm")
                     .list();
+
+            tuples.stream().forEach(tuple -> {
+                    dnaRuns.add((DnaRun)tuple[0]);
+            });
 
             return dnaRuns;
 

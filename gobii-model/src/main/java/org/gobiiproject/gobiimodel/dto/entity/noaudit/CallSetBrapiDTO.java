@@ -31,7 +31,7 @@ public class CallSetBrapiDTO extends DTOBase {
     @GobiiEntityMap(paramName = "dnaRunName", entity = DnaRun.class)
     private String callSetName;
 
-    @GobiiEntityMap(paramName = "experimentId", entity = DnaRun.class)
+    @GobiiEntityMap(paramName = "experiment.experimentId", entity = DnaRun.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer studyDbId;
 

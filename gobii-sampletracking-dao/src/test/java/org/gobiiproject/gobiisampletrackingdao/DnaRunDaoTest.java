@@ -22,7 +22,6 @@ import static junit.framework.TestCase.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
-@Ignore
 public class DnaRunDaoTest {
 
     @Autowired
