@@ -3840,10 +3840,10 @@ definitions:
       uri:
         type: "string"
         format: "uri"
-      readable:
-        type: "boolean"
       filename:
         type: "string"
+      readable:
+        type: "boolean"
   JobDTO:
     type: "object"
     properties:

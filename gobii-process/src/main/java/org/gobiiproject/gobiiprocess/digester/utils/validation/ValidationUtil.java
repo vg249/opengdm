@@ -378,13 +378,13 @@ class ValidationUtil {
         return verifyEqualMatrixSizeMarker(failureList,fileColumns,!markerFast);
     }
      static boolean verifyEqualMatrixSizeMarker(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException{
-        Integer size = markerFast
-                ? DigesterInstructionProcessor.getLastMatrixRowSize()
-                : DigesterInstructionProcessor.getLastMatrixColSize();
-        return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
+//        Commenting out as it is dead code, though a potentially useful reminder
+//        Integer size = markerFast
+//                ? DigesterInstructionProcessor.getLastMatrixRowSize()
+//                : DigesterInstructionProcessor.getLastMatrixColSize();
+//        return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
+         return true;
     }
-
-
 
     static void validateDatabaseCalls(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig cropConfig) {
         try {
