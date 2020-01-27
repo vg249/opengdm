@@ -20,6 +20,9 @@ import javax.persistence.*;
         @FetchProfile.FetchOverride(entity = DnaRun.class, association = "experiment", mode = FetchMode.JOIN),
         @FetchProfile.FetchOverride(entity = DnaRun.class, association = "dnaSample", mode = FetchMode.JOIN),
 })
+@FetchProfile(name = "dnarun-experiment", fetchOverrides = {
+        @FetchProfile.FetchOverride(entity = DnaRun.class, association = "experiment", mode = FetchMode.JOIN),
+})
 public class DnaRun {
 
     @Id

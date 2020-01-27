@@ -66,7 +66,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
         try {
 
             Session session = em.unwrap(Session.class);
-            //session.enableFetchProfile("dnarun-experiment-dnasample");
+            session.enableFetchProfile("dnarun-experiment");
 
             if(pageSize == null) {
                 pageSize = defaultPageSize;

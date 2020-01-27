@@ -9,6 +9,7 @@ import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +44,12 @@ public class CallSetBrapiServiceImpl implements CallSetBrapiService {
             CallSetBrapiDTO callSet = new CallSetBrapiDTO();
 
             ModelMapper.mapEntityToDto(dnaRun, callSet);
+
+            Iterator<String> datasetIdsIter = dnaRun.getDatasetDnaRunIdx().fieldNames();
+
+            while(datasetIdsIter.hasNext()) {
+                callSet.getVariantSetIds().add(Integer.parseInt(datasetIdsIter.next()));
+            }
 
             callSets.add(callSet);
 
