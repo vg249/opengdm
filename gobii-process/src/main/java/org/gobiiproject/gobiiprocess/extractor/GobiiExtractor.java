@@ -88,8 +88,7 @@ public class GobiiExtractor {
     private String rootDir = "../";
     private String markerListOverrideLocation = null;
 
-    @Autowired
-    private HDF5Interface hdf5Interface;
+    private HDF5Interface hdf5Interface = new HDF5Interface();
 
     /**
      * Main class of Extractor. Takes optional arguments + location of a json-based instruction file
@@ -102,7 +101,7 @@ public class GobiiExtractor {
     }
 
     public GobiiExtractor() {
-
+		
 	}
 
     public void run(String[] args) {
