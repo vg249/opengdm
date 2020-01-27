@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -33,21 +34,21 @@ public class DigesterFileProcessor {
 
 	private List<ProcessorResult> singleThreadProcess(GobiiLoaderProcedure procedure) {
 
-		return process(procedure, procedure.getInstructions().stream());
+		return process(procedure, () -> procedure.getInstructions().stream());
 	}
 
 	private List<ProcessorResult> mutliThreadProcess(GobiiLoaderProcedure procedure) {
 
-		return process(procedure, procedure.getInstructions().parallelStream());
+		return process(procedure, () -> procedure.getInstructions().parallelStream());
 	}
 
-	private List<ProcessorResult> process(GobiiLoaderProcedure procedure, Stream<GobiiLoaderInstruction> instructionStream) {
-		List<ProcessorResult> nonMatrixResults = instructionStream
+	private List<ProcessorResult> process(GobiiLoaderProcedure procedure, Supplier<Stream<GobiiLoaderInstruction>> instructionStream) {
+		List<ProcessorResult> nonMatrixResults = instructionStream.get()
 				.filter(i -> ! isMatrixInstruction(i))
 				.map(instruction -> processInstruction(procedure, instruction))
 				.collect(Collectors.toList());
 
-		List<ProcessorResult> matrixInstructionResults = instructionStream
+		List<ProcessorResult> matrixInstructionResults = instructionStream.get()
 				.filter(this::isMatrixInstruction)
 				.map(instruction -> processInstruction(procedure, instruction))
 				.collect(Collectors.toList());
