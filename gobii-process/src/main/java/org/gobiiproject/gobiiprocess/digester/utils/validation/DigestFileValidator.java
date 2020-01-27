@@ -17,6 +17,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import  org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
@@ -55,7 +56,7 @@ public class DigestFileValidator {
         this.performValidation(cropConfig, null);
     }
 
-    public void performValidation(GobiiCropConfig cropConfig, Boolean isMarkerFast) {
+    public void performValidation(GobiiCropConfig cropConfig, DatasetOrientationType orientation) {
         String validationOutput = rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
         /*
          * Read validation Rules
@@ -70,7 +71,7 @@ public class DigestFileValidator {
             List<Failure> failures = new ArrayList<>();
             if (loginToServer(url, username, password, null, failures)) {
                 try {
-                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig, isMarkerFast);
+                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig, orientation);
                     writer.write(validationErrorList);
                 } catch (Exception e) {
                     validationError.status = ValidationConstants.FAILURE;
@@ -101,12 +102,13 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig, Boolean isMarkerFast) {
+    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig,
+                                                DatasetOrientationType orientation) {
         List<ValidationError> validationErrorList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-            List<Failure> failureList = validate(validation, cropConfig, isMarkerFast);
+            List<Failure> failureList = validate(validation, cropConfig, orientation);
             if (failureList != null) {
                 if (failureList.size() > 0) {
                     validationError.status = ValidationConstants.FAILURE;
@@ -234,7 +236,7 @@ public class DigestFileValidator {
         return true;
     }
 
-    public List<Failure> validate(ValidationUnit validation, GobiiCropConfig cropConfig, Boolean isMarkerFast) {
+    public List<Failure> validate(ValidationUnit validation, GobiiCropConfig cropConfig, DatasetOrientationType orientation) {
         trimSpaces(validation);
         List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
@@ -250,7 +252,7 @@ public class DigestFileValidator {
             case "marker_linkage_group":
             case "dataset_dnarun":
             case "dataset_marker":
-                if (!new Validator(isMarkerFast).validate(validation, rootDir, failureList, cropConfig)) failureList = null;
+                if (!new Validator(orientation).validate(validation, rootDir, failureList, cropConfig)) failureList = null;
                 break;
             default:
                 try {

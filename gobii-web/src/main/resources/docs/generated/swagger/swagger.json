@@ -4347,7 +4347,7 @@
         },
         "datasetOrientationType" : {
           "type" : "string",
-          "enum" : [ "SAMPLE_FAST", "MARKER_FAST" ]
+          "enum" : [ "MARKER_FAST", "SAMPLE_FAST", "NONE" ]
         },
         "dataset" : {
           "$ref" : "#/definitions/PropNameId"

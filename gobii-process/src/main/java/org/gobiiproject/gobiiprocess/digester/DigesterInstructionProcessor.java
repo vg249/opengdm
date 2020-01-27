@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.csv;
+package org.gobiiproject.gobiiprocess.digester;
 
 import java.io.IOException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;

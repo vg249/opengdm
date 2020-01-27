@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.Digester;
+import org.gobiiproject.gobiiprocess.digester.DigesterInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.MatrixProcessorResult;
 import org.gobiiproject.gobiiprocess.digester.ProcessorResult;

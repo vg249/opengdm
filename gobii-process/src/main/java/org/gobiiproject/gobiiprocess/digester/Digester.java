@@ -56,7 +56,6 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
 import org.gobiiproject.gobiiprocess.digester.csv.CsvInstructionProcessor;
-import org.gobiiproject.gobiiprocess.digester.csv.DigesterInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
@@ -93,10 +92,6 @@ public class Digester {
     private String extractorScriptPath;
     private GobiiUriFactory gobiiUriFactory;
     private GobiiExtractorInstruction qcExtractInstruction = null;
-
-    //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
-    private Boolean isMarkerFast=null;
-
 
     public Digester(DigesterConfig config) {
 
@@ -289,9 +284,6 @@ public class Digester {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
-                    isMarkerFast=false;
-                }else{
-                    isMarkerFast=true;
                 }
             }
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Metadata Transformation");
@@ -339,7 +331,7 @@ public class Digester {
         boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.getValidation()) {
             DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
-            digestFileValidator.performValidation(gobiiCropConfig, isMarkerFast);
+            digestFileValidator.performValidation(gobiiCropConfig, procedure.getMetadata().getDatasetOrientationType());
             //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
             List<Path> pathList =
                     Files.list(Paths.get(directory))
@@ -460,7 +452,6 @@ public class Digester {
      *
      * @param pm
      * @param configuration
-     * @param mailInterface
      * @param instructionFile
      * @param crop
      * @param jobName
