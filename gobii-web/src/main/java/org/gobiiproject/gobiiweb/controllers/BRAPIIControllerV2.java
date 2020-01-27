@@ -169,12 +169,10 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSizeStr)
                     Integer pageSize,
-            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
-            //CallSetBrapiDTO callSetsFilter
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
+            CallSetBrapiDTO callSetsFilter
     ) {
         try {
-
-            CallSetBrapiDTO callSetsFilter = new CallSetBrapiDTO();
 
             PagedResult<CallSetBrapiDTO> callSets = callSetBrapiService.getCallSets(
                     pageSize, page,

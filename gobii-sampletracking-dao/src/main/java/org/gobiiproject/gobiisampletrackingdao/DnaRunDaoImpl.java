@@ -49,7 +49,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         List<DnaRun> dnaRuns = new ArrayList<>();
 
-        String queryString = "SELECT dnarun.*, dnasample.*, germplasm.* " +
+        String queryString = "SELECT {dnarun.*}, {dnasample.*}, {germplasm.*} " +
                 " FROM dnarun AS dnarun " +
                 " INNER JOIN dnasample ON(dnarun.dnasample_id = dnasample.dnasample_id " +
                 "   AND (:dnaSampleId IS NULL OR dnasample.dnasample_id = :dnaSampleId) " +
