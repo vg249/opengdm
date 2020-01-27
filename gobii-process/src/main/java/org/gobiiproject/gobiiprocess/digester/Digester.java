@@ -780,6 +780,8 @@ public class Digester {
 
         DigesterConfig config = new DigesterConfig();
 
+        config.setRootDir("../");
+
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cli = parser.parse(o, args);
