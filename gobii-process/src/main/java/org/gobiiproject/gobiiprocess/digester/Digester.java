@@ -126,9 +126,6 @@ public class Digester {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-
-        MailInterface mailInterface = new MailInterface(configuration);
-
         String jobFileName = instruction.getInstructionFileName().substring(0, instruction.getInstructionFileName().lastIndexOf('.'));
         JobStatus jobStatus = null;
         try {
@@ -450,7 +447,7 @@ public class Digester {
         }
 
         //Send Email
-        finalizeProcessing(pm, configuration, mailInterface, instruction.getInstructionFileName(),
+        finalizeProcessing(pm, configuration, instruction.getInstructionFileName(),
                 procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
 
     }
@@ -470,7 +467,7 @@ public class Digester {
      * @param logFile
      * @throws Exception
      */
-    private void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
+    private void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
         String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
         try {
             GobiiFileType loadType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
@@ -479,7 +476,7 @@ public class Digester {
             pm.addPath("Instruction File", instructionFilePath, configuration, false);
             pm.addPath("Error Log", logFile, configuration, false);
             pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
-            mailInterface.send(pm);
+            new MailInterface(configuration).send(pm);
         } catch (Exception e) {
             Logger.logError("MailInterface", "Error Sending Mail", e);
         }
