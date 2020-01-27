@@ -129,8 +129,6 @@ public class Digester {
 
         MailInterface mailInterface = new MailInterface(configuration);
 
-        Integer dataSetId = procedure.getMetadata().getDataset().getId();
-
         String jobFileName = instruction.getInstructionFileName().substring(0, instruction.getInstructionFileName().lastIndexOf('.'));
         JobStatus jobStatus = null;
         try {
@@ -416,6 +414,7 @@ public class Digester {
                 Logger.logError("FileReader", "No new data was uploaded.");
             }
             //Load Monet/HDF5
+            final Integer dataSetId = procedure.getMetadata().getDataset().getId();
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "Matrix_Upload");
             String variantFilename = "DS" + dataSetId;
             File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
