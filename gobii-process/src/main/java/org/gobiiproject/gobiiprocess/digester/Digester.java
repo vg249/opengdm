@@ -89,7 +89,6 @@ public class Digester {
     private final DigesterConfig config;
 
     private String loaderScriptPath;
-    private String extractorScriptPath;
     private GobiiUriFactory gobiiUriFactory;
     private GobiiExtractorInstruction qcExtractInstruction = null;
 
@@ -104,7 +103,7 @@ public class Digester {
 
         final ProcessMessage pm = new ProcessMessage();
 
-        extractorScriptPath = config + "extractors/";
+		String extractorScriptPath = config + "extractors/";
         loaderScriptPath = config.getRootDir() + "loaders/";
         hdf5Interface.setPathToHDF5(loaderScriptPath + "hdf5/bin/");
         hdf5Interface.setPathToHDF5Files(config.getPathToHDF5Files());
@@ -290,9 +289,7 @@ public class Digester {
             String instructionName = inst.getTable();
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(procedure, inst)));
             loaderInstructionList.add(instructionName);//TODO Hack - for ordering
-            if (LINKAGE_GROUP_TABNAME.equals(instructionName) || GERMPLASM_TABNAME.equals(instructionName) || GERMPLASM_PROP_TABNAME.equals(instructionName)) {
-                success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + getDestinationFile(procedure, inst));
-            }
+
             if (MARKER_TABNAME.equals(instructionName)) {//Convert 'alts' into a jsonb array
                 intermediateFile.transform(MobileTransform.PGArray);
             }
