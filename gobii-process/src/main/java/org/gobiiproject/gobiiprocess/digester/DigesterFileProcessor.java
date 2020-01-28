@@ -21,9 +21,11 @@ public class DigesterFileProcessor {
 
 	public List<ProcessorResult> parseInstructionFile(GobiiLoaderProcedure procedure) {
 		if (procedure.getInstructions() == null) {
-			Logger.logError("CSVFileReader", "No instructions passed in");
+			Logger.logError("Digester Instruction Processor", "No instructions passed in");
 			return new ArrayList<>();
 		}
+
+
 
 		if (LoaderGlobalConfigs.isSingleThreadFileRead()) {
 			return singleThreadProcess(procedure);

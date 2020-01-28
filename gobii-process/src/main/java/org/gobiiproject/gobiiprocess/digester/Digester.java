@@ -229,7 +229,7 @@ public class Digester {
                 new CsvInstructionProcessor(loaderScriptPath).process(p, i);
         DigesterFileProcessor digesterFileProcessor = new DigesterFileProcessor(instructionProcessor);
 
-        switch (procedure.getMetadata().getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type, all file types go through CSVFileReader(V2)
+        switch (procedure.getMetadata().getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type, all file types go through CSV Instruction Processor
             case HAPMAP:
                 //INTENTIONAL FALLTHROUGH
             case VCF:
@@ -703,14 +703,12 @@ public class Digester {
         if (config.getPropertiesFile() == null)
             config.setPropertiesFile(config.getRootDir() + "config/gobii-web.xml");
 
-        String instructionFile;
-        if (args.length == 0 || "".equals(args[0])) {
-            Scanner s = new Scanner(System.in);
-            System.out.println("Enter Loader Instruction File Location:");
-            instructionFile = s.nextLine();
-        } else {
-            instructionFile = args[0];
+        if (args.length == 0) {
+            System.out.println("No instruction file specified");
+            System.exit(1);
         }
+
+        String instructionFile = args[0];
 
         //Error logs go to a file based on crop (for human readability) and
         Logger.logInfo("Digester", "Beginning read of " + instructionFile);

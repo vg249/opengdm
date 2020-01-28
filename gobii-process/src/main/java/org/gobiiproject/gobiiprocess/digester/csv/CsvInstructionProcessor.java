@@ -96,7 +96,7 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
     private void listFilesFromFolder(File folder, BufferedWriter tempFileBufferedWriter,
                                      GobiiLoaderProcedure procedure, File outputFile) {
         if (folder == null) {
-            Logger.logWarning("CSVFileReader", "Read from null folder");
+            Logger.logWarning("CSV Instruction Processor", "Read from null folder");
             return;
         }
         boolean firstFile = true; //TODO - generation of metadata requires deduplication beyond 'dedup', placing here
