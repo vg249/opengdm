@@ -25,7 +25,7 @@ public class DigesterFileProcessor {
 			return new ArrayList<>();
 		}
 
-		if (LoaderGlobalConfigs.getSingleThreadFileRead()) {
+		if (LoaderGlobalConfigs.isSingleThreadFileRead()) {
 			return singleThreadProcess(procedure);
 		} else {
 			return mutliThreadProcess(procedure);

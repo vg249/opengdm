@@ -3838,13 +3838,13 @@ definitions:
         format: "url"
       file:
         type: "file"
+      readable:
+        type: "boolean"
       uri:
         type: "string"
         format: "uri"
       filename:
         type: "string"
-      readable:
-        type: "boolean"
   JobDTO:
     type: "object"
     properties:

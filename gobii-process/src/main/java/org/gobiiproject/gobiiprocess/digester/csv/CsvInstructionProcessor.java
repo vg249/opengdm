@@ -221,7 +221,7 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
                                                  GobiiLoaderProcedure procedure, File outputFile) throws IOException {
         Integer totalCols=null;
         Integer totalRows=null;
-        boolean skipValidation = !LoaderGlobalConfigs.getValidation();
+        boolean skipValidation = !LoaderGlobalConfigs.isEnableValidation();
 
         GobiiFileColumn csvBothColumn = null;
         for (GobiiFileColumn gobiiFileColumn : processedInstruction.getColumnList()) {
