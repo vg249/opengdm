@@ -61,6 +61,24 @@ public class DnaRunDaoTest {
     }
 
     @Test
+    public void testGetDnaRunsByDatasetIdWithNoAssociations() {
+
+        Integer pageSize = 1000;
+
+        Integer rowOffset = 0;
+
+        Integer datasetId = 9;
+
+        List<DnaRun> dnaruns = dnaRunDao.getDnaRunsByDatasetIdNoAssociations(
+                datasetId,
+                pageSize,
+                rowOffset);
+
+        assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
+
+    }
+
+    @Test
     public void testGetDnaRunsByDatasetId() {
 
         Integer pageSize = 200;

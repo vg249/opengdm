@@ -28,5 +28,9 @@ public interface DnaRunDao {
 
     List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames);
 
+    List<DnaRun> getDnaRunsByDatasetIdNoAssociations(Integer datasetId,
+                                                     Integer pageSize,
+                                                     Integer rowOffset);
+
 }
 

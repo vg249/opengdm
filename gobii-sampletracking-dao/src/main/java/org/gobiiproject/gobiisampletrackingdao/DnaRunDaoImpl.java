@@ -19,6 +19,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Transactional
 public class DnaRunDaoImpl implements DnaRunDao {
@@ -304,4 +305,41 @@ public class DnaRunDaoImpl implements DnaRunDao {
         }
 
     }
+
+    @Override
+    public List<DnaRun> getDnaRunsByDatasetIdNoAssociations(Integer datasetId,
+                                                            Integer pageSize,
+                                                            Integer rowOffset) throws GobiiException {
+
+        List<DnaRun> dnaRuns = new ArrayList<>();
+
+        Objects.requireNonNull(pageSize);
+        Objects.requireNonNull(rowOffset);
+
+        String queryString = "SELECT {dnarun.*} FROM dnarun " +
+                "WHERE jsonb_exists(dnarun.dataset_dnarun_idx, CAST(:datasetId AS TEXT))";
+
+        try {
+
+            Session session = em.unwrap(Session.class);
+
+            dnaRuns = session
+                    .createNativeQuery(queryString)
+                    .addEntity("dnarun", DnaRun.class)
+                    .setParameter("datasetId", datasetId)
+                    .setMaxResults(pageSize)
+                    .setFirstResult(rowOffset)
+                    .list();
+
+        }
+        catch(Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+        return dnaRuns;
+    }
+
 }
