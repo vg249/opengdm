@@ -419,7 +419,7 @@ public class HelperFunctions {
      */
     public static String completeInstruction(String instructionFile, String doneFolder) {
         //Move instruction file
-        FileSystemInterface.mv(instructionFile, doneFolder,true);
+        FileSystemInterface.mv(instructionFile, String.format("%s/%s", doneFolder, new File(instructionFile).getName()),true);
         return (doneFolder + FilenameUtils.getName(instructionFile));
     }
 
