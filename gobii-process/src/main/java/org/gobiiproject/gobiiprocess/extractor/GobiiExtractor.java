@@ -68,8 +68,7 @@ import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.*;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
@@ -621,7 +620,7 @@ public class GobiiExtractor {
 		            if (extract.getListFileName() != null) {
 			            File listFile = new File(extract.getListFileName());
 			            if (listFile.exists()) {
-				            mv(extract.getListFileName(), extractDir); //Move the list file to the extract directory
+				            mvToFolder(extract.getListFileName(), extractDir,false); //Move the list file to the extract directory
 			            }
 		            }
 		            Logger.logDebug("Extractor", "DataSet " + datasetName + " Created");

@@ -74,13 +74,24 @@ public class FileSystemInterface {
 		rmIfExist(f);
 	}
 	/**
-	 * As unix MV command.
-	 * @param from
-	 * @param to
+	 * Moves files, like the unix command, (but less powerful, see below).
+	 * @param from file to move
+	 * @param to file location to move to
 	 * @return true if move succeeded
 	 */
 	public static boolean mv(String from, String to) {
 			return mv(from,to,false);
+	}
+
+	/**
+	 * Moves a file to a new file location in the 'to' folder
+	 * @param from file to move
+	 * @param toFolder folder to move file to
+	 * @return true if move succeeded
+	 */
+	public static boolean mvToFolder(String from, String toFolder, boolean ignore) {
+		String toFilePath = String.format("%s/%s", toFolder,new File(from).getName());//Convert the folder path to a file path
+		return mv(from, toFilePath, ignore);
 	}
 	/**
 	 * As unix MV command, but only 'warns' on error
