@@ -51,7 +51,7 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
         Integer rowOffset = 0;
 
         if(pageSize == null) {
-            pageSize = BrapiDefaults.pageSize;
+            pageSize = Integer.parseInt(BrapiDefaults.pageSize);
         }
 
         if(pageNum != null && pageSize != null) {

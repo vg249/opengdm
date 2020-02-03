@@ -91,7 +91,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
 
             if(pageSize == null) {
-                pageSize = BrapiDefaults.pageSize;
+                pageSize = Integer.parseInt(BrapiDefaults.pageSize);
             }
 
             Integer genotypesToBeRead = pageSize;
@@ -278,7 +278,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
 
             if(pageSize == null) {
-                pageSize = BrapiDefaults.pageSize;
+                pageSize = Integer.parseInt(BrapiDefaults.pageSize);
             }
 
             Integer genotypesToBeRead = pageSize;

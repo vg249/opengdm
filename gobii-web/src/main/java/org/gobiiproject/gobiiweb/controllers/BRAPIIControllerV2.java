@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -159,25 +158,20 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Used to request a specific page of data to be returned. " +
                     "The page indexing starts at 0 (the first page is 'page'= 0). " +
                     "Default is 0")
-            @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageStr) Integer page,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) Integer pageToken,
+            @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSizeStr)
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize)
                     Integer pageSize,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             CallSetBrapiDTO callSetsFilter
     ) {
         try {
 
-            PagedResult<CallSetBrapiDTO> callSets = callSetBrapiService.getCallSets(
+            PagedResult<CallSetBrapiDTO> callSets;
+
+            callSets = callSetBrapiService.getCallSets(
                     pageSize, page,
-                    variantSetDbId, callSetsFilter
-            );
+                    variantSetDbId, callSetsFilter);
 
 
             BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(
@@ -518,10 +512,6 @@ public class BRAPIIControllerV2 {
                 page = getDefaultBrapiPage();
             }
 
-            if(pageSize == null) {
-                //TODO: Using same resource limit as markers. But, Can be defined seperately
-                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
-            }
 
             List<SamplesBrapiDTO> samples = samplesBrapiService.getSamples(
                     page, pageSize,
@@ -1318,7 +1308,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) int pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             HttpServletRequest request
     ){
 
