@@ -69,8 +69,7 @@ import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.*;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
@@ -629,13 +628,13 @@ public class GobiiExtractor {
 					rmIfExist(extractDir + "position.file");
 					rmIfExist(extractDir + "position.list");
 
-					if (extract.getListFileName() != null) {
-						File listFile = new File(extract.getListFileName());
-						if (listFile.exists()) {
-							mv(extract.getListFileName(), extractDir); //Move the list file to the extract directory
-						}
-					}
-					Logger.logDebug("Extractor", "DataSet " + datasetName + " Created");
+		            if (extract.getListFileName() != null) {
+			            File listFile = new File(extract.getListFileName());
+			            if (listFile.exists()) {
+				            mvToFolder(extract.getListFileName(), extractDir,false); //Move the list file to the extract directory
+			            }
+		            }
+		            Logger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
 					/*Perform QC if the instruction is QC-based AND we are a successful extract*/
 					if (inst.isQcCheck()) {
