@@ -125,9 +125,11 @@ public class BRAPIIControllerV2 {
 
     /**
      * Lists the dnaruns by page size and page token
-     *
+     * @param page - page number to be fetched for callsets
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size
+     * @param variantSetDbId - Variant Set Db Id
+     * @param callSetsFilter - CallsetBrapiDTO model to map the filters
      * @return Brapi response with list of dna runs/call sets
      */
     @ApiOperation(
@@ -173,7 +175,6 @@ public class BRAPIIControllerV2 {
                     pageSize, page,
                     variantSetDbId, callSetsFilter);
 
-
             BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(
                     callSets.getResult(),
                     callSets.getCurrentPageSize(),
@@ -197,8 +198,9 @@ public class BRAPIIControllerV2 {
     /**
      * Endpoint for getting a specific callset with a given callSetDbId
      *
-     * @param callSetDbId ID of the requested callset
+     * @param callSetDbId ID of the requested callsets
      * @return ResponseEntity with http status code specifying if retrieval of the callset is successful.
+     *
      * Response body contains the requested callset information
      */
     @ApiOperation(
@@ -227,17 +229,27 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "ID of the Callset to be extracted", required = true)
             @PathVariable("callSetDbId") Integer callSetDbId) {
 
-        Integer callSetDbIdInt;
-
         try {
+
+            CallSetBrapiDTO callSet = callSetBrapiService.getCallSetById(callSetDbId);
+
+            BrApiMasterPayload<CallSetBrapiDTO> payload = new BrApiMasterPayload<>(callSet);
+
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body("");
+                    MediaType.APPLICATION_JSON).body(payload);
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
         }
         catch(Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Entity does not exist");
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal server error");
         }
 
     }
