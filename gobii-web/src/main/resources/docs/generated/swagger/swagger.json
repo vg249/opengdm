@@ -3658,11 +3658,11 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "cvId" : {
+        "group" : {
           "type" : "integer",
           "format" : "int32"
         },
-        "group" : {
+        "cvId" : {
           "type" : "integer",
           "format" : "int32"
         }
@@ -4347,7 +4347,7 @@
         },
         "datasetOrientationType" : {
           "type" : "string",
-          "enum" : [ "SAMPLE_FAST", "MARKER_FAST" ]
+          "enum" : [ "MARKER_FAST", "SAMPLE_FAST", "NONE" ]
         },
         "dataset" : {
           "$ref" : "#/definitions/PropNameId"
@@ -4486,11 +4486,11 @@
           "type" : "string",
           "format" : "url"
         },
-        "readable" : {
-          "type" : "boolean"
-        },
         "file" : {
           "type" : "file"
+        },
+        "readable" : {
+          "type" : "boolean"
         },
         "uri" : {
           "type" : "string",
