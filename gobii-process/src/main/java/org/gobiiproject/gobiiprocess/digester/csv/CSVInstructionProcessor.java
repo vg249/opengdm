@@ -43,7 +43,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationRes
  * @date 3/23/2017
  */
 
-public class CsvInstructionProcessor implements DigesterInstructionProcessor {
+public class CSVInstructionProcessor implements DigesterInstructionProcessor {
 
     private static final String NEWLINE = "\n";
     private static final String TAB = "\t";
@@ -51,7 +51,7 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
     private GobiiProcessedInstruction processedInstruction;
     private int maxLines = 0;
 
-    public CsvInstructionProcessor(String loaderScriptPath) {
+    public CSVInstructionProcessor(String loaderScriptPath) {
         this.loaderScriptPath = loaderScriptPath;
     }
 
@@ -116,7 +116,7 @@ public class CsvInstructionProcessor implements DigesterInstructionProcessor {
     /**
      * Reads data from a single input file, and writes to digest file
      * (referenced by {@code }tmpFileBufferedsWriter}. This method is primarily called by
-     * {@link CsvInstructionProcessor listFilesFromFolder(File, BufferedWriter, GobiiLoaderInstruction, boolean)}
+     * {@link CSVInstructionProcessor listFilesFromFolder(File, BufferedWriter, GobiiLoaderInstruction, boolean)}
      *
      * @param file                   File to read from
      * @param tempFileBufferedWriter output file writer
