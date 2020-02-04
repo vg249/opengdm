@@ -608,7 +608,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
             String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-            readHdf5GenotypesFromResult(returnVal, extractListPath);
+            //readHdf5GenotypesFromResult(returnVal, extractListPath);
 
         }
         catch(GobiiException ge) {
@@ -851,11 +851,11 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
             String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-            this.readHdf5GenotypesFromMatrix(
-                    returnVal, extractFilePath,
-                    pageSize, datasetId,
-                    columnOffset, markerMetadataList, dnarunMetadataList,
-                    new ArrayList<>(dnarunHdf5OrderMap.values()));
+            //this.readHdf5GenotypesFromMatrix(
+            //        returnVal, extractFilePath,
+            //        pageSize, datasetId,
+            //        columnOffset, markerMetadataList, dnarunMetadataList,
+            //        new ArrayList<>(dnarunHdf5OrderMap.values()));
 
             if(extractFilePath != null && extractFilePath.endsWith("result.genotypes")) {
                 File extractFile = new File(extractFilePath);
@@ -1016,12 +1016,12 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                 List<GenotypeCallsDTO> datasetGenotypes = new ArrayList<>();
 
-                this.readHdf5GenotypesFromMatrix(
-                        datasetGenotypes, extractFilePath,
-                        pageSize, datasetId,
-                        0, mapMarkerMetadataByDatasetId.get(datasetId.toString()),
-                        mapDnarunMetadataByDatasetId.get(datasetId.toString()),
-                        new ArrayList<>(dnarunHdf5OrderMap.values()));
+                //this.readHdf5GenotypesFromMatrix(
+                //        datasetGenotypes, extractFilePath,
+                //        pageSize, datasetId,
+                //        0, mapMarkerMetadataByDatasetId.get(datasetId.toString()),
+                //        mapDnarunMetadataByDatasetId.get(datasetId.toString()),
+                //        new ArrayList<>(dnarunHdf5OrderMap.values()));
 
                 returnVal.addAll(datasetGenotypes);
 
@@ -1069,42 +1069,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
     }
 
-    private void readHdf5GenotypesFromResult (List<GenotypeCallsDTO> returnVal,
-                                              String extractListPath)  throws Exception {
-
-        File genotypCallsFile = new File(extractListPath);
-
-        FileInputStream fstream = new FileInputStream(genotypCallsFile);
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-        int i = 0;
-
-        int chrEach;
-
-        StringBuilder genotype = new StringBuilder();
-
-        while ((chrEach = br.read()) != -1) {
-
-            char genotypesChar = (char) chrEach;
-
-            if(genotypesChar == '\t' || genotypesChar == '\n') {
-
-                returnVal.get(i).setGenotype(new HashMap<>());
-                String[] genotypeValues = new String[] {genotype.toString()};
-                returnVal.get(i).getGenotype().put("values", genotypeValues);
-                i++;
-                genotype.setLength(0);
-
-            }
-            else {
-               genotype.append(genotypesChar);
-            }
-        }
-
-        fstream.close();
-
-    }
 
     public void setNextColumnOffset(String columnOffset) {
         this.nextColumnOffset = columnOffset;
@@ -1122,91 +1086,6 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Override
     public String getNextPageOffset() {
         return this.nextPageOffset;
-    }
-
-    private void readHdf5GenotypesFromMatrix (
-            List<GenotypeCallsDTO> returnVal,
-            String genotypeMatrixFilePath,
-            Integer pageSize,
-            Integer datasetId,
-            Integer columnOffset,
-            List<GenotypeCallsMarkerMetadataDTO> markerMetadataList,
-            List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList,
-            List<Integer> dnarunOrder)  throws Exception {
-
-
-        File genotypCallsFile = new File(genotypeMatrixFilePath);
-
-        FileInputStream fstream = new FileInputStream(genotypCallsFile);
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-        Integer i = 0; // row index
-        Integer j = 0; // column index
-        int k = 0; // genotypes count
-
-
-
-        int chrEach;
-
-        StringBuilder genotype = new StringBuilder();
-
-        while ((chrEach = br.read()) != -1 && k < pageSize) {
-
-
-            char genotypesChar = (char) chrEach;
-
-            if(genotypesChar == '\t' || genotypesChar == '\n') {
-
-                if(j < columnOffset) {
-                    j += 1;
-                    genotype.setLength(0);
-                    continue;
-                }
-
-                columnOffset = 0;
-
-                GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
-
-                genotypeCall.setCallSetDbId(dnarunMetadataList.get(dnarunOrder.get(j)).getDnarunId());
-                genotypeCall.setCallSetName(dnarunMetadataList.get(dnarunOrder.get(j)).getDnarunName());
-                genotypeCall.setVariantDbId(markerMetadataList.get(i).getMarkerId());
-                genotypeCall.setVariantName(markerMetadataList.get(i).getMarkerName());
-                genotypeCall.setVariantSetDbId(datasetId);
-
-                genotypeCall.setGenotype(new HashMap<>());
-                String[] genotypeValues = new String[] {genotype.toString()};
-                genotypeCall.getGenotype().put("values", genotypeValues);
-
-                returnVal.add(genotypeCall);
-
-
-                if(genotypesChar == '\t') {
-                    j++;
-                }
-                else {
-                    i++;
-                    j = 0;
-                }
-
-                k++;
-
-                genotype.setLength(0);
-
-            }
-            else {
-                genotype.append(genotypesChar);
-                if(genotype.length() == 2) {
-                    genotype.insert(1, '/');
-                }
-            }
-
-        }
-
-        this.setNextColumnOffset(j.toString());
-
-        fstream.close();
-
     }
 
     private String readHdf5GenotypesFromMatrix (
