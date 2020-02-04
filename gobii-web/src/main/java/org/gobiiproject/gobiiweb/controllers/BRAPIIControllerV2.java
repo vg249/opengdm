@@ -141,8 +141,6 @@ public class BRAPIIControllerV2 {
                             @ExtensionProperty(name="summary", value="Callsets")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
@@ -212,8 +210,6 @@ public class BRAPIIControllerV2 {
                             @ExtensionProperty(name="summary", value="Callsets : callSetDbId")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
@@ -303,7 +299,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             HttpServletRequest request) throws Exception {
 
 
@@ -339,7 +335,7 @@ public class BRAPIIControllerV2 {
      * Lists the variants by page size and page token
      *
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
-     *                 page size, then the response will have maximum page sie
+     *                 page size, then the response will have maximum page size
      * @return Brapi response with list of variants
      */
     @ApiOperation(
@@ -1123,7 +1119,6 @@ public class BRAPIIControllerV2 {
      * Lists the callsets for a given VariantSetDbId by page size and page token
      *
      * @param variantSetDbId - Integer ID of the VariantSet to be fetched
-     * @param pageTokenParam - String page token
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size, then the response will have maximum page size
      * @return Brapi response with list of CallSets
      */
@@ -1154,26 +1149,32 @@ public class BRAPIIControllerV2 {
     public @ResponseBody ResponseEntity getCallSetsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @ApiParam(value = "Page number", required = false)
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false) Integer pageSize
-    ){
+    ) {
 
         try {
 
+            PagedResult<CallSetBrapiDTO> pagedResult = callSetBrapiService.getCallSets(pageSize, page,
+                    variantSetDbId, null);
+
+            BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(
+                    pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getCurrentPageNum());
+
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body("");
+                    MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (GobiiException gE) {
             throw gE;
         }
         catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
@@ -1312,7 +1313,7 @@ public class BRAPIIControllerV2 {
             produces = "application/json")
     public @ResponseBody ResponseEntity getCallsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
-            @PathVariable("variantSetDbId") String variantSetDbIdVar,
+            @PathVariable("variantSetDbId") Integer variantSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "nextPageToken form previous page's meta data should be used." +
                     "If pageNumber is specified pageToken will be ignored. " +
@@ -1325,48 +1326,19 @@ public class BRAPIIControllerV2 {
     ){
 
         try {
-            List<GenotypeCallsDTO> genotypeCallsList = new ArrayList<>();
 
-            Integer variantSetDbId;
+            PagedResult<GenotypeCallsDTO> pagedResult = new PagedResult<>();
 
-            try {
-
-                variantSetDbId = Integer.parseInt(variantSetDbIdVar);
-
-                genotypeCallsList = genotypeCallsService.getGenotypeCallsByDatasetId(
-                        variantSetDbId, pageSize, pageToken);
-
-            }
-            catch(NumberFormatException | NullPointerException ne) {
-
-                String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-
-                String extractQueryPath = LineUtils.terminateDirectoryPath(
-                        configSettingsService.getConfigSettings().getServerConfigs().get(
-                                cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES)
-                ) + variantSetDbIdVar + LineUtils.PATH_TERMINATOR + "extractQuery.json";
-
-                genotypeCallsList =
-                        genotypeCallsService.getGenotypeCallsByExtractQuery(
-                                extractQueryPath, pageSize, pageToken);
-            }
+            pagedResult = genotypeCallsService.getGenotypeCallsByDatasetId(variantSetDbId, pageSize, pageToken);
 
 
-            BrApiResult result = new BrApiResult();
+            BrApiMasterListPayload<GenotypeCallsDTO> payload = new BrApiMasterListPayload<>(
+                    pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
 
-            result.setData(genotypeCallsList);
 
-            BrApiMasterPayload payload = new BrApiMasterPayload(result);
-
-            //if (genotypeCallsList.size() > 0) {
-            //    payload.getMetadata().getPagination().setPageSize(genotypeCallsList.size());
-            //    if (genotypeCallsList.size() >= pageSize) {
-            //        payload.getMetadata().getPagination().setNextPageToken(
-            //                genotypeCallsService.getNextPageToken());
-            //    }
-            //}
-
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (GobiiException gE) {
