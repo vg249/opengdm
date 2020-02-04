@@ -22,6 +22,13 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
         this.getMetadata().getPagination().setCurrentPage(currentPage);
     }
 
+    public BrApiMasterListPayload(List<T> listData, Integer pageSize, String nextPageToken) {
+
+        this.result.setData(listData);
+        this.getMetadata().getPagination().setPageSize(pageSize);
+        this.getMetadata().getPagination().setNextPageToken(nextPageToken);
+    }
+
 
     public BrApiResult<T> getResult() {
         return this.result;
