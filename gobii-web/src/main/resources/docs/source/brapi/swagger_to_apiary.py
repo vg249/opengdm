@@ -10,8 +10,8 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
-swagger_json_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/generated/swagger/sampletracking/swagger.json"
-doc_md_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/source/sampletracking/"
+swagger_json_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/generated/brapi/brapi/swagger.json"
+doc_md_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/source/brapi/"
 
 parser = argparse.ArgumentParser(description="Formats Swagger JSON to YAML file compatible with Apiary")
 
@@ -23,7 +23,7 @@ with open(swagger_json_path) as js_f:
 paths = d["paths"]
 tags = OrderedDict()
 
-tags_order = ["Authentication", "Project", "Experiment", "Sample", "Dataset", "NoTag"]
+tags_order = ["VariantSets", "CallSets", "NoTag"]
 
 paths_by_tags = {}
 
