@@ -441,14 +441,18 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         try {
 
-            Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
 
-            List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageOffset, pageSize);
+            List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageSize, pageOffset);
 
 
-            pageOffset = pageTokenParts.get("pageOffset");
+            if(pageToken != null) {
 
-            columnOffset = pageTokenParts.get("columnOffset");
+                Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
+
+                pageOffset = pageTokenParts.get("pageOffset");
+
+                columnOffset = pageTokenParts.get("columnOffset");
+            }
 
             if(columnOffset > dnaRuns.size()) {
                 pageOffset = null;
@@ -471,7 +475,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
 
 
-            List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, pageOffset, markerPageSize);
+            List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, markerPageSize, pageOffset);
 
             //HDF5 index map for markers
             for(Marker marker : markers) {
