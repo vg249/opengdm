@@ -1,6 +1,6 @@
 
-Lists VariantSets in the GDM. 
+Lists CallSets in the GDM. 
 
-**Response Body** is a [BrAPI response](#brapilistresponsetemplate) with [List of [VariantSet Resource](#variantsetresource)] in result.data.
+**Response Body** is a [BrAPI response](#brapilistresponsetemplate) with [List of [CallSet Resource](#callsetresourceexample)] in result.data.
 
 
