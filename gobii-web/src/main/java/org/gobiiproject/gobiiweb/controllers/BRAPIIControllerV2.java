@@ -549,6 +549,7 @@ public class BRAPIIControllerV2 {
             variantDbIdInt = variantDbId;
 
             MarkerBrapiDTO markerBrapiDTO = markerBrapiService.getMarkerById(variantDbIdInt);
+
             BrApiMasterPayload<MarkerBrapiDTO> payload = new BrApiMasterPayload<>(markerBrapiDTO);
 
             return ResponseEntity.ok().contentType(
@@ -673,7 +674,7 @@ public class BRAPIIControllerV2 {
     }
 
     @ApiOperation(
-            value = "Get Maps by mapId",
+            value = "Get Map by mapId",
             notes = "List Genome maps in the database",
             tags = {"Maps"},
             extensions = {
@@ -746,7 +747,7 @@ public class BRAPIIControllerV2 {
             @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
                     paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/maps/{mapId}/positions", method=RequestMethod.GET)
+    @RequestMapping(value="/maps/{mapId}/markerpositions", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMarkersByMapId(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,

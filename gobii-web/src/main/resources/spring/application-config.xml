@@ -475,6 +475,9 @@
     <bean id="rsMapBrapiDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapsetBrapiDaoImpl"/>
 
+    <!-- *** MAPSET SAMPLE TRACKING DAO BEANS *********** -->
+    <bean id="mapsetBrapiDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
+
 
     <!-- ** SAMPLE BRAPI BEANS **-->
     <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.SamplesBrapiServiceImpl"/>

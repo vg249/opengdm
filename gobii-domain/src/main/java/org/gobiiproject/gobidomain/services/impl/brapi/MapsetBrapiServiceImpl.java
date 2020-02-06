@@ -70,13 +70,7 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
             returnVal = dtoMapMapsetBrApi.getMapsetById(mapSetId);
 
-            if(returnVal.getMapDbId() > 0) {
-
-                returnVal.setLinkageGroups(
-                        linkageGroupBrapiService.getLinkageGroupsByMapId(returnVal.getMapDbId(), pageNum, pageSize));
-
-            }
-
+            
 
 
             if (null == returnVal) {
