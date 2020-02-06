@@ -16,7 +16,6 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.*;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,9 +132,9 @@ public class BRAPIIControllerV2 {
      * @return Brapi response with list of dna runs/call sets
      */
     @ApiOperation(
-            value = "List all Callsets",
+            value = "List CallSets",
             notes = "List of all Callsets.",
-            tags = {"Callsets"},
+            tags = {"CallSets"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Callsets")
@@ -178,8 +177,7 @@ public class BRAPIIControllerV2 {
                     callSets.getCurrentPageSize(),
                     callSets.getCurrentPageNum());
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch (GobiiException gE) {
@@ -202,9 +200,9 @@ public class BRAPIIControllerV2 {
      * Response body contains the requested callset information
      */
     @ApiOperation(
-            value = "Get callset by callsetId",
+            value = "Get CallSet by callsetId",
             notes = "Retrieves the Callset entity having the specified ID",
-            tags = {"Callsets"},
+            tags = {"CallSets"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Callsets : callSetDbId")
@@ -267,7 +265,7 @@ public class BRAPIIControllerV2 {
     @ApiOperation(
             value = "List genotype calls",
             notes = "List of all the genotype calls in a given Dna run identified by Dna run Id",
-            tags = {"Callsets"},
+            tags = {"CallSets"},
             extensions = {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="GenotypeCalls")
@@ -829,7 +827,7 @@ public class BRAPIIControllerV2 {
      * @return Brapi response with list of variantsets
      */
     @ApiOperation(
-            value = "List variantsets",
+            value = "List VariantSets",
             notes = "List of all Variantsets",
             tags = {"VariantSets"},
             extensions = {
@@ -928,7 +926,7 @@ public class BRAPIIControllerV2 {
      * Response body contains the requested variantset information
      */
     @ApiOperation(
-            value = "Get Variantset by variantSetDbId",
+            value = "Get VariantSet by variantSetDbId",
             notes = "Retrieves the VariantSet entity having the specified ID",
             tags = {"VariantSets"},
             extensions = {
