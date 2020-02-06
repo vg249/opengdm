@@ -17,7 +17,7 @@ public class Mapset extends BaseEntity {
     @Id
     @Column(name="mapset_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer mapSetId;
+    private Integer mapsetId;
 
     @Column(name="name")
     private String mapsetName;
@@ -49,12 +49,12 @@ public class Mapset extends BaseEntity {
     @Transient
     private Integer linkageGroupCount;
 
-    public Integer getMapSetId() {
-        return mapSetId;
+    public Integer getMapsetId() {
+        return mapsetId;
     }
 
-    public void setMapSetId(Integer mapSetId) {
-        this.mapSetId = mapSetId;
+    public void setMapsetId(Integer mapsetId) {
+        this.mapsetId = mapsetId;
     }
 
     public String getMapsetName() {

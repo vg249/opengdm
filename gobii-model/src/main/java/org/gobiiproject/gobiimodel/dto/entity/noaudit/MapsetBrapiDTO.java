@@ -2,9 +2,15 @@ package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
+import org.gobiiproject.gobiimodel.entity.Mapset;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Brapi DTO for Genome Maps List
@@ -12,17 +18,23 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MapsetBrapiDTO {
 
-
+    @GobiiEntityMap(paramName="mapsetId", entity = Mapset.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer mapDbId;
 
+    @GobiiEntityMap(paramName="mapsetName", entity = Mapset.class)
     private String mapName;
 
+    @GobiiEntityMap(paramName="description", entity = Mapset.class)
     private String comments;
 
+    @GobiiEntityMap(paramName="type.term", entity = Mapset.class, deep = true)
     private String type;
 
+    @GobiiEntityMap(paramName = "linkageGroupCount", entity = Mapset.class)
     private Integer linkageGroupCount;
 
+    @GobiiEntityMap(paramName = "markerCount", entity = Mapset.class)
     private Integer markerCount;
 
     public Integer getMapDbId() {
