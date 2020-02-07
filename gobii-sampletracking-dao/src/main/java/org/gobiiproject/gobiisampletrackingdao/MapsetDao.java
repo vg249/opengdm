@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MapsetDao {
 
-    List<Mapset> getMapsetsWithCountsByExperimentId(
+    List<Mapset> getMapsetsWithCounts(
             Integer pageSize, Integer rowOffset,
             Integer experimentId);
 
