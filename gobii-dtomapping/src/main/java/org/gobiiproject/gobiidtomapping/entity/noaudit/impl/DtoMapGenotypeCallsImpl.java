@@ -27,20 +27,9 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Autowired
     private HDF5Interface hdf5Interface;
 
-
     private String nextPageOffset;
 
     private String nextColumnOffset;
-
-    @Override
-    public String getNextPageOffset() {
-        return nextPageOffset;
-    }
-
-    @Override
-    public String getNextColumnOffset() {
-        return nextColumnOffset;
-    }
 
     public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataByMarkerIdLimit(
             Integer datasetId,
@@ -408,7 +397,234 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         return returnVal;
     }
 
+    /**
+     * Gets the list of Genotypes Calls for given dnarun metadata.
+     * @param dnarun
+     * @param pageToken
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<GenotypeCallsDTO> getGenotypeCallsList(
+            CallSetBrapiDTO dnarun, String pageToken,
+            Integer pageSize) {
 
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+    //    List<Integer> dnarunDatasets = dnarun.getVariantSetIds();
+
+    //    Integer startDatasetId = null;
+
+    //    Integer markerIdLimit = null;
+
+
+
+    //    Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
+
+    //    Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
+    //    try {
+    //        //Sort Dataset Ids in ascenrding order to aid page indexing.
+    //        Collections.sort(dnarunDatasets);
+
+    //        if(pageToken != null) {
+
+    //            String[] pageTokenSplit = pageToken.split("-", 2);
+
+    //            if (pageTokenSplit.length == 2) {
+    //                try {
+    //                    startDatasetId = Integer.parseInt(Arrays.asList(pageTokenSplit).get(0));
+    //                    markerIdLimit = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
+    //                } catch (Exception e) {
+    //                    markerIdLimit = null;
+    //                    startDatasetId = null;
+    //                }
+    //            }
+    //        }
+
+    //        List<GenotypeCallsMarkerMetadataDTO> genotypeMarkerMetadata = new ArrayList<>();
+
+    //        Integer startIndex = 0;
+
+    //        if(startDatasetId != null) {
+    //            startIndex = dnarunDatasets.indexOf(startDatasetId);
+    //        }
+
+    //        for(int i = startIndex; i < dnarunDatasets.size(); i++) {
+
+    //            Integer datasetId = dnarunDatasets.get(i);
+
+    //            dnarunHdf5IndexMap.put(datasetId.toString(),
+    //                    new ArrayList<>());
+
+    //            dnarunHdf5IndexMap.get(datasetId.toString()).add(
+    //                    dnarun.getDatasetDnarunIndex().get(
+    //                            datasetId.toString()).toString());
+
+
+    //            genotypeMarkerMetadata = this.getMarkerMetaDataByMarkerIdLimit(
+    //                    datasetId, markerIdLimit, pageSize);
+
+    //            for(GenotypeCallsMarkerMetadataDTO marker : genotypeMarkerMetadata) {
+
+    //                GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+
+    //                genotypeCall.setCallSetDbId(dnarun.getCallSetDbId());
+    //                genotypeCall.setCallSetName(dnarun.getCallSetName());
+    //                genotypeCall.setVariantDbId(marker.getMarkerId());
+    //                genotypeCall.setVariantName(marker.getMarkerName());
+    //                genotypeCall.setVariantSetDbId(datasetId);
+
+    //                if(!markerHdf5IndexMap.containsKey(datasetId.toString())) {
+
+    //                    markerHdf5IndexMap.put(
+    //                            datasetId.toString(),
+    //                            new ArrayList<>());
+    //                }
+    //                markerHdf5IndexMap.get(
+    //                        datasetId.toString()).add(
+    //                        marker.getHdf5MarkerIdx(datasetId.toString()));
+    //                returnVal.add(genotypeCall);
+    //            }
+    //            if(genotypeMarkerMetadata.size() >= pageSize) {
+    //                break;
+    //            }
+    //            else {
+    //                pageSize -= genotypeMarkerMetadata.size();
+    //            }
+    //        }
+
+    //        String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+    //        readHdf5GenotypesFromResult(returnVal, extractListPath);
+
+    //    }
+    //    catch(GobiiException ge) {
+    //        throw ge;
+    //    }
+    //    catch (Exception e) {
+    //        LOGGER.error(e.getMessage(), e);
+    //        throw new GobiiException(
+    //                GobiiStatusLevel.ERROR,
+    //                GobiiValidationStatusType.UNKNOWN,
+    //                "Failed to extract genotypes. " +
+    //                        "Please try again. If error persists, try contacting the System administrator");
+    //    }
+
+        return returnVal;
+    }
+
+    /**
+     * Gets the list of Genotypes Calls for given marker metadata.
+     * @param marker
+     * @param pageToken
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<GenotypeCallsDTO> getGenotypeCallsList(
+            MarkerBrapiDTO marker, String pageToken,
+            Integer pageSize) {
+
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+        List<Integer> markerDatasets = marker.getVariantSetDbId();
+
+        Integer startDatasetId = null;
+
+        Integer dnarunIdLimit = null;
+
+        Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
+
+        Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
+
+        try {
+
+            //Sort Dataset Ids in ascenrding order to aid page indexing.
+            Collections.sort(markerDatasets);
+
+            if(pageToken != null) {
+
+                String[] pageTokenSplit = pageToken.split("-", 2);
+
+                if (pageTokenSplit.length == 2) {
+                    try {
+                        startDatasetId = Integer.parseInt(Arrays.asList(pageTokenSplit).get(0));
+                        dnarunIdLimit = Integer.parseInt(Arrays.asList(pageTokenSplit).get(1));
+                    } catch (Exception e) {
+                        dnarunIdLimit = null;
+                        startDatasetId = null;
+                    }
+                }
+            }
+
+            List<GenotypeCallsDnarunMetadataDTO> genotypeDnarunMetadata = new ArrayList<>();
+
+            Integer startIndex = 0;
+
+            if(startDatasetId != null) {
+                startIndex = markerDatasets.indexOf(startDatasetId);
+            }
+
+            for(int i = startIndex; i < markerDatasets.size(); i++) {
+
+                Integer datasetId = markerDatasets.get(i);
+
+                markerHdf5IndexMap.put(datasetId.toString(),
+                        new ArrayList<>());
+
+                markerHdf5IndexMap.get(datasetId.toString()).add(
+                        marker.getDatasetMarkerIndex().get(datasetId.toString()).toString());
+
+                genotypeDnarunMetadata = this.getDnarunMetaDataByDnarunIdLimit(
+                        datasetId, dnarunIdLimit, pageSize);
+
+                for(GenotypeCallsDnarunMetadataDTO dnarun : genotypeDnarunMetadata) {
+
+                    GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+
+                    genotypeCall.setCallSetDbId(dnarun.getDnarunId());
+                    genotypeCall.setCallSetName(dnarun.getDnarunName());
+                    genotypeCall.setVariantDbId(marker.getVariantDbId());
+                    genotypeCall.setVariantName(marker.getVariantName());
+                    genotypeCall.setVariantSetDbId(datasetId);
+
+                    if(!dnarunHdf5IndexMap.containsKey(datasetId.toString())) {
+                        dnarunHdf5IndexMap.put(
+                                datasetId.toString(),
+                                new ArrayList<>());
+                    }
+                    dnarunHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            dnarun.getHdf5DnarunIdx(datasetId.toString()));
+                    returnVal.add(genotypeCall);
+                }
+                if(genotypeDnarunMetadata.size() >= pageSize) {
+                    break;
+                }
+                else {
+                    pageSize -= genotypeDnarunMetadata.size();
+                }
+            }
+
+            String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+
+            //readHdf5GenotypesFromResult(returnVal, extractListPath);
+
+        }
+        catch(GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Failed to extract genotypes. " +
+                            "Please try again. If error persists, try contacting the System administrator");
+        }
+
+        return returnVal;
+    }
 
     /**
      * Gets the list of Genotypes Calls for given datasetId.
@@ -633,19 +849,13 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
             this.setNextPageOffset(nextPageOffset.toString());
 
-            if(markerHdf5IndexMap.size() == 0 || dnarunHdf5IndexMap.size() == 0) {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Genotype calls does not exists");
-            }
-
             String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-            this.readHdf5GenotypesFromMatrix(
-                    returnVal, extractFilePath,
-                    pageSize, datasetId,
-                    columnOffset, markerMetadataList, dnarunMetadataList,
-                    new ArrayList<>(dnarunHdf5OrderMap.values()));
+            //this.readHdf5GenotypesFromMatrix(
+            //        returnVal, extractFilePath,
+            //        pageSize, datasetId,
+            //        columnOffset, markerMetadataList, dnarunMetadataList,
+            //        new ArrayList<>(dnarunHdf5OrderMap.values()));
 
             if(extractFilePath != null && extractFilePath.endsWith("result.genotypes")) {
                 File extractFile = new File(extractFilePath);
@@ -806,12 +1016,12 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
                 List<GenotypeCallsDTO> datasetGenotypes = new ArrayList<>();
 
-                this.readHdf5GenotypesFromMatrix(
-                        datasetGenotypes, extractFilePath,
-                        pageSize, datasetId,
-                        0, mapMarkerMetadataByDatasetId.get(datasetId.toString()),
-                        mapDnarunMetadataByDatasetId.get(datasetId.toString()),
-                        new ArrayList<>(dnarunHdf5OrderMap.values()));
+                //this.readHdf5GenotypesFromMatrix(
+                //        datasetGenotypes, extractFilePath,
+                //        pageSize, datasetId,
+                //        0, mapMarkerMetadataByDatasetId.get(datasetId.toString()),
+                //        mapDnarunMetadataByDatasetId.get(datasetId.toString()),
+                //        new ArrayList<>(dnarunHdf5OrderMap.values()));
 
                 returnVal.addAll(datasetGenotypes);
 
@@ -852,10 +1062,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        String genotypCallsFilePath = hdf5Interface.getHDF5Genotypes(true,
-                markerHdf5IndexMap,
-                sampleHdf5IndexMap,
-                tempFolder);
+        String genotypCallsFilePath = hdf5Interface.getHDF5Genotypes(true, markerHdf5IndexMap,
+                sampleHdf5IndexMap, tempFolder);
 
         return genotypCallsFilePath;
 
@@ -870,90 +1078,14 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
         this.nextPageOffset = pageOffset;
     }
 
+    @Override
+    public String getNextColumnOffset() {
+        return this.nextColumnOffset;
+    }
 
-    private void readHdf5GenotypesFromMatrix (
-            List<GenotypeCallsDTO> returnVal,
-            String genotypeMatrixFilePath,
-            Integer pageSize,
-            Integer datasetId,
-            Integer columnOffset,
-            List<GenotypeCallsMarkerMetadataDTO> markerMetadataList,
-            List<GenotypeCallsDnarunMetadataDTO> dnarunMetadataList,
-            List<Integer> dnarunOrder)  throws Exception {
-
-
-        File genotypCallsFile = new File(genotypeMatrixFilePath);
-
-        FileInputStream fstream = new FileInputStream(genotypCallsFile);
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-        Integer i = 0; // row index
-        Integer j = 0; // column index
-        int k = 0; // genotypes count
-
-
-
-        int chrEach;
-
-        StringBuilder genotype = new StringBuilder();
-
-        while ((chrEach = br.read()) != -1 && k < pageSize) {
-
-
-            char genotypesChar = (char) chrEach;
-
-            if(genotypesChar == '\t' || genotypesChar == '\n') {
-
-                if(j < columnOffset) {
-                    j += 1;
-                    genotype.setLength(0);
-                    continue;
-                }
-
-                columnOffset = 0;
-
-                GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
-
-                genotypeCall.setCallSetDbId(dnarunMetadataList.get(dnarunOrder.get(j)).getDnarunId());
-                genotypeCall.setCallSetName(dnarunMetadataList.get(dnarunOrder.get(j)).getDnarunName());
-                genotypeCall.setVariantDbId(markerMetadataList.get(i).getMarkerId());
-                genotypeCall.setVariantName(markerMetadataList.get(i).getMarkerName());
-                genotypeCall.setVariantSetDbId(datasetId);
-
-                genotypeCall.setGenotype(new HashMap<>());
-                String[] genotypeValues = new String[] {genotype.toString()};
-                genotypeCall.getGenotype().put("values", genotypeValues);
-
-                returnVal.add(genotypeCall);
-
-
-                if(genotypesChar == '\t') {
-                    j++;
-                }
-                else {
-                    i++;
-                    j = 0;
-                }
-
-                k++;
-
-                genotype.setLength(0);
-
-            }
-            else {
-                genotype.append(genotypesChar);
-                if(genotype.length() == 2) {
-                    genotype.insert(1, '/');
-                }
-            }
-
-        }
-
-        this.setNextColumnOffset(j.toString());
-
-        fstream.close();
-
+    @Override
+    public String getNextPageOffset() {
+        return this.nextPageOffset;
     }
 
     private String readHdf5GenotypesFromMatrix (

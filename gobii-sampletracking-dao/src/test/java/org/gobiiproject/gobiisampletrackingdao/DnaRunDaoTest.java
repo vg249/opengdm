@@ -21,7 +21,7 @@ import static junit.framework.TestCase.assertTrue;
  *   api.gobii.org. Need to refactor in future with Test databases and setup data
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
+@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class DnaRunDaoTest {
 
     @Autowired
@@ -36,6 +36,9 @@ public class DnaRunDaoTest {
 
         List<DnaRun> dnaruns = dnaRunDao.getDnaRuns(
                 pageSize, rowOffset,
+                null, null,
+                null, null,
+                null, null,
                 null, null);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
@@ -46,12 +49,33 @@ public class DnaRunDaoTest {
 
             List<DnaRun> dnaRunsPaged = dnaRunDao.getDnaRuns(
                     pageSize, rowOffset,
+                    null, null,
+                    null, null,
+                    null, null,
                     null, null);
 
 
             assertTrue("dnarun result list size not equal to the page size",
                     dnaRunsPaged.size() == pageSize);
         }
+    }
+
+    @Test
+    public void testGetDnaRunsByDatasetIdWithNoAssociations() {
+
+        Integer pageSize = 1000;
+
+        Integer rowOffset = 0;
+
+        Integer datasetId = 9;
+
+        List<DnaRun> dnaruns = dnaRunDao.getDnaRunsByDatasetIdNoAssociations(
+                datasetId,
+                pageSize,
+                rowOffset);
+
+        assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
+
     }
 
     @Test
@@ -63,6 +87,9 @@ public class DnaRunDaoTest {
 
         List<DnaRun> dnaruns = dnaRunDao.getDnaRuns(
                 pageSize, rowOffset,
+                null, null,
+                null, null,
+                null, null,
                 null, null);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);

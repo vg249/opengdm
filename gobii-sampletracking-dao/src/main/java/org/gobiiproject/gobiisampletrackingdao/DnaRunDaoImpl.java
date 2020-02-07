@@ -2,10 +2,12 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,9 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@Transactional
 public class DnaRunDaoImpl implements DnaRunDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MarkerDao.class);
@@ -33,37 +37,61 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @param rowOffset - Number of rows to be offseted before fetching tuples
      * @param dnaRunId - Dna Run Id which uniquely identifies dna run
      * @param datasetId - Dataset Id to which dnaruns belong to.
+     * @param dnaSampleId - dnaSampleId filter. to fetch only dnaruns for given dnasample Id.
+     * @param dnaSampleName - dnaSample Id filter. to fetch only dnaruns for given dnasample Name.
      * @return
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
-                                   Integer dnaRunId, Integer datasetId) {
+                                   Integer dnaRunId, String dnaRunName,
+                                   Integer datasetId, Integer experimentId,
+                                   Integer dnaSampleId, String dnaSampleName,
+                                   Integer germplasmId, String germplasmName) {
 
-        List<DnaRun> dnaRuns;
+        List<DnaRun> dnaRuns = new ArrayList<>();
 
-        String queryString = "SELECT dnarun.* " +
+        String queryString = "SELECT {dnarun.*}, {dnasample.*}, {germplasm.*} " +
                 " FROM dnarun AS dnarun " +
+                " INNER JOIN dnasample ON(dnarun.dnasample_id = dnasample.dnasample_id " +
+                "   AND (:dnaSampleId IS NULL OR dnasample.dnasample_id = :dnaSampleId) " +
+                "   AND (:dnaSampleName IS NULL OR dnasample.name = :dnaSampleName)) " +
+                " INNER JOIN germplasm ON(dnasample.germplasm_id = germplasm.germplasm_id " +
+                "   AND (:germplasmId IS NULL OR :germplasmId = germplasm.germplasm_id)" +
+                "   AND (:germplasmName IS NULL OR :germplasmName = germplasm.name)) " +
                 " WHERE (:datasetId IS NULL OR dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
                 " AND (:dnaRunId IS NULL OR dnarun.dnarun_id = :dnaRunId) " +
+                " AND (:dnaRunName IS NULL OR dnarun.name = :dnaRunName) " +
+                " AND (:experimentId IS NULL OR dnarun.experiment_id = :experimentId) " +
                 " LIMIT :pageSize OFFSET :rowOffset ";
 
         try {
 
             Session session = em.unwrap(Session.class);
-            session.enableFetchProfile("dnarun-experiment-dnasample");
+            session.enableFetchProfile("dnarun-experiment");
 
             if(pageSize == null) {
                 pageSize = defaultPageSize;
             }
 
-            dnaRuns = session.createNativeQuery(queryString)
+            List<Object[]> tuples = session.createNativeQuery(queryString)
                     .addEntity("dnarun", DnaRun.class)
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                     .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
                     .setParameter("dnaRunId", dnaRunId, IntegerType.INSTANCE)
+                    .setParameter("dnaRunName", dnaRunName, StringType.INSTANCE)
+                    .setParameter("dnaSampleId", dnaSampleId, IntegerType.INSTANCE)
+                    .setParameter("dnaSampleName", dnaSampleName, StringType.INSTANCE)
+                    .setParameter("germplasmId", germplasmId, IntegerType.INSTANCE)
+                    .setParameter("germplasmName", germplasmName, StringType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                    .setParameter("experimentId", experimentId, IntegerType.INSTANCE)
+                    .addJoin("dnasample", "dnarun.dnaSample")
+                    .addJoin("germplasm", "dnasample.germplasm")
                     .list();
+
+            tuples.stream().forEach(tuple -> {
+                    dnaRuns.add((DnaRun)tuple[0]);
+            });
 
             return dnaRuns;
 
@@ -80,7 +108,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDnaRunIdCursor(
             Integer dnaRunIdCursor,
             Integer datasetId,
@@ -107,7 +134,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     .addEntity("dnarun", DnaRun.class)
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
-                    .setParameter("dnaRunIdCursor",dnaRunIdCursor, IntegerType.INSTANCE)
+                    .setParameter("dnaRunIdCursor", dnaRunIdCursor, IntegerType.INSTANCE)
                     .list();
 
             return dnaRuns;
@@ -130,13 +157,15 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    @Transactional
     public DnaRun getDnaRunById(Integer dnaRunId) {
 
         try {
 
             List<DnaRun> dnaRunsById = this.getDnaRuns(null, null,
-                    dnaRunId, null);
+                    dnaRunId, null,
+                    null, null,
+                    null, null,
+                    null, null);
 
             if (dnaRunsById.size() > 1) {
 
@@ -179,11 +208,14 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of result DnaRun Entities.
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
                                               Integer rowOffset) {
 
-        return getDnaRuns(pageSize, rowOffset, null, datasetId);
+        return getDnaRuns(pageSize, rowOffset,
+                null, null,
+                datasetId, null,
+                null, null,
+                null, null);
 
     }
 
@@ -194,7 +226,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of DnaRun Entity result
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds) {
 
         List<DnaRun> dnaruns = new ArrayList<>();
@@ -208,6 +239,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             //Set Root entity and selected entities
             Root<DnaRun> root = criteria.from(DnaRun.class);
+
             criteria.select(root);
 
 
@@ -238,7 +270,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of DnaRun Entity result.
      */
     @Override
-    @Transactional
     public List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames) {
 
         List<DnaRun> dnaruns = new ArrayList<>();
@@ -275,6 +306,40 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     }
 
+    @Override
+    public List<DnaRun> getDnaRunsByDatasetIdNoAssociations(Integer datasetId,
+                                                            Integer pageSize,
+                                                            Integer rowOffset) throws GobiiException {
 
+        List<DnaRun> dnaRuns = new ArrayList<>();
+
+        Objects.requireNonNull(pageSize);
+        Objects.requireNonNull(rowOffset);
+
+        String queryString = "SELECT {dnarun.*} FROM dnarun " +
+                "WHERE jsonb_exists(dnarun.dataset_dnarun_idx, CAST(:datasetId AS TEXT))";
+
+        try {
+
+            Session session = em.unwrap(Session.class);
+
+            dnaRuns = session
+                    .createNativeQuery(queryString)
+                    .addEntity("dnarun", DnaRun.class)
+                    .setParameter("datasetId", datasetId)
+                    .setMaxResults(pageSize)
+                    .setFirstResult(rowOffset)
+                    .list();
+
+        }
+        catch(Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+        return dnaRuns;
+    }
 
 }

@@ -70,6 +70,7 @@ public class Experiment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "experiment_id")
+    @Access(AccessType.PROPERTY)
     private Integer experimentId;
 
     @Column(name="name")
@@ -98,7 +99,7 @@ public class Experiment extends BaseEntity{
         this.status = status;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 

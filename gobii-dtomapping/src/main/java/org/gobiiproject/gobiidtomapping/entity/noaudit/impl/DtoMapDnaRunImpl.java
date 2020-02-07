@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.gobiiproject.gobiidao.resultset.access.RsDnaRunDao;
 //import org.gobiiproject.gobiidao.resultset.access.RsSearchQueryDao;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
@@ -12,7 +10,7 @@ import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -20,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,177 +46,177 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
 
     @Transactional
     @Override
-    public DnaRunDTO get(Integer dnaRunId) throws GobiiDtoMappingException {
+    public CallSetBrapiDTO get(Integer dnaRunId) throws GobiiDtoMappingException {
 
-        DnaRunDTO returnVal = new DnaRunDTO();
+        CallSetBrapiDTO returnVal = new CallSetBrapiDTO();
 
-        try {
-            ResultSet resultSet = rsDnaRunDao.getDnaRunForDnaRunId(dnaRunId);
-            if (resultSet.next()) {
+        //try {
+        //    ResultSet resultSet = rsDnaRunDao.getDnaRunForDnaRunId(dnaRunId);
+        //    if (resultSet.next()) {
 
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+        //        ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-                if (returnVal.getDatasetDnarunIndex().size() > 0) {
+        //        if (returnVal.getDatasetDnarunIndex().size() > 0) {
 
-                    for (String dataSetId : returnVal.getDatasetDnarunIndex().keySet()) {
+        //            for (String dataSetId : returnVal.getDatasetDnarunIndex().keySet()) {
 
-                        if (dataSetId != null) {
-                            returnVal.getVariantSetIds().add(Integer.parseInt(dataSetId));
-                        }
-                    }
-                }
+        //                if (dataSetId != null) {
+        //                    returnVal.getVariantSetIds().add(Integer.parseInt(dataSetId));
+        //                }
+        //            }
+        //        }
 
-                if (resultSet.next()) {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                            "Multiple resources found. Violation of unique Dnarun ID constraint." +
-                                    " Please contact your Data Administrato to resolve this. " +
-                                    "Changing underlying database schemas and constraints " +
-                                    "without consulting GOBii Team is not recommended.");
-                }
-            }
-            else {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Dna run not found for given id.");
-            }
+        //        if (resultSet.next()) {
+        //            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+        //                    GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
+        //                    "Multiple resources found. Violation of unique Dnarun ID constraint." +
+        //                            " Please contact your Data Administrato to resolve this. " +
+        //                            "Changing underlying database schemas and constraints " +
+        //                            "without consulting GOBii Team is not recommended.");
+        //        }
+        //    }
+        //    else {
+        //        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+        //                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+        //                "Dna run not found for given id.");
+        //    }
 
-        }
-        catch (GobiiException gE) {
-            LOGGER.error(gE.getMessage(), gE);
-            throw new GobiiDtoMappingException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage());
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii Mapping error", e);
-            throw new GobiiDtoMappingException(e);
-        }
+        //}
+        //catch (GobiiException gE) {
+        //    LOGGER.error(gE.getMessage(), gE);
+        //    throw new GobiiDtoMappingException(
+        //            gE.getGobiiStatusLevel(),
+        //            gE.getGobiiValidationStatusType(),
+        //            gE.getMessage());
+        //}
+        //catch (Exception e) {
+        //    LOGGER.error("Gobii Mapping error", e);
+        //    throw new GobiiDtoMappingException(e);
+        //}
 
         return returnVal;
     }
 
     @Override
-    public List<DnaRunDTO> getList(Integer pageToken, Integer pageSize,
-                                   DnaRunDTO dnaRunDTOFilter) throws GobiiDtoMappingException {
+    public List<CallSetBrapiDTO> getList(Integer pageToken, Integer pageSize,
+                                         CallSetBrapiDTO callSetBrapiDTOFilter) throws GobiiDtoMappingException {
 
-        List<DnaRunDTO> returnVal;
-        try {
+        List<CallSetBrapiDTO> returnVal = new ArrayList<>();
+        //try {
 
-            Map<String, Object> sqlParams = new HashMap<>();
+        //    Map<String, Object> sqlParams = new HashMap<>();
 
-            if (pageToken != null) {
-                sqlParams.put("pageToken", pageToken);
-            }
+        //    if (pageToken != null) {
+        //        sqlParams.put("pageToken", pageToken);
+        //    }
 
-            if (pageSize != null) {
-                sqlParams.put("pageSize", pageSize);
-            }
+        //    if (pageSize != null) {
+        //        sqlParams.put("pageSize", pageSize);
+        //    }
 
-            if (dnaRunDTOFilter != null) {
+        //    if (callSetBrapiDTOFilter != null) {
 
-                if (dnaRunDTOFilter.getCallSetDbId() != null && dnaRunDTOFilter.getCallSetDbId() != 0) {
-                    sqlParams.put("callSetDbId", dnaRunDTOFilter.getCallSetDbId());
-                }
+        //        if (callSetBrapiDTOFilter.getCallSetDbId() != null && callSetBrapiDTOFilter.getCallSetDbId() != 0) {
+        //            sqlParams.put("callSetDbId", callSetBrapiDTOFilter.getCallSetDbId());
+        //        }
 
-                if (dnaRunDTOFilter.getCallSetName() != null) {
-                    sqlParams.put("callSetName", dnaRunDTOFilter.getCallSetName());
-                }
+        //        if (callSetBrapiDTOFilter.getCallSetName() != null) {
+        //            sqlParams.put("callSetName", callSetBrapiDTOFilter.getCallSetName());
+        //        }
 
-                if (dnaRunDTOFilter.getVariantSetIds().size() > 0) {
-                    sqlParams.put("variantSetDbId", dnaRunDTOFilter.getVariantSetIds().get(0));
-                }
+        //        if (callSetBrapiDTOFilter.getVariantSetIds().size() > 0) {
+        //            sqlParams.put("variantSetDbId", callSetBrapiDTOFilter.getVariantSetIds().get(0));
+        //        }
 
-                if (dnaRunDTOFilter.getSampleDbId() != null) {
-                    sqlParams.put("sampleDbId", dnaRunDTOFilter.getSampleDbId());
-                }
+        //        if (callSetBrapiDTOFilter.getSampleDbId() != null) {
+        //            sqlParams.put("sampleDbId", callSetBrapiDTOFilter.getSampleDbId());
+        //        }
 
-                if (dnaRunDTOFilter.getGermplasmDbId() != null) {
-                    sqlParams.put("germplasmDbId", dnaRunDTOFilter.getGermplasmDbId());
-                }
+        //        if (callSetBrapiDTOFilter.getGermplasmDbId() != null) {
+        //            sqlParams.put("germplasmDbId", callSetBrapiDTOFilter.getGermplasmDbId());
+        //        }
 
-                if (dnaRunDTOFilter.getStudyDbId() != null) {
-                    sqlParams.put("studyDbId", dnaRunDTOFilter.getStudyDbId());
-                }
+        //        if (callSetBrapiDTOFilter.getStudyDbId() != null) {
+        //            sqlParams.put("studyDbId", callSetBrapiDTOFilter.getStudyDbId());
+        //        }
 
-                if (dnaRunDTOFilter.getSampleName() != null) {
-                    sqlParams.put("sampleName", dnaRunDTOFilter.getSampleName());
-                }
-            }
+        //        if (callSetBrapiDTOFilter.getSampleName() != null) {
+        //            sqlParams.put("sampleName", callSetBrapiDTOFilter.getSampleName());
+        //        }
+        //    }
 
-            returnVal = (List<DnaRunDTO>) dtoListQueryColl.getList(
-                    ListSqlId.QUERY_ID_DNARUN_ALL,
-                    null,
-                    sqlParams
-            );
+        //    returnVal = (List<CallSetBrapiDTO>) dtoListQueryColl.getList(
+        //            ListSqlId.QUERY_ID_DNARUN_ALL,
+        //            null,
+        //            sqlParams
+        //    );
 
-            if (returnVal == null) {
-                return new ArrayList<>();
-            }
+        //    if (returnVal == null) {
+        //        return new ArrayList<>();
+        //    }
 
-            List<CvDTO> germplasmPropsCv = dtoMapCv.getCvsByGroupName(CVGROUP_GERMPLASM_PROP.getCvGroupName());
-            List<CvDTO> samplePropsCv = dtoMapCv.getCvsByGroupName(CVGROUP_DNASAMPLE_PROP.getCvGroupName());
+        //    List<CvDTO> germplasmPropsCv = dtoMapCv.getCvsByGroupName(CVGROUP_GERMPLASM_PROP.getCvGroupName());
+        //    List<CvDTO> samplePropsCv = dtoMapCv.getCvsByGroupName(CVGROUP_DNASAMPLE_PROP.getCvGroupName());
 
-            for(DnaRunDTO currentDnaRunDTO : returnVal) {
+        //    for(CallSetBrapiDTO currentCallSetBrapiDTO : returnVal) {
 
-                if (currentDnaRunDTO.getDatasetDnarunIndex().size() > 0) {
+        //        if (currentCallSetBrapiDTO.getDatasetDnarunIndex().size() > 0) {
 
-                    for (String dataSetId : currentDnaRunDTO.getDatasetDnarunIndex().keySet()) {
+        //            for (String dataSetId : currentCallSetBrapiDTO.getDatasetDnarunIndex().keySet()) {
 
-                        if (dataSetId != null) {
-                            currentDnaRunDTO.getVariantSetIds().add(Integer.parseInt(dataSetId));
-                        }
-                    }
-                }
+        //                if (dataSetId != null) {
+        //                    currentCallSetBrapiDTO.getVariantSetIds().add(Integer.parseInt(dataSetId));
+        //                }
+        //            }
+        //        }
 
-                if (currentDnaRunDTO.getGermplasmProps().size() > 0) {
+        //        if (currentCallSetBrapiDTO.getGermplasmProps().size() > 0) {
 
-                    for (String cvId : currentDnaRunDTO.getGermplasmProps().keySet()) {
+        //            for (String cvId : currentCallSetBrapiDTO.getGermplasmProps().keySet()) {
 
-                        String propValue = currentDnaRunDTO.getGermplasmProps().get(cvId).toString();
+        //                String propValue = currentCallSetBrapiDTO.getGermplasmProps().get(cvId).toString();
 
-                        List<CvDTO> result = germplasmPropsCv.stream()
-                                .filter(a -> Objects.equals(a.getCvId().toString(), cvId))
-                                .collect(Collectors.toList());
+        //                List<CvDTO> result = germplasmPropsCv.stream()
+        //                        .filter(a -> Objects.equals(a.getCvId().toString(), cvId))
+        //                        .collect(Collectors.toList());
 
-                        if (result.size() > 0 && propValue != null) {
-                            currentDnaRunDTO.getAdditionalInfo().put(result.get(0).getTerm(), propValue);
-                        }
-                    }
-                }
+        //                if (result.size() > 0 && propValue != null) {
+        //                    currentCallSetBrapiDTO.getAdditionalInfo().put(result.get(0).getTerm(), propValue);
+        //                }
+        //            }
+        //        }
 
-                if (currentDnaRunDTO.getSampleProps().size() > 0) {
+        //        if (currentCallSetBrapiDTO.getSampleProps().size() > 0) {
 
-                    for (String cvId : currentDnaRunDTO.getSampleProps().keySet()) {
+        //            for (String cvId : currentCallSetBrapiDTO.getSampleProps().keySet()) {
 
-                        String propValue = currentDnaRunDTO.getSampleProps().get(cvId).toString();
+        //                String propValue = currentCallSetBrapiDTO.getSampleProps().get(cvId).toString();
 
-                        List<CvDTO> result = samplePropsCv.stream()
-                                .filter(a -> Objects.equals(a.getCvId().toString(), cvId))
-                                .collect(Collectors.toList());
+        //                List<CvDTO> result = samplePropsCv.stream()
+        //                        .filter(a -> Objects.equals(a.getCvId().toString(), cvId))
+        //                        .collect(Collectors.toList());
 
-                        if (result.size() > 0 && propValue != null) {
-                            currentDnaRunDTO.getAdditionalInfo().put(result.get(0).getTerm(), propValue);
-                        }
-                    }
+        //                if (result.size() > 0 && propValue != null) {
+        //                    currentCallSetBrapiDTO.getAdditionalInfo().put(result.get(0).getTerm(), propValue);
+        //                }
+        //            }
 
-                }
-            }
-        }
-        catch (GobiiException gE) {
+        //        }
+        //    }
+        //}
+        //catch (GobiiException gE) {
 
-            LOGGER.error(gE.getMessage(), gE);
+        //    LOGGER.error(gE.getMessage(), gE);
 
-            throw new GobiiDtoMappingException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage());
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii Mapping Error", e);
-            throw new GobiiDtoMappingException(e);
-        }
+        //    throw new GobiiDtoMappingException(
+        //            gE.getGobiiStatusLevel(),
+        //            gE.getGobiiValidationStatusType(),
+        //            gE.getMessage());
+        //}
+        //catch (Exception e) {
+        //    LOGGER.error("Gobii Mapping Error", e);
+        //    throw new GobiiDtoMappingException(e);
+        //}
 
         return returnVal;
     }

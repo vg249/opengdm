@@ -49,7 +49,7 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
             Integer rowOffset = 0;
 
             if(pageSize == null) {
-                pageSize = BrapiDefaults.pageSize;
+                pageSize = Integer.parseInt(BrapiDefaults.pageSize);
             }
 
             if(pageNum != null && pageSize != null) {

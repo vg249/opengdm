@@ -65,7 +65,7 @@ public class HDF5Interface {
         String tempOutputFolder = LineUtils.terminateDirectoryPath(
                 this.getHdf5ProcessingPaths().get("outputDir")+tempOutputFolderName);
 
-        boolean createTempFolder = (new File(tempOutputFolder)).mkdir();
+        boolean createTempFolder = (new File(tempOutputFolder)).mkdirs();
 
         if(!createTempFolder) {
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
