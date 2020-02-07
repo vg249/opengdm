@@ -6,6 +6,7 @@ import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
@@ -39,25 +41,40 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
      * @throws GobiiDomainException
      */
     @Override
-    public List<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum,
+    public PagedResult<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum,
                                            Integer studyDbId) throws GobiiDomainException {
 
-        List<MapsetBrapiDTO> returnVal = new ArrayList<>();
+        PagedResult<MapsetBrapiDTO> pagedResult = new PagedResult<>();
 
         try {
 
-            List<Mapset> mapsets = mapsetDao.getMapsetsWithCountsByExperimentId(pageSize, pageNum, studyDbId);
+            Objects.requireNonNull(pageSize);
+            Objects.requireNonNull(pageNum);
+
+            List<MapsetBrapiDTO> mapsetBrapiDTOS = new ArrayList<>();
+
+            Integer rowOffset = pageNum*pageSize;
+
+            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(pageSize, rowOffset, studyDbId);
 
             for (Mapset mapset : mapsets) {
-
 
                 MapsetBrapiDTO mapsetBrapiDTO = new MapsetBrapiDTO();
 
                 ModelMapper.mapEntityToDto(mapset, mapsetBrapiDTO);
 
-                returnVal.add(mapsetBrapiDTO);
+                mapsetBrapiDTOS.add(mapsetBrapiDTO);
 
             }
+
+            pagedResult.setResult(mapsetBrapiDTOS);
+
+            pagedResult.setCurrentPageNum(pageNum);
+
+            pagedResult.setCurrentPageSize(pageSize);
+
+            return pagedResult;
+
         } catch (GobiiException gE) {
             throw gE;
         } catch (Exception e) {
@@ -65,8 +82,6 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
             throw new GobiiDomainException(e);
 
         }
-
-        return returnVal;
 
     }
 }
