@@ -1,10 +1,11 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 import java.util.List;
 
 public interface MapsetBrapiService {
 
-    List<MapsetBrapiDTO> getMapSets(Integer pageSize,  Integer pageNum, Integer studyDbId);
+    PagedResult<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum, Integer studyDbId);
 }
