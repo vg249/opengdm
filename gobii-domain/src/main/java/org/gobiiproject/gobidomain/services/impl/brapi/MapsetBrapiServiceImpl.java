@@ -8,8 +8,6 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,22 +32,23 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
     /**
      * Gets the list of Genome Maps in the database by Page Number and Page Size
-     * @param pageNum - Page Number to be fetched
+     *
+     * @param pageNum  - Page Number to be fetched
      * @param pageSize - Page Size to be fetched
      * @return List of Brapi Specified Genome Maps DTO
      * @throws GobiiDomainException
      */
     @Override
-    public List<MapsetBrapiDTO> getMapSets(Integer pageNum, Integer pageSize,
+    public List<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum,
                                            Integer studyDbId) throws GobiiDomainException {
 
         List<MapsetBrapiDTO> returnVal = new ArrayList<>();
 
         try {
 
-            List<Mapset> mapsets = mapsetDao.getMapsetsWithCountsByExperimentId(pageSize, pageNum,studyDbId);
+            List<Mapset> mapsets = mapsetDao.getMapsetsWithCountsByExperimentId(pageSize, pageNum, studyDbId);
 
-            for(Mapset mapset : mapsets) {
+            for (Mapset mapset : mapsets) {
 
 
                 MapsetBrapiDTO mapsetBrapiDTO = new MapsetBrapiDTO();
@@ -59,56 +58,15 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
                 returnVal.add(mapsetBrapiDTO);
 
             }
-        }
-        catch (GobiiException gE) {
+        } catch (GobiiException gE) {
             throw gE;
-        }
-        catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-
-        }
-
-    }
-
-    /**
-     * Gets the Genome Map by map Id. The linkage group list in the map is paged.
-     * @param pageNum - Page Number to be fetched
-     * @param pageSize - Page Size to be fetched
-     * @return MapSetBrapiDTO
-     * @throws GobiiDomainException
-     */
-    @Override
-    public MapsetBrapiDTO getMapSet(
-            Integer mapSetId,
-            Integer pageNum,
-            Integer pageSize) throws GobiiDomainException {
-
-        MapsetBrapiDTO returnVal = new MapsetBrapiDTO();
-
-        try {
-
-            returnVal = dtoMapMapsetBrApi.getMapsetById(mapSetId);
-
-            
-
-
-            if (null == returnVal) {
-                throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "The specified mapsetId ("
-                                + mapSetId
-                                + ") does not match an existing mapset ");
-            }
-            return returnVal;
         } catch (Exception e) {
-
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
 
         }
 
-    }
+        return returnVal;
 
+    }
 }

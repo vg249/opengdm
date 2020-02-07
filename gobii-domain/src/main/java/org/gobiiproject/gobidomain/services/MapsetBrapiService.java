@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface MapsetBrapiService {
 
-    List<MapsetBrapiDTO> getMapSets(Integer pageNumber, Integer pageSize);
-    MapsetBrapiDTO getMapSet(Integer mapSetId, Integer pageNumber, Integer pageSize);
+    List<MapsetBrapiDTO> getMapSets(Integer pageSize,  Integer pageNum, Integer studyDbId);
 }
