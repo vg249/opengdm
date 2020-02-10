@@ -1,10 +1,13 @@
-package org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage;
+package org.gobiiproject.gobiimodel.dto.instructions.validation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
 
-public class ValidationError {
+@Data
+public class ValidationResult {
     @JsonProperty
     public String fileName;
     @JsonProperty
@@ -12,7 +15,7 @@ public class ValidationError {
     @JsonProperty
     public List<Failure> failures;
 
-    public ValidationError() {
+    public ValidationResult() {
         fileName = "";
         status = "";
         failures = new ArrayList<>();

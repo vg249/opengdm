@@ -6,8 +6,8 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -112,7 +112,7 @@ public class DatasetMarkerValidationTest {
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+        ValidationResult[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationResult[].class);
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", ValidationTestSuite.SUCCESS_TEXT, fileErrors[0].status);
     }
@@ -163,7 +163,7 @@ public class DatasetMarkerValidationTest {
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+        ValidationResult[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationResult[].class);
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", ValidationTestSuite.FAILURE_TEXT, fileErrors[0].status);
         List<Failure> failures = fileErrors[0].failures;
@@ -221,7 +221,7 @@ public class DatasetMarkerValidationTest {
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+        ValidationResult[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationResult[].class);
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", ValidationTestSuite.FAILURE_TEXT, fileErrors[0].status);
 
@@ -279,7 +279,7 @@ public class DatasetMarkerValidationTest {
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+        ValidationResult[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationResult[].class);
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", ValidationTestSuite.FAILURE_TEXT, fileErrors[0].status);
 

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.utils.validation;
+package org.gobiiproject.gobiimodel.dto.instructions.validation;
 
 public class ValidationConstants {
     static final String CV = "CV";

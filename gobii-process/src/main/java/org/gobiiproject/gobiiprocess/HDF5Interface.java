@@ -48,7 +48,6 @@ public class HDF5Interface {
 
     /**
      * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false.
-     * @param dm Email message object - for direct writing
      * @param dst DataSetType (obviously)
      * @param configuration configurations - for reading if a configruation is set correctly
      * @param dataSetId ID of dataset to create
@@ -58,11 +57,10 @@ public class HDF5Interface {
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
      */
-    public boolean createHDF5FromDataset(ProcessMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) throws Exception {
+    public boolean createHDF5FromDataset(String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) throws Exception {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
-        dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
         int size=8;
         switch(dst.toUpperCase()){
