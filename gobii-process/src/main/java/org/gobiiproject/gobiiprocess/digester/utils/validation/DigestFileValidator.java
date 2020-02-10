@@ -16,11 +16,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import  org.gobiiproject.gobiimodel.types.DatasetOrientationType;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.allowedExtensions;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginToServer;
 
@@ -66,30 +67,30 @@ public class DigestFileValidator {
         try {
             SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValues(new FileWriter(new File(validationOutput)));
             List<ValidationUnit> validations = readRules(writer);
-            ValidationError validationError = new ValidationError();
-            validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
+            ValidationResult validationResult = new ValidationResult();
+            validationResult.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
             List<Failure> failures = new ArrayList<>();
             if (loginToServer(url, username, password, null, failures)) {
                 try {
-                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig, orientation);
-                    writer.write(validationErrorList);
+                    List<ValidationResult> validationResultList = doValidations(validations, cropConfig, orientation);
+                    writer.write(validationResultList);
                 } catch (Exception e) {
-                    validationError.status = ValidationConstants.FAILURE;
+                    validationResult.status = ValidationConstants.FAILURE;
                     Failure failure = new Failure();
                     failure.reason = FailureTypes.VALIDATION_ERROR;
                     failure.values.add(e.getMessage());
-                    validationError.failures.add(failure);
-                    List<ValidationError> validationErrorList = new ArrayList<>();
-                    validationErrorList.add(validationError);
-                    writer.write(validationErrorList);
+                    validationResult.failures.add(failure);
+                    List<ValidationResult> validationResultList = new ArrayList<>();
+                    validationResultList.add(validationResult);
+                    writer.write(validationResultList);
                     Logger.logError("DigestFileValidator",e);
                 }
             } else {
-                validationError.status = ValidationConstants.FAILURE;
-                validationError.failures.addAll(failures);
-                List<ValidationError> validationErrorList = new ArrayList<>();
-                validationErrorList.add(validationError);
-                writer.write(validationErrorList);
+                validationResult.status = ValidationConstants.FAILURE;
+                validationResult.failures.addAll(failures);
+                List<ValidationResult> validationResultList = new ArrayList<>();
+                validationResultList.add(validationResult);
+                writer.write(validationResultList);
             }
             writer.close();
         } catch (IOException e) {
@@ -102,25 +103,25 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig,
-                                                DatasetOrientationType orientation) {
-        List<ValidationError> validationErrorList = new ArrayList<>();
+    private List<ValidationResult> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig,
+												 DatasetOrientationType orientation) {
+        List<ValidationResult> validationResultList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
-            ValidationError validationError = new ValidationError();
-            validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
+            ValidationResult validationResult = new ValidationResult();
+            validationResult.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
             List<Failure> failureList = validate(validation, cropConfig, orientation);
             if (failureList != null) {
                 if (failureList.size() > 0) {
-                    validationError.status = ValidationConstants.FAILURE;
-                    validationError.failures.addAll(failureList);
-                    validationErrorList.add(validationError);
+                    validationResult.status = ValidationConstants.FAILURE;
+                    validationResult.failures.addAll(failureList);
+                    validationResultList.add(validationResult);
                 } else {
-                    validationError.status = ValidationConstants.SUCCESS;
-                    validationErrorList.add(validationError);
+                    validationResult.status = ValidationConstants.SUCCESS;
+                    validationResultList.add(validationResult);
                 }
             }
         }
-        return validationErrorList;
+        return validationResultList;
         // READ ERRORS
         // ValidationError[] fileErrors = mapper.readValue(new File(validationOutput), ValidationError[].class);
     }
@@ -226,13 +227,13 @@ public class DigestFileValidator {
     }
 
     private boolean validationFailed(SequenceWriter writer, String fileName, String value) throws IOException {
-        ValidationError validationError = new ValidationError();
-        validationError.fileName = fileName;
+        ValidationResult validationResult = new ValidationResult();
+        validationResult.fileName = fileName;
         Failure failure = new Failure();
         failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
         failure.values.add(value);
-        validationError.failures.add(failure);
-        writer.write(validationError);
+        validationResult.failures.add(failure);
+        writer.write(validationResult);
         return true;
     }
 

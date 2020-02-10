@@ -20,12 +20,13 @@ import java.util.stream.Stream;
 
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.FailureTypes;
 
 class ValidationUtil {
     static boolean isNullAndEmpty(String value) {
