@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
@@ -7,7 +8,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
 @Data
 public class DigestResults {
 
-	private IFLLineCounts iflLineCounts;
+	private List<IFLLineCounts> iflLineCounts = new LinkedList<>();
 
 	private String logFile;
 

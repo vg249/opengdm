@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.springframework.util.CollectionUtils;
 
 public class DigesterProcessMessage extends ProcessMessage{
 
@@ -34,7 +35,9 @@ public class DigesterProcessMessage extends ProcessMessage{
 
 		pm.addPath("matrix directory", digestConfig.getPathToHDF5Files(), config, false);
 
-		addIflLineCounts(pm, results.getIflLineCounts());
+		if (! CollectionUtils.isEmpty(results.getValidationResults())) {
+			results.getIflLineCounts().forEach(count -> addIflLineCounts(pm, count));
+		}
 
 		pm.addPath("Error Log", results.getLogFile(), config, false);
 
@@ -44,20 +47,22 @@ public class DigesterProcessMessage extends ProcessMessage{
 		pm.setBody(results.getJobName(), loadTypeName, SimpleTimer.stop("FileRead"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
 
 
-		boolean hasAnyFailedStatuses = results.getValidationResults().stream()
-				.map(ValidationResult::getStatus)
-				.anyMatch(ValidationConstants.FAILURE::equalsIgnoreCase);
+		if (! CollectionUtils.isEmpty(results.getValidationResults())) {
+			boolean hasAnyFailedStatuses = results.getValidationResults().stream()
+					.map(ValidationResult::getStatus)
+					.anyMatch(ValidationConstants.FAILURE::equalsIgnoreCase);
 
-		for (ValidationResult result : results.getValidationResults()) {
-			if (result.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-				for (int i = 0; i < result.failures.size(); i++) {
-					pm.addValidateTableElement(result.fileName, result.status, result.failures.get(i).reason, result.failures.get(i).columnName, result.failures.get(i).values);
+			for (ValidationResult result : results.getValidationResults()) {
+				if (result.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
+					for (int i = 0; i < result.failures.size(); i++) {
+						pm.addValidateTableElement(result.fileName, result.status, result.failures.get(i).reason, result.failures.get(i).columnName, result.failures.get(i).values);
+					}
 				}
-			}
-			if(result.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
-				//If any failed statii(statuses) exist, we should have this table, otherwise it should not exist
-				if(hasAnyFailedStatuses) {
-					pm.addValidateTableElement(result.fileName, result.status);
+				if (result.status.equalsIgnoreCase(ValidationConstants.SUCCESS)) {
+					//If any failed statii(statuses) exist, we should have this table, otherwise it should not exist
+					if (hasAnyFailedStatuses) {
+						pm.addValidateTableElement(result.fileName, result.status);
+					}
 				}
 			}
 		}

@@ -304,7 +304,9 @@ public class Digester {
 
                     IFLLineCounts counts = calculateTableStats(loaderInstructionMap, dstDir, key);
 
-                    results.setIflLineCounts(counts);
+                    if (counts != null) {
+                        results.getIflLineCounts().add(counts);
+                    }
 
                     if (counts.getLoadedData() == 0) {
                         Logger.logDebug("FileReader", "No data loaded for table " + key);
