@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * A separation routine for multi-allelic nucleotides for GDM-446. Takes a delimited string and converts it into an
@@ -103,7 +104,8 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
         boolean hasSeparators=((length != nucleotideCount));
         if(hasSeparators) { //If nucleotideCount=1, there's no separator character
             char separator = element.charAt(1);
-            return element.replaceAll("" + separator, "");
+            //Pattern.quote to escape literals like / and | being interpreted as regular expression syntax
+            return element.replaceAll(Pattern.quote( ""+separator ), "");
         }
         else return element;
     }
