@@ -20,7 +20,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
     selector: 'sample-marker-box',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onSampleMarkerError'],
-    encapsulation: ViewEncapsulation.Native,
+    encapsulation: ViewEncapsulation.Emulated,
     styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
         "js/node_modules/primeng/resources/primeng.css",
         "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
