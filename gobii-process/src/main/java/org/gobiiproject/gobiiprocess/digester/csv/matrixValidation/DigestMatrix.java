@@ -77,8 +77,8 @@ class DigestMatrix {
 
         @Override
         public boolean isAllowed(String entity) {
-            return elements.contains(entity);
-        }
+            return elements.contains(entity.toUpperCase());
+        }//Case insensitive matching
     }
     private static class AllowedNucleotides implements AllowedEntities{
         private int numberOfElements;
@@ -92,7 +92,7 @@ class DigestMatrix {
             if(entity.length()!=numberOfElements) return false;
             //Each element is a valid element
             for(String s: entity.split("")){
-                if(!allowedSet.contains(s)){
+                if(!allowedSet.contains(s.toUpperCase())){//toUpperCase for case insensitive matching
                     return false;
                 }
             }
