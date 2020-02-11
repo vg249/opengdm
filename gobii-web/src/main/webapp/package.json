@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -p ."
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -16,18 +16,12 @@
     "@angular/forms": "^8.2.14",
     "@angular/platform-browser": "^8.2.14",
     "@angular/platform-browser-dynamic": "^8.2.14",
-    "@angular/router": "^8.2.14",
     "@ngrx/effects": "^8.6.0",
     "@ngrx/store": "^8.6.0",
     "@ngrx/store-devtools": "^8.6.0",
-    "@types/core-js": "^2.5.2",
-    "@types/jasmine": "^3.5.3",
-    "@types/node": "^13.7.1",
-    "ng2-file-upload": "^1.4.0",
     "primeng": "^9.0.0-rc.4",
     "rxjs": "^6.5.4",
     "tslib": "^1.10.0",
-    "typescript": "^3.7.5",
     "zone.js": "^0.9.1"
   }
 }
