@@ -20,7 +20,7 @@
     <script src="js/node_modules/core-js/client/shim.min.js"></script>
     <script src="js/node_modules/zone.js/dist/zone.js"></script>
     <script src="js/node_modules/reflect-metadata/Reflect.js"></script>
-    <script src="js/node_modules/systemjs/dist/system.src.js"></script>
+    <!--<script src="js/node_modules/systemjs/dist/system.src.js"></script>-->
     <script src="js/node_modules/rxjs/bundles/Rx.js"></script>
 
     <!-- 2. Load Modules -->
@@ -38,7 +38,7 @@
      the package key is not taken merely as a reference for the package, but "browser" is appended to the pack specified in map section.
      Thus, in order to create the package name we need, and also direct SystemJS to the correct files in the bundles directory, we need
      to use a relative path: '../bundles/animations-browser.umd.js'-->
-    <script>
+    <script src="js/node_modules/systemjs/dist/system.src.js">
         System.config({
 
             packages: {
