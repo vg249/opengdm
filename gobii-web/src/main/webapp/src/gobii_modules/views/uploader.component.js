@@ -177,7 +177,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     //         });
                 };
                 __decorate([
-                    core_1.ViewChild('selectedFile'),
+                    core_1.ViewChild('selectedFile', { static: false }),
                     __metadata("design:type", Object)
                 ], UploaderComponent.prototype, "selectedFile", void 0);
                 UploaderComponent = __decorate([

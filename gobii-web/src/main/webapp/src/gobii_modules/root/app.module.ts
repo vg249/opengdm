@@ -26,7 +26,7 @@ import {LoginComponent} from "../views/login.component";
 import {routing} from "./app.routing";
 import {APP_BASE_HREF} from "@angular/common";
 import {AuthGuard} from "../services/core/auth.guard";
-import {Button} from "primeng/components/button/button";
+import {Button} from "primeng/primeng";
 import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../store/reducers';

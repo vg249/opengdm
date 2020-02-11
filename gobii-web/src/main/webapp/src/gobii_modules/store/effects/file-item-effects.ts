@@ -13,7 +13,7 @@ import * as fromRoot from '../reducers';
 import * as historyAction from '../../store/actions/history-action';
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
 
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../../services/core/file-item-service";
@@ -128,7 +128,7 @@ export class FileItemEffects {
 
                       }).mergeMap(actions => {
 
-                          return Observable.of(actions);
+                          return of(actions);
 
                       });
                   }
@@ -290,7 +290,7 @@ export class FileItemEffects {
                           // those will have to drive effects, as well.
                           // the call to
 
-                          return Observable.of(actions);
+                          return of(actions);
                       });
 
                   } //switchMap()

@@ -1,9 +1,12 @@
-System.register(["./header-names"], function (exports_1, context_1) {
+System.register(["@angular/common/http", "./header-names"], function (exports_1, context_1) {
     "use strict";
-    var header_names_1, HttpValues;
+    var http_1, header_names_1, HttpValues;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
+            function (http_1_1) {
+                http_1 = http_1_1;
+            },
             function (header_names_1_1) {
                 header_names_1 = header_names_1_1;
             }
@@ -19,7 +22,7 @@ System.register(["./header-names"], function (exports_1, context_1) {
                     return returnVal;
                 };
                 HttpValues.makeContentHeaders = function () {
-                    var returnVal = new Headers();
+                    var returnVal = new http_1.HttpHeaders();
                     returnVal.append('Content-Type', 'application/json');
                     returnVal.append('Accept', 'application/json');
                     return returnVal;

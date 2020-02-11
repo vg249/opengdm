@@ -15,7 +15,7 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {FilterParams} from "../../model/filter-params";
 import {Pagination} from "../../model/payload/pagination";
 import {PayloadFilter} from "../actions/action-payload-filter";
-import {map} from "rxjs/operator/map";
+import {map} from "rxjs/operators";
 import {REMOVE_ALL_FROM_EXTRACT} from "../actions/fileitem-action";
 
 
@@ -1003,4 +1003,3 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
     return returnVal;
 });
-

@@ -58,8 +58,7 @@ export class AuthenticationService {
                 this
                     ._http
                     .post(scope$.authUrl, requestBody, {headers: headers})
-                    .map(response => response.json())
-                    .subscribe(json => {
+                    .subscribe((json: JSON) => {
                             let dtoHeaderAuth: DtoHeaderAuth = DtoHeaderAuth
                                 .fromJSON(json);
                             if (dtoHeaderAuth.getToken()) {
@@ -72,14 +71,14 @@ export class AuthenticationService {
                                 observer.error("No token was provided by server");
                             }
                         },
-                        json => {
+                        (response: HttpResponse<JSON>) => {
 
-                            let message: string = json.status
+                            let message: string = response.status
                                 + ": "
-                                + json.statusText;
+                                + response.statusText;
 
-                            if (Number(json.status) == HttpValues.S_FORBIDDEN) {
-                                message += ": " + json._body;
+                            if (Number(response.status) == HttpValues.S_FORBIDDEN) {
+                                message += ": " + response.body;
                             }
 
                             observer.error(message);

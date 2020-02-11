@@ -68,7 +68,6 @@ System.register(["@angular/core", "../../model/http-values", "@angular/common/ht
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                             _this._http
                                 .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
-                                .map(function (response) { return response.json(); })
                                 .subscribe(function (json) {
                                 var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(json);
                                 if (payloadResponse.header.status.succeeded) {
@@ -79,9 +78,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/common/ht
                                 else {
                                     observer.error(payloadResponse.header);
                                 }
-                            }, function (json) {
-                                var obj = JSON.parse(json._body);
-                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            }, function (payloadResponse) {
                                 observer.error(payloadResponse.header);
                             }); // subscribe http
                         }
@@ -102,7 +99,6 @@ System.register(["@angular/core", "../../model/http-values", "@angular/common/ht
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                             _this._http
                                 .get(dtoRequestItem.getUrl(), { headers: headers })
-                                .map(function (response) { return response.json(); })
                                 .subscribe(function (json) {
                                 var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(json);
                                 if (payloadResponse.header.status.succeeded) {
@@ -114,9 +110,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/common/ht
                                 else {
                                     observer.error(payloadResponse);
                                 }
-                            }, function (json) {
-                                var obj = JSON.parse(json._body);
-                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            }, function (payloadResponse) {
                                 observer.error(payloadResponse.header);
                             }); // subscribe http
                         }

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/actions/history-action", "../model/type-extractor-filter", "../services/core/file-item-service", "../model/file-item-param-names", "../store/actions/fileitem-action", "../services/core/dto-request.service", "../services/app/jsontogfi/json-to-gfi-dataset", "../services/core/filter-params-coll", "../services/app/dto-request-item-gfi", "../services/app/jsontogfi/json-to-gfi-analysis", "../model/cv-filter-type", "../model/type-entity", "../model/gobii-file-item-compound-id", "../model/type-extractor-item", "rxjs/Subject", "rxjs/add/operator/withLatestFrom", "../store/actions/action-payload-filter", "../services/core/view-id-generator-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/actions/history-action", "../model/type-extractor-filter", "../services/core/file-item-service", "../model/file-item-param-names", "../store/actions/fileitem-action", "../services/core/dto-request.service", "../services/app/jsontogfi/json-to-gfi-dataset", "../services/core/filter-params-coll", "../services/app/dto-request-item-gfi", "../services/app/jsontogfi/json-to-gfi-analysis", "../model/cv-filter-type", "../model/type-entity", "../model/gobii-file-item-compound-id", "../model/type-extractor-item", "rxjs", "rxjs/operators", "../store/actions/action-payload-filter", "../services/core/view-id-generator-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, store_1, fromRoot, historyAction, type_extractor_filter_1, file_item_service_1, file_item_param_names_1, fileAction, dto_request_service_1, json_to_gfi_dataset_1, filter_params_coll_1, dto_request_item_gfi_1, json_to_gfi_analysis_1, cv_filter_type_1, type_entity_1, gobii_file_item_compound_id_1, type_extractor_item_1, Subject_1, action_payload_filter_1, view_id_generator_service_1, DatasetDatatableComponent;
+    var core_1, store_1, fromRoot, historyAction, type_extractor_filter_1, file_item_service_1, file_item_param_names_1, fileAction, dto_request_service_1, json_to_gfi_dataset_1, filter_params_coll_1, dto_request_item_gfi_1, json_to_gfi_analysis_1, cv_filter_type_1, type_entity_1, gobii_file_item_compound_id_1, type_extractor_item_1, rxjs_1, operators_1, action_payload_filter_1, view_id_generator_service_1, DatasetDatatableComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -64,10 +64,11 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
             function (type_extractor_item_1_1) {
                 type_extractor_item_1 = type_extractor_item_1_1;
             },
-            function (Subject_1_1) {
-                Subject_1 = Subject_1_1;
+            function (rxjs_1_1) {
+                rxjs_1 = rxjs_1_1;
             },
-            function (_1) {
+            function (operators_1_1) {
+                operators_1 = operators_1_1;
             },
             function (action_payload_filter_1_1) {
                 action_payload_filter_1 = action_payload_filter_1_1;
@@ -86,7 +87,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                     this.fileItemRequestService = fileItemRequestService;
                     this.viewIdGeneratorService = viewIdGeneratorService;
                     this.foo = "foo";
-                    this.onClickForNextPage$ = new Subject_1.Subject();
+                    this.onClickForNextPage$ = new rxjs_1.Subject();
                     this.doPaging = false;
                     this.datasetAnalysesNames = [];
                     this.nameIdFilterParamTypes = Object.assign({}, file_item_param_names_1.FilterParamNames);
@@ -102,7 +103,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                         this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntities);
                     }
                     this.onClickForNextPage$
-                        .withLatestFrom(this.store)
+                        .pipe(operators_1.withLatestFrom(this.store))
                         .subscribe(function (_a) {
                         var data = _a[0], state = _a[1];
                         if (state.fileItems.filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED]) {

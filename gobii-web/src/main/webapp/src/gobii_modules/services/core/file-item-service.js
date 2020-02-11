@@ -354,7 +354,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             }
                         }
                         else {
-                            return rxjs_1.Observable.of(null);
+                            return rxjs_1.of(null);
                         }
                     }
                     else {

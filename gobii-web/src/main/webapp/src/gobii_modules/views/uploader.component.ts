@@ -202,7 +202,7 @@ export class UploaderComponent implements OnInit {
         this.hasAnotherDropZoneOver = e;
     }
 
-    @ViewChild('selectedFile') selectedFile: any;
+    @ViewChild('selectedFile', {static: false}) selectedFile: any;
 
     clearSelectedFile() {
         this.selectedFile.nativeElement.value = '';

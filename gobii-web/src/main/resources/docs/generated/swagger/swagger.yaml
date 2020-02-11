@@ -3063,10 +3063,10 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-      cvId:
+      group:
         type: "integer"
         format: "int32"
-      group:
+      cvId:
         type: "integer"
         format: "int32"
   CvGroupDTO:
@@ -3835,13 +3835,13 @@ definitions:
       url:
         type: "string"
         format: "url"
-      readable:
-        type: "boolean"
       file:
         type: "file"
       uri:
         type: "string"
         format: "uri"
+      readable:
+        type: "boolean"
       filename:
         type: "string"
   JobDTO:

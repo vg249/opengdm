@@ -7,7 +7,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {Effect, Actions, ofType} from '@ngrx/effects';
 import {map} from 'rxjs/operators';
-import {of} from 'rxjs/of';
+import {of} from 'rxjs';
 import {TreeStructureService} from '../../services/core/tree-structure-service';
 import * as treeNodeActions from '../actions/treenode-action'
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/common/http", "@angular/platform-browser", "@angular/platform-browser/animations", "../views/export-format.component", "../views/status-display-box.component", "../views/checklist-box.component", "../views/sample-marker-box.component", "ng2-file-upload", "./app.extractorroot", "../services/core/dto-request.service", "../services/core/authentication.service", "../views/text-area.component", "../views/uploader.component", "../views/sample-list-type.component", "primeng/primeng", "../views/status-display-tree.component", "../views/name-id-list-box.component", "../services/core/name-id-service", "./app.component", "../views/login.component", "./app.routing", "@angular/common", "../services/core/auth.guard", "primeng/components/button/button", "./page-by-samples.component", "@ngrx/store", "../store/reducers", "@ngrx/store-devtools", "@ngrx/effects", "../store/effects/tree-effects", "../services/core/tree-structure-service", "../store/effects/file-item-effects", "../services/core/file-item-service", "../services/core/instruction-submission-service", "../views/dataset-datatable.component", "../services/core/filter-params-coll", "../services/core/view-id-generator-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/common/http", "@angular/platform-browser", "@angular/platform-browser/animations", "../views/export-format.component", "../views/status-display-box.component", "../views/checklist-box.component", "../views/sample-marker-box.component", "ng2-file-upload", "./app.extractorroot", "../services/core/dto-request.service", "../services/core/authentication.service", "../views/text-area.component", "../views/uploader.component", "../views/sample-list-type.component", "primeng/primeng", "../views/status-display-tree.component", "../views/name-id-list-box.component", "../services/core/name-id-service", "./app.component", "../views/login.component", "./app.routing", "@angular/common", "../services/core/auth.guard", "./page-by-samples.component", "@ngrx/store", "../store/reducers", "@ngrx/store-devtools", "@ngrx/effects", "../store/effects/tree-effects", "../services/core/tree-structure-service", "../store/effects/file-item-effects", "../services/core/file-item-service", "../services/core/instruction-submission-service", "../views/dataset-datatable.component", "../services/core/filter-params-coll", "../services/core/view-id-generator-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6,7 +6,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/common/http", "@an
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var core_1, forms_1, http_1, platform_browser_1, animations_1, export_format_component_1, status_display_box_component_1, checklist_box_component_1, sample_marker_box_component_1, ng2_file_upload_1, app_extractorroot_1, dto_request_service_1, authentication_service_1, text_area_component_1, uploader_component_1, sample_list_type_component_1, primeng_1, status_display_tree_component_1, name_id_list_box_component_1, name_id_service_1, app_component_1, login_component_1, app_routing_1, common_1, auth_guard_1, button_1, page_by_samples_component_1, store_1, reducers_1, store_devtools_1, effects_1, tree_effects_1, tree_structure_service_1, file_item_effects_1, file_item_service_1, instruction_submission_service_1, dataset_datatable_component_1, filter_params_coll_1, view_id_generator_service_1, AppModule;
+    var core_1, forms_1, http_1, platform_browser_1, animations_1, export_format_component_1, status_display_box_component_1, checklist_box_component_1, sample_marker_box_component_1, ng2_file_upload_1, app_extractorroot_1, dto_request_service_1, authentication_service_1, text_area_component_1, uploader_component_1, sample_list_type_component_1, primeng_1, status_display_tree_component_1, name_id_list_box_component_1, name_id_service_1, app_component_1, login_component_1, app_routing_1, common_1, auth_guard_1, primeng_2, page_by_samples_component_1, store_1, reducers_1, store_devtools_1, effects_1, tree_effects_1, tree_structure_service_1, file_item_effects_1, file_item_service_1, instruction_submission_service_1, dataset_datatable_component_1, filter_params_coll_1, view_id_generator_service_1, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -60,6 +60,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/common/http", "@an
             },
             function (primeng_1_1) {
                 primeng_1 = primeng_1_1;
+                primeng_2 = primeng_1_1;
             },
             function (status_display_tree_component_1_1) {
                 status_display_tree_component_1 = status_display_tree_component_1_1;
@@ -84,9 +85,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/common/http", "@an
             },
             function (auth_guard_1_1) {
                 auth_guard_1 = auth_guard_1_1;
-            },
-            function (button_1_1) {
-                button_1 = button_1_1;
             },
             function (page_by_samples_component_1_1) {
                 page_by_samples_component_1 = page_by_samples_component_1_1;
@@ -174,7 +172,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/common/http", "@an
                             sample_list_type_component_1.SampleListTypeComponent,
                             name_id_list_box_component_1.NameIdListBoxComponent,
                             status_display_tree_component_1.StatusDisplayTreeComponent,
-                            button_1.Button,
+                            primeng_2.Button,
                             page_by_samples_component_1.SearchCriteriaBySamplesComponent,
                             dataset_datatable_component_1.DatasetDatatableComponent
                         ],

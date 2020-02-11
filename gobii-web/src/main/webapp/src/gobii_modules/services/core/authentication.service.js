@@ -67,7 +67,6 @@ System.register(["@angular/core", "@angular/common/http", "rxjs", "rxjs/add/oper
                         _this
                             ._http
                             .post(scope$.authUrl, requestBody, { headers: headers })
-                            .map(function (response) { return response.json(); })
                             .subscribe(function (json) {
                             var dtoHeaderAuth = dto_header_auth_1.DtoHeaderAuth
                                 .fromJSON(json);
@@ -81,12 +80,12 @@ System.register(["@angular/core", "@angular/common/http", "rxjs", "rxjs/add/oper
                             else {
                                 observer.error("No token was provided by server");
                             }
-                        }, function (json) {
-                            var message = json.status
+                        }, function (response) {
+                            var message = response.status
                                 + ": "
-                                + json.statusText;
-                            if (Number(json.status) == http_values_1.HttpValues.S_FORBIDDEN) {
-                                message += ": " + json._body;
+                                + response.statusText;
+                            if (Number(response.status) == http_values_1.HttpValues.S_FORBIDDEN) {
+                                message += ": " + response.body;
                             }
                             observer.error(message);
                         }); // subscribe

@@ -52,8 +52,7 @@ export class DtoRequestService<T> {
                     .post(dtoRequestItem.getUrl(),
                         dtoRequestItem.getRequestBody(),
                         {headers: headers})
-                    .map(response => response.json())
-                    .subscribe(json => {
+                    .subscribe((json: JSON) => {
 
                             let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(json);
 
@@ -66,9 +65,7 @@ export class DtoRequestService<T> {
                             }
 
                         },
-                        json => {
-                            let obj = JSON.parse(json._body)
-                            let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
+                        (payloadResponse: PayloadEnvelope) => {
                             observer.error(payloadResponse.header);
                         }); // subscribe http
 
@@ -96,8 +93,7 @@ export class DtoRequestService<T> {
                 this._http
                     .get(dtoRequestItem.getUrl(),
                         {headers: headers})
-                    .map(response => response.json())
-                    .subscribe(json => {
+                    .subscribe((json: JSON) => {
 
                             let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(json);
 
@@ -111,9 +107,7 @@ export class DtoRequestService<T> {
                             }
 
                         },
-                        json => {
-                            let obj = JSON.parse(json._body)
-                            let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
+                        (payloadResponse: PayloadEnvelope) => {
                             observer.error(payloadResponse.header);
                         }); // subscribe http
 

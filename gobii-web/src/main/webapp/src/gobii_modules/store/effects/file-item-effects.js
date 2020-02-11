@@ -199,7 +199,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 }
                             }
                         }).mergeMap(function (actions) {
-                            return rxjs_1.Observable.of(actions);
+                            return rxjs_1.of(actions);
                         });
                     }));
                     /***
@@ -336,7 +336,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             // we need to police every other place where loadWithFilterParams is used (if anywhere):
                             // those will have to drive effects, as well.
                             // the call to
-                            return rxjs_1.Observable.of(actions);
+                            return rxjs_1.of(actions);
                         });
                     } //switchMap()
                     ));
