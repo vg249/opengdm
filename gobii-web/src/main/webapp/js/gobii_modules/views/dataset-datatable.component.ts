@@ -23,6 +23,7 @@ import {ExtractorItemType} from "../model/type-extractor-item";
 import {PagedFileItemList} from "../model/payload/paged-item-list";
 import {Pagination} from "../model/payload/pagination";
 import {withLatestFrom} from "rxjs/operators";
+//import "rxjs/add/operators/withLatestFrom";//TODO - fix for 6.0 rxjs compat
 import {ExtractReadyPayloadFilter, JobTypeFilters, PayloadFilter} from "../store/actions/action-payload-filter";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 import {FileItem} from "ng2-file-upload";
@@ -270,9 +271,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntities);
         }
 
-        this.onClickForNextPage$
-            .withLatestFrom(this.store)
-            .subscribe(([data, state]) => {
+        this.onClickForNextPage$.pipe(
+            withLatestFrom(this.store))
+                .subscribe(([data, state]) => {
                 if (state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED]) {
                     let pagination: Pagination = state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED].pagination;
                     if (pagination) {

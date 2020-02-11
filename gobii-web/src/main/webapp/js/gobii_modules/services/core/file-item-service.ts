@@ -18,7 +18,9 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import {Observable} from "rxjs";
+//import {Observable} from "rxjs/Observable"; //TODO - fix when 'of' works, JDLS
 import {expand, concat} from "rxjs/operators";
+import {of} from "rxjs";
 import {EntityStats} from "../../model/entity-stats";
 import {DtoRequestService} from "./dto-request.service";
 import {DtoRequestItemEntityStats, EntityRequestType} from "../app/dto-request-item-entity-stats";
@@ -410,7 +412,7 @@ export class FileItemService {
                 }
             } else {
 
-                return Observable.of(null);
+                return of(null);
             }
 
 

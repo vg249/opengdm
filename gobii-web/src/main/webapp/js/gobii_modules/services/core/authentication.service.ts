@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {Http, Response, Headers} from "@angular/http";
 import {Observable} from "rxjs";
 import { map } from "rxjs/operators";
+import "rxjs/add/operator/map" //TODO - remove when no longer in compat - fix how map works JDLS
 
 
 import {DtoHeaderAuth} from "../../model/dto-header-auth";

@@ -123,7 +123,7 @@ export class FileItemEffects {
 
                 }).mergeMap(actions => {
 
-                    return Observable.of(actions);
+                    return of(actions);
 
                 });
             }
@@ -285,7 +285,7 @@ export class FileItemEffects {
                     // those will have to drive effects, as well.
                     // the call to
 
-                    return Observable.of(actions);
+                    return of(actions);
                 });
 
             } //switchMap()
