@@ -413,7 +413,7 @@
                             "install", so unless you need to run some other npm command,
                             you can remove this whole <configuration> section.
                             -->
-                            <arguments>install</arguments>
+                            <arguments>install --save rxjs-compat</arguments>
                         </configuration>
                     </execution>
 
@@ -491,6 +491,7 @@
                                         <include>es6-shim/es6-shim.min.js</include>
                                         <include>systemjs/dist/system-polyfills.js</include>
                                         <include>systemjs/dist/system.src.js</include>
+                                        <include>rx/dist/rx.js</include>
                                         <include>rxjs/bundles/Rx.js</include>
                                         <include>bootstrap/dist/css/bootstrap.min.css</include>
                                         <include>bootswatch/cerulean/bootstrap.min.css</include>
@@ -515,6 +516,7 @@
                                         <include>reflect-metadata/Reflect.js</include>
                                         <include>rxjs/bundles/Rx.js</include>
                                         <include>rxjs/**</include>
+                                        <include>rx/**</include>
                                         <include>ng2-uploader/**</include>
                                         <include>ng2-file-upload/**</include>
                                         <include>primeng/**</include>
