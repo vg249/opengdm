@@ -23,7 +23,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
     selector: 'sample-list-type',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onHeaderStatusMessage'],
-    encapsulation: ViewEncapsulation.ShadowDom,
+    encapsulation: ViewEncapsulation.Emulated,
     styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
         "js/node_modules/primeng/resources/primeng.css",
         "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],

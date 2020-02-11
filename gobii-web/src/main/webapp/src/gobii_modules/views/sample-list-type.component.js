@@ -72,7 +72,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                         selector: 'sample-list-type',
                         inputs: ['gobiiExtractFilterType'],
                         outputs: ['onHeaderStatusMessage'],
-                        encapsulation: core_1.ViewEncapsulation.ShadowDom,
+                        encapsulation: core_1.ViewEncapsulation.Emulated,
                         styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
                             "js/node_modules/primeng/resources/primeng.css",
                             "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
