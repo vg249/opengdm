@@ -9,7 +9,7 @@ import {Store} from "@ngrx/store";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
-import "rxjs/add/operator/expand"
+import {expand} from "rxjs/operators"
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import * as fileAction from '../../store/actions/fileitem-action';

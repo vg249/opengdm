@@ -5,7 +5,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";

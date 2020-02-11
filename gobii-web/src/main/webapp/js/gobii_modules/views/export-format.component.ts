@@ -8,7 +8,7 @@ import {Header} from "../model/payload/header";
 import * as fromRoot from '../store/reducers';
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../services/core/file-item-service";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 
 

@@ -11,7 +11,7 @@ import * as fromTreeNodeActions from '../../store/actions/treenode-action';
 
 import {Store} from "@ngrx/store";
 import {NameId} from "../../model/name-id";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 import {GobiiDataSetExtract} from "../../model/extractor-instructions/data-set-extract";
 import {GobiiExtractorInstruction} from "../../model/extractor-instructions/gobii-extractor-instruction";

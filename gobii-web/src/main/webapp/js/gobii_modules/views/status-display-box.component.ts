@@ -1,6 +1,6 @@
 import {Component, OnInit, SimpleChange, OnChanges, Input} from "@angular/core";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 
 
 @Component({

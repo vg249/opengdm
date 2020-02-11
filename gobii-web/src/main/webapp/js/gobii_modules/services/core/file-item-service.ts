@@ -17,9 +17,8 @@ import {Store} from "@ngrx/store";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
-import {Observable} from "rxjs/Observable";
-import "rxjs/add/operator/expand"
-import "rxjs/add/operator/concat"
+import {Observable} from "rxjs";
+import {expand, concat} from "rxjs/operators";
 import {EntityStats} from "../../model/entity-stats";
 import {DtoRequestService} from "./dto-request.service";
 import {DtoRequestItemEntityStats, EntityRequestType} from "../app/dto-request-item-entity-stats";

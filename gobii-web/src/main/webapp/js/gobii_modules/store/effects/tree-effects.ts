@@ -1,17 +1,14 @@
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/exhaustMap';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/take';
+import {map, take, exhaustMap} from 'rxjs/operators';
+//import 'rxjs/add/operator/catch';
+//import 'rxjs/add/operator/do';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 //import {Effect, Actions} from '@ngrx/effects';
 import { Effect, Actions, ofType } from "@ngrx/effects";
-import {of} from 'rxjs/observable/of';
+import {of} from 'rxjs';
 import {TreeStructureService} from '../../services/core/tree-structure-service';
 import * as treeNodeActions from '../actions/treenode-action'
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
-import { map} from "rxjs/operators";
 
 @Injectable()
 export class TreeEffects {

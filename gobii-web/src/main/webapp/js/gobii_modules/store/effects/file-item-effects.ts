@@ -1,28 +1,23 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-//import {Actions, Effect} from '@ngrx/effects';
-import 'rxjs/add/operator/switchMap'
-import 'rxjs/add/observable/of';
-import "rxjs/add/operator/concat"
 
-import * as fileItemActions from '../actions/fileitem-action'
-import * as treeNodeActions from '../actions/treenode-action'
+import * as fileItemActions from '../actions/fileitem-action';
+import * as treeNodeActions from '../actions/treenode-action';
 import {TreeStructureService} from "../../services/core/tree-structure-service";
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import * as fromRoot from '../reducers';
 import * as historyAction from '../../store/actions/history-action';
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {Observable} from "rxjs/Observable";
+import {Observable, of} from "rxjs";
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../../services/core/file-item-service";
 import {FilterParamNames} from "../../model/file-item-param-names";
-import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
 import {FilterParamsColl} from "../../services/core/filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {PayloadFilter} from "../actions/action-payload-filter";
-import { map, switchMap } from "rxjs/operators";
+import { map, switchMap, concat, mergeMap } from "rxjs/operators";
 import { Effect, Actions, ofType } from "@ngrx/effects";
 
 @Injectable()

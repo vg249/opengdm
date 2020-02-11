@@ -5,7 +5,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model//type-extractor-item";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import * as fromRoot from '../store/reducers';
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../services/core/file-item-service";

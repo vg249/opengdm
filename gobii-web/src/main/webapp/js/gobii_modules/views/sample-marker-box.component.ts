@@ -9,7 +9,7 @@ import {FilterParamNames} from "../model/file-item-param-names";
 import * as fromRoot from '../store/reducers';
 import {FileItemService} from "../services/core/file-item-service";
 import {Store} from "@ngrx/store";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {StatusLevel} from "../model/type-status-level";
 import * as historyAction from "../store/actions/history-action";
 import {EntityType} from "../model/type-entity";

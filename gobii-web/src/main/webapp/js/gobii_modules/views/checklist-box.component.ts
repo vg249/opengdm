@@ -7,7 +7,7 @@ import {ExtractorItemType} from "../model//type-extractor-item";
 import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {FileItemService} from "../services/core/file-item-service";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";

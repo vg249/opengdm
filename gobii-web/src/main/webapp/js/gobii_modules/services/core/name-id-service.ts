@@ -5,7 +5,7 @@ import {FilterType} from "../../model/filter-type";
 import {CvFilterType, CvFilters} from "../../model/cv-filter-type";
 import {EntityType, EntitySubType} from "../../model/type-entity";
 import {FilterParams} from "../../model/filter-params";
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {DtoRequestItemNameIds} from "../app/dto-request-item-nameids";
 
 /**

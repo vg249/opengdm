@@ -23,7 +23,7 @@ import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {FilterParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";

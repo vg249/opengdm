@@ -10,7 +10,7 @@ import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model//type-extractor-item";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {FileItemService} from "../services/core/file-item-service";
 import * as historyAction from '../store/actions/history-action';
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";

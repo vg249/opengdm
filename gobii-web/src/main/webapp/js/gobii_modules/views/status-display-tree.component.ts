@@ -6,7 +6,7 @@ import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import * as fromRoot from '../store/reducers';
 import {Store} from "@ngrx/store";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 import {TypeControl} from "../services/core/type-control";
 
