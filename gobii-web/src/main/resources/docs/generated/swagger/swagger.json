@@ -4482,22 +4482,22 @@
         "open" : {
           "type" : "boolean"
         },
+        "readable" : {
+          "type" : "boolean"
+        },
+        "uri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "filename" : {
+          "type" : "string"
+        },
         "url" : {
           "type" : "string",
           "format" : "url"
         },
         "file" : {
           "type" : "file"
-        },
-        "uri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "readable" : {
-          "type" : "boolean"
-        },
-        "filename" : {
-          "type" : "string"
         }
       }
     },
