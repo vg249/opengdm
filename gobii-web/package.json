@@ -26,7 +26,7 @@
     "es6-shim": "^0.35.0",
     "font-awesome": "4.7.0",
     "ng2-bootstrap": "1.6.3",
-    "ng2-file-upload": "^1.4.0",
+    "ng2-file-upload": "1.2.1",
     "primeng": "^4.2.2",
     "reflect-metadata": "^0.1.8",
     "reselect": "^3.0.1",
