@@ -13,12 +13,6 @@ import {environmentSettings} from '../../environments/environment';
  */
 import {compose} from '@ngrx/store';
 
-/**
- * storeFreeze prevents state from being mutated. When mutation occurs, an
- * exception will be thrown. This is useful during development mode to
- * ensure that none of the reducers accidentally mutates the state.
- */
-import {storeFreeze} from 'ngrx-store-freeze';
 
 /**
  * combineReducers is another useful metareducer that takes a map of fileItemsReducer
@@ -82,7 +76,7 @@ export const reducers: ActionReducerMap<State> = {
 //     // router: fromRouter.routerReducer,
 // };
 
-const developmentReducer: ActionReducer<State> = compose(storeFreeze, combineReducers)(reducers);
+const developmentReducer: ActionReducer<State> = compose(combineReducers)(reducers);
 const productionReducer: ActionReducer<State> = combineReducers(reducers);
 
 // export function reducer(state: any, action: any) {

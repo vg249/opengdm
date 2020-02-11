@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {Actions, Effect} from '@ngrx/effects';
+//import {Actions, Effect} from '@ngrx/effects';
 import 'rxjs/add/operator/switchMap'
 import 'rxjs/add/observable/of';
 import "rxjs/add/operator/concat"
@@ -22,6 +22,8 @@ import {AddFilterRetrieved} from "../actions/history-action";
 import {FilterParamsColl} from "../../services/core/filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {PayloadFilter} from "../actions/action-payload-filter";
+import { map, switchMap } from "rxjs/operators";
+import { Effect, Actions, ofType } from "@ngrx/effects";
 
 @Injectable()
 export class FileItemEffects {
@@ -72,27 +74,27 @@ export class FileItemEffects {
         // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
         // accordance with how the nodes are defined by the tree service.
     @Effect()
-    selectForExtract$ = this.actions$
-        .ofType(fileItemActions.ADD_TO_EXTRACT)
-        .map((action: fileItemActions.AddToExtractAction) => {
+    selectForExtract$ = this.actions$.pipe(
+        ofType(fileItemActions.ADD_TO_EXTRACT),
+        map((action: fileItemActions.AddToExtractAction) => {
                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                 return new treeNodeActions.PlaceTreeNodeAction(treeNode);
             }
-        );
+        ));
 
     @Effect()
-    replaceSameByCompoundId$ = this.actions$
-        .ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID)
-        .map((action: fileItemActions.ReplaceItemOfSameCompoundIdAction) => {
+    replaceSameByCompoundId$ = this.actions$.pipe(
+        ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID),
+        map((action: fileItemActions.ReplaceItemOfSameCompoundIdAction) => {
                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
                 return new treeNodeActions.PlaceTreeNodeAction(treeNode);
             }
-        );
+        ));
 
     @Effect()
-    loadFileItemListWithFilter$ = this.actions$
-        .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
-        .switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
+    loadFileItemListWithFilter$ = this.actions$.pipe(
+        ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER),
+        switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
 
 
                 return Observable.create(observer => {
@@ -130,7 +132,7 @@ export class FileItemEffects {
 
                 });
             }
-        );
+        ));
 
     /***
      * The LOAD_FILTER action was a good idea: you would first LOAD the filter into the store.
@@ -215,9 +217,9 @@ export class FileItemEffects {
 
 
     @Effect()
-    replaceInExtract$ = this.actions$
-        .ofType(fileItemActions.REPLACE_BY_ITEM_ID)
-        .switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
+    replaceInExtract$ = this.actions$.pipe(
+        ofType(fileItemActions.REPLACE_BY_ITEM_ID),
+        switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
 
                 //  This action is triggered by the ubiguitous NameIdListBoxComponent
                 // as such, there are business behaviors that must be implemented here.
@@ -292,12 +294,12 @@ export class FileItemEffects {
                 });
 
             } //switchMap()
-        );
+        ));
 
     @Effect()
-    selectForExtractByFileItemId$ = this.actions$
-        .ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID)
-        .switchMap((action: fileItemActions.AddToExtractByItemIdAction) => {
+    selectForExtractByFileItemId$ = this.actions$.pipe(
+        ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID),
+        switchMap((action: fileItemActions.AddToExtractByItemIdAction) => {
 
                 // this is scary. The store is the single source of truth. The only way to get the fileItem for
                 // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
@@ -321,51 +323,51 @@ export class FileItemEffects {
                 })
 
             } //switchMap()
-        );
+        ));
 
 
     @Effect()
-    deSelectFromExtract$ = this.actions$
-        .ofType(fileItemActions.REMOVE_FROM_EXTRACT)
-        .map((action: fileItemActions.RemoveFromExtractAction) => {
+    deSelectFromExtract$ = this.actions$.pipe(
+        ofType(fileItemActions.REMOVE_FROM_EXTRACT),
+        map((action: fileItemActions.RemoveFromExtractAction) => {
                 return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
             }
-        );
+        ));
 
     @Effect()
-    deSelectFromExtractById$ = this.actions$
-        .ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID)
-        .map((action: fileItemActions.RemoveFromExractByItemIdAction) => {
+    deSelectFromExtractById$ = this.actions$.pipe(
+        ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID),
+        map((action: fileItemActions.RemoveFromExractByItemIdAction) => {
                 return new treeNodeActions.DeActivateFromExtractAction(action.payload);
             }
-        );
+        ));
 
 
     @Effect()
-    deselectAll$ = this.actions$
-        .ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT)
-        .map((action: fileItemActions.RemoveAllFromExtractAction) => {
+    deselectAll$ = this.actions$.pipe(
+        ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT),
+        map((action: fileItemActions.RemoveAllFromExtractAction) => {
                 return new treeNodeActions.ClearAll(action.payload);
             }
-        );
+        ));
 
     @Effect()
-    loadFileItem = this.actions$
-        .ofType(fileItemActions.LOAD_FILE_ITEM)
-        .map((action: fileItemActions.LoadFileItemtAction) => {
+    loadFileItem = this.actions$.pipe(
+        ofType(fileItemActions.LOAD_FILE_ITEM),
+        map((action: fileItemActions.LoadFileItemtAction) => {
                 if (action.payload.selectForExtract) {
                     return new fileItemActions.AddToExtractAction(action.payload.gobiiFileItem);
                 }
             }
-        );
+        ));
 
     @Effect()
-    setExtractType = this.actions$
-        .ofType(fileItemActions.SET_EXTRACT_TYPE)
-        .map((action: fileItemActions.SetExtractType) => {
+    setExtractType = this.actions$.pipe(
+        ofType(fileItemActions.SET_EXTRACT_TYPE),
+        map((action: fileItemActions.SetExtractType) => {
                 return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
             }
-        );
+        ));
 
 
     // @Effect()
