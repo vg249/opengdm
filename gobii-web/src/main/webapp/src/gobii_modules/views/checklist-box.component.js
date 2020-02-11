@@ -45,7 +45,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     this.typeControl = type_control_1.TypeControl;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
-                    this.differ = differs.find({}).create(null);
+                    this.differ = differs.find({}).create();
                 } // ctor
                 CheckListBoxComponent.prototype.ngOnInit = function () {
                     this.gobiiFileItems$ = this.fileItemService.getForFilter(this.filterParamName);

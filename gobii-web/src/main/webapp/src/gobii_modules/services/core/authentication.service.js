@@ -1,4 +1,4 @@
-System.register(["@angular/core", "rxjs", "rxjs/add/operator/map", "../../model/dto-header-auth", "../../model/http-values"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/common/http", "rxjs", "rxjs/add/operator/map", "../../model/dto-header-auth", "../../model/http-values"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,12 +9,15 @@ System.register(["@angular/core", "rxjs", "rxjs/add/operator/map", "../../model/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, rxjs_1, dto_header_auth_1, http_values_1, AuthenticationService;
+    var core_1, http_1, rxjs_1, dto_header_auth_1, http_values_1, AuthenticationService;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
             },
             function (rxjs_1_1) {
                 rxjs_1 = rxjs_1_1;
@@ -90,10 +93,9 @@ System.register(["@angular/core", "rxjs", "rxjs/add/operator/map", "../../model/
                     } // observer callback
                     ); // Observer.create()
                 }; // authenticate()
-                var _a;
                 AuthenticationService = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [typeof (_a = typeof Http !== "undefined" && Http) === "function" ? _a : Object])
+                    __metadata("design:paramtypes", [http_1.HttpClient])
                 ], AuthenticationService);
                 return AuthenticationService;
             }());

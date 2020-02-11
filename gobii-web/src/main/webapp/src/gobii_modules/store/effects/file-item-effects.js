@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "rxjs/add/operator/concat", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs", "@ngrx/store", "../../services/core/file-item-service", "../../model/file-item-param-names", "rxjs/add/operator/mergeMap", "../../services/core/filter-params-coll"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "rxjs/add/operator/concat", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs", "@ngrx/store", "../../services/core/file-item-service", "../../model/file-item-param-names", "rxjs/add/operator/mergeMap", "../../services/core/filter-params-coll", "rxjs/operators"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, type_extractor_item_1, rxjs_1, store_1, file_item_service_1, file_item_param_names_1, filter_params_coll_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, type_extractor_item_1, rxjs_1, store_1, file_item_service_1, file_item_param_names_1, filter_params_coll_1, operators_1, FileItemEffects;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -62,6 +62,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
+            },
+            function (operators_1_1) {
+                operators_1 = operators_1_1;
             }
         ],
         execute: function () {
@@ -166,20 +169,17 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
                     // accordance with how the nodes are defined by the tree service.
                     this.selectForExtract$ = this.actions$
-                        .ofType(fileItemActions.ADD_TO_EXTRACT)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.ADD_TO_EXTRACT), operators_1.map(function (action) {
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
-                    });
+                    }));
                     this.replaceSameByCompoundId$ = this.actions$
-                        .ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID), operators_1.map(function (action) {
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
-                    });
+                    }));
                     this.loadFileItemListWithFilter$ = this.actions$
-                        .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
-                        .switchMap(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER), operators_1.switchMap(function (action) {
                         return rxjs_1.Observable.create(function (observer) {
                             var addFilterSubmittedAction = new historyAction
                                 .AddFilterRetrieved({
@@ -201,7 +201,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         }).mergeMap(function (actions) {
                             return rxjs_1.Observable.of(actions);
                         });
-                    });
+                    }));
                     /***
                      * The LOAD_FILTER action was a good idea: you would first LOAD the filter into the store.
                      * There would then be an effect, as we have here, that would actually load the file items
@@ -283,8 +283,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     //         // }).map( fileItems => new fileItemActions.LoadFileItemListAction({gobiiFileItems: fileItems}));
                     //     });// switchMap()
                     this.replaceInExtract$ = this.actions$
-                        .ofType(fileItemActions.REPLACE_BY_ITEM_ID)
-                        .switchMap(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.REPLACE_BY_ITEM_ID), operators_1.switchMap(function (action) {
                         //  This action is triggered by the ubiguitous NameIdListBoxComponent
                         // as such, there are business behaviors that must be implemented here.
                         // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
@@ -340,10 +339,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             return rxjs_1.Observable.of(actions);
                         });
                     } //switchMap()
-                    );
+                    ));
                     this.selectForExtractByFileItemId$ = this.actions$
-                        .ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID)
-                        .switchMap(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID), operators_1.switchMap(function (action) {
                         // this is scary. The store is the single source of truth. The only way to get the fileItem for
                         // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
                         // select in an Observable.
@@ -362,34 +360,29 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             return new treeNodeActions.PlaceTreeNodeAction(gfi);
                         });
                     } //switchMap()
-                    );
+                    ));
                     this.deSelectFromExtract$ = this.actions$
-                        .ofType(fileItemActions.REMOVE_FROM_EXTRACT)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.REMOVE_FROM_EXTRACT), operators_1.map(function (action) {
                         return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
-                    });
+                    }));
                     this.deSelectFromExtractById$ = this.actions$
-                        .ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID), operators_1.map(function (action) {
                         return new treeNodeActions.DeActivateFromExtractAction(action.payload);
-                    });
+                    }));
                     this.deselectAll$ = this.actions$
-                        .ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT), operators_1.map(function (action) {
                         return new treeNodeActions.ClearAll(action.payload);
-                    });
+                    }));
                     this.loadFileItem = this.actions$
-                        .ofType(fileItemActions.LOAD_FILE_ITEM)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.LOAD_FILE_ITEM), operators_1.map(function (action) {
                         if (action.payload.selectForExtract) {
                             return new fileItemActions.AddToExtractAction(action.payload.gobiiFileItem);
                         }
-                    });
+                    }));
                     this.setExtractType = this.actions$
-                        .ofType(fileItemActions.SET_EXTRACT_TYPE)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(fileItemActions.SET_EXTRACT_TYPE), operators_1.map(function (action) {
                         return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
-                    });
+                    }));
                 }
                 __decorate([
                     effects_1.Effect(),

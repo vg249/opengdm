@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpValues} from "../../model/http-values";
-import {Http} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {AuthenticationService} from "./authentication.service";
 import {DtoRequestItem} from "./dto-request-item";
 import {DtoHeaderResponse} from "../../model/dto-header-response";
@@ -15,7 +15,7 @@ import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 export class DtoRequestService<T> {
 
 
-    constructor(private _http: Http,
+    constructor(private _http: HttpClient,
                 private _authenticationService: AuthenticationService) {
     }
 

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {Actions, Effect} from '@ngrx/effects';
+import {Actions, Effect, ofType} from '@ngrx/effects';
 import 'rxjs/add/operator/switchMap'
 import 'rxjs/add/observable/of';
 import "rxjs/add/operator/concat"
@@ -23,6 +23,7 @@ import {AddFilterRetrieved} from "../actions/history-action";
 import {FilterParamsColl} from "../../services/core/filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {PayloadFilter} from "../actions/action-payload-filter";
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class FileItemEffects {
@@ -74,64 +75,64 @@ export class FileItemEffects {
         // accordance with how the nodes are defined by the tree service.
     @Effect()
     selectForExtract$ = this.actions$
-        .ofType(fileItemActions.ADD_TO_EXTRACT)
-        .map((action: fileItemActions.AddToExtractAction) => {
-                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
-                return new treeNodeActions.PlaceTreeNodeAction(treeNode);
-            }
-        );
+        .pipe(ofType(fileItemActions.ADD_TO_EXTRACT),
+              map((action: fileItemActions.AddToExtractAction) => {
+                      let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
+                      return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+                  }
+              ));
 
     @Effect()
     replaceSameByCompoundId$ = this.actions$
-        .ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID)
-        .map((action: fileItemActions.ReplaceItemOfSameCompoundIdAction) => {
-                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
-                return new treeNodeActions.PlaceTreeNodeAction(treeNode);
-            }
-        );
+        .pipe(ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID),
+              map((action: fileItemActions.ReplaceItemOfSameCompoundIdAction) => {
+                      let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
+                      return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+                  }
+              ))
 
     @Effect()
     loadFileItemListWithFilter$ = this.actions$
-        .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
-        .switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
+        .pipe(ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER),
+              switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
 
 
-                return Observable.create(observer => {
+                      return Observable.create(observer => {
 
 
-                    let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
-                        .AddFilterRetrieved(
-                            {
-                                gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
-                                filterId: action.payload.filterId,
-                                filterValue: action.payload.filter.relatedEntityFilterValue,
-                                entityLasteUpdated: action.payload.filter.entityLasteUpdated
-                            }
-                        );
+                          let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
+                              .AddFilterRetrieved(
+                                  {
+                                      gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                                      filterId: action.payload.filterId,
+                                      filterValue: action.payload.filter.relatedEntityFilterValue,
+                                      entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                                  }
+                              );
 
 
-                    observer.next(addFilterSubmittedAction);
-                    let filterParams: FilterParams = this.filterParamsColl.getFilter(action.payload.filterId,
-                        action.payload.filter.gobiiExtractFilterType);
+                          observer.next(addFilterSubmittedAction);
+                          let filterParams: FilterParams = this.filterParamsColl.getFilter(action.payload.filterId,
+                              action.payload.filter.gobiiExtractFilterType);
 
 
-                    let gobiiFileItems: GobiiFileItem[] = action.payload.gobiiFileItems;
-                    let payloadFilter: PayloadFilter = action.payload.filter;
-                    if (filterParams && filterParams.getOnLoadFilteredItemsAction() !== null) {
+                          let gobiiFileItems: GobiiFileItem[] = action.payload.gobiiFileItems;
+                          let payloadFilter: PayloadFilter = action.payload.filter;
+                          if (filterParams && filterParams.getOnLoadFilteredItemsAction() !== null) {
 
-                        let action = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, payloadFilter);
-                        if (action) {
-                            observer.next(action);
-                        }
-                    }
+                              let action = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, payloadFilter);
+                              if (action) {
+                                  observer.next(action);
+                              }
+                          }
 
-                }).mergeMap(actions => {
+                      }).mergeMap(actions => {
 
-                    return Observable.of(actions);
+                          return Observable.of(actions);
 
-                });
-            }
-        );
+                      });
+                  }
+              ));
 
     /***
      * The LOAD_FILTER action was a good idea: you would first LOAD the filter into the store.
@@ -217,156 +218,156 @@ export class FileItemEffects {
 
     @Effect()
     replaceInExtract$ = this.actions$
-        .ofType(fileItemActions.REPLACE_BY_ITEM_ID)
-        .switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
+        .pipe(ofType(fileItemActions.REPLACE_BY_ITEM_ID),
+              switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
 
-                //  This action is triggered by the ubiguitous NameIdListBoxComponent
-                // as such, there are business behaviors that must be implemented here.
-                // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
-                // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
-                // There is a flaw here: this action assigns a filter type for further processing baseed on
-                // entity name; but that's incorrect: not all replace actions should result in further processing
-                // -- only the ones involved with hierarchical queries do. The ReplaceInExtractByItemIdAction
-                // should include the filterId and then delegate this part of the processing to FileItemService,
-                // which specializes in the filter types.
-                return Observable.create(observer => {
+                      //  This action is triggered by the ubiguitous NameIdListBoxComponent
+                      // as such, there are business behaviors that must be implemented here.
+                      // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
+                      // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
+                      // There is a flaw here: this action assigns a filter type for further processing baseed on
+                      // entity name; but that's incorrect: not all replace actions should result in further processing
+                      // -- only the ones involved with hierarchical queries do. The ReplaceInExtractByItemIdAction
+                      // should include the filterId and then delegate this part of the processing to FileItemService,
+                      // which specializes in the filter types.
+                      return Observable.create(observer => {
 
-                    let fileItemToReplaceWithUniqueId: string = action.payload.itemIdToReplaceItWith;
-                    let fileItemCurrentlyInExtractUniqueId: string = action.payload.itemIdCurrentlyInExtract;
-                    let filterParamName: FilterParamNames = action.payload.filterParamName;
-                    this.store.select(fromRoot.getAllFileItems)
-                        .subscribe(all => {
-                                let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
+                          let fileItemToReplaceWithUniqueId: string = action.payload.itemIdToReplaceItWith;
+                          let fileItemCurrentlyInExtractUniqueId: string = action.payload.itemIdCurrentlyInExtract;
+                          let filterParamName: FilterParamNames = action.payload.filterParamName;
+                          this.store.select(fromRoot.getAllFileItems)
+                              .subscribe(all => {
+                                      let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
 
-                                // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
-                                //If item ID is 0, is a label item, and so for filtering purposes it's null
-                                let filterValue: string = ( fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
-                                if (filterParamName !== FilterParamNames.UNKNOWN ) {
+                                      // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
+                                      //If item ID is 0, is a label item, and so for filtering purposes it's null
+                                      let filterValue: string = ( fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
+                                      if (filterParamName !== FilterParamNames.UNKNOWN ) {
 
-                                    this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType,
-                                        filterParamName,
-                                        filterValue).subscribe(loadFileItemListAction => {
+                                          this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType,
+                                              filterParamName,
+                                              filterValue).subscribe(loadFileItemListAction => {
 
-                                            if( loadFileItemListAction ) {
-                                                if (loadFileItemListAction) {
-                                                    observer.next(loadFileItemListAction);
-                                                }
-                                            }
-                                        },
-                                        error => {
-                                            this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-                                        }
-                                    );
+                                                  if( loadFileItemListAction ) {
+                                                      if (loadFileItemListAction) {
+                                                          observer.next(loadFileItemListAction);
+                                                      }
+                                                  }
+                                              },
+                                              error => {
+                                                  this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                                              }
+                                          );
 
 
-                                } // if we had a filter to dispatch
+                                      } // if we had a filter to dispatch
 
-                                // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
-                                if (fileItemToReplaceWith.getIsExtractCriterion()) {
-                                    if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
-                                        let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
-                                        observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                      // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
+                                      if (fileItemToReplaceWith.getIsExtractCriterion()) {
+                                          if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
+                                              let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                              observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
 
-                                    } else {
-                                        observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
-                                    }
-                                }
+                                          } else {
+                                              observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                          }
+                                      }
 
-                            },
-                            error => {
-                                this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-                            }
-                        ).unsubscribe(); // fromRoot.getAllFileItems()
+                                  },
+                                  error => {
+                                      this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                                  }
+                              ).unsubscribe(); // fromRoot.getAllFileItems()
 
-                }).mergeMap(actions => {
+                      }).mergeMap(actions => {
 
-                    // I think that if the loadWithFilterParams() returned an observable, such that it was
-                    // "finished" after everything was dispatched, this would work. Or something like it
-                    // something like this might work: https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/expand.md
-                    // In other words, loadWithFilterParams has to really return an observable of an array of GobiiFileItems,
-                    // such that the load action would actually be done _here_
-                    // we need to police every other place where loadWithFilterParams is used (if anywhere):
-                    // those will have to drive effects, as well.
-                    // the call to
+                          // I think that if the loadWithFilterParams() returned an observable, such that it was
+                          // "finished" after everything was dispatched, this would work. Or something like it
+                          // something like this might work: https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/expand.md
+                          // In other words, loadWithFilterParams has to really return an observable of an array of GobiiFileItems,
+                          // such that the load action would actually be done _here_
+                          // we need to police every other place where loadWithFilterParams is used (if anywhere):
+                          // those will have to drive effects, as well.
+                          // the call to
 
-                    return Observable.of(actions);
-                });
+                          return Observable.of(actions);
+                      });
 
-            } //switchMap()
-        );
+                  } //switchMap()
+              ));
 
     @Effect()
     selectForExtractByFileItemId$ = this.actions$
-        .ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID)
-        .switchMap((action: fileItemActions.AddToExtractByItemIdAction) => {
+        .pipe(ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID),
+              switchMap((action: fileItemActions.AddToExtractByItemIdAction) => {
 
-                // this is scary. The store is the single source of truth. The only way to get the fileItem for
-                // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
-                // select in an Observable.
-                return Observable.create(observer => {
+                      // this is scary. The store is the single source of truth. The only way to get the fileItem for
+                      // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
+                      // select in an Observable.
+                      return Observable.create(observer => {
 
-                    let fileItemUniqueId: String = action.payload;
-                    this.store.select(fromRoot.getAllFileItems)
-                        .subscribe(all => {
-                                let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
-                                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
-                                observer.next(treeNode);
-                                observer.complete();
-                            },
-                            error => {
-                                this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-                            }).unsubscribe();
+                          let fileItemUniqueId: String = action.payload;
+                          this.store.select(fromRoot.getAllFileItems)
+                              .subscribe(all => {
+                                      let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
+                                      let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                                      observer.next(treeNode);
+                                      observer.complete();
+                                  },
+                                  error => {
+                                      this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                                  }).unsubscribe();
 
-                }).map(gfi => {
-                    return new treeNodeActions.PlaceTreeNodeAction(gfi)
-                })
+                      }).map(gfi => {
+                          return new treeNodeActions.PlaceTreeNodeAction(gfi)
+                      })
 
-            } //switchMap()
-        );
+                  } //switchMap()
+              ));
 
 
     @Effect()
     deSelectFromExtract$ = this.actions$
-        .ofType(fileItemActions.REMOVE_FROM_EXTRACT)
-        .map((action: fileItemActions.RemoveFromExtractAction) => {
-                return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
-            }
-        );
+        .pipe(ofType(fileItemActions.REMOVE_FROM_EXTRACT),
+              map((action: fileItemActions.RemoveFromExtractAction) => {
+                      return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
+                  }
+              ));
 
     @Effect()
     deSelectFromExtractById$ = this.actions$
-        .ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID)
-        .map((action: fileItemActions.RemoveFromExractByItemIdAction) => {
-                return new treeNodeActions.DeActivateFromExtractAction(action.payload);
-            }
-        );
+        .pipe(ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID),
+              map((action: fileItemActions.RemoveFromExractByItemIdAction) => {
+                      return new treeNodeActions.DeActivateFromExtractAction(action.payload);
+                  }
+              ));
 
 
     @Effect()
     deselectAll$ = this.actions$
-        .ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT)
-        .map((action: fileItemActions.RemoveAllFromExtractAction) => {
-                return new treeNodeActions.ClearAll(action.payload);
-            }
-        );
+        .pipe(ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT),
+              map((action: fileItemActions.RemoveAllFromExtractAction) => {
+                      return new treeNodeActions.ClearAll(action.payload);
+                  }
+              ));
 
     @Effect()
     loadFileItem = this.actions$
-        .ofType(fileItemActions.LOAD_FILE_ITEM)
-        .map((action: fileItemActions.LoadFileItemtAction) => {
-                if (action.payload.selectForExtract) {
-                    return new fileItemActions.AddToExtractAction(action.payload.gobiiFileItem);
-                }
-            }
-        );
+        .pipe(ofType(fileItemActions.LOAD_FILE_ITEM),
+              map((action: fileItemActions.LoadFileItemtAction) => {
+                      if (action.payload.selectForExtract) {
+                          return new fileItemActions.AddToExtractAction(action.payload.gobiiFileItem);
+                      }
+                  }
+              ));
 
     @Effect()
     setExtractType = this.actions$
-        .ofType(fileItemActions.SET_EXTRACT_TYPE)
-        .map((action: fileItemActions.SetExtractType) => {
-                return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
-            }
-        );
+        .pipe(ofType(fileItemActions.SET_EXTRACT_TYPE),
+              map((action: fileItemActions.SetExtractType) => {
+                      return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
+                  }
+              ));
 
 
     // @Effect()

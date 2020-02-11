@@ -126,10 +126,10 @@ System.register(["@angular/core", "../../model/http-values", "@angular/common/ht
                         }
                     }); // observable
                 };
-                var _a;
                 DtoRequestService = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [typeof (_a = typeof http_1.Http !== "undefined" && http_1.Http) === "function" ? _a : Object, authentication_service_1.AuthenticationService])
+                    __metadata("design:paramtypes", [http_1.HttpClient,
+                        authentication_service_1.AuthenticationService])
                 ], DtoRequestService);
                 return DtoRequestService;
             }());

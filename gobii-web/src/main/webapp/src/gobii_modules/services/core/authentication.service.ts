@@ -11,7 +11,7 @@ import {HttpValues} from "../../model/http-values";
 export class AuthenticationService {
 
 
-    constructor(private _http: Http) {
+    constructor(private _http: HttpClient) {
     }
 
     private defaultUser: string = 'USER_READER';

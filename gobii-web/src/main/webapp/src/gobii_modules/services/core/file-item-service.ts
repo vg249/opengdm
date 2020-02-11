@@ -18,7 +18,6 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import {Observable} from "rxjs";
-import { of } from 'rxjs/observable/of';
 import "rxjs/add/operator/expand"
 import "rxjs/add/operator/concat"
 import {EntityStats} from "../../model/entity-stats";

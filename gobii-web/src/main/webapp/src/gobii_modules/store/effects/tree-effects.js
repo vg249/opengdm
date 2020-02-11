@@ -1,4 +1,4 @@
-System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/operator/exhaustMap", "rxjs/add/operator/map", "rxjs/add/operator/take", "@angular/core", "@angular/router", "@ngrx/effects", "../../services/core/tree-structure-service", "../actions/treenode-action"], function (exports_1, context_1) {
+System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/operator/exhaustMap", "rxjs/add/operator/map", "rxjs/add/operator/take", "@angular/core", "@angular/router", "@ngrx/effects", "rxjs/operators", "../../services/core/tree-structure-service", "../actions/treenode-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, router_1, effects_1, tree_structure_service_1, treeNodeActions, TreeEffects;
+    var core_1, router_1, effects_1, operators_1, tree_structure_service_1, treeNodeActions, TreeEffects;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -32,6 +32,9 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
             function (effects_1_1) {
                 effects_1 = effects_1_1;
             },
+            function (operators_1_1) {
+                operators_1 = operators_1_1;
+            },
             function (tree_structure_service_1_1) {
                 tree_structure_service_1 = tree_structure_service_1_1;
             },
@@ -47,21 +50,18 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                     this.treeStructureService = treeStructureService;
                     this.router = router;
                     this.initTreeNodes$ = this.actions$
-                        .ofType(treeNodeActions.INIT)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(treeNodeActions.INIT), operators_1.map(function (action) {
                         var initialTreeNodes = _this.treeStructureService.getInitialTree();
                         return new treeNodeActions.InitTree(initialTreeNodes);
-                    });
+                    }));
                     this.placeNodeInTree$ = this.actions$
-                        .ofType(treeNodeActions.PLACE_TREE_NODE)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(treeNodeActions.PLACE_TREE_NODE), operators_1.map(function (action) {
                         return new treeNodeActions.ActivateForExtractAction(action.payload.getId());
-                    });
+                    }));
                     this.clearAll$ = this.actions$
-                        .ofType(treeNodeActions.CLEAR_ALL)
-                        .map(function (action) {
+                        .pipe(effects_1.ofType(treeNodeActions.CLEAR_ALL), operators_1.map(function (action) {
                         return new treeNodeActions.InitAction();
-                    });
+                    }));
                 }
                 __decorate([
                     effects_1.Effect(),
@@ -103,7 +103,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                 ) {}
             }
             
-            * */ 
+            * */
         }
     };
 });

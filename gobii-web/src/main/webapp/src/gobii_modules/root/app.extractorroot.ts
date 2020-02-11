@@ -338,10 +338,10 @@ export class ExtractorRoot implements OnInit {
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
     public typeControl:any = TypeControl;
 
-    selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
+    selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat) as Observable<GobiiFileItem>;
 
 
-    public messages$: Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
+    public messages$: Observable<string[]> = this.store.select(fromRoot.getStatusMessages) as Observable<string[]>;
 
 
     // ************************************************************************
@@ -676,4 +676,3 @@ export class ExtractorRoot implements OnInit {
 
 
 }
-
