@@ -29,6 +29,7 @@
     "primeng": "^9.0.0-rc.4",
     "reselect": "^4.0.0",
     "rxjs": "^6.5.4",
+    "systemjs": "^6.2.2",
     "tslib": "^1.10.0",
     "typescript": "^3.7.5",
     "zone.js": "^0.9.1"

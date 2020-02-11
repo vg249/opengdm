@@ -4482,8 +4482,12 @@
         "open" : {
           "type" : "boolean"
         },
-        "readable" : {
-          "type" : "boolean"
+        "url" : {
+          "type" : "string",
+          "format" : "url"
+        },
+        "file" : {
+          "type" : "file"
         },
         "uri" : {
           "type" : "string",
@@ -4492,12 +4496,8 @@
         "filename" : {
           "type" : "string"
         },
-        "url" : {
-          "type" : "string",
-          "format" : "url"
-        },
-        "file" : {
-          "type" : "file"
+        "readable" : {
+          "type" : "boolean"
         }
       }
     },
