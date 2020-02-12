@@ -6,22 +6,22 @@
 
 
     <!--<link rel="stylesheet" href="js/node_modules/bootstrap/dist/css/bootstrap.min.css">-->
-    <link rel="stylesheet" href="js/node_modules/bootswatch/cerulean/bootstrap.min.css">
-    <link rel="stylesheet" href="css/extractor-ui.css">
+    <!-- <link rel="stylesheet" href="js/node_modules/bootswatch/cerulean/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="app/css/extractor-ui.css">
     <!--<link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/themes/cupertino/theme.css"/>-->
     <!--<link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/themes/kasper/theme.css"/>-->
     <!--<link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/themes/ludvig/theme.css"/>-->
-    <link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/themes/omega/theme.css"/>
-    <link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/primeng.css"/>
-    <link rel="stylesheet" type="text/css" href="js/node_modules/font-awesome/css/font-awesome.min.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/themes/omega/theme.css"/> -->
+    <!-- <link rel="stylesheet" type="text/css" href="js/node_modules/primeng/resources/primeng.css"/> -->
+    <!-- <link rel="stylesheet" type="text/css" href="js/node_modules/font-awesome/css/font-awesome.min.css"/> -->
 
     <!-- 1. Load libraries -->
     <!-- Polyfill(s) for older browsers -->
-    <script src="js/node_modules/core-js/client/shim.min.js"></script>
-    <script src="js/node_modules/zone.js/dist/zone.js"></script>
-    <script src="js/node_modules/reflect-metadata/Reflect.js"></script>
-    <script src="js/node_modules/systemjs/dist/system.src.js"></script>
-    <script src="js/node_modules/rxjs/bundles/Rx.js"></script>
+    <!-- <script src="node_modules/core-js/client/shim.min.js"></script> -->
+    <!-- <script src="node_modules/zone.js/dist/zone.js"></script> -->
+    <!-- <script src="node_modules/reflect-metadata/Reflect.js"></script> -->
+    <script src="node_modules/systemjs/dist/system.js"></script>
+    <!-- <script src="node_modules/rxjs/bundles/rxjs.umd.min.js"></script> -->
 
     <!-- 2. Load Modules -->
     <!-- The SystemJs bit below requires (no pun intended) some explanation.
@@ -38,132 +38,134 @@
      the package key is not taken merely as a reference for the package, but "browser" is appended to the pack specified in map section.
      Thus, in order to create the package name we need, and also direct SystemJS to the correct files in the bundles directory, we need
      to use a relative path: '../bundles/animations-browser.umd.js'-->
-    <script>
-        System.config({
-
-            packages: {
-                '@angular/core': {defaultExtension: 'js', main: 'bundles/core.umd.js'},
-                '@angular/common': {defaultExtension: 'js', main: 'bundles/common.umd.js'},
-                '@angular/compiler': {defaultExtension: 'js', main: 'bundles/compiler.umd.js'},
-                '@angular/router': {defaultExtension: 'js', main: 'bundles/router.umd.js'},
-                '@angular/http': {defaultExtension: 'js', main: 'bundles/http.umd.js'},
-                '@angular/animations': {defaultExtension: 'js', main: 'bundles/animations.umd.js'},
-                '@angular/animations/browser': {defaultExtension: 'js', main: '../bundles/animations-browser.umd.js'},
-                '@angular/platform-browser': {defaultExtension: 'js', main: 'bundles/platform-browser.umd.js'},
-                '@angular/platform-browser/animations': {
-                    defaultExtension: 'js',
-                    main: '../bundles/platform-browser-animations.umd.js'
-                },
-                '@angular/platform-browser-dynamic': {
-                    defaultExtension: 'js',
-                    main: 'bundles/platform-browser-dynamic.umd.js'
-                },
-                '@angular/forms': {defaultExtension: 'js', main: 'bundles/forms.umd.js'},
-                'js/gobii_modules/root': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/views': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/services/app': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/services/core': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/model': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/store/reducers': {
-                    format: 'register',
-                    defaultExtension: 'js',
-                    main: 'index.js'
-                },
-                'js/gobii_modules/store/actions': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/store/effects': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'js/gobii_modules/environments': {
-                    format: 'register',
-                    defaultExtension: 'js'
-                },
-                'rxjs': {defaultExtension: 'js'},
-                'ng2-uploader': {main: './ng2-uploader.js', defaultExtension: 'js'},
-                'ng2-file-upload': {
-                    main: './ng2-file-upload.js',
-                    defaultExtension: 'js'
-                },
-                primeng: {
-                    defaultExtension: 'js'
-                },
-                '@ngrx/store': {
-                    defaultExtension: 'js',
-                    main:'bundles/store.umd.js'
-                },
-                '@ngrx/db': {
-                    defaultExtension: 'js',
-                    main:'bundles/db.umd.js'
-                },
-                '@ngrx/effects': {
-                    defaultExtension: 'js',
-                    main:'bundles/effects.umd.js'
-                },
-                '@ngrx/router-store': {
-                    defaultExtension: 'js',
-                    main:'bundles/router-store.umd.js'
-                },
-                '@ngrx/store-devtools': {
-                    defaultExtension: 'js',
-                    main:'bundles/store-devtools.umd.js'
-                },
-                'reselect': {
-                    defaultExtension: 'js',
-                    main:'dist/reselect.js'
-                },
-                'ngrx-store-freeze': {
-                    defaultExtension: 'js',
-                    main:'dist/index.js'
-                },
-                'deep-freeze-strict': {
-                    defaultExtension: 'js',
-                    main:'index.js'
-                }
+    <script type="systemjs-packagemap">
+    {
+        'packages': {
+            '@angular/core': {defaultExtension: 'js', main: 'bundles/core.umd.js'},
+            '@angular/common': {defaultExtension: 'js', main: 'bundles/common.umd.js'},
+            '@angular/compiler': {defaultExtension: 'js', main: 'bundles/compiler.umd.js'},
+            '@angular/router': {defaultExtension: 'js', main: 'bundles/router.umd.js'},
+            '@angular/http': {defaultExtension: 'js', main: 'bundles/http.umd.js'},
+            '@angular/animations': {defaultExtension: 'js', main: 'bundles/animations.umd.js'},
+            '@angular/animations/browser': {defaultExtension: 'js', main: '../bundles/animations-browser.umd.js'},
+            '@angular/platform-browser': {defaultExtension: 'js', main: 'bundles/platform-browser.umd.js'},
+            '@angular/platform-browser/animations': {
+                defaultExtension: 'js',
+                main: '../bundles/platform-browser-animations.umd.js'
             },
-            map: {
-                '@angular/core': 'js/node_modules/@angular/core',
-                '@angular/common': 'js/node_modules/@angular/common',
-                '@angular/compiler': 'js/node_modules/@angular/compiler',
-                '@angular/router': 'js/node_modules/@angular/router',
-                '@angular/router-deprecated': 'js/node_modules/@angular/router-deprecated',
-                '@angular/http': 'js/node_modules/@angular/http',
-                '@angular/animations': 'js/node_modules/@angular/animations',
-                '@angular/platform-browser': 'js/node_modules/@angular/platform-browser',
-                '@angular/platform-browser-dynamic': 'js/node_modules/@angular/platform-browser-dynamic',
-                '@angular/forms': 'js/node_modules/@angular/forms',
-                'rxjs': 'js/node_modules/rxjs',
-                'ng2-uploader': 'js/node_modules/ng2-uploader',
-                'ng2-file-upload': 'js/node_modules/ng2-file-upload',
-                'primeng': 'js/node_modules/primeng',
-                '@ngrx/db': 'js/node_modules/@ngrx/db',
-                '@ngrx/effects': 'js/node_modules/@ngrx/effects',
-                '@ngrx/router-store': 'js/node_modules/@ngrx/router-store',
-                '@ngrx/store': 'js/node_modules/@ngrx/store',
-                '@ngrx/store-devtools': 'js/node_modules/@ngrx/store-devtools',
-                'deep-freeze-strict': 'js/node_modules/deep-freeze-strict',
-                'ngrx-store-freeze': 'js/node_modules/ngrx-store-freeze',
-                'reselect': 'js/node_modules/reselect',
+            '@angular/platform-browser-dynamic': {
+                defaultExtension: 'js',
+                main: 'bundles/platform-browser-dynamic.umd.js'
+            },
+            '@angular/forms': {defaultExtension: 'js', main: 'bundles/forms.umd.js'},
+            'app/js/root': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/views': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/services/app': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/services/core': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/model': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/store/reducers': {
+                format: 'register',
+                defaultExtension: 'js',
+                main: 'index.js'
+            },
+            'app/js/store/actions': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/store/effects': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'app/js/environments': {
+                format: 'register',
+                defaultExtension: 'js'
+            },
+            'rxjs': {defaultExtension: 'js'},
+            'ng2-uploader': {main: './ng2-uploader.js', defaultExtension: 'js'},
+            'ng2-file-upload': {
+                main: './ng2-file-upload.js',
+                defaultExtension: 'js'
+            },
+            primeng: {
+                defaultExtension: 'js'
+            },
+            '@ngrx/store': {
+                defaultExtension: 'js',
+                main:'bundles/store.umd.js'
+            },
+            '@ngrx/db': {
+                defaultExtension: 'js',
+                main:'bundles/db.umd.js'
+            },
+            '@ngrx/effects': {
+                defaultExtension: 'js',
+                main:'bundles/effects.umd.js'
+            },
+            '@ngrx/router-store': {
+                defaultExtension: 'js',
+                main:'bundles/router-store.umd.js'
+            },
+            '@ngrx/store-devtools': {
+                defaultExtension: 'js',
+                main:'bundles/store-devtools.umd.js'
+            },
+            'reselect': {
+                defaultExtension: 'js',
+                main:'dist/reselect.js'
+            },
+            'ngrx-store-freeze': {
+                defaultExtension: 'js',
+                main:'dist/index.js'
+            },
+            'deep-freeze-strict': {
+                defaultExtension: 'js',
+                main:'index.js'
             }
-        });
-        System.import('js/gobii_modules/root/main').then(null, console.error.bind(console));
+        },
+        'map': {
+            'main': 'app/js/root/',
+            '@angular/core': 'app/js/node_modules/@angular/core',
+            '@angular/common': 'app/js/node_modules/@angular/common',
+            '@angular/compiler': 'app/js/node_modules/@angular/compiler',
+            '@angular/router': 'app/js/node_modules/@angular/router',
+            '@angular/router-deprecated': 'app/js/node_modules/@angular/router-deprecated',
+            '@angular/http': 'app/js/node_modules/@angular/http',
+            '@angular/animations': 'app/js/node_modules/@angular/animations',
+            '@angular/platform-browser': 'app/js/node_modules/@angular/platform-browser',
+            '@angular/platform-browser-dynamic': 'app/js/node_modules/@angular/platform-browser-dynamic',
+            '@angular/forms': 'app/js/node_modules/@angular/forms',
+            'rxjs': 'app/js/node_modules/rxjs',
+            'ng2-uploader': 'app/js/node_modules/ng2-uploader',
+            'ng2-file-upload': 'app/js/node_modules/ng2-file-upload',
+            'primeng': 'app/js/node_modules/primeng',
+            '@ngrx/db': 'app/js/node_modules/@ngrx/db',
+            '@ngrx/effects': 'app/js/node_modules/@ngrx/effects',
+            '@ngrx/router-store': 'app/js/node_modules/@ngrx/router-store',
+            '@ngrx/store': 'app/js/node_modules/@ngrx/store',
+            '@ngrx/store-devtools': 'app/js/node_modules/@ngrx/store-devtools',
+            'deep-freeze-strict': 'app/js/node_modules/deep-freeze-strict',
+            'ngrx-store-freeze': 'app/js/node_modules/ngrx-store-freeze',
+            'reselect': 'app/js/node_modules/reselect',
+        }
+    }
+    </script>
+    <script>
+      System.import('/app/js/main.js').then(null, console.error.bind(console));
     </script>
 
 

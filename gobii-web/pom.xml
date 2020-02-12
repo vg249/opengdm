@@ -396,6 +396,7 @@
                         <configuration>
                             <nodeVersion>${node-version}</nodeVersion>
                             <npmVersion>${npm-version}</npmVersion>
+                            <workingDirectory>src/main/webapp</workingDirectory>
                         </configuration>
                     </execution>
 
@@ -413,6 +414,7 @@
                             "install", so unless you need to run some other npm command,
                             you can remove this whole <configuration> section.
                             -->
+                            <workingDirectory>src/main/webapp</workingDirectory>
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
@@ -426,6 +428,7 @@
                         <configuration>
                             <skip>${maven.exec.skip}</skip>
                             <arguments>run build</arguments>
+                            <workingDirectory>src/main/webapp</workingDirectory>
                         </configuration>
                     </execution>
 
@@ -468,93 +471,6 @@
                             </resources>
                         </configuration>
                     </execution>
-
-                    <execution>
-                        <id>prepare-package-nodemodules</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Copy all generated javascript files into the final directory structure -->
-                            <!--<outputDirectory>${project.build.outputDirectory}/${project.artifactId}</outputDirectory>-->
-                            <outputDirectory>${project.build.directory}/${project.build.finalName}/js/node_modules
-                            </outputDirectory>
-                            <resources>
-                                <resource>
-                                    <!-- Take the node-module code from where npm puts it -->
-                                    <directory>${project.basedir}/node_modules</directory>
-                                    <includes>
-                                        <!-- *************************************************-->
-                                        <!-- packageed javascript libraries to support angular2-->
-                                        <!-- ***** GROUP 1: supporting libraries -->
-                                        <include>es6-shim/es6-shim.min.js</include>
-                                        <include>systemjs/dist/system-polyfills.js</include>
-                                        <include>systemjs/dist/system.src.js</include>
-                                        <include>rxjs/bundles/Rx.js</include>
-                                        <include>bootstrap/dist/css/bootstrap.min.css</include>
-                                        <include>bootswatch/cerulean/bootstrap.min.css</include>
-                                        <include>bootswatch/cosmo/bootstrap.min.css</include>
-                                        <include>bootswatch/cyborg/bootstrap.min.css</include>
-                                        <include>bootswatch/darkly/bootstrap.min.css</include>
-                                        <include>bootswatch/flatly/bootstrap.min.css</include>
-                                        <include>bootswatch/fonts/bootstrap.min.css</include>
-                                        <include>bootswatch/journal/bootstrap.min.css</include>
-                                        <include>bootswatch/lumen/bootstrap.min.css</include>
-                                        <include>bootswatch/paper/bootstrap.min.css</include>
-                                        <include>bootswatch/readable/bootstrap.min.css</include>
-                                        <include>bootswatch/sandstone/bootstrap.min.css</include>
-                                        <include>bootswatch/simplex/bootstrap.min.css</include>
-                                        <include>bootswatch/slate/bootstrap.min.css</include>
-                                        <include>bootswatch/spacelab/bootstrap.min.css</include>
-                                        <include>bootswatch/superhero/bootstrap.min.css</include>
-                                        <include>bootswatch/united/bootstrap.min.css</include>
-                                        <include>bootswatch/yeti/bootstrap.min.css</include>
-                                        <include>zone.js/dist/zone.js</include>
-                                        <include>core-js/client/shim.min.js</include>
-                                        <include>reflect-metadata/Reflect.js</include>
-                                        <include>rxjs/bundles/Rx.js</include>
-                                        <include>rxjs/**</include>
-                                        <include>ng2-uploader/**</include>
-                                        <include>ng2-file-upload/**</include>
-                                        <include>primeng/**</include>
-                                        <include>font-awesome/css/font-awesome.min.css</include>
-                                        <include>font-awesome/fonts/**</include>
-
-
-                                        <!-- ***** GROUP 2: angular bundle files-->
-                                        <include>@angular/core/bundles/core.umd.js</include>
-                                        <include>@angular/common/bundles/common.umd.js</include>
-                                        <include>@angular/compiler/bundles/compiler.umd.js</include>
-                                        <include>@angular/router/bundles/router.umd.js</include>
-                                        <include>@angular/http/bundles/http.umd.js</include>
-                                        <include>@angular/platform-browser/bundles/platform-browser.umd.js</include>
-                                        <include>@angular/platform-browser/bundles/platform-browser-animations.umd.js
-                                        </include>
-                                        <include>
-                                            @angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js
-                                        </include>
-                                        <include>@angular/forms/bundles/forms.umd.js</include>
-                                        <include>@angular/animations/bundles/animations.umd.js</include>
-                                        <include>@angular/animations/bundles/animations-browser.umd.js</include>
-                                        <include>@angular/animations/bundles/animations-browser.umd.js</include>
-
-                                        <!-- ***** GROUP 3: angular bundle files-->
-                                        <include>deep-freeze-strict/index.js</include>
-                                        <include>ngrx-store-freeze/dist/index.js</include>
-                                        <include>reselect/dist/reselect.js</include>
-                                        <include>@ngrx/db/bundles/db.umd.js</include>
-                                        <include>@ngrx/effects/bundles/effects.umd.js</include>
-                                        <include>@ngrx/router-store/bundles/router-store.umd.js</include>
-                                        <include>@ngrx/store/bundles/store.umd.js</include>
-                                        <include>@ngrx/store-devtools/bundles/store-devtools.umd.js</include>
-                                    </includes>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
 
                     <execution>
                         <id>prepare-package-finaldocs</id>

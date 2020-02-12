@@ -18,8 +18,6 @@ gobii-sampletracking-dao/target
 .classpath
 .project
 *.log
-gobii-web/src/main/ts/*.js
-gobii-web/src/main/ts/*.map
 gobii-web/src/main/webapp/js/gobii_modules/**/*.js
 gobii-web/src/main/webapp/js/gobii_modules/**/*.js.map
 gobii-web/src/main/ts/.baseDir.ts
@@ -35,3 +33,4 @@ gobii-client/gobii-web.xml
 gobii-web/package-lock.json
 
 gobii-web/src/main/resources/docs/generated/**
+gobii-web/src/main/webapp/js/node_modules/*
