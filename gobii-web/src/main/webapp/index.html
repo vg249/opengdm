@@ -21,7 +21,7 @@
     <script src="js/node_modules/zone.js/dist/zone.js"></script>
     <script src="js/node_modules/reflect-metadata/Reflect.js"></script>
     <script src="js/node_modules/systemjs/dist/system.src.js"></script>
-    <script src="js/node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="js/node_modules/rxjs/Rx.js"></script>
 
     <!-- 2. Load Modules -->
     <!-- The SystemJs bit below requires (no pun intended) some explanation.
@@ -96,12 +96,17 @@
                     format: 'register',
                     defaultExtension: 'js'
                 },
-                'rxjs': {defaultExtension: 'js'},
                 'ng2-uploader': {main: './ng2-uploader.js', defaultExtension: 'js'},
                 'ng2-file-upload': {
                     main: './ng2-file-upload.js',
                     defaultExtension: 'js'
                 },
+                'rxjs': {main: 'index.js', defaultExtension: 'js' },
+                'rxjs/fetch': {main: 'index.js', defaultExtension: 'js' },
+                'rxjs/operators': {main: 'index.js', defaultExtension: 'js' },
+                'rxjs/testing': {main: 'index.js', defaultExtension: 'js' },
+                'rxjs/webSocket': {main: 'index.js', defaultExtension: 'js' },
+                'rxjs-compat': {defaultExtension: 'js'},
                 primeng: {
                     defaultExtension: 'js'
                 },
@@ -150,6 +155,8 @@
                 '@angular/platform-browser-dynamic': 'js/node_modules/@angular/platform-browser-dynamic',
                 '@angular/forms': 'js/node_modules/@angular/forms',
                 'rxjs': 'js/node_modules/rxjs',
+                'rxjs-compat':'js/node_modules/rxjs-compat',
+                'rxjs-compat/Subject':'js/node_modules/rxjs-compat/Subject',
                 'ng2-uploader': 'js/node_modules/ng2-uploader',
                 'ng2-file-upload': 'js/node_modules/ng2-file-upload',
                 'primeng': 'js/node_modules/primeng',
