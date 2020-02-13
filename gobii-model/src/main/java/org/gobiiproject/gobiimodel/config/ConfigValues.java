@@ -192,6 +192,9 @@ class ConfigValues {
     @Element(required = false)
     private boolean isProvidesBackend = true;
 
+    @Element(required = false)
+    private String emailSvrFrom;
+
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
     }
@@ -670,5 +673,12 @@ class ConfigValues {
 
     public void setGlobalServersByServerType(Map<ServerType, ServerConfig> globalServersByServerType) {
         this.globalServersByServerType = globalServersByServerType;
+    }
+
+    public String getEmailSvrFrom(){
+        return this.emailSvrFrom;
+    }
+    public void setEmailSvrFrom(String emailSvrFrom){
+        this.emailSvrFrom = emailSvrFrom;
     }
 }
