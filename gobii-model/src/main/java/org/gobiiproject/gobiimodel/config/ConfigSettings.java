@@ -403,4 +403,11 @@ public class ConfigSettings {
 
     public void setEmailAuth(String auth){ this.configValues.setEmailAuthType(auth);}
 
+    public String getEmailSvrFrom(){
+        return this.configValues.getEmailSvrFrom();
+    }
+    public void setEmailSvrFrom(String emailSvrFrom){
+        this.configValues.setEmailSvrFrom(emailSvrFrom);
+    }
+
 }
