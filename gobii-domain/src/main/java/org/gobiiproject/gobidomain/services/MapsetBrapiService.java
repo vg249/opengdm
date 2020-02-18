@@ -8,4 +8,6 @@ import java.util.List;
 public interface MapsetBrapiService {
 
     PagedResult<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum, Integer studyDbId);
+    MapsetBrapiDTO getMapSetById(Integer mapDbId);
+
 }
