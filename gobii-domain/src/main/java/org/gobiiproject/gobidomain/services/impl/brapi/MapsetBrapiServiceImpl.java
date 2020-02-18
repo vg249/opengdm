@@ -9,6 +9,8 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,7 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(pageSize, rowOffset, studyDbId);
+            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(pageSize, rowOffset, null, studyDbId);
 
             for (Mapset mapset : mapsets) {
 
@@ -83,5 +85,25 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
         }
 
+    }
+
+    @Override
+    public MapsetBrapiDTO getMapSetById(Integer mapDbId) throws GobiiException {
+
+        MapsetBrapiDTO mapsetBrapiDTO = new MapsetBrapiDTO();
+
+        try {
+
+            Mapset mapset = mapsetDao.getMapsetWithCountsById(mapDbId);
+
+            ModelMapper.mapEntityToDto(mapset, mapsetBrapiDTO);
+
+            return mapsetBrapiDTO;
+        }
+        catch(Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal server error");
+        }
     }
 }
