@@ -46,7 +46,7 @@ export class CheckListBoxComponent {
                 private differs: KeyValueDiffers,
                 public viewIdGeneratorService: ViewIdGeneratorService) {
 
-        this.differ = differs.find({}).create(null);
+        this.differ = differs.find({}).create();
 
 
     } // ctor
