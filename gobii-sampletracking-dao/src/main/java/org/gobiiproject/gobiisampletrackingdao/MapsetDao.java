@@ -9,8 +9,9 @@ public interface MapsetDao {
 
     List<Mapset> getMapsetsWithCounts(
             Integer pageSize, Integer rowOffset,
-            Integer experimentId);
+            Integer mapsetId, Integer experimentId);
 
+    Mapset getMapsetWithCountsById(Integer mapsetId);
 
 
 }
