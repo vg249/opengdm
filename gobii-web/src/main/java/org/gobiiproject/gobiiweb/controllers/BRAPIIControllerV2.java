@@ -568,19 +568,29 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/maps", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMaps(
-            @RequestParam(value = "page", required = false, defaultValue = ) Integer page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSizeStr) Integer pageSize,
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
             @RequestParam(value = "type", required = false) String mapType) throws GobiiException {
 
         try {
 
+            PagedResult<MapsetBrapiDTO> pagedResult = mapsetBrapiService.getMapSets(pageSize, page, studyDbId);
 
+            BrApiMasterListPayload<MapsetBrapiDTO> payload = new BrApiMasterListPayload<>(pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getCurrentPageNum());
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException gE) {
+            throw gE;
         }
         catch(Exception e) {
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Entity does not exist"
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal server error"
             );
         }
 
@@ -622,7 +632,7 @@ public class BRAPIIControllerV2 {
 
             }
 
-            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
+            MapsetBrapiDTO mapset = new MapsetBrapiDTO();
 
             BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
 
@@ -645,7 +655,7 @@ public class BRAPIIControllerV2 {
     }
 
     @ApiOperation(
-            value = "Get Markers by mapId",
+            value = "Get Markers positions",
             notes = "List Genome maps in the database",
             tags = {"Maps"},
             extensions = {
@@ -660,27 +670,17 @@ public class BRAPIIControllerV2 {
             @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
                     paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/maps/{mapId}/markerpositions", method=RequestMethod.GET)
+    @RequestMapping(value="/markerpositions", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMarkersByMapId(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "linkageGroupName", required = false) String linkageGroupName,
-            @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
+            @RequestParam(value = "mapDbId") Integer mapDbId) throws GobiiException {
 
         try {
 
-            if(page == null) {
-                //First Page
-                page = getDefaultBrapiPage();
-            }
-            if(pageSize == null) {
 
-                //TODO: Using same resource limit as markers. But, Can be defined seperately
-                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
-
-            }
-
-            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSet(mapId, page, pageSize);
+            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSetById(mapDbId);
 
             MarkerBrapiDTO markerFilter = new MarkerBrapiDTO();
 
