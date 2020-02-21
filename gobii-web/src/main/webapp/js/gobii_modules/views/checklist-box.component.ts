@@ -22,7 +22,7 @@ import {TypeControl} from "../services/core/type-control";
     template: `
         <form
                 [id]="viewIdGeneratorService.makeCheckboxListBoxId(filterParamName)">
-            <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
+            <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px; padding-right: 2px">
                 <div *ngFor="let gobiiFileItem of gobiiFileItems$ | async"
                      (click)=handleItemSelected($event)>
                     <input type="checkbox"

@@ -34,7 +34,7 @@ import {FileItem} from "ng2-file-upload";
     inputs: [],
     outputs: [],
     template: `
-        <div style="border: 1px solid #336699; padding-left: 5px">
+        <div style="border: 0px; padding-left: 5px">
             <BR>
             <p-checkbox binary="true"
                         [(ngModel)]="filterToExtractReady"
@@ -79,10 +79,9 @@ import {FileItem} from "ng2-file-upload";
                 </p-column>
                 <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col="rowData" pTemplate="body">
-                        <button type="button"
-                                pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                icon="fa-bars"
-                                style="font-size: 10px"></button>
+                        <button pButton type="button" icon="pi pi-eye" class="ui-button-secondary"
+                                 (click)="selectDataset($event,col,datasetOverlayPanel);"
+                        ></button>
                     </ng-template>
                 </p-column>
                 <p-column field="_entity.datasetName"
@@ -134,8 +133,8 @@ import {FileItem} from "ng2-file-upload";
             </p-dataTable>
             <p-overlayPanel #datasetOverlayPanel
                             appendTo="body"
-                            showCloseIcon="true"
-                            (onBeforeHide)="handleHideOverlayPanel($event)">
+                            [showCloseIcon]="true" 
+                            (onHide)="handleHideOverlayPanel($event)">
 
 
                 <!-- you have to  -->

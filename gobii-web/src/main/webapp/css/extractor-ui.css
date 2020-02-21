@@ -1,4 +1,4 @@
-
+@import '~primeicons/primeicons.css';
 /* Styles from original angular demo */
 
 /*
@@ -17,10 +17,11 @@ body, input[text], button {
 button {
   font-family: Arial;
   background-color: #eee;
+  margin: 6px 8px 6px 8px;
+  min-width: 20px;
   border: none;
   padding: 5px 10px;
   border-radius: 4px;
-  cursor: pointer;
   cursor: hand;
 }
 button:hover {
@@ -115,4 +116,16 @@ div.ui-datatable-scrollable-body {
 
 td{
     width: 300px !important;
+}
+
+button {
+    min-height: 18px;
+    min-width: 18px;
+    cursor: hand;
+    padding:0px;
+}
+
+i{
+    min-height: 16px !important;
+    min-width: 16px !important;
 }

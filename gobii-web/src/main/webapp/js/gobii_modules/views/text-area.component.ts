@@ -7,8 +7,9 @@ import {Component, EventEmitter} from "@angular/core";
         <textarea ref-textarea 
         [(ngModel)]="textValue" rows="4" style="width: 100%;"
         (click)="handleTextboxClicked($event)"></textarea><br/>
-        <button (click)="handleTextboxDataComplete(textarea.value)">Add To Extract</button>
-        <button (click)="textValue=''">Clear</button>
+        <button class="btn btn-success" (click)="handleTextboxDataComplete(textarea.value)">Add To Extract</button>
+        
+        <button class="btn btn-primary" (click)="textValue=''">Clear</button>
         
          <!--<h2>Log <button (click)="log=''">Clear</button></h2>-->
         <!--<pre>{{log}}</pre>-->
