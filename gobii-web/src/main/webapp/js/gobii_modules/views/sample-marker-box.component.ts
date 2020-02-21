@@ -84,16 +84,14 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
 
             <div>
                 <p-dialog header="{{extractTypeLabelExisting}} Already Selelected" [(visible)]="displayChoicePrompt"
-                          modal="modal" width="300" height="300" responsive="true">
+                          modal="modal" width="300" height="200" responsive="true">
                     <p>{{extractTypeLabelExisting}} already selected. Specify {{extractTypeLabelProposed}}
                         instead?</p>
                     <p-footer>
-                        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-                            <button type="button" pButton icon="fa-close" (click)="handleUserChoice(false)"
+                            <button type="button" pButton icon="pi pi-times" (click)="handleUserChoice(false)"
                                     label="No"></button>
-                            <button type="button" pButton icon="fa-check" (click)="handleUserChoice(true)"
+                            <button type="button" pButton icon="pi pi-check" (click)="handleUserChoice(true)"
                                     label="Yes"></button>
-                        </div>
                     </p-footer>
                 </p-dialog>
             </div>
@@ -104,7 +102,8 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
                         the size of the list</p>
 
                     <p-footer>
-                        <button type="button" pButton (click)="displayMaxItemsExceeded=false" label="OK"></button>
+                        <button type="button" pButton icon="pi pi-check" (click)="displayMaxItemsExceeded=false"
+                                label="OK"></button>
                     </p-footer>
                 </p-dialog>
            

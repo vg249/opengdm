@@ -18,6 +18,7 @@ import {
     CheckboxModule, DataTableModule, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
     AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule
 } from 'primeng/primeng';
+import {ButtonModule} from 'primeng/button';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
 import {NameIdService} from "../services/core/name-id-service";
@@ -26,7 +27,6 @@ import {LoginComponent} from "../views/login.component";
 import {routing} from "./app.routing";
 import {APP_BASE_HREF} from "@angular/common";
 import {AuthGuard} from "../services/core/auth.guard";
-import {Button} from "primeng/components/button/button";
 import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../store/reducers';
@@ -48,6 +48,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
         FormsModule,
         ReactiveFormsModule,
         TreeModule,
+        ButtonModule,
         CheckboxModule,
         SharedModule,
         DataTableModule,
@@ -83,7 +84,6 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
         SampleListTypeComponent,
         NameIdListBoxComponent,
         StatusDisplayTreeComponent,
-        Button,
         SearchCriteriaBySamplesComponent,
         DatasetDatatableComponent],
     providers: [AuthGuard,
