@@ -169,48 +169,48 @@ export class TreeStructureService {
         
         if (gobiiFileItemCompoundId.getEntityType() === EntityType.DATASET) {
 
-            icon = "fa-database";
-            expandedIcon = "fa-folder-expanded";
-            collapsedIcon = "fa-database";
+            icon = "pi pi-copy";
+            expandedIcon = "pi pi-folder-open";
+            collapsedIcon = "pi pi-copy";
 
         } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.CONTACT) {
 
-            icon = "fa-user-o";
-            expandedIcon = "fa-user-o";
-            collapsedIcon = "fa-user-o";
+            icon = "pi pi-user";
+            expandedIcon = "pi pi-user";
+            collapsedIcon = "pi pi-user";
 
         } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.MAPSET) {
 
-            icon = "fa-map-o";
-            expandedIcon = "fa-map-o";
-            collapsedIcon = "fa-map-o";
+            icon = "pi pi-map-marker";
+            expandedIcon = "pi pi-map-marker";
+            collapsedIcon = "pi pi-map-marker";
 
         } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.PLATFORM) {
 
-            icon = "fa-calculator";
-            expandedIcon = "fa-calculator";
-            collapsedIcon = "fa-calculator";
+            icon = "pi pi-bookmark";
+            expandedIcon = "pi pi-bookmark";
+            collapsedIcon = "pi pi-bookmark";
 
         } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.PROJECT) {
 
-            icon = "fa-clipboard";
-            expandedIcon = "fa-clipboard";
-            collapsedIcon = "fa-clipboard";
+            icon = "pi pi-compass";
+            expandedIcon = "pi pi-compass";
+            collapsedIcon = "pi pi-compass";
 
         } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.CV) {
 
             if (gobiiFileItemCompoundId.getCvFilterType() === CvFilterType.DATASET_TYPE) {
-                icon = "fa-file-excel-o";
-                expandedIcon = "fa-file-excel-o";
-                collapsedIcon = "fa-file-excel-o";
+                icon = "pi pi-file-excel";
+                expandedIcon = "pi pi-file-excel";
+                collapsedIcon = "pi pi-file-excel";
             }
 
         } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.MARKER_GROUP) {
 
             // if (isParent) {
-            icon = "fa-pencil";
-            expandedIcon = "fa-pencil";
-            collapsedIcon = "fa-pencil";
+            icon = "pi pi-sitemap";
+            expandedIcon = "pi pi-sitemap";
+            collapsedIcon = "pi pi-sitemap";
 
         }
 
@@ -222,48 +222,48 @@ export class TreeStructureService {
 
         if (entityType === EntityType.DATASET) {
 
-            treeNode.icon = "fa-database";
-            treeNode.expandedIcon = "fa-folder-expanded";
-            treeNode.collapsedIcon = "fa-database";
+            treeNode.icon = "pi pi-copy";
+            treeNode.expandedIcon = "pi pi-folder-open";
+            treeNode.collapsedIcon = "pi pi-copy";
 
         } else if (entityType === EntityType.CONTACT) {
 
-            treeNode.icon = "fa-user-o";
-            treeNode.expandedIcon = "fa-user-o";
-            treeNode.collapsedIcon = "fa-user-o";
+            treeNode.icon = "pi pi-user";
+            treeNode.expandedIcon = "pi pi-user";
+            treeNode.collapsedIcon = "pi pi-user";
 
         } else if (entityType === EntityType.MAPSET) {
 
-            treeNode.icon = "fa-map-o";
-            treeNode.expandedIcon = "fa-map-o";
-            treeNode.collapsedIcon = "fa-map-o";
+            treeNode.icon = "pi pi-map-marker";
+            treeNode.expandedIcon = "pi pi-map-marker";
+            treeNode.collapsedIcon = "pi pi-map-marker";
 
         } else if (entityType === EntityType.PLATFORM) {
 
-            treeNode.icon = "fa-calculator";
-            treeNode.expandedIcon = "fa-calculator";
-            treeNode.collapsedIcon = "fa-calculator";
+            treeNode.icon = "pi pi-bookmark";
+            treeNode.expandedIcon = "pi pi-bookmark";
+            treeNode.collapsedIcon = "pi pi-bookmark";
 
         } else if (entityType === EntityType.PROJECT) {
 
-            treeNode.icon = "fa-clipboard";
-            treeNode.expandedIcon = "fa-clipboard";
-            treeNode.collapsedIcon = "fa-clipboard";
+            treeNode.icon = "pi pi-compass";
+            treeNode.expandedIcon = "pi pi-compass";
+            treeNode.collapsedIcon = "pi pi-compass";
 
         } else if (entityType === EntityType.CV) {
 
             if (cvFilterType === CvFilterType.DATASET_TYPE) {
-                treeNode.icon = "fa-file-excel-o";
-                treeNode.expandedIcon = "fa-file-excel-o";
-                treeNode.collapsedIcon = "fa-file-excel-o";
+                treeNode.icon = "pi pi-file-excel";
+                treeNode.expandedIcon = "pi pi-file-excel";
+                treeNode.collapsedIcon = "pi pi-file-excel";
             }
 
         } else if (entityType === EntityType.MARKER_GROUP) {
 
             // if (isParent) {
-            treeNode.icon = "fa-pencil";
-            treeNode.expandedIcon = "fa-pencil";
-            treeNode.collapsedIcon = "fa-pencil";
+            treeNode.icon = "pi pi-sitemap";
+            treeNode.expandedIcon = "pi pi-sitemap";
+            treeNode.collapsedIcon = "pi pi-sitemap";
           
         }
     }
@@ -287,52 +287,52 @@ export class TreeStructureService {
             //this.addEntityIconToNode(gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getCvFilterType(), treeNode);
 
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT) {
-            icon = "fa-columns";
-            expandedIcon = "fa-columns";
-            collapsedIcon = "fa-columns";
+            icon = "pi pi-pencil";
+            expandedIcon = "pi pi-pencil";
+            collapsedIcon = "pi pi-pencil";
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
-            icon = "fa-file-text-o";
-            expandedIcon = "fa-file-text-o";
-            collapsedIcon = "fa-file-text-o";
+            icon = "pi pi-paperclip";
+            expandedIcon = "pi pi-paperclip";
+            collapsedIcon = "pi pi-paperclip";
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
             if (isParent) {
-                icon = "fa-list-ul";
-                expandedIcon = "fa-list-ul";
-                collapsedIcon = "fa-list-ul";
+                icon = "pi pi-list";
+                expandedIcon = "pi pi-list";
+                collapsedIcon = "pi pi-list";
             } else {
-                icon = "fa-eyedropper";
-                expandedIcon = "fa-eyedropper";
-                collapsedIcon = "fa-eyedropper";
+                icon = "pi pi-list";
+                expandedIcon = "pi pi-list";
+                collapsedIcon = "pi pi-list";
             }
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
-            icon = "fa-file-text-o";
-            expandedIcon = "fa-file-text-o";
-            collapsedIcon = "fa-file-text-o";
+            icon = "pi pi-paperclip";
+            expandedIcon = "pi pi-paperclip";
+            collapsedIcon = "pi pi-paperclip";
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
 
             if (isParent) {
-                icon = "fa-list-ul";
-                expandedIcon = "fa-list-ul";
-                collapsedIcon = "fa-list-ul";
+                icon = "pi pi-list";
+                expandedIcon = "pi pi-list";
+                collapsedIcon = "pi pi-list";
             } else {
-                icon = "fa-map-marker";
-                expandedIcon = "fa-map-marker";
-                collapsedIcon = "fa-map-marker";
+                icon = "pi pi-list";
+                expandedIcon = "pi pi-list";
+                collapsedIcon = "pi pi-list";
             }
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.JOB_ID) {
-            icon = "fa-info-circle";
-            expandedIcon = "fa-info-circle";
-            collapsedIcon = "fa-info-circle";
+            icon = "pi pi-ticket";
+            expandedIcon = "pi pi-ticket";
+            collapsedIcon = "pi pi-ticket";
         } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
-            icon = "fa-info-circle";
-            expandedIcon = "fa-info-circle";
-            collapsedIcon = "fa-info-circle";
+            icon = "pi pi-list";
+            expandedIcon = "pi pi-list";
+            collapsedIcon = "pi pi-list";
         } else {
             //     }
             // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
-            icon = "fa-folder";
-            expandedIcon = "fa-folder-expanded";
-            collapsedIcon = "fa-folder";
+            icon = "pi pi-folder";
+            expandedIcon = "pi pi-folder-open";
+            collapsedIcon = "pi pi-folder";
         }
 
         return {icon: icon, expandedIcon: expandedIcon, collapsedIcon: collapsedIcon};
@@ -351,52 +351,52 @@ export class TreeStructureService {
         //     this.addEntityIconToNode(treeNode.getEntityType(), treeNode.getCvFilterType(), treeNode);
         //
         // } else if (treeNode.getItemType() === ExtractorItemType.EXPORT_FORMAT) {
-        //     treeNode.icon = "fa-columns";
-        //     treeNode.expandedIcon = "fa-columns";
-        //     treeNode.collapsedIcon = "fa-columns";
+        //     treeNode.icon = "pi pi-pencil";
+        //     treeNode.expandedIcon = "pi pi-pencil";
+        //     treeNode.collapsedIcon = "pi pi-pencil";
         // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_FILE) {
-        //     treeNode.icon = "fa-file-text-o";
-        //     treeNode.expandedIcon = "fa-file-text-o";
-        //     treeNode.collapsedIcon = "fa-file-text-o";
+        //     treeNode.icon = "pi pi-paperclip";
+        //     treeNode.expandedIcon = "pi pi-paperclip";
+        //     treeNode.collapsedIcon = "pi pi-paperclip";
         // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
         //     if (isParent) {
-        //         treeNode.icon = "fa-list-ul";
-        //         treeNode.expandedIcon = "fa-list-ul";
-        //         treeNode.collapsedIcon = "fa-list-ul";
+        //         treeNode.icon = "pi pi-list";
+        //         treeNode.expandedIcon = "pi pi-list";
+        //         treeNode.collapsedIcon = "pi pi-list";
         //     } else {
-        //         treeNode.icon = "fa-eyedropper";
-        //         treeNode.expandedIcon = "fa-eyedropper";
-        //         treeNode.collapsedIcon = "fa-eyedropper";
+        //         treeNode.icon = "pi pi-list";
+        //         treeNode.expandedIcon = "pi pi-list";
+        //         treeNode.collapsedIcon = "pi pi-list";
         //     }
         // } else if (treeNode.getItemType() === ExtractorItemType.MARKER_FILE) {
-        //     treeNode.icon = "fa-file-text-o";
-        //     treeNode.expandedIcon = "fa-file-text-o";
-        //     treeNode.collapsedIcon = "fa-file-text-o";
+        //     treeNode.icon = "pi pi-paperclip";
+        //     treeNode.expandedIcon = "pi pi-paperclip";
+        //     treeNode.collapsedIcon = "pi pi-paperclip";
         // } else if (treeNode.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
         //
         //     if (isParent) {
-        //         treeNode.icon = "fa-list-ul";
-        //         treeNode.expandedIcon = "fa-list-ul";
-        //         treeNode.collapsedIcon = "fa-list-ul";
+        //         treeNode.icon = "pi pi-list";
+        //         treeNode.expandedIcon = "pi pi-list";
+        //         treeNode.collapsedIcon = "pi pi-list";
         //     } else {
-        //         treeNode.icon = "fa-map-marker";
-        //         treeNode.expandedIcon = "fa-map-marker";
-        //         treeNode.collapsedIcon = "fa-map-marker";
+        //         treeNode.icon = "pi pi-list";
+        //         treeNode.expandedIcon = "pi pi-list";
+        //         treeNode.collapsedIcon = "pi pi-list";
         //     }
         // } else if (treeNode.getItemType() === ExtractorItemType.JOB_ID) {
-        //     treeNode.icon = "fa-info-circle";
-        //     treeNode.expandedIcon = "fa-info-circle";
-        //     treeNode.collapsedIcon = "fa-info-circle";
+        //     treeNode.icon = "pi pi-list";
+        //     treeNode.expandedIcon = "pi pi-list";
+        //     treeNode.collapsedIcon = "pi pi-list";
         // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
-        //     treeNode.icon = "fa-info-circle";
-        //     treeNode.expandedIcon = "fa-info-circle";
-        //     treeNode.collapsedIcon = "fa-info-circle";
+        //     treeNode.icon = "pi pi-list";
+        //     treeNode.expandedIcon = "pi pi-list";
+        //     treeNode.collapsedIcon = "pi pi-list";
         // } else {
         //     //     }
         //     // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
-        //     treeNode.icon = "fa-folder";
-        //     treeNode.expandedIcon = "fa-folder-expanded";
-        //     treeNode.collapsedIcon = "fa-folder";
+        //     treeNode.icon = "pi pi-folder";
+        //     treeNode.expandedIcon = "pi pi-folder-open";
+        //     treeNode.collapsedIcon = "pi pi-folder";
         // }
     }
 
@@ -442,7 +442,7 @@ export class TreeStructureService {
 
 
         //let icon: string = "fa-chevron-circle-right";
-        let icon: string = "fa-share";
+        let icon: string = "pi pi-circle-on";
         //let icon: string = "fa-chevron-right";
 
         this.store.dispatch(new treeNodeActions.SetTreeNodeLook(

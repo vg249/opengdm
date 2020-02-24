@@ -38,8 +38,6 @@ import {TypeControl} from "../services/core/type-control";
     selector: 'extractor-root',
     styleUrls: ['/extractor-ui.css'],
     template: `
-        <BR>
-        <BR>
         <div class="panel panel-default col-md-6 col-md-offset-0" style="width: 95%">
             <div class="panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
@@ -70,7 +68,7 @@ import {TypeControl} from "../services/core/type-control";
                 <BR>
                 <BR>
                 <div class="container-fluid">
-
+                               
                     <div class="row">
 
                         <div class="col-md-8"> <!-- outer grid column 1: Dataset, Sample, Marker Filtering-->
@@ -258,8 +256,11 @@ import {TypeControl} from "../services/core/type-control";
                                     {{currentStatusMessage}}
                                     <!--<status-display [messages$]="messages$"></status-display>-->
                                 </div> <!-- panel body -->
-
                             </div> <!-- panel primary -->
+                            <p-footer>
+                                <button type="button" pButton icon="pi pi-check" (click)="display=false"
+                                        label="OK"></button>
+                            </p-footer>
                         </p-dialog>
 
                         <div class="col-md-4"> <!-- outer grid column 2: Criteria summary -->
@@ -322,7 +323,8 @@ import {TypeControl} from "../services/core/type-control";
 
                 </div>
             </div> <!-- panel primary -->
-        </div> <!-- panel-default  -->` // end template
+        </div> <!-- panel-default  -->
+    ` // end template
 }) // @Component
 
 export class ExtractorRoot implements OnInit {
