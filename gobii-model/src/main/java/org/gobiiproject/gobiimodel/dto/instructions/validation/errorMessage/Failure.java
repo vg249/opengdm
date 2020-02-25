@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage;
+package org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;

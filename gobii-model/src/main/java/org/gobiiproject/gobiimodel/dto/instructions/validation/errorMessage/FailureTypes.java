@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage;
+package org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage;
 
 public class FailureTypes {
     public static final String LOGIN_FAILURE = "Login failure";

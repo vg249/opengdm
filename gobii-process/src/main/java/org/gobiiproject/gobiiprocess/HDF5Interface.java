@@ -13,12 +13,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 
 import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -32,13 +42,12 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.*;
 public class HDF5Interface {
 
 
-    private static String pathToHDF5;
-    private static String pathToHDF5Files;
+    private String pathToHDF5;
+    private String pathToHDF5Files;
     //Paths
 
     /**
      * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false.
-     * @param dm Email message object - for direct writing
      * @param dst DataSetType (obviously)
      * @param configuration configurations - for reading if a configruation is set correctly
      * @param dataSetId ID of dataset to create
@@ -48,11 +57,10 @@ public class HDF5Interface {
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
      */
-    public static boolean createHDF5FromDataset(ProcessMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) throws Exception {
+    public boolean createHDF5FromDataset(String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) throws Exception {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
-        dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
         int size=8;
         switch(dst.toUpperCase()){
@@ -72,24 +80,88 @@ public class HDF5Interface {
             rmIfExist(HDF5File);
             return false;
         }
-        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
         return true;
     }
 
-    public static String getPathToHDF5() {
+    /**
+     * Updates Postgresql through the webservices to update the DataSet's monetDB and HDF5File references.
+     *
+     * @param config         Configuration settings, used to determine connections
+     * @param cropName       Name of the crop
+     * @param dataSetId      Data set to update
+     * @param monetTableName Name of the table in the monetDB database for this dataset.
+     * @param hdfFileName    Name of the HDF5 file for this dataset (Note, these should be obvious)
+     */
+    public void updateValues(ConfigSettings config, String cropName, Integer dataSetId, String monetTableName, String hdfFileName) {
+        try {
+            // set up authentication and so forth
+            // you'll need to get the current from the instruction file
+            GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
+
+            if (LineUtils.isNullOrEmpty(context.getUserToken())) {
+                logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+                return;
+            }
+
+            String currentCropContextRoot = context.getInstance(null, false).getCurrentCropContextRoot();
+            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+
+            RestUri projectsUri = gobiiUriFactory
+                    .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
+            projectsUri.setParamValue("id", dataSetId.toString());
+            GobiiEnvelopeRestResource<DataSetDTO, DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
+            PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+                    .get(DataSetDTO.class);
+
+            DataSetDTO dataSetResponse;
+            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+                System.out.println();
+                logError("Digester", "Data set response response errors");
+                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+                    logError("HeaderError", currentStatusMesage.getMessage());
+                }
+                return;
+            } else {
+                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
+            }
+
+            dataSetResponse.setDataTable(monetTableName);
+            dataSetResponse.setDataFile(hdfFileName);
+
+            resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+                    .put(DataSetDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
+
+
+            //dataSetResponse = dtoProcessor.process(dataSetResponse);
+            // if you didn't succeed, do not pass go, but do log errors to your log file
+            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+                logError("Digester", "Data set response response errors");
+                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+                    logError("HeaderError", currentStatusMesage.getMessage());
+                }
+                return;
+            }
+        } catch (Exception e) {
+            logError("Digester", "Exception while referencing data sets in Postgresql", e);
+            return;
+        }
+    }
+
+    public String getPathToHDF5() {
         return pathToHDF5;
     }
 
-    public static void setPathToHDF5(String pathToHDF5) {
-        HDF5Interface.pathToHDF5 = pathToHDF5;
+    public void setPathToHDF5(String pathToHDF5) {
+        this.pathToHDF5 = pathToHDF5;
     }
 
-    public static String getPathToHDF5Files() {
+    public String getPathToHDF5Files() {
         return pathToHDF5Files;
     }
 
-    public static void setPathToHDF5Files(String pathToHDF5Files) {
-        HDF5Interface.pathToHDF5Files = pathToHDF5Files;
+    public void setPathToHDF5Files(String pathToHDF5Files) {
+        this.pathToHDF5Files = pathToHDF5Files;
     }
 
     /**
@@ -101,11 +173,11 @@ public class HDF5Interface {
      * @return location of output
      * @throws FileNotFoundException if it can't find a file related
      */
-    public static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder, String posFile) throws FileNotFoundException {
+    public String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder, String posFile) throws FileNotFoundException {
         return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
     }
 
-    private static HashMap<String,String> getSamplePosFromFile(String inputFile) throws FileNotFoundException {
+    private HashMap<String,String> getSamplePosFromFile(String inputFile) throws FileNotFoundException {
         HashMap<String, String> map = new HashMap<String, String>();
         BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
         try{
@@ -138,7 +210,7 @@ public class HDF5Interface {
      * @return String location of the output file on the filesystem.
      * @throws FileNotFoundException if the datasets provided contain an invalid dataset, or the temporary file folder is badly chmodded
      */
-    public static String getHDF5GenoFromSampleList(boolean markerFast, String errorFile, String tempFolder, String posFile, String samplePosFile) throws FileNotFoundException{
+    public String getHDF5GenoFromSampleList(boolean markerFast, String errorFile, String tempFolder, String posFile, String samplePosFile) throws FileNotFoundException{
         if(!new File(posFile).exists()){
             Logger.logError("Genotype Matrix","No positions generated - Likely no data");
             return null;
@@ -223,7 +295,7 @@ public class HDF5Interface {
      * MarkerList and sampleList are passed in as null
      * @return see getHDF5Genotype(boolean,String, Integer, String, String, String)
      */
-    public static String getHDF5Genotype(boolean markerFast, String errorFile, Integer dataSetId, String tempFolder) {
+    public String getHDF5Genotype(boolean markerFast, String errorFile, Integer dataSetId, String tempFolder) {
         return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null,null);
     }
 
@@ -239,7 +311,7 @@ public class HDF5Interface {
      * @param sampleList nullable - list of comma delimited samples to cut out
      * @return file location of the dataset output.
      */
-    private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList) {
+    private String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList) {
         String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
 
         String HDF5File= getFileLoc(dataSetId);
@@ -275,7 +347,7 @@ public class HDF5Interface {
         return genoFile;
     }
 
-    private static String getFileLoc(Integer dataSetId) {
+    private String getFileLoc(Integer dataSetId) {
         return pathToHDF5Files + "DS_" + dataSetId + ".h5";
     }
 
@@ -289,7 +361,7 @@ public class HDF5Interface {
      * @param elementList String containing comma separated list of integers, corresponding to 0 based row/column entities
      * @param markerFast if true, filter by rows. Corresponds to the 'sample list' marker fast nature
      */
-    private static void filterDirectional(String filename, String elementList, boolean markerFast){
+    private void filterDirectional(String filename, String elementList, boolean markerFast){
         //Take all positive integers from this list as cut values. See cutString.
         //Ex 0,1,2,-1,4,5 -> 0,1,2,4,5
         List<Integer> elements;
@@ -321,7 +393,7 @@ public class HDF5Interface {
         rmIfExist(tmpFile);
     }
 
-    private static void filterLines(File from, File to, List<Integer> elements) throws IOException {
+    private void filterLines(File from, File to, List<Integer> elements) throws IOException {
         try(BufferedReader in = new BufferedReader(new FileReader(from));
         BufferedWriter out = new BufferedWriter(new FileWriter(to))) {
             String line = in.readLine();
@@ -342,7 +414,7 @@ public class HDF5Interface {
         }
     }
 
-    private static final String TAB="\t";
+    private final String TAB="\t";
 
     /**
      * Projects a subset of rows onto the output file (cutting out vertical slices)
@@ -350,7 +422,7 @@ public class HDF5Interface {
      * @to destination of output projection
      * @throws IOException
      */
-    private static void projectRows(File from, File to, List<Integer> elements) throws IOException {
+    private void projectRows(File from, File to, List<Integer> elements) throws IOException {
         try(BufferedReader in = new BufferedReader(new FileReader(from));
             BufferedWriter out = new BufferedWriter(new FileWriter(to))) {
             String line = in.readLine();

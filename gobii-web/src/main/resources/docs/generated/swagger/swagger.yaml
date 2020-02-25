@@ -3063,10 +3063,10 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-      cvId:
+      group:
         type: "integer"
         format: "int32"
-      group:
+      cvId:
         type: "integer"
         format: "int32"
   CvGroupDTO:
@@ -3699,8 +3699,9 @@ definitions:
       datasetOrientationType:
         type: "string"
         enum:
-        - "SAMPLE_FAST"
         - "MARKER_FAST"
+        - "SAMPLE_FAST"
+        - "NONE"
       dataset:
         $ref: "#/definitions/PropNameId"
       datasetType:
@@ -3835,10 +3836,10 @@ definitions:
       url:
         type: "string"
         format: "url"
-      readable:
-        type: "boolean"
       file:
         type: "file"
+      readable:
+        type: "boolean"
       uri:
         type: "string"
         format: "uri"
