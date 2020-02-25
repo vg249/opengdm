@@ -15,10 +15,7 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedListByCursor;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
@@ -583,10 +580,6 @@ public class BRAPIIControllerV2 {
                 page = getDefaultBrapiPage();
             }
 
-            if(pageSize == null) {
-                //TODO: Using same resource limit as markers. But, Can be defined seperately
-                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
-            }
 
             List<SamplesBrapiDTO> samples = samplesBrapiService.getSamples(
                     page, pageSize,
@@ -1431,7 +1424,7 @@ public class BRAPIIControllerV2 {
                     "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) int pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSizeStr) Integer pageSize,
             HttpServletRequest request
     ){
 
