@@ -31,8 +31,8 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
                                                            Integer mapsetId, String mapsetName,
                                                            Integer linkageGroupId, String linkageGroupName,
                                                            Integer markerId, String markerName,
-                                                           BigDecimal minPosition, BigDecimal maxPosition,
-                                                           Integer datasetId) throws GobiiException
+                                                           BigDecimal minPosition, BigDecimal maxPosition
+    ) throws GobiiException
 
     {
         List<MarkerLinkageGroup> markerLinkageGroups = new ArrayList<>();
@@ -85,17 +85,9 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
                 predicates.add(cb.ge(markerLinkageGroup.get("start"), minPosition));
             }
             if(maxPosition != null) {
-                predicates.add(cb.ge(markerLinkageGroup.get("stop"), maxPosition));
+                predicates.add(cb.le(markerLinkageGroup.get("stop"), maxPosition));
             }
 
-            if(datasetId != null) {
-
-                Expression<Boolean> datasetIdExists = cb.function("JSONB_EXISTS", Boolean.class,
-                        marker.get("datasetMarkerIdx"), cb.literal(datasetId.toString()));
-
-                predicates.add(cb.isTrue(datasetIdExists));
-
-            }
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
 
@@ -105,8 +97,6 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
                     .getResultList();
 
             return markerLinkageGroups;
-
-
 
         }
         catch(Exception e) {
