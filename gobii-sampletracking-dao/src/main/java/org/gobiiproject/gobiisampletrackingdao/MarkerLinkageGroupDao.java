@@ -11,9 +11,7 @@ public interface MarkerLinkageGroupDao {
                                                     Integer mapsetId, String mapsetName,
                                                     Integer linkageGroupId, String linkageGroupName,
                                                     Integer markerId, String markerName,
-                                                    BigDecimal minPosition, BigDecimal maxPosition,
-                                                    Integer datasetId);
-
+                                                    BigDecimal minPosition, BigDecimal maxPosition);
 
 
 }
