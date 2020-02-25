@@ -231,6 +231,11 @@ public final class GobiiClientContext {
         String host = url.getHost();
         String context = url.getPath();
         Integer port = url.getPort();
+        String protocol = url.getProtocol();
+
+        if(port == -1) {
+           port = url.getDefaultPort();
+        }
 
 
         if (LineUtils.isNullOrEmpty(host)) {
@@ -247,7 +252,7 @@ public final class GobiiClientContext {
 
         // The /configsettings resource does not require authentication
         // this should be the only case in which we don't provide a crop ID
-        HttpCore httpCore = new HttpCore(host, port);
+        HttpCore httpCore = new HttpCore(host, port, protocol);
         String settingsPath = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath());
 
         RestUri configSettingsUri = new GobiiUriFactory(null).RestUriFromUri(settingsPath);
