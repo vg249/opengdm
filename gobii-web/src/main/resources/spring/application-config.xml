@@ -464,18 +464,6 @@
     <!-- *** Marker Sample Tracking Beans ************************************* -->
     <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
 
-    <!-- *** DATASET BRAPI BEANS *********** -->
-    <bean id="dataSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.DatasetBrapiServiceImpl"/>
-    <bean id="dtoMapDatasetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDatasetBrapiImpl"/>
-    <bean id="rsDatasetBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDatasetBrapiDaoImpl"/>
-
-    <!-- *** MAPSET BRAPI BEANS *********** -->
-    <bean id="mapSetBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.MapsetBrapiServiceImpl"/>
-    <bean id="dtoMapMapsetBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetBrapiImpl"/>
-    <bean id="rsMapBrapiDao"
-          class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapsetBrapiDaoImpl"/>
-
-
     <!-- ** SAMPLE BRAPI BEANS **-->
     <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.SamplesBrapiServiceImpl"/>
 
@@ -484,10 +472,7 @@
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
     <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.LinkakgeGroupBrapiServiceImpl"/>
-    <bean id="dtoMapLinkageGroupBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapLinkageGroupBrapiImpl"/>
 
-    <!-- *** ANALYSIS BRAPI BEANS ********** -->
-    <bean id="dtoMapAnalysisBrapi" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisBrapiImpl"/>
 
     <!-- *** Genotype Calls Beans ************************************* -->
     <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.brapi.GenotypeCallsServiceImpl"/>
