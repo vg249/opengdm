@@ -23,7 +23,7 @@ public class Marker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer markerId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id")
     private Platform platform = new Platform();
 
@@ -43,11 +43,11 @@ public class Marker {
     @Column(name="sequence")
     private String sequence;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id")
     private Reference reference = new Reference();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "strand_id", referencedColumnName = "cv_id")
     private Cv strand = new Cv();
 
@@ -66,6 +66,10 @@ public class Marker {
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
     private JsonNode properties;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
     @Transient
     private Integer markerStart;
@@ -201,9 +205,6 @@ public class Marker {
         this.markerStop = markerStop;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
 
 
 }
