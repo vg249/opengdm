@@ -1,20 +1,20 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
@@ -27,53 +27,86 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
     @Override
     @Transactional
-    public List<MarkerLinkageGroup> getMarkerLinkageGroups(Integer pageNum, Integer pageSize,
-                                                           Integer markerId, Integer linkageGroupId,
-                                                           Integer datasetId) {
-        List<MarkerLinkageGroup> markerLinkageGroups;
-        final int defaultPageSize = 1000;
-        final int defaultPageNum = 0;
+    public List<MarkerLinkageGroup> getMarkerLinkageGroups(Integer pageSize, Integer rowOffset,
+                                                           Integer mapsetId, String mapsetName,
+                                                           Integer linkageGroupId, String linkageGroupName,
+                                                           Integer markerId, String markerName,
+                                                           BigDecimal minPosition, BigDecimal maxPosition,
+                                                           Integer datasetId) throws GobiiException
+
+    {
+        List<MarkerLinkageGroup> markerLinkageGroups = new ArrayList<>();
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        Objects.requireNonNull(pageSize);
+        Objects.requireNonNull(rowOffset);
 
         try {
 
+            CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            Session session = em.unwrap(Session.class);
+            CriteriaQuery<MarkerLinkageGroup> criteriaQuery = cb.createQuery(MarkerLinkageGroup.class);
 
-            Criteria markerLinkageCriteria = session.createCriteria(MarkerLinkageGroup.class);
+            Root<MarkerLinkageGroup> markerLinkageGroup = criteriaQuery.from(MarkerLinkageGroup.class);
+            criteriaQuery.select(markerLinkageGroup);
 
-            Criteria markerCriteria = markerLinkageCriteria.createCriteria("marker");
+            Join<Object, Object> marker = (Join<Object, Object>) markerLinkageGroup.fetch("marker");
 
-            // TODO: new linkagegroup criteria will be added when linkage group entity is created
+            //Join LinkageGroup to root
+            Join<Object, Object> linkageGroup = (Join<Object, Object>) (
+                    markerLinkageGroup.fetch("linkageGroup"));
+            Join<Object, Object> mapset = (Join<Object, Object>) linkageGroup.fetch("mapset");
+
+            //Associated Tables that needs to be fetched along with root table
+
+            if(mapsetId != null) {
+                predicates.add(cb.equal(mapset.get("mapsetId"), mapsetId));
+            }
+            if(mapsetName != null) {
+                predicates.add(cb.equal(mapset.get("mapsetName"), mapsetName));
+            }
+
             if(linkageGroupId != null) {
-                markerLinkageCriteria.add(Restrictions.eq("linkageGroupId", linkageGroupId));
+                predicates.add(cb.equal(linkageGroup.get("linkageGroupId"), linkageGroupId));
+            }
+            if(linkageGroupName != null) {
+                predicates.add(cb.equal(linkageGroup.get("linkageGroupName"), linkageGroupName));
             }
 
             if(markerId != null) {
-                markerCriteria.add(Restrictions.eq("markerId", markerId));
+                predicates.add(cb.equal(marker.get("markerId"), markerId));
+            }
+            if(markerName != null) {
+                predicates.add(cb.equal(marker.get("markerName"), markerName));
+            }
+
+            if(minPosition != null) {
+                predicates.add(cb.ge(markerLinkageGroup.get("start"), minPosition));
+            }
+            if(maxPosition != null) {
+                predicates.add(cb.ge(markerLinkageGroup.get("stop"), maxPosition));
             }
 
             if(datasetId != null) {
-                markerCriteria.add(Restrictions.sqlRestriction(
-                        "{alias}.dataset_marker_idx ?? ?", datasetId.toString(),
-                        StringType.INSTANCE));
+
+                Expression<Boolean> datasetIdExists = cb.function("JSONB_EXISTS", Boolean.class,
+                        marker.get("datasetMarkerIdx"), cb.literal(datasetId.toString()));
+
+                predicates.add(cb.isTrue(datasetIdExists));
+
             }
 
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+
+            markerLinkageGroups = em.createQuery(criteriaQuery)
+                    .setFirstResult(rowOffset)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
+            return markerLinkageGroups;
 
 
-            if(pageSize != null && pageNum != null) {
-                markerLinkageCriteria
-                        .setMaxResults(pageSize)
-                        .setFirstResult(pageSize * pageNum);
-            }
-            else {
-                //If either page size or page number is not provided, use default maximum limit which is 1000
-                //and fetch the first page
-                markerLinkageCriteria
-                        .setMaxResults(defaultPageSize)
-                        .setFirstResult(defaultPageNum);
-            }
-
-            markerLinkageGroups = markerLinkageCriteria.list();
 
         }
         catch(Exception e) {
@@ -84,9 +117,6 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
-
-        return markerLinkageGroups;
-
 
     }
 
