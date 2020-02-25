@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
+@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class ExperimentDaoTest {
 
     @Autowired

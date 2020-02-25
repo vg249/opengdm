@@ -15,7 +15,6 @@ import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
 public class CvDaoTest {
 
     @Autowired
