@@ -87,6 +87,8 @@ public class GobiiExtractor {
     private String rootDir = "../";
     private String markerListOverrideLocation = null;
 
+    private static final String SAMPLE_FILE_ID_POSITIONS = "43,44,45";
+
     private HDF5Interface hdf5Interface = new HDF5Interface();
 
     /**
@@ -597,10 +599,18 @@ public class GobiiExtractor {
 								String hapmapOutFile = extractDir + "Dataset.hmp.txt";
 								HapmapTransformer hapmapTransformer = new HapmapTransformer();
 								Logger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
-								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+
+								String sampleFileWithoutIds = sampleFile+".tmp";
+								String locations=SAMPLE_FILE_ID_POSITIONS;
+								tryExec("cut --complement -f"+locations+" "+sampleFile,sampleFileWithoutIds, errorFile);//Marker Name, Linkage Group Name, Marker Linkage Group Start
+
+								success &= hapmapTransformer.generateFile(markerFile, sampleFileWithoutIds, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 								pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(), configuration, true);
 								getCounts(success, pm, markerFile, sampleFile);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
+
+								rmIfExist(sampleFileWithoutIds);
+
 								break;
 							case META_DATA:
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Extract");
