@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MapsetBrapiDTO;
 
 import java.util.List;
 

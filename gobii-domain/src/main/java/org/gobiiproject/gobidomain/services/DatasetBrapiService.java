@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetBrapiDTO;
 
 import java.util.List;
 

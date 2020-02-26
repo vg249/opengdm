@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.LinkageGroupBrapiDTO;
 
 import java.util.List;
 

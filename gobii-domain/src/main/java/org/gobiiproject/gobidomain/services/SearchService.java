@@ -1,6 +1,6 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SearchResultDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.SearchResultDTO;
 
 public interface SearchService {
 

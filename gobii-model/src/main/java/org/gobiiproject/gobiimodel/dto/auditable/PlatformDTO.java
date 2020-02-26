@@ -6,7 +6,7 @@ import java.util.List;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 /**

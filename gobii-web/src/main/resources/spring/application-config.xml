@@ -599,7 +599,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DATASET_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDatasetAll"/>
                         <constructor-arg ref="listStatementDatasetAllPaged"/>
@@ -609,7 +609,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CONTACT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.ContactDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementContactAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -619,7 +619,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_ORGANIZATION_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.OrganizationDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementOrganizationAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -629,7 +629,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PLATFORM_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementPlatformAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -638,7 +638,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PLATFORM_NAMES_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementPlatformByList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -648,7 +648,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROJECT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementProjectAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -658,7 +658,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementExperimentAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -668,7 +668,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.MarkerDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementMarkerAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -678,7 +678,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROTOCOL_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.ProtocolDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementProtocolAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -688,7 +688,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CVS_BY_GROUP}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.CvDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementCvsByGroup"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -728,7 +728,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_JOB_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.JobDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementJobAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -738,7 +738,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_JOB_BY_DATASET_ID}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.JobDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementJobByDatasetId"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -748,7 +748,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_JOB_BY_JOBNAME}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.JobDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementJobByJobName"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -828,7 +828,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_ALL_BRAPI}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementMarkerBrapiAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -838,7 +838,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DATASET_ALL_BRAPI}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.DataSetBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDatasetBrapiAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -848,7 +848,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_ANALYSES_ALL_BRAPI}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.AnalysisBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementAnalysisBrapiByIds"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -859,7 +859,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MAPSET_BRAPI_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.MapsetBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementBrapiMapset"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -870,7 +870,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_LINKAGE_GROUP_BRAPI_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.LinkageGroupBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementBrapiLinkageGroup"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -881,7 +881,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_LINKAGE_GROUP_BY_MAP_BRAPI_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.LinkageGroupBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementBrapiLinkageGroupByMap"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -902,7 +902,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnaRunAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -912,7 +912,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_GENOTYPE_CALLS_MARKER_METADATA}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsMarkerMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementGenotypeCallsMarkerMetaData"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -923,7 +923,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_GENOTYPE_CALLS_DNARUN_METADATA}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDnarunMetadataDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsDnarunMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementGenotypeCallsDnarunMetaData"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -934,7 +934,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_METADATA_BY_DATASET}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsMarkerMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementMarkerMetaDataByDatasetId"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -945,7 +945,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_METADATA_BY_DATASET}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDnarunMetadataDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsDnarunMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnarunMetaDataByDatasetId"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -956,7 +956,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_METADATA_BY_MARKER_LIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsMarkerMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementMarkerMetaDataByMarkerIdList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -967,7 +967,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_METADATA_BY_DNARUN_LIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDnarunMetadataDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsDnarunMetadataDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnarunMetaDataByDnarunIdList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -999,7 +999,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg
-                                value="org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO"/>
+                                value="org.gobiiproject.gobiimodel.dto.auditable.sampletracking.ProjectDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementProjectAllWithProperties"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -1010,7 +1010,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.sampletracking.ExperimentDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementExperimentAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
@@ -1020,7 +1020,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).CREATE_ID_DNASAMPLES}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.auditable.sampletracking.DnaSampleDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="createStatementDnaSamples"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>

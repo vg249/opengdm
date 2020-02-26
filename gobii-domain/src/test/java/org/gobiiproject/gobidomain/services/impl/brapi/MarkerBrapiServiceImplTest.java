@@ -1,8 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl.brapi;
 
-import org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapMarkerBrapi;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

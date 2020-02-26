@@ -5,7 +5,7 @@ import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProject;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;

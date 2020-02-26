@@ -1,6 +1,6 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface CallSetBrapiService {

@@ -5,7 +5,7 @@ import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MarkerGroupService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMarkerGroup;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;

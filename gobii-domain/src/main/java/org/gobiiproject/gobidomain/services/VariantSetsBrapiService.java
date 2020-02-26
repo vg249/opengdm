@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
 
 import java.util.List;
 

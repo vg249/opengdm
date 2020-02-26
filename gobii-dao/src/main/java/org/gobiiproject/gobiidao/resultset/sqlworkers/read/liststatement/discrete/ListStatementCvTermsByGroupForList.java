@@ -10,7 +10,7 @@ import java.util.Map;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ParameterizedSql;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_CV_BY_GROUP_AND_LIST;
 
 /**

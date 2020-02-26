@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.entity.children;
+package org.gobiiproject.gobiimodel.dto.children;
 
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;

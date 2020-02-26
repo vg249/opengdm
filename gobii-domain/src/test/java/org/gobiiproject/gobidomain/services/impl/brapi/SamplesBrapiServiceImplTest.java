@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.Germplasm;

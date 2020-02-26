@@ -5,7 +5,7 @@ import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;

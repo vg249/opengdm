@@ -12,8 +12,8 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
+import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
@@ -615,32 +615,14 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMapByMapId(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
 
         try {
 
-            if(page == null) {
-                //First Page
-                page = getDefaultBrapiPage();
-            }
-            if(pageSize == null) {
-
-                //TODO: Using same resource limit as markers. But, Can be defined seperately
-                pageSize = getDefaultPageSize(RestResourceId.GOBII_MARKERS);
-
-            }
-
-            MapsetBrapiDTO mapset = new MapsetBrapiDTO();
-
-            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(mapset);
-
-
-            payload.getMetadata().getPagination().setCurrentPage(page);
-
-            payload.getMetadata().getPagination().setPageSize(pageSize);
-
+            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSetById(mapId);
+            BrApiMasterPayload<MapsetBrapiDTO> payload = new BrApiMasterPayload(mapset, pageSize, page);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }

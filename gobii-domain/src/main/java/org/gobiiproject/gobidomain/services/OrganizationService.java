@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services;
 
 import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.OrganizationDTO;
 
 /**
  * Created by Angel on 5/4/2016.

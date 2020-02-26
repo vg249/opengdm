@@ -4,7 +4,7 @@ import org.gobiiproject.gobidomain.CvIdCvTermMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.SamplesBrapiService;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class SamplesBrapiServiceImpl implements SamplesBrapiService {

@@ -1,7 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.entity.annotations;
-
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
+package org.gobiiproject.gobiimodel.dto.annotations;
 
 import java.lang.annotation.*;
 

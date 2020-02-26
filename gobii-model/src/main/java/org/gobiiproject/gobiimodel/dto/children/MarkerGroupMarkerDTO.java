@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiimodel.dto.entity.children;
+package org.gobiiproject.gobiimodel.dto.children;
 
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;

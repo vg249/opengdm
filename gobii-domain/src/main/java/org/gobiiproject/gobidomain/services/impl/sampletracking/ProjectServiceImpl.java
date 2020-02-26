@@ -1,15 +1,12 @@
 package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.CvIdCvTermMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;

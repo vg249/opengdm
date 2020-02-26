@@ -1,9 +1,6 @@
 package org.gobiiproject.gobidomain.services.impl.brapi;
 
-import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
-import org.gobiiproject.gobiimodel.entity.DnaRun;
-import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
+import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +14,7 @@ import java.util.List;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
 
 /**

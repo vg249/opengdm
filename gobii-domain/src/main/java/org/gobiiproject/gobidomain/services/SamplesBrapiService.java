@@ -1,6 +1,6 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
 
 import java.util.List;
 

@@ -2,10 +2,9 @@ package org.gobiiproject.gobiimodel.dto.base;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Date;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.entity.Project;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 

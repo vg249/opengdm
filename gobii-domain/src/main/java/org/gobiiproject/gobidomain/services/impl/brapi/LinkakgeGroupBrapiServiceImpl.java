@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapLinkageGroupBrApi;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.LinkageGroupBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.LinkageGroupBrapiDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

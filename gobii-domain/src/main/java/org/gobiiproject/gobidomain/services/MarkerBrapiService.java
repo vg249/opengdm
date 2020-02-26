@@ -1,8 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.entity.children.TableColDisplay;
+import org.gobiiproject.gobiimodel.dto.children.TableColDisplay;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 /**

@@ -8,7 +8,7 @@ package org.gobiiproject.gobidomain.services;
 import java.util.List;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 
 /**
  * Created by Phil on 3/24/2016.

@@ -5,7 +5,7 @@ import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.sampletracking.ExperimentDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;

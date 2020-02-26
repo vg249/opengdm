@@ -2,28 +2,17 @@ package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsDnaRunDao;
 //import org.gobiiproject.gobiidao.resultset.access.RsSearchQueryDao;
-import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
-import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.ResultSet;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_DNASAMPLE_PROP;
-import static org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_GERMPLASM_PROP;
 
 /**
  * Created by VCalaminos on 6/25/2019.

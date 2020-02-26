@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetBrapiDTO;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.entity.children;
+package org.gobiiproject.gobiimodel.dto.children;
 
 /**
  * A singluar identifier used for unambiguously sepcifying a UI parameter used during this action.

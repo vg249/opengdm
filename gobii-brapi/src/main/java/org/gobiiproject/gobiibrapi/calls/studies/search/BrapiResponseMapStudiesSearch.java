@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiibrapi.calls.studies.search;
 
 import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

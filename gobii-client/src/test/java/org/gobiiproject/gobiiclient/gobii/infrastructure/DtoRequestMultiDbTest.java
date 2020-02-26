@@ -16,7 +16,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.*;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;

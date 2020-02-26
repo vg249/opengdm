@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.entity.children;
+package org.gobiiproject.gobiimodel.dto.children;
 
 /**
  * Created by Phil on 4/14/2016.

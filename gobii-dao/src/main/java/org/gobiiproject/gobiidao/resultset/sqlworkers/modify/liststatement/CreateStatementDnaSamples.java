@@ -2,8 +2,7 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.modify.liststatement;
 
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
-import org.gobiiproject.gobiidao.resultset.core.listquery.ParameterizedSql;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.sampletracking.DnaSampleDTO;
 
 
 import java.sql.Connection;

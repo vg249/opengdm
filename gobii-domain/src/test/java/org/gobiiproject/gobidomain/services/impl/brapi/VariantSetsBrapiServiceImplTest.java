@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.AnalysisBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;

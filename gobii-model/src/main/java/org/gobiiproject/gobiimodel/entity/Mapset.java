@@ -9,9 +9,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "mapset")
-@FetchProfile(name = "mapset-typecv", fetchOverrides = {
-        @FetchProfile.FetchOverride(entity = Mapset.class, association = "type", mode = FetchMode.JOIN),
-})
 public class Mapset extends BaseEntity {
 
     @Id

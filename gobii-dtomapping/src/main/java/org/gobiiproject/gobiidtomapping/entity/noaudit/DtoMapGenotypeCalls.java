@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
+import org.gobiiproject.gobiimodel.dto.noaudit.*;
 
 import java.util.List;
 import java.util.Map;

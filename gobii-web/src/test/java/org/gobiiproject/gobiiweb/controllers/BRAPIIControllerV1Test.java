@@ -1,18 +1,14 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobidomain.security.UserContextLoader;
 import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.VariantSetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CallSetBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.AnalysisBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
