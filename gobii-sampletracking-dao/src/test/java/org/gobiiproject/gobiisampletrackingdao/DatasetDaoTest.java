@@ -18,6 +18,7 @@ import static junit.framework.TestCase.assertTrue;
  * TODO: Setup class to create required data in the test database needs to be completed in future.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class DatasetDaoTest {
 
     @Autowired
