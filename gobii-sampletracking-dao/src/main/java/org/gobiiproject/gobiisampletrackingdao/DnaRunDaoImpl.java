@@ -58,7 +58,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 " INNER JOIN germplasm ON(dnasample.germplasm_id = germplasm.germplasm_id " +
                 "   AND (:germplasmId IS NULL OR :germplasmId = germplasm.germplasm_id)" +
                 "   AND (:germplasmName IS NULL OR :germplasmName = germplasm.name)) " +
-                " WHERE (:datasetId IS NULL OR dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL) " +
+                " WHERE (:datasetId IS NULL OR JSONB_EXISTS(dataset.dataset_dnarun_idx, CAST(:datasetId AS TEXT))) " +
                 " AND (:dnaRunId IS NULL OR dnarun.dnarun_id = :dnaRunId) " +
                 " AND (:dnaRunName IS NULL OR dnarun.name = :dnaRunName) " +
                 " AND (:experimentId IS NULL OR dnarun.experiment_id = :experimentId) " +
