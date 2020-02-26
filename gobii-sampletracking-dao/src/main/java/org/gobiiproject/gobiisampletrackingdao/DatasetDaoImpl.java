@@ -121,7 +121,8 @@ public class DatasetDaoImpl implements DatasetDao {
                 "FROM dataset " +
                 "WHERE :datasetId IS NULL OR dataset_id = :datasetId " +
                 "LIMIT :pageSize OFFSET :rowOffset) " +
-                "SELECT ds.* , anas.*, " +
+                "SELECT {ds.*} , {anas.*}, {experiment.*}, {callinganalysis.*}, {job.*}, " +
+                "{typeCv.*}, {statusCv.*}, " +
                 "(SELECT gettotalmarkersindataset " +
                 "FROM gettotalmarkersindataset(CAST(ds.dataset_id AS TEXT))) " +
                 "AS marker_count, " +
@@ -129,7 +130,12 @@ public class DatasetDaoImpl implements DatasetDao {
                 "FROM gettotaldnarunsindataset(CAST(ds.dataset_id AS TEXT))) " +
                 "AS dnarun_count " +
                 "FROM ds " +
-                "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) ";
+                "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) " +
+                "LEFT JOIN experiment AS experiment USING(experiment_id) " +
+                "LEFT JOIN analysis AS callinganalysis ON(callinganalysis.analysis_id = ds.callinganalysis_id) " +
+                "LEFT JOIN job USING(job_id) " +
+                "LEFT JOIN cv typeCv ON(job.type_id = typeCv.cv_id) " +
+                "LEFT JOIN cv statusCv ON(job.status = statusCv.cv_id) ";
 
         try {
 
@@ -142,6 +148,11 @@ public class DatasetDaoImpl implements DatasetDao {
             List<Object[]> resultTupleList = session.createNativeQuery(queryString)
                     .addEntity("ds", Dataset.class)
                     .addEntity("anas", Analysis.class)
+                    .addJoin("experiment", "ds.experiment")
+                    .addJoin("job", "ds.job")
+                    .addJoin("callinganalysis", "ds.callingAnalysis")
+                    .addJoin("typeCv", "job.type")
+                    .addJoin("statusCv", "job.status")
                     .addScalar("marker_count", IntegerType.INSTANCE)
                     .addScalar("dnarun_count", IntegerType.INSTANCE)
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
