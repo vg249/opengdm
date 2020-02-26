@@ -27,7 +27,7 @@ public class Analysis extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
     private Cv type = new Cv();
 
@@ -43,7 +43,7 @@ public class Analysis extends BaseEntity {
     @Column(name = "sourceuri")
     private String sourceUri;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id", referencedColumnName = "reference_id")
     private Reference reference = new Reference();
 
@@ -51,7 +51,7 @@ public class Analysis extends BaseEntity {
     @Convert(converter = JsonbConverter.class)
     private JsonNode parameters;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 

@@ -29,11 +29,11 @@ public class Dataset extends BaseEntity {
     @Column(name="name")
     private String datasetName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "experiment_id")
     private Experiment experiment = new Experiment();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "callinganalysis_id", referencedColumnName = "analysis_id")
     private Analysis callingAnalysis = new Analysis();
 
@@ -60,15 +60,15 @@ public class Dataset extends BaseEntity {
     @Convert(converter = JsonbConverter.class)
     private JsonNode scores;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
     private Cv type = new Cv();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
     private Job job = new Job();
 

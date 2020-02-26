@@ -27,15 +27,15 @@ public class Job {
     @Column(name="name")
     private String jobName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
     private Cv type = new Cv();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payload_type_id", referencedColumnName = "cv_id")
     private Cv payloadType = new Cv();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 
