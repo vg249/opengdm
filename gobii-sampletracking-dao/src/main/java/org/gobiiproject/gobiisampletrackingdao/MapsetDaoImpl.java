@@ -24,7 +24,7 @@ public class MapsetDaoImpl implements MapsetDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MapsetDaoImpl.class);
 
-    String mapsByExperimentIdListQueryString = "SELECT DISTINCT {mapset.*}, " +
+    String mapsByExperimentIdListQueryString = "SELECT DISTINCT {mapset.*}, {typecv.*}, " +
             "COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
             " COUNT(marker_id) AS marker_count " +
             "FROM experiment " +
@@ -33,18 +33,22 @@ public class MapsetDaoImpl implements MapsetDao {
             "INNER JOIN marker_linkage_group USING(marker_id) " +
             "INNER JOIN linkage_group USING(linkage_group_id) " +
             "INNER JOIN mapset ON(mapset.mapset_id = linkage_group.map_id) " +
+            "LEFT JOIN cv typecv ON(mapset.type_id = typecv.cv_id) " +
             "WHERE (:experimentId IS NULL OR experiment.experiment_id = :experimentId) " +
             "AND (:mapsetId IS NULL OR mapset.mapset_Id = :mapsetId) " +
-            "GROUP BY mapset.mapset_id;";
+            "GROUP BY mapset.mapset_id, typecv.cv_id " +
+            "LIMIT :pageSize OFFSET :rowOffset";
 
-    String mapsListQueryString = "SELECT {mapset.*}, COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
+    String mapsListQueryString = "SELECT DISTINCT {mapset.*}, {typecv.*}, " +
+            "COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
             "COUNT(marker_id) AS marker_count " +
-            "FROM mapset LEFT OUTER JOIN linkage_group ON(mapset.mapset_id = linkage_group.map_id) " +
+            "FROM mapset " +
+            "LEFT OUTER JOIN cv typecv ON(mapset.type_id = typecv.cv_id) " +
+            "LEFT OUTER JOIN linkage_group ON(mapset.mapset_id = linkage_group.map_id) " +
             "LEFT OUTER JOIN marker_linkage_group USING(linkage_group_id) " +
             "WHERE (:mapsetId IS NULL OR mapset.mapset_Id = :mapsetId) " +
-            "GROUP BY mapset.mapset_id;";
-
-    String mapsQueryString = "";
+            "GROUP BY mapset.mapset_id, typecv.cv_id " +
+            "LIMIT :pageSize OFFSET :rowOffset";
 
     @PersistenceContext
     protected EntityManager em;
@@ -59,8 +63,6 @@ public class MapsetDaoImpl implements MapsetDao {
 
             Session session = em.unwrap(Session.class);
 
-            session.enableFetchProfile("mapset-typecv");
-
             String queryString = mapsListQueryString;
 
             if(experimentId != null) {
@@ -69,18 +71,18 @@ public class MapsetDaoImpl implements MapsetDao {
 
             NativeQuery query = session.createNativeQuery(queryString)
                     .addEntity("mapset", Mapset.class)
+                    .addJoin("typecv", "mapset.type")
                     .addScalar("linkage_group_count", IntegerType.INSTANCE)
                     .addScalar("marker_count", IntegerType.INSTANCE)
                     .setParameter("mapsetId", mapsetId, IntegerType.INSTANCE)
-                    .setFetchSize(pageSize)
-                    .setFirstResult(rowOffset);
+                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                    .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE);
 
             if(experimentId != null) {
                 query.setParameter("experimentId", experimentId);
             }
 
             List<Object[]> resultTuples = query.list();
-
 
             for(Object[] tuple : resultTuples) {
 
@@ -113,7 +115,8 @@ public class MapsetDaoImpl implements MapsetDao {
    public Mapset getMapsetWithCountsById(Integer mapsetId) {
       try {
 
-          List<Mapset> mapsetsById = this.getMapsetsWithCounts(null, null, mapsetId, null);
+          List<Mapset> mapsetsById = this.getMapsetsWithCounts(null, null,
+                  mapsetId, null);
 
           if (mapsetsById.size() > 1) {
 
@@ -121,12 +124,12 @@ public class MapsetDaoImpl implements MapsetDao {
 
               throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                       GobiiValidationStatusType.NONE,
-                      "More than one dnarun entity exists for the same Id");
+                      "More than one Mapset entity exists for the same Id");
 
           } else if (mapsetsById.size() == 0) {
               throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                       GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                      "Dna run Entity for given id does not exist");
+                      "Mapset Entity for given id does not exist");
           }
 
           return mapsetsById.get(0);
