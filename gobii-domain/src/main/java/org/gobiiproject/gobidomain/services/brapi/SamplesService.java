@@ -1,13 +1,13 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.brapi.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 
 import java.util.List;
 
-public interface SamplesBrapiService {
+public interface SamplesService {
 
-    List<SamplesBrapiDTO> getSamples(Integer pageNum, Integer pageSize,
-                                     Integer sampleDbId, Integer germplasmDbId,
-                                     String observationUnitDbId);
+    List<SamplesDTO> getSamples(Integer pageNum, Integer pageSize,
+                                Integer sampleDbId, Integer germplasmDbId,
+                                String observationUnitDbId);
 
 }

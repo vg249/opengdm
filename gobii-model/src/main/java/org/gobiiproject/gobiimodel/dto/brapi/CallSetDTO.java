@@ -22,7 +22,7 @@ import java.util.Map;
         "id", "allowedProcessTypes", "entityNameType",
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CallSetBrapiDTO extends DTOBase {
+public class CallSetDTO extends DTOBase {
 
     @GobiiEntityMap(paramName = "dnaRunId", entity = DnaRun.class)
     @JsonSerialize(using = ToStringSerializer.class)

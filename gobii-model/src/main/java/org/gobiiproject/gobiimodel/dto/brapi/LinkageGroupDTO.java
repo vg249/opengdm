@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * Brapi DTO for LinkageGroups
  */
-public class LinkageGroupBrapiDTO {
+public class LinkageGroupDTO {
 
 
     private String linkageGroupName;

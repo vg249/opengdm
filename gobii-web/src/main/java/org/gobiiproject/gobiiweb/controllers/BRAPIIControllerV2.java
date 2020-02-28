@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobidomain.services.brapi.*;
+import org.gobiiproject.gobidomain.services.brapi.MapsetService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
@@ -13,7 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.*;
 import org.gobiiproject.gobiimodel.dto.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.*;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,37 +51,40 @@ public class BRAPIIControllerV2 {
     private final Integer brapiDefaultPageSize = 1000;
 
     @Autowired
-    private GenotypeCallsService genotypeCallsService = null;
+    private GenotypeCallsService genotypeCallsService;
 
     @Autowired
-    private SearchService searchService = null;
+    private SearchService searchService;
 
     @Autowired
     private ConfigSettingsService configSettingsService;
 
     @Autowired
-    private MapsetBrapiService mapsetBrapiService;
+    private MapsetService mapsetService;
 
     @Autowired
-    private SamplesBrapiService samplesBrapiService;
+    private SamplesService samplesBrapiService;
 
     @Autowired
-    private VariantSetsBrapiService variantSetsService;
+    private VariantSetsService variantSetsService;
 
     @Autowired
-    private CallSetBrapiService callSetBrapiService;
+    private CallSetService callSetService;
+
+    @Autowired
+    private MarkerPositionsService markerPositionsService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 
-    private class CallSetResponse extends BrApiMasterPayload<CallSetBrapiDTO>{}
-    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<CallSetBrapiDTO>>{}
+    private class CallSetResponse extends BrApiMasterPayload<CallSetDTO>{}
+    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
     private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
     private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
-    private class VariantResponse extends BrApiMasterPayload<MarkerBrapiDTO>{}
-    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<MarkerBrapiDTO>>{}
-    private class VariantSetResponse extends  BrApiMasterPayload<DataSetBrapiDTO>{}
-    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<DataSetBrapiDTO>>{}
+    private class VariantResponse extends BrApiMasterPayload<VariantDTO>{}
+    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
+    private class VariantSetResponse extends BrApiMasterPayload<VariantSetDTO>{}
+    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<VariantSetDTO>>{}
 
 
     /**
@@ -160,17 +165,17 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize)
                     Integer pageSize,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            CallSetBrapiDTO callSetsFilter
+            CallSetDTO callSetsFilter
     ) {
         try {
 
-            PagedResult<CallSetBrapiDTO> callSets;
+            PagedResult<CallSetDTO> callSets;
 
-            callSets = callSetBrapiService.getCallSets(
+            callSets = callSetService.getCallSets(
                     pageSize, page,
                     variantSetDbId, callSetsFilter);
 
-            BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(
+            BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
                     callSets.getResult(),
                     callSets.getCurrentPageSize(),
                     callSets.getCurrentPageNum());
@@ -223,9 +228,9 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            CallSetBrapiDTO callSet = callSetBrapiService.getCallSetById(callSetDbId);
+            CallSetDTO callSet = callSetService.getCallSetById(callSetDbId);
 
-            BrApiMasterPayload<CallSetBrapiDTO> payload = new BrApiMasterPayload<>(callSet);
+            BrApiMasterPayload<CallSetDTO> payload = new BrApiMasterPayload<>(callSet);
 
             return ResponseEntity.ok().contentType(
                     MediaType.APPLICATION_JSON).body(payload);
@@ -463,7 +468,7 @@ public class BRAPIIControllerV2 {
             }
 
 
-            List<SamplesBrapiDTO> samples = samplesBrapiService.getSamples(
+            List<SamplesDTO> samples = samplesBrapiService.getSamples(
                     page, pageSize,
                     sampleDbId, germplasmDbId,
                     observationUnitDbId);
@@ -518,9 +523,9 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            PagedResult<MapsetBrapiDTO> pagedResult = mapsetBrapiService.getMapSets(pageSize, page, studyDbId);
+            PagedResult<MapsetDTO> pagedResult = mapsetService.getMapSets(pageSize, page, studyDbId);
 
-            BrApiMasterListPayload<MapsetBrapiDTO> payload = new BrApiMasterListPayload<>(pagedResult.getResult(),
+            BrApiMasterListPayload<MapsetDTO> payload = new BrApiMasterListPayload<>(pagedResult.getResult(),
                     pagedResult.getCurrentPageSize(),
                     pagedResult.getCurrentPageNum());
 
@@ -564,8 +569,8 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSetById(mapId);
-            BrApiMasterPayload<MapsetBrapiDTO> payload = new BrApiMasterPayload(mapset, pageSize, page);
+            MapsetDTO mapset = mapsetService.getMapSetById(mapId);
+            BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload(mapset, pageSize, page);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }
@@ -599,12 +604,21 @@ public class BRAPIIControllerV2 {
     public @ResponseBody ResponseEntity getMarkersByMapId(
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @RequestParam(value = "linkageGroupName", required = false) String linkageGroupName,
-            @RequestParam(value = "mapDbId") Integer mapDbId) throws GobiiException {
+            @RequestParam(value = "minPosition", required = false) BigDecimal minPosition,
+            @RequestParam(value = "maxPosition", required = false) BigDecimal maxPosition,
+            MarkerPositions markerPositionsFilter) throws GobiiException {
 
         try {
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("");
+            PagedResult<MarkerPositions> pagedResult = markerPositionsService.getMarkerPositions(pageSize, page,
+                    markerPositionsFilter, minPosition, maxPosition);
+
+            BrApiMasterListPayload<MarkerPositions> payload = new BrApiMasterListPayload<>(
+                    pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getCurrentPageNum());
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
 
         }
         catch(GobiiException gE) {
@@ -974,10 +988,10 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            PagedResult<CallSetBrapiDTO> pagedResult = callSetBrapiService.getCallSets(pageSize, page,
+            PagedResult<CallSetDTO> pagedResult = callSetService.getCallSets(pageSize, page,
                     variantSetDbId, null);
 
-            BrApiMasterListPayload<CallSetBrapiDTO> payload = new BrApiMasterListPayload<>(
+            BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
                     pagedResult.getResult(),
                     pagedResult.getCurrentPageSize(),
                     pagedResult.getCurrentPageNum());

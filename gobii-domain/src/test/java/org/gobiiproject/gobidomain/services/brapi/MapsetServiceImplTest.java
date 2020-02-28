@@ -22,7 +22,7 @@ import static org.mockito.Mockito.isNull;
  * Created by VCalaminos on 7/18/2019.
  */
 @WebAppConfiguration
-public class MapsetBrapiServiceImplTest {
+public class MapsetServiceImplTest {
 
     @InjectMocks
     private MapsetBrapiServiceImpl mapsetBrapiService;

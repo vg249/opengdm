@@ -17,7 +17,7 @@ import java.util.List;
         "id", "allowedProcessTypes", "entityNameType", "datasetMarkerIndex"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VariantBrapiDTO extends DTOBase {
+public class VariantDTO extends DTOBase {
 
 
     @GobiiEntityMap(paramName="alts", entity = Marker.class)

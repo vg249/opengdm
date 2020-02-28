@@ -1,16 +1,13 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobidomain.services.brapi.SamplesBrapiService;
-import org.gobiiproject.gobidomain.services.brapi.VariantSetsBrapiService;
-import org.gobiiproject.gobiimodel.dto.auditable.AnalysisBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.DataSetBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobidomain.services.brapi.SamplesService;
+import org.gobiiproject.gobidomain.services.brapi.VariantSetsService;
+import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -42,10 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BRAPIIControllerV1Test {
 
     @Mock
-    private SamplesBrapiService samplesBrapiService;
+    private SamplesService samplesBrapiService;
 
     @Mock
-    private VariantSetsBrapiService variantSetsBrapiService;
+    private VariantSetsService variantSetsService;
 
     @InjectMocks
     private BRAPIIControllerV2 brapiiControllerV2;
@@ -63,63 +60,29 @@ public class BRAPIIControllerV1Test {
 
     }
 
-    private CallSetBrapiDTO createMockDnaRunDTO() {
+    private CallSetDTO createMockDnaRunDTO() {
 
-        CallSetBrapiDTO callSetBrapiDTO = new CallSetBrapiDTO();
+        CallSetDTO callSetDTO = new CallSetDTO();
 
-        callSetBrapiDTO.setCallSetDbId(34);
-        callSetBrapiDTO.setCallSetName("test-callset");
-        callSetBrapiDTO.setGermplasmDbId(1);
+        callSetDTO.setCallSetDbId(34);
+        callSetDTO.setCallSetName("test-callset");
+        callSetDTO.setGermplasmDbId(1);
 
-        return callSetBrapiDTO;
+        return callSetDTO;
     }
 
-    private MarkerBrapiDTO createMockMarkerDTO() {
 
-        MarkerBrapiDTO markerBrapiDTO = new MarkerBrapiDTO();
-        List<Integer> variantSetDbId = new ArrayList<>();
-        variantSetDbId.add(1);
-        variantSetDbId.add(2);
+    private AnalysisDTO createMockAnalysisDTO(Integer analysisId) {
 
-        markerBrapiDTO.setVariantDbId(35);
-        markerBrapiDTO.setVariantName("test-variant");
-        markerBrapiDTO.setVariantSetDbId(variantSetDbId);
-        markerBrapiDTO.setMapSetName("test-mapset");
+        AnalysisDTO analysisDTO = new AnalysisDTO();
 
-        return markerBrapiDTO;
+        analysisDTO.setAnalysisDbId(analysisId);
+        analysisDTO.setAnalysisName("test-analysis-"+analysisId.toString());
+        analysisDTO.setType("calling");
+
+        return analysisDTO;
     }
 
-    private AnalysisBrapiDTO createMockAnalysisDTO(Integer analysisId) {
-
-        AnalysisBrapiDTO analysisBrapiDTO = new AnalysisBrapiDTO();
-
-        analysisBrapiDTO.setAnalysisDbId(analysisId);
-        analysisBrapiDTO.setAnalysisName("test-analysis-"+analysisId.toString());
-        analysisBrapiDTO.setType("calling");
-
-        return analysisBrapiDTO;
-    }
-
-    private DataSetBrapiDTO createMockDatasetDTO() {
-
-        DataSetBrapiDTO dataSetBrapiDTO = new DataSetBrapiDTO();
-
-        AnalysisBrapiDTO analysisBrapiDTO = createMockAnalysisDTO(1);
-        AnalysisBrapiDTO analysisBrapiDTO1 = createMockAnalysisDTO(2);
-
-        dataSetBrapiDTO.setVariantSetDbId(36);
-        dataSetBrapiDTO.setVariantSetName("test-variantSet");
-        dataSetBrapiDTO.setStudyDbId(1);
-        dataSetBrapiDTO.setCallingAnalysisId(analysisBrapiDTO.getAnalysisDbId());
-        dataSetBrapiDTO.setStudyName("test-study");
-
-        List<AnalysisBrapiDTO> analysisBrapiDTOList = new ArrayList<>();
-        analysisBrapiDTOList.add(analysisBrapiDTO1);
-
-        dataSetBrapiDTO.setAnalyses(analysisBrapiDTOList);
-
-        return dataSetBrapiDTO;
-    }
 
     @Test
     public void getCallsets() throws Exception {
@@ -297,14 +260,14 @@ public class BRAPIIControllerV1Test {
 
     }
 
-    private List<SamplesBrapiDTO> createMockSamples(Integer pageSize) {
+    private List<SamplesDTO> createMockSamples(Integer pageSize) {
 
-        List<SamplesBrapiDTO> returnVal = new ArrayList<>();
+        List<SamplesDTO> returnVal = new ArrayList<>();
 
 
         for(int i = 0; i < pageSize; i++) {
 
-            SamplesBrapiDTO sample = new SamplesBrapiDTO();
+            SamplesDTO sample = new SamplesDTO();
 
             sample.setTissueType(RandomStringUtils.random(5, true, false));
 
@@ -345,7 +308,7 @@ public class BRAPIIControllerV1Test {
 
         final Integer defaultPageNum =  0;
 
-        List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
+        List<SamplesDTO> mockSamples = createMockSamples(pageSize);
 
         when(
                 samplesBrapiService.getSamples(
@@ -401,7 +364,7 @@ public class BRAPIIControllerV1Test {
         Integer pageSize = random.nextInt(100);
         Integer pageNum = random.nextInt(10);
 
-        List<SamplesBrapiDTO> mockSamples = createMockSamples(pageSize);
+        List<SamplesDTO> mockSamples = createMockSamples(pageSize);
 
         when(
                 samplesBrapiService.getSamples(

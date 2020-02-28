@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.auditable;
+package org.gobiiproject.gobiimodel.dto.brapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -52,7 +52,7 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private List<Object> availableFormats;
 
-    private Set<AnalysisBrapiDTO> analyses = new HashSet<>();
+    private Set<AnalysisDTO> analyses = new HashSet<>();
 
     private boolean extractReady;
 
@@ -143,11 +143,11 @@ public class VariantSetDTO extends DTOBaseAuditable {
         this.availableFormats = availableFormats;
     }
 
-    public Set<AnalysisBrapiDTO> getAnalyses() {
+    public Set<AnalysisDTO> getAnalyses() {
         return analyses;
     }
 
-    public void setAnalyses(Set<AnalysisBrapiDTO> analyses) {
+    public void setAnalyses(Set<AnalysisDTO> analyses) {
         this.analyses = analyses;
     }
 

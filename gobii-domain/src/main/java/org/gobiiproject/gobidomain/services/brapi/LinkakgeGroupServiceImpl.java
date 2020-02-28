@@ -1,16 +1,16 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.brapi.LinkageGroupBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.LinkageGroupDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
+public class LinkakgeGroupServiceImpl implements LinkageGroupService {
 
-    Logger LOGGER = LoggerFactory.getLogger(LinkakgeGroupBrapiServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(LinkakgeGroupServiceImpl.class);
 
     /**
      * Gets the list of LinkageGroups in the database by Page Number and Page Size
@@ -20,10 +20,10 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
      * @throws GobiiDomainException
      */
     @Override
-    public List<LinkageGroupBrapiDTO> getLinkageGroups(
+    public List<LinkageGroupDTO> getLinkageGroups(
             Integer pageNum, Integer pageSize) throws GobiiDomainException {
 
-        List<LinkageGroupBrapiDTO> returnVal = new ArrayList<>();
+        List<LinkageGroupDTO> returnVal = new ArrayList<>();
 
         try {
 
@@ -47,10 +47,10 @@ public class LinkakgeGroupBrapiServiceImpl implements LinkageGroupBrapiService {
      * @throws GobiiDomainException
      */
     @Override
-    public List<LinkageGroupBrapiDTO> getLinkageGroupsByMapId(Integer mapId,
-            Integer pageNum, Integer pageSize) throws GobiiDomainException {
+    public List<LinkageGroupDTO> getLinkageGroupsByMapId(Integer mapId,
+                                                         Integer pageNum, Integer pageSize) throws GobiiDomainException {
 
-        List<LinkageGroupBrapiDTO> returnVal = new ArrayList<>();
+        List<LinkageGroupDTO> returnVal = new ArrayList<>();
 
         try {
 

@@ -1,6 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +21,11 @@ import static org.mockito.Matchers.any;
  * Created by VCalaminos on 7/18/2019.
  */
 @WebAppConfiguration
-public class CallSetBrapiServiceImplTest {
+public class CallSetServiceImplTest {
 
 
     @InjectMocks
-    private CallSetBrapiServiceImpl callSetBrapiService;
+    private CallSetServiceImpl callSetBrapiService;
 
     @Mock
     private DnaRunDaoImpl dnaRunDao;
@@ -35,15 +35,15 @@ public class CallSetBrapiServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    private CallSetBrapiDTO createMockDnaRunDTO() {
+    private CallSetDTO createMockDnaRunDTO() {
 
-        CallSetBrapiDTO callSetBrapiDTO = new CallSetBrapiDTO();
+        CallSetDTO callSetDTO = new CallSetDTO();
 
-        callSetBrapiDTO.setCallSetDbId(34);
-        callSetBrapiDTO.setCallSetName("test-callset");
-        callSetBrapiDTO.setGermplasmDbId(1);
+        callSetDTO.setCallSetDbId(34);
+        callSetDTO.setCallSetName("test-callset");
+        callSetDTO.setGermplasmDbId(1);
 
-        return callSetBrapiDTO;
+        return callSetDTO;
 
     }
 
@@ -51,7 +51,7 @@ public class CallSetBrapiServiceImplTest {
     @Test
     public void getCallsets() throws Exception {
 
-        List<CallSetBrapiDTO> callsetsMock = new ArrayList<>();
+        List<CallSetDTO> callsetsMock = new ArrayList<>();
 
 
 

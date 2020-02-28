@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.noaudit.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MapsetBrapiServiceImpl implements MapsetBrapiService {
+public class MapsetBrapiServiceImpl implements MapsetService {
 
     Logger LOGGER = LoggerFactory.getLogger(MapsetBrapiServiceImpl.class);
 
@@ -35,17 +35,17 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
      * @throws GobiiDomainException
      */
     @Override
-    public PagedResult<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum,
-                                           Integer studyDbId) throws GobiiDomainException {
+    public PagedResult<MapsetDTO> getMapSets(Integer pageSize, Integer pageNum,
+                                             Integer studyDbId) throws GobiiDomainException {
 
-        PagedResult<MapsetBrapiDTO> pagedResult = new PagedResult<>();
+        PagedResult<MapsetDTO> pagedResult = new PagedResult<>();
 
         try {
 
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(pageNum);
 
-            List<MapsetBrapiDTO> mapsetBrapiDTOS = new ArrayList<>();
+            List<MapsetDTO> mapsetDTOS = new ArrayList<>();
 
             Integer rowOffset = pageNum*pageSize;
 
@@ -53,15 +53,15 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
             for (Mapset mapset : mapsets) {
 
-                MapsetBrapiDTO mapsetBrapiDTO = new MapsetBrapiDTO();
+                MapsetDTO mapsetDTO = new MapsetDTO();
 
-                ModelMapper.mapEntityToDto(mapset, mapsetBrapiDTO);
+                ModelMapper.mapEntityToDto(mapset, mapsetDTO);
 
-                mapsetBrapiDTOS.add(mapsetBrapiDTO);
+                mapsetDTOS.add(mapsetDTO);
 
             }
 
-            pagedResult.setResult(mapsetBrapiDTOS);
+            pagedResult.setResult(mapsetDTOS);
 
             pagedResult.setCurrentPageNum(pageNum);
 
@@ -80,17 +80,17 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
     }
 
     @Override
-    public MapsetBrapiDTO getMapSetById(Integer mapDbId) throws GobiiException {
+    public MapsetDTO getMapSetById(Integer mapDbId) throws GobiiException {
 
-        MapsetBrapiDTO mapsetBrapiDTO = new MapsetBrapiDTO();
+        MapsetDTO mapsetDTO = new MapsetDTO();
 
         try {
 
             Mapset mapset = mapsetDao.getMapsetWithCountsById(mapDbId);
 
-            ModelMapper.mapEntityToDto(mapset, mapsetBrapiDTO);
+            ModelMapper.mapEntityToDto(mapset, mapsetDTO);
 
-            return mapsetBrapiDTO;
+            return mapsetDTO;
         }
         catch(Exception e) {
             throw new GobiiException(GobiiStatusLevel.ERROR,

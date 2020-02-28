@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.brapi;
 import org.gobiiproject.gobidomain.CvIdCvTermMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.brapi.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SamplesBrapiServiceImpl implements SamplesBrapiService {
+public class SamplesServiceImpl implements SamplesService {
 
 
     @Autowired
@@ -37,12 +37,12 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
      * @return List of Genotype Calls
      */
     @Override
-    public List<SamplesBrapiDTO> getSamples(Integer pageNum, Integer pageSize,
-                                            Integer sampleDbId, Integer germplasmDbId,
-                                            String observationUnitDbId) {
+    public List<SamplesDTO> getSamples(Integer pageNum, Integer pageSize,
+                                       Integer sampleDbId, Integer germplasmDbId,
+                                       String observationUnitDbId) {
         try {
 
-            List<SamplesBrapiDTO> returnVal = new ArrayList<>();
+            List<SamplesDTO> returnVal = new ArrayList<>();
 
             Integer rowOffset = 0;
 
@@ -66,22 +66,22 @@ public class SamplesBrapiServiceImpl implements SamplesBrapiService {
 
                 if (dnaSample != null) {
 
-                    SamplesBrapiDTO samplesBrapiDTO = new SamplesBrapiDTO();
+                    SamplesDTO samplesDTO = new SamplesDTO();
 
-                    ModelMapper.mapEntityToDto(dnaSample, samplesBrapiDTO);
+                    ModelMapper.mapEntityToDto(dnaSample, samplesDTO);
 
                     if (dnaSample.getProperties() != null && dnaSample.getProperties().size() > 0) {
 
-                        samplesBrapiDTO.setAdditionalInfo(CvIdCvTermMapper.mapCvIdToCvTerms(
+                        samplesDTO.setAdditionalInfo(CvIdCvTermMapper.mapCvIdToCvTerms(
                                 cvList, dnaSample.getProperties()));
 
-                        if (samplesBrapiDTO.getAdditionalInfo().containsKey("sample_type")) {
-                            samplesBrapiDTO.setTissueType(samplesBrapiDTO.getAdditionalInfo().get("sample_type"));
-                            samplesBrapiDTO.getAdditionalInfo().remove("sample_type");
+                        if (samplesDTO.getAdditionalInfo().containsKey("sample_type")) {
+                            samplesDTO.setTissueType(samplesDTO.getAdditionalInfo().get("sample_type"));
+                            samplesDTO.getAdditionalInfo().remove("sample_type");
                         }
                     }
 
-                    returnVal.add(samplesBrapiDTO);
+                    returnVal.add(samplesDTO);
                 }
             }
 

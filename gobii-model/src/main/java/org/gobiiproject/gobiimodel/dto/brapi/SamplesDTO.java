@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SamplesBrapiDTO {
+public class SamplesDTO {
 
     @GobiiEntityMap(paramName="germplasm.germplasmId", entity = DnaSample.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)

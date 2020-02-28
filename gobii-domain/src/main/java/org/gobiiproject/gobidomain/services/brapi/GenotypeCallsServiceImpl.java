@@ -3,10 +3,8 @@ package org.gobiiproject.gobidomain.services.brapi;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
-import org.gobiiproject.gobidomain.services.brapi.GenotypeCallsService;
-import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
@@ -31,8 +29,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);
 
-    @Autowired
-    private DtoMapGenotypeCalls dtoMapGenotypeCalls = null;
 
     @Autowired
     private DnaRunDao dnaRunDao = null;
@@ -587,8 +583,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             String outputDirPath = "";
 
-            returnVal =  dtoMapGenotypeCalls.getGenotypeCallsListByExtractQuery(
-                    extractQueryFilePath, pageToken, pageSize);
 
         }
         catch (GobiiException gE) {
@@ -615,7 +609,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         Map<String, String> returnVal = new HashMap<>();
 
         try {
-            return dtoMapGenotypeCalls.getGenotypeCallsAsString(datasetId, pageToken);
+            return returnVal;
         }
         catch (GobiiException gE) {
 

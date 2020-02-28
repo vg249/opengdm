@@ -1,20 +1,20 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
-public interface CallSetBrapiService {
+public interface CallSetService {
 
-    PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
-                                             Integer pageNum,
-                                             Integer variantSetDbId,
-                                             CallSetBrapiDTO callSetsFilter);
+    PagedResult<CallSetDTO> getCallSets(Integer pageSize,
+                                        Integer pageNum,
+                                        Integer variantSetDbId,
+                                        CallSetDTO callSetsFilter);
 
-    PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
-                                           String pageToken,
-                                           Integer variantSetDbId,
-                                           CallSetBrapiDTO callSetsFilter);
+    PagedResult<CallSetDTO> getCallSets(Integer pageSize,
+                                        String pageToken,
+                                        Integer variantSetDbId,
+                                        CallSetDTO callSetsFilter);
 
-    CallSetBrapiDTO getCallSetById(Integer callSetDbId);
+    CallSetDTO getCallSetById(Integer callSetDbId);
 
 }

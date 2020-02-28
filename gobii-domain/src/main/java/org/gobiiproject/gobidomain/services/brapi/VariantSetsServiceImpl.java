@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.brapi;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.dto.brapi.AnalysisBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
+public class VariantSetsServiceImpl implements VariantSetsService {
 
-    Logger LOGGER = LoggerFactory.getLogger(VariantSetsBrapiServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(VariantSetsServiceImpl.class);
 
     @Autowired
     private DatasetDao datasetDao;
@@ -45,7 +45,7 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
         List<VariantSetDTO> returnVal = new ArrayList<>();
 
-        HashMap<Integer, AnalysisBrapiDTO> analysisBrapiDTOMap = new HashMap<>();
+        HashMap<Integer, AnalysisDTO> analysisBrapiDTOMap = new HashMap<>();
 
         Integer rowOffset = 0;
 
@@ -147,7 +147,7 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
      */
     public void mapDatasetEntityToVariantSetDto(Dataset dataset,
                                                 VariantSetDTO variantSetDTO,
-                                                HashMap<Integer, AnalysisBrapiDTO> analysisBrapiDTOMap) {
+                                                HashMap<Integer, AnalysisDTO> analysisBrapiDTOMap) {
 
         ModelMapper.mapEntityToDto(dataset, variantSetDTO);
 
@@ -160,14 +160,14 @@ public class VariantSetsBrapiServiceImpl implements VariantSetsBrapiService {
 
             if(analysisBrapiDTOMap == null || analysisBrapiDTOMap.containsKey(analysis.getAnalysisId()) == false) {
 
-                AnalysisBrapiDTO analysisBrapiDTO = new AnalysisBrapiDTO();
+                AnalysisDTO analysisDTO = new AnalysisDTO();
 
-                ModelMapper.mapEntityToDto(analysis, analysisBrapiDTO);
+                ModelMapper.mapEntityToDto(analysis, analysisDTO);
 
-                variantSetDTO.getAnalyses().add(analysisBrapiDTO);
+                variantSetDTO.getAnalyses().add(analysisDTO);
 
                 if(analysisBrapiDTOMap != null) {
-                    analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisBrapiDTO);
+                    analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisDTO);
                 }
             }
             else {

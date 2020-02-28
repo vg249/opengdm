@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.dto.brapi.AnalysisBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
@@ -23,10 +23,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @WebAppConfiguration
-public class VariantSetsBrapiServiceImplTest {
+public class VariantSetsServiceImplTest {
 
     @InjectMocks
-    private VariantSetsBrapiServiceImpl variansetService;
+    private VariantSetsServiceImpl variansetService;
 
     @Mock
     private DatasetDaoImpl datasetDao;
@@ -165,20 +165,20 @@ public class VariantSetsBrapiServiceImplTest {
 
             Analysis analysis = datasetsMock.get(assertIndex).getMappedAnalyses().iterator().next();
 
-            AnalysisBrapiDTO analysisBrapiDTO = variantSets.get(assertIndex).getAnalyses().iterator().next();
+            AnalysisDTO analysisDTO = variantSets.get(assertIndex).getAnalyses().iterator().next();
 
             assertEquals("check analysisDbId is mapped",
                     analysis.getAnalysisId(),
-                    analysisBrapiDTO.getAnalysisDbId());
+                    analysisDTO.getAnalysisDbId());
 
 
             assertEquals("check analysisName is mapped",
                     analysis.getAnalysisName(),
-                    analysisBrapiDTO.getAnalysisName());
+                    analysisDTO.getAnalysisName());
 
             assertEquals("check analysis description is mapped",
                     analysis.getDescription(),
-                    analysisBrapiDTO.getDescription());
+                    analysisDTO.getDescription());
 
 
 

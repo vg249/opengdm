@@ -1,11 +1,11 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.brapi.MapsetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
-public interface MapsetBrapiService {
+public interface MapsetService {
 
-    PagedResult<MapsetBrapiDTO> getMapSets(Integer pageSize, Integer pageNum, Integer studyDbId);
-    MapsetBrapiDTO getMapSetById(Integer mapDbId);
+    PagedResult<MapsetDTO> getMapSets(Integer pageSize, Integer pageNum, Integer studyDbId);
+    MapsetDTO getMapSetById(Integer mapDbId);
 
 }

@@ -10,7 +10,7 @@ import org.gobiiproject.gobiimodel.entity.Mapset;
  * Brapi DTO for Genome Maps List
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MapsetBrapiDTO {
+public class MapsetDTO {
 
     @GobiiEntityMap(paramName="mapsetId", entity = Mapset.class)
     @JsonSerialize(using = ToStringSerializer.class)

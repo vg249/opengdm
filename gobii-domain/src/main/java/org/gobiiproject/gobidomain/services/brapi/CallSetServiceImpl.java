@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -17,24 +17,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class CallSetBrapiServiceImpl implements CallSetBrapiService {
+public class CallSetServiceImpl implements CallSetService {
 
-    Logger LOGGER = LoggerFactory.getLogger(CallSetBrapiServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(CallSetServiceImpl.class);
 
     @Autowired
     private DnaRunDao dnaRunDao;
 
-    public PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
-                                                    Integer pageNum,
-                                                    Integer variantSetDbId,
-                                                    CallSetBrapiDTO callSetsFilter) throws GobiiException {
+    public PagedResult<CallSetDTO> getCallSets(Integer pageSize,
+                                               Integer pageNum,
+                                               Integer variantSetDbId,
+                                               CallSetDTO callSetsFilter) throws GobiiException {
 
         Objects.requireNonNull(pageSize);
         Objects.requireNonNull(pageNum);
 
-        PagedResult<CallSetBrapiDTO> pagedResult = new PagedResult<>();
+        PagedResult<CallSetDTO> pagedResult = new PagedResult<>();
 
-        List<CallSetBrapiDTO> callSets = new ArrayList<>();
+        List<CallSetDTO> callSets = new ArrayList<>();
 
         try {
 
@@ -49,7 +49,7 @@ public class CallSetBrapiServiceImpl implements CallSetBrapiService {
 
 
             for (DnaRun dnaRun : dnaRuns) {
-                CallSetBrapiDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun);
+                CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun);
                 callSets.add(callSet);
             }
 
@@ -68,18 +68,18 @@ public class CallSetBrapiServiceImpl implements CallSetBrapiService {
         }
     }
 
-    public PagedResult<CallSetBrapiDTO> getCallSets(Integer pageSize,
-                                                  String pageToken,
-                                                  Integer variantSetDbId,
-                                                  CallSetBrapiDTO callSetsFilter) {
+    public PagedResult<CallSetDTO> getCallSets(Integer pageSize,
+                                               String pageToken,
+                                               Integer variantSetDbId,
+                                               CallSetDTO callSetsFilter) {
 
-        PagedResult<CallSetBrapiDTO> callSets = new PagedResult<>();
+        PagedResult<CallSetDTO> callSets = new PagedResult<>();
 
         return callSets;
     }
 
 
-    public CallSetBrapiDTO getCallSetById(Integer callSetDbId) throws GobiiException {
+    public CallSetDTO getCallSetById(Integer callSetDbId) throws GobiiException {
 
         Objects.requireNonNull(callSetDbId);
 
@@ -87,7 +87,7 @@ public class CallSetBrapiServiceImpl implements CallSetBrapiService {
 
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
-            CallSetBrapiDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun);
+            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun);
 
             return callSet;
         }
@@ -101,9 +101,9 @@ public class CallSetBrapiServiceImpl implements CallSetBrapiService {
     }
 
 
-    private CallSetBrapiDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun) {
+    private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun) {
 
-        CallSetBrapiDTO callSet = new CallSetBrapiDTO();
+        CallSetDTO callSet = new CallSetDTO();
 
         ModelMapper.mapEntityToDto(dnaRun, callSet);
 

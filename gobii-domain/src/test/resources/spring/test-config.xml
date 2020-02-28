@@ -121,19 +121,9 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnaRunAll"/>
-                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
-                    </bean>
-                </entry>
-                <!-- BRAPI MARKER ALL -->
-                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_ALL_BRAPI}">
-                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
-                        <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO"/>
-                        <constructor-arg ref="pageFramesTrackingCache"/>
-                        <constructor-arg ref="listStatementMarkerBrapiAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>

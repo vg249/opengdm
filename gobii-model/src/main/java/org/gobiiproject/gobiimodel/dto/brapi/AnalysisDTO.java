@@ -21,7 +21,7 @@ import java.util.Date;
         "modifiedBy", "modifiedDate", "createdDate"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AnalysisBrapiDTO extends DTOBaseAuditable {
+public class AnalysisDTO extends DTOBaseAuditable {
 
 
     @GobiiEntityMap(paramName="analysisId", entity = Analysis.class)
@@ -40,7 +40,7 @@ public class AnalysisBrapiDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="software", entity = Analysis.class)
     private String software;
 
-    public AnalysisBrapiDTO() {
+    public AnalysisDTO() {
         super(GobiiEntityNameType.ANALYSIS);
     }
 

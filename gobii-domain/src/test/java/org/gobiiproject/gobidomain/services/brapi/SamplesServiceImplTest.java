@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.dto.brapi.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.Germplasm;
@@ -31,10 +31,10 @@ import static org.mockito.Mockito.*;
  * Created by VCalaminos on 7/18/2019.
  */
 @WebAppConfiguration
-public class SamplesBrapiServiceImplTest {
+public class SamplesServiceImplTest {
 
     @InjectMocks
-    private SamplesBrapiServiceImpl samplesBrapiService;
+    private SamplesServiceImpl samplesBrapiService;
 
     @Mock
     private DnaSampleDaoImpl dnaSampleDao;
@@ -144,7 +144,7 @@ public class SamplesBrapiServiceImplTest {
         ).thenReturn(samplesMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(
+        List<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
                 0, pageSize,
                 null, null,
                 null);
@@ -211,7 +211,7 @@ public class SamplesBrapiServiceImplTest {
         ).thenReturn(cvsMock);
 
 
-        List<SamplesBrapiDTO> samplesBrapi = samplesBrapiService.getSamples(
+        List<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
                 0, pageSize,
                 null, null,
                 null);
