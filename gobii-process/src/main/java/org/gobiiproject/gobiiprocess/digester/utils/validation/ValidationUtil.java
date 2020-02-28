@@ -203,7 +203,7 @@ class ValidationUtil {
                             comparisonFileColumnElements = new HashSet<>(getFileColumn(comparisonFilePath, fieldToCompare.get(0), failureList));
 
 
-                        if (!fileColumnElements.containsAll(comparisonFileColumnElements))
+                        if (!comparisonFileColumnElements.containsAll(fileColumnElements))
                             createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns),externalFieldFileExtension+"."+String.join(",", fieldToCompare))), failureList);
                     }
                 } else {
