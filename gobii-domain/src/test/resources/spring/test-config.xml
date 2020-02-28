@@ -58,14 +58,6 @@
     <bean id="sampleTrackingProjectService"
           class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>
 
-    <bean id="dtoMapDnaRun" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapDnaRunImpl"/>
-    <bean id="dnaRunService"
-          class="org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl"/>
-
-    <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
-    <bean id="markerBrapiService"
-          class="org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl"/>
-
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
     <bean id="spRunnerCallable"
