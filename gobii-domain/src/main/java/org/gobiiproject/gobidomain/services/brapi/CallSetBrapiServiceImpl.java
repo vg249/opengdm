@@ -1,6 +1,5 @@
-package org.gobiiproject.gobidomain.services.impl.brapi;
+package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobidomain.services.CallSetBrapiService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;

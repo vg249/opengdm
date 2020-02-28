@@ -1,10 +1,9 @@
-package org.gobiiproject.gobidomain.services.impl.brapi;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
-import org.gobiiproject.gobidomain.services.GenotypeCallsService;
-import org.gobiiproject.gobidomain.services.MarkerBrapiService;
+import org.gobiiproject.gobidomain.services.brapi.GenotypeCallsService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsDTO;
@@ -34,9 +33,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     @Autowired
     private DtoMapGenotypeCalls dtoMapGenotypeCalls = null;
-
-    @Autowired
-    private MarkerBrapiService markerService = null;
 
     @Autowired
     private DnaRunDao dnaRunDao = null;

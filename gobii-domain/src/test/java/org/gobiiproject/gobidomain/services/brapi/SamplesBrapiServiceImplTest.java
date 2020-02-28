@@ -1,4 +1,4 @@
-package org.gobiiproject.gobidomain.services.impl.brapi;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
+import org.gobiiproject.gobidomain.services.brapi.SamplesBrapiServiceImpl;
 import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;

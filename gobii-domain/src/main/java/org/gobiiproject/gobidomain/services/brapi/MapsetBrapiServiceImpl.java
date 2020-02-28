@@ -1,8 +1,6 @@
-package org.gobiiproject.gobidomain.services.impl.brapi;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
-import org.gobiiproject.gobidomain.services.MapsetBrapiService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;

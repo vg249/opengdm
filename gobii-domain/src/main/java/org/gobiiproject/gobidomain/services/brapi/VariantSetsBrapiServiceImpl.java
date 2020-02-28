@@ -1,7 +1,6 @@
-package org.gobiiproject.gobidomain.services.impl.brapi;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.VariantSetsBrapiService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.auditable.AnalysisBrapiDTO;

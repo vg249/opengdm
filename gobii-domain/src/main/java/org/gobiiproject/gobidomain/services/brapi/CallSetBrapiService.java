@@ -1,4 +1,4 @@
-package org.gobiiproject.gobidomain.services;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;

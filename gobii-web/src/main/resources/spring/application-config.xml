@@ -457,7 +457,6 @@
 
 
     <!-- *** MARKER BRAPI BEANS ************* -->
-    <bean id="markerBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.MarkerBrapiServiceImpl"/>
     <bean id="dtoMapMarkerBrapi" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerBrapiImpl"/>
     <bean id="rsMarkerBrapiDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerBrapiDaoImpl"/>
 
@@ -465,17 +464,23 @@
     <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
 
     <!-- ** SAMPLE BRAPI BEANS **-->
-    <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.SamplesBrapiServiceImpl"/>
+    <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.brapi.SamplesBrapiServiceImpl"/>
+
+    <!-- ** Mapset BRAPI BEANS **-->
+    <bean id="mapsetBrapiService" class="org.gobiiproject.gobidomain.services.brapi.MapsetBrapiServiceImpl"/>
 
     <!-- ** VariantSets BRAPI BEANS **-->
-    <bean id="variantSetsBrapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.VariantSetsBrapiServiceImpl"/>
+    <bean id="variantSetsBrapiService" class="org.gobiiproject.gobidomain.services.brapi.VariantSetsBrapiServiceImpl"/>
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
-    <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.impl.brapi.LinkakgeGroupBrapiServiceImpl"/>
+    <bean id="linkageGroupBiapiService" class="org.gobiiproject.gobidomain.services.brapi.LinkakgeGroupBrapiServiceImpl"/>
+
+    <!-- *** Callsets BRAPI BEANS *********** -->
+    <bean id="callsetsBiapiService" class="org.gobiiproject.gobidomain.services.brapi.CallSetBrapiServiceImpl"/>
 
 
     <!-- *** Genotype Calls Beans ************************************* -->
-    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.impl.brapi.GenotypeCallsServiceImpl"/>
+    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.brapi.GenotypeCallsServiceImpl"/>
     <bean id="dtoMapGenotypeCalls" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapGenotypeCallsImpl"/>
     <!--<bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>-->
 
@@ -1266,6 +1271,6 @@
         <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>
 
-    <bean id="searchService" class="org.gobiiproject.gobidomain.services.impl.brapi.SearchServiceImpl"/>
+    <bean id="searchService" class="org.gobiiproject.gobidomain.services.brapi.SearchServiceImpl"/>
 
 </beans>

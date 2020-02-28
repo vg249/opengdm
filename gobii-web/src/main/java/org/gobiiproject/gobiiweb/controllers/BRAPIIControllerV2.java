@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.*;
+import org.gobiiproject.gobidomain.services.brapi.*;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
@@ -46,9 +47,6 @@ public class BRAPIIControllerV2 {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV2.class);
 
     private final Integer brapiDefaultPageSize = 1000;
-
-    @Autowired
-    private MarkerBrapiService markerBrapiService = null;
 
     @Autowired
     private GenotypeCallsService genotypeCallsService = null;
@@ -381,58 +379,8 @@ public class BRAPIIControllerV2 {
     ) {
         try {
 
-            MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
-
-            if (variantDbId != null) {
-                markerBrapiDTOFilter.setVariantDbId(variantDbId);
-            }
-
-            if (variantSetDbId != null) {
-                List<Integer> variantDbArr = new ArrayList<>();
-                variantDbArr.add(variantSetDbId);
-                markerBrapiDTOFilter.setVariantSetDbId(variantDbArr);
-            }
-
-            if (mapSetId != null) {
-                markerBrapiDTOFilter.setMapSetId(mapSetId);
-            }
-
-            if (mapSetName != null) {
-                markerBrapiDTOFilter.setMapSetName(mapSetName);
-            }
-
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_MARKERS,
-                    RestMethodType.GET
-            );
-
-            if (maxPageSize == null) {
-                maxPageSize = 1000;
-            }
-
-            if (pageSize == null || pageSize >  maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageNum,
-                    pageSize, markerBrapiDTOFilter);
-
-            BrApiResult result = new BrApiResult();
-            result.setData(markerList);
-
-            BrApiMasterPayload payload = new BrApiMasterPayload(result);
-
-            if (markerList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(markerList.size());
-                if (markerList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            markerList.get(markerList.size() -1).getVariantDbId().toString()
-                    );
-                }
-            }
-
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+                    MediaType.APPLICATION_JSON).body("");
         }
         catch (GobiiException gE) {
             throw gE;
@@ -484,14 +432,9 @@ public class BRAPIIControllerV2 {
         Integer variantDbIdInt;
 
         try {
-            variantDbIdInt = variantDbId;
-
-            MarkerBrapiDTO markerBrapiDTO = markerBrapiService.getMarkerById(variantDbIdInt);
-
-            BrApiMasterPayload<MarkerBrapiDTO> payload = new BrApiMasterPayload<>(markerBrapiDTO);
 
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+                    MediaType.APPLICATION_JSON).body("");
 
         }
         catch (Exception e) {
@@ -661,32 +604,7 @@ public class BRAPIIControllerV2 {
 
         try {
 
-
-            MapsetBrapiDTO mapset = mapsetBrapiService.getMapSetById(mapDbId);
-
-            MarkerBrapiDTO markerFilter = new MarkerBrapiDTO();
-
-            markerFilter.setMapSetId(mapset.getMapDbId());
-
-
-            if(linkageGroupName != null) {
-                markerFilter.setLinkageGroupName(linkageGroupName);
-            }
-
-            List<MarkerBrapiDTO> markers = markerBrapiService.getMarkers(
-                    null, page, pageSize, markerFilter);
-
-            Map<String, Object> brapiResult = new HashMap<>();
-
-            brapiResult.put("data", markers);
-
-            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
-
-
-            payload.getMetadata().getPagination().setCurrentPage(page);
-            payload.getMetadata().getPagination().setPageSize(pageSize);
-
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("");
 
         }
         catch(GobiiException gE) {
@@ -998,65 +916,8 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            Integer pageToken = null;
-
-            if (pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                } catch (Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid Page Token"
-                    );
-                }
-            }
-
-            MarkerBrapiDTO markerBrapiDTOFilter = new MarkerBrapiDTO();
-
-            List<Integer> variantSetDbIdArr = new ArrayList<>();
-            variantSetDbIdArr.add(variantSetDbId);
-            markerBrapiDTOFilter.setVariantSetDbId(variantSetDbIdArr);
-
-            if (mapSetId != null) {
-                markerBrapiDTOFilter.setMapSetId(mapSetId);
-            }
-
-            if (mapSetName != null) {
-                markerBrapiDTOFilter.setMapSetName(mapSetName);
-            }
-
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_MARKERS,
-                    RestMethodType.GET
-            );
-
-            if (maxPageSize == null){
-                maxPageSize = 1000;
-            }
-
-            if (pageSize == null || pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            List<MarkerBrapiDTO> markerList = markerBrapiService.getMarkers(pageToken, pageNum,
-                    pageSize, markerBrapiDTOFilter);
-
-            BrApiResult result = new BrApiResult();
-            result.setData(markerList);
-            BrApiMasterPayload payload = new BrApiMasterPayload(result);
-
-            if (markerList.size() > 0) {
-                payload.getMetadata().getPagination().setPageSize(markerList.size());
-                if (markerList.size() >= pageSize) {
-                    payload.getMetadata().getPagination().setNextPageToken(
-                            markerList.get(markerList.size() -1).getVariantDbId().toString()
-                    );
-                }
-            }
-
             return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+                    MediaType.APPLICATION_JSON).body("");
 
         }
         catch (GobiiException gE) {

@@ -1,6 +1,7 @@
-package org.gobiiproject.gobidomain.services.impl.brapi;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.gobiiproject.gobidomain.services.brapi.MapsetBrapiServiceImpl;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl;
 import org.junit.Before;

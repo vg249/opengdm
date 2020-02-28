@@ -1,4 +1,4 @@
-package org.gobiiproject.gobidomain.services;
+package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsDTO;
