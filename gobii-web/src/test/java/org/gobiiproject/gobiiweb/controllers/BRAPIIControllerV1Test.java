@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.MarkerBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -47,7 +48,7 @@ public class BRAPIIControllerV1Test {
     private VariantSetsBrapiService variantSetsBrapiService;
 
     @InjectMocks
-    private BRAPIIControllerV1 brapiiControllerV1;
+    private BRAPIIControllerV2 brapiiControllerV2;
 
     private MockMvc mockMvc;
 
@@ -58,7 +59,7 @@ public class BRAPIIControllerV1Test {
 
         MockitoAnnotations.initMocks(this);
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(brapiiControllerV1).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(brapiiControllerV2).build();
 
     }
 
@@ -360,7 +361,7 @@ public class BRAPIIControllerV1Test {
                         .contextPath("/gobii-dev")).andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$metadata").exists())
+                .andExpect(jsonPath("$.metadata").exists())
                 .andExpect(jsonPath("$.metadata.pagination").exists())
                 .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
                 .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
@@ -417,7 +418,7 @@ public class BRAPIIControllerV1Test {
                         .contextPath("/gobii-dev")).andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$metadata").exists())
+                .andExpect(jsonPath("$.metadata").exists())
                 .andExpect(jsonPath("$.metadata.pagination").exists())
                 .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
                 .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
