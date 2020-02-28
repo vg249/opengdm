@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.noaudit;
+package org.gobiiproject.gobiimodel.dto.brapi;
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 

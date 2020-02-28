@@ -1,6 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.auditable.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 
 import java.util.List;
 

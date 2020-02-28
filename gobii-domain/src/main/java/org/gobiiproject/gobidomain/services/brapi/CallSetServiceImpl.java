@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;

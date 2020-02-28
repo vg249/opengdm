@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.noaudit.LinkageGroupBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.LinkageGroupBrapiDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

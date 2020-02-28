@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.noaudit;
+package org.gobiiproject.gobiimodel.dto.brapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

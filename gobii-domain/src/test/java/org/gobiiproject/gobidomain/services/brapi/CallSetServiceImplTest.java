@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobidomain.services.brapi.CallSetBrapiServiceImpl;
-import org.gobiiproject.gobiimodel.dto.noaudit.CallSetBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetBrapiDTO;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
 import org.junit.Test;

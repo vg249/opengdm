@@ -1,6 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.noaudit.LinkageGroupBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.LinkageGroupBrapiDTO;
 
 import java.util.List;
 

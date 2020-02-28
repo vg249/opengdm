@@ -2,9 +2,8 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.CvIdCvTermMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.brapi.SamplesBrapiService;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.noaudit.SamplesBrapiDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesBrapiDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
