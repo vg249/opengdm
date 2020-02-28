@@ -3,7 +3,6 @@ package org.gobiiproject.gobidomain.services.impl.brapi;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LinkageGroupBrapiService;
 import org.gobiiproject.gobidomain.services.MapsetBrapiService;
-import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapsetBrApi;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.noaudit.MapsetBrapiDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -24,11 +23,6 @@ public class MapsetBrapiServiceImpl implements MapsetBrapiService {
 
     Logger LOGGER = LoggerFactory.getLogger(MapsetBrapiServiceImpl.class);
 
-    @Autowired
-    private DtoMapMapsetBrApi dtoMapMapsetBrApi;
-
-    @Autowired
-    private LinkageGroupBrapiService linkageGroupBrapiService;
 
     @Autowired
     private MapsetDao mapsetDao;
