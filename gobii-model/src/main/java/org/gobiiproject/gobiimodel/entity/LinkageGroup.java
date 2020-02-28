@@ -27,7 +27,7 @@ public class LinkageGroup extends BaseEntity {
     @Column(name = "stop")
     private BigDecimal linkageGroupStop;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "map_id", referencedColumnName = "mapset_id")
     private Mapset mapset;
 

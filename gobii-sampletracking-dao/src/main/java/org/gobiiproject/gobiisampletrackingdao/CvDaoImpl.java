@@ -18,7 +18,7 @@ import java.util.*;
 
 public class CvDaoImpl implements CvDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(SpWorker.class);
+    Logger LOGGER = LoggerFactory.getLogger(CvDaoImpl.class);
 
     @PersistenceContext
     protected EntityManager em;

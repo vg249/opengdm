@@ -24,7 +24,7 @@ import java.util.Objects;
 @Transactional
 public class DnaRunDaoImpl implements DnaRunDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(MarkerDao.class);
+    Logger LOGGER = LoggerFactory.getLogger(DnaRunDaoImpl.class);
 
     @PersistenceContext
     protected EntityManager em;

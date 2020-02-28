@@ -18,12 +18,10 @@ import java.util.Objects;
 
 public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(DnaSampleDao.class);
+    Logger LOGGER = LoggerFactory.getLogger(MarkerLinkageGroupDaoImpl.class);
 
     @PersistenceContext
     protected EntityManager em;
-
-
 
     @Override
     @Transactional
