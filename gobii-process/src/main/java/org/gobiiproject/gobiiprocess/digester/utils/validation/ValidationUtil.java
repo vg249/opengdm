@@ -161,7 +161,7 @@ class ValidationUtil {
 
 
     /**
-     * Validates that a particular column is same in both the files
+     * Validates that a particular column is a subset of the column in another file
      *
      * @param filePath    File Path
      * @param condition   Condition Unit
