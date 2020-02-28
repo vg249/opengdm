@@ -401,7 +401,12 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 case CSV_ROW:
                     appendTabToOutput(outputLine, column);
                     //TODO- this is also super bad, using remove on a long array list
-                    outputLine.append(processedInstruction.getRequiredRows().get(rowNo).remove(0));
+                    try {
+                        outputLine.append(processedInstruction.getRequiredRows().get(rowNo).remove(0));
+                    }catch(IndexOutOfBoundsException e){
+                        //TODO - found working on validation logic - This case can OOB if any row is jagged.
+                        Logger.logWarning("CSVInstructionProcessor","Missing line for data, zero width added to output string");
+                    }
                     rowNo++;
                     break;
                 case CSV_COLUMN:
