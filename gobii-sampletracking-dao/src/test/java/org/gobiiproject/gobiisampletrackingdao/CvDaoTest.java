@@ -24,11 +24,19 @@ public class CvDaoTest {
     @Test
     public void getCvListByCvGroupTest() {
 
+        String testCvGroupName = CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName();
+        GobiiCvGroupType testCvType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
+
         List<Cv> cvList = cvDao.getCvListByCvGroup(
                 CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
 
+        for(Cv cv : cvList) {
+            assertTrue("CV group name and type condition failed",
+                    cv.getCvGroup().getCvGroupName().equals(testCvGroupName) &&
+                    cv.getCvGroup().getCvGroupType() == testCvType.getGroupTypeId());
+        }
     }
 
     @Test
