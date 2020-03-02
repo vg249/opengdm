@@ -15,6 +15,7 @@ import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class CvDaoTest {
 
     @Autowired
@@ -27,6 +28,17 @@ public class CvDaoTest {
                 CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
+
+    }
+
+    @Test
+    public void getCvByCvId() {
+
+        Integer cvId = 4;
+
+        Cv cv = cvDao.getCvByCvId(cvId);
+
+        assertTrue("Failed getCv by Id", cv.getCvId() == cvId);
 
     }
 
