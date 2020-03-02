@@ -22,8 +22,9 @@ public class Cv {
     @Column(name = "rank")
     private Integer rank;
 
-    @Column(name = "cvgroup_id")
-    private Integer cvGroupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cvgroup_id")
+    private CvGroup cvGroup;
 
     @Column(name = "abbreviation")
     private String abbreviation;
@@ -70,12 +71,12 @@ public class Cv {
         this.rank = rank;
     }
 
-    public Integer getCvGroupId() {
-        return cvGroupId;
+    public CvGroup getCvGroup() {
+        return cvGroup;
     }
 
-    public void setCvGroupId(Integer cvGroupId) {
-        this.cvGroupId = cvGroupId;
+    public void setCvGroup(CvGroup cvGroup) {
+        this.cvGroup = cvGroup;
     }
 
     public String getAbbreviation() {
