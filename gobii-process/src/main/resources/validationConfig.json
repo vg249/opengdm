@@ -40,7 +40,7 @@
         {
           "columnName": "external_code",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fileShouldExist": "digest.germplasm",
           "fieldColumns": [
             "external_code"
@@ -122,7 +122,7 @@
         {
           "columnName": "project_id",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fileShouldExist": "digest.dnasample",
           "fieldColumns": [
             "project_id"
@@ -135,7 +135,7 @@
         {
           "columnName": "dnasample_name",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fieldColumns": [
             "dnasample_name"
           ],
@@ -147,7 +147,7 @@
         {
           "columnName": "external_code",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fieldColumns": [
             "external_code"
           ],
@@ -159,7 +159,7 @@
         {
           "columnName": "num",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fieldColumns": [
             "num"
           ],
@@ -275,7 +275,7 @@
         {
           "columnName": "experiment_id",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fileShouldExist": "digest.dnarun",
           "fieldColumns": [
             "experiment_id"
@@ -288,7 +288,7 @@
         {
           "columnName": "dnarun_name",
           "required": "yes",
-          "type": "File",
+          "type": "File_Subset",
           "fieldColumns": [
             "dnarun_name"
           ],

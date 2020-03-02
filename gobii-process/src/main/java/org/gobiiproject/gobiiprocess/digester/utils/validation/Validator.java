@@ -14,18 +14,8 @@ import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.FailureTypes;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.addMessageToList;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.getFileColumns;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.getFilesWithExtension;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.processFileError;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateColumnBetweenFiles;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateColumns;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateDatabaseCalls;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateFileExistenceCheck;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateUniqueColumnListHelper;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.validateUniqueColumns;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.verifyEqualMatrixSizeDnarun;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.verifyEqualMatrixSizeMarker;
+
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
 
 class Validator {
 
@@ -288,6 +278,8 @@ class Validator {
                 } else if (condition.type != null) {
                     if (condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
                         validateColumnBetweenFiles(filePath, condition, failureList);
+                    } else if(condition.type.equalsIgnoreCase(ValidationConstants.FILE_SUBSET)){
+                        validateColumnSubsetBetweenFiles(filePath,condition,failureList);
                     } else if (condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                         validateDatabaseCalls(filePath, condition, failureList, cropConfig);
                     } else {
