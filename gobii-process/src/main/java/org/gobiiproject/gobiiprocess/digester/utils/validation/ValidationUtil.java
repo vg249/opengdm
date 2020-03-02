@@ -159,6 +159,65 @@ class ValidationUtil {
             printMissingFieldError("File", "typeName", failureList);
     }
 
+
+    /**
+     * Validates that a particular column is a subset of the column in another file
+     *
+     * @param filePath    File Path
+     * @param condition   Condition Unit
+     * @param failureList failure list
+     */
+    static void validateColumnSubsetBetweenFiles(String filePath, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        String parentDirectory = new File(filePath).getParent();
+        if (condition.typeName != null) {
+            if (DigesterFileExtensions.allowedExtensions.contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
+                if (condition.fieldToCompare != null && condition.fieldColumns != null) {
+                    String comparisonFileName = condition.typeName;
+                    List<String> fieldColumns = condition.fieldColumns;
+                    List<String> fieldToCompare = condition.fieldToCompare;
+                    List<String> filesList = new ArrayList<>();
+
+                    String externalFieldFileExtension = condition.typeName.substring(condition.typeName.indexOf('.') + 1);//E.G. "gerplasm"
+
+                    if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
+                        if (filesList.size() != 1) {
+                            processFileError(comparisonFileName, filesList.size(), failureList);
+                            return;
+                        }
+                        
+                        Set<String> fileColumnElements, comparisonFileColumnElements;
+                        if (fieldToCompare.size() > 1)
+                            fileColumnElements = new HashSet<>(getFileColumns(filePath, fieldColumns, failureList));
+                        else fileColumnElements = new HashSet<>(getFileColumn(filePath, fieldColumns.get(0), failureList));
+
+                        if (fileColumnElements.size() == 0 && condition.required.equalsIgnoreCase(ValidationConstants.YES)) {
+                            createFailure(FailureTypes.COLUMN_NOT_FOUND, fieldColumns, failureList);
+                            return;
+                        }
+
+                        String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
+                        if (fieldToCompare.size() > 1)
+                            comparisonFileColumnElements = new HashSet<>(getFileColumns(comparisonFilePath, fieldToCompare, failureList));
+                        else
+                            comparisonFileColumnElements = new HashSet<>(getFileColumn(comparisonFilePath, fieldToCompare.get(0), failureList));
+
+
+                        if (!comparisonFileColumnElements.containsAll(fileColumnElements))
+                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns),externalFieldFileExtension+"."+String.join(",", fieldToCompare))), failureList);
+                    }
+                } else {
+                    if (condition.fieldToCompare != null)
+                        printMissingFieldError("File", "fieldToCompare", failureList);
+                    else if (condition.fieldColumns != null)
+                        printMissingFieldError("File", "fieldColumns", failureList);
+                }
+            } else
+                createFailure(FailureTypes.INVALID_FILE_EXTENSIONS, new ArrayList<>(), condition.typeName, failureList);
+
+        } else
+            printMissingFieldError("File", "typeName", failureList);
+    }
+
     /**
      * Checks that the file exists
      *

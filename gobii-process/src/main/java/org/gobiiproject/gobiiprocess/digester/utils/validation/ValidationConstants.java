@@ -12,6 +12,7 @@ public class ValidationConstants {
     static final String DNASAMPLE_NAME_NUM = "sampleNameNum";
     static final String DB = "DB";
     static final String FILE = "FILE";
+    static final String FILE_SUBSET = "FILE_SUBSET";
     static final String YES = "YES";
     static final String NO = "NO";
     public static final String SUCCESS = "PASSED";
