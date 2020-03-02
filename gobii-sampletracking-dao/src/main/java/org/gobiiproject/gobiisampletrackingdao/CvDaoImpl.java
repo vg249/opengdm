@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import java.util.*;
 
 public class CvDaoImpl implements CvDao {
@@ -30,23 +34,22 @@ public class CvDaoImpl implements CvDao {
         Objects.requireNonNull(cvId, "Cv Id should not be null");
 
         try {
-            List<Cv> cvList = em
-                    .createNativeQuery("SELECT * FROM cv WHERE cv_id = ?", Cv.class)
-                    .setParameter(1, cvId)
-                    .getResultList();
 
-            if(cvList.size() == 1) {
-                return cvList.get(0);
-            }
-            else {
-                LOGGER.error("More than one entity for same Id");
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.UNIQUE_KEY_VIOLATION,
-                        "More than one entity with same id found. ");
+            CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
 
-            }
+            Root<Cv> cv = criteriaQuery.from(Cv.class);
+            criteriaQuery.select(cv);
 
+            Join<Object, Object> cvGroup = (Join<Object, Object>) cv.fetch("cvGroup");
+
+            criteriaQuery.where(criteriaBuilder.equal(cv.get("cvId"), cvId));
+
+            Cv result = em.createQuery(criteriaQuery)
+                    .getSingleResult();
+
+            return result;
         }
         catch(Exception e) {
 
@@ -78,6 +81,9 @@ public class CvDaoImpl implements CvDao {
         }
 
         try {
+
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+
 
             Query q = em
                     .createNativeQuery(queryString, Cv.class)
