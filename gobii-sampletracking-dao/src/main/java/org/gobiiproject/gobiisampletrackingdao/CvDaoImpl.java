@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.*;
 
 public class CvDaoImpl implements CvDao {
@@ -66,35 +63,33 @@ public class CvDaoImpl implements CvDao {
     @Override
     public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) throws GobiiException {
 
-        List<Cv> cvList = new ArrayList<>();
-
         Objects.requireNonNull(cvGroupName, "CV group name should not be null");
 
-        String queryString = "SELECT DISTINCT cv.* FROM cv INNER JOIN cvgroup " +
-                "ON (cv.cvgroup_id = cvgroup.cvgroup_id AND cvgroup.name = ?";
-
-        if(cvType != null) {
-            queryString += " AND cvgroup.type = ?)";
-        }
-        else {
-            queryString += " )";
-        }
+        List<Predicate> predicates = new ArrayList<>();
 
         try {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
+            CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
 
-            Query q = em
-                    .createNativeQuery(queryString, Cv.class)
-                    .setParameter(1, cvGroupName);
+            Root<Cv> cv = criteriaQuery.from(Cv.class);
+            criteriaQuery.select(cv);
 
+            Join<Object, Object> cvGroup = (Join<Object, Object>) cv.fetch("cvGroup");
+
+            predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupName"), cvGroupName));
 
             if(cvType != null) {
-                q.setParameter(2, cvType.getGroupTypeId());
+                predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupType"), cvType.getGroupTypeId()));
             }
 
-            cvList = q.getResultList();
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+
+            List<Cv> cvs = em.createQuery(criteriaQuery)
+                    .getResultList();
+
+            return cvs;
 
         }
         catch(Exception e) {
@@ -106,8 +101,6 @@ public class CvDaoImpl implements CvDao {
                     e.getMessage());
 
         }
-
-        return cvList;
     }
 
     @Override
