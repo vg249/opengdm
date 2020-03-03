@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             newProject.setCreatedDate(new Date(new Date().getTime()));
 
             // Set the Status of the project as newly created by getting it respective cvId
-            List<Cv> statusCvList = cvDao.getCvsByCvTermAndCvGroup(
+            List<Cv> statusCvList = cvDao.getCvs(
                     "new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
                     GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 

@@ -53,7 +53,7 @@ public class CvDaoTest {
     @Test
     public void getCvsByCvTermAndCvGroup() {
 
-        List<Cv> cvList = cvDao.getCvsByCvTermAndCvGroup( "new",
+        List<Cv> cvList = cvDao.getCvs( "new",
                 CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
