@@ -65,32 +65,8 @@ public class CvDaoImpl implements CvDao {
 
         Objects.requireNonNull(cvGroupName, "CV group name should not be null");
 
-        List<Predicate> predicates = new ArrayList<>();
-
         try {
-
-            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-
-            CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
-
-            Root<Cv> cv = criteriaQuery.from(Cv.class);
-            criteriaQuery.select(cv);
-
-            Join<Object, Object> cvGroup = (Join<Object, Object>) cv.fetch("cvGroup");
-
-            predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupName"), cvGroupName));
-
-            if(cvType != null) {
-                predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupType"), cvType.getGroupTypeId()));
-            }
-
-            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
-
-            List<Cv> cvs = em.createQuery(criteriaQuery)
-                    .getResultList();
-
-            return cvs;
-
+            return this.getCvs(null, cvGroupName, cvType);
         }
         catch(Exception e) {
 
@@ -104,36 +80,41 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public List<Cv> getCvsByCvTermAndCvGroup(String cvTerm,
-                                             String cvGroupName,
-                                             GobiiCvGroupType cvType) throws GobiiException {
+    public List<Cv> getCvs(String cvTerm, String cvGroupName,
+                           GobiiCvGroupType cvType) throws GobiiException {
 
-        List<Cv> cvList = new ArrayList<>();
-
-        Objects.requireNonNull(cvTerm, "CV term cannot be null");
-        Objects.requireNonNull(cvGroupName, "CV Group Name cannot be null");
-
-        String queryString = "SELECT DISTINCT cv.* FROM cv " + "INNER JOIN cvgroup " +
-                "ON (cv.cvgroup_id = cvgroup.cvgroup_id AND cvgroup.name = ? AND cv.term = ?";
-
-        if(cvType != null) {
-            queryString += " AND cvgroup.type = ?)";
-        }
-        else {
-            queryString += " )";
-        }
+        List<Predicate> predicates = new ArrayList<>();
 
         try {
 
-            Query q = em.createNativeQuery(queryString, Cv.class)
-                    .setParameter(1, cvGroupName)
-                    .setParameter(2, cvTerm);
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            if(cvType != null) {
-                q.setParameter(3, cvType.getGroupTypeId());
+            CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
+
+            Root<Cv> cv = criteriaQuery.from(Cv.class);
+            criteriaQuery.select(cv);
+
+            Join<Object, Object> cvGroup = (Join<Object, Object>) cv.fetch("cvGroup");
+
+            if(cvTerm != null) {
+                predicates.add(criteriaBuilder.equal(cv.get("term"), cvTerm));
             }
 
-            cvList = q.getResultList();
+            if(cvGroupName != null) {
+                predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupName"), cvGroupName));
+            }
+
+            if(cvType != null) {
+                predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupType"), cvType.getGroupTypeId()));
+            }
+
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+
+            List<Cv> cvs = em.createQuery(criteriaQuery)
+                    .getResultList();
+
+            return cvs;
+
 
         }
         catch(Exception e) {
@@ -146,6 +127,5 @@ public class CvDaoImpl implements CvDao {
 
         }
 
-        return cvList;
     }
 }
