@@ -10,27 +10,35 @@ public interface DnaRunDao {
                             Integer dnaRunId, String dnaRunName,
                             Integer datasetId, Integer experimentId,
                             Integer dnaSampleId, String dnaSampleName,
+                            Integer germplasmId, String germplasmName,
+                            boolean fetchAssociations);
+
+    List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
+                            Integer dnaRunId, String dnaRunName,
+                            Integer datasetId, Integer experimentId,
+                            Integer dnaSampleId, String dnaSampleName,
                             Integer germplasmId, String germplasmName);
 
+    DnaRun getDnaRunById(Integer dnaRunId);
+
+    DnaRun getDnaRunById(Integer dnaRunId, boolean fetchAssociations);
 
     List<DnaRun> getDnaRunsByDnaRunIdCursor(Integer dnaRunId,
-                                            Integer datasetId,
-                                            Integer pageSize);
-
-    DnaRun getDnaRunById(Integer dnaRunId);
+                                            Integer pageSize,
+                                            Integer datasetId);
 
     List<DnaRun> getDnaRunsByDatasetId(Integer datasetId,
                                        Integer pageSize,
                                        Integer rowOffset);
 
+    List<DnaRun> getDnaRunsByDatasetId(Integer datasetId,
+                                       Integer pageSize,
+                                       Integer rowOffset,
+                                       boolean fetchAssociations);
 
     List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds);
 
     List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames);
-
-    List<DnaRun> getDnaRunsByDatasetIdNoAssociations(Integer datasetId,
-                                                     Integer pageSize,
-                                                     Integer rowOffset);
 
 }
 
