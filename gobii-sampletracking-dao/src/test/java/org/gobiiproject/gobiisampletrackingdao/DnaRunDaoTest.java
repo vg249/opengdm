@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.type.IntegerType;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -60,21 +62,44 @@ public class DnaRunDaoTest {
         }
     }
 
-    @Test
+    @Test(expected = LazyInitializationException.class)
     public void testGetDnaRunsByDatasetIdWithNoAssociations() {
 
         Integer pageSize = 1000;
-
         Integer rowOffset = 0;
-
         Integer datasetId = 9;
 
-        List<DnaRun> dnaruns = dnaRunDao.getDnaRunsByDatasetIdNoAssociations(
-                datasetId,
-                pageSize,
-                rowOffset);
+        List<DnaRun> dnaruns = dnaRunDao.getDnaRunsByDatasetId(
+                datasetId, pageSize,
+                rowOffset, false);
 
         assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
+
+        for(DnaRun dnaRun : dnaruns) {
+            Experiment experiment = dnaRun.getExperiment();
+            System.out.println(experiment.getExperimentName());
+        }
+
+    }
+
+    @Test(expected = LazyInitializationException.class)
+    public void testGetDnaRunsWithNoAssociationsByGermplasmName() {
+
+        //TODO: Create a setup method
+        Integer pageSize = 1000;
+        Integer rowOffset = 0;
+        String germplasmName = "7048517";
+
+        List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(pageSize, rowOffset,
+                null, null,
+                null, null,
+                null, null,
+                null, germplasmName, false);
+
+        //there is only one dnarun for this germplasm
+        assertTrue(dnaRuns.size() == 1);
+
+        System.out.println(dnaRuns.get(0).getDnaSample().getDnaSampleName());
 
     }
 
@@ -113,7 +138,8 @@ public class DnaRunDaoTest {
             Integer datasetId = Integer.parseInt(
                     dnaruns.get(dnaRunWithDatasetIndex).getDatasetDnaRunIdx().fieldNames().next());
 
-            List<DnaRun> dnarunsByDatasetId = dnaRunDao.getDnaRunsByDatasetId(datasetId, null, null);
+            List<DnaRun> dnarunsByDatasetId = dnaRunDao.getDnaRunsByDatasetId(
+                    datasetId, pageSize, rowOffset);
 
             assertTrue("Empty dnarun list for given dataset id", dnarunsByDatasetId.size() > 0);
 
