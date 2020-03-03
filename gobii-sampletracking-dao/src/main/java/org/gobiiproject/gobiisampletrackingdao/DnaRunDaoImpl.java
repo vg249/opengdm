@@ -44,7 +44,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
                                    Integer dnaRunId, String dnaRunName,
                                    Integer datasetId, Integer experimentId,
                                    Integer dnaSampleId, String dnaSampleName,
-                                   Integer germplasmId, String germplasmName) {
+                                   Integer germplasmId, String germplasmName,
+                                   boolean fetchAssociations) {
 
 
         Objects.requireNonNull(pageSize, "Page size should not be null");
@@ -63,55 +64,54 @@ public class DnaRunDaoImpl implements DnaRunDao {
             Root<DnaRun> dnaRunRoot = criteriaQuery.from(DnaRun.class);
             criteriaQuery.select(dnaRunRoot);
 
-            Join<Object, Object> dnaSampleJoin = (
-                    (Join<Object, Object>) dnaRunRoot.fetch("dnaSample"));
+            Join<Object, Object> dnaSampleJoin = null;
+            Join<Object, Object> germplasmJoin = null;
+            Join<Object, Object> experimentJoin = null;
 
-            Join<Object, Object> germplasmJoin = (
-                    (Join<Object, Object>) dnaSampleJoin.fetch("germplasm"));
+            if(fetchAssociations) {
+                dnaSampleJoin= (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
+                germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+            }
+            else {
+                if (dnaSampleId != null || dnaSampleName != null
+                        || germplasmId != null || germplasmName != null) {
+                    dnaSampleJoin = dnaRunRoot.join("dnaSample");
 
-            Join<Object, Object> experimentJoin = (
-                    (Join<Object, Object>) dnaRunRoot.fetch("experiment"));
-
-
-            if(dnaSampleId  != null || dnaSampleName != null
-                    || germplasmId != null || germplasmName != null
-            ) {
-
-                if(dnaSampleId != null) {
-                    predicates.add(criteriaBuilder.equal(
-                            dnaSampleJoin.get("dnaSampleId"),
-                            dnaSampleId));
-                }
-
-                if(dnaSampleName != null) {
-                    predicates.add(criteriaBuilder.equal(
-                            dnaSampleJoin.get("dnaSampleName"),
-                            dnaSampleName));
-                }
-
-                if(germplasmId != null || germplasmName != null) {
-
-                    if(germplasmId != null) {
-                        predicates.add(
-                                criteriaBuilder.equal(
-                                        germplasmJoin.get("germplasmId"),
-                                        germplasmId));
+                    if (germplasmId != null || germplasmName != null) {
+                        germplasmJoin = dnaSampleJoin.join("germplasm");
                     }
-
-                    if(germplasmName != null) {
-                        predicates.add(criteriaBuilder.equal(
-                                germplasmJoin.get("germplasmName"),
-                                germplasmName));
-                    }
-
                 }
+            }
 
+            if(dnaSampleId != null && dnaSampleJoin != null) {
+                predicates.add(criteriaBuilder.equal(
+                        dnaSampleJoin.get("dnaSampleId"),
+                        dnaSampleId));
+            }
+
+            if(dnaSampleName != null && dnaSampleJoin != null) {
+                predicates.add(criteriaBuilder.equal(
+                        dnaSampleJoin.get("dnaSampleName"),
+                        dnaSampleName));
+            }
+
+
+            if(germplasmId != null && germplasmJoin != null) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                germplasmJoin.get("germplasmId"),
+                                germplasmId));
+            }
+
+            if(germplasmName != null && germplasmJoin != null) {
+                predicates.add(criteriaBuilder.equal(
+                        germplasmJoin.get("germplasmName"),
+                        germplasmName));
             }
 
             if(experimentId != null) {
                 predicates.add(
-                        criteriaBuilder.equal(experimentJoin.get("experiemntId"), experimentId));
-
+                        criteriaBuilder.equal(dnaRunRoot.get("experiment.experiemntId"), experimentId));
             }
 
             if(datasetId != null) {
@@ -152,33 +152,57 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     @Override
+    public List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
+                                   Integer dnaRunId, String dnaRunName,
+                                   Integer datasetId, Integer experimentId,
+                                   Integer dnaSampleId, String dnaSampleName,
+                                   Integer germplasmId, String germplasmName) {
+
+        return this.getDnaRuns(pageSize, rowOffset,
+                dnaRunId, dnaRunName,
+                datasetId, experimentId,
+                dnaSampleId, dnaSampleName,
+                germplasmId, germplasmName,
+                true);
+
+    }
+
+
+    @Override
     public List<DnaRun> getDnaRunsByDnaRunIdCursor(
             Integer dnaRunIdCursor,
-            Integer datasetId,
-            Integer pageSize) {
+            Integer pageSize,
+            Integer datasetId) {
 
         List<DnaRun> dnaRuns;
+        List<Predicate> predicates = new ArrayList<>();
 
+        Objects.requireNonNull(dnaRunIdCursor, "DnaRunId cursor is required");
         Objects.requireNonNull(pageSize, "Page Size is required");
-
-        String queryString = "SELECT {dnarun.*} " +
-                " FROM dnarun AS dnarun " +
-                " WHERE (dnarun.dataset_dnarun_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
-                " AND (:dnaRunIdCursor IS NULL OR dnarun.dnarun_id > :dnaRunIdCursor) " +
-                " ORDER BY dnarun.dnarun_id " +
-                " LIMIT :pageSize ";
 
         try {
 
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            Session session = em.unwrap(Session.class);
+            CriteriaQuery<DnaRun> criteriaQuery = criteriaBuilder.createQuery(DnaRun.class);
 
-            dnaRuns = session.createNativeQuery(queryString)
-                    .addEntity("dnarun", DnaRun.class)
-                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
-                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
-                    .setParameter("dnaRunIdCursor", dnaRunIdCursor, IntegerType.INSTANCE)
-                    .list();
+            Root<DnaRun> dnaRunRoot = criteriaQuery.from(DnaRun.class);
+            predicates.add(criteriaBuilder.gt(dnaRunRoot.get("dnaRunId"), dnaRunIdCursor));
+
+            if(datasetId != null) {
+                Expression<Boolean> datasetIdExists = criteriaBuilder.function(
+                        "JSONB_EXISTS", Boolean.class,
+                        dnaRunRoot.get("datasetDnaRunIdx"), criteriaBuilder.literal(datasetId.toString()));
+
+                predicates.add(criteriaBuilder.isTrue(datasetIdExists));
+            }
+
+            criteriaQuery.select(dnaRunRoot);
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+
+            dnaRuns = em.createQuery(criteriaQuery)
+                    .setMaxResults(pageSize)
+                    .getResultList();
 
             return dnaRuns;
 
@@ -200,7 +224,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    public DnaRun getDnaRunById(Integer dnaRunId) {
+    public DnaRun getDnaRunById(Integer dnaRunId, boolean fetchAssociations) {
 
         try {
 
@@ -208,7 +232,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     dnaRunId, null,
                     null, null,
                     null, null,
-                    null, null);
+                    null, null, fetchAssociations);
 
             if (dnaRunsById.size() > 1) {
 
@@ -244,6 +268,17 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     /**
+     * Get DnaRun Entity by dnaRun Id.
+     * dnaRunId is unique id for dnaRunEntity.
+     * @param dnaRunId - dna run id for which DnaRun Entity needs to be fetched.
+     * @return - DnaRun Entity with the given id
+     */
+    @Override
+    public DnaRun getDnaRunById(Integer dnaRunId) {
+        return this.getDnaRunById(dnaRunId, true);
+    }
+
+    /**
      * Lists DnaRun entities for given dataset Id
      * @param datasetId - ID of dataset to which dnaruns belong.
      * @param pageSize - Number of rows to be fetched
@@ -258,10 +293,31 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 null, null,
                 datasetId, null,
                 null, null,
-                null, null);
+                null, null,
+                true);
 
     }
 
+    /**
+     * Lists DnaRun entities for given dataset Id
+     * @param datasetId - ID of dataset to which dnaruns belong.
+     * @param pageSize - Number of rows to be fetched
+     * @param rowOffset - Number of rows to offset before fetching
+     * @param fetchAssociations - Optional
+     * @return - List of result DnaRun Entities.
+     */
+    @Override
+    public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
+                                              Integer rowOffset, boolean fetchAssociations) {
+
+        return getDnaRuns(pageSize, rowOffset,
+                null, null,
+                datasetId, null,
+                null, null,
+                null, null,
+                fetchAssociations);
+
+    }
 
     /**
      * Lists DnaRun Entitis with given DnaRun Id
@@ -315,7 +371,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
     @Override
     public List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames) {
 
-        List<DnaRun> dnaruns = new ArrayList<>();
+        List<DnaRun> dnaRuns;
 
         try {
 
@@ -328,14 +384,13 @@ public class DnaRunDaoImpl implements DnaRunDao {
             Root<DnaRun> root = criteria.from(DnaRun.class);
             criteria.select(root);
 
-
             criteria.where(root.get("dnaRunName").in(dnaRunNames));
 
             criteria.orderBy(cb.asc(root.get("dnaRunName")));
 
-            dnaruns = em.createQuery(criteria).getResultList();
+            dnaRuns = em.createQuery(criteria).getResultList();
 
-            return dnaruns;
+            return dnaRuns;
 
         }
         catch (Exception e) {
@@ -347,42 +402,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         }
 
-    }
-
-    @Override
-    public List<DnaRun> getDnaRunsByDatasetIdNoAssociations(Integer datasetId,
-                                                            Integer pageSize,
-                                                            Integer rowOffset) throws GobiiException {
-
-        List<DnaRun> dnaRuns = new ArrayList<>();
-
-        Objects.requireNonNull(pageSize);
-        Objects.requireNonNull(rowOffset);
-
-        String queryString = "SELECT {dnarun.*} FROM dnarun " +
-                "WHERE jsonb_exists(dnarun.dataset_dnarun_idx, CAST(:datasetId AS TEXT))";
-
-        try {
-
-            Session session = em.unwrap(Session.class);
-
-            dnaRuns = session
-                    .createNativeQuery(queryString)
-                    .addEntity("dnarun", DnaRun.class)
-                    .setParameter("datasetId", datasetId)
-                    .setMaxResults(pageSize)
-                    .setFirstResult(rowOffset)
-                    .list();
-
-        }
-        catch(Exception e) {
-            LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-        }
-        return dnaRuns;
     }
 
 }
