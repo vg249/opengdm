@@ -78,13 +78,6 @@ public class MarkerDaoTest {
 
         }
 
-
-        //Test Get MarkerStartAndStop by datasetId
-        markers = markerDao.getMarkersWithStartAndStop(pageSize, rowOffset, null, datasetId);
-
-        assertTrue("Empty marker list",markers.size() > 0);
-
-
         for(Marker marker : markers) {
 
             assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
@@ -127,42 +120,6 @@ public class MarkerDaoTest {
 
     }
 
-    @Test
-    public void testGetMarkerStartStopTuples() {
-
-        Integer pageSize = 200;
-
-        Integer rowOffset = 0;
-
-        List<Marker> markers = markerDao.getMarkersWithStartAndStop(
-                pageSize, rowOffset,
-                null, null);
-
-        assertTrue("Empty marker list",markers.size() > 0);
-
-        if(markers.size() > 0) {
-
-            pageSize = markers.size() - 1;
-
-            List<Marker> markersPaged = markerDao.getMarkersWithStartAndStop(
-                    pageSize, rowOffset,
-                    null, null);
-
-            boolean atleastOneStartStopIsMapped = false;
-
-            for(Marker marker : markersPaged) {
-                if(marker.getMarkerStart() != null || marker.getMarkerStop() != null) {
-                    atleastOneStartStopIsMapped = true;
-                }
-            }
-
-            assertTrue(atleastOneStartStopIsMapped);
-
-            assertTrue("marker result list size not equal to the page size",
-                    markersPaged.size() == pageSize);
-        }
-
-    }
 
     @Test
     public void testGetMarkersByMarkerIds() {

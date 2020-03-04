@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.gobiiproject.gobidomain.services.brapi.MapsetBrapiServiceImpl;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl;
 import org.junit.Before;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.isNull;
 public class MapsetServiceImplTest {
 
     @InjectMocks
-    private MapsetBrapiServiceImpl mapsetBrapiService;
+    private MapsetServiceImpl mapsetBrapiService;
 
     @Mock
     private MapsetDaoImpl mapsetDao;

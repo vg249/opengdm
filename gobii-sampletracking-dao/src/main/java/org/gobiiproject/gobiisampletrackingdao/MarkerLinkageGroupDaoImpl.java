@@ -37,8 +37,8 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        Objects.requireNonNull(pageSize);
-        Objects.requireNonNull(rowOffset);
+        Objects.requireNonNull(pageSize, "Page Size is required");
+        Objects.requireNonNull(rowOffset, "Row Offset is required");
 
         try {
 

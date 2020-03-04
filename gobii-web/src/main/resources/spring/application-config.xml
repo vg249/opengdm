@@ -73,8 +73,6 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapProjectImpl"/>
     <bean id="projectService"
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
-    <bean id="sampleTrackingProjectService"
-          class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
@@ -313,10 +311,6 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapExperimentImpl"/>
     <bean id="ExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
-    <bean id="sampleTrackingExperimentService"
-          class="org.gobiiproject.gobidomain.services.impl.sampletracking.ExperimentServiceImpl"/>
-    <bean id="sampleTrackingDnasampleService"
-          class="org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl"/>
 
 
     <!-- **** Analysis Beans *************************************** -->
@@ -393,11 +387,6 @@
     <bean id="rsSampleTrackingProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsProjectDaoImpl"/>
 
-    <!-- **** New Project DAO for sample tracking use cases -->
-    <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
-
-    <!-- **** New Experiment DAO for sample tracking use cases -->
-    <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
     <!-- **** New CV DAO for sample tracking use cases -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
@@ -443,7 +432,6 @@
     <bean id="rsSampleDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsSampleDaoImpl"/>
 
     <!-- *** DNA Sample Beans *********************************** -->
-    <bean id="sampleTrackingDnaSampleService" class="org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl"/>
     <bean id="dtoMapSampleTrackingDnaSample"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
 
@@ -460,7 +448,7 @@
     <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.brapi.SamplesServiceImpl"/>
 
     <!-- ** Mapset BRAPI BEANS **-->
-    <bean id="mapsetService" class="org.gobiiproject.gobidomain.services.brapi.MapsetBrapiServiceImpl"/>
+    <bean id="mapsetService" class="org.gobiiproject.gobidomain.services.brapi.MapsetServiceImpl"/>
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
 
     <!-- ** Marker Positions BRAPI BEANS **-->

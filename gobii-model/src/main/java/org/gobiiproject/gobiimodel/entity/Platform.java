@@ -31,7 +31,7 @@ public class Platform extends BaseEntity{
     @Column(name="description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
     private Cv type;
 
@@ -94,7 +94,7 @@ public class Platform extends BaseEntity{
         this.status = status;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 
