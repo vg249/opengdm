@@ -73,6 +73,17 @@ public class NucleotideSeparatorSplitterTest {
     }
 
     @Test
+    public void testPipeSeparatorsCase(){
+        List<String> input = Arrays.asList("A|A|A|A","A|C|G|T","C|C|G|T","G|T|T|T","A|C|G|T");
+        List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+
+        List<String> output = runSplitter(input);
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+    }
+
+
+    @Test
     public void testExtraSeparatorsCase(){
         List<String> input = Arrays.asList("A/A/A/A","A/C//G/T","C/C/G/T","G/T/T/T","A/C/G/T");
        // List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
