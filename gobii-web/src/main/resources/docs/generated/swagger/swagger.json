@@ -4482,15 +4482,15 @@
         "open" : {
           "type" : "boolean"
         },
-        "url" : {
-          "type" : "string",
-          "format" : "url"
+        "file" : {
+          "type" : "file"
         },
         "readable" : {
           "type" : "boolean"
         },
-        "file" : {
-          "type" : "file"
+        "url" : {
+          "type" : "string",
+          "format" : "url"
         },
         "uri" : {
           "type" : "string",
