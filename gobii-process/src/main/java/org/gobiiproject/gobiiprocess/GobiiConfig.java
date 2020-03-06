@@ -61,6 +61,8 @@ public class GobiiConfig {
     private static String CONFIG_SVR_GLOBAL_EMAIL = "stE"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_EMAIL_TYPE = "stT"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE = "stH"; // does not require -c
+    private static String CONFIG_SVR_GLOBAL_EMAIL_FROM = "stFr"; // does not require -c
+    private static String CONFIG_SVR_GLOBAL_EMAIL_PASSWORD_TYPE = "stPt"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES = "stMUM";
     private static String CONFIG_SVR_CROP_WEB = "stW";
     private static String CONFIG_SVR_CROP_POSTGRES = "stP";
@@ -237,6 +239,8 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)", "server: email"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL_TYPE, true, "Email server type", "server type"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE, true, "Email server hash type", "hash type"); // does not require -c
+            setOption(options, CONFIG_SVR_GLOBAL_EMAIL_FROM, true, "Email server From Address", "server from"); // does not require -c
+            setOption(options, CONFIG_SVR_GLOBAL_EMAIL_PASSWORD_TYPE, true, "Email server Password Type", "password type"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES, true, "Max file upload size (mbytes)", "max upload size"); // does not require -c
             setOption(options, CONFIG_SVR_CROP_WEB, false, "Server type: Web", "server: web");
             setOption(options, CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres", "server: pgsql");
@@ -1138,6 +1142,20 @@ public class GobiiConfig {
                         configSettings.setEmailSvrType(emailSvrType);
                         argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
                         valsSet.add(emailSvrType);
+                    }
+
+                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_FROM)) {
+                        String emailSvrFrom = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_FROM);
+                        configSettings.setEmailSvrFrom(emailSvrFrom);
+                        argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_FROM);
+                        valsSet.add(emailSvrFrom);
+                    }
+
+                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_PASSWORD_TYPE)) {
+                        String emailSvrPasswdType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_PASSWORD_TYPE);
+                        configSettings.setEmailSvrPassword(emailSvrPasswdType);
+                        argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_PASSWORD_TYPE);
+                        valsSet.add(emailSvrPasswdType);
                     }
 
                     if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE)) {
