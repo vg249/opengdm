@@ -26,35 +26,61 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiiweb.DataSourceSelector;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles("projectsController-test")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/spring/application-config.xml" })
+@ContextConfiguration(classes = ProjectsControllerTestConfiguration.class
+// locations = { "classpath:/spring/application-config.xml" }
+)
 @WebAppConfiguration
 public class ProjectsControllerTest {
     static {
-        //TODO: this is bad way of setting the property, is there someway to do it using WebAppConfiguration?
+        // TODO: this is bad way of setting the property, is there someway to do it
+        // using WebAppConfiguration?
         System.setProperty("cfgFqpn", ProjectsControllerTest.class.getResource("mockconfig.xml").getPath());
     }
+
+    @Mock
+    private ProjectService<ProjectDTO> projectService;
 
     @InjectMocks
     private ProjectsController projectsController;
 
     private MockMvc mockMvc;
 
-    @Autowired
-    DataSourceSelector dataSourceMulti;
-
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(projectsController).build();
-        
+        assert this.projectsController.getProjectService() != null;
+
     }
 
+    private ProjectDTO createMockProjectDTO() {
+        ProjectDTO dto = new ProjectDTO();
+        dto.setId(1);
+        dto.setModifiedBy(1);
+        dto.setProjectName("test-project");
+        return dto;
+    }
+    
     @Test
     public void sampleTest() throws Exception {
+        List<ProjectDTO> mockList = new ArrayList<ProjectDTO>();
+        mockList.add(createMockProjectDTO());
+        when(
+            projectService.getProjects(1, 1000)
+        ).thenReturn(
+            mockList
+        );
+
         mockMvc.perform(
             MockMvcRequestBuilders
             .get("/gobii-dev/gobii/v3/projects")
