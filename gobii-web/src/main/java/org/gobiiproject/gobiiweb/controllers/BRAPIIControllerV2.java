@@ -1155,7 +1155,7 @@ public class BRAPIIControllerV2 {
 
             PagedResult<GenotypeCallsDTO> pagedResult = new PagedResult<>();
 
-            pagedResult = genotypeCallsService.getGenotypeCallsByDatasetId(variantSetDbId, pageSize, pageToken);
+            pagedResult = genotypeCallsService.getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
 
 
             BrApiMasterListPayload<GenotypeCallsDTO> payload = new BrApiMasterListPayload<>(
