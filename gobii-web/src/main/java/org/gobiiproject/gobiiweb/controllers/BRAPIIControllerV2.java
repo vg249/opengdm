@@ -162,16 +162,13 @@ public class BRAPIIControllerV2 {
                     "Default is 0")
             @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize)
-                    Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             CallSetDTO callSetsFilter
     ) {
         try {
 
-            PagedResult<CallSetDTO> callSets;
-
-            callSets = callSetService.getCallSets(
+            PagedResult<CallSetDTO> callSets = callSetService.getCallSets(
                     pageSize, page,
                     variantSetDbId, callSetsFilter);
 
@@ -979,13 +976,14 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Page number", required = false)
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            CallSetDTO callSetsFilter
     ) {
 
         try {
 
             PagedResult<CallSetDTO> pagedResult = callSetService.getCallSets(pageSize, page,
-                    variantSetDbId, null);
+                    variantSetDbId, callSetsFilter);
 
             BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
                     pagedResult.getResult(),
