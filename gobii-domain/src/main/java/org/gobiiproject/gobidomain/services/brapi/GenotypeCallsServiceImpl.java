@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import jdk.vm.ci.code.site.Mark;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -160,7 +159,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-                readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
+                readGenotypesFromFile(genotypeCalls, extractListPath);
 
                 if(markers.size() >= genotypesToBeRead) {
                     break;
@@ -343,7 +342,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 if(dnaRuns.size() > 0) {
                     String extractListPath = extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-                    readHdf5GenotypesFromResult(genotypeCalls, extractListPath);
+                    readGenotypesFromFile(genotypeCalls, extractListPath);
                 }
                 else {
                     continue;
@@ -419,7 +418,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         //next page token for the next page
         String nextPageToken;
 
-        Integer pageOffset = null;
+        Integer pageOffset = 0;
 
         Integer columnOffset = 0;
         Integer markerPageSize = 0;
@@ -512,7 +511,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
 
-            Integer nextColumnOffset = this.readHdf5GenotypesFromFile(genotypeCalls, extractFilePath,
+            Integer nextColumnOffset = this.readGenotypesFromFile(genotypeCalls, extractFilePath,
                     pageSize, datasetId,
                     columnOffset, markers,
                     dnaRuns, new ArrayList<>(dnarunHdf5OrderMap.values()));
@@ -605,17 +604,20 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
     @Override
-    public Map<String, String> getGenotypeCallsAsString(Integer datasetId, Integer markerRowOffset) {
+    public String getGenotypeCallsAsString(Integer datasetId, Integer pageNum) {
 
-        Map<String, String> returnVal = new HashMap<>();
+        String returnVal = "";
 
-        Objects.requireNonNull(datasetId, "datasetId : Non Null parameter");
+        Objects.requireNonNull(pageNum, "pageNum : Non Null parameter");
         Objects.requireNonNull(datasetId, "markerRowOffset : Non Null parameter");
-
-        Integer dnaRunRowOffset = 0;
 
         //TODO: Add properties in gobii-web.xml to configure maximum page sizes
         Integer pageSize = 10000;
+
+        Integer dnaRunRowOffset = 0;
+        Integer markerRowOffset = pageNum*pageSize;
+
+        List<String> headerValues = new ArrayList<>();
 
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
@@ -624,6 +626,15 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         try {
 
             List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, pageSize, markerRowOffset);
+
+            if(markers.size() == 0) {
+                return returnVal;
+            }
+
+            //Add header for first page
+            if(pageNum == 0) {
+                headerValues.add("MarkerName");
+            }
 
             List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageSize,
                     dnaRunRowOffset, false);
@@ -648,9 +659,19 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 }
                 dnarunHdf5IndexMap.get(datasetId.toString()).add(
                         dnaRun.getDatasetDnaRunIdx().get(datasetId.toString()).textValue());
+                if(pageNum == 0) {
+                    headerValues.add(dnaRun.getDnaRunName());
+                }
             }
 
+            //Append header for first page
+            String headerString = null;
+            if(pageNum == 0 && headerValues.size() > 0) {
+                headerString = String.join(",", headerValues);
+            }
 
+            String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+            returnVal = this.readGenotypesFromFile(extractFilePath, markers, dnaRuns, headerString);
 
             return returnVal;
         }
@@ -690,7 +711,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
 
-    private void readHdf5GenotypesFromResult (List<GenotypeCallsDTO> returnVal,
+    private void readGenotypesFromFile (List<GenotypeCallsDTO> returnVal,
                                               String extractListPath) {
 
         try {
@@ -739,7 +760,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
 
-    private Integer readHdf5GenotypesFromFile (
+    private Integer readGenotypesFromFile (
             List<GenotypeCallsDTO> returnVal,
             String genotypeMatrixFilePath,
             Integer pageSize,
@@ -824,10 +845,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         return j;
     }
 
-    private String extractGenotypesFromFile (
+    private String readGenotypesFromFile (
             String genotypeMatrixFilePath,
             List<Marker> markerMetadataList,
-            List<DnaRun> dnarunMetadataList)  throws Exception {
+            List<DnaRun> dnarunMetadataList,
+            String header
+    )  throws Exception {
 
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
@@ -842,7 +865,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         StringBuilder genotypes = new StringBuilder();
 
-        genotypes.append(markerMetadataList.get(i).getMarkerId());
+        if(header != null && !header.isEmpty()) {
+            genotypes.append(header);
+            genotypes.append('\n');
+        }
+
+        genotypes.append(markerMetadataList.get(i).getMarkerName());
         genotypes.append(',');
 
         while ((chrEach = br.read()) != -1) {
@@ -857,7 +885,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 i++;
                 genotypes.append('\n');
                 if(i < markerMetadataList.size()) {
-                    genotypes.append(markerMetadataList.get(i).getMarkerId());
+                    genotypes.append(markerMetadataList.get(i).getMarkerName());
                     genotypes.append(',');
                 }
             }
