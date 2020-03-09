@@ -24,30 +24,22 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     Logger LOGGER = LoggerFactory.getLogger(VariantSetsServiceImpl.class);
 
+    private String fileUrlFormat = "/gobii-{0}/variantsets/{1, number}/calls/download";
+
     @Autowired
     private DatasetDao datasetDao;
 
-    private String fileUrlFormat = "/gobii-{0}/variantsets/{1, number}/calls/download";
-
-    private String cropType = "";
-
-    public String getCropType() {
-        return cropType;
-    }
-
-    public void setCropType(String cropType) {
-        this.cropType = cropType;
-    }
 
     @Override
-    public List<VariantSetDTO> listVariantSets(Integer pageNum, Integer pageSize,
-                                               Integer varianSetDbID) {
+    public List<VariantSetDTO> getVariantSets(Integer pageNum, Integer pageSize,
+                                              Integer varianSetDbID) {
 
         List<VariantSetDTO> returnVal = new ArrayList<>();
 
         HashMap<Integer, AnalysisDTO> analysisBrapiDTOMap = new HashMap<>();
 
         Integer rowOffset = 0;
+
 
         if(pageSize == null) {
             pageSize = Integer.parseInt(BrapiDefaults.pageSize);
@@ -153,7 +145,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
         variantSetDTO.setFileUrl(
                 MessageFormat.format(this.fileUrlFormat,
-                        this.getCropType(),
+                        cropType,
                         dataset.getDatasetId()));
 
         for(Analysis analysis : dataset.getMappedAnalyses()) {
