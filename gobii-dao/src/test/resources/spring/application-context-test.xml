@@ -16,23 +16,22 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-    <bean id="dnaSampleDao" class="org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl"/>
-    <bean id="markerLinkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerLinkageGroupDaoImpl"/>
-    <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
-    <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
-    <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
-    <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
-    <bean id="linkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.LinkageGroupDaoImpl"/>
-    <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
-    <bean id="v3ProjectDao" class="org.gobiiproject.gobiisampletrackingdao.V3ProjectDaoImpl"/>
-
-    <bean id="spWorker"
-          class="org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker"/>
-
-    <context:component-scan base-package="org.gobiiproject.gobiisampletrackingdao.spring"/>
+    <!-- <context:component-scan base-package="org.gobiiproject.gobiidao.spring"/> -->
+    <bean id="dataSource"
+       class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/gobii_dev" />
+        <property name="username" value="postgres" />
+        <property name="password" value="" />
+         <property name="connectionProperties">
+            <props>
+                <prop key="socketTimeout">10</prop>
+            </props>
+        </property>
+    </bean>
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSourceMulti"/>
+        <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="org.gobiiproject.gobiimodel.entity"/>
         <property name="mappingResources" value="META_INF/mapping.xml"/>
         <property name="jpaVendorAdapter">

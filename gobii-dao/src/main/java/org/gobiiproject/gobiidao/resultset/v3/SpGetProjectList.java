@@ -1,7 +1,7 @@
 /**
  * RsGetProjectList.java
  * 
- * V3 API Get project list 
+ * V3 API Get project list (for testing)
  */
 package org.gobiiproject.gobiidao.resultset.v3;
 
