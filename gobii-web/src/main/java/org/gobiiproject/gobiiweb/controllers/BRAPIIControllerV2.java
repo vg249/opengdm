@@ -1216,31 +1216,21 @@ public class BRAPIIControllerV2 {
 
            try {
 
-               Map<String, String> genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                       variantSetDbId, null);
+               int pageNum = 0;
 
-               String genotypes = genotypesResult.get("genotypes");
+               String genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                       variantSetDbId, pageNum);
 
-               if(genotypesResult.containsKey("genotypes") &&
-                       genotypesResult.get("genotypes") != null &&
-                       genotypesResult.get("genotypes").length() != 0) {
+               while(genotypesResult != null &&
+                       genotypesResult.length() != 0) {
 
-                   emitter.send(genotypes, MediaType.TEXT_PLAIN);
+                   emitter.send(genotypesResult, MediaType.TEXT_PLAIN);
 
-                   while(genotypesResult.get("nextPageOffset") != null) {
+                   pageNum++;
 
-                       genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                               variantSetDbId, genotypesResult.get("nextPageOffset"));
+                   genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                               variantSetDbId, pageNum);
 
-                       genotypes = genotypesResult.get("genotypes");
-
-                       emitter.send(genotypes, MediaType.TEXT_PLAIN);
-                   }
-
-                   emitter.complete();
-               }
-               else {
-                   emitter.complete();
                }
 
                emitter.complete();
