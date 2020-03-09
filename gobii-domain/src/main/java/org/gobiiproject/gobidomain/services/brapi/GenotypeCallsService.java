@@ -29,6 +29,6 @@ public interface GenotypeCallsService {
             Integer pageSize,
             String pageToken) throws GobiiDomainException;
 
-    Map<String, String> getGenotypeCallsAsString(Integer datasetId, Integer markerRowOffset);
+    String getGenotypeCallsAsString(Integer datasetId, Integer pageNum);
 
 }
