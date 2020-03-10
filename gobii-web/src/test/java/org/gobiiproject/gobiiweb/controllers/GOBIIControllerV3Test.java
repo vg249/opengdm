@@ -35,6 +35,7 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 
 import static org.mockito.Mockito.when;
@@ -78,7 +79,10 @@ public class GOBIIControllerV3Test {
         List<GobiiProjectDTO> mockList = new ArrayList<GobiiProjectDTO>();
         GobiiProjectDTO mockItem = createMockProjectDTO();
         mockList.add(mockItem);
-        BrApiMasterListPayload<GobiiProjectDTO> mockPayload = new BrApiMasterListPayload<>(mockList, 1, 0);
+        PagedResult<GobiiProjectDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
         when(
             projectService.getProjects(0, 1000)
         ).thenReturn(

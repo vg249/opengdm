@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.v3.GobiiProject;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -29,7 +29,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 public class V3ProjectServiceImplTest {
 
     @Mock
-    private ProjectDao v3ProjectDao;
+    private ProjectDao projectDao;
 
     @Mock
     private CvDao cvDao;
@@ -45,7 +45,7 @@ public class V3ProjectServiceImplTest {
     @Test
     public void testSimple() {
 
-        assert v3ProjectDao != null ;
+        assert projectDao != null ;
 
         //Mock Cvs
         List<Cv> mockCvList = new java.util.ArrayList<>();
@@ -58,15 +58,15 @@ public class V3ProjectServiceImplTest {
         GobiiProject mockEntity = new GobiiProject();
         mockEntity.setProjectName("PName");
         daoReturn.add(mockEntity);
-        when(v3ProjectDao.getProjects(0,1000))
+        when(projectDao.getProjects(0,1000))
         .thenReturn(
             daoReturn
         );
 
-        BrApiMasterListPayload<GobiiProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000);
-        assert payload.getResult().getData().size() == 1;
-        assert payload.getResult().getData().get(0).getProjectName() == mockEntity.getProjectName();
-        assert payload.getMetadata().getPagination().getPageSize() == 1;
+        PagedResult<GobiiProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000);
+        assert payload.getResult().size() == 1 ;
+        assert payload.getCurrentPageNum() == 0;
+        assert payload.getCurrentPageSize() == 1;
     }
 
 }

@@ -17,10 +17,6 @@
         <!-- gobii dependencies -->
         <dependency>
             <groupId>org.gobiiproject</groupId>
-            <artifactId>gobii-api-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-sampletracking-dao</artifactId>
         </dependency>
 

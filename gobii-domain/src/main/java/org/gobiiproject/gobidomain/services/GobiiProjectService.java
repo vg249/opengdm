@@ -2,8 +2,9 @@ package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+
 
 public interface GobiiProjectService{
-    BrApiMasterListPayload<GobiiProjectDTO>  getProjects(Integer pageNum, Integer pageSize) throws GobiiDomainException;
+    PagedResult<GobiiProjectDTO>  getProjects(Integer pageNum, Integer pageSize) throws GobiiDomainException;
 }

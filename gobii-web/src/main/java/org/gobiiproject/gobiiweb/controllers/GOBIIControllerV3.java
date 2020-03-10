@@ -15,6 +15,7 @@ import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +59,18 @@ public class GOBIIControllerV3 {
         LOGGER.debug("Querying projects List");
         Integer pageSizeToUse = pageSize;
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
-        System.out.println(pageNum);
-        System.out.println(pageSize);
-        BrApiMasterListPayload<GobiiProjectDTO> pagedResult = 
-            projectService.getProjects(
-                Math.max(0, pageNum),
-                pageSizeToUse
-            );
+        PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
+            Math.max(0, pageNum),
+            pageSizeToUse
+        );
+        BrApiMasterListPayload<GobiiProjectDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+           
         
-        return ResponseEntity.ok(pagedResult);
+        return ResponseEntity.ok(payload);
     }
 
     public GobiiProjectService getProjectService() {

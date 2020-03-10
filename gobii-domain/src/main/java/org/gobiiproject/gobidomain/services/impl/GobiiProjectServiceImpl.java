@@ -12,12 +12,12 @@ import java.util.Objects;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.v3.GobiiProject;
 import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
@@ -41,10 +41,10 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
 
     @Override
-    public BrApiMasterListPayload<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
+    public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
 
         LOGGER.debug("Getting projects list offset %d size %d", pageNum, pageSize);
-        BrApiMasterListPayload<GobiiProjectDTO> pagedResult;
+        PagedResult<GobiiProjectDTO> pagedResult;
 
         //get Cvs
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
@@ -65,7 +65,10 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
                 projectDTOs.add(dto);
             });
             
-            pagedResult = new BrApiMasterListPayload<>(projectDTOs, projectDTOs.size(), pageNum);
+            pagedResult = new PagedResult<>();
+            pagedResult.setResult(projectDTOs);
+            pagedResult.setCurrentPageNum(pageNum);
+            pagedResult.setCurrentPageSize(projectDTOs.size());
             return pagedResult;
         } catch (GobiiException gE) {
             throw gE;
