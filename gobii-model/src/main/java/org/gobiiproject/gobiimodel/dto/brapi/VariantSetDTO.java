@@ -46,7 +46,7 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private String fileUrl;
 
-    private String fileFormat = "text/tab-seperated-values";
+    private String fileFormat = "text/csv";
 
     private String dataFormat = "tabular";
 

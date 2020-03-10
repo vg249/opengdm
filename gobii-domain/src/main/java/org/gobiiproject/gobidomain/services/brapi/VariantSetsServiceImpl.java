@@ -24,7 +24,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     Logger LOGGER = LoggerFactory.getLogger(VariantSetsServiceImpl.class);
 
-    private String fileUrlFormat = "/gobii-{0}/variantsets/{1, number}/calls/download";
+    private String fileUrlFormat = "/variantsets/{0, number}/calls/download";
 
     @Autowired
     private DatasetDao datasetDao;
@@ -144,9 +144,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
         ModelMapper.mapEntityToDto(dataset, variantSetDTO);
 
         variantSetDTO.setFileUrl(
-                MessageFormat.format(this.fileUrlFormat,
-                        cropType,
-                        dataset.getDatasetId()));
+                MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
 
         for(Analysis analysis : dataset.getMappedAnalyses()) {
 

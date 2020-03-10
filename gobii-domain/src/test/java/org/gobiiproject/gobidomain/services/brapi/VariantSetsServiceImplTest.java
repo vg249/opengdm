@@ -122,7 +122,7 @@ public class VariantSetsServiceImplTest {
         ).thenReturn(datasetsMock);
 
 
-        List<VariantSetDTO> variantSets = variansetService.listVariantSets(
+        List<VariantSetDTO> variantSets = variansetService.getVariantSets(
                 0, pageSize, null);
 
         assertEquals("Size mismatch", datasetsMock.size(), variantSets.size());

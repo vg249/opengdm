@@ -777,9 +777,8 @@ public class BRAPIIControllerV2 {
                 pageSize = maxPageSize;
             }
 
-            variantSetsService.setCropType(CropRequestAnalyzer.getGobiiCropType(request));
 
-            List<VariantSetDTO> variantSets = variantSetsService.listVariantSets(pageNum, pageSize, variantSetDbId);
+            List<VariantSetDTO> variantSets = variantSetsService.getVariantSets(pageNum, pageSize, variantSetDbId);
 
             BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(variantSets);
 
@@ -849,8 +848,6 @@ public class BRAPIIControllerV2 {
             HttpServletRequest request) {
 
         try {
-
-            variantSetsService.setCropType(CropRequestAnalyzer.getGobiiCropType(request));
 
             VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
 
