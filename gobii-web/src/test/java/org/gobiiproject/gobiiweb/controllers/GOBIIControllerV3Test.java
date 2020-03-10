@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.V3ProjectService;
+import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 
 import static org.mockito.Mockito.when;
 
@@ -47,14 +47,9 @@ import static org.mockito.Mockito.when;
 )
 @WebAppConfiguration
 public class GOBIIControllerV3Test {
-    // static {
-    //     // TODO: this is bad way of setting the property, is there someway to do it
-    //     // using WebAppConfiguration?
-    //     System.setProperty("cfgFqpn", GOBIIControllerV3Test.class.getResource("mockconfig.xml").getPath());
-    // }
 
     @Mock
-    private V3ProjectService projectService;
+    private GobiiProjectService projectService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -69,8 +64,8 @@ public class GOBIIControllerV3Test {
 
     }
 
-    private V3ProjectDTO createMockProjectDTO() {
-        V3ProjectDTO dto = new V3ProjectDTO();
+    private GobiiProjectDTO createMockProjectDTO() {
+        GobiiProjectDTO dto = new GobiiProjectDTO();
         dto.setId(1);
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
@@ -79,13 +74,15 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void simpleTest() throws Exception {
-        List<V3ProjectDTO> mockList = new ArrayList<V3ProjectDTO>();
-        V3ProjectDTO mockItem = createMockProjectDTO();
+        assert projectService != null;
+        List<GobiiProjectDTO> mockList = new ArrayList<GobiiProjectDTO>();
+        GobiiProjectDTO mockItem = createMockProjectDTO();
         mockList.add(mockItem);
+        BrApiMasterListPayload<GobiiProjectDTO> mockPayload = new BrApiMasterListPayload<>(mockList, 1, 0);
         when(
             projectService.getProjects(0, 1000)
         ).thenReturn(
-            new BrApiMasterListPayload<V3ProjectDTO>(mockList, 1, 0)
+            mockPayload
         );
 
         mockMvc.perform(
@@ -101,6 +98,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
         .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
         ;
+
     }
     
     

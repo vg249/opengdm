@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
-public class V3ProjectDaoImplTest {
+public class ProjectDaoImplTest {
 
     @Autowired
     private ProjectDao v3ProjectDao;

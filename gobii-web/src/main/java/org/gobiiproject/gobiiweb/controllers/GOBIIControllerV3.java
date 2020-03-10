@@ -11,16 +11,15 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import java.util.Optional;
 
-import org.gobiiproject.gobidomain.services.V3ProjectService;
+import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,8 +37,9 @@ import io.swagger.annotations.Api;
 public class GOBIIControllerV3 {
     //private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectsController.class);
     Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
+    
     @Autowired
-    private V3ProjectService projectService = null;
+    private GobiiProjectService projectService = null;
 
     /**
      * getProjectsList 
@@ -51,26 +51,29 @@ public class GOBIIControllerV3 {
      * @return
      */
     @GetMapping("/projects")
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<V3ProjectDTO>> getProjectsList(
-            @RequestParam Optional<Integer> pageNum,
-            @RequestParam Optional<Integer> pageSize) {
+    @ResponseBody 
+    public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
+            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
+            @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
         LOGGER.debug("Querying projects List");
-        Integer pageSizeToUse = pageSize.orElse(1000);
+        Integer pageSizeToUse = pageSize;
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
-        BrApiMasterListPayload<V3ProjectDTO> pagedResult = 
+        System.out.println(pageNum);
+        System.out.println(pageSize);
+        BrApiMasterListPayload<GobiiProjectDTO> pagedResult = 
             projectService.getProjects(
-                Math.max(0, pageNum.orElse(0)),
+                Math.max(0, pageNum),
                 pageSizeToUse
             );
         
         return ResponseEntity.ok(pagedResult);
     }
 
-    public V3ProjectService getProjectService() {
+    public GobiiProjectService getProjectService() {
         return projectService;
     }
 
-    public void setProjectService(V3ProjectService projectService) {
+    public void setProjectService(GobiiProjectService projectService) {
         this.projectService = projectService;
     }
 

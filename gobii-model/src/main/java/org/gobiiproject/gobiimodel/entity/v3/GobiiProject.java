@@ -18,7 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "project")
-public class Project extends BaseEntity {
+public class GobiiProject extends BaseEntity {
 
     @Id
     @Column(name="project_id")

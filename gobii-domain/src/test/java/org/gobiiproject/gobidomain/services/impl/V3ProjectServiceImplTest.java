@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
-import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.v3.Project;
+import org.gobiiproject.gobiimodel.entity.v3.GobiiProject;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class V3ProjectServiceImplTest {
     private CvDao cvDao;
 
     @InjectMocks
-    private V3ProjectServiceImpl v3ProjectServiceImpl;
+    private GobiiProjectServiceImpl v3ProjectServiceImpl;
 
     @Before
     public void init() {
@@ -54,8 +54,8 @@ public class V3ProjectServiceImplTest {
             mockCvList
         );
 
-        List<Project> daoReturn = new java.util.ArrayList<>();
-        Project mockEntity = new Project();
+        List<GobiiProject> daoReturn = new java.util.ArrayList<>();
+        GobiiProject mockEntity = new GobiiProject();
         mockEntity.setProjectName("PName");
         daoReturn.add(mockEntity);
         when(v3ProjectDao.getProjects(0,1000))
@@ -63,7 +63,7 @@ public class V3ProjectServiceImplTest {
             daoReturn
         );
 
-        BrApiMasterListPayload<V3ProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000);
+        BrApiMasterListPayload<GobiiProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000);
         assert payload.getResult().getData().size() == 1;
         assert payload.getResult().getData().get(0).getProjectName() == mockEntity.getProjectName();
         assert payload.getMetadata().getPagination().getPageSize() == 1;

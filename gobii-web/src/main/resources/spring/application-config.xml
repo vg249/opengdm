@@ -388,8 +388,8 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsProjectDaoImpl"/>
 
    <!-- **** Projects V3  Beans -->
-    <bean id="v3ProjectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
-    <bean id="v3ProjectService" class="org.gobiiproject.gobidomain.services.impl.V3ProjectServiceImpl"/>
+    <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
+    <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.impl.GobiiProjectServiceImpl"/>
 
     <!-- **** New CV DAO for sample tracking use cases -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>

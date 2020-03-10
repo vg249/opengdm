@@ -20,8 +20,7 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.children.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.entity.v3.Project;
+import org.gobiiproject.gobiimodel.entity.v3.GobiiProject;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 
@@ -32,10 +31,10 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
     "id", "allowedProcessTypes", "entityNameType"
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class V3ProjectDTO extends DTOBaseAuditable {
+public class GobiiProjectDTO extends DTOBaseAuditable {
 
    
-    public V3ProjectDTO() {
+    public GobiiProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
     }
 
@@ -52,19 +51,19 @@ public class V3ProjectDTO extends DTOBaseAuditable {
 
     // we are waiting until we a have a view to return
     // properties for that property: we don't know how to represent them yet
-    @GobiiEntityMap(paramName = "projectId", entity = Project.class)
+    @GobiiEntityMap(paramName = "projectId", entity = GobiiProject.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer projectId = 0;
 
-    @GobiiEntityMap(paramName="projectName", entity = Project.class)
+    @GobiiEntityMap(paramName="projectName", entity = GobiiProject.class)
     private String projectName;
 
-    @GobiiEntityMap(paramName="projectDescription", entity = Project.class)
+    @GobiiEntityMap(paramName="projectDescription", entity = GobiiProject.class)
     private String projectDescription;
 
-    @GobiiEntityMap(paramName="contact.contactId", entity = Project.class, deep=true)
+    @GobiiEntityMap(paramName="contact.contactId", entity = GobiiProject.class, deep=true)
     private Integer piContactId;
-    @GobiiEntityMap(paramName="contact.username", entity = Project.class, deep=true)
+    @GobiiEntityMap(paramName="contact.username", entity = GobiiProject.class, deep=true)
     private String piContactName;
 
     //TODO: when the stats table is done
