@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.v3.Project;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
-import org.gobiiproject.gobiisampletrackingdao.V3ProjectDao;
+import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,7 +29,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 public class V3ProjectServiceImplTest {
 
     @Mock
-    private V3ProjectDao v3ProjectDao;
+    private ProjectDao v3ProjectDao;
 
     @Mock
     private CvDao cvDao;

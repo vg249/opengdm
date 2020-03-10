@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class V3ProjectDaoImplTest {
 
     @Autowired
-    private V3ProjectDao v3ProjectDao;
+    private ProjectDao v3ProjectDao;
 
 
     @Before

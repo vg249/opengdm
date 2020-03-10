@@ -23,7 +23,7 @@ import org.gobiiproject.gobiimodel.entity.v3.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
-import org.gobiiproject.gobiisampletrackingdao.V3ProjectDao;
+import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class V3ProjectServiceImpl implements V3ProjectService {
     // @Autowired
     // private DtoMapV3Project dtoMapV3Project;
     @Autowired
-    private V3ProjectDao v3ProjectDao;
+    private ProjectDao v3ProjectDao;
 
     @Autowired
     private CvDao cvDao;

@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.transaction.Transactional;
 
-public class V3ProjectDaoImpl implements V3ProjectDao {
+public class ProjectDaoImpl implements ProjectDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(V3ProjectDaoImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(ProjectDaoImpl.class);
     
     @PersistenceContext
     protected EntityManager em;

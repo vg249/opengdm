@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.gobiiproject.gobiimodel.entity.v3.Project;
 
-public interface V3ProjectDao {
+public interface ProjectDao {
 
     List<Project> getProjects(
         Integer pageNum,
