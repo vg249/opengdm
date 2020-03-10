@@ -1,17 +1,17 @@
-package org.gobiiproject.gobidomain;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.children.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+package org.gobiiproject.gobiimodel.modelmapper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 /**
  * Module to map CV Ids to CV terms and vice versa.
@@ -19,12 +19,14 @@ import java.util.Map;
 public class CvIdCvTermMapper {
 
     /**
-     * Function maps the properties object with CV term as a key to Json Node
-     * with cvIds as Key.
+     * Function maps the properties object with CV term as a key to Json Node with
+     * cvIds as Key.
      *
-     * @param cvList List of Cv Entity
-     * @param properties Map object with cv term as key which needs to be mapped to their cvId as key
-     * @return Json Node with cvId as Key. Returning Json Node as Entity Column is a Json Column.
+     * @param cvList     List of Cv Entity
+     * @param properties Map object with cv term as key which needs to be mapped to
+     *                   their cvId as key
+     * @return Json Node with cvId as Key. Returning Json Node as Entity Column is a
+     *         Json Column.
      */
     public static JsonNode mapCvTermsToCvId(List<Cv> cvList, Map<String, String> properties) {
 
@@ -39,19 +41,16 @@ public class CvIdCvTermMapper {
             for (Cv cv : cvList) {
                 if (properties.containsKey(cv.getTerm())) {
 
-                    cvIdMappedProperties.put(cv.getCvId().toString(),
-                            properties.get(cv.getTerm()));
+                    cvIdMappedProperties.put(cv.getCvId().toString(), properties.get(cv.getTerm()));
 
                 }
             }
 
-            returnVal = mapper.reader().readTree(
-                    mapper.writeValueAsString(cvIdMappedProperties));
+            returnVal = mapper.reader().readTree(mapper.writeValueAsString(cvIdMappedProperties));
 
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
 
-            throw new GobiiDomainException(
+            throw new GobiiException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage());
@@ -77,7 +76,7 @@ public class CvIdCvTermMapper {
         }
         catch(Exception e) {
 
-            throw new GobiiDomainException(
+            throw new GobiiException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage());
@@ -103,7 +102,7 @@ public class CvIdCvTermMapper {
         }
         catch(Exception e) {
 
-            throw new GobiiDomainException(
+            throw new GobiiException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage());

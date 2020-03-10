@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="contact")
-public class V3Contact extends BaseEntity {
+public class Contact extends BaseEntity {
     @Id
     @Column(name="contact_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
