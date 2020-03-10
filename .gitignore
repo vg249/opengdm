@@ -13,7 +13,6 @@ gobii-dtomapping/target
 gobii-dtomapping/.factorypath
 gobii-dtomappint/bin
 gobii-model/target
-gobii-model/bin
 gobii-model/.factorypath 
 gobii-api-model/target
 gobii-api-model/.factorypath 
@@ -24,14 +23,15 @@ gobii-process/.factorypath
 gobii-web/target
 gobii-web/.factorypath 
 gobii-sampletracking-dao/target
-hobii-smapletracking/bin
 gobii-sampletracking-dao/.factorypath 
-/bin/
+bin/
 
+.factorypath
 .settings
 .classpath
 .project
 *.log
+*.class
 gobii-web/src/main/ts/*.js
 gobii-web/src/main/ts/*.map
 gobii-web/src/main/webapp/js/gobii_modules/**/*.js
