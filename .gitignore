@@ -1,17 +1,28 @@
 listMergedBranches.sh
 
+.vscode/
 .idea
 *.iml
 gobii-client/target
+gobii-client/.factorypath 
 gobii-dao/target
+gobii-dao/.factorypath 
 gobii-domain/target
+gobii-domain/.factorypath 
 gobii-dtomapping/target
+gobii-dtomapping/.factorypath
 gobii-model/target
+gobii-model/.factorypath 
 gobii-api-model/target
+gobii-api-model/.factorypath 
 gobii-brapi/target
+gobii-brapi/.factorypath
 gobii-process/target
+gobii-process/.factorypath 
 gobii-web/target
+gobii-web/.factorypath 
 gobii-sampletracking-dao/target
+gobii-sampletracking-dao/.factorypath 
 /bin/
 
 .settings
@@ -35,3 +46,5 @@ gobii-client/gobii-web.xml
 gobii-web/package-lock.json
 
 gobii-web/src/main/resources/docs/generated/**
+
+
