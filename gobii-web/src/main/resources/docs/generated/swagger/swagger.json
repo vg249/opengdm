@@ -3658,11 +3658,11 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "group" : {
+        "cvId" : {
           "type" : "integer",
           "format" : "int32"
         },
-        "cvId" : {
+        "group" : {
           "type" : "integer",
           "format" : "int32"
         }
@@ -4492,12 +4492,12 @@
           "type" : "string",
           "format" : "url"
         },
-        "filename" : {
-          "type" : "string"
-        },
         "uri" : {
           "type" : "string",
           "format" : "uri"
+        },
+        "filename" : {
+          "type" : "string"
         }
       }
     },

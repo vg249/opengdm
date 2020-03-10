@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.transaction.Transactional;
 
 public class V3ProjectDaoImpl implements V3ProjectDao {
 
@@ -23,6 +24,8 @@ public class V3ProjectDaoImpl implements V3ProjectDao {
     protected EntityManager em;
 
     final int defaultPageSize = 1000;
+    
+    @Transactional
     @Override
     public List<V3Project> getProjects(Integer pageNum, Integer pageSize) {
         // TODO Auto-generated method stub
