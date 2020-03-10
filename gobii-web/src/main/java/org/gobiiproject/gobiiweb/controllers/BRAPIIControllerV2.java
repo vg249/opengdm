@@ -744,9 +744,11 @@ public class BRAPIIControllerV2 {
     public @ResponseBody ResponseEntity getVariantSets(
             @ApiParam(value = "Id of the VariantSet to be fetched. Also, corresponds to dataset Id")
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. studyDbID " +
-                    "also corresponds to experiment")
-            @RequestParam(value = "studyDbId", required = false) String studyDbId,
+            @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. study " +
+                    "corresponds to experiment")
+            @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
+            @ApiParam(value = "Study Name for which list of Variantsets need to be fetched")
+            @RequestParam(value = "studyName", required = false) String studyName,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page number to be fetched")
@@ -754,10 +756,14 @@ public class BRAPIIControllerV2 {
     ) {
         try {
 
-            List<VariantSetDTO> variantSets = variantSetsService.getVariantSets(pageSize, pageNum, variantSetDbId);
+            PagedResult<VariantSetDTO> pagedResult = variantSetsService.getVariantSets(pageSize, pageNum,
+                    variantSetDbId, null,
+                    studyDbId, studyName);
 
             BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(
-                    variantSets, pageSize, pageNum);
+                    pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -775,11 +781,11 @@ public class BRAPIIControllerV2 {
     }
 
     /**
-     * Endpoint for getting a specific variantset with a given variantSetDbId
+     * Endpoint for getting a specific variantSet with a given variantSetDbId
      *
-     * @param variantSetDbId ID of the requested variantset
-     * @return ResponseEntity with http status code specifying if retrieval of the variantset is successful.
-     * Response body contains the requested variantset information
+     * @param variantSetDbId ID of the requested variantSet
+     * @return ResponseEntity with http status code specifying if retrieval of the variantSet is successful.
+     * Response body contains the requested variantSet information
      */
     @ApiOperation(
             value = "Get VariantSet by variantSetDbId",
@@ -817,8 +823,7 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantSetById(
             @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
-            @PathVariable("variantSetDbId") Integer variantSetDbId,
-            HttpServletRequest request) {
+            @PathVariable("variantSetDbId") Integer variantSetDbId) {
 
         try {
 
