@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.V3Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -73,7 +74,7 @@ public class V3ProjectDTO extends DTOBaseAuditable {
     private Integer dnaRunsCount;
 
 
-    private List<EntityPropertyDTO> properties = new java.util.ArrayList<>();
+    private List<CvPropertyDTO> properties = new java.util.ArrayList<>();
 
     @GobiiEntityParam(paramName = "projectId")
     public Integer getProjectId() {
@@ -161,11 +162,11 @@ public class V3ProjectDTO extends DTOBaseAuditable {
         this.dnaRunsCount = dnaRunsCount;
     }
 
-    public List<EntityPropertyDTO> getProperties() {
+    public List<CvPropertyDTO> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<EntityPropertyDTO> properties) {
+    public void setProperties(List<CvPropertyDTO> properties) {
         this.properties = properties;
     }
 }

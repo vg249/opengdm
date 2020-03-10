@@ -9,21 +9,18 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.V3ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +55,13 @@ public class GOBIIControllerV3 {
             @RequestParam Optional<Integer> pageNum,
             @RequestParam Optional<Integer> pageSize) {
         LOGGER.debug("Querying projects List");
-        BrApiMasterListPayload<V3ProjectDTO> pagedResult = projectService.getProjects(pageNum.orElse(0), pageSize.orElse(1000));
+        Integer pageSizeToUse = pageSize.orElse(1000);
+        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+        BrApiMasterListPayload<V3ProjectDTO> pagedResult = 
+            projectService.getProjects(
+                Math.max(0, pageNum.orElse(0)),
+                pageSizeToUse
+            );
         
         return ResponseEntity.ok(pagedResult);
     }
