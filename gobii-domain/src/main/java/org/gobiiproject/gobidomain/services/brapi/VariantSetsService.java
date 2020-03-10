@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface VariantSetsService {
 
-    List<VariantSetDTO> getVariantSets(Integer pageNum, Integer pageSize,
-                                        Integer variantSetDbId);
+    List<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
+                                       Integer variantSetDbId);
 
     VariantSetDTO getVariantSetById(Integer variantSetDbId);
 

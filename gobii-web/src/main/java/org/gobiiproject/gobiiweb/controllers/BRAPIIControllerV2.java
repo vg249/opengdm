@@ -705,7 +705,7 @@ public class BRAPIIControllerV2 {
     /**
      * Lists the variantsets by page size and page token
      *
-     * @param pageTokenParam - String page token
+     * @param pageNum - Page number to be fetched. 0 indexed.
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size
      * @return Brapi response with list of variantsets
@@ -747,44 +747,17 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. studyDbID " +
                     "also corresponds to experiment")
             @RequestParam(value = "studyDbId", required = false) String studyDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page number to be fetched")
-            @RequestParam(value = "page", required = false) Integer pageNum,
-            HttpServletRequest request
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer pageNum
     ) {
         try {
 
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_DATASETS,
-                    RestMethodType.GET
-            );
+            List<VariantSetDTO> variantSets = variantSetsService.getVariantSets(pageSize, pageNum, variantSetDbId);
 
-            if (maxPageSize == null) {
-                maxPageSize = this.brapiDefaultPageSize;
-            }
-
-            if (pageSize == null) {
-                pageSize = this.brapiDefaultPageSize;
-            }
-            else if(pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-
-            List<VariantSetDTO> variantSets = variantSetsService.getVariantSets(pageNum, pageSize, variantSetDbId);
-
-            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(variantSets);
-
-            payload.getMetadata().getPagination().setPageSize(pageSize);
-
-            payload.getMetadata().getPagination().setCurrentPage(pageNum);
+            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(
+                    variantSets, pageSize, pageNum);
 
             return ResponseEntity.ok(payload);
 

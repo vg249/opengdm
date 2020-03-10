@@ -421,6 +421,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         Integer pageOffset = 0;
 
         Integer columnOffset = 0;
+        Integer dnaRunOffset = 0;
+
         Integer markerPageSize = 0;
 
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
@@ -432,7 +434,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         try {
 
 
-            List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageSize, pageOffset);
+            List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageSize, dnaRunOffset);
 
 
             if(pageToken != null) {

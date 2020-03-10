@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class VariantSetsServiceImpl implements VariantSetsService {
@@ -31,30 +32,23 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
 
     @Override
-    public List<VariantSetDTO> getVariantSets(Integer pageNum, Integer pageSize,
-                                              Integer varianSetDbID) {
+    public List<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
+                                              Integer variantSetDbId) {
 
         List<VariantSetDTO> returnVal = new ArrayList<>();
 
         HashMap<Integer, AnalysisDTO> analysisBrapiDTOMap = new HashMap<>();
 
-        Integer rowOffset = 0;
-
-
-        if(pageSize == null) {
-            pageSize = Integer.parseInt(BrapiDefaults.pageSize);
-        }
-
-        if(pageNum != null && pageSize != null) {
-            rowOffset = pageNum*pageSize;
-        }
+        Objects.requireNonNull(pageSize, "pageSize: Required non null");
+        Objects.requireNonNull(pageNum, "pageNum: Required non null");
 
         try {
 
-            List<Dataset> datasets = datasetDao.listDatasets(
-                   pageSize,
-                   rowOffset,
-                   varianSetDbID);
+            Integer rowOffset = pageNum*pageSize;
+
+            List<Dataset> datasets = datasetDao.getDatasets(
+                   pageSize, rowOffset,
+                   variantSetDbId);
 
             for (Dataset dataset : datasets) {
 
@@ -146,29 +140,29 @@ public class VariantSetsServiceImpl implements VariantSetsService {
         variantSetDTO.setFileUrl(
                 MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
 
-        for(Analysis analysis : dataset.getMappedAnalyses()) {
+        //for(Analysis analysis : dataset.getMappedAnalyses()) {
 
-            if(analysisBrapiDTOMap == null || analysisBrapiDTOMap.containsKey(analysis.getAnalysisId()) == false) {
+        //    if(analysisBrapiDTOMap == null || analysisBrapiDTOMap.containsKey(analysis.getAnalysisId()) == false) {
 
-                AnalysisDTO analysisDTO = new AnalysisDTO();
+        //        AnalysisDTO analysisDTO = new AnalysisDTO();
 
-                ModelMapper.mapEntityToDto(analysis, analysisDTO);
+        //        ModelMapper.mapEntityToDto(analysis, analysisDTO);
 
-                variantSetDTO.getAnalyses().add(analysisDTO);
+        //        variantSetDTO.getAnalyses().add(analysisDTO);
 
-                if(analysisBrapiDTOMap != null) {
-                    analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisDTO);
-                }
-            }
-            else {
+        //        if(analysisBrapiDTOMap != null) {
+        //            analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisDTO);
+        //        }
+        //    }
+        //    else {
 
-                variantSetDTO.getAnalyses().add(
-                        analysisBrapiDTOMap.get(analysis.getAnalysisId()));
+        //        variantSetDTO.getAnalyses().add(
+        //                analysisBrapiDTOMap.get(analysis.getAnalysisId()));
 
 
-            }
+        //    }
 
-        }
+        //}
 
 
     }
