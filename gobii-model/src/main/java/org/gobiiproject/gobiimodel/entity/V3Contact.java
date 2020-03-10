@@ -22,8 +22,8 @@ public class V3Contact extends BaseEntity {
     @Column(name="email")
     private String email;
     
-    @Column(name="roles")
-    private Integer[] roles;
+    //@Column(name="roles")
+    //private Integer[] roles;
     
 	@Column(name="organization_id")	
 	private Integer organizationId;	
@@ -71,13 +71,13 @@ public class V3Contact extends BaseEntity {
         this.email = email;
     }
 
-    public Integer[] getRoles() {
-        return roles;
-    }
+    // public Integer[] getRoles() {
+    //     return roles;
+    // }
 
-    public void setRoles(Integer[] roles) {
-        this.roles = roles;
-    }
+    // public void setRoles(Integer[] roles) {
+    //     this.roles = roles;
+    // }
 
     public Integer getOrganizationId() {
         return organizationId;

@@ -29,7 +29,7 @@ public class V3Project extends BaseEntity {
     private String projectName;
 
     @OneToOne
-    @JoinColumn(name="contact_id")
+    @JoinColumn(name="pi_contact", referencedColumnName="contact_id")
     private V3Contact contact;
 
     @Column(name="code")

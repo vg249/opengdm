@@ -29,6 +29,7 @@ public class V3ProjectDaoImpl implements V3ProjectDao {
     @Override
     public List<V3Project> getProjects(Integer pageNum, Integer pageSize) {
         // TODO Auto-generated method stub
+        LOGGER.debug("DAO getting projects");
         List<V3Project> projects = new ArrayList<>();
 
         try {
@@ -37,7 +38,6 @@ public class V3ProjectDaoImpl implements V3ProjectDao {
 
             Root<V3Project> projectRoot = criteriaQuery.from(V3Project.class);
             criteriaQuery.select(projectRoot);
-
             projects = em.createQuery(criteriaQuery)
                 .setFirstResult(pageNum * pageSize)
                 .setMaxResults(pageSize)

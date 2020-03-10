@@ -56,8 +56,7 @@ public class GOBIIControllerV3 {
     public @ResponseBody ResponseEntity<BrApiMasterListPayload<V3ProjectDTO>> getProjectsList(
             @RequestParam Optional<Integer> pageNum,
             @RequestParam Optional<Integer> pageSize) {
-        LOGGER.debug("Accessing projects list ");
-        assert projectService != null;
+        LOGGER.debug("Querying projects List");
         List<V3ProjectDTO> projectsList = projectService.getProjects(pageNum.orElse(0), pageSize.orElse(1000));
         BrApiMasterListPayload<V3ProjectDTO> responsePayload = new BrApiMasterListPayload<>(
             projectsList,

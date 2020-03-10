@@ -22,7 +22,7 @@ public class DtoMapV3ProjectImpl implements DtoMapV3Project {
 
     @Override
     public List<V3ProjectDTO> getProjects(Integer pageNum, Integer pageSize) {
-
+        LOGGER.debug("DTO converting projects");
         List<V3Project> projects = v3ProjectDao.getProjects(pageNum, pageSize);
         List<V3ProjectDTO> list = new java.util.ArrayList<>();
         projects.forEach( project -> {
