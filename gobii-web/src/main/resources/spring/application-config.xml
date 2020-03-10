@@ -389,7 +389,6 @@
 
    <!-- **** Projects V3  Beans -->
     <bean id="v3ProjectDao" class="org.gobiiproject.gobiisampletrackingdao.V3ProjectDaoImpl"/>
-    <bean id="dtoMapV3Project" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapV3ProjectImpl"/>
     <bean id="v3ProjectService" class="org.gobiiproject.gobidomain.services.impl.V3ProjectServiceImpl"/>
 
     <!-- **** New CV DAO for sample tracking use cases -->

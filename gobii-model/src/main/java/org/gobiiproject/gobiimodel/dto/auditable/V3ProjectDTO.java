@@ -1,44 +1,39 @@
+/**
+ * V3ProjectDTO.java
+ * 
+ * DTO for Project data (Gobii API V3)
+ * 
+ * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>
+ * @since 2020-03-07
+ */
 package org.gobiiproject.gobiimodel.dto.auditable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.children.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.V3Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 
 /**
- * Created by Phil on 4/6/2016.
+ * 
  */
+@JsonIgnoreProperties(ignoreUnknown = false, value={
+    "id", "allowedProcessTypes", "entityNameType"
+})
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class V3ProjectDTO extends DTOBaseAuditable {
 
-    /**
-     *  {
-                "projectId": "1",
-                "piContactId": 34,
-                "piContactName" : "imPi",
-                "projectName": "foo_proj_01",
-                "projectDescription": "foo 01 project",
-                "experimentCount" : 5,
-                "datasetCount" : 6,
-                "markersCount" : 15000,
-                "dnaRunsCount" : 1000,
-                "createdBy": "1",
-                "createdDate": "2019-07-25T04:00:00",
-                "modifiedBy": "1",
-                "modifiedDate": "2019-07-25T04:00:00",
-                "properties": [
-                    {
-                        "propertyId" : "1",
-                        "propertyName" : "testProp",
-                        "propertyValue" : "testPropValue"
-                    },
-                ]
-            },
-     */
+   
     public V3ProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
     }
@@ -56,16 +51,28 @@ public class V3ProjectDTO extends DTOBaseAuditable {
 
     // we are waiting until we a have a view to return
     // properties for that property: we don't know how to represent them yet
-
+    @GobiiEntityMap(paramName = "projectId", entity = V3Project.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer projectId = 0;
+
+    @GobiiEntityMap(paramName="projectName", entity = V3Project.class)
     private String projectName;
+
+    @GobiiEntityMap(paramName="projectDescription", entity = V3Project.class)
     private String projectDescription;
+
+    @GobiiEntityMap(paramName="contact.contactId", entity = V3Project.class, deep=true)
     private Integer piContactId;
+    @GobiiEntityMap(paramName="contact.username", entity = V3Project.class, deep=true)
     private String piContactName;
+
+    //TODO: when the stats table is done
     private Integer experimentCount;
     private Integer datasetCount;
     private Integer markersCount;
     private Integer dnaRunsCount;
+
+
     private List<EntityPropertyDTO> properties = new java.util.ArrayList<>();
 
     @GobiiEntityParam(paramName = "projectId")

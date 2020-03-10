@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.V3ProjectService;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
 
@@ -53,7 +54,7 @@ public class GOBIIControllerV3Test {
     // }
 
     @Mock
-    private V3ProjectService<V3ProjectDTO> projectService;
+    private V3ProjectService projectService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -84,7 +85,7 @@ public class GOBIIControllerV3Test {
         when(
             projectService.getProjects(0, 1000)
         ).thenReturn(
-            mockList
+            new BrApiMasterListPayload<V3ProjectDTO>(mockList, 1, 0)
         );
 
         mockMvc.perform(

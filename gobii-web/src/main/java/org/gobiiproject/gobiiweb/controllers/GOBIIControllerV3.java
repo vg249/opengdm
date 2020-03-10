@@ -18,6 +18,7 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayl
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class GOBIIControllerV3 {
     //private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectsController.class);
     Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
     @Autowired
-    private V3ProjectService<V3ProjectDTO> projectService = null;
+    private V3ProjectService projectService = null;
 
     /**
      * getProjectsList 
@@ -57,20 +58,16 @@ public class GOBIIControllerV3 {
             @RequestParam Optional<Integer> pageNum,
             @RequestParam Optional<Integer> pageSize) {
         LOGGER.debug("Querying projects List");
-        List<V3ProjectDTO> projectsList = projectService.getProjects(pageNum.orElse(0), pageSize.orElse(1000));
-        BrApiMasterListPayload<V3ProjectDTO> responsePayload = new BrApiMasterListPayload<>(
-            projectsList,
-            projectsList.size(),
-            pageNum.orElse(0)
-        );
-        return ResponseEntity.ok(responsePayload);
+        BrApiMasterListPayload<V3ProjectDTO> pagedResult = projectService.getProjects(pageNum.orElse(0), pageSize.orElse(1000));
+        
+        return ResponseEntity.ok(pagedResult);
     }
 
-    public V3ProjectService<V3ProjectDTO> getProjectService() {
+    public V3ProjectService getProjectService() {
         return projectService;
     }
 
-    public void setProjectService(V3ProjectService<V3ProjectDTO> projectService) {
+    public void setProjectService(V3ProjectService projectService) {
         this.projectService = projectService;
     }
 
