@@ -11,7 +11,9 @@ gobii-domain/target
 gobii-domain/.factorypath 
 gobii-dtomapping/target
 gobii-dtomapping/.factorypath
+gobii-dtomappint/bin
 gobii-model/target
+gobii-model/bin
 gobii-model/.factorypath 
 gobii-api-model/target
 gobii-api-model/.factorypath 
@@ -22,6 +24,7 @@ gobii-process/.factorypath
 gobii-web/target
 gobii-web/.factorypath 
 gobii-sampletracking-dao/target
+hobii-smapletracking/bin
 gobii-sampletracking-dao/.factorypath 
 /bin/
 
