@@ -1,13 +1,15 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 import java.util.List;
 
 public interface VariantSetsService {
 
-    List<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
-                                       Integer variantSetDbId);
+    PagedResult<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
+                               Integer variantSetDbId, String variantSetName,
+                               Integer studyDbId, String studyName);
 
     VariantSetDTO getVariantSetById(Integer variantSetDbId);
 
