@@ -32,7 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobidomain.services.V3ProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("projectsController-test")
@@ -50,7 +53,7 @@ public class GOBIIControllerV3Test {
     // }
 
     @Mock
-    private ProjectService<ProjectDTO> projectService;
+    private V3ProjectService<V3ProjectDTO> projectService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -65,8 +68,8 @@ public class GOBIIControllerV3Test {
 
     }
 
-    private ProjectDTO createMockProjectDTO() {
-        ProjectDTO dto = new ProjectDTO();
+    private V3ProjectDTO createMockProjectDTO() {
+        V3ProjectDTO dto = new V3ProjectDTO();
         dto.setId(1);
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
@@ -75,8 +78,8 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void simpleTest() throws Exception {
-        List<ProjectDTO> mockList = new ArrayList<ProjectDTO>();
-        ProjectDTO mockItem = createMockProjectDTO();
+        List<V3ProjectDTO> mockList = new ArrayList<V3ProjectDTO>();
+        V3ProjectDTO mockItem = createMockProjectDTO();
         mockList.add(mockItem);
         when(
             projectService.getProjects(0, 1000)
@@ -95,6 +98,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
         .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
         .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
+        .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
         ;
     }
     

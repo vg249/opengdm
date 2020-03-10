@@ -22,7 +22,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  */
 @ControllerAdvice(assignableTypes = {
         BRAPIIControllerV1.class,
-        BRAPIIControllerV2.class
+        BRAPIIControllerV2.class,
+        GOBIIControllerV3.class
 })
 public class GlobalControllerExceptionHandler {
 

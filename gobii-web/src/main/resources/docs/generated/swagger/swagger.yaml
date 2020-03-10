@@ -3840,11 +3840,11 @@ definitions:
       url:
         type: "string"
         format: "url"
+      filename:
+        type: "string"
       uri:
         type: "string"
         format: "uri"
-      filename:
-        type: "string"
   JobDTO:
     type: "object"
     properties:

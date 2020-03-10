@@ -28,15 +28,15 @@ public class V3Project extends BaseEntity {
     @Column(name="name")
     private String projectName;
 
-    @Column(name="pi_contact")
-    private Integer piContactId;
+    @OneToOne
+    @JoinColumn(name="contact_id")
+    private V3Contact contact;
 
     @Column(name="code")
     private String projectCode;
 
     @Column(name="description")
     private String projectDescription;
-
 
     @Column(name="props", columnDefinition = "jsonb")
     @Convert(converter = JsonbConverter.class)
@@ -59,16 +59,7 @@ public class V3Project extends BaseEntity {
     }
 
 
-    public Integer getPiContactId() {
-        return this.piContactId;
-    }
-
-    public void setPiContactId(Integer piContactId) {
-        this.piContactId = piContactId;
-    }
-
     public String getProjectCode() {
-
         return this.projectCode;
     }
 
@@ -92,16 +83,38 @@ public class V3Project extends BaseEntity {
         this.properties = properties;
     }
 
-    public Cv getStatus() {
-        return status;
+    public V3Contact getContact() {
+        return contact;
     }
 
-    public void setStatus(Cv status) {
-        this.status = status;
+    public void setContact(V3Contact contact) {
+        this.contact = contact;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    public Integer getPiContactId() {
+        if (this.contact == null) return null;
+        return this.contact.getContactId();
+    }
 
+    public String getPiContactName() {
+        if (this.contact == null) return null;
+        return this.contact.getUsername();
+    }
+
+    
+    public Integer getExperimentCount() {
+        return null;
+    }
+
+    public Integer getDatasetCount() {
+        return null;
+    }
+
+    public Integer getDnaRunsCount() {
+        return null;
+    }
+
+    public Integer getMarkersCount() {
+        return null;
+    }
 }

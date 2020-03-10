@@ -9,6 +9,7 @@
          id="WebApp_ID" version="3.0">
 
     <display-name>gobii-web</display-name>
+    <absolute-ordering />
 
     <context-param>
         <param-name>contextConfigLocation</param-name>

@@ -15,11 +15,11 @@ public class V3ProjectDaoImplTest {
     private V3ProjectDao v3ProjectDao;
 
 
+
     @Test
     @Transactional
     public void testSimpleQuery() {
        assert v3ProjectDao != null;
-
        assert v3ProjectDao.getProjects(0, 1000) != null;
        assert v3ProjectDao.getProjects(0, 1000).size() > 0;
     }

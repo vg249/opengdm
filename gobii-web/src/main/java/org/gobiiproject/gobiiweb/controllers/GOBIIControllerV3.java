@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobidomain.services.V3ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
-import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +39,9 @@ import io.swagger.annotations.Api;
 @CrossOrigin
 public class GOBIIControllerV3 {
     //private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectsController.class);
-
+    Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
     @Autowired
-    private ProjectService<ProjectDTO> projectService = null;
+    private V3ProjectService<V3ProjectDTO> projectService = null;
 
     /**
      * getProjectsList 
@@ -53,12 +53,13 @@ public class GOBIIControllerV3 {
      * @return
      */
     @GetMapping("/projects")
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<ProjectDTO>> getProjectsList(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<V3ProjectDTO>> getProjectsList(
             @RequestParam Optional<Integer> pageNum,
             @RequestParam Optional<Integer> pageSize) {
-        
-        List<ProjectDTO> projectsList = projectService.getProjects(pageNum.orElse(0), pageSize.orElse(1000));
-        BrApiMasterListPayload<ProjectDTO> responsePayload = new BrApiMasterListPayload<ProjectDTO>(
+        LOGGER.debug("Accessing projects list ");
+        assert projectService != null;
+        List<V3ProjectDTO> projectsList = projectService.getProjects(pageNum.orElse(0), pageSize.orElse(1000));
+        BrApiMasterListPayload<V3ProjectDTO> responsePayload = new BrApiMasterListPayload<>(
             projectsList,
             projectsList.size(),
             pageNum.orElse(0)
@@ -66,11 +67,11 @@ public class GOBIIControllerV3 {
         return ResponseEntity.ok(responsePayload);
     }
 
-    public ProjectService<ProjectDTO> getProjectService() {
+    public V3ProjectService<V3ProjectDTO> getProjectService() {
         return projectService;
     }
 
-    public void setProjectService(ProjectService<ProjectDTO> projectService) {
+    public void setProjectService(V3ProjectService<V3ProjectDTO> projectService) {
         this.projectService = projectService;
     }
 
