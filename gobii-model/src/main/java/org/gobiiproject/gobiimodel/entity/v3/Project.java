@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.entity;
+package org.gobiiproject.gobiimodel.entity.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -18,7 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "project")
-public class V3Project extends BaseEntity {
+public class Project extends BaseEntity {
 
     @Id
     @Column(name="project_id")

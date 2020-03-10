@@ -9,7 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.gobiiproject.gobiimodel.entity.V3Project;
+import org.gobiiproject.gobiimodel.entity.v3.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -27,16 +27,16 @@ public class V3ProjectDaoImpl implements V3ProjectDao {
     
     @Transactional
     @Override
-    public List<V3Project> getProjects(Integer pageNum, Integer pageSize) {
+    public List<Project> getProjects(Integer pageNum, Integer pageSize) {
         // TODO Auto-generated method stub
         LOGGER.debug("DAO getting projects");
-        List<V3Project> projects = new ArrayList<>();
+        List<Project> projects = new ArrayList<>();
 
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-            CriteriaQuery<V3Project> criteriaQuery = criteriaBuilder.createQuery(V3Project.class);
+            CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
 
-            Root<V3Project> projectRoot = criteriaQuery.from(V3Project.class);
+            Root<Project> projectRoot = criteriaQuery.from(Project.class);
             criteriaQuery.select(projectRoot);
             projects = em.createQuery(criteriaQuery)
                 .setFirstResult(pageNum * pageSize)

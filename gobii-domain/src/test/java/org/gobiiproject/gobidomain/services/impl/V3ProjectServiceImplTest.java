@@ -14,7 +14,7 @@ import java.util.List;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.V3Project;
+import org.gobiiproject.gobiimodel.entity.v3.Project;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.V3ProjectDao;
 import org.junit.Before;
@@ -54,8 +54,8 @@ public class V3ProjectServiceImplTest {
             mockCvList
         );
 
-        List<V3Project> daoReturn = new java.util.ArrayList<>();
-        V3Project mockEntity = new V3Project();
+        List<Project> daoReturn = new java.util.ArrayList<>();
+        Project mockEntity = new Project();
         mockEntity.setProjectName("PName");
         daoReturn.add(mockEntity);
         when(v3ProjectDao.getProjects(0,1000))

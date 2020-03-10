@@ -19,7 +19,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.V3Project;
+import org.gobiiproject.gobiimodel.entity.v3.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -53,7 +53,7 @@ public class V3ProjectServiceImpl implements V3ProjectService {
             Objects.requireNonNull(pageNum);
             List<V3ProjectDTO> projectDTOs = new java.util.ArrayList<>();
 
-            List<V3Project> projects = v3ProjectDao.getProjects(pageNum, pageSize);
+            List<Project> projects = v3ProjectDao.getProjects(pageNum, pageSize);
             projects.forEach(project -> {
                 V3ProjectDTO dto = new V3ProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
