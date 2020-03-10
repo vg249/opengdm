@@ -1,15 +1,14 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.math.BigInteger;
 import java.util.List;
+import java.util.Random;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -24,6 +23,7 @@ public class DatasetDaoTest {
     @Autowired
     private DatasetDao datasetDao;
 
+    Random random = new Random();
 
     @Test
     public void testListDatasets() {
@@ -42,7 +42,6 @@ public class DatasetDaoTest {
     }
 
 
-
     @Test
     public void testListDatasetsWithPageSize() {
 
@@ -57,8 +56,6 @@ public class DatasetDaoTest {
 
     }
 
-
-
     @Test
     public void testGetDatasetById() {
 
@@ -69,15 +66,55 @@ public class DatasetDaoTest {
                 null, null,
                 null, null);
 
+        assertTrue(datasets.size() == testPageSize);
 
-        assertTrue(datasets.size() == 10);
-
-        Integer datasetId = datasets.get(9).getDatasetId();
+        Integer datasetId = datasets.get(random.nextInt(datasets.size())).getDatasetId();
 
         Dataset dataset = datasetDao.getDatasetById(datasetId);
 
-        assertTrue(dataset.getDatasetId() == datasetId);
+        assertTrue("Failing get Dataset by Id",
+                dataset.getDatasetId() == datasetId);
 
     }
 
+    @Test
+    public void testGetDatasetByExperiemntId() {
+
+        Integer testPageSize = 100;
+        Integer testRowOffset = 0;
+
+        List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
+                null, null,
+                null, null);
+
+
+        assertTrue(datasets.size() <= testPageSize);
+
+        Integer experimentId = datasets.get(random.nextInt(datasets.size())).getExperiment().getExperimentId();
+
+        List<Dataset> datasetsByExperimentId = datasetDao.getDatasets(testPageSize, testRowOffset,
+                null, null,
+                experimentId, null);
+
+        for (Dataset dataset : datasetsByExperimentId) {
+            assertTrue("Failing Experiment Id Filter",
+                    dataset.getExperiment().getExperimentId() == experimentId);
+        }
+
+    }
+
+    @Test
+    public void testGetDatasetsWithAnalysisAndCounts() {
+
+        Integer testPageSize = 100;
+        Integer testRowOffset = 0;
+
+        List<Object[]> resultTuple = datasetDao.getDatasetsWithAnalysesAndCounts(testPageSize, testRowOffset,
+                null, null,
+                null, null);
+
+
+        assertTrue(resultTuple.size() <= testPageSize);
+
+    }
 }
