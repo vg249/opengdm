@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Reference;
+import org.gobiiproject.gobiimodel.types.BrapiVariantTypes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,6 +20,14 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VariantDTO extends DTOBase {
 
+    @GobiiEntityMap(paramName="markerId", entity = Marker.class)
+    private int variantDbId;
+
+    private List<String> variantNames = new ArrayList<>();
+
+    private List<String> variantSetDbId = new ArrayList<>();
+
+    private String variantType = BrapiVariantTypes.MARKER.toString();
 
     @GobiiEntityMap(paramName="alts", entity = Marker.class)
     private String[] alternateBases;
@@ -33,30 +42,16 @@ public class VariantDTO extends DTOBase {
 
     private List<String> filtersPassed;
 
-    @GobiiEntityMap(paramName="referenceName", entity = Reference.class, deep=true)
+    @GobiiEntityMap(paramName="reference.referenceName", entity = Marker.class, deep=true)
     private String referenceName;
 
     @GobiiEntityMap(paramName="ref", entity = Marker.class)
     private String referenceBases;
 
-    @GobiiEntityMap(paramName="platformName", entity = Platform.class, deep=true)
+    @GobiiEntityMap(paramName="platform.platformName", entity = Marker.class, deep=true)
     private String platformName;
 
     private String svlen;
-
-    @GobiiEntityMap(paramName="markerId", entity = Marker.class)
-    private int variantDbId;
-
-    private List<String> variantNames = new ArrayList<>();
-
-    private List<String> variantSetDbId = new ArrayList<>();
-
-
-    private String variantType = "marker";
-
-    private BigDecimal start;
-
-    protected BigDecimal stop;
 
     public List<Integer> getCiend() {
         return ciend;
@@ -153,22 +148,6 @@ public class VariantDTO extends DTOBase {
 
     public void setVariantType(String variantType) {
         this.variantType = variantType;
-    }
-
-    public BigDecimal getStart() {
-        return start;
-    }
-
-    public void setStart(BigDecimal start) {
-        this.start = start;
-    }
-
-    public BigDecimal getStop() {
-        return stop;
-    }
-
-    public void setStop(BigDecimal stop) {
-        this.stop = stop;
     }
 
     public List<String> getVariantSetDbId() {

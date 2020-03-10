@@ -21,7 +21,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * in this project and returns appropriate HTTP response.
  */
 @ControllerAdvice(assignableTypes = {
-        SampleTrackingController.class,
         BRAPIIControllerV1.class,
         BRAPIIControllerV2.class
 })

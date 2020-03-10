@@ -71,6 +71,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
             if(fetchAssociations) {
                 dnaSampleJoin= (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
                 germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                experimentJoin = (Join<Object, Object>) dnaRunRoot.fetch("experiment");
             }
             else {
                 if (dnaSampleId != null || dnaSampleName != null
@@ -80,6 +81,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     if (germplasmId != null || germplasmName != null) {
                         germplasmJoin = dnaSampleJoin.join("germplasm");
                     }
+                }
+                if(experimentId != null) {
+                    experimentJoin = dnaRunRoot.join("experiment");
                 }
             }
 
@@ -109,9 +113,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
                         germplasmName));
             }
 
-            if(experimentId != null) {
+            if(experimentId != null && experimentJoin != null) {
                 predicates.add(
-                        criteriaBuilder.equal(dnaRunRoot.get("experiment.experiemntId"), experimentId));
+                        criteriaBuilder.equal(experimentJoin.get("experimentId"), experimentId));
             }
 
             if(datasetId != null) {
@@ -383,6 +387,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
             //Set Root entity and selected entities
             Root<DnaRun> root = criteria.from(DnaRun.class);
             criteria.select(root);
+
 
             criteria.where(root.get("dnaRunName").in(dnaRunNames));
 

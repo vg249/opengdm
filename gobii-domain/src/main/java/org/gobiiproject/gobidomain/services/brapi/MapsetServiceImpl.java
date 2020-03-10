@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MapsetBrapiServiceImpl implements MapsetService {
+public class MapsetServiceImpl implements MapsetService {
 
-    Logger LOGGER = LoggerFactory.getLogger(MapsetBrapiServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(MapsetServiceImpl.class);
 
 
     @Autowired

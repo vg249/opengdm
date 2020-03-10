@@ -162,16 +162,13 @@ public class BRAPIIControllerV2 {
                     "Default is 0")
             @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize)
-                    Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             CallSetDTO callSetsFilter
     ) {
         try {
 
-            PagedResult<CallSetDTO> callSets;
-
-            callSets = callSetService.getCallSets(
+            PagedResult<CallSetDTO> callSets = callSetService.getCallSets(
                     pageSize, page,
                     variantSetDbId, callSetsFilter);
 
@@ -180,7 +177,7 @@ public class BRAPIIControllerV2 {
                     callSets.getCurrentPageSize(),
                     callSets.getCurrentPageNum());
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException gE) {
@@ -232,8 +229,7 @@ public class BRAPIIControllerV2 {
 
             BrApiMasterPayload<CallSetDTO> payload = new BrApiMasterPayload<>(callSet);
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException gE) {
@@ -438,8 +434,7 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body("");
+            return ResponseEntity.ok("");
 
         }
         catch (Exception e) {
@@ -483,8 +478,7 @@ public class BRAPIIControllerV2 {
 
             payload.getMetadata().getPagination().setPageSize(pageSize);
 
-
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
 
         }
@@ -571,7 +565,7 @@ public class BRAPIIControllerV2 {
 
             MapsetDTO mapset = mapsetService.getMapSetById(mapId);
             BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload(mapset, pageSize, page);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch(Exception e) {
@@ -618,7 +612,7 @@ public class BRAPIIControllerV2 {
                     pagedResult.getCurrentPageSize(),
                     pagedResult.getCurrentPageNum());
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch(GobiiException gE) {
@@ -793,7 +787,7 @@ public class BRAPIIControllerV2 {
 
             payload.getMetadata().getPagination().setCurrentPage(pageNum);
 
-            return ResponseEntity.ok().body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException gE) {
@@ -862,7 +856,7 @@ public class BRAPIIControllerV2 {
 
             BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
 
-            return ResponseEntity.ok().body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException gE) {
@@ -930,8 +924,7 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body("");
+            return ResponseEntity.ok("");
 
         }
         catch (GobiiException gE) {
@@ -983,21 +976,21 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Page number", required = false)
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            CallSetDTO callSetsFilter
     ) {
 
         try {
 
             PagedResult<CallSetDTO> pagedResult = callSetService.getCallSets(pageSize, page,
-                    variantSetDbId, null);
+                    variantSetDbId, callSetsFilter);
 
             BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
                     pagedResult.getResult(),
                     pagedResult.getCurrentPageSize(),
                     pagedResult.getCurrentPageNum());
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException gE) {
@@ -1160,7 +1153,7 @@ public class BRAPIIControllerV2 {
 
             PagedResult<GenotypeCallsDTO> pagedResult = new PagedResult<>();
 
-            pagedResult = genotypeCallsService.getGenotypeCallsByDatasetId(variantSetDbId, pageSize, pageToken);
+            pagedResult = genotypeCallsService.getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
 
 
             BrApiMasterListPayload<GenotypeCallsDTO> payload = new BrApiMasterListPayload<>(
@@ -1169,7 +1162,7 @@ public class BRAPIIControllerV2 {
                     pagedResult.getNextPageToken());
 
 
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(payload);
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException gE) {
@@ -1221,31 +1214,21 @@ public class BRAPIIControllerV2 {
 
            try {
 
-               Map<String, String> genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                       variantSetDbId, null);
+               int pageNum = 0;
 
-               String genotypes = genotypesResult.get("genotypes");
+               String genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                       variantSetDbId, pageNum);
 
-               if(genotypesResult.containsKey("genotypes") &&
-                       genotypesResult.get("genotypes") != null &&
-                       genotypesResult.get("genotypes").length() != 0) {
+               while(genotypesResult != null &&
+                       genotypesResult.length() != 0) {
 
-                   emitter.send(genotypes, MediaType.TEXT_PLAIN);
+                   emitter.send(genotypesResult, MediaType.TEXT_PLAIN);
 
-                   while(genotypesResult.get("nextPageOffset") != null) {
+                   pageNum++;
 
-                       genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                               variantSetDbId, genotypesResult.get("nextPageOffset"));
+                   genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                               variantSetDbId, pageNum);
 
-                       genotypes = genotypesResult.get("genotypes");
-
-                       emitter.send(genotypes, MediaType.TEXT_PLAIN);
-                   }
-
-                   emitter.complete();
-               }
-               else {
-                   emitter.complete();
                }
 
                emitter.complete();
@@ -1274,35 +1257,6 @@ public class BRAPIIControllerV2 {
     public Integer getDefaultBrapiPage() {
 
         return 0;
-    }
-
-    /**
-     * Gets the default page size
-     * @param restResourceId Resource Id for which default page size needs to be fetched. Example: GOBII_MARKERS
-     * @return
-     */
-    public Integer getDefaultPageSize(RestResourceId restResourceId) {
-
-        Integer pageSize = 1000;
-
-        try {
-
-            //TODO: Using same resource limit as markers. define different resource limit if required
-            pageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_MARKERS,
-                    RestMethodType.GET
-            );
-
-            if(pageSize == null) {
-                pageSize = 1000;
-            }
-        }
-        catch(Exception e) {
-            //If resource limit is not defined
-            pageSize = 1000;
-        }
-
-        return pageSize;
     }
 
     @RequestMapping("/error")

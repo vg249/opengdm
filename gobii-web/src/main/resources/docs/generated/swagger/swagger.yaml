@@ -3836,10 +3836,10 @@ definitions:
       url:
         type: "string"
         format: "url"
-      file:
-        type: "file"
       readable:
         type: "boolean"
+      file:
+        type: "file"
       uri:
         type: "string"
         format: "uri"

@@ -328,7 +328,6 @@ public class BRAPIIControllerV1Test {
                 .andExpect(jsonPath("$.metadata.pagination").exists())
                 .andExpect(jsonPath("$.metadata.pagination.currentPage").exists())
                 .andExpect(jsonPath("$.metadata.pagination.pageSize").value(pageSize))
-                //Current page should be zero as page param is null
                 .andExpect(jsonPath("$.metadata.pagination.currentPage").value(defaultPageNum))
                 .andExpect(jsonPath("$.result.data[0].sampleDbId")
                         .value(mockSamples.get(0).getSampleDbId().toString()))

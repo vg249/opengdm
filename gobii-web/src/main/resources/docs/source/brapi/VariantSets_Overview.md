@@ -21,42 +21,31 @@ modified | Integer | Modified date string in UTC
 
 <a name="variantsetresourceexample">**Resource Example**</a>
 
-```
+```json
 
-      {
-        "additionalInfo": {},
-        "analyses": [
-          {
-            "analysisDbId": "6191a6bd",
-            "analysisName": "Standard QC",
-            "created": "2018-01-01T14:47:23-0600",
-            "description": "This is a formal description of a QC methodology. Blah blah blah ...",
-            "software": [
-              "https://github.com/genotyping/QC"
+        {
+            "createdBy": 1,
+            "modifiedBy": 4,
+            "variantSetDbId": "2",
+            "variantSetName": "CIMMYT Wheat - M51STIBWSN_2",
+            "studyDbId": "2",
+            "fileUrl": "/gobii-dev/variantsets/2/calls/download",
+            "fileFormat": "text/tab-seperated-values",
+            "dataFormat": "tabular",
+            "analyses": [
+                {
+                    "analysisDbId": "2",
+                    "analysisName": "None",
+                    "description": "",
+                    "created": "2019-12-19T05:00:00"
+                }
             ],
-            "type": "QC",
-            "updated": "2018-01-01T14:47:23-0600"
-          }
-        ],
-        "availableFormats": [
-          {
-            "dataFormat": "VCF",
-            "fileFormat": "application/excel",
-            "fileURL": "https://brapi.org/example/VCF_1.xlsx"
-          },
-          {
-            "dataFormat": "VCF",
-            "fileFormat": "text/csv",
-            "fileURL": "https://brapi.org/example/VCF_2.csv"
-          }
-        ],
-        "callSetCount": 341,
-        "referenceSetDbId": "57eae639",
-        "studyDbId": "2fc3b034",
-        "variantCount": 250,
-        "variantSetDbId": "87a6ac1e",
-        "variantSetName": "Maize QC DataSet 002334"
-      }
+            "extractReady": true,
+            "callSetCount": 710,
+            "variantCount": 54,
+            "created": "2019-12-19T05:00:00",
+            "updated": "2019-12-19T05:00:00"
+        } 
 
 ```
 

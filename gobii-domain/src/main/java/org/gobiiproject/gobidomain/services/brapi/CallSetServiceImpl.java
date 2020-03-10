@@ -29,8 +29,9 @@ public class CallSetServiceImpl implements CallSetService {
                                                Integer variantSetDbId,
                                                CallSetDTO callSetsFilter) throws GobiiException {
 
-        Objects.requireNonNull(pageSize);
-        Objects.requireNonNull(pageNum);
+        Objects.requireNonNull(pageSize, "pageSize : Required non null");
+        Objects.requireNonNull(pageNum, "pageNum : Required non null");
+        Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
 
         PagedResult<CallSetDTO> pagedResult = new PagedResult<>();
 
