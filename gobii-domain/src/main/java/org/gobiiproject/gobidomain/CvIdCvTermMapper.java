@@ -1,8 +1,10 @@
 package org.gobiiproject.gobidomain;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -83,6 +85,32 @@ public class CvIdCvTermMapper {
         }
 
         return returnVal;
+
+    }
+
+    public static List<CvPropertyDTO> listCvIdToCvTerms(List<Cv> cvList, JsonNode propertiesJson) {
+        List<CvPropertyDTO> dtoList = new java.util.ArrayList<>();
+        try {
+            for(Cv cv : cvList) {
+                if(propertiesJson.has(cv.getCvId().toString())) {
+                    CvPropertyDTO dto = new CvPropertyDTO();
+                    dto.setPropertyId(cv.getCvId());
+                    dto.setPropertyName(cv.getTerm());
+                    dto.setPropertyValue(propertiesJson.get(cv.getCvId().toString()).asText());
+                    dtoList.add(dto);
+                }
+            }
+        }
+        catch(Exception e) {
+
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+
+        }
+
+        return dtoList;
 
     }
 }

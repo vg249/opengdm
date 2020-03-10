@@ -10,14 +10,19 @@ package org.gobiiproject.gobidomain.services.impl;
 import java.util.List;
 import java.util.Objects;
 
+import org.gobiiproject.gobidomain.CvIdCvTermMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.V3ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.V3ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.V3Project;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.V3ProjectDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +36,18 @@ public class V3ProjectServiceImpl implements V3ProjectService {
     @Autowired
     private V3ProjectDao v3ProjectDao;
 
+    @Autowired
+    private CvDao cvDao;
+
 
     @Override
     public BrApiMasterListPayload<V3ProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
-        // TODO Auto-generated method stub
+
         LOGGER.debug("Getting projects list offset %d size %d", pageNum, pageSize);
         BrApiMasterListPayload<V3ProjectDTO> pagedResult;
+
+        //get Cvs
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(pageNum);
@@ -46,25 +57,10 @@ public class V3ProjectServiceImpl implements V3ProjectService {
             projects.forEach(project -> {
                 V3ProjectDTO dto = new V3ProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
-                //TODO: use BeanUtils?  -- transferred from refactored dtoMap class (deleted)
-                // dto.setId(project.getProjectId());
-                // dto.setProjectId(project.getProjectId());
-                // dto.setProjectName(project.getProjectName());
-                // dto.setProjectDescription(project.getProjectDescription());
-                // dto.setPiContactId(project.getPiContactId());
-                // dto.setPiContactName(project.getPiContactName());
-                // dto.setCreatedBy(project.getCreatedBy());
-                // dto.setCreatedDate(project.getCreatedDate());
-                // dto.setDatasetCount(project.getDatasetCount());
-                // dto.setExperimentCount(project.getExperimentCount());
-                // dto.setDnaRunsCount(project.getDnaRunsCount());
-                // dto.setMarkersCount(project.getMarkersCount());
-                // dto.setModifiedBy(project.getModifiedBy());
-                // dto.setModifiedDate(project.getModifiedDate());
-                // dto.setProjectDescription(project.getProjectDescription());
-                // JsonNode props = project.getProperties();
-                //TODO: convert JsonNode to PropertyDTO
-                //dto.setProperties(project.getProperties());
+                
+                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties());
+               
+                dto.setProperties(propDTOs);
                 
                 projectDTOs.add(dto);
             });
@@ -76,11 +72,7 @@ public class V3ProjectServiceImpl implements V3ProjectService {
         } catch (Exception e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
-
-        }
-
-
-       
+        }  
     }
 
 }
