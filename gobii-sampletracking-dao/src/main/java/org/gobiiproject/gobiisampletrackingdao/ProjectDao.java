@@ -1,5 +1,5 @@
 /**
- * V3ProjectDao.java
+ * ProjectDao.java
  * 
  * V3 API Project DAO interface
  */

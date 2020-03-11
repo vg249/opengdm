@@ -1,7 +1,8 @@
 /**
- * V3ProjectServiceImpl.java
+ * GobiiProjectServiceImpl.java
  * 
  * Project Service for V3 API.
+ * 
  * @author Rodolfo N. Duldulao, Jr.
  * @since 2020-03-07
  */

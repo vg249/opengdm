@@ -26,7 +26,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 
 @WebAppConfiguration
-public class V3ProjectServiceImplTest {
+public class GobiiProjectServiceImplTest {
 
     @Mock
     private ProjectDao projectDao;

@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiiweb.controllers;
 
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiiweb.DataSourceSelector;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
