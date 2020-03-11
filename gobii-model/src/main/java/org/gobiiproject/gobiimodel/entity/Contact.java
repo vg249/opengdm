@@ -71,6 +71,7 @@ public class Contact extends BaseEntity {
         this.email = email;
     }
 
+    // TODO: create converter class for Array
     // public Integer[] getRoles() {
     //     return roles;
     // }

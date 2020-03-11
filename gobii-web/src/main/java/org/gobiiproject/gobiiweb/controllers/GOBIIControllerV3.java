@@ -9,8 +9,6 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
-import java.util.Optional;
-
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
@@ -36,8 +34,7 @@ import io.swagger.annotations.Api;
 @Api()
 @CrossOrigin
 public class GOBIIControllerV3 {
-    //private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectsController.class);
-    Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
     
     @Autowired
     private GobiiProjectService projectService = null;
@@ -58,6 +55,7 @@ public class GOBIIControllerV3 {
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
         LOGGER.debug("Querying projects List");
         Integer pageSizeToUse = pageSize;
+
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
         PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, pageNum),
