@@ -37,6 +37,9 @@ public class VariantSetDTO extends DTOBaseAuditable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer studyDbId;
 
+    @GobiiEntityMap(paramName="experiment.experimentName", entity = Dataset.class, deep=true)
+    private String studyName;
+
     @GobiiEntityMap(paramName="callingAnalysis.reference.referenceId", entity = Dataset.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceSetDbId;
@@ -46,7 +49,7 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private String fileUrl;
 
-    private String fileFormat = "text/tab-seperated-values";
+    private String fileFormat = "text/csv";
 
     private String dataFormat = "tabular";
 
@@ -101,6 +104,14 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     public void setStudyDbId(Integer studyDbId) {
         this.studyDbId = studyDbId;
+    }
+
+    public String getStudyName() {
+        return studyName;
+    }
+
+    public void setStudyName(String studyName) {
+        this.studyName = studyName;
     }
 
     public Integer getReferenceSetDbId() {

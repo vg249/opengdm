@@ -1,10 +1,12 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import org.codehaus.janino.Mod;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -14,76 +16,123 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.xml.crypto.Data;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 public class VariantSetsServiceImpl implements VariantSetsService {
 
     Logger LOGGER = LoggerFactory.getLogger(VariantSetsServiceImpl.class);
 
+    private String fileUrlFormat = "/variantsets/{0, number}/calls/download";
+
     @Autowired
     private DatasetDao datasetDao;
 
-    private String fileUrlFormat = "/gobii-{0}/variantsets/{1, number}/calls/download";
-
-    private String cropType = "";
-
-    public String getCropType() {
-        return cropType;
-    }
-
-    public void setCropType(String cropType) {
-        this.cropType = cropType;
-    }
 
     @Override
-    public List<VariantSetDTO> listVariantSets(Integer pageNum, Integer pageSize,
-                                               Integer varianSetDbID) {
+    public PagedResult<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
+                                      Integer variantSetDbId, String variantSetName,
+                                      Integer studyDbId, String studyName) {
 
-        List<VariantSetDTO> returnVal = new ArrayList<>();
+        PagedResult<VariantSetDTO> returnVal = new PagedResult<>();
 
-        HashMap<Integer, AnalysisDTO> analysisBrapiDTOMap = new HashMap<>();
+        List<VariantSetDTO> variantSets = new ArrayList<>();
 
-        Integer rowOffset = 0;
+        //To map variantsetdto by datasetid to avoid mapping more than once
+        HashMap<Integer, VariantSetDTO> variantSetDtoMapByDatasetId = new HashMap<>();
 
-        if(pageSize == null) {
-            pageSize = Integer.parseInt(BrapiDefaults.pageSize);
-        }
+        //To map analysisdto by analysisid to avoid mapping more than once
+        HashMap<Integer, AnalysisDTO> analysisDtoMapByAnalysisId = new HashMap<>();
 
-        if(pageNum != null && pageSize != null) {
-            rowOffset = pageNum*pageSize;
-        }
+        Objects.requireNonNull(pageSize, "pageSize: Required non null");
+        Objects.requireNonNull(pageNum, "pageNum: Required non null");
 
         try {
 
-            List<Dataset> datasets = datasetDao.listDatasets(
-                   pageSize,
-                   rowOffset,
-                   varianSetDbID);
+            Integer rowOffset = pageNum*pageSize;
 
-            for (Dataset dataset : datasets) {
+            List<Object[]> resultTuple = datasetDao.getDatasetsWithAnalysesAndCounts(
+                    pageSize, rowOffset,
+                    variantSetDbId, variantSetName,
+                    studyDbId, studyName);
 
-                VariantSetDTO variantSetDTO = new VariantSetDTO();
+            Set<Integer> analysisIds = new HashSet<>();
 
-                mapDatasetEntityToVariantSetDto(dataset, variantSetDTO, analysisBrapiDTOMap);
+            for (Object[] tuple : resultTuple) {
 
-                if(dataset.getJob() == null) {
-                    variantSetDTO.setExtractReady(false);
+                VariantSetDTO variantSetDTO;
+                AnalysisDTO analysisDTO;
+
+                Dataset dataset = (Dataset) tuple[0];
+                Analysis analysis = (Analysis) tuple[1];
+                Integer markerCount = (Integer) tuple[2];
+                Integer dnaRunCount = (Integer) tuple[3];
+
+                if(!variantSetDtoMapByDatasetId.containsKey(dataset.getDatasetId())) {
+                    variantSetDTO = new VariantSetDTO();
+
+                    ModelMapper.mapEntityToDto(dataset, variantSetDTO);
+
+                    variantSets.add(variantSetDTO);
+
+                    //Set dataset download url
+                    variantSetDTO.setFileUrl(
+                            MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
+
+                    //Set Marker and DnaRun Counts
+                    variantSetDTO.setVariantCount(markerCount);
+                    variantSetDTO.setCallSetCount(dnaRunCount);
+
+                    //Map extract ready of dataset
+                    mapVariantSetExtractReady(dataset, variantSetDTO);
+
+                    variantSetDtoMapByDatasetId.put(dataset.getDatasetId(), variantSetDTO);
+
+                    //Map Calling analysis
+                    if(dataset.getCallingAnalysis() != null) {
+                        if(analysisDtoMapByAnalysisId.containsKey(
+                                dataset.getCallingAnalysis().getAnalysisId())) {
+                            variantSetDTO.getAnalyses().add(analysisDtoMapByAnalysisId.get(
+                                    dataset.getCallingAnalysis().getAnalysisId()));
+                        }
+                        else {
+                            analysisDTO = new AnalysisDTO();
+                            ModelMapper.mapEntityToDto(dataset.getCallingAnalysis(), analysisDTO);
+                            variantSetDTO.getAnalyses().add(analysisDTO);
+                            analysisDtoMapByAnalysisId.put(dataset.getCallingAnalysis().getAnalysisId(),
+                                    analysisDTO);
+                        }
+                    }
                 }
                 else {
-                    variantSetDTO.setExtractReady(
-                            (dataset.getJob().getType().getTerm() == JobType.CV_JOBTYPE_LOAD.getCvName() &&
-                                    dataset.getJob().getStatus().getTerm() == GobiiJobStatus.COMPLETED.getCvTerm()) ||
-                                    (dataset.getJob().getType().getTerm() != JobType.CV_JOBTYPE_LOAD.getCvName()));
-
+                    variantSetDTO = variantSetDtoMapByDatasetId.get(dataset.getDatasetId());
                 }
 
-                returnVal.add(variantSetDTO);
+                if(analysis != null) {
+                    if(analysisDtoMapByAnalysisId.containsKey(analysis.getAnalysisId())) {
+                        variantSetDTO.getAnalyses().add(analysisDtoMapByAnalysisId.get(
+                                analysis.getAnalysisId()));
+                    }
+                    else {
+                        analysisDTO = new AnalysisDTO();
+                        ModelMapper.mapEntityToDto(analysis, analysisDTO);
+                        variantSetDTO.getAnalyses().add(analysisDTO);
+                        analysisDtoMapByAnalysisId.put(dataset.getCallingAnalysis().getAnalysisId(),
+                                analysisDTO);
+                    }
+                }
+
+
+                analysisIds.addAll(Arrays.asList(dataset.getAnalyses()));
+
 
             }
+
+            returnVal.setResult(variantSets);
+            returnVal.setCurrentPageNum(pageNum);
+            returnVal.setCurrentPageSize(variantSets.size());
 
             return returnVal;
         }
@@ -96,8 +145,8 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
             throw new GobiiDomainException(
                      GobiiStatusLevel.ERROR,
-                     GobiiValidationStatusType.BAD_REQUEST,
-                     "Bad Request");
+                     GobiiValidationStatusType.UNKNOWN,
+                     e.getMessage());
 
         }
 
@@ -106,16 +155,15 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     public VariantSetDTO getVariantSetById(Integer variantSetDbId) {
 
-        VariantSetDTO variantSetDTO = new VariantSetDTO();
 
         try {
+            //Overload getvariantsets by passing
+            PagedResult<VariantSetDTO> variantSetDtos = this.getVariantSets(1000, 0,
+                    variantSetDbId, null,
+                    null, null);
 
-            Dataset dataset = datasetDao.getDatasetById(variantSetDbId);
 
-
-            mapDatasetEntityToVariantSetDto(dataset, variantSetDTO);
-
-            return variantSetDTO;
+            return variantSetDtos.getResult().get(0);
 
         }
         catch (GobiiException ge) {
@@ -127,70 +175,41 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
             throw new GobiiDomainException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Bad Request");
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
 
         }
 
 
     }
 
-    /**
-     * Maps Dataset entity to variantSetDTO.
-     *
-     * @param dataset - Dataset Entity
-     * @param variantSetDTO - VariantSetDTO
-     * @param analysisBrapiDTOMap - HashMap of Analysis Entity with analysisId as their key.
-     *                            The map is used to keep track of analysis which are already model mapped.
-     *                            If the parameter is null, then all the analysis are mapped irrsespective of
-     *                            whether they are already mapped or not
-     */
-    public void mapDatasetEntityToVariantSetDto(Dataset dataset,
-                                                VariantSetDTO variantSetDTO,
-                                                HashMap<Integer, AnalysisDTO> analysisBrapiDTOMap) {
 
-        ModelMapper.mapEntityToDto(dataset, variantSetDTO);
+    private void mapVariantSetExtractReady(Dataset dataset, VariantSetDTO variantSetDTO) {
 
-        variantSetDTO.setFileUrl(
-                MessageFormat.format(this.fileUrlFormat,
-                        this.getCropType(),
-                        dataset.getDatasetId()));
-
-        for(Analysis analysis : dataset.getMappedAnalyses()) {
-
-            if(analysisBrapiDTOMap == null || analysisBrapiDTOMap.containsKey(analysis.getAnalysisId()) == false) {
-
-                AnalysisDTO analysisDTO = new AnalysisDTO();
-
-                ModelMapper.mapEntityToDto(analysis, analysisDTO);
-
-                variantSetDTO.getAnalyses().add(analysisDTO);
-
-                if(analysisBrapiDTOMap != null) {
-                    analysisBrapiDTOMap.put(analysis.getAnalysisId(), analysisDTO);
-                }
+        try {
+            if(dataset.getJob() == null) {
+                variantSetDTO.setExtractReady(false);
             }
             else {
-
-                variantSetDTO.getAnalyses().add(
-                        analysisBrapiDTOMap.get(analysis.getAnalysisId()));
-
+                variantSetDTO.setExtractReady(
+                        (dataset.getJob().getType().getTerm() == JobType.CV_JOBTYPE_LOAD.getCvName() &&
+                                dataset.getJob().getStatus().getTerm() == GobiiJobStatus.COMPLETED.getCvTerm()) ||
+                                (dataset.getJob().getType().getTerm() != JobType.CV_JOBTYPE_LOAD.getCvName()));
 
             }
 
         }
+        catch (Exception e) {
 
+            LOGGER.error(e.getMessage(), e);
 
-    }
+            throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
 
-    /**
-     * Override for function with same name where the last argument has to be null
-     * @param dataset
-     * @param variantSetDTO
-     */
-    public void mapDatasetEntityToVariantSetDto(Dataset dataset,
-                                                VariantSetDTO variantSetDTO) {
-        mapDatasetEntityToVariantSetDto(dataset, variantSetDTO, null);
+        }
 
     }
+
 }
