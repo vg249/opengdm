@@ -37,7 +37,9 @@ public class ProjectDaoImpl implements ProjectDao {
             CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
 
             Root<Project> projectRoot = criteriaQuery.from(Project.class);
+            projectRoot.fetch("contact");
             criteriaQuery.select(projectRoot);
+
             projects = em.createQuery(criteriaQuery)
                 .setFirstResult(pageNum * pageSize)
                 .setMaxResults(pageSize)

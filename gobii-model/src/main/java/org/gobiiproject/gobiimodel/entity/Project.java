@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +36,7 @@ public class Project extends BaseEntity {
     @Column(name="name")
     private String projectName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="pi_contact", referencedColumnName="contact_id")
     private Contact contact;
 
@@ -49,7 +50,7 @@ public class Project extends BaseEntity {
     @Convert(converter = JsonbConverter.class)
     private JsonNode properties = JsonNodeFactory.instance.objectNode();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 
