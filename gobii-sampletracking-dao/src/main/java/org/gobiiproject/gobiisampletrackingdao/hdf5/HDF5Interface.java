@@ -62,8 +62,9 @@ public class HDF5Interface {
 
         Collections.sort(datasetList);
 
-        String tempOutputFolder = LineUtils.terminateDirectoryPath(
-                this.getHdf5ProcessingPaths().get("outputDir")+tempOutputFolderName);
+        String tempOutputFolder = Paths.get(
+                this.getHdf5ProcessingPaths().get("outputDir"),
+                tempOutputFolderName).toString();
 
         boolean createTempFolder = (new File(tempOutputFolder)).mkdirs();
 
