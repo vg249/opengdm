@@ -35,7 +35,7 @@ public class Project extends BaseEntity {
     @Column(name="name")
     private String projectName;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="pi_contact", referencedColumnName="contact_id")
     private Contact contact;
 
