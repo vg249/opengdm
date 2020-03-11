@@ -19,7 +19,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.v3.GobiiProject;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -53,7 +53,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
             Objects.requireNonNull(pageNum);
             List<GobiiProjectDTO> projectDTOs = new java.util.ArrayList<>();
 
-            List<GobiiProject> projects = projectDao.getProjects(pageNum, pageSize);
+            List<Project> projects = projectDao.getProjects(pageNum, pageSize);
             projects.forEach(project -> {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);

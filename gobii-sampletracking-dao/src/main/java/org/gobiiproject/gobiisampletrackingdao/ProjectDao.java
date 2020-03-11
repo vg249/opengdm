@@ -7,11 +7,11 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.entity.v3.GobiiProject;
+import org.gobiiproject.gobiimodel.entity.Project;
 
 public interface ProjectDao {
 
-    List<GobiiProject> getProjects(
+    List<Project> getProjects(
         Integer pageNum,
         Integer pageSize  
     );

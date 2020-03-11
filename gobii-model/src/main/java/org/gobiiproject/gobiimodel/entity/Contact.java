@@ -1,8 +1,6 @@
-package org.gobiiproject.gobiimodel.entity.v3;
+package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.*;
-
-import org.gobiiproject.gobiimodel.entity.BaseEntity;
 
 @Entity
 @Table(name="contact")
