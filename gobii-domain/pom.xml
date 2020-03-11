@@ -15,6 +15,7 @@
 
     <dependencies>
         <!-- gobii dependencies -->
+
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-sampletracking-dao</artifactId>
