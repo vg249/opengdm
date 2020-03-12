@@ -23,9 +23,9 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -59,22 +59,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     @Autowired
     private DtoMapJob dtoMapJob = null;
 
-    private InstructionFileAccess<GobiiLoaderProcedure> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
 
-
-    private void createDirectories(String instructionFileDirectory,
-                                   GobiiFile gobiiFile) throws GobiiDaoException {
-
-
-        if (null != instructionFileDirectory) {
-            instructionFileAccess.createDirectory(instructionFileDirectory);
-        }
+    private void createDirectories(GobiiFile gobiiFile) throws GobiiDaoException {
 
         if (gobiiFile.isCreateSource()) {
-            instructionFileAccess.createDirectory(gobiiFile.getSource());
+            HelperFunctions.createDirectory(gobiiFile.getSource());
         }
 
-        instructionFileAccess.createDirectory(gobiiFile.getDestination());
+        HelperFunctions.createDirectory(gobiiFile.getDestination());
 
     } // createDirectories()
 
@@ -102,24 +94,10 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 throw new GobiiDtoMappingException("Loader instruction request does not specify a crop");
             }
 
-            String instructionFileDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-
-            String instructionFileFqpn = instructionFileDirectory
-                    + loaderInstructionFilesDTO.getInstructionFileName()
-                    + INSTRUCTION_FILE_EXT;
-
 
             if (loaderInstructionFilesDTO.getProcedure().getMetadata().getJobPayloadType() == null) {
                 throw new Exception("The primary instruction does not have a payload type");
             }
-
-
-//            for (Integer currentFileIdx = 0;
-//                 currentFileIdx < loaderInstructionFilesDTO.getGobiiLoaderInstructions().size();
-//                 currentFileIdx++) {
-//
-//                primaryLoaderInstruction =
-//                        loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(currentFileIdx);
 
 
             if (LineUtils.isNullOrEmpty(loaderInstructionFilesDTO.getProcedure().getMetadata().getGobiiCropType())) {
@@ -145,7 +123,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             if (currentGobiiFile.isRequireDirectoriesToExist()) {
 
-                if (!instructionFileAccess.doesPathExist(currentGobiiFile.getSource())) {
+                if (!HelperFunctions.doesPathExist(currentGobiiFile.getSource())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                             GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                             "require-to-exist was set to true, but the source file path does not exist: "
@@ -153,7 +131,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                 }
 
-                if (!instructionFileAccess.doesPathExist(currentGobiiFile.getDestination())) {
+                if (!HelperFunctions.doesPathExist(currentGobiiFile.getDestination())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                             GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                             "require-to-exist was set to true, but the source file path does not exist: "
@@ -239,16 +217,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             // "source file" is the data file the user may have already uploaded
             if (currentGobiiFile.isCreateSource()) {
 
-                createDirectories(instructionFileDirectory,
-                        currentGobiiFile);
+                createDirectories(currentGobiiFile);
 
             } else {
 
                 // it's supposed to exist, so we check
-                if (instructionFileAccess.doesPathExist(currentGobiiFile.getSource())) {
+                if (HelperFunctions.doesPathExist(currentGobiiFile.getSource())) {
 
-                    createDirectories(instructionFileDirectory,
-                            currentGobiiFile);
+                    createDirectories(currentGobiiFile);
                 } else {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                             GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -301,11 +277,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     jobDTONew.setPayloadType(loaderInstructionFilesDTO.getProcedure().getMetadata().getJobPayloadType().getCvName());
                     jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
                     jobDTONew.setSubmittedDate(new Date());
+                    // TODO attach instruction to job
 
                     dtoMapJob.createJob(jobDTONew);
-
-                    instructionFileAccess.writeInstructions(instructionFileFqpn,
-                            returnVal.getProcedure());
 
                 } else {
 

@@ -19,6 +19,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
@@ -433,6 +434,62 @@ public class HelperFunctions {
         if (fileLocation == null) return false;
         File f = new File(fileLocation);
         return f.exists() && f.getTotalSpace() != 0;
+    }
+
+    public static boolean doesPathExist(String pathName) throws GobiiException {
+        return new File(pathName).exists();
+    }
+
+    public static void createDirectory(String instructionFileDirectory) throws GobiiException {
+
+
+        if (null != instructionFileDirectory) {
+
+            if (! doesPathExist(instructionFileDirectory)) {
+
+                makeDirectory(instructionFileDirectory);
+
+            } else {
+                verifyDirectoryPermissions(instructionFileDirectory);
+            }
+        }
+
+    } // createDirectories()
+
+    public static void makeDirectory(String pathName) throws GobiiException {
+
+        if (!doesPathExist(pathName)) {
+
+            File pathToCreate = new File(pathName);
+
+            if (!pathToCreate.mkdirs()) {
+                throw new GobiiException("Unable to create directory " + pathName);
+            }
+
+            if ((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))) {
+                throw new GobiiException("Unable to set read on directory " + pathName);
+            }
+
+            if ((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))) {
+                throw new GobiiException("Unable to set write on directory " + pathName);
+            }
+
+
+        } else {
+            throw new GobiiException("The specified path already exists: " + pathName);
+        }
+    }
+
+    public static void verifyDirectoryPermissions(String pathName) throws GobiiException {
+
+        File pathToCreate = new File(pathName);
+        if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+            throw new GobiiException("Unable to set read permissions on directory " + pathName);
+        }
+
+        if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+            throw new GobiiException("Unable to set write permissions on directory " + pathName);
+        }
     }
 
 
