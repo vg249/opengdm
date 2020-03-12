@@ -73,9 +73,9 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -1730,9 +1730,9 @@ public class GobiiAdl {
     }
 
 
-    private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath, String folderName) throws Exception {
+    private static DigesterProcedureDTO createInstructionFileDTO(String instructionFilePath, String folderName) throws Exception {
 
-        LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
+        DigesterProcedureDTO digesterProcedureDTO = new DigesterProcedureDTO();
         try {
             File instructionFile = new File(instructionFilePath);
             InstructionFileAccess<GobiiLoaderProcedure> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
@@ -1741,8 +1741,8 @@ public class GobiiAdl {
             if (null != procedure) {
                 String instructionFileName = instructionFile.getName();
                 String justName = instructionFileName.replaceFirst("[.][^.]+$", "");
-                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + justName);
-                loaderInstructionFilesDTO.setGobiiLoaderProcedure(procedure);
+                digesterProcedureDTO.setName(folderName + "_" + justName);
+                digesterProcedureDTO.setGobiiLoaderProcedure(procedure);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -1751,14 +1751,14 @@ public class GobiiAdl {
         } catch (Exception e) {
             processError("Error creating instruction file DTO: " + e.getMessage(), GobiiStatusLevel.ERROR);
         }
-        return loaderInstructionFilesDTO;
+        return digesterProcedureDTO;
     }
 
-    private static boolean submitInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO, String jobPayloadType) throws Exception {
+    private static boolean submitInstructionFile(DigesterProcedureDTO digesterProcedureDTO, String jobPayloadType) throws Exception {
 
         boolean returnVal = false;
 
-        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getProcedure());
+        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(digesterProcedureDTO.getProcedure());
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
@@ -1766,28 +1766,28 @@ public class GobiiAdl {
         } else {
             try {
                 if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS.getCvName())) {
-                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
+                    digesterProcedureDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName())) {
-                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
+                    digesterProcedureDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
-                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    digesterProcedureDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 } else {
-                    loaderInstructionFilesDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    digesterProcedureDTO.getProcedure().getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 }
-                PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
-                GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                PayloadEnvelope<DigesterProcedureDTO> payloadEnvelope = new PayloadEnvelope<>(digesterProcedureDTO, GobiiProcessType.CREATE);
+                GobiiEnvelopeRestResource<DigesterProcedureDTO, DigesterProcedureDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS));
-                PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
+                PayloadEnvelope<DigesterProcedureDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(DigesterProcedureDTO.class,
                         payloadEnvelope);
                 checkStatus(loaderInstructionFileDTOResponseEnvelope);
-                Payload<LoaderInstructionFilesDTO> payload = loaderInstructionFileDTOResponseEnvelope.getPayload();
+                Payload<DigesterProcedureDTO> payload = loaderInstructionFileDTOResponseEnvelope.getPayload();
                 if (payload.getData() == null || payload.getData().size() < 1) {
                     System.out.println("Could not get a valid response from server. Please try again.");
                 } else {
-                    String instructionFileName = payload.getData().get(0).getInstructionFileName();
+                    String instructionFileName = payload.getData().get(0).getName();
                     System.out.println("Request " + instructionFileName + " submitted.");
-                    Integer datasetId = loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId();
+                    Integer datasetId = digesterProcedureDTO.getProcedure().getMetadata().getDataset().getId();
                     returnVal = checkJobStatusLoad(instructionFileName, datasetId);
                 }
             } catch (Exception err) {
@@ -1802,7 +1802,7 @@ public class GobiiAdl {
 
         boolean returnVal = false;
 
-        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> loaderJobResponseEnvolope = new GobiiEnvelopeRestResource<>(
+        GobiiEnvelopeRestResource<DigesterProcedureDTO, DigesterProcedureDTO> loaderJobResponseEnvolope = new GobiiEnvelopeRestResource<>(
                 GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS)
@@ -1816,11 +1816,11 @@ public class GobiiAdl {
 
         while (!statusDetermined && ((System.currentTimeMillis() - startTime) <= timeoutInMillis)) {
 
-            PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
+            PayloadEnvelope<DigesterProcedureDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(DigesterProcedureDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
 
             // because we called checkStatus() with second parameter true, we know that there is at least one payload item
-            List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
+            List<DigesterProcedureDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderProcedure procedure = data.get(0).getProcedure();
 
             String newStatus = procedure.getMetadata().getGobiiJobStatus().getCvName();
@@ -2195,11 +2195,11 @@ public class GobiiAdl {
 
 
                 // CREATE LOADER INSTRUCTION FILE
-                LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath, folderName);
+                DigesterProcedureDTO digesterProcedureDTO = createInstructionFileDTO(instructionFilePath, folderName);
 
                 System.out.println("Submitting file " + instructionFilePath + " - " + folderName);
                 // SUBMIT INSTRUCTION FILE DTO
-                returnVal = submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
+                returnVal = submitInstructionFile(digesterProcedureDTO, jobPayloadType);
             }
         } // iterate scenarios
 

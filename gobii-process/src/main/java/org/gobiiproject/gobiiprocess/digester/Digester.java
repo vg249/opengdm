@@ -25,12 +25,12 @@ import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigestResults;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterConfig;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.IFLLineCounts;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -89,7 +89,7 @@ public class Digester {
         this.digesterConfig = config;
     }
 
-    public void run(LoaderInstructionFilesDTO instruction) throws Exception {
+    public void run(DigesterProcedureDTO instruction) throws Exception {
 
         final GobiiLoaderProcedure procedure = instruction.getProcedure();
 
@@ -112,7 +112,7 @@ public class Digester {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        String jobFileName = instruction.getInstructionFileName().substring(0, instruction.getInstructionFileName().lastIndexOf('.'));
+        String jobFileName = instruction.getName().substring(0, instruction.getName().lastIndexOf('.'));
         JobStatus jobStatus = null;
         try {
             jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobFileName);
@@ -174,7 +174,7 @@ public class Digester {
         String logDir = configuration.getFileSystemLog();
         String logFile = null;
         if (logDir != null) {
-            String instructionName = instruction.getInstructionFileName();
+            String instructionName = instruction.getName();
             instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
             logFile = logDir + "/" + instructionName + ".log";
             String oldLogFile = Logger.getLogFilepath();
@@ -191,17 +191,17 @@ public class Digester {
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
             if (inst == null) {
-                logError("Digester", "Missing or malformed instruction in " + instruction.getInstructionFileName());
+                logError("Digester", "Missing or malformed instruction in " + instruction.getName());
                 continue;
             }
         }
 
         if (procedure.getMetadata().getGobiiFile() == null) {
-            logError("Digester", "Instruction " + instruction.getInstructionFileName() + " has bad 'file' column");
+            logError("Digester", "Instruction " + instruction.getName() + " has bad 'file' column");
         }
         GobiiFileType instructionFileType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
         if (instructionFileType == null) {
-            logError("Digester", "Instruction " + instruction.getInstructionFileName() + " has missing file format");
+            logError("Digester", "Instruction " + instruction.getName() + " has missing file format");
         }
 
 
@@ -369,7 +369,7 @@ public class Digester {
         DigesterProcessMessage processMessage = DigesterProcessMessage.create(configuration, digesterConfig, instruction, results);
 
         //Send Email
-        finalizeProcessing(processMessage, configuration, instruction.getInstructionFileName(),
+        finalizeProcessing(processMessage, configuration, instruction.getName(),
                 procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
 
     }
@@ -674,9 +674,9 @@ public class Digester {
         //Job Id is the 'name' part of the job file  /asd/de/name.json
         String filename = new File(instructionFile).getName();
 
-        LoaderInstructionFilesDTO instruction = new LoaderInstructionFilesDTO();
+        DigesterProcedureDTO instruction = new DigesterProcedureDTO();
         instruction.setGobiiLoaderProcedure(procedure);
-        instruction.setInstructionFileName(filename);
+        instruction.setName(filename);
 
         if (procedure == null || procedure.getInstructions() == null || procedure.getInstructions().isEmpty()) {
             logError("Digester", "No instruction for file " + instructionFile);

@@ -5,11 +5,11 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class LoaderInstructionFilesDTO extends DTOBase {
+public class DigesterProcedureDTO extends DTOBase {
 
 
     private GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
-    private String instructionFileName = null;
+    private String name = null;
 
 
     @Override
@@ -30,12 +30,12 @@ public class LoaderInstructionFilesDTO extends DTOBase {
         this.procedure = procedure;
     }
 
-    public String getInstructionFileName() {
-        return instructionFileName;
+    public String getName() {
+        return name;
     }
 
-    public void setInstructionFileName(String instructionFileName) {
-        this.instructionFileName = instructionFileName;
+    public void setName(String name) {
+        this.name = name;
     }
 
 

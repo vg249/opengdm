@@ -274,9 +274,9 @@
 
     <!-- **** Loader Instruction File Beans *************************************** -->
     <bean id="dtoMapLoaderInstructions"
-          class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapLoaderInstructionsImpl"/>
+          class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapDigesterProcedureImpl"/>
     <bean id="loaderInstructionFilesService"
-          class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
+          class="org.gobiiproject.gobidomain.services.impl.DigesterProcedureServiceImpl"/>
 
     <!-- **** Extractor File Beans *************************************** -->
     <bean id="dtoMapExtractorInstructions"

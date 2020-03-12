@@ -5,7 +5,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.DigestResults;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.IFLLineCounts;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
@@ -15,7 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 public class DigesterProcessMessage extends ProcessMessage{
 
-	public static DigesterProcessMessage create(ConfigSettings config, DigesterConfig digestConfig, LoaderInstructionFilesDTO instruction, DigestResults results) throws Exception {
+	public static DigesterProcessMessage create(ConfigSettings config, DigesterConfig digestConfig, DigesterProcedureDTO instruction, DigestResults results) throws Exception {
 
 		GobiiLoaderProcedure procedure = instruction.getProcedure();
 
