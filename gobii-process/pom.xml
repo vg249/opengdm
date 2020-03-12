@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>GOBII Server 2.1_2019-08-23</version>
+        <version>GOBII Server 2.2_2020-03-04</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -99,7 +99,7 @@
             <version>1.18.8</version>
             <scope>compile</scope>
         </dependency>
-
+        
     </dependencies>
 
     <build>
@@ -188,7 +188,7 @@
                             <finalName>Digester</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.digester.Digester</mainClass>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.GobiiFileReader</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

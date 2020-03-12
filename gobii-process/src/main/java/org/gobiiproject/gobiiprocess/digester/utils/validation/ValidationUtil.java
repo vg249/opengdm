@@ -20,13 +20,12 @@ import java.util.stream.Stream;
 
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
-import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
 class ValidationUtil {
     static boolean isNullAndEmpty(String value) {
@@ -53,10 +52,10 @@ class ValidationUtil {
                     }
     }
 
-    static void validateMatrixSizeMarkerColumns(String fileName, List<String> columns, List<String[]> inputFileList, List<Failure> failureList, DatasetOrientationType orientation) throws MaximumErrorsValidationException {
+    static void validateMatrixSizeMarkerColumns(String fileName, List<String> columns, List<String[]> inputFileList, List<Failure> failureList, boolean markerFast) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
         List<String> headers = Arrays.asList(inputFileList.get(0).clone());
-        verifyEqualMatrixSizeMarker(failureList,getFileColumns(fileName,columns,failureList), orientation);
+        verifyEqualMatrixSizeMarker(failureList,getFileColumns(fileName,columns,failureList),markerFast);
 
         }
 
@@ -434,18 +433,15 @@ class ValidationUtil {
         return true;
     }
 
-     static boolean verifyEqualMatrixSizeDnarun(List<Failure> failureList, List<String> fileColumns, DatasetOrientationType orientation) throws MaximumErrorsValidationException {
-        return verifyEqualMatrixSizeMarker(failureList,fileColumns,orientation.flip());
+     static boolean verifyEqualMatrixSizeDnarun(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException {
+        return verifyEqualMatrixSizeMarker(failureList,fileColumns,!markerFast);
     }
-     static boolean verifyEqualMatrixSizeMarker(List<Failure> failureList, List<String> fileColumns,
-                                                DatasetOrientationType orientation) throws MaximumErrorsValidationException{
-//        Commenting out as it is dead code, though a potentially useful reminder
-//        Integer size = markerFast
-//                ? DigesterInstructionProcessor.getLastMatrixRowSize()
-//                : DigesterInstructionProcessor.getLastMatrixColSize();
-//        return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
-         return true;
+     static boolean verifyEqualMatrixSizeMarker(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException{
+        Integer size = markerFast?CSVFileReaderInterface.getLastMatrixRowSize():CSVFileReaderInterface.getLastMatrixColSize();
+        return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
     }
+
+
 
     static void validateDatabaseCalls(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig cropConfig) {
         try {
