@@ -162,16 +162,13 @@ public class BRAPIIControllerV2 {
                     "Default is 0")
             @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize)
-                    Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             CallSetDTO callSetsFilter
     ) {
         try {
 
-            PagedResult<CallSetDTO> callSets;
-
-            callSets = callSetService.getCallSets(
+            PagedResult<CallSetDTO> callSets = callSetService.getCallSets(
                     pageSize, page,
                     variantSetDbId, callSetsFilter);
 
@@ -708,7 +705,7 @@ public class BRAPIIControllerV2 {
     /**
      * Lists the variantsets by page size and page token
      *
-     * @param pageTokenParam - String page token
+     * @param pageNum - Page number to be fetched. 0 indexed.
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size
      * @return Brapi response with list of variantsets
@@ -747,48 +744,26 @@ public class BRAPIIControllerV2 {
     public @ResponseBody ResponseEntity getVariantSets(
             @ApiParam(value = "Id of the VariantSet to be fetched. Also, corresponds to dataset Id")
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. studyDbID " +
-                    "also corresponds to experiment")
-            @RequestParam(value = "studyDbId", required = false) String studyDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. study " +
+                    "corresponds to experiment")
+            @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
+            @ApiParam(value = "Study Name for which list of Variantsets need to be fetched")
+            @RequestParam(value = "studyName", required = false) String studyName,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page number to be fetched")
-            @RequestParam(value = "page", required = false) Integer pageNum,
-            HttpServletRequest request
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer pageNum
     ) {
         try {
 
-            Integer maxPageSize = RestResourceLimits.getResourceLimit(
-                    RestResourceId.GOBII_DATASETS,
-                    RestMethodType.GET
-            );
+            PagedResult<VariantSetDTO> pagedResult = variantSetsService.getVariantSets(pageSize, pageNum,
+                    variantSetDbId, null,
+                    studyDbId, studyName);
 
-            if (maxPageSize == null) {
-                maxPageSize = this.brapiDefaultPageSize;
-            }
-
-            if (pageSize == null) {
-                pageSize = this.brapiDefaultPageSize;
-            }
-            else if(pageSize > maxPageSize) {
-                pageSize = maxPageSize;
-            }
-
-            variantSetsService.setCropType(CropRequestAnalyzer.getGobiiCropType(request));
-
-            List<VariantSetDTO> variantSets = variantSetsService.listVariantSets(pageNum, pageSize, variantSetDbId);
-
-            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(variantSets);
-
-            payload.getMetadata().getPagination().setPageSize(pageSize);
-
-            payload.getMetadata().getPagination().setCurrentPage(pageNum);
+            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(
+                    pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -806,11 +781,11 @@ public class BRAPIIControllerV2 {
     }
 
     /**
-     * Endpoint for getting a specific variantset with a given variantSetDbId
+     * Endpoint for getting a specific variantSet with a given variantSetDbId
      *
-     * @param variantSetDbId ID of the requested variantset
-     * @return ResponseEntity with http status code specifying if retrieval of the variantset is successful.
-     * Response body contains the requested variantset information
+     * @param variantSetDbId ID of the requested variantSet
+     * @return ResponseEntity with http status code specifying if retrieval of the variantSet is successful.
+     * Response body contains the requested variantSet information
      */
     @ApiOperation(
             value = "Get VariantSet by variantSetDbId",
@@ -848,12 +823,9 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariantSetById(
             @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
-            @PathVariable("variantSetDbId") Integer variantSetDbId,
-            HttpServletRequest request) {
+            @PathVariable("variantSetDbId") Integer variantSetDbId) {
 
         try {
-
-            variantSetsService.setCropType(CropRequestAnalyzer.getGobiiCropType(request));
 
             VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
 
@@ -979,13 +951,14 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Page number", required = false)
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            CallSetDTO callSetsFilter
     ) {
 
         try {
 
             PagedResult<CallSetDTO> pagedResult = callSetService.getCallSets(pageSize, page,
-                    variantSetDbId, null);
+                    variantSetDbId, callSetsFilter);
 
             BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
                     pagedResult.getResult(),
@@ -1155,7 +1128,7 @@ public class BRAPIIControllerV2 {
 
             PagedResult<GenotypeCallsDTO> pagedResult = new PagedResult<>();
 
-            pagedResult = genotypeCallsService.getGenotypeCallsByDatasetId(variantSetDbId, pageSize, pageToken);
+            pagedResult = genotypeCallsService.getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
 
 
             BrApiMasterListPayload<GenotypeCallsDTO> payload = new BrApiMasterListPayload<>(
@@ -1216,31 +1189,21 @@ public class BRAPIIControllerV2 {
 
            try {
 
-               Map<String, String> genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                       variantSetDbId, null);
+               int pageNum = 0;
 
-               String genotypes = genotypesResult.get("genotypes");
+               String genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                       variantSetDbId, pageNum);
 
-               if(genotypesResult.containsKey("genotypes") &&
-                       genotypesResult.get("genotypes") != null &&
-                       genotypesResult.get("genotypes").length() != 0) {
+               while(genotypesResult != null &&
+                       genotypesResult.length() != 0) {
 
-                   emitter.send(genotypes, MediaType.TEXT_PLAIN);
+                   emitter.send(genotypesResult, MediaType.TEXT_PLAIN);
 
-                   while(genotypesResult.get("nextPageOffset") != null) {
+                   pageNum++;
 
-                       genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                               variantSetDbId, genotypesResult.get("nextPageOffset"));
+                   genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
+                               variantSetDbId, pageNum);
 
-                       genotypes = genotypesResult.get("genotypes");
-
-                       emitter.send(genotypes, MediaType.TEXT_PLAIN);
-                   }
-
-                   emitter.complete();
-               }
-               else {
-                   emitter.complete();
                }
 
                emitter.complete();

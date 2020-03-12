@@ -16,12 +16,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import  org.gobiiproject.gobiimodel.types.DatasetOrientationType;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.FailureTypes;
-import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.allowedExtensions;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginToServer;
 
@@ -33,11 +31,6 @@ public class DigestFileValidator {
 
     private String rootDir, rulesFile, url, password, username;
 
-
-    public DigestFileValidator(String rootDir, String url, String username, String password) {
-        this(rootDir, null, url, username, password);
-    }
-
     public DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
         this.rootDir = rootDir;
         this.url = url;
@@ -46,18 +39,21 @@ public class DigestFileValidator {
         this.password = password;
     }
 
+    public DigestFileValidator(String rootDir, String url, String username, String password) {
+        this.rootDir = rootDir;
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
     public static void main(String[] args) {
         InputParameters inputParameters = new InputParameters();
         readInputParameters(args, inputParameters);
         DigestFileValidator digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
-        digestFileValidator.performValidation(null, null);
+        digestFileValidator.performValidation(null);
     }
 
     public void performValidation(GobiiCropConfig cropConfig) {
-        this.performValidation(cropConfig, null);
-    }
-
-    public void performValidation(GobiiCropConfig cropConfig, DatasetOrientationType orientation) {
         String validationOutput = rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
         /*
          * Read validation Rules
@@ -67,30 +63,30 @@ public class DigestFileValidator {
         try {
             SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValues(new FileWriter(new File(validationOutput)));
             List<ValidationUnit> validations = readRules(writer);
-            ValidationResult validationResult = new ValidationResult();
-            validationResult.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
+            ValidationError validationError = new ValidationError();
+            validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
             List<Failure> failures = new ArrayList<>();
             if (loginToServer(url, username, password, null, failures)) {
                 try {
-                    List<ValidationResult> validationResultList = doValidations(validations, cropConfig, orientation);
-                    writer.write(validationResultList);
+                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig);
+                    writer.write(validationErrorList);
                 } catch (Exception e) {
-                    validationResult.status = ValidationConstants.FAILURE;
+                    validationError.status = ValidationConstants.FAILURE;
                     Failure failure = new Failure();
                     failure.reason = FailureTypes.VALIDATION_ERROR;
                     failure.values.add(e.getMessage());
-                    validationResult.failures.add(failure);
-                    List<ValidationResult> validationResultList = new ArrayList<>();
-                    validationResultList.add(validationResult);
-                    writer.write(validationResultList);
+                    validationError.failures.add(failure);
+                    List<ValidationError> validationErrorList = new ArrayList<>();
+                    validationErrorList.add(validationError);
+                    writer.write(validationErrorList);
                     Logger.logError("DigestFileValidator",e);
                 }
             } else {
-                validationResult.status = ValidationConstants.FAILURE;
-                validationResult.failures.addAll(failures);
-                List<ValidationResult> validationResultList = new ArrayList<>();
-                validationResultList.add(validationResult);
-                writer.write(validationResultList);
+                validationError.status = ValidationConstants.FAILURE;
+                validationError.failures.addAll(failures);
+                List<ValidationError> validationErrorList = new ArrayList<>();
+                validationErrorList.add(validationError);
+                writer.write(validationErrorList);
             }
             writer.close();
         } catch (IOException e) {
@@ -103,25 +99,24 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationResult> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig,
-												 DatasetOrientationType orientation) {
-        List<ValidationResult> validationResultList = new ArrayList<>();
+    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig) {
+        List<ValidationError> validationErrorList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
-            ValidationResult validationResult = new ValidationResult();
-            validationResult.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-            List<Failure> failureList = validate(validation, cropConfig, orientation);
+            ValidationError validationError = new ValidationError();
+            validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
+            List<Failure> failureList = validate(validation, cropConfig);
             if (failureList != null) {
                 if (failureList.size() > 0) {
-                    validationResult.status = ValidationConstants.FAILURE;
-                    validationResult.failures.addAll(failureList);
-                    validationResultList.add(validationResult);
+                    validationError.status = ValidationConstants.FAILURE;
+                    validationError.failures.addAll(failureList);
+                    validationErrorList.add(validationError);
                 } else {
-                    validationResult.status = ValidationConstants.SUCCESS;
-                    validationResultList.add(validationResult);
+                    validationError.status = ValidationConstants.SUCCESS;
+                    validationErrorList.add(validationError);
                 }
             }
         }
-        return validationResultList;
+        return validationErrorList;
         // READ ERRORS
         // ValidationError[] fileErrors = mapper.readValue(new File(validationOutput), ValidationError[].class);
     }
@@ -227,17 +222,17 @@ public class DigestFileValidator {
     }
 
     private boolean validationFailed(SequenceWriter writer, String fileName, String value) throws IOException {
-        ValidationResult validationResult = new ValidationResult();
-        validationResult.fileName = fileName;
+        ValidationError validationError = new ValidationError();
+        validationError.fileName = fileName;
         Failure failure = new Failure();
         failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
         failure.values.add(value);
-        validationResult.failures.add(failure);
-        writer.write(validationResult);
+        validationError.failures.add(failure);
+        writer.write(validationError);
         return true;
     }
 
-    public List<Failure> validate(ValidationUnit validation, GobiiCropConfig cropConfig, DatasetOrientationType orientation) {
+    public List<Failure> validate(ValidationUnit validation, GobiiCropConfig cropConfig) {
         trimSpaces(validation);
         List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
@@ -253,7 +248,7 @@ public class DigestFileValidator {
             case "marker_linkage_group":
             case "dataset_dnarun":
             case "dataset_marker":
-                if (!new Validator(orientation).validate(validation, rootDir, failureList, cropConfig)) failureList = null;
+                if (!new Validator().validate(validation, rootDir, failureList, cropConfig)) failureList = null;
                 break;
             default:
                 try {

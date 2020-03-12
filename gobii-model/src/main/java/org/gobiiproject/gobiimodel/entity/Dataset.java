@@ -6,9 +6,7 @@ import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Model for Dataset Entity.
@@ -41,9 +39,6 @@ public class Dataset extends BaseEntity {
     @Convert(converter = IntegerArrayConverter.class)
     private Integer[] analyses;
 
-    @Transient
-    private Set<Analysis> mappedAnalyses = new HashSet<>();
-
     @Column(name="data_table")
     private String dataTable;
 
@@ -71,12 +66,6 @@ public class Dataset extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
     private Job job = new Job();
-
-    @Transient
-    private Integer markerCount;
-
-    @Transient
-    private Integer dnaRunCount;
 
     public Integer getDatasetId() {
         return datasetId;
@@ -109,7 +98,6 @@ public class Dataset extends BaseEntity {
     public void setCallingAnalysis(Analysis callingAnalysis) {
         this.callingAnalysis = callingAnalysis;
     }
-
 
     public Integer[] getAnalyses() {
         return analyses;
@@ -181,29 +169,5 @@ public class Dataset extends BaseEntity {
 
     public void setQualityFile(String qualityFile) {
         this.qualityFile = qualityFile;
-    }
-
-    public Set<Analysis> getMappedAnalyses() {
-        return mappedAnalyses;
-    }
-
-    public void setMappedAnalyses(Set<Analysis> mappedAnalyses) {
-        this.mappedAnalyses = mappedAnalyses;
-    }
-
-    public Integer getMarkerCount() {
-        return markerCount;
-    }
-
-    public void setMarkerCount(Integer markerCount) {
-        this.markerCount = markerCount;
-    }
-
-    public Integer getDnaRunCount() {
-        return dnaRunCount;
-    }
-
-    public void setDnaRunCount(Integer dnaRunCount) {
-        this.dnaRunCount = dnaRunCount;
     }
 }

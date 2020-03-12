@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MarkerDaoImpl implements MarkerDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(MarkerDao.class);
+    Logger LOGGER = LoggerFactory.getLogger(MarkerDaoImpl.class);
 
     @PersistenceContext
     protected EntityManager em;
@@ -221,7 +221,7 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     public List<Marker> getMarkersByMarkerNames(List<String> markerNames) {
 
-        List<Marker> markers = new ArrayList<>();
+        List<Marker> markers;
 
         try {
 

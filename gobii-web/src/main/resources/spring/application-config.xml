@@ -391,14 +391,18 @@
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
     <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.impl.GobiiProjectServiceImpl"/>
 
-    <!-- **** New CV DAO for sample tracking use cases -->
+    <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
-    <!-- **** New CV DAO for sample tracking use cases -->
+    <!-- **** New Dataset Dao -->
     <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
 
     <!-- **** New Samples DAO for accessing DNA samples -->
     <bean id="dnaSampleDao" class="org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl"/>
+
+    <!-- **** New Analysis Dao -->
+    <bean id="analysisDao" class="org.gobiiproject.gobiisampletrackingdao.AnalysisDaoImpl"/>
+
 
 
     <!-- **** Manifests Beans *************************************** -->
