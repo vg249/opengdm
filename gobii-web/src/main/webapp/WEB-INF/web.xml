@@ -9,6 +9,7 @@
          id="WebApp_ID" version="3.0">
 
     <display-name>gobii-web</display-name>
+    <absolute-ordering />
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -17,6 +18,13 @@
             classpath:spring/spring-security.xml
         </param-value>
     </context-param>
+
+    
+
+   <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/classes/application.properties</param-value>
+   </context-param>
 
     <context-param>
         <param-name>spring.profiles.active</param-name>
@@ -65,9 +73,14 @@
         <!--<listener-class>org.springframework.web.context.request.RequestContextHolder</listener-class>-->
     <!--</listener>-->
 
+<!-- applies log4j configuration -->
+<!-- <listener>
+    <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+</listener> -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
 
 
     <!-- if you don't specify the servlet-name in the filter mappings,

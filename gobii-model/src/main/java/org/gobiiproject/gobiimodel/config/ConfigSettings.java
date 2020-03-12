@@ -41,7 +41,7 @@ public class ConfigSettings {
     ConfigValues configValues = null;
 
     public ConfigSettings(String configFileWebPath) {
-
+        Logger.logDebug("ConfigSettings", "configFileWebPath: " + configFileWebPath);
         try {
             configValues = ConfigValuesReader.read(configFileWebPath);
             this.configFileFqpn = configFileWebPath;
