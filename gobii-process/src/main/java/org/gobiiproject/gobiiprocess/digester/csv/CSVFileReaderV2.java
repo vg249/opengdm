@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
 
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -18,17 +19,13 @@ import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiiprocess.digester.Digester;
-import org.gobiiproject.gobiiprocess.digester.DigesterInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
-import org.gobiiproject.gobiiprocess.digester.MatrixProcessorResult;
-import org.gobiiproject.gobiiprocess.digester.ProcessorResult;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
 
 /**
  * CSV-Specific File Loader class, used by
- * {@link Digester} Contains
+ * {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader} Contains
  * methods specific to reading of single-character separated text files, such as
  * .csv, tab-delimited, and pipe-separated values. This class is used, when none
  * of GobiiColumnType in GobiiLoaderInstruction
@@ -43,7 +40,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationRes
  * @date 3/23/2017
  */
 
-public class CSVInstructionProcessor implements DigesterInstructionProcessor {
+public class CSVFileReaderV2 extends CSVFileReaderInterface {
 
     private static final String NEWLINE = "\n";
     private static final String TAB = "\t";
@@ -51,8 +48,64 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
     private GobiiProcessedInstruction processedInstruction;
     private int maxLines = 0;
 
-    public CSVInstructionProcessor(String loaderScriptPath) {
+    CSVFileReaderV2(String loaderScriptPath) {
         this.loaderScriptPath = loaderScriptPath;
+    }
+
+    public static void parseInstructionFile(GobiiLoaderProcedure procedure, String loaderScriptPath) {
+        CSVFileReaderInterface reader;
+        if (LoaderGlobalConfigs.isSingleThreadFileRead()) {
+            for (GobiiLoaderInstruction i : procedure.getInstructions()) {
+                try {
+                    reader = new CSVFileReaderV2(loaderScriptPath);
+                    reader.processCSV(procedure, i);
+                } catch (InterruptedException e) {
+                    Logger.logError("CSVFileReader", "Interrupted reading instruction", e);
+                } catch (Exception e) {
+                    Logger.logError("CSVFileReader", "Unexpected Exception in reader", e);
+                }
+            }
+            return;
+        }
+
+        List<Thread> threads = new LinkedList<>();
+        if (procedure.getInstructions() == null) {
+            Logger.logError("CSVFileReader", "No instructions passed in");
+        } else {
+            GobiiLoaderInstruction matrixInstruction = null;
+
+            //Create threads
+            for (GobiiLoaderInstruction loaderInstruction : procedure.getInstructions()) {
+                if (matrixInstruction == null && isMatrixInstruction(loaderInstruction)) {
+                    matrixInstruction = loaderInstruction;
+                    continue;//Skip processing until after all intermediate files
+                }
+                reader = new CSVFileReaderV2(loaderScriptPath);
+                Thread processingThread = new Thread(new ReaderThread(reader, procedure, loaderInstruction));
+                threads.add(processingThread);
+                processingThread.start();
+            }
+            //Wait for all threads to complete, lets just wait for all of them in order (obviously, many will be done
+            // before hand, in which case 'join' does nothing. Brilliant.
+            for (Thread t : threads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    Logger.logError("CSVFileReader", "Interrupt", e);
+                }
+            }
+
+            //Process matrix in main processing thread.
+            if (matrixInstruction != null) {
+                reader = new CSVFileReaderV2(loaderScriptPath);
+                new ReaderThread(reader, procedure, matrixInstruction).run();//Calls this thread from our thread
+            }
+        }
+    }
+
+    //Gnarly logic - if the first column asked for is a both type, this likely is the matrix file
+    private static boolean isMatrixInstruction(GobiiLoaderInstruction inst){
+        return inst.getGobiiFileColumns().get(0).getGobiiColumnType().equals(GobiiColumnType.CSV_BOTH);
     }
 
     /**
@@ -61,7 +114,7 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
      *
      * @param loaderInstruction Singular instruction, specifying input and output directories
      */
-    public ProcessorResult process(GobiiLoaderProcedure procedure, GobiiLoaderInstruction loaderInstruction) {
+    public void processCSV(GobiiLoaderProcedure procedure, GobiiLoaderInstruction loaderInstruction) {
 
         processedInstruction = new GobiiProcessedInstruction(loaderInstruction);
         processedInstruction.parseInstruction();
@@ -74,15 +127,13 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
             if (file.isDirectory()) {
                 listFilesFromFolder(file, tempFileBufferedWriter, procedure, outputFile);
             } else {
-                return writeToOutputFile(file, tempFileBufferedWriter, procedure, outputFile, true);
+                writeToOutputFile(file, tempFileBufferedWriter, procedure, outputFile, true);
             }
         } catch (FileNotFoundException e) {
             Logger.logError("CSVReader", "Unexpected Missing File", e);
         } catch (IOException e) {
             Logger.logError("CSVReader", "Unexpected IO Error", e);
         }
-
-        return null;
     }
 
     /**
@@ -96,7 +147,7 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
     private void listFilesFromFolder(File folder, BufferedWriter tempFileBufferedWriter,
                                      GobiiLoaderProcedure procedure, File outputFile) {
         if (folder == null) {
-            Logger.logWarning("CSV Instruction Processor", "Read from null folder");
+            Logger.logWarning("CSVFileReader", "Read from null folder");
             return;
         }
         boolean firstFile = true; //TODO - generation of metadata requires deduplication beyond 'dedup', placing here
@@ -116,29 +167,35 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
     /**
      * Reads data from a single input file, and writes to digest file
      * (referenced by {@code }tmpFileBufferedsWriter}. This method is primarily called by
-     * {@link CSVInstructionProcessor listFilesFromFolder(File, BufferedWriter, GobiiLoaderInstruction, boolean)}
+     * {@link CSVFileReaderV2 listFilesFromFolder(File, BufferedWriter, GobiiLoaderInstruction, boolean)}
      *
      * @param file                   File to read from
      * @param tempFileBufferedWriter output file writer
      * @throws IOException when the requisite file is missing or cannot be read
      */
-    private ProcessorResult writeToOutputFile(File file, BufferedWriter tempFileBufferedWriter,
-                                              GobiiLoaderProcedure procedure, File outputFile, boolean firstFile) throws IOException {
+    private void writeToOutputFile(File file, BufferedWriter tempFileBufferedWriter,
+                                   GobiiLoaderProcedure procedure, File outputFile, boolean firstFile) throws IOException {
 
         if (processedInstruction.hasCSV_ROW()) {
             if(!firstFile){
-                return null; //TODO - assumption that this is a duplicated 'normal' oriented file.
+                return; //TODO - assumption that this is a duplicated 'normal' oriented file.
                 //Multiple files are stacked 'vertically'. This "feature" is very jank, and this bit'll have to be ripped
                 //out while replacing it.
             }
-            processCsvRow(file, tempFileBufferedWriter, procedure);
+            processCSV_ROW(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_COL()) {
-            processCsvColumn(file, tempFileBufferedWriter, procedure);
+            processCSV_COL(file, tempFileBufferedWriter, procedure);
         } else if (processedInstruction.hasCSV_BOTH()) {
-            return processCsvBoth(file, tempFileBufferedWriter, procedure, outputFile);
+            RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, procedure, outputFile);
+            //Terrible hack to return size of matrix. There _can be more than one of these_, in which case they're stacked vertically
+            if(CSVFileReaderInterface.lastMatrixSizeRowCol == null) {
+                CSVFileReaderInterface.lastMatrixSizeRowCol = matrixSize;
+            }
+            else{
+                //Add rows
+                CSVFileReaderInterface.lastMatrixSizeRowCol = CSVFileReaderInterface.lastMatrixSizeRowCol.operateRows(matrixSize,Integer::sum);
+            }
         }
-
-        return null;
     }
 
     /**
@@ -148,8 +205,8 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
      * @param tempFileBufferedWriter Output file writer.
      * @throws IOException Exception in I/O operations
      */
-    private void processCsvRow(File file, BufferedWriter tempFileBufferedWriter, GobiiLoaderProcedure procedure) throws IOException {
-        readCsvRows(file, procedure);
+    private void processCSV_ROW(File file, BufferedWriter tempFileBufferedWriter, GobiiLoaderProcedure procedure) throws IOException {
+        readCSV_ROWS(file, procedure);
         // Added for consistency in flow. For CSV_ROW this variable is not used. So empty list is passed
         ArrayList<String> rowList = new ArrayList<>();
         if (processedInstruction.isFirstLine()) {
@@ -168,8 +225,8 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
      * @param tempFileBufferedWriter Output file writer.
      */
 
-    private void processCsvColumn(File file, BufferedWriter tempFileBufferedWriter,
-                                  GobiiLoaderProcedure procedure) {
+    private void processCSV_COL(File file, BufferedWriter tempFileBufferedWriter,
+                                GobiiLoaderProcedure procedure) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
             String fileRow;
@@ -217,16 +274,16 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
      * @throws IOException Exception in I/O operations
      */
 
-    private MatrixProcessorResult processCsvBoth(File file, BufferedWriter tempFileBufferedWriter,
-                                                 GobiiLoaderProcedure procedure, File outputFile) throws IOException {
+    private RowColPair<Integer> processCSV_BOTH(File file, BufferedWriter tempFileBufferedWriter,
+                                 GobiiLoaderProcedure procedure, File outputFile) throws IOException {
         Integer totalCols=null;
         Integer totalRows=null;
         boolean skipValidation = !LoaderGlobalConfigs.isEnableValidation();
 
-        GobiiFileColumn csvBothColumn = null;
+        GobiiFileColumn csv_BothColumn = null;
         for (GobiiFileColumn gobiiFileColumn : processedInstruction.getColumnList()) {
             if (gobiiFileColumn.getGobiiColumnType().equals(GobiiColumnType.CSV_BOTH)) {
-                csvBothColumn = gobiiFileColumn;
+                csv_BothColumn = gobiiFileColumn;
                 break;
             }
         }
@@ -244,11 +301,11 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
-                    if (rowNo >= csvBothColumn.getrCoord()) {
+                    if (rowNo >= csv_BothColumn.getrCoord()) {
                         inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
                         outputRowList = new ArrayList<>();
-                        getRow(inputRowList, csvBothColumn);
-                        ValidationResult validationResult=matrixValidation.validate(rowNo, csvBothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
+                        getRow(inputRowList, csv_BothColumn);
+                        ValidationResult validationResult=matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
                         if (validationResult.success) {
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
                             totalCols=validationResult.numRows;
@@ -258,16 +315,13 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
                                 tempFileBufferedWriter.flush();
                                 tempFileBufferedWriter.close();
                                 FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
-								MatrixProcessorResult result = new MatrixProcessorResult();
-								result.setNumColumns(totalCols);
-								result.setNumRows(rowNo);
-                                return result;
+                                return new RowColPair<Integer>(totalCols,rowNo);
                             }
                         }
                     }
                     rowNo++;
+                    totalRows=rowNo-csv_BothColumn.getrCoord();
                 }
-                totalRows = rowNo - csvBothColumn.getrCoord();
             }
         }
         if (matrixValidation.getErrorCount() != 0) {
@@ -275,10 +329,7 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
             tempFileBufferedWriter.close();
             FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
         }
-		MatrixProcessorResult result = new MatrixProcessorResult();
-		result.setNumColumns(totalCols);
-		result.setNumRows(totalRows);
-		return result;
+        return new RowColPair<Integer>(totalRows,totalCols);
     }
 
     /**
@@ -383,7 +434,7 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
      *
      * @param file              Input file.
      */
-    private void readCsvRows(File file, GobiiLoaderProcedure procedure) {
+    private void readCSV_ROWS(File file, GobiiLoaderProcedure procedure) {
         int maxRequiredRowNo = maxRequiredRow();
 
 
@@ -490,5 +541,45 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
             maxRowNo=1; //need to read at least one row to know maxLines.
         }
         return maxRowNo;
+    }
+}
+
+
+class ReaderThread implements Runnable {
+    private CSVFileReaderInterface reader;
+    private GobiiLoaderProcedure procedure;
+    private GobiiLoaderInstruction instruction;
+
+    ReaderThread(CSVFileReaderInterface reader, GobiiLoaderProcedure procedure, GobiiLoaderInstruction instruction) {
+        this.reader = reader;
+        this.procedure = procedure;
+        this.instruction = instruction;
+    }
+
+    @Override
+    public void run() {
+        try {
+            reader.processCSV(procedure, instruction);
+        } catch (Exception e) {
+            Logger.logError("ReaderThread", "Error processing file read", e);
+        } catch(OutOfMemoryError e){
+            Logger.logError("ReaderThread","Out of memory processing instruction " + instruction.getTable(),e);
+            throw e;//Rethrow, as we can't deal with OOM
+        }
+    }
+}
+
+class RowColPair<I>{
+    public I row;
+    public I col;
+    RowColPair(I row, I col){
+        this.row=row;
+        this.col=col;
+    }
+    public RowColPair<I> operateRows(RowColPair<I> other, BiFunction<I,I,I> function){
+        return new RowColPair<I>(function.apply(row,other.row),this.col);
+    }
+    public RowColPair<I> operateCols(RowColPair<I> other, BiFunction<I,I,I> function){
+        return new RowColPair<I>(this.row,function.apply(col,other.col));
     }
 }

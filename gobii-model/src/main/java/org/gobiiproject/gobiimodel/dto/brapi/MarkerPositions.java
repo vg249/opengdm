@@ -13,7 +13,7 @@ public class MarkerPositions {
     @GobiiEntityMap(paramName = "linkageGroup.linkageGroupName", entity = MarkerLinkageGroup.class, deep = true)
     private String linkageGroupName;
 
-    @GobiiEntityMap(paramName = "linkageGroup.linkageGroupId", entity = MarkerLinkageGroup.class, deep = true)
+    @GobiiEntityMap(paramName = "linkageGroup.mapset.mapsetId", entity = MarkerLinkageGroup.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer mapDbId;
 
