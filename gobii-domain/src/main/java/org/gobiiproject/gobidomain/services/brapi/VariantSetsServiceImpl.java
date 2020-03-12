@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
+import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
     @Override
     public PagedResult<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
                                       Integer variantSetDbId, String variantSetName,
-                                      Integer studyDbId, String studyName) {
+                                      Integer studyDbId, String studyName) throws GobiiException {
 
         PagedResult<VariantSetDTO> returnVal = new PagedResult<>();
 
@@ -158,12 +159,18 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
         try {
             //Overload getvariantsets by passing
-            PagedResult<VariantSetDTO> variantSetDtos = this.getVariantSets(1000, 0,
+            PagedResult<VariantSetDTO> variantSets = this.getVariantSets(1000, 0,
                     variantSetDbId, null,
                     null, null);
 
+            if(variantSets.getResult() != null && variantSets.getResult().size() < 1) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "VariantSet for given id does not exist");
 
-            return variantSetDtos.getResult().get(0);
+            }
+
+            return variantSets.getResult().get(0);
 
         }
         catch (GobiiException ge) {
