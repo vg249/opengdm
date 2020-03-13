@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -16,6 +17,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Type;
 
 /**
  * Model for Project Entity.
@@ -46,9 +50,9 @@ public class Project extends BaseEntity {
     @Column(name="description")
     private String projectDescription;
 
-    @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
-    private JsonNode properties = JsonNodeFactory.instance.objectNode();
+    @Column(name="props")
+    @Type(type = "ProjectPropertiesType")
+    private ProjectProperties properties;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
@@ -87,11 +91,11 @@ public class Project extends BaseEntity {
         this.projectDescription = projectDescription;
     }
 
-    public JsonNode getProperties() {
+    public ProjectProperties getProperties() {
         return this.properties;
     }
 
-    public void setProperties(JsonNode properties) {
+    public void setProperties(ProjectProperties properties) {
         this.properties = properties;
     }
 

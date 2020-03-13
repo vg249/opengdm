@@ -18,6 +18,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -59,7 +60,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
                 
-                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties());
+                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
                
                 dto.setProperties(propDTOs);
                 
@@ -78,5 +79,24 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
             throw new GobiiDomainException(e);
         }  
     }
+
+
+	@Override
+	public GobiiProjectDTO createProject(GobiiProjectRequestDTO request) throws Exception {
+        //check if contact exists
+        Project project = projectDao.createProject(
+            request.getPiContactId(),
+            request.getProjectName(),
+            request.getProjectDescription(),
+            request.getProperties()
+        );
+        GobiiProjectDTO dto = new GobiiProjectDTO();
+        ModelMapper.mapEntityToDto(project, dto);
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
+        dto.setProperties(propDTOs);
+        return dto;
+
+	}
 
 }

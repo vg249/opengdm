@@ -3,11 +3,13 @@ package org.gobiiproject.gobiimodel.entity;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "cv")
-public class Cv {
+public class Cv implements Serializable{
 
     @Id
     @Column(name = "cv_id")

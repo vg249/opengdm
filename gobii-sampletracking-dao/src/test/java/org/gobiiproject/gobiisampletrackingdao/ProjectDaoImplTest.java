@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,16 @@ public class ProjectDaoImplTest {
        assert v3ProjectDao != null;
        assert v3ProjectDao.getProjects(0, 1000) != null;
        //assert v3ProjectDao.getProjects(0, 1000).size() > 0;
+    }
+
+    @Test
+    @Transactional
+    public void testCreateProject() throws Exception {
+        Project project = v3ProjectDao.createProject("4", "test", "", null);
+        assert project != null;
+        assert project.getProjectId() > 0;
+        System.out.println(project.getProjectId());
+
     }
 
 }

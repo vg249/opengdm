@@ -11,16 +11,21 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,6 +74,17 @@ public class GOBIIControllerV3 {
            
         
         return ResponseEntity.ok(payload);
+    }
+
+    @PostMapping("/projects")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> createProject(
+            @RequestBody final GobiiProjectRequestDTO project
+    ) throws Exception {
+        BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
+        GobiiProjectDTO createdDTO = projectService.createProject(project);
+        result.setResult(createdDTO);
+        return ResponseEntity.created(null).body(result);
     }
 
     public GobiiProjectService getProjectService() {

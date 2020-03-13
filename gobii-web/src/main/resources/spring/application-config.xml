@@ -1057,7 +1057,8 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+                <!--prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop-->
+                <prop key="hibernate.dialect">org.gobiiproject.gobiimodel.entity.pgsql.GobiiPostgresSQLDialect</prop>
             </props>
         </property>
     </bean>

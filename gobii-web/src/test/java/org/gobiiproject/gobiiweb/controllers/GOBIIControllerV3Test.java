@@ -16,8 +16,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +61,7 @@ public class GOBIIControllerV3Test {
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(gobiiControllerV3).build();
-        //assert this.projectsController.getProjectService() != null;
+        //assert this.projectsController.getProjectService() != null
 
     }
 
@@ -100,5 +105,29 @@ public class GOBIIControllerV3Test {
 
     }
     
+    @Test
+    public void testCreateSimple() throws Exception {
+        GobiiProjectRequestDTO mockRequest = new GobiiProjectRequestDTO();
+        mockRequest.setPiContactId("1"); //need to mock contact here
+        mockRequest.setProjectName("Test project");
+        mockRequest.setProjectDescription("Test description");
+        //this test does not include properties
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(mockRequest);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        ;
+    }
     
 }

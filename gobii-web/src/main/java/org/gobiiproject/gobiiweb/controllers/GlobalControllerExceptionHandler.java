@@ -109,6 +109,7 @@ public class GlobalControllerExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity GeneralExceptionHandler(Exception e) {
+        e.printStackTrace();
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Server Error");
         LOGGER.error(e.getMessage());
