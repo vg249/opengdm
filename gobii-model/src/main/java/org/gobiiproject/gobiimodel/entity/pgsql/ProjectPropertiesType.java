@@ -1,3 +1,10 @@
+/**
+ * ProjectPropertiesType.java
+ * 
+ * UserType for Project Properties
+ * @author Rodolfo N. Duldulao, Jr.
+ * @since 2020-03-13
+ */
 package org.gobiiproject.gobiimodel.entity.pgsql;
 
 import java.io.ByteArrayInputStream;

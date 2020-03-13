@@ -1,3 +1,10 @@
+/**
+ * ProjectProperties.java
+ * 
+ * Project Properties attribute type in Project class
+ * @author Rodolfo N. Duldulao, Jr.
+ * @since 2020-03-13
+ */
 package org.gobiiproject.gobiimodel.entity.pgsql;
 
 import java.util.Collection;
