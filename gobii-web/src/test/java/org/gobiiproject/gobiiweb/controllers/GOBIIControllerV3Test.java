@@ -9,6 +9,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.junit.Before;
@@ -30,6 +32,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,7 +52,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 )
 @WebAppConfiguration
 public class GOBIIControllerV3Test {
-
+    private final static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3Test.class);
     @Mock
     private GobiiProjectService projectService;
 
@@ -60,8 +64,12 @@ public class GOBIIControllerV3Test {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(gobiiControllerV3).build();
-        //assert this.projectsController.getProjectService() != null
+        this.mockMvc = MockMvcBuilders
+            .standaloneSetup(gobiiControllerV3)
+            .setControllerAdvice(new GlobalControllerExceptionHandler())
+            .build();
+
+        //assert this.projectsController.getProjectService() != null.
 
     }
 
@@ -117,6 +125,15 @@ public class GOBIIControllerV3Test {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(mockRequest);
 
+        
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        //let's leave it empty since it's a mock anyways
+		when(
+            projectService.createProject( any(GobiiProjectRequestDTO.class) )
+        ).thenReturn(
+            mockGobiiProject
+        );
+
         mockMvc.perform(
             MockMvcRequestBuilders
             .post("/gobii-dev/gobii/v3/projects")
@@ -127,6 +144,58 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        ;
+    }
+
+    @Test
+    public void testCreateWithProperties() throws Exception {
+        GobiiProjectRequestDTO mockRequest = new GobiiProjectRequestDTO();
+        mockRequest.setPiContactId("1"); //need to mock contact here
+        mockRequest.setProjectName("Test project");
+        mockRequest.setProjectDescription("Test description");
+        java.util.List<CvPropertyDTO> properties = new java.util.ArrayList<>();
+        CvPropertyDTO prop1 = new CvPropertyDTO();
+        prop1.setPropertyId(4);
+        prop1.setPropertyValue("test-value");
+        properties.add(prop1);
+        mockRequest.setProperties(properties);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(mockRequest);
+        System.out.println(requestJson);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        ;
+    }
+
+    @Test
+    public void testCreateWithPropertiesValidationError() throws Exception {
+        String requestJson = "{\"piContactId\" : null,\"projectName\" : null, \"projectDescription\" : \"Test description\"," +
+            "\"properties\" : [ {\"propertyId\" : 4, \"propertyName\" : null, \"propertyValue\" : \"test-value\"} ]}";
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.error").value("piContactId must not be empty, projectName must not be empty"))
         ;
     }
     

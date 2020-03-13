@@ -7,11 +7,16 @@
  */
 package org.gobiiproject.gobiimodel.dto.children;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 
 public class CvPropertyDTO {
 
+    @Positive
     private Integer propertyId = null;
     private String propertyName = null;
+    
+    @NotEmpty
     private String propertyValue = null;
 
     public CvPropertyDTO() {

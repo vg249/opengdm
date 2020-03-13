@@ -78,7 +78,18 @@ public class ProjectDaoImpl implements ProjectDao {
         project.setProjectName(projectName);
         project.setProjectDescription(projectDescription);
         project.setStatus(cv);
-        project.setProperties(new ProjectProperties());
+
+        ProjectProperties props = new ProjectProperties();
+        if (properties != null) {
+            properties.forEach(dto -> {
+                props.put(
+                    dto.getPropertyId().toString(),
+                    dto.getPropertyValue()
+                );
+            });
+        }
+        
+        project.setProperties(props);
         //TODO: set properties
         try {
             em.persist(project);

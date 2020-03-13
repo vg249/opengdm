@@ -20,6 +20,7 @@ package org.gobiiproject.gobiimodel.dto.request;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
  import javax.validation.constraints.Pattern;
 
@@ -36,6 +37,7 @@ public class GobiiProjectRequestDTO {
 
     private String projectDescription;
 
+    @Valid
     private List<CvPropertyDTO> properties;
 
     public GobiiProjectRequestDTO() {
