@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiimodel.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,16 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
+import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
 
 /**
  * Model for Project Entity.
@@ -114,7 +107,17 @@ public class Project extends BaseEntity {
 
     public String getPiContactName() {
         if (this.contact == null) return null;
-        return this.contact.getUsername();
+        if (!isNullOrEmpty(this.contact.getFirstName()) &&
+            !isNullOrEmpty(this.contact.getLastName())) {
+                return String.format("%s, %s", this.contact.getLastName(), this.contact.getFirstName());
+        }
+        if (!isNullOrEmpty(this.contact.getFirstName())) {
+            return this.contact.getFirstName(); //covers one-name persons
+        }
+        if (!isNullOrEmpty(this.contact.getLastName())) {
+            return this.contact.getLastName();
+        }
+        return null;
     }
 
     public Cv getStatus() {
