@@ -55,14 +55,25 @@ public class HttpCore {
     private TokenType tokenType = TokenType.GOBII;
     private String host = null;
     private Integer port = null;
+    private String httpScheme = "http";
     private boolean logJson = false;
-
 
     public HttpCore(String host,
                     Integer port) {
+        this.host = host;
+        this.port = port;
+
+    }
+
+
+    //To set HTTP scheme incase
+    public HttpCore(String host,
+                    Integer port,
+                    String httpScheme) {
 
         this.host = host;
         this.port = port;
+        this.httpScheme = httpScheme;
     }
 
 
@@ -85,7 +96,7 @@ public class HttpCore {
     }
 
     URIBuilder getBaseBuilder() throws Exception {
-        return (new URIBuilder().setScheme("http")
+        return (new URIBuilder().setScheme(this.httpScheme)
                 .setHost(host)
                 .setPort(port));
     }

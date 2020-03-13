@@ -231,6 +231,11 @@ public final class GobiiClientContext {
         String host = url.getHost();
         String context = url.getPath();
         Integer port = url.getPort();
+        String protocol = url.getProtocol();
+
+        if(port == -1) {
+           port = url.getDefaultPort();
+        }
 
 
         if (LineUtils.isNullOrEmpty(host)) {
@@ -247,11 +252,11 @@ public final class GobiiClientContext {
 
         // The /configsettings resource does not require authentication
         // this should be the only case in which we don't provide a crop ID
-        HttpCore httpCore = new HttpCore(host, port);
+         this.httpCore = new HttpCore(host, port, protocol);
         String settingsPath = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath());
 
         RestUri configSettingsUri = new GobiiUriFactory(null).RestUriFromUri(settingsPath);
-        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri);
+        HttpMethodResult httpMethodResult = this.httpCore.get(configSettingsUri);
 
         GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiPayloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
@@ -469,9 +474,17 @@ public final class GobiiClientContext {
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
 
-            this.httpCore = new HttpCore(this.getCurrentCropDomain(),
-                    this.getCurrentCropPort());
+            if (this.httpCore == null) { //initialize on login
+                if(this.getCurrentCropPort()==443){
 
+                    this.httpCore = new HttpCore(this.getCurrentCropDomain(),
+                            this.getCurrentCropPort(), "https");
+                }else {
+
+                    this.httpCore = new HttpCore(this.getCurrentCropDomain(),
+                            this.getCurrentCropPort());
+                }
+            }
 
             HttpMethodResult httpMethodResult = this.getHttp().authenticateWithUser(authUri, userName, password);
 
