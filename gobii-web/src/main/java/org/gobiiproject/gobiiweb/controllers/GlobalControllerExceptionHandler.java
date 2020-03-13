@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import javax.persistence.PersistenceException;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
@@ -138,8 +140,21 @@ public class GlobalControllerExceptionHandler {
         errorPayload.setError(ve.getMessage());
         LOGGER.error(ve.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+    }
+
+    @ExceptionHandler(PersistenceException.class)
+    public ResponseEntity PersistenceExceptionHandler(PersistenceException pe) {
+        ErrorPayload errorPayload = new ErrorPayload();
+        if (pe.getMessage().contains("ConstraintViolation")) {
+            errorPayload.setError("Entity already exists");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+        }
+
+        errorPayload.setError(pe.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorPayload);
 
     }
+
     @ExceptionHandler({NullPointerException.class,ResourceDoesNotExistException.class})
     public ResponseEntity NullPointerExceptionHandler(NullPointerException e) {
         ErrorPayload errorPayload = new ErrorPayload();

@@ -1,4 +1,12 @@
+/**
+ * ProjectDaoImplTest.java
+ * 
+ * This test requires a test db.
+ */
 package org.gobiiproject.gobiisampletrackingdao;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -53,6 +61,13 @@ public class ProjectDaoImplTest {
         assert project != null;
         assert project.getProjectId() > 0;
         assert project.getProperties().size() == 1;
+    }
+
+    @Test(expected = javax.persistence.PersistenceException.class)
+    @Transactional
+    public void testDoubleCreateProject() throws Exception {
+        Project project = v3ProjectDao.createProject("4", "test", "", null);
+        Project project2 = v3ProjectDao.createProject("4", "test", "", null);
     }
 
 }

@@ -88,16 +88,12 @@ public class ProjectDaoImpl implements ProjectDao {
                 );
             });
         }
-        
+
         project.setProperties(props);
-        //TODO: set properties
-        try {
-            em.persist(project);
-            em.flush();
-            LOGGER.debug("Project " +  project.getProjectId());
-        } catch (Exception e) {
-            LOGGER.debug(e.toString());
-        }
+        
+        em.persist(project);
+        em.flush();
+        
 		return project;
     }
     
