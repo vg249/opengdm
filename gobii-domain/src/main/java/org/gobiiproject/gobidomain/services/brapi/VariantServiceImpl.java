@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -7,12 +8,15 @@ import org.gobiiproject.gobiimodel.dto.brapi.VariantDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class VariantServiceImpl implements VariantService {
 
@@ -49,6 +53,15 @@ public class VariantServiceImpl implements VariantService {
                 VariantDTO variantDTO = new VariantDTO();
 
                 ModelMapper.mapEntityToDto(marker, variantDTO);
+
+                if(marker.getDatasetMarkerIdx() != null) {
+
+                    List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
+                            marker.getDatasetMarkerIdx().fieldNames());
+
+                    variantDTO.setVariantSetDbId(variantSetDbIds);
+
+                }
 
                 variants.add(variantDTO);
             }
