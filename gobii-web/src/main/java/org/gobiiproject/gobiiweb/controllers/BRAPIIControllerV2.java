@@ -433,11 +433,13 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "ID of the Variant to be extracted", required = true)
             @PathVariable("variantDbId") Integer variantDbId) {
 
-        Integer variantDbIdInt;
-
         try {
 
-            return ResponseEntity.ok("");
+            VariantDTO variantDTO = variantService.getVariantByVariantDbId(variantDbId);
+
+            BrApiMasterPayload<VariantDTO> payload = new BrApiMasterPayload<>(variantDTO);
+
+            return ResponseEntity.ok(payload);
 
         }
         catch (Exception e) {
