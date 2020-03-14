@@ -102,8 +102,37 @@ public class VariantServiceImpl implements VariantService {
 
     @Override
     public VariantDTO getVariantByVariantDbId(Integer variantDbId) {
+
         VariantDTO returnVal = new VariantDTO();
-        return returnVal;
+
+        try {
+
+            Objects.requireNonNull(variantDbId, "variantDbId : Required non null");
+
+            Marker marker = markerDao.getMarkerById(variantDbId);
+
+            ModelMapper.mapEntityToDto(marker, returnVal);
+
+            if(marker.getDatasetMarkerIdx() != null) {
+
+                List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
+                        marker.getDatasetMarkerIdx().fieldNames());
+
+                returnVal.setVariantSetDbId(variantSetDbIds);
+
+            }
+
+            return returnVal;
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
     }
 
 
