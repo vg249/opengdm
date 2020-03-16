@@ -29,6 +29,8 @@ import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class GobiiProjectServiceImpl implements GobiiProjectService {
     Logger LOGGER = LoggerFactory.getLogger(GobiiProjectServiceImpl.class);
@@ -82,13 +84,14 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
 
 	@Override
-	public GobiiProjectDTO createProject(GobiiProjectRequestDTO request) throws Exception {
+	public GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception {
         //check if contact exists
         Project project = projectDao.createProject(
             request.getPiContactId(),
             request.getProjectName(),
             request.getProjectDescription(),
-            request.getProperties()
+            request.getProperties(),
+            createdBy
         );
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
@@ -98,5 +101,12 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         return dto;
 
 	}
+
+    @Override
+    public String getDefaultProjectCreator() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) return auth.getName();
+        return null;
+    }
 
 }

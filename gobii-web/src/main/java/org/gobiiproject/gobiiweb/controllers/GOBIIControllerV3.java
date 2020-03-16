@@ -105,7 +105,10 @@ public class GOBIIControllerV3  {
             throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
         } 
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
-        GobiiProjectDTO createdDTO = projectService.createProject(project);
+
+        //Get the current user
+        String userName = projectService.getDefaultProjectCreator();
+        GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
         result.setResult(createdDTO);
         result.setMetadata(null);
         return ResponseEntity.created(null).body(result);

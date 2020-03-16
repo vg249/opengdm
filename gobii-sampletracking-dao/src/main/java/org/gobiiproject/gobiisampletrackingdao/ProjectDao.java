@@ -21,6 +21,7 @@ public interface ProjectDao {
         String contactId,
         String projectName,
         String projectDescrition,
-        List<CvPropertyDTO> properties
+        List<CvPropertyDTO> properties,
+        String createByUser
     ) throws Exception;
 }

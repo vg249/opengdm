@@ -49,7 +49,7 @@ public class ProjectDaoImplTest {
     public void testCreateProject() throws Exception {
         List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),GobiiCvGroupType.GROUP_TYPE_SYSTEM);
         assert cvList.size() > 0;
-        Project project = v3ProjectDao.createProject("4", "test", "", null);
+        Project project = v3ProjectDao.createProject("4", "test", "", null, "gadm");
         assert project != null;
         assert project.getProjectId() > 0;
         assert project.getStatus().getCvId() == cvList.get(0).getCvId();
@@ -65,7 +65,7 @@ public class ProjectDaoImplTest {
         prop1.setPropertyValue("test-value");
         cvProps.add(prop1);
 
-        Project project = v3ProjectDao.createProject("4", "test", "test", cvProps);
+        Project project = v3ProjectDao.createProject("4", "test", "test", cvProps, "gadm");
         assert project != null;
         assert project.getProjectId() > 0;
         assert project.getProperties().size() == 1;
@@ -74,8 +74,8 @@ public class ProjectDaoImplTest {
     @Test(expected = javax.persistence.PersistenceException.class)
     @Transactional
     public void testDoubleCreateProject() throws Exception {
-        Project project = v3ProjectDao.createProject("4", "test", "", null);
-        Project project2 = v3ProjectDao.createProject("4", "test", "", null);
+        Project project = v3ProjectDao.createProject("4", "test", "", null, "gadm");
+        Project project2 = v3ProjectDao.createProject("4", "test", "", null, "gadm");
     }
 
 }

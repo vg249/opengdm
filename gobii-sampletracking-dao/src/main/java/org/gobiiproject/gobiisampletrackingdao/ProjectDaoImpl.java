@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -12,6 +14,7 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.system.User;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -19,7 +22,6 @@ import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.hibernate.criterion.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +75,7 @@ public class ProjectDaoImpl implements ProjectDao {
     @Transactional
 	@Override
 	public Project createProject(String contactId, String projectName, String projectDescription,
-			List<CvPropertyDTO> properties) throws Exception {
+			List<CvPropertyDTO> properties, String createByUserName) throws Exception {
 
         Contact contact = this.getContact(Integer.parseInt(contactId));
         if (contact == null) throw new GobiiDaoException("Contact Not Found");
@@ -108,6 +110,10 @@ public class ProjectDaoImpl implements ProjectDao {
         }
 
         project.setProperties(props);
+        //audit items
+        Contact creator = this.getContactByUsername(createByUserName);
+        if (creator != null) project.setCreatedBy(creator.getContactId());
+        project.setCreatedDate(new java.util.Date());
         
         em.persist(project);
         em.flush();
@@ -116,6 +122,18 @@ public class ProjectDaoImpl implements ProjectDao {
     }
     
 
+    public Contact getContactByUsername(String username) throws Exception {
+        try {
+            TypedQuery<Contact> tq = em.createQuery("FROM Contact WHERE username=?1", Contact.class);
+            Contact result = tq.setParameter(1, username).getSingleResult();
+            return result;
+        } catch (NoResultException nre) {
+            return null;
+        } catch (Exception e) {
+            throw e;    
+        }
+        
+    }
     /**
      * Get Contact data
      */

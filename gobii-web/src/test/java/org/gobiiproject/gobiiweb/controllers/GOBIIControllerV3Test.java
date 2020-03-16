@@ -8,8 +8,10 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -139,8 +141,10 @@ public class GOBIIControllerV3Test {
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
+        doReturn("gadm").when(projectService).getDefaultProjectCreator();
+        
 		when(
-            projectService.createProject( any(GobiiProjectRequestDTO.class) )
+            projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm"))
         ).thenReturn(
             mockGobiiProject
         );
@@ -166,11 +170,14 @@ public class GOBIIControllerV3Test {
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
+        doReturn("gadm").when(projectService).getDefaultProjectCreator();
         when(
-            projectService.createProject( any(GobiiProjectRequestDTO.class) )
+            projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm") )
         ).thenReturn(
             mockGobiiProject
         );
+
+        
 
         mockMvc.perform(
             MockMvcRequestBuilders
