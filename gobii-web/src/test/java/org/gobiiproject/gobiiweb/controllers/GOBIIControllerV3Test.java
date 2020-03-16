@@ -78,6 +78,16 @@ public class GOBIIControllerV3Test {
         dto.setId(1);
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
+        
+        //mock DTO
+        CvPropertyDTO propDto = new CvPropertyDTO();
+        propDto.setPropertyGroupId(1);
+        propDto.setPropertyGroupName("test-group");
+        propDto.setPropertyType(1);
+
+        List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
+        propDtoList.add(propDto);
+
         return dto;
     }
 
@@ -109,6 +119,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
         .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
         .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
+        .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system"))
         ;
 
     }
