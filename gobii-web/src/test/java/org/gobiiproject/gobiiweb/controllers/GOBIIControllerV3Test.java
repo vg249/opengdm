@@ -26,6 +26,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,12 +88,12 @@ public class GOBIIControllerV3Test {
 
         List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
         propDtoList.add(propDto);
-
+        dto.setProperties(propDtoList);
         return dto;
     }
 
     @Test
-    public void simpleTest() throws Exception {
+    public void simpleListTest() throws Exception {
         assert projectService != null;
         List<GobiiProjectDTO> mockList = new ArrayList<GobiiProjectDTO>();
         GobiiProjectDTO mockItem = createMockProjectDTO();
@@ -119,7 +120,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
         .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
         .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
-        .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system"))
+        .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system defined"))
         ;
 
     }
@@ -136,7 +137,6 @@ public class GOBIIControllerV3Test {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(mockRequest);
 
-        
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
 		when(
@@ -155,28 +155,22 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
     }
 
     @Test
     public void testCreateWithProperties() throws Exception {
-        GobiiProjectRequestDTO mockRequest = new GobiiProjectRequestDTO();
-        mockRequest.setPiContactId("1"); //need to mock contact here
-        mockRequest.setProjectName("Test project");
-        mockRequest.setProjectDescription("Test description");
-        java.util.List<CvPropertyDTO> properties = new java.util.ArrayList<>();
-        CvPropertyDTO prop1 = new CvPropertyDTO();
-        prop1.setPropertyId(4);
-        prop1.setPropertyValue("test-value");
-        properties.add(prop1);
-        mockRequest.setProperties(properties);
+        String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+            "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
 
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(mockRequest);
-        System.out.println(requestJson);
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        //let's leave it empty since it's a mock anyways
+        when(
+            projectService.createProject( any(GobiiProjectRequestDTO.class) )
+        ).thenReturn(
+            mockGobiiProject
+        );
 
         mockMvc.perform(
             MockMvcRequestBuilders
@@ -188,6 +182,7 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
     }
 
@@ -206,7 +201,8 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.error").value("piContactId must not be empty, projectName must not be empty"))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be empty")))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("projectName must not be empty")))
         ;
     }
     

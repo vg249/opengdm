@@ -107,6 +107,7 @@ public class GOBIIControllerV3  {
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
         GobiiProjectDTO createdDTO = projectService.createProject(project);
         result.setResult(createdDTO);
+        result.setMetadata(null);
         return ResponseEntity.created(null).body(result);
     }
 

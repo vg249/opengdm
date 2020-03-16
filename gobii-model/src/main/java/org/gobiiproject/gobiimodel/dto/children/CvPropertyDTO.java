@@ -23,12 +23,14 @@ public class CvPropertyDTO {
 
     @GobiiEntityMap(paramName="cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Positive
     private Integer propertyId = null;
 
     @GobiiEntityMap(paramName="term", entity = Cv.class)
     private String propertyName = null;
 
     //this is from the props column of Project
+    @NotEmpty
     private String propertyValue = null;
 
     @GobiiEntityMap(paramName="cvGroup.cvGroupId", entity = Cv.class, deep = true)
