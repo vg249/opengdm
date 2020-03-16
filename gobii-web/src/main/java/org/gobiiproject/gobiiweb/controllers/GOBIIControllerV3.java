@@ -102,7 +102,7 @@ public class GOBIIControllerV3  {
                     info.add(objErr.getField() + " " + objErr.getDefaultMessage());
                 }
             );
-            throw new ValidationException(String.join(", ", info.toArray(new String[info.size()])));
+            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
         } 
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
         GobiiProjectDTO createdDTO = projectService.createProject(project);
