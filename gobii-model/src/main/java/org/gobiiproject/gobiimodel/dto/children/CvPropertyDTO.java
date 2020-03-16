@@ -99,7 +99,6 @@ public class CvPropertyDTO {
         return this.propertyGroupType;
     }
     public void setPropertyGroupType(Integer propertyType) {
-        System.out.println("THIS IS CALLED");
         this.propertyGroupType = propertyType;
         this.setPropertyType(propertyType);
     }
