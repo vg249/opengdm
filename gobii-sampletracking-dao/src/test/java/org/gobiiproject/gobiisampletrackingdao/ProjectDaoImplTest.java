@@ -5,11 +5,13 @@
  */
 package org.gobiiproject.gobiisampletrackingdao;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class ProjectDaoImplTest {
+
+    @Autowired
+    private CvDao cvDao;
 
     @Autowired
     private ProjectDao v3ProjectDao;
@@ -42,9 +47,12 @@ public class ProjectDaoImplTest {
     @Test
     @Transactional
     public void testCreateProject() throws Exception {
+        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+        assert cvList.size() > 0;
         Project project = v3ProjectDao.createProject("4", "test", "", null);
         assert project != null;
         assert project.getProjectId() > 0;
+        assert project.getStatus().getCvId() == cvList.get(0).getCvId();
     }
 
     @Test

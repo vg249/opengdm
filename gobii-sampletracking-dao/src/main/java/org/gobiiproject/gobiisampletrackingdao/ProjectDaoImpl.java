@@ -10,20 +10,26 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProjectDaoImpl implements ProjectDao {
 
     Logger LOGGER = LoggerFactory.getLogger(ProjectDaoImpl.class);
     
+    @Autowired
+    private CvDao cvDao;
+
     @PersistenceContext
     protected EntityManager em;
 
@@ -70,7 +76,16 @@ public class ProjectDaoImpl implements ProjectDao {
         if (contact == null) throw new GobiiDaoException("Contact Not Found");
         LOGGER.debug("Contact " + contact.getFirstName());
     
-        Cv cv = em.getReference(Cv.class, 1);
+        //Get the Cv for status, new row
+
+
+        List<Cv> cvList = cvDao.getCvs( "new",
+                CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+        
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
         LOGGER.debug("Cv " + cv.getTerm());
         Project project = new Project();
                 
