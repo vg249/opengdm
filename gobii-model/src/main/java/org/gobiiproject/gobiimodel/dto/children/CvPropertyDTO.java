@@ -8,23 +8,28 @@
 package org.gobiiproject.gobiimodel.dto.children;
 
 
-public class CvPropertyDTO {
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+
+public class CvPropertyDTO {
+    private final static String PROPERTY_TYPE_SYSTEM = "system";
+    private final static String PROPERTY_TYPE_CUSTOM = "user defined";
+
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer propertyId = null;
     private String propertyName = null;
     private String propertyValue = null;
+
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer propertyGroupId;
+    private String propertyGroupName;
+    private String propertyType;
 
     public CvPropertyDTO() {
 
     }
 
-    public CvPropertyDTO(Integer propertyId,
-                             String propertyName,
-                             String propertyValue) {
-        this.propertyId = propertyId;
-        this.propertyName = propertyName;
-        this.propertyValue = propertyValue;
-    }
 
   
     public String getPropertyName() {
@@ -51,5 +56,33 @@ public class CvPropertyDTO {
         this.propertyId = propertyId;
     }
 
+    public Integer getPropertyGroupId() {
+        return propertyGroupId;
+    }
+
+    public void setPropertyGroupId(Integer propertyGroupId) {
+        this.propertyGroupId = propertyGroupId;
+    }
+
+    public String getPropertyGroupName() {
+        return propertyGroupName;
+    }
+
+    public void setPropertyGroupName(String propertyGroupName) {
+        this.propertyGroupName = propertyGroupName;
+    }
+
+    public String getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
+    }
+
+    public void setPropertyType(Integer propertyType) {
+        if (propertyType == 1) this.propertyType = PROPERTY_TYPE_SYSTEM;
+        else if (propertyType == 2) this.propertyType = PROPERTY_TYPE_CUSTOM;
+    }
 
 }
