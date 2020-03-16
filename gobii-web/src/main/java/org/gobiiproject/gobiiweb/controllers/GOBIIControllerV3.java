@@ -9,24 +9,30 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.Api;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 @Scope(value = "request")
 @RestController
@@ -34,10 +40,52 @@ import io.swagger.annotations.Api;
 @Api()
 @CrossOrigin
 public class GOBIIControllerV3 {
+
+
     private static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
     
     @Autowired
     private GobiiProjectService projectService = null;
+
+
+    /**
+     * Authentication Endpoint
+     * Mimicking same logic used in v1
+     * @param request - Request from the client
+     * @param response - Response with Headers values filled in TokenFilter
+     * @return
+     */
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity authenticate(HttpServletRequest request,
+                                       HttpServletResponse response) {
+
+        try {
+
+            HeaderAuth dtoHeaderAuth = new HeaderAuth();
+
+            PayloadWriter<AuthDTO> payloadWriter = new PayloadWriter<>(
+                    request, response, AuthDTO.class);
+
+            payloadWriter.setAuthHeader(dtoHeaderAuth, response);
+
+            return ResponseEntity.ok(dtoHeaderAuth);
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
+
+
+    }
 
     /**
      * getProjectsList 
