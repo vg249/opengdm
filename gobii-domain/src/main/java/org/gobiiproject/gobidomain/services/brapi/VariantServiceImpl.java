@@ -63,6 +63,11 @@ public class VariantServiceImpl implements VariantService {
 
                 }
 
+                if(marker.getMarkerName() != null) {
+                    variantDTO.setVariantNames(new ArrayList<>());
+                    variantDTO.getVariantNames().add(marker.getMarkerName());
+                }
+
                 variants.add(variantDTO);
             }
 
