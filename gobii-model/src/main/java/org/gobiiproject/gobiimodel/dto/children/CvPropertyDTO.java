@@ -18,7 +18,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 
 @JsonIgnoreProperties({"propertyGroupType"})
 public class CvPropertyDTO {
-    private final static String PROPERTY_TYPE_SYSTEM = "system";
+    private final static String PROPERTY_TYPE_SYSTEM = "system defined";
     private final static String PROPERTY_TYPE_CUSTOM = "user defined";
 
     @GobiiEntityMap(paramName="cvId", entity = Cv.class)
