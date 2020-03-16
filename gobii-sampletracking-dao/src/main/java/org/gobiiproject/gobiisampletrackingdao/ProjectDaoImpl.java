@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.criterion.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ public class ProjectDaoImpl implements ProjectDao {
             Root<Project> projectRoot = criteriaQuery.from(Project.class);
             projectRoot.fetch("contact");
             criteriaQuery.select(projectRoot);
+            criteriaQuery.orderBy(criteriaBuilder.asc(projectRoot.get("projectId")));
+            
 
             projects = em.createQuery(criteriaQuery)
                 .setFirstResult(pageNum * pageSize)
