@@ -7,31 +7,45 @@
  */
 package org.gobiiproject.gobiimodel.dto.children;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.Cv;
 
+@JsonIgnoreProperties({"propertyGroupType"})
 public class CvPropertyDTO {
     private final static String PROPERTY_TYPE_SYSTEM = "system";
     private final static String PROPERTY_TYPE_CUSTOM = "user defined";
 
+    @GobiiEntityMap(paramName="cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer propertyId = null;
+
+    @GobiiEntityMap(paramName="term", entity = Cv.class)
     private String propertyName = null;
+
+    //this is from the props column of Project
     private String propertyValue = null;
 
+    @GobiiEntityMap(paramName="cvGroup.cvGroupId", entity = Cv.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer propertyGroupId;
+
+    @GobiiEntityMap(paramName="cvGroup.cvGroupName", entity = Cv.class, deep = true)
     private String propertyGroupName;
-    private String propertyType;
+
+    @GobiiEntityMap(paramName="cvGroup.cvGroupType", entity = Cv.class, deep = true)
+    private Integer propertyGroupType;
+
+    private String propertyType; //alias
 
     public CvPropertyDTO() {
 
     }
 
 
-  
     public String getPropertyName() {
         return propertyName;
     }
@@ -72,17 +86,22 @@ public class CvPropertyDTO {
         this.propertyGroupName = propertyGroupName;
     }
 
-    public String getPropertyType() {
-        return propertyType;
-    }
-
-    public void setPropertyType(String propertyType) {
-        this.propertyType = propertyType;
+    public String getPropertyType() {  
+        return this.propertyType;
     }
 
     public void setPropertyType(Integer propertyType) {
-        if (propertyType == 1) this.propertyType = PROPERTY_TYPE_SYSTEM;
-        else if (propertyType == 2) this.propertyType = PROPERTY_TYPE_CUSTOM;
+        if (propertyType == 1) this.propertyType =  PROPERTY_TYPE_SYSTEM;
+        else if (propertyType == 2) this.propertyType =  PROPERTY_TYPE_CUSTOM;
+    }
+
+    public Integer getPropertyGroupType() {
+        return this.propertyGroupType;
+    }
+    public void setPropertyGroupType(Integer propertyType) {
+        System.out.println("THIS IS CALLED");
+        this.propertyGroupType = propertyType;
+        this.setPropertyType(propertyType);
     }
 
 }
