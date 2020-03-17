@@ -2,6 +2,8 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -29,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ProjectDaoImpl implements ProjectDao {
 
     Logger LOGGER = LoggerFactory.getLogger(ProjectDaoImpl.class);
-    
+
     @Autowired
     private CvDao cvDao;
 
@@ -37,7 +39,7 @@ public class ProjectDaoImpl implements ProjectDao {
     protected EntityManager em;
 
     final int defaultPageSize = 1000;
-    
+
     @Transactional
     @Override
     public List<Project> getProjects(Integer pageNum, Integer pageSize) {
@@ -53,47 +55,41 @@ public class ProjectDaoImpl implements ProjectDao {
             projectRoot.fetch("contact");
             criteriaQuery.select(projectRoot);
             criteriaQuery.orderBy(criteriaBuilder.asc(projectRoot.get("projectId")));
-            
 
-            projects = em.createQuery(criteriaQuery)
-                .setFirstResult(pageNum * pageSize)
-                .setMaxResults(pageSize)
-                .getResultList(); 
+            projects = em.createQuery(criteriaQuery).setFirstResult(pageNum * pageSize).setMaxResults(pageSize)
+                    .getResultList();
             LOGGER.debug("Projects List " + projects.size());
             return projects;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                e.getMessage() +  " Cause Message: " + e.getCause().getMessage()
-             );
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
-        
+
     }
 
     @Transactional
-	@Override
-	public Project createProject(String contactId, String projectName, String projectDescription,
-			List<CvPropertyDTO> properties, String createByUserName) throws Exception {
+    @Override
+    public Project createProject(String contactId, String projectName, String projectDescription,
+            List<CvPropertyDTO> properties, String createByUserName) throws Exception {
 
         Contact contact = this.getContact(Integer.parseInt(contactId));
-        if (contact == null) throw new GobiiDaoException("Contact Not Found");
+        if (contact == null)
+            throw new GobiiDaoException("Contact Not Found");
         LOGGER.debug("Contact " + contact.getFirstName());
-    
-        //Get the Cv for status, new row
 
+        // Get the Cv for status, new row
 
-        List<Cv> cvList = cvDao.getCvs( "new",
-                CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-        
+        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
         Cv cv = null;
         if (!cvList.isEmpty()) {
             cv = cvList.get(0);
         }
         LOGGER.debug("Cv " + cv.getTerm());
         Project project = new Project();
-                
+
         project.setContact(contact);
         project.setProjectName(projectName);
         project.setProjectDescription(projectDescription);
@@ -102,25 +98,23 @@ public class ProjectDaoImpl implements ProjectDao {
         ProjectProperties props = new ProjectProperties();
         if (properties != null) {
             properties.forEach(dto -> {
-                props.put(
-                    dto.getPropertyId().toString(),
-                    dto.getPropertyValue()
-                );
+                //TODO: no checking if Cv exists
+                props.put(dto.getPropertyId().toString(), dto.getPropertyValue());
             });
         }
 
         project.setProperties(props);
-        //audit items
+        // audit items
         Contact creator = this.getContactByUsername(createByUserName);
-        if (creator != null) project.setCreatedBy(creator.getContactId());
+        if (creator != null)
+            project.setCreatedBy(creator.getContactId());
         project.setCreatedDate(new java.util.Date());
-        
+
         em.persist(project);
         em.flush();
-        
-		return project;
+
+        return project;
     }
-    
 
     public Contact getContactByUsername(String username) throws Exception {
         try {
@@ -130,10 +124,11 @@ public class ProjectDaoImpl implements ProjectDao {
         } catch (NoResultException nre) {
             return null;
         } catch (Exception e) {
-            throw e;    
+            throw e;
         }
-        
+
     }
+
     /**
      * Get Contact data
      */
@@ -143,6 +138,98 @@ public class ProjectDaoImpl implements ProjectDao {
 
     public Cv getCv(Integer id) throws Exception {
         return em.find(Cv.class, id);
+    }
+
+    @Transactional
+    @Override
+    public Project patchProject(Integer projectId, Map<String, String> attributes,
+            List<Map<String, String>> propertiesList, String updatedBy) throws Exception {
+        
+        Project project = em.find(Project.class, projectId);
+        if (project == null) {
+            return null;
+        }
+
+        //audit items first
+        Contact editor = this.getContactByUsername(updatedBy);
+        project.setModifiedBy(null);
+        if (editor != null)
+            project.setModifiedBy(editor.getContactId());
+        project.setModifiedDate(new java.util.Date());
+        
+        if (attributes != null && attributes.size() > 0) {
+            this.updateAttributes(project, attributes);
+        }
+      
+        if (propertiesList != null && propertiesList.size() > 0) {
+            this.updateProperties(project, propertiesList);
+        }
+
+        //set new status
+
+        List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
+        project.setStatus(cv);
+
+        em.persist(project);
+        em.flush();
+
+        return project;
+
+    }
+
+    private void updateProperties(Project project, List<Map<String, String>> propertiesList) {
+        ProjectProperties properties = project.getProperties();
+        for (Map<String, String> prop: propertiesList) {
+            String key = prop.get("propertyId");
+            String value = prop.get("propertyValue");
+            if (properties.containsKey(key) && value == null) {
+                //remove the property
+                properties.remove(key);
+            } else if (properties.containsKey(key) && value != null) {
+                properties.put(key, value);
+            } else if (!properties.containsKey(key)) {
+                properties.put(key, value); //TODO: no checking if Cv exists?
+            }
+        }
+        project.setProperties(properties);
+    }
+
+    private void updateAttributes(Project project, Map<String, String> attributes)
+            throws NumberFormatException, Exception {
+        for (String key: attributes.keySet()) {
+            String value = attributes.get(key);
+            switch(key) {
+                case "piContactId":
+                    this.updateContact(project, value);
+                    break;
+                case "projectName":
+                    this.updateProjectName(project, value);
+                    break;
+                case "projectDescription":
+                    this.updateProjectDescription(project, value);
+                    break;
+            }
+        }
+    }
+
+    private void updateProjectDescription(Project project, String value) {
+        project.setProjectDescription(value);
+    }
+
+    private void updateProjectName(Project project, String value) throws Exception {
+        if (value == null || value.trim() == "") throw new Exception("projectName is required");
+        project.setProjectName(value);
+    }
+
+    private void updateContact(Project project, String value) throws NumberFormatException, Exception {
+        Contact contact = this.getContact(Integer.parseInt(value));
+        project.setContact(contact);
     }
 
     

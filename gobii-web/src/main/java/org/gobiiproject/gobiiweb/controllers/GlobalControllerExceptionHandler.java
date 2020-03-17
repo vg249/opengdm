@@ -159,6 +159,7 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity NullPointerExceptionHandler(NullPointerException e) {
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Resource not found");
+        e.printStackTrace();
         LOGGER.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorPayload);
     }

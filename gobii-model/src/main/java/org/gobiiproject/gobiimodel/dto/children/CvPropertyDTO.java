@@ -9,6 +9,8 @@ package org.gobiiproject.gobiimodel.dto.children;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -17,9 +19,12 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.Cv;
 
 @JsonIgnoreProperties({"propertyGroupType"})
-public class CvPropertyDTO {
+public class CvPropertyDTO  {
     private final static String PROPERTY_TYPE_SYSTEM = "system defined";
     private final static String PROPERTY_TYPE_CUSTOM = "user defined";
+    
+    @JsonIgnore
+    private java.util.List<String> _isKeyInInput = new java.util.ArrayList<>();
 
     @GobiiEntityMap(paramName="cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -64,6 +69,7 @@ public class CvPropertyDTO {
 
     public void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
+        this._isKeyInInput.add("propertyValue");
     }
 
     public Integer getPropertyId() {
@@ -72,6 +78,7 @@ public class CvPropertyDTO {
 
     public void setPropertyId(Integer propertyId) {
         this.propertyId = propertyId;
+        this._isKeyInInput.add("propertyId");
     }
 
     public Integer getPropertyGroupId() {
@@ -105,6 +112,10 @@ public class CvPropertyDTO {
     public void setPropertyGroupType(Integer propertyType) {
         this.propertyGroupType = propertyType;
         this.setPropertyType(propertyType);
+    }
+
+    public boolean keyInPayload(String key) {
+        return this._isKeyInInput.contains(key);
     }
 
 }

@@ -9,6 +9,8 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,6 +28,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.hamcrest.core.StringContains;
@@ -51,7 +54,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
     classes = GOBIIControllerV3TestConfiguration.class
-  //locations = { "classpath:/spring/application-config.xml" }
+    //locations = { "classpath:/spring/application-config.xml" }
 )
 @WebAppConfiguration
 public class GOBIIControllerV3Test {
@@ -141,7 +144,7 @@ public class GOBIIControllerV3Test {
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
-        doReturn("gadm").when(projectService).getDefaultProjectCreator();
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
         
 		when(
             projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm"))
@@ -170,7 +173,7 @@ public class GOBIIControllerV3Test {
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
-        doReturn("gadm").when(projectService).getDefaultProjectCreator();
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
         when(
             projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm") )
         ).thenReturn(
@@ -211,6 +214,35 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be empty")))
         .andExpect(jsonPath("$.error").value(StringContains.containsString("projectName must not be empty")))
         ;
+    }
+
+    //Update (PATCH tests)
+    @Test
+    public void testPatchProjectName() throws Exception {
+        String requestJson = "{\"projectName\" : null}";
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        //let's leave it empty since it's a mock anyways
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
+        when(
+            projectService.patchProject(eq(123), any(GobiiProjectPatchDTO.class), eq("gadm"))
+        ).thenReturn(
+            mockGobiiProject
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/projects/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        ;
+
+        verify(projectService,times(1)).patchProject(eq(123), any(GobiiProjectPatchDTO.class), eq("gadm") );
+
     }
     
 }

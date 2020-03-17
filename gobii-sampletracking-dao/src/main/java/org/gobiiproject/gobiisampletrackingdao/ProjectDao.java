@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -23,5 +24,12 @@ public interface ProjectDao {
         String projectDescrition,
         List<CvPropertyDTO> properties,
         String createByUser
+    ) throws Exception;
+
+    Project patchProject(
+        Integer projectId,
+        Map<String, String> attributes,
+        List<Map<String, String>> propertiesList,
+        String updatedBy
     ) throws Exception;
 }
