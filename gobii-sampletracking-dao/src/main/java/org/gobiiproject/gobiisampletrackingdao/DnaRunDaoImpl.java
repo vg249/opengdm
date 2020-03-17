@@ -232,7 +232,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         try {
 
-            List<DnaRun> dnaRunsById = this.getDnaRuns(null, null,
+            List<DnaRun> dnaRunsById = this.getDnaRuns(2, 0,
                     dnaRunId, null,
                     null, null,
                     null, null,
