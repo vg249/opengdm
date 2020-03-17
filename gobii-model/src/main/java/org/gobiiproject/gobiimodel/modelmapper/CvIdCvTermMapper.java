@@ -92,9 +92,10 @@ public class CvIdCvTermMapper {
         try {
             for(Cv cv : cvList) {
                 if(propertiesJson.has(cv.getCvId().toString())) {
+
                     CvPropertyDTO dto = new CvPropertyDTO();
-                    dto.setPropertyId(cv.getCvId());
-                    dto.setPropertyName(cv.getTerm());
+                    ModelMapper.mapEntityToDto(cv, dto);
+                    dto.setPropertyType(cv.getCvGroup().getCvGroupType());
                     dto.setPropertyValue(propertiesJson.get(cv.getCvId().toString()).asText());
                     dtoList.add(dto);
                 }
