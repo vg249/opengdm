@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 
+@Ignore
 public class HapmapTransformerTest {
 
     /**
