@@ -78,6 +78,13 @@ public class ProjectDaoImplTest {
         Project project2 = v3ProjectDao.createProject("4", "test", "", null, "gadm");
     }
 
+    @Test
+    @Transactional
+    public void testGetProjectProperties() {
+        List<Cv> cvs = v3ProjectDao.getProjectProperties(0, 1000);
+        assert cvs.size() > 0;
+    }
+
 }
 
 

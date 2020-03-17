@@ -34,7 +34,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class GobiiProjectServiceImpl implements GobiiProjectService {
     Logger LOGGER = LoggerFactory.getLogger(GobiiProjectServiceImpl.class);
-    
+
     // @Autowired
     // private DtoMapV3Project dtoMapV3Project;
     @Autowired
@@ -43,14 +43,13 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
     @Autowired
     private CvDao cvDao;
 
-
     @Override
     public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
 
         LOGGER.debug("Getting projects list offset %d size %d", pageNum, pageSize);
         PagedResult<GobiiProjectDTO> pagedResult;
 
-        //get Cvs
+        // get Cvs
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
@@ -61,14 +60,15 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
             projects.forEach(project -> {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
-                
-                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
-               
+
+                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs,
+                        project.getProperties().getProperties());
+
                 dto.setProperties(propDTOs);
-                
+
                 projectDTOs.add(dto);
             });
-            
+
             pagedResult = new PagedResult<>();
             pagedResult.setResult(projectDTOs);
             pagedResult.setCurrentPageNum(pageNum);
@@ -79,20 +79,14 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         } catch (Exception e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
-        }  
+        }
     }
 
-
-	@Override
-	public GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception {
-        //check if contact exists
-        Project project = projectDao.createProject(
-            request.getPiContactId(),
-            request.getProjectName(),
-            request.getProjectDescription(),
-            request.getProperties(),
-            createdBy
-        );
+    @Override
+    public GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception {
+        // check if contact exists
+        Project project = projectDao.createProject(request.getPiContactId(), request.getProjectName(),
+                request.getProjectDescription(), request.getProperties(), createdBy);
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
@@ -100,13 +94,36 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         dto.setProperties(propDTOs);
         return dto;
 
-	}
+    }
 
     @Override
     public String getDefaultProjectCreator() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) return auth.getName();
+        if (auth != null)
+            return auth.getName();
         return null;
+    }
+
+    @Override
+    public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
+        PagedResult<CvPropertyDTO> pagedResult;
+
+        try {
+            Objects.requireNonNull(pageSize);
+            Objects.requireNonNull(page);
+            List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
+            List<CvPropertyDTO> converted = CvIdCvTermMapper.convert(cvs);
+            pagedResult = new PagedResult<>();
+            pagedResult.setResult(converted);
+            pagedResult.setCurrentPageNum(page);
+            pagedResult.setCurrentPageSize(converted.size());
+            return pagedResult;
+        } catch (GobiiException gE) {
+            throw gE;
+        } catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
     }
 
 }

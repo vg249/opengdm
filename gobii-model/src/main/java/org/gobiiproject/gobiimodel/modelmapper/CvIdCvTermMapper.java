@@ -85,6 +85,12 @@ public class CvIdCvTermMapper {
 
     }
 
+    /**
+     * Convert Cv data to List
+     * @param cvList
+     * @param propertiesJson
+     * @return
+     */
     public static List<CvPropertyDTO> listCvIdToCvTerms(List<Cv> cvList, JsonNode propertiesJson) {
         List<CvPropertyDTO> dtoList = new java.util.ArrayList<>();
         try {
@@ -107,8 +113,33 @@ public class CvIdCvTermMapper {
                     e.getMessage());
 
         }
-
         return dtoList;
+    }
 
+
+    /**
+     * Convert Cv db entities to DTO
+     * @param cvList
+     * @return
+     */
+    public static List<CvPropertyDTO> convert(List<Cv> cvList) {
+        List<CvPropertyDTO> dtoList = new java.util.ArrayList<>();
+        try {
+            for(Cv cv : cvList) {
+                CvPropertyDTO dto = new CvPropertyDTO();
+                ModelMapper.mapEntityToDto(cv, dto);
+                dto.setPropertyType(cv.getCvGroup().getCvGroupType());
+                dtoList.add(dto);
+            }
+        }
+        catch(Exception e) {
+
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage());
+
+        }
+        return dtoList;
     }
 }

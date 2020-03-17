@@ -10,6 +10,8 @@ package org.gobiiproject.gobiimodel.dto.children;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -17,6 +19,7 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.Cv;
 
 @JsonIgnoreProperties({"propertyGroupType"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CvPropertyDTO {
     private final static String PROPERTY_TYPE_SYSTEM = "system defined";
     private final static String PROPERTY_TYPE_CUSTOM = "user defined";

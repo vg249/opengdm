@@ -9,6 +9,8 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -82,16 +84,27 @@ public class GOBIIControllerV3Test {
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
         
+
+        List<CvPropertyDTO> propDtoList = createMockPropDTOList();
+        dto.setProperties(propDtoList);
+        return dto;
+    }
+
+    private CvPropertyDTO createMockPropDTO() {
         //mock DTO
         CvPropertyDTO propDto = new CvPropertyDTO();
+        propDto.setPropertyId(1);
+        propDto.setPropertyName("test-prop");
         propDto.setPropertyGroupId(1);
         propDto.setPropertyGroupName("test-group");
         propDto.setPropertyType(1);
+        return propDto;
+    }
 
+    private List<CvPropertyDTO> createMockPropDTOList() {
         List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
-        propDtoList.add(propDto);
-        dto.setProperties(propDtoList);
-        return dto;
+        propDtoList.add( createMockPropDTO() );
+        return propDtoList;
     }
 
     @Test
@@ -211,6 +224,39 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be empty")))
         .andExpect(jsonPath("$.error").value(StringContains.containsString("projectName must not be empty")))
         ;
+    }
+
+
+    //TEsts for Project Properties
+    @Test
+    public void testListProjectProperties() throws Exception {
+
+        List<CvPropertyDTO> mockList = createMockPropDTOList();
+        PagedResult<CvPropertyDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
+        when(
+            projectService.getProjectProperties(0, 1000)
+        ).thenReturn(
+            mockPayload
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects/properties")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+        .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+        .andExpect(jsonPath("$.result.data[0].propertyId").value(1))
+        .andExpect(jsonPath("$.result.data[0].propertyName").value("test-prop"))
+        .andExpect(jsonPath("$.result.data[0].propertyType").value("system defined"))
+        ;
+        verify(projectService, times(1)).getProjectProperties(0, 1000);
     }
     
 }

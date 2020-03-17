@@ -21,6 +21,7 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
@@ -164,6 +165,35 @@ public class GOBIIControllerV3  {
         result.setMetadata(null);
         return ResponseEntity.created(null).body(result);
     }
+
+
+    /**
+     * List Projet Properties
+     * 
+     */
+    @GetMapping("/projects/properties")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getProjectProperties(
+            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
+            @RequestParam(required=false, defaultValue = "1000") Integer pageSize) throws Exception {
+        LOGGER.debug("Querying project properties List");
+        Integer pageSizeToUse = pageSize;
+
+        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+        PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
+            Math.max(0, pageNum),
+            pageSizeToUse
+        );
+        BrApiMasterListPayload<CvPropertyDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+           
+        return ResponseEntity.ok(payload);
+    }
+
+
 
     public GobiiProjectService getProjectService() {
         return projectService;
