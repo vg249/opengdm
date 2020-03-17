@@ -57,7 +57,6 @@ import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getWebserviceConnectionString;
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logInfo;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
@@ -113,11 +112,9 @@ public class Digester {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        String jobName = instruction.getName();
-
-        logInfo("Digester", "Job Name: " + jobName);
 
         JobStatus jobStatus = null;
+        String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
         try {
             jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobName);
         } catch (Exception e) {
@@ -170,9 +167,6 @@ public class Digester {
             Logger.logError("Validation failed.", validationStatus);
         }
 
-
-        //TODO: HACK - Job's name is
-        String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
         results.setJobName(jobName);
 
         String logDir = configuration.getFileSystemLog();
