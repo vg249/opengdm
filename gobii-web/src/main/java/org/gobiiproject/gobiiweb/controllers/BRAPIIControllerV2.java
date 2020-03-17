@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobidomain.services.brapi.*;
 import org.gobiiproject.gobidomain.services.brapi.MapsetService;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -1005,26 +1007,26 @@ public class BRAPIIControllerV2 {
                     name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
-    @RequestMapping(value = {
-            "/search/calls",
-            "/search/variantsets/",
-            "/search/callsets"},
-            method = RequestMethod.POST,
-            consumes = "application/json",
-            produces = "application/json")
+    @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
+            consumes = "application/json", produces = "application/json")
     public ResponseEntity searchGenotypeCalls(
-            HttpEntity<String> searchQuery,
+            @Valid  @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
             HttpServletRequest request
     ) {
+
+        ObjectMapper objectMapper  = new ObjectMapper();
+
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
+            String genotypesSearchQueryJson = objectMapper.writeValueAsString(genotypeCallsSearchQuery);
 
-            if (searchQuery.hasBody()) {
+            if (!StringUtils.isEmpty(genotypesSearchQueryJson)) {
 
-                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(cropType,
-                        searchQuery.getBody());
+                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(
+                        cropType,
+                        genotypesSearchQueryJson);
 
                 BrApiMasterPayload<SearchResultDTO> payload = new BrApiMasterPayload<>(searchResultDTO);
 
@@ -1051,40 +1053,6 @@ public class BRAPIIControllerV2 {
             );
 
         }
-    }
-
-    @RequestMapping(value = "/search/calls/{searchResultDbId}")
-    public ResponseEntity getSearchCalls(
-            @ApiParam()
-            @PathVariable String searchResultDbId,
-            HttpServletRequest request) {
-        return ResponseEntity.ok("");
-    }
-
-
-    @ApiOperation(
-            value = "Create an extract ",
-            notes = "Creates a variant set resource for given extract query",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="VariantSets")
-                    })
-            }
-            ,
-            hidden = true
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token", required=true,
-                    paramType = "header", dataType = "string")
-    })
-    @RequestMapping(value="/variantsets/extract", method=RequestMethod.POST)
-    public ResponseEntity<String> VariantSetsExtract(
-            HttpEntity<String> extractQuery,
-            HttpServletRequest request) throws Exception {
-
-        return ResponseEntity.ok("");
     }
 
     @ApiOperation(
