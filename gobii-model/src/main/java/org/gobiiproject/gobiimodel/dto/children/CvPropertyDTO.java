@@ -7,6 +7,8 @@
  */
 package org.gobiiproject.gobiimodel.dto.children;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -21,12 +23,14 @@ public class CvPropertyDTO {
 
     @GobiiEntityMap(paramName="cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Positive
     private Integer propertyId = null;
 
     @GobiiEntityMap(paramName="term", entity = Cv.class)
     private String propertyName = null;
 
     //this is from the props column of Project
+    @NotEmpty
     private String propertyValue = null;
 
     @GobiiEntityMap(paramName="cvGroup.cvGroupId", entity = Cv.class, deep = true)

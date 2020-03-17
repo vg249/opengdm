@@ -4,22 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.system.User;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
+import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProjectDaoImpl implements ProjectDao {
 
     Logger LOGGER = LoggerFactory.getLogger(ProjectDaoImpl.class);
     
+    @Autowired
+    private CvDao cvDao;
+
     @PersistenceContext
     protected EntityManager em;
 
@@ -39,11 +52,14 @@ public class ProjectDaoImpl implements ProjectDao {
             Root<Project> projectRoot = criteriaQuery.from(Project.class);
             projectRoot.fetch("contact");
             criteriaQuery.select(projectRoot);
+            criteriaQuery.orderBy(criteriaBuilder.asc(projectRoot.get("projectId")));
+            
 
             projects = em.createQuery(criteriaQuery)
                 .setFirstResult(pageNum * pageSize)
                 .setMaxResults(pageSize)
-                .getResultList();
+                .getResultList(); 
+            LOGGER.debug("Projects List " + projects.size());
             return projects;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -54,6 +70,79 @@ public class ProjectDaoImpl implements ProjectDao {
              );
         }
         
+    }
+
+    @Transactional
+	@Override
+	public Project createProject(String contactId, String projectName, String projectDescription,
+			List<CvPropertyDTO> properties, String createByUserName) throws Exception {
+
+        Contact contact = this.getContact(Integer.parseInt(contactId));
+        if (contact == null) throw new GobiiDaoException("Contact Not Found");
+        LOGGER.debug("Contact " + contact.getFirstName());
+    
+        //Get the Cv for status, new row
+
+
+        List<Cv> cvList = cvDao.getCvs( "new",
+                CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+        
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
+        LOGGER.debug("Cv " + cv.getTerm());
+        Project project = new Project();
+                
+        project.setContact(contact);
+        project.setProjectName(projectName);
+        project.setProjectDescription(projectDescription);
+        project.setStatus(cv);
+
+        ProjectProperties props = new ProjectProperties();
+        if (properties != null) {
+            properties.forEach(dto -> {
+                props.put(
+                    dto.getPropertyId().toString(),
+                    dto.getPropertyValue()
+                );
+            });
+        }
+
+        project.setProperties(props);
+        //audit items
+        Contact creator = this.getContactByUsername(createByUserName);
+        if (creator != null) project.setCreatedBy(creator.getContactId());
+        project.setCreatedDate(new java.util.Date());
+        
+        em.persist(project);
+        em.flush();
+        
+		return project;
+    }
+    
+
+    public Contact getContactByUsername(String username) throws Exception {
+        try {
+            TypedQuery<Contact> tq = em.createQuery("FROM Contact WHERE username=?1", Contact.class);
+            Contact result = tq.setParameter(1, username).getSingleResult();
+            return result;
+        } catch (NoResultException nre) {
+            return null;
+        } catch (Exception e) {
+            throw e;    
+        }
+        
+    }
+    /**
+     * Get Contact data
+     */
+    public Contact getContact(Integer id) throws Exception {
+        return em.getReference(Contact.class, id);
+    }
+
+    public Cv getCv(Integer id) throws Exception {
+        return em.find(Cv.class, id);
     }
 
     

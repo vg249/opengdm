@@ -63,9 +63,7 @@ public class CvIdCvTermMapper {
 
     public static Map<String, String> mapCvIdToCvTerms(List<Cv> cvList, JsonNode propertiesJson) {
 
-        Map<String, String> returnVal = new HashMap();
-
-        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> returnVal = new HashMap<>();
 
         try {
             for(Cv cv : cvList) {
