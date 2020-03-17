@@ -172,9 +172,7 @@ public class Digester {
         String logDir = configuration.getFileSystemLog();
         String logFile = null;
         if (logDir != null) {
-            String instructionName = instruction.getName();
-            instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
-            logFile = logDir + "/" + instructionName + ".log";
+            logFile = logDir + "/" + jobName + ".log";
             String oldLogFile = Logger.getLogFilepath();
             Logger.logDebug("Error Logger", "Moving error log to " + logFile);
             Logger.setLogFilepath(logFile);
