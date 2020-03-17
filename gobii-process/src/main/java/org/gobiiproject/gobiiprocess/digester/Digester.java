@@ -114,9 +114,8 @@ public class Digester {
         }
 
         JobStatus jobStatus = null;
-        String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
         try {
-            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobName);
+            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), instruction.getName());
         } catch (Exception e) {
             Logger.logError("GobiiFileReader", "Error Checking Status", e);
         }
@@ -167,6 +166,7 @@ public class Digester {
             Logger.logError("Validation failed.", validationStatus);
         }
 
+        String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
         results.setJobName(jobName);
 
         String logDir = configuration.getFileSystemLog();
@@ -514,8 +514,7 @@ public class Digester {
      */
     private String getJobReadableIdentifier(String cropName, GobiiLoaderProcedure procedure) {
         cropName = cropName.charAt(0) + cropName.substring(1).toLowerCase();// MAIZE -> Maize
-        String jobName = "[GOBII - Loader]: " + cropName + " - digest of \"" + getSourceFileName(procedure.getMetadata().getGobiiFile()) + "\"";
-        return jobName;
+        return "[GOBII - Loader]: " + cropName + " - digest of \"" + procedure.getMetadata().getGobiiFile() + "\"";
     }
 
     /**
