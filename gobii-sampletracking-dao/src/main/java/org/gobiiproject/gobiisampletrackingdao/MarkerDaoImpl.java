@@ -15,6 +15,7 @@ import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MarkerDaoImpl implements MarkerDao {
 
@@ -23,18 +24,19 @@ public class MarkerDaoImpl implements MarkerDao {
     @PersistenceContext
     protected EntityManager em;
 
-    final int defaultPageSize = 1000;
-
     @Override
     @Transactional
     public List<Marker> getMarkers(Integer pageSize, Integer rowOffset,
-                                   Integer markerId, Integer datasetId) {
+                                   Integer markerId, Integer datasetId) throws GobiiException {
 
-        List<Marker> markers = new ArrayList<>();
+        List<Marker> markers;
 
         List<Predicate> predicates = new ArrayList<>();
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageSize, "rowOffset : Required non null");
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
@@ -85,9 +87,17 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     @Transactional
     public Marker getMarkerById(Integer markerId) {
+
         try {
 
-            List<Marker> markersById = this.getMarkers(null, null,
+            Objects.requireNonNull(markerId, "markerId : Required non null");
+
+            //To overload the getMarkers. There should be only one marker for a marker id
+            //So, to check any discrepancy with that from database side
+            Integer pageSize = 2;
+            Integer rowOffset = 0;
+
+            List<Marker> markersById = this.getMarkers(pageSize, rowOffset,
                     markerId, null);
 
             if (markersById.size() > 1) {
@@ -124,31 +134,46 @@ public class MarkerDaoImpl implements MarkerDao {
 
     @Override
     @Transactional
-    public List<Marker> getMarkersByMarkerIdCursor(Integer markerIdCursor, Integer datasetId, Integer pageSize) {
+    public List<Marker> getMarkersByMarkerIdCursor(Integer pageSize, Integer markerIdCursor,
+                                                   Integer datasetId) {
 
         List<Marker> markers;
-
-        String queryString = "SELECT {marker.*} " +
-                " FROM marker AS marker " +
-                " WHERE (marker.dataset_marker_idx->CAST(:datasetId AS TEXT) IS NOT NULL OR :datasetId IS NULL) " +
-                " AND (:markerIdCursor IS NULL OR marker.marker_id > :markerIdCursor) " +
-                " ORDER BY marker.marker_id " +
-                " LIMIT :pageSize ";
+        List<Predicate> predicates = new ArrayList<>();
 
         try {
 
-            if(pageSize == null) {
-                pageSize = defaultPageSize;
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Marker> criteriaQuery = criteriaBuilder.createQuery(Marker.class);
+
+            Root<Marker> markerRoot = criteriaQuery.from(Marker.class);
+
+            markerRoot.fetch("platform", JoinType.LEFT);
+            markerRoot.fetch("reference", JoinType.LEFT);
+
+            if(markerIdCursor != null) {
+                predicates.add(criteriaBuilder.gt(markerRoot.get("markerId"), markerIdCursor));
             }
 
-            Session session = em.unwrap(Session.class);
+            if(datasetId != null) {
 
-            markers = session.createNativeQuery(queryString)
-                    .addEntity("marker", Marker.class)
-                    .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
-                    .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
-                    .setParameter("markerIdCursor", markerIdCursor, IntegerType.INSTANCE)
-                    .list();
+                Expression<Boolean> datasetIdExists = criteriaBuilder.function(
+                        "JSONB_EXISTS", Boolean.class,
+                        markerRoot.get("datasetMarkerIdx"), criteriaBuilder.literal(datasetId.toString()));
+
+                predicates.add(criteriaBuilder.isTrue(datasetIdExists));
+
+            }
+
+
+            criteriaQuery.select(markerRoot);
+            criteriaQuery.orderBy(criteriaBuilder.asc(markerRoot.get("markerId")));
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+
+            markers = em.createQuery(criteriaQuery)
+                    .setMaxResults(pageSize)
+                    .getResultList();
 
             return markers;
 

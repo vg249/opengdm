@@ -72,6 +72,9 @@ public class BRAPIIControllerV2 {
     private CallSetService callSetService;
 
     @Autowired
+    private VariantService variantService;
+
+    @Autowired
     private MarkerPositionsService markerPositionsService;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -361,27 +364,27 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value="/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariants(
             @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) Integer pageToken,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "page", required = false) Integer pageNum,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                    "Value is $metadata.pagination.nextPageToken form previous page.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+            @ApiParam(value = "Size of the page")
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "ID of the variant to be extracted")
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
             @ApiParam(value = "ID of the variantSet to be extracted")
-            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            @ApiParam(value = "ID of the mapset to be retrieved")
-            @RequestParam(value = "mapSetId", required = false) Integer mapSetId,
-            @ApiParam(value = "Name of the mapset to be retrieved")
-            @RequestParam(value = "mapSetName", required = false) String mapSetName
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
     ) {
         try {
 
-            return ResponseEntity.ok().contentType(
-                    MediaType.APPLICATION_JSON).body("");
+            PagedResult<VariantDTO> pagedResult = variantService.getVariants(pageSize, pageToken,
+                    variantDbId, variantSetDbId);
+
+            BrApiMasterListPayload<VariantDTO>  payload = new BrApiMasterListPayload<>(
+                    pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
+
+            return ResponseEntity.ok(payload);
+
         }
         catch (GobiiException gE) {
             throw gE;
@@ -430,11 +433,13 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "ID of the Variant to be extracted", required = true)
             @PathVariable("variantDbId") Integer variantDbId) {
 
-        Integer variantDbIdInt;
-
         try {
 
-            return ResponseEntity.ok("");
+            VariantDTO variantDTO = variantService.getVariantByVariantDbId(variantDbId);
+
+            BrApiMasterPayload<VariantDTO> payload = new BrApiMasterPayload<>(variantDTO);
+
+            return ResponseEntity.ok(payload);
 
         }
         catch (Exception e) {

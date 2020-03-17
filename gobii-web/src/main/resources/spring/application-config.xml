@@ -403,6 +403,12 @@
     <!-- **** New Analysis Dao -->
     <bean id="analysisDao" class="org.gobiiproject.gobiisampletrackingdao.AnalysisDaoImpl"/>
 
+    <!-- **** New Marker Dao -->
+    <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
+
+    <!-- **** New DnaRun Dao -->
+    <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
+
 
 
     <!-- **** Manifests Beans *************************************** -->
@@ -443,13 +449,6 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
 
 
-    <!-- *** DNA RUN Sample Tracking Beans ************************************* -->
-    <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
-
-
-
-    <!-- *** Marker Sample Tracking Beans ************************************* -->
-    <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
 
     <!-- ** SAMPLE BRAPI BEANS **-->
     <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.brapi.SamplesServiceImpl"/>
@@ -470,6 +469,9 @@
 
     <!-- *** Callsets BRAPI BEANS *********** -->
     <bean id="callSetService" class="org.gobiiproject.gobidomain.services.brapi.CallSetServiceImpl"/>
+
+    <!-- *** Variant BRAPI BEANS *********** -->
+    <bean id="variantService" class="org.gobiiproject.gobidomain.services.brapi.VariantServiceImpl"/>
 
     <!-- *** Genotype Calls BRAPI BEANS *********** -->
     <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.brapi.GenotypeCallsServiceImpl"/>

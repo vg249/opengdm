@@ -21,7 +21,7 @@ import java.util.List;
 public class VariantDTO extends DTOBase {
 
     @GobiiEntityMap(paramName="markerId", entity = Marker.class)
-    private int variantDbId;
+    private Integer variantDbId;
 
     private List<String> variantNames = new ArrayList<>();
 
