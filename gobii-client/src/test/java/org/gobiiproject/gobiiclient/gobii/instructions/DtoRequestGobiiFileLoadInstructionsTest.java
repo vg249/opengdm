@@ -32,6 +32,7 @@ import org.junit.*;
 import java.util.LinkedList;
 
 
+@Ignore
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
     private static GobiiUriFactory gobiiUriFactory;
