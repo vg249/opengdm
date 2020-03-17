@@ -1415,7 +1415,7 @@ paths:
         name: "body"
         required: true
         schema:
-          $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
+          $ref: "#/definitions/PayloadEnvelopeDigesterProcedureDTO"
       - name: "X-Auth-Token"
         in: "header"
         description: "Authentication Token"
@@ -1425,7 +1425,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
+            $ref: "#/definitions/PayloadEnvelopeDigesterProcedureDTO"
       x-summary: "Loader"
   /gobii/v1/instructions/loader/jobs/{jobName}:
     get:
@@ -1475,7 +1475,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
+            $ref: "#/definitions/PayloadEnvelopeDigesterProcedureDTO"
       x-summary: "Loader : instructionFileName"
   /gobii/v1/jobs:
     get:
@@ -3216,6 +3216,27 @@ definitions:
       id:
         type: "integer"
         format: "int32"
+  DigesterProcedureDTO:
+    type: "object"
+    properties:
+      allowedProcessTypes:
+        type: "array"
+        uniqueItems: true
+        items:
+          type: "string"
+          enum:
+          - "CREATE"
+          - "READ"
+          - "UPDATE"
+          - "DELETE"
+          - "NONE"
+      procedure:
+        $ref: "#/definitions/GobiiLoaderProcedure"
+      name:
+        type: "string"
+      id:
+        type: "integer"
+        format: "int32"
   DisplayDTO:
     type: "object"
     properties:
@@ -3838,13 +3859,13 @@ definitions:
         format: "url"
       file:
         type: "file"
-      readable:
-        type: "boolean"
       uri:
         type: "string"
         format: "uri"
       filename:
         type: "string"
+      readable:
+        type: "boolean"
   JobDTO:
     type: "object"
     properties:
@@ -3949,27 +3970,6 @@ definitions:
           type: "array"
           items:
             type: "string"
-  LoaderInstructionFilesDTO:
-    type: "object"
-    properties:
-      allowedProcessTypes:
-        type: "array"
-        uniqueItems: true
-        items:
-          type: "string"
-          enum:
-          - "CREATE"
-          - "READ"
-          - "UPDATE"
-          - "DELETE"
-          - "NONE"
-      procedure:
-        $ref: "#/definitions/GobiiLoaderProcedure"
-      instructionFileName:
-        type: "string"
-      id:
-        type: "integer"
-        format: "int32"
   ManifestDTO:
     type: "object"
     properties:
@@ -4504,6 +4504,15 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/DataSetDTO"
+  PayloadDigesterProcedureDTO:
+    type: "object"
+    properties:
+      linkCollection:
+        $ref: "#/definitions/LinkCollection"
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/DigesterProcedureDTO"
   PayloadDisplayDTO:
     type: "object"
     properties:
@@ -4580,6 +4589,13 @@ definitions:
         $ref: "#/definitions/PayloadDataSetDTO"
       header:
         $ref: "#/definitions/Header"
+  PayloadEnvelopeDigesterProcedureDTO:
+    type: "object"
+    properties:
+      payload:
+        $ref: "#/definitions/PayloadDigesterProcedureDTO"
+      header:
+        $ref: "#/definitions/Header"
   PayloadEnvelopeDisplayDTO:
     type: "object"
     properties:
@@ -4627,13 +4643,6 @@ definitions:
     properties:
       payload:
         $ref: "#/definitions/PayloadLoaderFilePreviewDTO"
-      header:
-        $ref: "#/definitions/Header"
-  PayloadEnvelopeLoaderInstructionFilesDTO:
-    type: "object"
-    properties:
-      payload:
-        $ref: "#/definitions/PayloadLoaderInstructionFilesDTO"
       header:
         $ref: "#/definitions/Header"
   PayloadEnvelopeManifestDTO:
@@ -4756,15 +4765,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/LoaderFilePreviewDTO"
-  PayloadLoaderInstructionFilesDTO:
-    type: "object"
-    properties:
-      linkCollection:
-        $ref: "#/definitions/LinkCollection"
-      data:
-        type: "array"
-        items:
-          $ref: "#/definitions/LoaderInstructionFilesDTO"
   PayloadManifestDTO:
     type: "object"
     properties:

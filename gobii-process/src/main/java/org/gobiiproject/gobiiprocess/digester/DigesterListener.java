@@ -34,33 +34,31 @@ public class DigesterListener {
 
 		socket = new ServerSocket(port);
 
-		new Thread(() -> {
-			for(;;) {
-				try {
-					Socket client = socket.accept();
+		for(;;) {
+			try {
+				Socket client = socket.accept();
 
-					BufferedReader clientReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				BufferedReader clientReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-					String input = clientReader.readLine();
+				String input = clientReader.readLine();
 
-					DigesterProcedureDTO procedure = new ObjectMapper().readValue(input, DigesterProcedureDTO.class);
+				DigesterProcedureDTO procedure = new ObjectMapper().readValue(input, DigesterProcedureDTO.class);
 
-					executor.execute(() -> {
-						try {
-							digester.run(procedure);
-						} catch (Exception e) {
-							// TODO something useful
-							e.printStackTrace();
-						}
-					});
+				executor.execute(() -> {
+					try {
+						digester.run(procedure);
+					} catch (Exception e) {
+						// TODO something useful
+						e.printStackTrace();
+					}
+				});
 
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		});
+		}
 	}
 
 

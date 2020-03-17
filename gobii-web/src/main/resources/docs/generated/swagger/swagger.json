@@ -1735,7 +1735,7 @@
           "name" : "body",
           "required" : true,
           "schema" : {
-            "$ref" : "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
+            "$ref" : "#/definitions/PayloadEnvelopeDigesterProcedureDTO"
           }
         }, {
           "name" : "X-Auth-Token",
@@ -1748,7 +1748,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
+              "$ref" : "#/definitions/PayloadEnvelopeDigesterProcedureDTO"
             }
           }
         },
@@ -1808,7 +1808,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
+              "$ref" : "#/definitions/PayloadEnvelopeDigesterProcedureDTO"
             }
           }
         },
@@ -3860,6 +3860,29 @@
         }
       }
     },
+    "DigesterProcedureDTO" : {
+      "type" : "object",
+      "properties" : {
+        "allowedProcessTypes" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
+          }
+        },
+        "procedure" : {
+          "$ref" : "#/definitions/GobiiLoaderProcedure"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
     "DisplayDTO" : {
       "type" : "object",
       "properties" : {
@@ -4489,15 +4512,15 @@
         "file" : {
           "type" : "file"
         },
-        "readable" : {
-          "type" : "boolean"
-        },
         "uri" : {
           "type" : "string",
           "format" : "uri"
         },
         "filename" : {
           "type" : "string"
+        },
+        "readable" : {
+          "type" : "boolean"
         }
       }
     },
@@ -4626,29 +4649,6 @@
               "type" : "string"
             }
           }
-        }
-      }
-    },
-    "LoaderInstructionFilesDTO" : {
-      "type" : "object",
-      "properties" : {
-        "allowedProcessTypes" : {
-          "type" : "array",
-          "uniqueItems" : true,
-          "items" : {
-            "type" : "string",
-            "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
-          }
-        },
-        "procedure" : {
-          "$ref" : "#/definitions/GobiiLoaderProcedure"
-        },
-        "instructionFileName" : {
-          "type" : "string"
-        },
-        "id" : {
-          "type" : "integer",
-          "format" : "int32"
         }
       }
     },
@@ -5159,6 +5159,20 @@
         }
       }
     },
+    "PayloadDigesterProcedureDTO" : {
+      "type" : "object",
+      "properties" : {
+        "linkCollection" : {
+          "$ref" : "#/definitions/LinkCollection"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DigesterProcedureDTO"
+          }
+        }
+      }
+    },
     "PayloadDisplayDTO" : {
       "type" : "object",
       "properties" : {
@@ -5278,6 +5292,17 @@
         }
       }
     },
+    "PayloadEnvelopeDigesterProcedureDTO" : {
+      "type" : "object",
+      "properties" : {
+        "payload" : {
+          "$ref" : "#/definitions/PayloadDigesterProcedureDTO"
+        },
+        "header" : {
+          "$ref" : "#/definitions/Header"
+        }
+      }
+    },
     "PayloadEnvelopeDisplayDTO" : {
       "type" : "object",
       "properties" : {
@@ -5349,17 +5374,6 @@
       "properties" : {
         "payload" : {
           "$ref" : "#/definitions/PayloadLoaderFilePreviewDTO"
-        },
-        "header" : {
-          "$ref" : "#/definitions/Header"
-        }
-      }
-    },
-    "PayloadEnvelopeLoaderInstructionFilesDTO" : {
-      "type" : "object",
-      "properties" : {
-        "payload" : {
-          "$ref" : "#/definitions/PayloadLoaderInstructionFilesDTO"
         },
         "header" : {
           "$ref" : "#/definitions/Header"
@@ -5550,20 +5564,6 @@
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/LoaderFilePreviewDTO"
-          }
-        }
-      }
-    },
-    "PayloadLoaderInstructionFilesDTO" : {
-      "type" : "object",
-      "properties" : {
-        "linkCollection" : {
-          "$ref" : "#/definitions/LinkCollection"
-        },
-        "data" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/LoaderInstructionFilesDTO"
           }
         }
       }

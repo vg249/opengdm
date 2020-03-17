@@ -96,6 +96,7 @@
           class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
 
+
     <!-- **** NameIdList Beans *************************************** -->
     <bean id="rsContact"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
@@ -271,6 +272,9 @@
           class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapLoaderFilesImpl"/>
     <bean id="loaderFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderFilesServiceImpl"/>
+
+    <bean id="digesterService"
+          class=" org.gobiiproject.gobidomain.services.impl.DigesterServiceImpl"/>
 
     <!-- **** Loader Instruction File Beans *************************************** -->
     <bean id="dtoMapLoaderInstructions"

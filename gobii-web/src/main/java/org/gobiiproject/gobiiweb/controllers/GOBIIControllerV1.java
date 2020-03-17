@@ -34,6 +34,7 @@ import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.CvGroupService;
 import org.gobiiproject.gobidomain.services.CvService;
 import org.gobiiproject.gobidomain.services.DataSetService;
+import org.gobiiproject.gobidomain.services.DigesterService;
 import org.gobiiproject.gobidomain.services.DisplayService;
 import org.gobiiproject.gobidomain.services.EntityStatsService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
@@ -202,6 +203,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private EntityStatsService entityStatsService = null;
+
+    @Autowired
+    private DigesterService digesterService = null;
 
     private Tika tika = new Tika();
 
@@ -2150,6 +2154,8 @@ public class GOBIIControllerV1 {
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             DigesterProcedureDTO digesterProcedureDTONew = digesterProcedureSerivce.createInstruction(
                     cropType, digesterProcedureDTOToCreate);
+
+            digesterService.sendProcedure(digesterProcedureDTONew);
 
             PayloadWriter<DigesterProcedureDTO> payloadWriter = new PayloadWriter<>(request, response,
                     DigesterProcedureDTO.class);
