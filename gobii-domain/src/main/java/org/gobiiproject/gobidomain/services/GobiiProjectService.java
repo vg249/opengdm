@@ -16,6 +16,5 @@ public interface GobiiProjectService{
     PagedResult<GobiiProjectDTO>  getProjects(Integer pageNum, Integer pageSize) throws GobiiDomainException;
     GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception;
     String getDefaultProjectCreator();
-    PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception;
     
 }

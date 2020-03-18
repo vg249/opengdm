@@ -8,12 +8,12 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
@@ -37,8 +38,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,6 +48,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ActiveProfiles("projectsController-test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -56,10 +57,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
   //locations = { "classpath:/spring/application-config.xml" }
 )
 @WebAppConfiguration
+@Slf4j
 public class GOBIIControllerV3Test {
-    private final static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3Test.class);
     @Mock
     private GobiiProjectService projectService;
+
+    @Mock
+    private PropertiesService propertiesService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -68,6 +72,7 @@ public class GOBIIControllerV3Test {
 
     @Before
     public void setup() throws Exception {
+        log.info("Setting up Gobii V3 Controller test");
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders
             .standaloneSetup(gobiiControllerV3)
@@ -237,7 +242,7 @@ public class GOBIIControllerV3Test {
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
         when(
-            projectService.getProjectProperties(0, 1000)
+            propertiesService.getProjectProperties(0, 1000)
         ).thenReturn(
             mockPayload
         );
@@ -256,7 +261,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].propertyName").value("test-prop"))
         .andExpect(jsonPath("$.result.data[0].propertyType").value("system defined"))
         ;
-        verify(projectService, times(1)).getProjectProperties(0, 1000);
+        verify(propertiesService, times(1)).getProjectProperties(0, 1000);
     }
     
 }

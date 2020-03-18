@@ -104,26 +104,6 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         return null;
     }
 
-    @Override
-    public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
-        PagedResult<CvPropertyDTO> pagedResult;
-
-        try {
-            Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(page);
-            List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
-            List<CvPropertyDTO> converted = CvIdCvTermMapper.convert(cvs);
-            pagedResult = new PagedResult<>();
-            pagedResult.setResult(converted);
-            pagedResult.setCurrentPageNum(page);
-            pagedResult.setCurrentPageSize(converted.size());
-            return pagedResult;
-        } catch (GobiiException gE) {
-            throw gE;
-        } catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
-    }
+    
 
 }

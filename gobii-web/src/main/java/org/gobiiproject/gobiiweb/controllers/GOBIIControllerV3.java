@@ -12,9 +12,12 @@ package org.gobiiproject.gobiiweb.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -23,14 +26,12 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
-import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -40,28 +41,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.Api;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
+@Slf4j
 public class GOBIIControllerV3  {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
     
     @Autowired
     private GobiiProjectService projectService = null;
+
+    @Autowired
+    private PropertiesService propertiesService = null;
 
     /**
      * Authentication Endpoint
@@ -91,7 +91,7 @@ public class GOBIIControllerV3  {
             throw gE;
         }
         catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -116,7 +116,7 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer pageNum,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
-        LOGGER.debug("Querying projects List");
+        log.debug("Querying projects List");
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
@@ -168,7 +168,7 @@ public class GOBIIControllerV3  {
 
 
     /**
-     * List Projet Properties
+     * List Project Properties
      * 
      */
     @GetMapping("/projects/properties")
@@ -176,11 +176,11 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getProjectProperties(
             @RequestParam(required=false, defaultValue = "0") Integer pageNum,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) throws Exception {
-        LOGGER.debug("Querying project properties List");
+        log.debug("Querying project properties List");
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
-        PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
+        PagedResult<CvPropertyDTO> pagedResult =  propertiesService.getProjectProperties(
             Math.max(0, pageNum),
             pageSizeToUse
         );
