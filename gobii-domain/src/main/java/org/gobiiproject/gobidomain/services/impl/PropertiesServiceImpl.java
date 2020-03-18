@@ -32,12 +32,18 @@ public class PropertiesServiceImpl implements PropertiesService {
 
     @Override
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
+        return this.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
+    }
+
+
+    @Override
+    public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroup cvGroup) throws Exception {
         PagedResult<CvPropertyDTO> pagedResult;
 
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
-            List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
+            List<Cv> cvs = cvDao.getCvs(null, cvGroup.getCvGroupName(), null, page, pageSize);
             List<CvPropertyDTO> converted = CvIdCvTermMapper.convert(cvs);
             pagedResult = new PagedResult<>();
             pagedResult.setResult(converted);
