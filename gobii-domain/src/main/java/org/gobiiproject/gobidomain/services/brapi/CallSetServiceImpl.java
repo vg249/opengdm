@@ -59,7 +59,7 @@ public class CallSetServiceImpl implements CallSetService {
                     null);
 
             List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
                     null);
 
             for (DnaRun dnaRun : dnaRuns) {
