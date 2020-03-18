@@ -459,31 +459,22 @@ public class BRAPIIControllerV2 {
             @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
             @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
             @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize) {
 
         try {
 
-            if(page == null) {
-                //First Page
-                page = getDefaultBrapiPage();
-            }
 
-
-            List<SamplesDTO> samples = samplesBrapiService.getSamples(
-                    page, pageSize,
+            PagedResult<SamplesDTO> samples = samplesBrapiService.getSamples(
+                    pageSize, page,
                     sampleDbId, germplasmDbId,
                     observationUnitDbId);
 
-            Map<String, Object> brapiResult = new HashMap<>();
-
-            brapiResult.put("data", samples);
-
-            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
-
-            payload.getMetadata().getPagination().setCurrentPage(page);
-
-            payload.getMetadata().getPagination().setPageSize(pageSize);
+            BrApiMasterListPayload<SamplesDTO> payload = new BrApiMasterListPayload<>(
+                    samples.getResult(),
+                    samples.getCurrentPageSize(),
+                    samples.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
