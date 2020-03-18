@@ -29,15 +29,15 @@ public class CallSetServiceImpl implements CallSetService {
                                                Integer variantSetDbId,
                                                CallSetDTO callSetsFilter) throws GobiiException {
 
-        Objects.requireNonNull(pageSize, "pageSize : Required non null");
-        Objects.requireNonNull(pageNum, "pageNum : Required non null");
-        Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
-
         PagedResult<CallSetDTO> pagedResult = new PagedResult<>();
 
         List<CallSetDTO> callSets = new ArrayList<>();
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
+            Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
 
 
             Integer rowOffset = pageNum * pageSize;
