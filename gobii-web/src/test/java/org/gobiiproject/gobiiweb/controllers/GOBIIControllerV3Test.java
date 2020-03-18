@@ -8,12 +8,12 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.hamcrest.core.StringContains;
@@ -38,8 +37,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,15 +47,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ActiveProfiles("projectsController-test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
     classes = GOBIIControllerV3TestConfiguration.class
-    //locations = { "classpath:/spring/application-config.xml" }
+  //locations = { "classpath:/spring/application-config.xml" }
 )
 @WebAppConfiguration
+@Slf4j
 public class GOBIIControllerV3Test {
-    private final static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3Test.class);
     @Mock
     private GobiiProjectService projectService;
 
@@ -69,6 +68,7 @@ public class GOBIIControllerV3Test {
 
     @Before
     public void setup() throws Exception {
+        log.info("Setting up Gobii V3 Controller test");
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders
             .standaloneSetup(gobiiControllerV3)
@@ -85,16 +85,27 @@ public class GOBIIControllerV3Test {
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
         
+
+        List<CvPropertyDTO> propDtoList = createMockPropDTOList();
+        dto.setProperties(propDtoList);
+        return dto;
+    }
+
+    private CvPropertyDTO createMockPropDTO() {
         //mock DTO
         CvPropertyDTO propDto = new CvPropertyDTO();
+        propDto.setPropertyId(1);
+        propDto.setPropertyName("test-prop");
         propDto.setPropertyGroupId(1);
         propDto.setPropertyGroupName("test-group");
         propDto.setPropertyType(1);
+        return propDto;
+    }
 
+    private List<CvPropertyDTO> createMockPropDTOList() {
         List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
-        propDtoList.add(propDto);
-        dto.setProperties(propDtoList);
-        return dto;
+        propDtoList.add( createMockPropDTO() );
+        return propDtoList;
     }
 
     @Test
@@ -216,33 +227,37 @@ public class GOBIIControllerV3Test {
         ;
     }
 
-    //Update (PATCH tests)
+
+    //TEsts for Project Properties
     @Test
-    public void testPatchProjectName() throws Exception {
-        String requestJson = "{\"projectName\" : null}";
-        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
-        //let's leave it empty since it's a mock anyways
-        doReturn("gadm").when(projectService).getDefaultProjectEditor();
+    public void testListProjectProperties() throws Exception {
+
+        List<CvPropertyDTO> mockList = createMockPropDTOList();
+        PagedResult<CvPropertyDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
         when(
-            projectService.patchProject(eq(123), any(GobiiProjectPatchDTO.class), eq("gadm"))
+            projectService.getProjectProperties(0, 1000)
         ).thenReturn(
-            mockGobiiProject
+            mockPayload
         );
 
         mockMvc.perform(
             MockMvcRequestBuilders
-            .patch("/gobii-dev/gobii/v3/projects/123")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestJson)
+            .get("/gobii-dev/gobii/v3/projects/properties")
             .contextPath("/gobii-dev")
         )
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+        .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+        .andExpect(jsonPath("$.result.data[0].propertyId").value(1))
+        .andExpect(jsonPath("$.result.data[0].propertyName").value("test-prop"))
+        .andExpect(jsonPath("$.result.data[0].propertyType").value("system defined"))
         ;
-
-        verify(projectService,times(1)).patchProject(eq(123), any(GobiiProjectPatchDTO.class), eq("gadm") );
-
+        verify(projectService, times(1)).getProjectProperties(0, 1000);
     }
     
 }

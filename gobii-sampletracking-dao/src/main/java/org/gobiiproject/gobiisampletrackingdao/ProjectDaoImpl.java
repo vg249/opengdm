@@ -1,3 +1,9 @@
+/**
+ * ProjetDaoImpl.java
+ * 
+ * ProjectDao Default Implementation.  DAO for Project and Project Properties (CV)
+ * @author Rodolfo N. Duldulao, Jr.
+ */
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
@@ -16,7 +22,6 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.system.User;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -43,7 +48,6 @@ public class ProjectDaoImpl implements ProjectDao {
     @Transactional
     @Override
     public List<Project> getProjects(Integer pageNum, Integer pageSize) {
-        // TODO Auto-generated method stub
         LOGGER.debug("DAO getting projects");
         List<Project> projects = new ArrayList<>();
 
@@ -233,4 +237,9 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     
+    @Override
+    public List<Cv> getProjectProperties(Integer page, Integer pageSize) {
+        return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
+    }
+ 
 }

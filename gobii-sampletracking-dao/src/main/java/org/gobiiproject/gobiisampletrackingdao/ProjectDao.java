@@ -2,6 +2,7 @@
  * ProjectDao.java
  * 
  * V3 API Project DAO interface
+ * @author Rodolfo N. Duldulao, Jr.
  */
 package org.gobiiproject.gobiisampletrackingdao;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 
 public interface ProjectDao {
@@ -32,4 +34,9 @@ public interface ProjectDao {
         List<Map<String, String>> propertiesList,
         String updatedBy
     ) throws Exception;
+    
+    List<Cv> getProjectProperties(
+        Integer pageNum,
+        Integer pageSize  
+    ); 
 }
