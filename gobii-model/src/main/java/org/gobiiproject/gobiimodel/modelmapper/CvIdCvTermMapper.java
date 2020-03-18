@@ -65,6 +65,14 @@ public class CvIdCvTermMapper {
 
         Map<String, String> returnVal = new HashMap<>();
 
+        return mapCvIdToCvTerms(cvList, propertiesJson, returnVal);
+
+    }
+
+    public static Map<String, String> mapCvIdToCvTerms(List<Cv> cvList,
+                                                       JsonNode propertiesJson, Map<String, String> returnVal) {
+
+
         try {
             for(Cv cv : cvList) {
                 if(propertiesJson.has(cv.getCvId().toString())) {
