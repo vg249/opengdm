@@ -51,20 +51,14 @@ public @interface CheckAtLeastOneNotNullOrEmpty {
 
             try {
 
-                for (String fieldName:fieldNames){
-
+                for (String fieldName:fieldNames) {
                     Object property = PropertyUtils.getProperty(object, fieldName);
-
-                    if (property == null) {
-                        return false;
-                    }
-                    else if(property instanceof List<?> && ((List<Object>)property).size() == 0) {
-                        return false;
-                    }
-                    else {
+                    if (property != null && property instanceof List<?> && ((List<Object>) property).size() > 0) {
                         return true;
                     }
-
+                    else if(property != null && !(property instanceof List<?>)) {
+                        return true;
+                    }
                 }
 
                 return false;
