@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.Germplasm;
@@ -144,12 +145,12 @@ public class SamplesServiceImplTest {
         ).thenReturn(samplesMock);
 
 
-        List<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
+        PagedResult<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
                 0, pageSize,
                 null, null,
                 null);
 
-        assertEquals("Size mismatch", samplesMock.size(), samplesBrapi.size());
+        assertEquals("Size mismatch", samplesMock.size(), samplesBrapi.getResult().size());
 
         for(int i = 0; i < 10; i++) {
 
@@ -157,32 +158,32 @@ public class SamplesServiceImplTest {
 
             assertEquals("germplasmDbId check failed",
                     samplesMock.get(assertIndex).getGermplasm().getGermplasmId(),
-                    samplesBrapi.get(assertIndex).getGermplasmDbId());
+                    samplesBrapi.getResult().get(assertIndex).getGermplasmDbId());
 
             assertEquals("sampleDbId check failed!",
                     samplesMock.get(assertIndex).getDnaSampleId(),
-                    samplesBrapi.get(assertIndex).getSampleDbId());
+                    samplesBrapi.getResult().get(assertIndex).getSampleDbId());
 
             assertEquals("observationUnitDbId check failed!",
                     samplesMock.get(assertIndex).getGermplasm().getExternalCode(),
-                    samplesBrapi.get(assertIndex).getObservationUnitDbId());
+                    samplesBrapi.getResult().get(assertIndex).getObservationUnitDbId());
 
             assertEquals("sampelName check failed!",
                     samplesMock.get(assertIndex).getDnaSampleName(),
-                    samplesBrapi.get(assertIndex).getSampleName());
+                    samplesBrapi.getResult().get(assertIndex).getSampleName());
 
 
             assertEquals("sampleNum check failed!",
                     samplesMock.get(assertIndex).getDnaSampleNum(),
-                    samplesBrapi.get(assertIndex).getWell());
+                    samplesBrapi.getResult().get(assertIndex).getWell());
 
             assertEquals("samplePUI check failed!",
                     samplesMock.get(assertIndex).getDnaSampleUuid(),
-                    samplesBrapi.get(assertIndex).getSamplePUI());
+                    samplesBrapi.getResult().get(assertIndex).getSamplePUI());
 
             assertEquals("projectId check failed!",
                     samplesMock.get(assertIndex).getProjectId(),
-                    samplesBrapi.get(assertIndex).getSampleGroupDbId());
+                    samplesBrapi.getResult().get(assertIndex).getSampleGroupDbId());
         }
 
     }
@@ -211,12 +212,12 @@ public class SamplesServiceImplTest {
         ).thenReturn(cvsMock);
 
 
-        List<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
+        PagedResult<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
                 0, pageSize,
                 null, null,
                 null);
 
-        assertEquals(samplesMock.size(), samplesBrapi.size());
+        assertEquals(samplesMock.size(), samplesBrapi.getResult().size());
 
         for(int i = 0; i < 10; i++) {
 
@@ -226,7 +227,7 @@ public class SamplesServiceImplTest {
             if (samplesMock.get(assertIndex).getProperties().size() > 0) {
                 assertEquals("AdditionalInfor object size is not equal to persistance object",
                         samplesMock.get(assertIndex).getProperties().size(),
-                        samplesBrapi.get(assertIndex).getAdditionalInfo().size());
+                        samplesBrapi.getResult().get(assertIndex).getAdditionalInfo().size());
 
                 Map<String, Object> samplesPropertiesMap =  mapper.convertValue(
                         samplesMock.get(assertIndex).getProperties(),
@@ -239,13 +240,13 @@ public class SamplesServiceImplTest {
                     assertEquals(
                             "additionalInfo mapping failed",
                             samplesPropertiesMap.get(cvId).toString(),
-                            samplesBrapi.get(assertIndex).getAdditionalInfo().get(cvTerm));
+                            samplesBrapi.getResult().get(assertIndex).getAdditionalInfo().get(cvTerm));
 
                 }
 
             }
             else {
-               assertNull(samplesBrapi.get(assertIndex).getAdditionalInfo());
+               assertNull(samplesBrapi.getResult().get(assertIndex).getAdditionalInfo());
             }
         }
 
