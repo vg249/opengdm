@@ -30,10 +30,10 @@ public class PropertiesServiceImpl implements PropertiesService {
     @Autowired
     private CvDao cvDao;
 
-    @Override
-    public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
-        return this.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
-    }
+    // @Override
+    // public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
+    //     return this.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
+    // }
 
 
     @Override

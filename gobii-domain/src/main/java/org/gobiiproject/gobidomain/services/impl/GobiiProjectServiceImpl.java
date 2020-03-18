@@ -112,7 +112,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
     @Override
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception {
-        return propertiesService.getProjectProperties(pageNum, pageSize);
+        return propertiesService.getProperties(pageNum, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
     }
 
     
