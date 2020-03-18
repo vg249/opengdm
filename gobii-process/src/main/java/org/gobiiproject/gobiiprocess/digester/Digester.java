@@ -358,15 +358,14 @@ public class Digester {
             }
         }//endif Digest section
         else {
-            Logger.logWarning("Digester", "Aborted - Unsuccessfully Generated Files");
+            Logger.logError("Digester", "Aborted - Unsuccessfully Generated Files");
             jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
         }
 
         DigesterProcessMessage processMessage = DigesterProcessMessage.create(configuration, digesterConfig, instruction, results);
 
         //Send Email
-        finalizeProcessing(processMessage, configuration, instruction.getName(),
-                procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
+        finalizeProcessing(processMessage, configuration);
 
     }
 
@@ -378,16 +377,10 @@ public class Digester {
      *
      * @param pm
      * @param configuration
-     * @param instructionFile
-     * @param crop
-     * @param jobName
-     * @param logFile
      * @throws Exception
      */
-    private void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
-        String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+    private void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration) throws Exception {
         try {
-            pm.addPath("Instruction File", instructionFilePath, configuration, false);
             new MailInterface(configuration).send(pm);
         } catch (Exception e) {
             Logger.logError("MailInterface", "Error Sending Mail", e);
