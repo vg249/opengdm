@@ -60,9 +60,6 @@ public class GOBIIControllerV3  {
     @Autowired
     private GobiiProjectService projectService = null;
 
-    @Autowired
-    private PropertiesService propertiesService = null;
-
     /**
      * Authentication Endpoint
      * Mimicking same logic used in v1
@@ -180,7 +177,7 @@ public class GOBIIControllerV3  {
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
-        PagedResult<CvPropertyDTO> pagedResult =  propertiesService.getProjectProperties(
+        PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
             Math.max(0, pageNum),
             pageSizeToUse
         );

@@ -13,6 +13,7 @@ import java.util.Objects;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
@@ -32,9 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class GobiiProjectServiceImpl implements GobiiProjectService {
-    Logger LOGGER = LoggerFactory.getLogger(GobiiProjectServiceImpl.class);
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+public class GobiiProjectServiceImpl implements GobiiProjectService {
+    
     // @Autowired
     // private DtoMapV3Project dtoMapV3Project;
     @Autowired
@@ -43,10 +46,13 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
     @Autowired
     private CvDao cvDao;
 
+    @Autowired
+    private PropertiesService propertiesService;
+
     @Override
     public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
 
-        LOGGER.debug("Getting projects list offset %d size %d", pageNum, pageSize);
+        log.debug("Getting projects list offset %d size %d", pageNum, pageSize);
         PagedResult<GobiiProjectDTO> pagedResult;
 
         // get Cvs
@@ -77,7 +83,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         } catch (GobiiException gE) {
             throw gE;
         } catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
+            log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
     }
@@ -102,6 +108,11 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         if (auth != null)
             return auth.getName();
         return null;
+    }
+
+    @Override
+    public PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception {
+        return propertiesService.getProjectProperties(pageNum, pageSize);
     }
 
     

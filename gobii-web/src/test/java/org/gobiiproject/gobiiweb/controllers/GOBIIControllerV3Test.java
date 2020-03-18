@@ -62,9 +62,6 @@ public class GOBIIControllerV3Test {
     @Mock
     private GobiiProjectService projectService;
 
-    @Mock
-    private PropertiesService propertiesService;
-
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
 
@@ -242,7 +239,7 @@ public class GOBIIControllerV3Test {
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
         when(
-            propertiesService.getProjectProperties(0, 1000)
+            projectService.getProjectProperties(0, 1000)
         ).thenReturn(
             mockPayload
         );
@@ -261,7 +258,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].propertyName").value("test-prop"))
         .andExpect(jsonPath("$.result.data[0].propertyType").value("system defined"))
         ;
-        verify(propertiesService, times(1)).getProjectProperties(0, 1000);
+        verify(projectService, times(1)).getProjectProperties(0, 1000);
     }
     
 }
