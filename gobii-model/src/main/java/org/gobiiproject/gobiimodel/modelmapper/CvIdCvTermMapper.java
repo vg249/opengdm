@@ -7,6 +7,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -72,11 +73,17 @@ public class CvIdCvTermMapper {
     public static Map<String, String> mapCvIdToCvTerms(List<Cv> cvList,
                                                        JsonNode propertiesJson, Map<String, String> returnVal) {
 
+        String cvValue;
 
         try {
             for(Cv cv : cvList) {
                 if(propertiesJson.has(cv.getCvId().toString())) {
-                    returnVal.put(cv.getTerm(), propertiesJson.get(cv.getCvId().toString()).asText());
+
+                    cvValue = propertiesJson.get(cv.getCvId().toString()).asText();
+
+                    if(StringUtils.isNotEmpty(cvValue)) {
+                        returnVal.put(cv.getTerm(), cvValue);
+                    }
                 }
             }
         }
