@@ -123,9 +123,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
                 List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(
+                        genotypesToBeRead,
                         markerIdCursor,
-                        datasetId,
-                        genotypesToBeRead);
+                        null,
+                        datasetId);
 
                 GenotypeCallsDTO genotypeCall;
 
