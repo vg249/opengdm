@@ -1,21 +1,30 @@
+/**
+ * CvDaoImpl.java
+ * 
+ * @author original author
+ * @author Rodolfo N. Duldulao, Jr.
+ */
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.*;
-import java.util.*;
 
 public class CvDaoImpl implements CvDao {
 
@@ -66,7 +75,7 @@ public class CvDaoImpl implements CvDao {
         Objects.requireNonNull(cvGroupName, "CV group name should not be null");
 
         try {
-            return this.getCvs(null, cvGroupName, cvType);
+            return this.getCvs(null, cvGroupName, cvType, null, null);
         }
         catch(Exception e) {
 
@@ -79,14 +88,18 @@ public class CvDaoImpl implements CvDao {
         }
     }
 
+    
     @Override
-    public List<Cv> getCvs(String cvTerm, String cvGroupName,
-                           GobiiCvGroupType cvType) throws GobiiException {
+    public List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType) {
+        return this.getCvs(cvTerm, cvGroupName, cvType, null, null);
+    }
+
+    @Override
+    public List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType, Integer page, Integer pageSize) throws GobiiException {
 
         List<Predicate> predicates = new ArrayList<>();
 
         try {
-
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
             CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
@@ -109,13 +122,22 @@ public class CvDaoImpl implements CvDao {
             }
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+            criteriaQuery.orderBy(criteriaBuilder.asc(cv.get("cvId")));
+            
+            List<Cv> cvs = null;
+            if (page == null) {
 
-            List<Cv> cvs = em.createQuery(criteriaQuery)
+                cvs = em.createQuery(criteriaQuery)
                     .getResultList();
+            } else {
+                if (pageSize == null || pageSize <= 0) pageSize = 1000;
+                cvs = em.createQuery(criteriaQuery)
+                    .setFirstResult(page * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+            }
 
             return cvs;
-
-
         }
         catch(Exception e) {
 
