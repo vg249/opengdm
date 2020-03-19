@@ -23,8 +23,8 @@ public interface DnaRunDao {
 
     DnaRun getDnaRunById(Integer dnaRunId, boolean fetchAssociations);
 
-    List<DnaRun> getDnaRunsByDnaRunIdCursor(Integer dnaRunId,
-                                            Integer pageSize,
+    List<DnaRun> getDnaRunsByDnaRunIdCursor(Integer pageSize,
+                                            Integer dnaRunIdCursor,
                                             Integer datasetId);
 
     List<DnaRun> getDnaRunsByDatasetId(Integer datasetId,
