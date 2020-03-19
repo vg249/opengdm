@@ -31,7 +31,7 @@ public interface ProjectDao {
     Project patchProject(
         Integer projectId,
         Map<String, String> attributes,
-        List<Map<String, String>> propertiesList,
+        List<CvPropertyDTO> propertiesList,
         String updatedBy
     ) throws Exception;
     

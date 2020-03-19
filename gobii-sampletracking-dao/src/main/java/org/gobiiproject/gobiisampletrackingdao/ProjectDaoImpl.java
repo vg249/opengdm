@@ -9,7 +9,6 @@ package org.gobiiproject.gobiisampletrackingdao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -29,13 +28,12 @@ import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ProjectDaoImpl implements ProjectDao {
+import lombok.extern.slf4j.Slf4j;
 
-    Logger LOGGER = LoggerFactory.getLogger(ProjectDaoImpl.class);
+@Slf4j
+public class ProjectDaoImpl implements ProjectDao {
 
     @Autowired
     private CvDao cvDao;
@@ -48,7 +46,7 @@ public class ProjectDaoImpl implements ProjectDao {
     @Transactional
     @Override
     public List<Project> getProjects(Integer pageNum, Integer pageSize) {
-        LOGGER.debug("DAO getting projects");
+        log.debug("DAO getting projects");
         List<Project> projects = new ArrayList<>();
 
         try {
@@ -62,10 +60,10 @@ public class ProjectDaoImpl implements ProjectDao {
 
             projects = em.createQuery(criteriaQuery).setFirstResult(pageNum * pageSize).setMaxResults(pageSize)
                     .getResultList();
-            LOGGER.debug("Projects List " + projects.size());
+            log.debug("Projects List " + projects.size());
             return projects;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
@@ -80,10 +78,8 @@ public class ProjectDaoImpl implements ProjectDao {
         Contact contact = this.getContact(Integer.parseInt(contactId));
         if (contact == null)
             throw new GobiiDaoException("Contact Not Found");
-        LOGGER.debug("Contact " + contact.getFirstName());
 
         // Get the Cv for status, new row
-
         List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
@@ -91,7 +87,7 @@ public class ProjectDaoImpl implements ProjectDao {
         if (!cvList.isEmpty()) {
             cv = cvList.get(0);
         }
-        LOGGER.debug("Cv " + cv.getTerm());
+        log.debug("Cv " + cv.getTerm());
         Project project = new Project();
 
         project.setContact(contact);
@@ -137,7 +133,7 @@ public class ProjectDaoImpl implements ProjectDao {
      * Get Contact data
      */
     public Contact getContact(Integer id) throws Exception {
-        return em.getReference(Contact.class, id);
+        return em.find(Contact.class, id);
     }
 
     public Cv getCv(Integer id) throws Exception {
@@ -147,13 +143,12 @@ public class ProjectDaoImpl implements ProjectDao {
     @Transactional
     @Override
     public Project patchProject(Integer projectId, Map<String, String> attributes,
-            List<Map<String, String>> propertiesList, String updatedBy) throws Exception {
+            List<CvPropertyDTO> propertiesList, String updatedBy) throws Exception {
         
         Project project = em.find(Project.class, projectId);
         if (project == null) {
             return null;
         }
-
         //audit items first
         Contact editor = this.getContactByUsername(updatedBy);
         project.setModifiedBy(null);
@@ -161,16 +156,17 @@ public class ProjectDaoImpl implements ProjectDao {
             project.setModifiedBy(editor.getContactId());
         project.setModifiedDate(new java.util.Date());
         
+        //update project fields
         if (attributes != null && attributes.size() > 0) {
             this.updateAttributes(project, attributes);
         }
       
+        //update project properties
         if (propertiesList != null && propertiesList.size() > 0) {
             this.updateProperties(project, propertiesList);
         }
 
         //set new status
-
         List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
@@ -179,27 +175,32 @@ public class ProjectDaoImpl implements ProjectDao {
             cv = cvList.get(0);
         }
         project.setStatus(cv);
-
+        
         em.persist(project);
         em.flush();
+        //em.refresh(project);
 
         return project;
 
     }
 
-    private void updateProperties(Project project, List<Map<String, String>> propertiesList) {
+
+
+
+    private void updateProperties(Project project, List<CvPropertyDTO> propertiesList) {
         ProjectProperties properties = project.getProperties();
-        for (Map<String, String> prop: propertiesList) {
-            String key = prop.get("propertyId");
-            String value = prop.get("propertyValue");
-            if (properties.containsKey(key) && value == null) {
+        for (CvPropertyDTO prop: propertiesList) {
+            Integer key = prop.getPropertyId();
+            String value = prop.getPropertyValue();
+            log.info(key + ":" + value);
+            if (!properties.containsKey(key.toString())) {
+                properties.put(key.toString(), value); //TODO: no checking if Cv exists?
+            } else if (value == null) {
                 //remove the property
-                properties.remove(key);
-            } else if (properties.containsKey(key) && value != null) {
-                properties.put(key, value);
-            } else if (!properties.containsKey(key)) {
-                properties.put(key, value); //TODO: no checking if Cv exists?
-            }
+                properties.remove(key.toString());
+            } else if ( value != null) {
+                properties.put(key.toString(), value);
+            } 
         }
         project.setProperties(properties);
     }
@@ -232,14 +233,16 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     private void updateContact(Project project, String value) throws NumberFormatException, Exception {
+        if (project.getContact() != null && project.getPiContactId().toString().equals(value)) return;
         Contact contact = this.getContact(Integer.parseInt(value));
-        project.setContact(contact);
+        
+        if (contact != null) {
+            project.setContact(contact);
+        }
     }
-
     
     @Override
     public List<Cv> getProjectProperties(Integer page, Integer pageSize) {
         return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
     }
- 
 }

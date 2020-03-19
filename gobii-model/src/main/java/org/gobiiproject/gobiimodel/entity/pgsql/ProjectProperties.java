@@ -14,6 +14,9 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ProjectProperties implements java.io.Serializable, Map<String,String> {
     /**
      *
@@ -32,7 +35,9 @@ public class ProjectProperties implements java.io.Serializable, Map<String,Strin
 
     public void setProperties(JsonNode properties) {
         //convert to map
-        values.clear();
+        if (properties == null) return;
+
+        values = new java.util.HashMap<String, String>();
         properties.fieldNames().forEachRemaining(
             fieldName -> {
                 values.put(fieldName, (properties.get(fieldName)).asText());
@@ -70,7 +75,8 @@ public class ProjectProperties implements java.io.Serializable, Map<String,Strin
 
     @Override
     public String put(String key, String value) {
-        return values.put(key.toString(), value.toString());
+        if (key == null) return null;
+        return values.put(key, value);
     }
 
     @Override

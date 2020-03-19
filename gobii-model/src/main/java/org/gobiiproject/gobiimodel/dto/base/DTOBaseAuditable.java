@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import java.util.Date;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
@@ -26,6 +28,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
     }
 
     @GobiiEntityMap(paramName="createdBy", base=true)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer createdBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)
@@ -33,6 +36,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
     private Date createdDate = null;
 
     @GobiiEntityMap(paramName="modifiedBy", base=true)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer modifiedBy = null;
 
     @JsonSerialize(using=UtcDateSerializer.class)

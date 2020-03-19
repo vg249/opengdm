@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.hamcrest.core.StringContains;
@@ -224,6 +225,36 @@ public class GOBIIControllerV3Test {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be empty")))
         .andExpect(jsonPath("$.error").value(StringContains.containsString("projectName must not be empty")))
+        ;
+    }
+
+    @Test
+    public void testPatchWithProperties() throws Exception {
+        String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+            "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
+
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        //let's leave it empty since it's a mock anyways
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
+        when(
+            projectService.patchProject( eq(84), any(GobiiProjectPatchDTO.class), eq("gadm") )
+        ).thenReturn(
+            mockGobiiProject
+        );
+
+        
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/projects/84")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
     }
 

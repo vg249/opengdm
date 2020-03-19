@@ -28,8 +28,6 @@ import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,8 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GobiiProjectServiceImpl implements GobiiProjectService {
     
-    // @Autowired
-    // private DtoMapV3Project dtoMapV3Project;
     @Autowired
     private ProjectDao projectDao;
 
@@ -49,6 +45,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
     @Autowired
     private PropertiesService propertiesService;
+
 
     @Override
     public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
@@ -117,7 +114,6 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         //convert
         java.util.Map<String, String> attributes = new java.util.HashMap<>();
         List<CvPropertyDTO> propList = request.getProperties();
-        java.util.List<java.util.Map<String, String>> properties = new java.util.ArrayList<>();
         if (request.keyInPayload("piContactId")) {
             attributes.put("piContactId", request.getPiContactId());
         }
@@ -128,19 +124,14 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
             attributes.put("projectDescription", request.getProjectDescription());
         }
 
-        if (propList != null) {
-            for (CvPropertyDTO propDTO: propList) {
-                if (propDTO.keyInPayload("propertyId") && propDTO.keyInPayload("propertyValue")) {
-                    java.util.Map<String, String>  entry = new java.util.HashMap<>();
-                    entry.put(propDTO.getPropertyId().toString(), propDTO.getPropertyValue());
-                    properties.add(entry);
-                }
-            }   
-        }     
-
-        Project project = projectDao.patchProject(projectId, attributes, properties, editedBy);
+        Project project = projectDao.patchProject(projectId, attributes, propList, editedBy);
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
+        // get Cvs
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
+        dto.setProperties(propDTOs);
+
         return dto;
     }
 

@@ -30,6 +30,9 @@ import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ProjectPropertiesType implements UserType {
     private final static Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesType.class);
     @Override
@@ -70,7 +73,7 @@ public class ProjectPropertiesType implements UserType {
             props.setProperties(jsonNode);
             return props;
         } catch (Exception e) {
-            //
+            e.printStackTrace();
         }
         return null;
     }

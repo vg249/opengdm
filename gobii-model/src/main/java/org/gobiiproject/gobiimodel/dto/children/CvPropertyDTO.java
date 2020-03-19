@@ -38,7 +38,6 @@ public class CvPropertyDTO {
     private String propertyName = null;
 
     //this is from the props column of Project
-    @NotEmpty
     private String propertyValue = null;
 
     @GobiiEntityMap(paramName="cvGroup.cvGroupId", entity = Cv.class, deep = true)
