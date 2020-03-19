@@ -14,6 +14,7 @@ public interface MarkerDao {
 
     List<Marker> getMarkersByMarkerIdCursor(Integer pageSize,
                                             Integer markerIdCursor,
+                                            Integer markerId,
                                             Integer datasetId);
 
     List<Marker> getMarkersByDatasetId(Integer datasetId,
