@@ -114,6 +114,7 @@ public class ProjectDaoImplTest {
         assert project.getProperties().get("4").equals("test-value");
         assert project.getProperties().size() > 0;
 
+        //edit-test
         List<CvPropertyDTO> projProps = new ArrayList<>();
         CvPropertyDTO testProps = new CvPropertyDTO();
         testProps.setPropertyId(4);
@@ -123,6 +124,15 @@ public class ProjectDaoImplTest {
         assert project.getProperties().size() > 0;
         log.info(project.getProperties().get("4"));
         assert project.getProperties().get("4").equals("new-test-value");
+
+        //delete test
+        projProps = new ArrayList<>();
+        testProps = new CvPropertyDTO();
+        testProps.setPropertyId(4);
+        testProps.setPropertyValue(null);
+        projProps.add(testProps);
+        project = v3ProjectDao.patchProject(project.getProjectId(), testAttributes, projProps, "gadm");
+        assert project.getProperties().size() == 0; //property shoud be deleted
 
     }
 
