@@ -8,9 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
-import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
@@ -24,6 +25,9 @@ import lombok.Data;
  */
 @Entity
 @Table(name = "project")
+@NamedEntityGraph(name = "project.contact",
+    attributeNodes = @NamedAttributeNode("contact")
+)
 @Data
 public class Project extends BaseEntity {
 
@@ -35,8 +39,7 @@ public class Project extends BaseEntity {
     @Column(name="name")
     private String projectName;
 
-    //switched this to EAGER because LAZY is causing some problems when updating
-    @ManyToOne(fetch = FetchType.EAGER) 
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name="pi_contact", referencedColumnName="contact_id")
     private Contact contact;
 
@@ -47,8 +50,8 @@ public class Project extends BaseEntity {
     private String projectDescription;
 
     @Column(name="props")
-    @Type(type = "ProjectPropertiesType")
-    private ProjectProperties properties;
+    @Type(type = "CvPropertiesType")
+    private java.util.Map<String, String> properties;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
