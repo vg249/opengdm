@@ -87,7 +87,7 @@ public class ProjectDaoImplTest {
     @Test
     @Transactional
     public void testGetProjectProperties() {
-        List<Cv> cvs = v3ProjectDao.getProjectProperties(0, 1000);
+        List<Cv> cvs = v3ProjectDao.getCvProperties(0, 1000);
         assert cvs.size() > 0;
     }
 

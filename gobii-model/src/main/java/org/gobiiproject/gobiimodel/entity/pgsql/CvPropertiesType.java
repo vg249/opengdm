@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ProjectPropertiesType implements UserType {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesType.class);
+public class CvPropertiesType implements UserType {
+    private final static Logger LOGGER = LoggerFactory.getLogger(CvPropertiesType.class);
     @Override
     public int[] sqlTypes() {
         return new int[] { Types.JAVA_OBJECT };
@@ -42,7 +42,7 @@ public class ProjectPropertiesType implements UserType {
 
     @Override
     public Class returnedClass() {
-        return ProjectProperties.class;
+        return CvProperties.class;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ProjectPropertiesType implements UserType {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.createObjectNode();
             jsonNode = objectMapper.readTree(cellContent);
-            ProjectProperties props = new ProjectProperties();
+            CvProperties props = new CvProperties();
             props.setProperties(jsonNode);
             return props;
         } catch (Exception e) {
@@ -84,7 +84,7 @@ public class ProjectPropertiesType implements UserType {
         String jsonString = "{}";
         if (value != null) {
             try {
-                ProjectProperties props = (ProjectProperties) value;
+                CvProperties props = (CvProperties) value;
                 ObjectMapper objectMapper = new ObjectMapper();
                 StringWriter stringWriter = new StringWriter();
                 objectMapper.writeValue(stringWriter, props.getProperties());

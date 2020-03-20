@@ -35,7 +35,7 @@ public interface ProjectDao {
         String updatedBy
     ) throws Exception;
     
-    List<Cv> getProjectProperties(
+    List<Cv> getCvProperties(
         Integer pageNum,
         Integer pageSize  
     ); 

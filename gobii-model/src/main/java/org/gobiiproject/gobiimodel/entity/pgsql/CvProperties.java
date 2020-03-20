@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ProjectProperties implements java.io.Serializable, Map<String,String> {
+public class CvProperties implements java.io.Serializable, Map<String,String> {
     /**
      *
      */

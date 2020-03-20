@@ -7,9 +7,11 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -24,7 +26,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
+import org.gobiiproject.gobiimodel.entity.pgsql.CvProperties;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -95,7 +97,7 @@ public class ProjectDaoImpl implements ProjectDao {
         project.setProjectDescription(projectDescription);
         project.setStatus(cv);
 
-        ProjectProperties props = new ProjectProperties();
+        CvProperties props = new CvProperties();
         if (properties != null) {
             properties.forEach(dto -> {
                 //TODO: no checking if Cv exists
@@ -144,8 +146,11 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public Project patchProject(Integer projectId, Map<String, String> attributes,
             List<CvPropertyDTO> propertiesList, String updatedBy) throws Exception {
-        
-        Project project = em.find(Project.class, projectId);
+        EntityGraph graph = this.em.getEntityGraph("project.contact");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+
+        Project project = em.find(Project.class, projectId, hints);
         if (project == null) {
             return null;
         }
@@ -188,7 +193,7 @@ public class ProjectDaoImpl implements ProjectDao {
 
 
     private void updateProperties(Project project, List<CvPropertyDTO> propertiesList) {
-        ProjectProperties properties = project.getProperties();
+        CvProperties properties = project.getProperties();
         for (CvPropertyDTO prop: propertiesList) {
             Integer key = prop.getPropertyId();
             String value = prop.getPropertyValue();
@@ -242,7 +247,7 @@ public class ProjectDaoImpl implements ProjectDao {
     }
     
     @Override
-    public List<Cv> getProjectProperties(Integer page, Integer pageSize) {
+    public List<Cv> getCvProperties(Integer page, Integer pageSize) {
         return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
     }
 }

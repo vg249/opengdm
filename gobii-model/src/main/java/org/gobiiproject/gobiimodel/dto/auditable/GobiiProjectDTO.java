@@ -8,6 +8,8 @@
  */
 package org.gobiiproject.gobiimodel.dto.auditable;
 
+import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
+
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,17 +20,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import lombok.Data;
-
-import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
 
 
 /**

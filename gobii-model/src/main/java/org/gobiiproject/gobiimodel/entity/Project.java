@@ -8,9 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
-import org.gobiiproject.gobiimodel.entity.pgsql.ProjectProperties;
+import org.gobiiproject.gobiimodel.entity.pgsql.CvProperties;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
@@ -24,6 +26,9 @@ import lombok.Data;
  */
 @Entity
 @Table(name = "project")
+@NamedEntityGraph(name = "project.contact",
+    attributeNodes = @NamedAttributeNode("contact")
+)
 @Data
 public class Project extends BaseEntity {
 
@@ -46,8 +51,8 @@ public class Project extends BaseEntity {
     private String projectDescription;
 
     @Column(name="props")
-    @Type(type = "ProjectPropertiesType")
-    private ProjectProperties properties;
+    @Type(type = "CvPropertiesType")
+    private CvProperties properties;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")

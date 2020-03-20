@@ -1,2 +1,2 @@
-@org.hibernate.annotations.TypeDef(name="ProjectPropertiesType", typeClass = org.gobiiproject.gobiimodel.entity.pgsql.ProjectPropertiesType.class )
+@org.hibernate.annotations.TypeDef(name="CvPropertiesType", typeClass = org.gobiiproject.gobiimodel.entity.pgsql.CvPropertiesType.class )
 package org.gobiiproject.gobiimodel.entity;
