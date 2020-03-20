@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 /**
  * Module to map CV Ids to CV terms and vice versa.
  */
-public class CvIdCvTermMapper {
+public class CvMapper {
 
     /**
      * Function maps the properties object with CV term as a key to Json Node with
@@ -91,15 +91,14 @@ public class CvIdCvTermMapper {
      * @param propertiesJson
      * @return
      */
-    public static List<CvPropertyDTO> listCvIdToCvTerms(List<Cv> cvList, JsonNode propertiesJson) {
+    public static List<CvPropertyDTO> listCvIdToCvTerms(List<Cv> cvList, Map<String, String> props) {
         List<CvPropertyDTO> dtoList = new java.util.ArrayList<>();
         try {
             for(Cv cv : cvList) {
-                if(propertiesJson.has(cv.getCvId().toString())) {
-
+                if(props.containsKey(cv.getCvId().toString())) {
                     CvPropertyDTO dto = new CvPropertyDTO();
                     ModelMapper.mapEntityToDto(cv, dto);
-                    dto.setPropertyValue(propertiesJson.get(cv.getCvId().toString()).asText());
+                    dto.setPropertyValue(props.get(cv.getCvId().toString()));
                     dtoList.add(dto);
                 }
             }
@@ -115,6 +114,20 @@ public class CvIdCvTermMapper {
         return dtoList;
     }
 
+    /**
+     * Convert List of DTOs to Map
+     * @param dtoList
+     * @return
+     */
+    public static Map<String, String> mapCvIdToCvTerms( List<CvPropertyDTO> dtoList) {
+        java.util.Map<String, String> map = new java.util.HashMap<>();
+        if (dtoList == null) return map;
+
+        dtoList.forEach((item) -> {
+            map.put(item.getPropertyId().toString(), item.getPropertyValue());
+        });
+        return map;
+    }
 
     /**
      * Convert Cv db entities to DTO

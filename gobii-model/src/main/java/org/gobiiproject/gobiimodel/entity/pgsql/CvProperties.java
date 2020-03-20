@@ -23,31 +23,7 @@ public class CvProperties implements java.io.Serializable, Map<String,String> {
      */
     private static final long serialVersionUID = -8869498320638000413L;
     private Map<String, String> values = new java.util.HashMap<String, String>();
-
-    public JsonNode getProperties() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.createObjectNode();
-        if (values != null) {
-            jsonNode = objectMapper.valueToTree(values);
-        }
-        return jsonNode;
-    }
-
-    public void setProperties(JsonNode properties) {
-        //convert to map
-        if (properties == null) return;
-
-        values = new java.util.HashMap<String, String>();
-        properties.fieldNames().forEachRemaining(
-            fieldName -> {
-                values.put(fieldName, (properties.get(fieldName)).asText());
-            }
-        );
-    }
-
     
-
-
     @Override
     public int size() {
         return values.size();

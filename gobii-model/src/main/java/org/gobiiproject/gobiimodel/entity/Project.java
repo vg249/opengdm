@@ -12,7 +12,6 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
-import org.gobiiproject.gobiimodel.entity.pgsql.CvProperties;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
@@ -52,7 +51,7 @@ public class Project extends BaseEntity {
 
     @Column(name="props")
     @Type(type = "CvPropertiesType")
-    private CvProperties properties;
+    private java.util.Map<String, String> properties;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")

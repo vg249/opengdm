@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CvPropertiesType implements UserType {
-    private final static Logger LOGGER = LoggerFactory.getLogger(CvPropertiesType.class);
     @Override
     public int[] sqlTypes() {
         return new int[] { Types.JAVA_OBJECT };
@@ -42,7 +41,7 @@ public class CvPropertiesType implements UserType {
 
     @Override
     public Class returnedClass() {
-        return CvProperties.class;
+        return java.util.Map.class;
     }
 
     @Override
@@ -67,10 +66,15 @@ public class CvPropertiesType implements UserType {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.createObjectNode();
-            jsonNode = objectMapper.readTree(cellContent);
-            CvProperties props = new CvProperties();
-            props.setProperties(jsonNode);
+            final JsonNode jsonNode = objectMapper.readTree(cellContent);
+            java.util.Map<String, String> props = new java.util.HashMap<>();
+
+            jsonNode.fieldNames().forEachRemaining(
+                fieldName -> {
+                    props.put(fieldName, (jsonNode.get(fieldName)).asText());
+                }
+            );
+        
             return props;
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,10 +88,11 @@ public class CvPropertiesType implements UserType {
         String jsonString = "{}";
         if (value != null) {
             try {
-                CvProperties props = (CvProperties) value;
+                java.util.Map<String, String> props = (java.util.Map<String,String>) value;
                 ObjectMapper objectMapper = new ObjectMapper();
                 StringWriter stringWriter = new StringWriter();
-                objectMapper.writeValue(stringWriter, props.getProperties());
+                JsonNode jsonNode = objectMapper.valueToTree(props);
+                objectMapper.writeValue(stringWriter, jsonNode);
                 stringWriter.flush();
                 jsonString = stringWriter.toString();
             } catch (JsonGenerationException e) {
@@ -99,7 +104,7 @@ public class CvPropertiesType implements UserType {
             }  
         }
         
-        LOGGER.debug("Setting " + jsonString + " to index " + index);
+        log.debug("Setting " + jsonString + " to index " + index);
         st.setObject(index, jsonString, Types.OTHER);
     }
 

@@ -24,7 +24,7 @@ import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
+import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
@@ -65,8 +65,8 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
 
-                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs,
-                        project.getProperties().getProperties());
+                List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs,
+                        project.getProperties());
 
                 dto.setProperties(propDTOs);
 
@@ -94,7 +94,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
-        List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
+        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         dto.setProperties(propDTOs);
         return dto;
 
@@ -129,7 +129,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         ModelMapper.mapEntityToDto(project, dto);
         // get Cvs
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
-        List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
+        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         dto.setProperties(propDTOs);
 
         return dto;

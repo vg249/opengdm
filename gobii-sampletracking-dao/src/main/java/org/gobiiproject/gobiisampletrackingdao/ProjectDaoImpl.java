@@ -7,6 +7,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.entity.pgsql.CvProperties;
+import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -97,14 +98,7 @@ public class ProjectDaoImpl implements ProjectDao {
         project.setProjectDescription(projectDescription);
         project.setStatus(cv);
 
-        CvProperties props = new CvProperties();
-        if (properties != null) {
-            properties.forEach(dto -> {
-                //TODO: no checking if Cv exists
-                props.put(dto.getPropertyId().toString(), dto.getPropertyValue());
-            });
-        }
-
+        java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(properties);
         project.setProperties(props);
         // audit items
         Contact creator = this.getContactByUsername(createByUserName);
@@ -189,25 +183,14 @@ public class ProjectDaoImpl implements ProjectDao {
 
     }
 
-
-
-
     private void updateProperties(Project project, List<CvPropertyDTO> propertiesList) {
-        CvProperties properties = project.getProperties();
-        for (CvPropertyDTO prop: propertiesList) {
-            Integer key = prop.getPropertyId();
-            String value = prop.getPropertyValue();
-            log.info(key + ":" + value);
-            if (!properties.containsKey(key.toString())) {
-                properties.put(key.toString(), value); //TODO: no checking if Cv exists?
-            } else if (value == null) {
-                //remove the property
-                properties.remove(key.toString());
-            } else if ( value != null) {
-                properties.put(key.toString(), value);
-            } 
-        }
-        project.setProperties(properties);
+        java.util.Map<String, String> currentProperties = project.getProperties();
+        java.util.Map<String, String> incomingProperties = CvMapper.mapCvIdToCvTerms(propertiesList);
+
+        currentProperties.putAll(incomingProperties);
+        currentProperties.values().removeAll(Collections.singleton(null)); //remove nulled values
+        
+        project.setProperties(currentProperties);
     }
 
     private void updateAttributes(Project project, Map<String, String> attributes)

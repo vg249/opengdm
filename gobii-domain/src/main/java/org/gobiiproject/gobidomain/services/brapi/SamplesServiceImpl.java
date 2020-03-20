@@ -5,7 +5,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
-import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
+import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.BrapiDefaults;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -72,7 +72,7 @@ public class SamplesServiceImpl implements SamplesService {
 
                     if (dnaSample.getProperties() != null && dnaSample.getProperties().size() > 0) {
 
-                        samplesDTO.setAdditionalInfo(CvIdCvTermMapper.mapCvIdToCvTerms(
+                        samplesDTO.setAdditionalInfo(CvMapper.mapCvIdToCvTerms(
                                 cvList, dnaSample.getProperties()));
 
                         if (samplesDTO.getAdditionalInfo().containsKey("sample_type")) {
