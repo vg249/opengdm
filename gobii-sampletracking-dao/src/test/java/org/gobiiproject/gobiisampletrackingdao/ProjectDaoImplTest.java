@@ -106,6 +106,10 @@ public class ProjectDaoImplTest {
         Map<String, String> testAttributes = new HashMap<String, String>();
         testAttributes.put("piContactId", "5");
         testAttributes.put("projectDescription", "test");
+
+        //Get test
+        project = v3ProjectDao.getProject(project.getProjectId());
+        assert project != null;
         
         project = v3ProjectDao.patchProject(project.getProjectId(), testAttributes, null, "gadm");
         log.info("Project description: " + project.getProjectDescription());

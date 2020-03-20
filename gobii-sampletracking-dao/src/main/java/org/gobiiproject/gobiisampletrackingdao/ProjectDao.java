@@ -38,5 +38,7 @@ public interface ProjectDao {
     List<Cv> getProjectProperties(
         Integer pageNum,
         Integer pageSize  
-    ); 
+    );
+
+	Project getProject(Integer projectId); 
 }

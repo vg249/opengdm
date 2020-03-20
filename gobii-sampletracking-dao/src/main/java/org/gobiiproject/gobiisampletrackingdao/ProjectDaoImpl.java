@@ -184,9 +184,6 @@ public class ProjectDaoImpl implements ProjectDao {
 
     }
 
-
-
-
     private void updateProperties(Project project, List<CvPropertyDTO> propertiesList) {
         ProjectProperties properties = project.getProperties();
         for (CvPropertyDTO prop: propertiesList) {
@@ -244,5 +241,11 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public List<Cv> getProjectProperties(Integer page, Integer pageSize) {
         return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
+    }
+
+    @Override
+    public Project getProject(Integer projectId) {
+        Project project = em.find(Project.class, projectId);
+        return project;
     }
 }
