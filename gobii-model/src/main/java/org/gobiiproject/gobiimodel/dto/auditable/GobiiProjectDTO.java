@@ -57,7 +57,6 @@ import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
 @Data
 public class GobiiProjectDTO extends DTOBaseAuditable {
 
-   
     public GobiiProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
     }
