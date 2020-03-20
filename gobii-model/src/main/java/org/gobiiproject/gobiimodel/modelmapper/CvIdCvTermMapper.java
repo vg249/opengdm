@@ -99,7 +99,6 @@ public class CvIdCvTermMapper {
 
                     CvPropertyDTO dto = new CvPropertyDTO();
                     ModelMapper.mapEntityToDto(cv, dto);
-                    dto.setPropertyType(cv.getCvGroup().getCvGroupType());
                     dto.setPropertyValue(propertiesJson.get(cv.getCvId().toString()).asText());
                     dtoList.add(dto);
                 }
@@ -128,7 +127,6 @@ public class CvIdCvTermMapper {
             for(Cv cv : cvList) {
                 CvPropertyDTO dto = new CvPropertyDTO();
                 ModelMapper.mapEntityToDto(cv, dto);
-                dto.setPropertyType(cv.getCvGroup().getCvGroupType());
                 dtoList.add(dto);
             }
         }

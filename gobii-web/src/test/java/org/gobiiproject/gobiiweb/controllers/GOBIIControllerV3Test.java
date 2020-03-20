@@ -99,7 +99,7 @@ public class GOBIIControllerV3Test {
         propDto.setPropertyName("test-prop");
         propDto.setPropertyGroupId(1);
         propDto.setPropertyGroupName("test-group");
-        propDto.setPropertyType(1);
+        propDto.setPropertyGroupType(1);
         return propDto;
     }
 
