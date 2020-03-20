@@ -35,8 +35,7 @@ public class Project extends BaseEntity {
     @Column(name="name")
     private String projectName;
 
-    //switched this to EAGER because LAZY is causing some problems when updating
-    @ManyToOne(fetch = FetchType.EAGER) 
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name="pi_contact", referencedColumnName="contact_id")
     private Contact contact;
 
