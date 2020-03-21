@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
-import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -72,7 +71,7 @@ public class GOBIIControllerV3  {
      */
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity authenticate(HttpServletRequest request,
+    public ResponseEntity<HeaderAuth> authenticate(HttpServletRequest request,
                                        HttpServletResponse response) {
 
         try {

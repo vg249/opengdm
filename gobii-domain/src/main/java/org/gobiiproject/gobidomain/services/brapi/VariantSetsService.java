@@ -3,8 +3,6 @@ package org.gobiiproject.gobidomain.services.brapi;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
-import java.util.List;
-
 public interface VariantSetsService {
 
     PagedResult<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,

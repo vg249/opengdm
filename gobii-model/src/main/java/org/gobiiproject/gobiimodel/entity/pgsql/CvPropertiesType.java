@@ -27,8 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +38,7 @@ public class CvPropertiesType implements UserType {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public Class returnedClass() {
         return java.util.Map.class;
     }
