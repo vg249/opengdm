@@ -140,11 +140,7 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public Project patchProject(Integer projectId, Map<String, String> attributes,
             List<CvPropertyDTO> propertiesList, String updatedBy) throws Exception {
-        EntityGraph graph = this.em.getEntityGraph("project.contact");
-        Map<String, Object> hints = new HashMap<>();
-        hints.put("javax.persistence.fetchgraph", graph);
-
-        Project project = em.find(Project.class, projectId, hints);
+        Project project = em.find(Project.class, projectId, getContactHints());
         if (project == null) {
             return null;
         }
@@ -236,7 +232,14 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Override
     public Project getProject(Integer projectId) {
-        Project project = em.find(Project.class, projectId);
+        Project project = em.find(Project.class, projectId, getContactHints());
         return project;
+    }
+
+    private Map<String, Object> getContactHints() {
+        EntityGraph<?> graph = this.em.getEntityGraph("project.contact");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;
     }
 }
