@@ -104,9 +104,10 @@ public class MarkerDaoTest {
         Integer markerIdCursor = markers.get(random.nextInt(markers.size())).getMarkerId();
 
         List<Marker> markersByMarkerIdCursor = markerDao.getMarkersByMarkerIdCursor(
+                pageSize,
                 markerIdCursor,
-                datasetId,
-                pageSize);
+                null,
+                datasetId);
 
 
         for(Marker marker : markersByMarkerIdCursor) {
