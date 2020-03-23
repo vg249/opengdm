@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
@@ -14,6 +15,7 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -27,8 +29,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     @PersistenceContext
     protected EntityManager em;
-
-    final int defaultPageSize = 1000;
 
     /**
      * Lists the DnaRun Entities which matches the given criterias.
@@ -326,15 +326,15 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     }
 
-    /**
-     * Lists DnaRun Entitis with given DnaRun Id
-     * @param dnaRunIds - List of IDs of dnaRun.
-     * @return - List of DnaRun Entity result
-     */
     @Override
-    public List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds) {
+    public List<DnaRun> getDnaRuns(List<Integer> dnaRunIds, List<String> dnaRunNames,
+                                   List<String> datasetIds) {
 
-        List<DnaRun> dnaruns = new ArrayList<>();
+        List<DnaRun> dnaruns;
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        String[] datasetIdsArray = new String[]{};
 
         try {
 
@@ -348,12 +348,54 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             criteria.select(root);
 
+            if(dnaRunIds != null && dnaRunIds.size() > 0) {
+                predicates.add(root.get("dnaRunId").in(dnaRunIds));
+            }
 
-            criteria.where(root.get("dnaRunId").in(dnaRunIds));
+            if(dnaRunNames != null && dnaRunNames.size() > 0) {
+                predicates.add(root.get("dnaRunName").in(dnaRunNames));
+            }
 
+            /**Fetch markers only if the dnaRunIds or markerNames are not empty*/
+            if(predicates.size() == 0) {
+                String errorMsg = "All predicates are null. " +
+                        "Either dnaRunIds or dnaRunNames are required";
+                LOGGER.error(errorMsg);
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        errorMsg);
+            }
+
+            if(datasetIds != null && datasetIds.size() > 0) {
+
+                datasetIdsArray = datasetIds.toArray(new String[0]);
+
+                ParameterExpression datasetIdsExp = cb.parameter(String[].class, "datasetIds");
+
+                Expression<Boolean> datasetIdExists = cb.function(
+                        "JSONB_EXISTS_ANY",
+                        Boolean.class,
+                        root.get("datasetMarkerIdx"),
+                        datasetIdsExp
+                );
+
+                predicates.add(cb.isTrue(datasetIdExists));
+
+            }
+
+            criteria.where(predicates.toArray(new Predicate[]{}));
             criteria.orderBy(cb.asc(root.get("dnaRunId")));
 
-            dnaruns =  em.createQuery(criteria).getResultList();
+            Query query =  em.createQuery(criteria);
+
+            if(datasetIds != null && datasetIds.size() > 0) {
+                query
+                        .unwrap(org.hibernate.query.Query.class)
+                        .setParameter("datasetIds", datasetIdsArray, StringArrayType.INSTANCE);
+            }
+
+
+            dnaruns = query.getResultList();
 
             return dnaruns;
 
@@ -369,6 +411,17 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     }
 
+    /**
+     * Lists DnaRun Entitis with given DnaRun Id
+     * @param dnaRunIds - List of IDs of dnaRun.
+     * @return - List of DnaRun Entity result
+     */
+    @Override
+    public List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds) {
+
+        return this.getDnaRuns(dnaRunIds, null, null);
+    }
+
 
     /**
      * Lists DnaRun Entities with given DnaRun Names
@@ -377,39 +430,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
      */
     @Override
     public List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames) {
-
-        List<DnaRun> dnaRuns;
-
-        try {
-
-            CriteriaBuilder cb  = em.getCriteriaBuilder();
-
-            // Initialize criteria with Marker Entity as Result
-            CriteriaQuery<DnaRun> criteria = cb.createQuery(DnaRun.class);
-
-            //Set Root entity and selected entities
-            Root<DnaRun> root = criteria.from(DnaRun.class);
-            criteria.select(root);
-
-
-            criteria.where(root.get("dnaRunName").in(dnaRunNames));
-
-            criteria.orderBy(cb.asc(root.get("dnaRunName")));
-
-            dnaRuns = em.createQuery(criteria).getResultList();
-
-            return dnaRuns;
-
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-
-        }
-
+        return this.getDnaRuns(null, dnaRunNames, null);
     }
 
 }

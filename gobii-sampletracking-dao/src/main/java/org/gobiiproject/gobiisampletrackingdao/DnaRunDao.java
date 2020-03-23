@@ -13,6 +13,10 @@ public interface DnaRunDao {
                             Integer germplasmId, String germplasmName,
                             boolean fetchAssociations);
 
+    List<DnaRun> getDnaRuns(List<Integer> dnaRunIds,
+                            List<String> dnaRunNames,
+                            List<String> datasetIds);
+
     List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
                             Integer dnaRunId, String dnaRunName,
                             Integer datasetId, Integer experimentId,
