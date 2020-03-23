@@ -25,6 +25,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -38,6 +39,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -156,11 +159,30 @@ public class GOBIIControllerV3  {
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
-        String userName = projectService.getDefaultProjectCreator();
+        String userName = projectService.getDefaultProjectEditor();
         GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
         result.setResult(createdDTO);
         result.setMetadata(null);
         return ResponseEntity.created(null).body(result);
+    }
+
+    /**
+     * For Patch Project
+     * @return
+     */
+    @PatchMapping("/projects/{projectId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> patchProject(
+        @PathVariable Integer projectId,
+        @RequestBody @Valid final GobiiProjectPatchDTO project,
+        BindingResult bindingResult
+    ) throws Exception {
+        String userName = projectService.getDefaultProjectEditor();
+        GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
+        BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
+        payload.setResult(dto);
+        payload.setMetadata(null);
+        return ResponseEntity.ok(payload);
     }
 
 

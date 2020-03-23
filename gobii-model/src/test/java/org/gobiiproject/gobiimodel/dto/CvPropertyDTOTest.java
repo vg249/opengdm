@@ -21,7 +21,6 @@ public class CvPropertyDTOTest {
         CvPropertyDTO dto = new CvPropertyDTO();
 
         ModelMapper.mapEntityToDto(entity, dto);
-        dto.setPropertyType(dto.getPropertyGroupType());
         assert dto.getPropertyGroupType() == 1;
         assert dto.getPropertyType() == "system defined";
 

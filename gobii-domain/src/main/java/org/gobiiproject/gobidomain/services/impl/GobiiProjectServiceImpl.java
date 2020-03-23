@@ -19,16 +19,15 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
+import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,8 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GobiiProjectServiceImpl implements GobiiProjectService {
     
-    // @Autowired
-    // private DtoMapV3Project dtoMapV3Project;
     @Autowired
     private ProjectDao projectDao;
 
@@ -48,6 +45,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
     @Autowired
     private PropertiesService propertiesService;
+
 
     @Override
     public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
@@ -67,8 +65,8 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
 
-                List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs,
-                        project.getProperties().getProperties());
+                List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs,
+                        project.getProperties());
 
                 dto.setProperties(propDTOs);
 
@@ -96,14 +94,14 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
-        List<CvPropertyDTO> propDTOs = CvIdCvTermMapper.listCvIdToCvTerms(cvs, project.getProperties().getProperties());
+        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         dto.setProperties(propDTOs);
         return dto;
 
     }
 
     @Override
-    public String getDefaultProjectCreator() {
+    public String getDefaultProjectEditor() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null)
             return auth.getName();
@@ -111,6 +109,32 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
     }
 
     @Override
+    public GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy)
+            throws Exception {
+        //convert
+        java.util.Map<String, String> attributes = new java.util.HashMap<>();
+        List<CvPropertyDTO> propList = request.getProperties();
+        if (request.keyInPayload("piContactId")) {
+            attributes.put("piContactId", request.getPiContactId());
+        }
+        if (request.keyInPayload("projectName")) {
+            attributes.put("projectName", request.getProjectName());
+        }
+        if (request.keyInPayload("projectDescription")) {
+            attributes.put("projectDescription", request.getProjectDescription());
+        }
+
+        Project project = projectDao.patchProject(projectId, attributes, propList, editedBy);
+        GobiiProjectDTO dto = new GobiiProjectDTO();
+        ModelMapper.mapEntityToDto(project, dto);
+        // get Cvs
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
+        dto.setProperties(propDTOs);
+
+        return dto;
+    }
+
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception {
         return propertiesService.getProperties(pageNum, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
     }

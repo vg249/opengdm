@@ -18,7 +18,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
+import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,7 +44,7 @@ public class PropertiesServiceImpl implements PropertiesService {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
             List<Cv> cvs = cvDao.getCvs(null, cvGroup.getCvGroupName(), null, page, pageSize);
-            List<CvPropertyDTO> converted = CvIdCvTermMapper.convert(cvs);
+            List<CvPropertyDTO> converted = CvMapper.convert(cvs);
             pagedResult = new PagedResult<>();
             pagedResult.setResult(converted);
             pagedResult.setCurrentPageNum(page);
