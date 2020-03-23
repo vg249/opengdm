@@ -391,6 +391,7 @@
 
    <!-- **** Projects V3  Beans -->
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
+    <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
     <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.impl.GobiiProjectServiceImpl"/>
 
     <!-- **** New CV DAO -->

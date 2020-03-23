@@ -30,6 +30,8 @@ import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
@@ -99,7 +101,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         // check if contact exists
         Contact contact = contactDao.getContact(Integer.parseInt(request.getPiContactId()));
         if (contact == null)
-            throw new GobiiDaoException("Contact Not Found");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
 
         // Get the Cv for status, new row
         List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
@@ -261,6 +263,8 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         
         if (contact != null) {
             project.setContact(contact);
+        } else {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
         }
     }
 }
