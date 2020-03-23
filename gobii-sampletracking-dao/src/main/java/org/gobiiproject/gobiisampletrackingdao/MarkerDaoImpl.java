@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
@@ -83,6 +85,7 @@ public class MarkerDaoImpl implements MarkerDao {
 
 
     }
+
 
     @Override
     @Transactional
@@ -207,10 +210,17 @@ public class MarkerDaoImpl implements MarkerDao {
      */
     @Transactional
     @Override
-    public List<Marker> getMarkersByMarkerIds(List<Integer> markerIds) {
-        List<Marker> markers = new ArrayList<>();
+    public List<Marker> getMarkers(List<Integer> markerIds, List<String> markerNames,
+                                   List<String> datasetIds) throws GobiiException {
+
+        List<Marker> markers;
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        String[] datasetIdsArray = new String[]{};
 
         try {
+
 
             CriteriaBuilder cb  = em.getCriteriaBuilder();
 
@@ -221,12 +231,54 @@ public class MarkerDaoImpl implements MarkerDao {
             Root<Marker> root = criteria.from(Marker.class);
             criteria.select(root);
 
+            if(markerIds != null && markerIds.size() > 0) {
+                predicates.add(root.get("markerId").in(markerIds));
+            }
 
-            criteria.where(root.get("markerId").in(markerIds));
+            if(markerNames != null && markerNames.size() > 0) {
+                predicates.add(root.get("markerName").in(markerNames));
+            }
 
+            /**Fetch markers only if the markerIds or markerNames are not empty*/
+            if(predicates.size() == 0) {
+                String errorMsg = "All predicates are null. " +
+                        "Either markerIds or markerNames are required.";
+                LOGGER.error(errorMsg);
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.UNKNOWN,
+                        errorMsg);
+            }
+
+            if(datasetIds != null && datasetIds.size() > 0) {
+
+                datasetIdsArray = datasetIds.toArray(new String[0]);
+
+                ParameterExpression datasetIdsExp = cb.parameter(String[].class, "datasetIds");
+
+                Expression<Boolean> datasetIdExists = cb.function(
+                        "JSONB_EXISTS_ANY",
+                        Boolean.class,
+                        root.get("datasetMarkerIdx"),
+                        datasetIdsExp
+                );
+
+                predicates.add(cb.isTrue(datasetIdExists));
+
+            }
+
+            criteria.where(predicates.toArray(new Predicate[]{}));
             criteria.orderBy(cb.asc(root.get("markerId")));
 
-            markers = em.createQuery(criteria).getResultList();
+            Query query = em.createQuery(criteria);
+
+            if(datasetIds != null && datasetIds.size() > 0) {
+                query
+                        .unwrap(org.hibernate.query.Query.class)
+                        .setParameter("datasetIds", datasetIdsArray, StringArrayType.INSTANCE);
+            }
+
+            markers = query
+                    .getResultList();
 
             return markers;
 
@@ -242,6 +294,17 @@ public class MarkerDaoImpl implements MarkerDao {
     }
 
     /**
+     * Returns List of Marker Entities for given markerIds
+     * @param markerIds - List of Marker Ids
+     * @return Lis of Marker Entities
+     */
+    @Transactional
+    @Override
+    public List<Marker> getMarkersByMarkerIds(List<Integer> markerIds) {
+        return this.getMarkers(markerIds, null, null);
+    }
+
+    /**
      * Retruns List of Marker Entities for given Marker Names
      * @param markerNames - Marker
      * @return
@@ -249,37 +312,7 @@ public class MarkerDaoImpl implements MarkerDao {
     @Transactional
     @Override
     public List<Marker> getMarkersByMarkerNames(List<String> markerNames) {
-
-        List<Marker> markers;
-
-        try {
-
-            CriteriaBuilder cb  = em.getCriteriaBuilder();
-
-            CriteriaQuery<Marker> criteria = cb.createQuery(Marker.class);
-
-            Root<Marker> root = criteria.from(Marker.class);
-            criteria.select(root);
-
-            criteria.where(root.get("markerName").in(markerNames));
-
-            criteria.orderBy(cb.asc(root.get("markerId")));
-
-            markers = em.createQuery(criteria).getResultList();
-
-            return markers;
-
-
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-
-
-        }
+        return this.getMarkers(null, markerNames, null);
     }
 
 }

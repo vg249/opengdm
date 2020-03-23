@@ -166,4 +166,30 @@ public class MarkerDaoTest {
 
     }
 
+    @Test
+    public void testGetMarkersByMarkerNamesAndDatasetIds() {
+
+
+        List<String> markerNames = new ArrayList<>(Arrays.asList(
+                "BS00062676", "kw004_Sbm1", "TaMoc-7A_2433",
+                "Tsn1", "TaCKX-D1", "TaCwi-4A_1523",
+                "TaCwi-A1a/b", "snp3BS-8", "TaGASR-A1", "TaGS-D1",
+                "TaGW2-HAP-A/G", "TaSus2-2B_SNP", "TaTGW6-A1_1050",
+                "snpOS0312", "Xsnp3BS-2"));
+
+        List<String> datasetIds = new ArrayList<>(Arrays.asList(
+                "2", "5"));
+
+        List<Marker> markers = markerDao.getMarkers(null, markerNames, datasetIds);
+
+        assertTrue(markers.size() <= markerNames.size());
+
+        for(Marker marker : markers) {
+            assertTrue(markerNames.contains(marker.getMarkerName()));
+            assertTrue(marker.getDatasetMarkerIdx().has(datasetIds.get(0)) ||
+                    marker.getDatasetMarkerIdx().has(datasetIds.get(1)));
+        }
+
+    }
+
 }
