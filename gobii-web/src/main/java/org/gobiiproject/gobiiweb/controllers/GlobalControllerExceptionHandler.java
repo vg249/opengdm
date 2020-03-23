@@ -51,6 +51,7 @@ public class GlobalControllerExceptionHandler {
                 errorStatus = HttpStatus.NOT_FOUND;
                 break;
             }
+            case ASSOCIATED_ENTITIES_FOUND:
             case ENTITY_ALREADY_EXISTS: {
                 errorStatus = HttpStatus.CONFLICT;
                 break;
@@ -159,7 +160,6 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity<ErrorPayload> NullPointerExceptionHandler(NullPointerException e) {
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Resource not found");
-        e.printStackTrace();
         LOGGER.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorPayload);
     }

@@ -216,7 +216,8 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
-    @DeleteMapping("/projects/{projectId")
+    @DeleteMapping("/projects/{projectId}")
+    @ResponseBody
     public ResponseEntity<String> deleteProject(
         @PathVariable Integer projectId
     ) throws Exception {
