@@ -34,9 +34,11 @@ import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -206,6 +208,20 @@ public class GOBIIControllerV3  {
         payload.setResult(dto);
         payload.setMetadata(null);
         return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete Project
+     * 
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/projects/{projectId")
+    public ResponseEntity<String> deleteProject(
+        @PathVariable Integer projectId
+    ) throws Exception {
+        projectService.deleteProject(projectId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
 

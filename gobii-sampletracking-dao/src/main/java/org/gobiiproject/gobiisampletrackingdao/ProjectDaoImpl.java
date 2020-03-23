@@ -111,4 +111,10 @@ public class ProjectDaoImpl implements ProjectDao {
         return hints;
     }
 
+    @Override
+    public void deleteProject(Project project) throws Exception {
+        em.remove(project);
+        em.flush();
+    }
+
 }

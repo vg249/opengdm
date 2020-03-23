@@ -31,5 +31,7 @@ public interface ProjectDao {
         Integer pageSize  
     );
 
-	Project getProject(Integer projectId) throws Exception;
+    Project getProject(Integer projectId) throws Exception;
+    
+    void deleteProject(Project project) throws Exception;
 }

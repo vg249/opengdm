@@ -267,4 +267,14 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
         }
     }
+
+    @Override
+    public void deleteProject(Integer projectId) throws Exception {
+        Project project = projectDao.getProject(projectId);
+        if (project == null) throw new NullPointerException("Project does not exist");
+
+        projectDao.deleteProject(project);
+        
+
+    }
 }
