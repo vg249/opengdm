@@ -82,4 +82,8 @@ public class GobiiProjectPatchDTO {
         return this._isKeyInInput.contains(key);
     }
 
+    public List<String> payloadKeys() {
+        return this._isKeyInInput;
+    }
+
  }

@@ -130,7 +130,7 @@ public class CvPropertiesType implements UserType {
     @Override
     public boolean isMutable() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -147,8 +147,7 @@ public class CvPropertiesType implements UserType {
 
     @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        // TODO Auto-generated method stub
-        return null;
+        return original;
     }
     
 }

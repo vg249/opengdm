@@ -21,7 +21,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 /**
  * Created by Phil on 8/16/2016.
  */
-ß
 @Configuration
 public class ConfigSupplement {
 
