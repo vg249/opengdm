@@ -51,7 +51,7 @@ public class GlobalControllerExceptionHandler {
                 errorStatus = HttpStatus.NOT_FOUND;
                 break;
             }
-            case ASSOCIATED_ENTITIES_FOUND:
+            case FOREIGN_KEY_VIOLATION:
             case ENTITY_ALREADY_EXISTS: {
                 errorStatus = HttpStatus.CONFLICT;
                 break;

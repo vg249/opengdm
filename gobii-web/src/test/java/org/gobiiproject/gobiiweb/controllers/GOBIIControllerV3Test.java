@@ -383,7 +383,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testDelete409() throws Exception {
-        Exception exc = new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ASSOCIATED_ENTITIES_FOUND, "test");
+        Exception exc = new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.FOREIGN_KEY_VIOLATION, "test");
         doThrow(
             exc
         ).when(

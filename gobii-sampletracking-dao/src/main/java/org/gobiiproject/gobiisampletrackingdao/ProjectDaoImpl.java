@@ -123,7 +123,7 @@ public class ProjectDaoImpl implements ProjectDao {
             if (e.getMessage().contains("ConstraintViolation"))
                 throw new GobiiException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ASSOCIATED_ENTITIES_FOUND,
+                    GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
                     "Associated resources found. Cannot complete the action unless they are deleted.");
             throw e;
         }
