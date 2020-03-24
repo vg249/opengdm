@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public interface GenotypeCallsService {
             Integer pageSize,
             String pageToken) throws GobiiDomainException;
 
-    List<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
-            String extractQueryFilePath,
+    PagedResult<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
+            GenotypeCallsSearchQueryDTO genotypesSearchQuery,
             Integer pageSize,
             String pageToken) throws GobiiDomainException;
 
