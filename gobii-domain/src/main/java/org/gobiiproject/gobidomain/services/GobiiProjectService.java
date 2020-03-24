@@ -18,6 +18,7 @@ public interface GobiiProjectService{
     PagedResult<GobiiProjectDTO>  getProjects(Integer pageNum, Integer pageSize) throws GobiiDomainException;
     GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception;
     GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy) throws Exception;
+    void deleteProject(Integer projectId) throws Exception;
     String getDefaultProjectEditor();
 
     //

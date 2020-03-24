@@ -19,6 +19,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -74,7 +75,6 @@ public class ProjectDaoImpl implements ProjectDao {
         return projectToBeCreated;
     }
 
-    
     public Cv getCv(Integer id) throws Exception {
         return em.find(Cv.class, id);
     }
@@ -98,6 +98,7 @@ public class ProjectDaoImpl implements ProjectDao {
         return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
     }
 
+    @Transactional
     @Override
     public Project getProject(Integer projectId) {
         Project project = em.find(Project.class, projectId, getContactHints());
@@ -109,6 +110,23 @@ public class ProjectDaoImpl implements ProjectDao {
         Map<String, Object> hints = new HashMap<>();
         hints.put("javax.persistence.fetchgraph", graph);
         return hints;
+    }
+
+    @Transactional
+    @Override
+    public void deleteProject(Project project) throws Exception {
+        try {
+            project = em.merge(project);
+            em.remove(project);
+            em.flush();
+        } catch (javax.persistence.PersistenceException pe) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                "Associated resources found. Cannot complete the action unless they are deleted.");
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
 }

@@ -10,7 +10,9 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,11 +28,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
@@ -331,6 +336,72 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isNotFound())
         ;
         verify(projectService, times(1)).getProject(123);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        
+        doNothing().when(
+            projectService
+        ).deleteProject(eq(84));
+       
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/projects/84")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(204))
+        ;
+
+        verify(projectService, times(1)).deleteProject(eq(84));
+    }
+
+    @Test
+    public void testDelete404() throws Exception {
+        Exception exc = new NullPointerException("test");
+        doThrow(
+            exc
+        ).when(
+            projectService
+        ).deleteProject(eq(84));
+       
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/projects/84")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(404))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("Resource not found")))
+        ;
+
+        verify(projectService, times(1)).deleteProject(eq(84));
+    }
+
+    @Test
+    public void testDelete409() throws Exception {
+        Exception exc = new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.FOREIGN_KEY_VIOLATION, "test");
+        doThrow(
+            exc
+        ).when(
+            projectService
+        ).deleteProject(eq(84));
+       
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/projects/84")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(409))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("test")))
+        ;
+
+        verify(projectService, times(1)).deleteProject(eq(84));
     }
     
 }
