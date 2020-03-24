@@ -59,18 +59,18 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
     private PropertiesService propertiesService;
 
     @Override
-    public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
-        log.debug("Getting projects list offset %d size %d", pageNum, pageSize);
+    public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize) throws GobiiDtoMappingException {
+        log.debug("Getting projects list offset %d size %d", page, pageSize);
         PagedResult<GobiiProjectDTO> pagedResult;
 
         // get Cvs
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(pageNum);
+            Objects.requireNonNull(page);
             List<GobiiProjectDTO> projectDTOs = new java.util.ArrayList<>();
 
-            List<Project> projects = projectDao.getProjects(pageNum, pageSize);
+            List<Project> projects = projectDao.getProjects(page, pageSize);
             projects.forEach(project -> {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
@@ -85,7 +85,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
             pagedResult = new PagedResult<>();
             pagedResult.setResult(projectDTOs);
-            pagedResult.setCurrentPageNum(pageNum);
+            pagedResult.setCurrentPageNum(page);
             pagedResult.setCurrentPageSize(projectDTOs.size());
             return pagedResult;
         } catch (GobiiException gE) {
@@ -197,8 +197,8 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         return dto;
     }
 
-    public PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception {
-        return propertiesService.getProperties(pageNum, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
+    public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
+        return propertiesService.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
     }
 
     @Override
