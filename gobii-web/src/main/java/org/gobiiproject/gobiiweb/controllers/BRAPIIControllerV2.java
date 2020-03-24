@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobidomain.services.brapi.*;
 import org.gobiiproject.gobidomain.services.brapi.MapsetService;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -457,31 +459,22 @@ public class BRAPIIControllerV2 {
             @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
             @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
             @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize) {
 
         try {
 
-            if(page == null) {
-                //First Page
-                page = getDefaultBrapiPage();
-            }
 
-
-            List<SamplesDTO> samples = samplesBrapiService.getSamples(
-                    page, pageSize,
+            PagedResult<SamplesDTO> samples = samplesBrapiService.getSamples(
+                    pageSize, page,
                     sampleDbId, germplasmDbId,
                     observationUnitDbId);
 
-            Map<String, Object> brapiResult = new HashMap<>();
-
-            brapiResult.put("data", samples);
-
-            BrApiMasterPayload<Map<String, Object>> payload = new BrApiMasterPayload(brapiResult);
-
-            payload.getMetadata().getPagination().setCurrentPage(page);
-
-            payload.getMetadata().getPagination().setPageSize(pageSize);
+            BrApiMasterListPayload<SamplesDTO> payload = new BrApiMasterListPayload<>(
+                    samples.getResult(),
+                    samples.getCurrentPageSize(),
+                    samples.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -855,7 +848,7 @@ public class BRAPIIControllerV2 {
      * Lists the variants for a given VariantSetDbId by page size and page token
      *
      * @param variantSetDbId - Integer ID of the VariantSet to be fetched
-     * @param pageTokenParam - String page token
+     * @param pageToken - String page token
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size,
      *                 then the response will have maximum page size
      * @return Brapi response with list of CallSets
@@ -887,36 +880,13 @@ public class BRAPIIControllerV2 {
     public @ResponseBody ResponseEntity getVariantsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
-            @RequestParam(value = "page", required = false) Integer pageNum,
+            @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(value = "ID of the mapset to be retrieved")
-            @RequestParam(value = "mapSetId", required = false) Integer mapSetId,
-            @ApiParam(value = "Name of the mapset to be retrieved")
-            @RequestParam(value = "mapSetName", required = false) String mapSetName
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @RequestParam(value = "variantDbId", required = false) Integer variantDbId
     ){
-
-        try {
-
-            return ResponseEntity.ok("");
-
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage()
-            );
-        }
+        VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
+        return getVariants(pageToken,pageSize, variantDbId, variantSet.getVariantSetDbId());
     }
 
     /**
@@ -962,16 +932,8 @@ public class BRAPIIControllerV2 {
 
         try {
 
-            PagedResult<CallSetDTO> pagedResult = callSetService.getCallSets(pageSize, page,
-                    variantSetDbId, callSetsFilter);
-
-            BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
-                    pagedResult.getResult(),
-                    pagedResult.getCurrentPageSize(),
-                    pagedResult.getCurrentPageNum());
-
-            return ResponseEntity.ok(payload);
-
+            VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
+            return getCallSets(pageSize, page, variantSet.getVariantSetDbId(), callSetsFilter);
         }
         catch (GobiiException gE) {
             throw gE;
@@ -1005,26 +967,26 @@ public class BRAPIIControllerV2 {
                     name="Authorization", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
-    @RequestMapping(value = {
-            "/search/calls",
-            "/search/variantsets/",
-            "/search/callsets"},
-            method = RequestMethod.POST,
-            consumes = "application/json",
-            produces = "application/json")
+    @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
+            consumes = "application/json", produces = "application/json")
     public ResponseEntity searchGenotypeCalls(
-            HttpEntity<String> searchQuery,
+            @Valid  @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
             HttpServletRequest request
     ) {
+
+        ObjectMapper objectMapper  = new ObjectMapper();
+
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
+            String genotypesSearchQueryJson = objectMapper.writeValueAsString(genotypeCallsSearchQuery);
 
-            if (searchQuery.hasBody()) {
+            if (!StringUtils.isEmpty(genotypesSearchQueryJson)) {
 
-                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(cropType,
-                        searchQuery.getBody());
+                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(
+                        cropType,
+                        genotypesSearchQueryJson);
 
                 BrApiMasterPayload<SearchResultDTO> payload = new BrApiMasterPayload<>(searchResultDTO);
 
@@ -1051,40 +1013,6 @@ public class BRAPIIControllerV2 {
             );
 
         }
-    }
-
-    @RequestMapping(value = "/search/calls/{searchResultDbId}")
-    public ResponseEntity getSearchCalls(
-            @ApiParam()
-            @PathVariable String searchResultDbId,
-            HttpServletRequest request) {
-        return ResponseEntity.ok("");
-    }
-
-
-    @ApiOperation(
-            value = "Create an extract ",
-            notes = "Creates a variant set resource for given extract query",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="VariantSets")
-                    })
-            }
-            ,
-            hidden = true
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token", required=true,
-                    paramType = "header", dataType = "string")
-    })
-    @RequestMapping(value="/variantsets/extract", method=RequestMethod.POST)
-    public ResponseEntity<String> VariantSetsExtract(
-            HttpEntity<String> extractQuery,
-            HttpServletRequest request) throws Exception {
-
-        return ResponseEntity.ok("");
     }
 
     @ApiOperation(

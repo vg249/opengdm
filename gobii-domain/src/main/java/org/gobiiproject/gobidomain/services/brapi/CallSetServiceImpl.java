@@ -1,21 +1,24 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CallSetServiceImpl implements CallSetService {
 
@@ -24,20 +27,23 @@ public class CallSetServiceImpl implements CallSetService {
     @Autowired
     private DnaRunDao dnaRunDao;
 
+    @Autowired
+    private CvDao cvDao;
+
     public PagedResult<CallSetDTO> getCallSets(Integer pageSize,
                                                Integer pageNum,
                                                Integer variantSetDbId,
                                                CallSetDTO callSetsFilter) throws GobiiException {
-
-        Objects.requireNonNull(pageSize, "pageSize : Required non null");
-        Objects.requireNonNull(pageNum, "pageNum : Required non null");
-        Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
 
         PagedResult<CallSetDTO> pagedResult = new PagedResult<>();
 
         List<CallSetDTO> callSets = new ArrayList<>();
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
+            Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
 
 
             Integer rowOffset = pageNum * pageSize;
@@ -48,9 +54,16 @@ public class CallSetServiceImpl implements CallSetService {
                     callSetsFilter.getSampleDbId(), callSetsFilter.getSampleName(),
                     callSetsFilter.getGermplasmDbId(), callSetsFilter.getGermplasmName());
 
+            List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
+                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    null);
+
+            List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
+                    CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
+                    null);
 
             for (DnaRun dnaRun : dnaRuns) {
-                CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun);
+                CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
                 callSets.add(callSet);
             }
 
@@ -88,7 +101,15 @@ public class CallSetServiceImpl implements CallSetService {
 
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
-            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun);
+            List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
+                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    null);
+
+            List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
+                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    null);
+
+            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
 
             return callSet;
         }
@@ -102,7 +123,10 @@ public class CallSetServiceImpl implements CallSetService {
     }
 
 
-    private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun) {
+    private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun,
+                                                   List<Cv> dnaSampleGroupCvs,
+                                                   List<Cv> germplasmGroupCvs) {
+
 
         CallSetDTO callSet = new CallSetDTO();
 
@@ -114,7 +138,25 @@ public class CallSetServiceImpl implements CallSetService {
             callSet.getVariantSetIds().add(Integer.parseInt(datasetIdsIter.next()));
         }
 
+        if(dnaRun.getDnaSample().getProperties().size() > 0) {
+
+            Map<String, String> additionalInfo = CvIdCvTermMapper.mapCvIdToCvTerms(
+                    dnaSampleGroupCvs,
+                    dnaRun.getDnaSample().getProperties());
+
+            if(dnaRun.getDnaSample().getGermplasm().getProperties().size() > 0) {
+                additionalInfo =CvIdCvTermMapper.mapCvIdToCvTerms(
+                        germplasmGroupCvs,
+                        dnaRun.getDnaSample().getGermplasm().getProperties(),
+                        additionalInfo);
+            }
+
+            callSet.setAdditionalInfo(additionalInfo);
+
+        }
+
         return callSet;
     }
+
 
 }
