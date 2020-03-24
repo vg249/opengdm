@@ -974,19 +974,16 @@ public class BRAPIIControllerV2 {
             HttpServletRequest request
     ) {
 
-        ObjectMapper objectMapper  = new ObjectMapper();
 
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            String genotypesSearchQueryJson = objectMapper.writeValueAsString(genotypeCallsSearchQuery);
-
-            if (!StringUtils.isEmpty(genotypesSearchQueryJson)) {
+            if (genotypeCallsSearchQuery != null) {
 
                 SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(
                         cropType,
-                        genotypesSearchQueryJson);
+                        genotypeCallsSearchQuery);
 
                 BrApiMasterPayload<SearchResultDTO> payload = new BrApiMasterPayload<>(searchResultDTO);
 
@@ -1000,6 +997,37 @@ public class BRAPIIControllerV2 {
                         "Missing Request body"
                 );
             }
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.NONE,
+                    "Internal Server Error " + e.getMessage()
+            );
+
+        }
+    }
+
+    @RequestMapping(value = "/search/{searchResultDbId}/calls",
+            method = RequestMethod.GET,
+            produces = "application/json")
+    public ResponseEntity getGenotypeCallsBySearchQuery(
+            @PathVariable String searchResultDbId,
+            HttpServletRequest request
+    ) {
+
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO = searchService.getGenotypesSearchQuery(
+                    searchResultDbId, cropType);
+
+            return ResponseEntity.ok(genotypeCallsSearchQueryDTO);
 
         }
         catch (GobiiException ge) {
