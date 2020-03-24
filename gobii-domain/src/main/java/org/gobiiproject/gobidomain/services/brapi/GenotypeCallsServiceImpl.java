@@ -5,6 +5,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
@@ -567,27 +568,49 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         return returnVal;
     }
 
+
+
     /**
      * Gets the genotype calls in given datasets.
-     * @param extractQueryFilePath - datasetId given by user.
+     * @param genotypesSearchQuery - Search Query DTO.
      * @param pageToken - String token with datasetId and markerId combination of last page's last element.
      *                  If unspecified, first page will be extracted.
      * @param pageSize - Page size to extract. If not specified default page size.
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public List<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
-            String extractQueryFilePath, Integer pageSize,
+    public PagedResult<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
+            GenotypeCallsSearchQueryDTO genotypesSearchQuery, Integer pageSize,
             String pageToken) {
 
-        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
+
+        List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
+
+        List<Marker> markers;
+
+        List<DnaRun> dnaRuns;
 
         try {
 
+            if ((genotypesSearchQuery.getCallSetDbIds().size() > 0
+                    || genotypesSearchQuery.getCallSetNames().size() > 0
+                ) && (genotypesSearchQuery.getVariantDbIds().size() > 0
+                    || genotypesSearchQuery.getVariantNames().size() > 0
+                )
+            ) {
 
-            String outputDirPath = "";
+                markers = markerDao.getMarkers(
+                        genotypesSearchQuery.getVariantDbIds(),
+                        genotypesSearchQuery.getVariantNames(),
+                        null);
 
+                dnaRuns = dnaRunDao.getDnaRuns(
+                        genotypesSearchQuery.getCallSetDbIds(),
+                        genotypesSearchQuery.getCallSetNames(),
+                        null);
 
+            }
         }
         catch (GobiiException gE) {
 
