@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 /**
  * Created by VCalaminos on 1/10/2018.
  */
+@SuppressWarnings({"serial", "unchecked", "rawtypes"})
 public class ListStatementReferencesForList implements ListStatement {
 
     private final String PARAM_NAME_NAME_LIST = "nameArray";

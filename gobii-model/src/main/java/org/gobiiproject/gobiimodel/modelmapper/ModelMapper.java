@@ -234,6 +234,7 @@ public class ModelMapper {
 
     }
 
+    @SuppressWarnings("rawtypes")
     public static Map<String, EntityFieldBean> getDtoEntityMap(Class dtoClassName) {
 
         Map<String, EntityFieldBean> returnVal = new HashMap<>();

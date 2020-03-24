@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Phil on 10/16/2016.
  */
+@SuppressWarnings("all")
 public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     @Autowired

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Phil on 10/16/2016.
  */
+@SuppressWarnings("serial")
 public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
 
     @Autowired

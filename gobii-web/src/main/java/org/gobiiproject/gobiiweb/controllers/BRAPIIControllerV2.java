@@ -118,7 +118,7 @@ public class BRAPIIControllerV2 {
             }
     )
     @ResponseBody
-    public ResponseEntity getCalls(
+    public ResponseEntity<String> getCalls(
             HttpServletRequest request) throws Exception {
 
 
@@ -159,7 +159,7 @@ public class BRAPIIControllerV2 {
                 paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallSets(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSets(
             @ApiParam(value = "Used to request a specific page of data to be returned. " +
                     "The page indexing starts at 0 (the first page is 'page'= 0). " +
                     "Default is 0")
@@ -222,7 +222,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<CallSetDTO>> getCallSetsByCallSetDbId(
             @ApiParam(value = "ID of the Callset to be extracted", required = true)
             @PathVariable("callSetDbId") Integer callSetDbId) {
 
@@ -561,7 +561,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMapByMapId(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<MapsetDTO>> getMapByMapId(
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
@@ -569,7 +569,7 @@ public class BRAPIIControllerV2 {
         try {
 
             MapsetDTO mapset = mapsetService.getMapSetById(mapId);
-            BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload(mapset, pageSize, page);
+            BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>(mapset, pageSize, page);
             return ResponseEntity.ok(payload);
 
         }

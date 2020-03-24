@@ -109,9 +109,9 @@ public class TestDtoFactory {
         returnVal.setStatusId(1);
         returnVal.setModifiedBy(1);
        returnVal.setCreatedBy(1);
-        returnVal.setPlatformCode(uniqueStem + "dummy code");
-        returnVal.setPlatformDescription(uniqueStem + "dummy description");
-        returnVal.setPlatformName(uniqueStem + "New Platform");
+        returnVal.setPlatformCode(uniqueStemString + "dummy code");
+        returnVal.setPlatformDescription(uniqueStemString + "dummy description");
+        returnVal.setPlatformName(uniqueStemString + "New Platform");
         returnVal.setTypeId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());
@@ -202,10 +202,10 @@ public class TestDtoFactory {
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties
-        returnVal.setName(uniqueStem + "dummy name");
-        returnVal.setCode(uniqueStem + "add dummy code");
+        returnVal.setName(uniqueStemString + "dummy name");
+        returnVal.setCode(uniqueStemString + "add dummy code");
         returnVal.setCreatedBy(1);
-        returnVal.setDescription(uniqueStem + "dummy description");
+        returnVal.setDescription(uniqueStemString + "dummy description");
         returnVal.setMapType(1);
         returnVal.setModifiedBy(1);
         returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCE));
@@ -223,10 +223,10 @@ public class TestDtoFactory {
         ReferenceDTO returnVal = new ReferenceDTO();
 
         String uniqueStemString = uniqueStem.toString();
-        returnVal.setName(uniqueStem + ": reference");
-        returnVal.setVersion("version:" + uniqueStem);
-        returnVal.setLink(uniqueStem + " link");
-        returnVal.setFilePath(uniqueStem + " file path");
+        returnVal.setName(uniqueStemString + ": reference");
+        returnVal.setVersion("version:" + uniqueStemString);
+        returnVal.setLink(uniqueStemString + " link");
+        returnVal.setFilePath(uniqueStemString + " file path");
 
         return returnVal;
 
@@ -299,16 +299,16 @@ public class TestDtoFactory {
                 GobiiEntityNameType.ORGANIZATION);
 
 
-        returnVal.setFirstName(uniqueStem + " new contact");
-        returnVal.setLastName(uniqueStem + "new lastname");
-        returnVal.setEmail(uniqueStem + "mail@email.com");
-        returnVal.setCode(uniqueStem + "added New Code");
+        returnVal.setFirstName(uniqueStemString + " new contact");
+        returnVal.setLastName(uniqueStemString + "new lastname");
+        returnVal.setEmail(uniqueStemString + "mail@email.com");
+        returnVal.setCode(uniqueStemString + "added New Code");
         returnVal.setCreatedBy(1);
         returnVal.setModifiedBy(1);
         returnVal.setOrganizationId(organizationId);
         returnVal.getRoles().add(1);
         returnVal.getRoles().add(2);
-        returnVal.setUserName(uniqueStem + "new username");
+        returnVal.setUserName(uniqueStemString + "new username");
 
         return returnVal;
 

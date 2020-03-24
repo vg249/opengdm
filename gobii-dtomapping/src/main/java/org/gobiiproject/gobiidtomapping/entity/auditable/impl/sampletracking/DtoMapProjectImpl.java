@@ -169,7 +169,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
             Map<String, Object> spParamsParameters =
                     EntityProperties.propertiesToParams(projectId, entityProperty);
 
-            Integer propertyId = rsSampleTrackingProjectDao.createUpdateProjectProperty(spParamsParameters);
+            //Integer propertyId = 
+            rsSampleTrackingProjectDao.createUpdateProjectProperty(spParamsParameters);
         }
 
     }

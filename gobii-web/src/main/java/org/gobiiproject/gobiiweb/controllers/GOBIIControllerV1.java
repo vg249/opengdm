@@ -1883,7 +1883,7 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = dataSetService.getJobDetailsByDatasetId(Integer.parseInt(datasetId));
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -2250,7 +2250,7 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -2411,7 +2411,7 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -3051,7 +3051,7 @@ public class GOBIIControllerV1 {
                             RestResourceId.GOBII_NAMES)
                             .addUriParam("entity", entity));
 
-            String cropType = returnVal.getHeader().getCropType();
+            //String cropType = returnVal.getHeader().getCropType();
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5474,7 +5474,7 @@ public class GOBIIControllerV1 {
         //for example, if we wanted to put files into the extractor/output directory, we would need
         //to use the jobid. But we don't suppor that use case yet.
 
-        Enumeration<String> headers = request.getHeaders("Content-Disposition");
+        //Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
         if (!file.isEmpty()) {
             try {
@@ -5627,7 +5627,7 @@ public class GOBIIControllerV1 {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String name = file.getName();
+        //String name = file.getName();
 
         String fileMimeType = null;
 
@@ -5635,7 +5635,7 @@ public class GOBIIControllerV1 {
         //for example, if we wanted to put files into the extractor/output directory, we would need
         //to use the jobid. But we don't suppor that use case yet.
 
-        Enumeration<String> headers = request.getHeaders("Content-Disposition");
+        //Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
         if (!file.isEmpty()) {
             try {

@@ -283,7 +283,7 @@ public class DtoRequestAuthenticationTest {
 
         // now break the test user login
         String testLoginUser = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
-        RestUri restUriContactSearch = gobiiClientContext.getInstance(null, false)
+        RestUri restUriContactSearch = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .contactsByQueryParams();
         restUriContactSearch.setParamValue("userName", testLoginUser);
@@ -295,7 +295,7 @@ public class DtoRequestAuthenticationTest {
         ContactDTO contactDTOFromGet = resultEnvelope.getPayload().getData().get(0);
         contactDTOFromGet.setUserName("not");
 
-        RestUri restUriContactUpdate = gobiiClientContext.getInstance(null, false)
+        RestUri restUriContactUpdate = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(RestResourceId.GOBII_CONTACTS)
                 .addUriParam("id")

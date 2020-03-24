@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by VCalaminos on 10/10/2018.
  */
+@SuppressWarnings("serial")
 public class DtoMapNameIdFetchGermplasm implements DtoMapNameIdFetch {
 
     @Autowired

@@ -60,6 +60,7 @@ public class BRAPIIControllerV1Test {
 
     }
 
+    @SuppressWarnings("unused")
     private CallSetDTO createMockDnaRunDTO() {
 
         CallSetDTO callSetDTO = new CallSetDTO();
@@ -72,6 +73,7 @@ public class BRAPIIControllerV1Test {
     }
 
 
+    @SuppressWarnings("unused")
     private AnalysisDTO createMockAnalysisDTO(Integer analysisId) {
 
         AnalysisDTO analysisDTO = new AnalysisDTO();
@@ -301,6 +303,7 @@ public class BRAPIIControllerV1Test {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetSamplesList() throws Exception {
 
@@ -357,6 +360,7 @@ public class BRAPIIControllerV1Test {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetSamplesListPageNum() throws Exception {
 

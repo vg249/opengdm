@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by VCalaminos on 9/18/2018.
  */
+@SuppressWarnings("serial")
 public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
 
     @Autowired
@@ -37,7 +38,7 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
     private Integer getDnaSamplesFromResultSet(List<NameIdDTO> nameIdDTOList, ResultSet resultSet, String columnName, String columnId, GobiiFilterType gobiiFilterType) throws SQLException {
 
         Collections.sort(nameIdDTOList);
-        Integer index;
+        //Integer index;
         Integer nameId;
 
         List<NameIdDTO> nameList = new ArrayList<>();

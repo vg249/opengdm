@@ -45,13 +45,11 @@ public class CvPropertiesType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public int hashCode(Object x) throws HibernateException {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -129,19 +127,16 @@ public class CvPropertiesType implements UserType {
 
     @Override
     public boolean isMutable() {
-        // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public Serializable disassemble(Object value) throws HibernateException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        // TODO Auto-generated method stub
         return null;
     }
 

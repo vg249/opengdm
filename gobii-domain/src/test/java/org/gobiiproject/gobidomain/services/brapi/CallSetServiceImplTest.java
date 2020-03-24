@@ -1,5 +1,8 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
@@ -8,14 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.any;
 
 /**
  * Created by VCalaminos on 7/18/2019.
