@@ -119,12 +119,12 @@ public class ProjectDaoImpl implements ProjectDao {
             project = em.merge(project);
             em.remove(project);
             em.flush();
+        } catch (javax.persistence.PersistenceException pe) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                "Associated resources found. Cannot complete the action unless they are deleted.");
         } catch (Exception e) {
-            if (e.getMessage().contains("ConstraintViolation"))
-                throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-                    "Associated resources found. Cannot complete the action unless they are deleted.");
             throw e;
         }
     }
