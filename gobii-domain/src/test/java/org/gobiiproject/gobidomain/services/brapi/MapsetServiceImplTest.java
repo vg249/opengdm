@@ -44,7 +44,6 @@ public class MapsetServiceImplTest {
 
         for(int i = 0; i < listSize; i++) {
 
-
             Mapset mapset = new Mapset();
 
             mapset.setMarkerCount(100);
@@ -52,8 +51,6 @@ public class MapsetServiceImplTest {
             returnVal.add(mapset);
 
         }
-
-
 
         return returnVal;
    }
@@ -63,7 +60,6 @@ public class MapsetServiceImplTest {
     public void testMainFieldsMapping() throws Exception {
 
         final Integer pageSize = 1000;
-
 
     }
 

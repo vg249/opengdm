@@ -5,26 +5,18 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
-import io.swagger.annotations.ResponseHeader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.tika.Tika;
 import org.gobiiproject.gobidomain.GobiiDomainException;
@@ -75,14 +67,14 @@ import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.MarkerDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.rest.RestProfileDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
@@ -111,8 +103,26 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
+import io.swagger.annotations.ResponseHeader;
 
 
 /**

@@ -190,7 +190,6 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getProjectNames() throws GobiiDaoException {
-        // TODO Auto-generated method stub
 
         ResultSet returnVal = null;
 

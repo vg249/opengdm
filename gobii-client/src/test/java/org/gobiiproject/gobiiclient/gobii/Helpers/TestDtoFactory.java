@@ -278,9 +278,9 @@ public class TestDtoFactory {
         ManifestDTO returnVal = new ManifestDTO();
 
         String uniqueStemString = uniqueStem.toString();
-        returnVal.setName(uniqueStem + ": reference");
-        returnVal.setCode("version:" + uniqueStem);
-        returnVal.setFilePath(uniqueStem + " file path");
+        returnVal.setName(uniqueStemString + ": reference");
+        returnVal.setCode("version:" + uniqueStemString);
+        returnVal.setFilePath(uniqueStemString + " file path");
         returnVal.setCreatedBy(1);
         returnVal.setModifiedBy(1);
 

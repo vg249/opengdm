@@ -1,9 +1,21 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.QueryField;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
@@ -11,14 +23,6 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
-import javax.transaction.Transactional;
-import java.util.*;
 
 /**
  * Data access object Implementation for dataset Entity in the database
