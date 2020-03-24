@@ -15,12 +15,12 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
    
 public interface GobiiProjectService{
     GobiiProjectDTO getProject(Integer projectId) throws Exception;
-    PagedResult<GobiiProjectDTO>  getProjects(Integer pageNum, Integer pageSize) throws GobiiDomainException;
+    PagedResult<GobiiProjectDTO>  getProjects(Integer page, Integer pageSize) throws GobiiDomainException;
     GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception;
     GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy) throws Exception;
     void deleteProject(Integer projectId) throws Exception;
     String getDefaultProjectEditor();
 
     //
-    PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception;
+    PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception;
 }

@@ -47,7 +47,8 @@ public class VariantServiceImpl implements VariantService {
 
 
             List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(
-                    pageSize, markerIdCursor, variantSetDbId);
+                    pageSize, markerIdCursor,
+                    variantDbId, variantSetDbId);
 
             for(Marker marker : markers) {
 

@@ -1,8 +1,11 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class SamplesServiceImpl implements SamplesService {
@@ -37,18 +41,20 @@ public class SamplesServiceImpl implements SamplesService {
      * @return List of Genotype Calls
      */
     @Override
-    public List<SamplesDTO> getSamples(Integer pageNum, Integer pageSize,
-                                       Integer sampleDbId, Integer germplasmDbId,
-                                       String observationUnitDbId) {
+    public PagedResult<SamplesDTO> getSamples(Integer pageSize, Integer pageNum,
+                                            Integer sampleDbId, Integer germplasmDbId,
+                                            String observationUnitDbId) {
+
+        PagedResult<SamplesDTO> returnVal = new PagedResult<>();
+
+        List<SamplesDTO> samplesDTOs = new ArrayList<>();
+
         try {
 
-            List<SamplesDTO> returnVal = new ArrayList<>();
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
 
             Integer rowOffset = 0;
-
-            if(pageSize == null) {
-                pageSize = Integer.parseInt(BrapiDefaults.pageSize);
-            }
 
             if(pageNum != null && pageSize != null) {
                 rowOffset = pageNum*pageSize;
@@ -81,9 +87,13 @@ public class SamplesServiceImpl implements SamplesService {
                         }
                     }
 
-                    returnVal.add(samplesDTO);
+                    samplesDTOs.add(samplesDTO);
                 }
             }
+
+            returnVal.setCurrentPageSize(samplesDTOs.size());
+            returnVal.setCurrentPageNum(pageNum);
+            returnVal.setResult(samplesDTOs);
 
             return returnVal;
         }

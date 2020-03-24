@@ -123,9 +123,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
                 List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(
+                        genotypesToBeRead,
                         markerIdCursor,
-                        datasetId,
-                        genotypesToBeRead);
+                        null,
+                        datasetId);
 
                 GenotypeCallsDTO genotypeCall;
 
@@ -310,8 +311,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         marker.getDatasetMarkerIdx().get(datasetId.toString()).textValue());
 
 
-                List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDnaRunIdCursor(dnaRunIdCursor,
-                        datasetId, genotypesToBeRead);
+                List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDnaRunIdCursor(genotypesToBeRead,
+                        dnaRunIdCursor,
+                        datasetId);
 
                 // Add Marker and DnaRun Metadata associated with genotype calls.
                 // Extract HdF5 index for each marker and map it by dataset id.
