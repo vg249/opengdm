@@ -666,13 +666,10 @@ public class BRAPIIControllerV2 {
             @ApiParam(value = "Id for marker to be fetched")
             @PathVariable(value="variantDbId") Integer variantDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
+                    "nextPageToken form previous page's meta data should be used.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             HttpServletRequest request) throws Exception {
         try {
 
@@ -1017,6 +1014,11 @@ public class BRAPIIControllerV2 {
             produces = "application/json")
     public ResponseEntity getGenotypeCallsBySearchQuery(
             @PathVariable String searchResultDbId,
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             HttpServletRequest request
     ) {
 
@@ -1026,6 +1028,10 @@ public class BRAPIIControllerV2 {
 
             GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO = searchService.getGenotypesSearchQuery(
                     searchResultDbId, cropType);
+
+            PagedResult<GenotypeCallsDTO> pagedResult = genotypeCallsService.getGenotypeCallsByExtractQuery(
+                    genotypeCallsSearchQueryDTO, pageSize, pageToken
+            );
 
             return ResponseEntity.ok(genotypeCallsSearchQueryDTO);
 
