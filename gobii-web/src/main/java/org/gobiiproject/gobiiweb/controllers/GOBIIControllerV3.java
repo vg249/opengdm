@@ -108,21 +108,21 @@ public class GOBIIControllerV3  {
      * 
      * Gets list of projects
      * 
-     * @param pageNum 0-based page of data used in conjunction with pageSize
+     * @param page 0-based page of data used in conjunction with pageSize
      * @param pageSize number of items in response list.
      * @return
      */
     @GetMapping("/projects")
     @ResponseBody 
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
-            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
+            @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
         log.debug("Querying projects List");
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
         PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
-            Math.max(0, pageNum),
+            Math.max(0, page),
             pageSizeToUse
         );
         BrApiMasterListPayload<GobiiProjectDTO> payload = new BrApiMasterListPayload<>(
@@ -233,14 +233,14 @@ public class GOBIIControllerV3  {
     @GetMapping("/projects/properties")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getProjectProperties(
-            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
+            @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) throws Exception {
         log.debug("Querying project properties List");
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
         PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
-            Math.max(0, pageNum),
+            Math.max(0, page),
             pageSizeToUse
         );
         BrApiMasterListPayload<CvPropertyDTO> payload = new BrApiMasterListPayload<>(
