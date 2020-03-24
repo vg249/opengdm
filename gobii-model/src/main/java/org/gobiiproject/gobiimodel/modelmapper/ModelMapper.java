@@ -149,6 +149,7 @@ public class ModelMapper {
         ModelMapper.mapper(entityInstance, dtoInstance, false);
     }
 
+    @SuppressWarnings("all")
     private static void getDtoEntityMap(
             Class dtoClassName,
             Map<String, EntityFieldBean> returnVal,

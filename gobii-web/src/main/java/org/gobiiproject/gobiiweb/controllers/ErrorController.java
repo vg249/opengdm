@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ErrorController {
 
     @RequestMapping(value = "error", method = RequestMethod.GET)
-    public ResponseEntity error(HttpServletRequest request) {
+    public ResponseEntity<ErrorPayload> error(HttpServletRequest request) {
 
         ErrorPayload errorPayload = new ErrorPayload();
 

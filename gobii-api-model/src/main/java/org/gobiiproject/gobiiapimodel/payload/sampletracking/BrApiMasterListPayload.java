@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
 

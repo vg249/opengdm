@@ -2,8 +2,9 @@ package org.gobiiproject.gobiiweb.spring;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -20,7 +21,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 /**
  * Created by Phil on 8/16/2016.
  */
-
 @Configuration
 public class ConfigSupplement {
 

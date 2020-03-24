@@ -243,7 +243,6 @@ public class GOBIIControllerV3Test {
         );
 
         
-
         mockMvc.perform(
             MockMvcRequestBuilders
             .patch("/gobii-dev/gobii/v3/projects/84")
@@ -257,7 +256,6 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
     }
-
 
     //TEsts for Project Properties
     @Test
@@ -289,6 +287,50 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].propertyType").value("system defined"))
         ;
         verify(projectService, times(1)).getProjectProperties(0, 1000);
+    }
+
+    @Test
+    public void testGetProject() throws Exception {
+
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO(); //let's leave it empty since it's a mock anyways
+        when(
+            projectService.getProject( eq(123) )
+        ).thenReturn(
+            mockGobiiProject
+        );
+
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
+        ;
+        verify(projectService, times(1)).getProject(123);
+    }
+
+    @Test
+    public void testGetProjectNotFound() throws Exception {
+
+        when(
+            projectService.getProject( eq(123) )
+        ).thenReturn(
+            null
+        );
+     
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        ;
+        verify(projectService, times(1)).getProject(123);
     }
     
 }

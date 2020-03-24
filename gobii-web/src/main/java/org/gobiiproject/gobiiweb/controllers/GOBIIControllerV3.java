@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
-import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -72,7 +71,7 @@ public class GOBIIControllerV3  {
      */
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity authenticate(HttpServletRequest request,
+    public ResponseEntity<HeaderAuth> authenticate(HttpServletRequest request,
                                        HttpServletResponse response) {
 
         try {
@@ -165,6 +164,30 @@ public class GOBIIControllerV3  {
         result.setMetadata(null);
         return ResponseEntity.created(null).body(result);
     }
+
+    /**
+     * Get Project endpoint handler
+     * 
+     * @param projectId
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/projects/{projectId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> getProject(
+        @PathVariable Integer projectId
+    ) throws Exception {
+        BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
+        GobiiProjectDTO project = projectService.getProject(projectId);
+        if (project == null) {
+            throw new NullPointerException("Project does not exist");
+        }
+        result.setResult(project);
+        result.setMetadata(null);
+        return ResponseEntity.ok(result);
+
+    }
+
 
     /**
      * For Patch Project

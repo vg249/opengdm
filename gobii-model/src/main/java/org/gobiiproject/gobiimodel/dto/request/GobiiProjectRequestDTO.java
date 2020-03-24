@@ -22,11 +22,14 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
- import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern;
 
- import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.Project;
 
 public class GobiiProjectRequestDTO {
+    
     
     @NotEmpty
     @Pattern(regexp="^(0|[1-9][0-9]*)$")
