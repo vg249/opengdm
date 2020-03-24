@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -310,12 +311,18 @@ public class BRAPIIControllerV1Test {
 
         List<SamplesDTO> mockSamples = createMockSamples(pageSize);
 
+        PagedResult<SamplesDTO> result = new PagedResult<>();
+
+        result.setCurrentPageSize(mockSamples.size());
+        result.setCurrentPageNum(defaultPageNum);
+        result.setResult(mockSamples);
+
         when(
                 samplesBrapiService.getSamples(
                         any(Integer.TYPE), eq(pageSize),
                         isNull(Integer.class), isNull(Integer.class),
                         isNull(String.class))
-        ).thenReturn(mockSamples);
+        ).thenReturn(result);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
@@ -365,12 +372,19 @@ public class BRAPIIControllerV1Test {
 
         List<SamplesDTO> mockSamples = createMockSamples(pageSize);
 
+        PagedResult<SamplesDTO> result = new PagedResult<>();
+
+        result.setCurrentPageSize(pageSize);
+        result.setCurrentPageNum(pageNum);
+        result.setResult(mockSamples);
+
+
         when(
                 samplesBrapiService.getSamples(
                         any(Integer.TYPE), eq(pageSize),
                         isNull(Integer.class), isNull(Integer.class),
                         isNull(String.class))
-        ).thenReturn(mockSamples);
+        ).thenReturn(result);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(

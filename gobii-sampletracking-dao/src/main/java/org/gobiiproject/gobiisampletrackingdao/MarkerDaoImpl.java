@@ -135,7 +135,7 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     @Transactional
     public List<Marker> getMarkersByMarkerIdCursor(Integer pageSize, Integer markerIdCursor,
-                                                   Integer datasetId) {
+                                                   Integer markerId, Integer datasetId) {
 
         List<Marker> markers;
         List<Predicate> predicates = new ArrayList<>();
@@ -151,6 +151,10 @@ public class MarkerDaoImpl implements MarkerDao {
 
             markerRoot.fetch("platform", JoinType.LEFT);
             markerRoot.fetch("reference", JoinType.LEFT);
+
+            if(markerId != null) {
+                predicates.add(criteriaBuilder.equal(markerRoot.get("markerId"), markerId));
+            }
 
             if(markerIdCursor != null) {
                 predicates.add(criteriaBuilder.gt(markerRoot.get("markerId"), markerIdCursor));

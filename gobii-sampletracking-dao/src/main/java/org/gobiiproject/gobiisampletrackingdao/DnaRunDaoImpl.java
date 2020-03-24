@@ -10,6 +10,7 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -174,14 +175,13 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     @Override
     public List<DnaRun> getDnaRunsByDnaRunIdCursor(
-            Integer dnaRunIdCursor,
             Integer pageSize,
-            Integer datasetId) {
+            @Nullable  Integer dnaRunIdCursor,
+            @Nullable  Integer datasetId) {
 
         List<DnaRun> dnaRuns;
         List<Predicate> predicates = new ArrayList<>();
 
-        Objects.requireNonNull(dnaRunIdCursor, "DnaRunId cursor is required");
         Objects.requireNonNull(pageSize, "Page Size is required");
 
         try {
@@ -191,7 +191,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
             CriteriaQuery<DnaRun> criteriaQuery = criteriaBuilder.createQuery(DnaRun.class);
 
             Root<DnaRun> dnaRunRoot = criteriaQuery.from(DnaRun.class);
-            predicates.add(criteriaBuilder.gt(dnaRunRoot.get("dnaRunId"), dnaRunIdCursor));
+
+            if(dnaRunIdCursor != null) {
+                predicates.add(criteriaBuilder.gt(dnaRunRoot.get("dnaRunId"), dnaRunIdCursor));
+            }
 
             if(datasetId != null) {
                 Expression<Boolean> datasetIdExists = criteriaBuilder.function(
@@ -232,7 +235,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         try {
 
-            List<DnaRun> dnaRunsById = this.getDnaRuns(null, null,
+            List<DnaRun> dnaRunsById = this.getDnaRuns(2, 0,
                     dnaRunId, null,
                     null, null,
                     null, null,
