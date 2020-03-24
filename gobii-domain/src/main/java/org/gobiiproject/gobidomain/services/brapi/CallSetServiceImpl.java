@@ -6,7 +6,7 @@ import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
-import org.gobiiproject.gobiimodel.modelmapper.CvIdCvTermMapper;
+import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -140,12 +140,12 @@ public class CallSetServiceImpl implements CallSetService {
 
         if(dnaRun.getDnaSample().getProperties().size() > 0) {
 
-            Map<String, String> additionalInfo = CvIdCvTermMapper.mapCvIdToCvTerms(
+            Map<String, String> additionalInfo = CvMapper.mapCvIdToCvTerms(
                     dnaSampleGroupCvs,
                     dnaRun.getDnaSample().getProperties());
 
             if(dnaRun.getDnaSample().getGermplasm().getProperties().size() > 0) {
-                additionalInfo =CvIdCvTermMapper.mapCvIdToCvTerms(
+                additionalInfo =CvMapper.mapCvIdToCvTerms(
                         germplasmGroupCvs,
                         dnaRun.getDnaSample().getGermplasm().getProperties(),
                         additionalInfo);
