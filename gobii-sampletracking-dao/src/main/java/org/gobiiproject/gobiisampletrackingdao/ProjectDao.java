@@ -2,12 +2,13 @@
  * ProjectDao.java
  * 
  * V3 API Project DAO interface
+ * @author Rodolfo N. Duldulao, Jr.
  */
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 
 public interface ProjectDao {
@@ -18,10 +19,19 @@ public interface ProjectDao {
     );
 
     Project createProject(
-        String contactId,
-        String projectName,
-        String projectDescrition,
-        List<CvPropertyDTO> properties,
-        String createByUser
+        Project projectToBeCreated
     ) throws Exception;
+
+    Project patchProject(
+        Project projectToBePatched
+    ) throws Exception;
+    
+    List<Cv> getCvProperties(
+        Integer pageNum,
+        Integer pageSize  
+    );
+
+    Project getProject(Integer projectId) throws Exception;
+    
+    void deleteProject(Project project) throws Exception;
 }

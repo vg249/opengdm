@@ -12,6 +12,8 @@ package org.gobiiproject.gobiiweb.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
@@ -21,43 +23,43 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
-import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.Api;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
+@Slf4j
 public class GOBIIControllerV3  {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3.class);
     
     @Autowired
     private GobiiProjectService projectService = null;
@@ -71,7 +73,7 @@ public class GOBIIControllerV3  {
      */
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity authenticate(HttpServletRequest request,
+    public ResponseEntity<HeaderAuth> authenticate(HttpServletRequest request,
                                        HttpServletResponse response) {
 
         try {
@@ -90,7 +92,7 @@ public class GOBIIControllerV3  {
             throw gE;
         }
         catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -115,7 +117,7 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer pageNum,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
-        LOGGER.debug("Querying projects List");
+        log.debug("Querying projects List");
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
@@ -158,12 +160,99 @@ public class GOBIIControllerV3  {
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
-        String userName = projectService.getDefaultProjectCreator();
+        String userName = projectService.getDefaultProjectEditor();
         GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
         result.setResult(createdDTO);
         result.setMetadata(null);
         return ResponseEntity.created(null).body(result);
     }
+
+    /**
+     * Get Project endpoint handler
+     * 
+     * @param projectId
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/projects/{projectId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> getProject(
+        @PathVariable Integer projectId
+    ) throws Exception {
+        BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
+        GobiiProjectDTO project = projectService.getProject(projectId);
+        if (project == null) {
+            throw new NullPointerException("Project does not exist");
+        }
+        result.setResult(project);
+        result.setMetadata(null);
+        return ResponseEntity.ok(result);
+
+    }
+
+
+    /**
+     * For Patch Project
+     * @return
+     */
+    @PatchMapping("/projects/{projectId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> patchProject(
+        @PathVariable Integer projectId,
+        @RequestBody @Valid final GobiiProjectPatchDTO project,
+        BindingResult bindingResult
+    ) throws Exception {
+        String userName = projectService.getDefaultProjectEditor();
+        GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
+        BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
+        payload.setResult(dto);
+        payload.setMetadata(null);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete Project
+     * 
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/projects/{projectId}")
+    @ResponseBody
+    public ResponseEntity<String> deleteProject(
+        @PathVariable Integer projectId
+    ) throws Exception {
+        projectService.deleteProject(projectId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+
+    /**
+     * List Project Properties
+     * 
+     */
+    @GetMapping("/projects/properties")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getProjectProperties(
+            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
+            @RequestParam(required=false, defaultValue = "1000") Integer pageSize) throws Exception {
+        log.debug("Querying project properties List");
+        Integer pageSizeToUse = pageSize;
+
+        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+        PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
+            Math.max(0, pageNum),
+            pageSizeToUse
+        );
+        BrApiMasterListPayload<CvPropertyDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+           
+        return ResponseEntity.ok(payload);
+    }
+
+
 
     public GobiiProjectService getProjectService() {
         return projectService;

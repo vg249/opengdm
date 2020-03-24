@@ -27,19 +27,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ProjectPropertiesType implements UserType {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesType.class);
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class CvPropertiesType implements UserType {
     @Override
     public int[] sqlTypes() {
         return new int[] { Types.JAVA_OBJECT };
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public Class returnedClass() {
-        return ProjectProperties.class;
+        return java.util.Map.class;
     }
 
     @Override
@@ -64,13 +65,18 @@ public class ProjectPropertiesType implements UserType {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.createObjectNode();
-            jsonNode = objectMapper.readTree(cellContent);
-            ProjectProperties props = new ProjectProperties();
-            props.setProperties(jsonNode);
+            final JsonNode jsonNode = objectMapper.readTree(cellContent);
+            java.util.Map<String, String> props = new java.util.HashMap<>();
+
+            jsonNode.fieldNames().forEachRemaining(
+                fieldName -> {
+                    props.put(fieldName, (jsonNode.get(fieldName)).asText());
+                }
+            );
+        
             return props;
         } catch (Exception e) {
-            //
+            e.printStackTrace();
         }
         return null;
     }
@@ -81,10 +87,11 @@ public class ProjectPropertiesType implements UserType {
         String jsonString = "{}";
         if (value != null) {
             try {
-                ProjectProperties props = (ProjectProperties) value;
+                java.util.Map<String, String> props = (java.util.Map<String,String>) value;
                 ObjectMapper objectMapper = new ObjectMapper();
                 StringWriter stringWriter = new StringWriter();
-                objectMapper.writeValue(stringWriter, props.getProperties());
+                JsonNode jsonNode = objectMapper.valueToTree(props);
+                objectMapper.writeValue(stringWriter, jsonNode);
                 stringWriter.flush();
                 jsonString = stringWriter.toString();
             } catch (JsonGenerationException e) {
@@ -96,7 +103,7 @@ public class ProjectPropertiesType implements UserType {
             }  
         }
         
-        LOGGER.debug("Setting " + jsonString + " to index " + index);
+        log.debug("Setting " + jsonString + " to index " + index);
         st.setObject(index, jsonString, Types.OTHER);
     }
 
@@ -123,7 +130,7 @@ public class ProjectPropertiesType implements UserType {
     @Override
     public boolean isMutable() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -140,8 +147,7 @@ public class ProjectPropertiesType implements UserType {
 
     @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        // TODO Auto-generated method stub
-        return null;
+        return original;
     }
     
 }

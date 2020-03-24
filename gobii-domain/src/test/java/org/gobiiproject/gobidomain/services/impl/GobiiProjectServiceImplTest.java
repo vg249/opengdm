@@ -12,9 +12,11 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
@@ -33,6 +35,9 @@ public class GobiiProjectServiceImplTest {
 
     @Mock
     private CvDao cvDao;
+
+    @Mock
+    private ContactDao contactDao;
 
     @InjectMocks
     private GobiiProjectServiceImpl v3ProjectServiceImpl;
@@ -68,5 +73,7 @@ public class GobiiProjectServiceImplTest {
         assert payload.getCurrentPageNum() == 0;
         assert payload.getCurrentPageSize() == 1;
     }
+
+    //TODO: create unit tests for the other service methods.
 
 }

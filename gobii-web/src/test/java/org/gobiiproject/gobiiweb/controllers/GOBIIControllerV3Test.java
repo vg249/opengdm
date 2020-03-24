@@ -8,10 +8,14 @@
  */
 package org.gobiiproject.gobiiweb.controllers;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,10 +28,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,8 +43,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,6 +53,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ActiveProfiles("projectsController-test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -54,8 +62,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
   //locations = { "classpath:/spring/application-config.xml" }
 )
 @WebAppConfiguration
+@Slf4j
 public class GOBIIControllerV3Test {
-    private final static Logger LOGGER = LoggerFactory.getLogger(GOBIIControllerV3Test.class);
     @Mock
     private GobiiProjectService projectService;
 
@@ -66,6 +74,7 @@ public class GOBIIControllerV3Test {
 
     @Before
     public void setup() throws Exception {
+        log.info("Setting up Gobii V3 Controller test");
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders
             .standaloneSetup(gobiiControllerV3)
@@ -82,16 +91,27 @@ public class GOBIIControllerV3Test {
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
         
-        //mock DTO
-        CvPropertyDTO propDto = new CvPropertyDTO();
-        propDto.setPropertyGroupId(1);
-        propDto.setPropertyGroupName("test-group");
-        propDto.setPropertyType(1);
 
-        List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
-        propDtoList.add(propDto);
+        List<CvPropertyDTO> propDtoList = createMockPropDTOList();
         dto.setProperties(propDtoList);
         return dto;
+    }
+
+    private CvPropertyDTO createMockPropDTO() {
+        //mock DTO
+        CvPropertyDTO propDto = new CvPropertyDTO();
+        propDto.setPropertyId(1);
+        propDto.setPropertyName("test-prop");
+        propDto.setPropertyGroupId(1);
+        propDto.setPropertyGroupName("test-group");
+        propDto.setPropertyGroupType(1);
+        return propDto;
+    }
+
+    private List<CvPropertyDTO> createMockPropDTOList() {
+        List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
+        propDtoList.add( createMockPropDTO() );
+        return propDtoList;
     }
 
     @Test
@@ -141,7 +161,7 @@ public class GOBIIControllerV3Test {
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
-        doReturn("gadm").when(projectService).getDefaultProjectCreator();
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
         
 		when(
             projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm"))
@@ -170,7 +190,7 @@ public class GOBIIControllerV3Test {
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
-        doReturn("gadm").when(projectService).getDefaultProjectCreator();
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
         when(
             projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm") )
         ).thenReturn(
@@ -211,6 +231,177 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be empty")))
         .andExpect(jsonPath("$.error").value(StringContains.containsString("projectName must not be empty")))
         ;
+    }
+
+    @Test
+    public void testPatchWithProperties() throws Exception {
+        String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+            "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
+
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        //let's leave it empty since it's a mock anyways
+        doReturn("gadm").when(projectService).getDefaultProjectEditor();
+        when(
+            projectService.patchProject( eq(84), any(GobiiProjectPatchDTO.class), eq("gadm") )
+        ).thenReturn(
+            mockGobiiProject
+        );
+
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/projects/84")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
+        ;
+    }
+
+    //TEsts for Project Properties
+    @Test
+    public void testListProjectProperties() throws Exception {
+
+        List<CvPropertyDTO> mockList = createMockPropDTOList();
+        PagedResult<CvPropertyDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
+        when(
+            projectService.getProjectProperties(0, 1000)
+        ).thenReturn(
+            mockPayload
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects/properties")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+        .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+        .andExpect(jsonPath("$.result.data[0].propertyId").value(1))
+        .andExpect(jsonPath("$.result.data[0].propertyName").value("test-prop"))
+        .andExpect(jsonPath("$.result.data[0].propertyType").value("system defined"))
+        ;
+        verify(projectService, times(1)).getProjectProperties(0, 1000);
+    }
+
+    @Test
+    public void testGetProject() throws Exception {
+
+        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO(); //let's leave it empty since it's a mock anyways
+        when(
+            projectService.getProject( eq(123) )
+        ).thenReturn(
+            mockGobiiProject
+        );
+
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
+        ;
+        verify(projectService, times(1)).getProject(123);
+    }
+
+    @Test
+    public void testGetProjectNotFound() throws Exception {
+
+        when(
+            projectService.getProject( eq(123) )
+        ).thenReturn(
+            null
+        );
+     
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        ;
+        verify(projectService, times(1)).getProject(123);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        
+        doNothing().when(
+            projectService
+        ).deleteProject(eq(84));
+       
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/projects/84")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(204))
+        ;
+
+        verify(projectService, times(1)).deleteProject(eq(84));
+    }
+
+    @Test
+    public void testDelete404() throws Exception {
+        Exception exc = new NullPointerException("test");
+        doThrow(
+            exc
+        ).when(
+            projectService
+        ).deleteProject(eq(84));
+       
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/projects/84")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(404))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("Resource not found")))
+        ;
+
+        verify(projectService, times(1)).deleteProject(eq(84));
+    }
+
+    @Test
+    public void testDelete409() throws Exception {
+        Exception exc = new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.FOREIGN_KEY_VIOLATION, "test");
+        doThrow(
+            exc
+        ).when(
+            projectService
+        ).deleteProject(eq(84));
+       
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/projects/84")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(409))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("test")))
+        ;
+
+        verify(projectService, times(1)).deleteProject(eq(84));
     }
     
 }
