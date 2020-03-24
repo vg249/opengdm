@@ -1,8 +1,10 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
 import org.gobiiproject.gobidomain.services.brapi.SearchService;
+import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.SearchResultDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -18,11 +20,11 @@ import java.util.UUID;
 public class SearchServiceImpl implements SearchService {
 
     @Autowired
-    private ConfigSettingsService configSettingsService;
+    protected ConfigSettingsService configSettingsService;
 
     @Override
     public SearchResultDTO createSearchQueryResource(String cropType,
-                                                     String searchQueryString) {
+                                                     GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO) {
 
         if (cropType == null) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR,
@@ -32,32 +34,56 @@ public class SearchServiceImpl implements SearchService {
 
         SearchResultDTO searchResultDTO = new SearchResultDTO();
 
+        ObjectMapper objectMapper  = new ObjectMapper();
+
         try {
-            String processingId = UUID.randomUUID().toString();
 
-            String extractQueryPath = Paths.get(
-                    configSettingsService.getConfigSettings().getServerConfigs().get(
-                            cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES),
-                    processingId,
-                    "searchQuery.json"
-            ).toString();
+            String resourceId = UUID.randomUUID().toString();
 
+            String extractQueryPath = getSearchQueryResourcePath(resourceId, cropType);
 
             File extractQueryFile = new File(extractQueryPath);
 
             extractQueryFile.getParentFile().mkdirs();
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(extractQueryFile));
+            objectMapper.writeValue(extractQueryFile, genotypeCallsSearchQueryDTO);
 
-            bw.write(searchQueryString);
-
-            bw.close();
-
-
-            searchResultDTO.setSearchResultDbId(processingId);
-
+            searchResultDTO.setSearchResultDbId(resourceId);
 
             return searchResultDTO;
+
+        } catch (Exception e) {
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.NONE,
+                    "Internal Server Error");
+
+        }
+    }
+
+    private String getSearchQueryResourcePath(String resourceId, String cropType) {
+        return Paths.get(
+                configSettingsService.getConfigSettings().getServerConfigs().get(
+                        cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES),
+                resourceId,
+                "searchQuery.json").toString();
+    }
+
+    @Override
+    public GenotypeCallsSearchQueryDTO getGenotypesSearchQuery(String resourceId, String cropType) {
+
+        GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery;
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            String extractQueryPath = getSearchQueryResourcePath(resourceId, cropType);
+
+            File extractQueryFile = new File(extractQueryPath);
+
+            genotypeCallsSearchQuery = mapper.readValue(extractQueryFile, GenotypeCallsSearchQueryDTO.class);
+
+            return genotypeCallsSearchQuery;
+
         } catch (Exception e) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.NONE,
