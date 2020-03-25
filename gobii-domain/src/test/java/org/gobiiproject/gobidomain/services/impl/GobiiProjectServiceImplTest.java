@@ -63,12 +63,12 @@ public class GobiiProjectServiceImplTest {
         Project mockEntity = new Project();
         mockEntity.setProjectName("PName");
         daoReturn.add(mockEntity);
-        when(projectDao.getProjects(0,1000))
+        when(projectDao.getProjects(0,1000, null))
         .thenReturn(
             daoReturn
         );
 
-        PagedResult<GobiiProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000);
+        PagedResult<GobiiProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000, null);
         assert payload.getResult().size() == 1 ;
         assert payload.getCurrentPageNum() == 0;
         assert payload.getCurrentPageSize() == 1;

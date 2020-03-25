@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -42,9 +43,10 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Transactional
     @Override
-    public List<Project> getProjects(Integer pageNum, Integer pageSize) {
+    public List<Project> getProjects(Integer pageNum, Integer pageSize, Integer piContactId) {
         log.debug("DAO getting projects");
         List<Project> projects = new ArrayList<>();
+        Integer contactId = (Optional.ofNullable(piContactId)).orElse(0);
 
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -53,6 +55,14 @@ public class ProjectDaoImpl implements ProjectDao {
             Root<Project> projectRoot = criteriaQuery.from(Project.class);
             projectRoot.fetch("contact");
             criteriaQuery.select(projectRoot);
+            if (contactId > 0) {
+                criteriaQuery.where(
+                    criteriaBuilder.equal(
+                        projectRoot.get("contact"),
+                        contactId
+                    )
+                );
+            }
             criteriaQuery.orderBy(criteriaBuilder.asc(projectRoot.get("projectId")));
 
             projects = em.createQuery(criteriaQuery).setFirstResult(pageNum * pageSize).setMaxResults(pageSize)

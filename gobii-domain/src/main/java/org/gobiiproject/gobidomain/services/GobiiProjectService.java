@@ -15,7 +15,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
    
 public interface GobiiProjectService{
     GobiiProjectDTO getProject(Integer projectId) throws Exception;
-    PagedResult<GobiiProjectDTO>  getProjects(Integer page, Integer pageSize) throws GobiiDomainException;
+    PagedResult<GobiiProjectDTO>  getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDomainException;
     GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception;
     GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy) throws Exception;
     void deleteProject(Integer projectId) throws Exception;

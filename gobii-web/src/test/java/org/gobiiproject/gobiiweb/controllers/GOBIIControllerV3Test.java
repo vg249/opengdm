@@ -125,7 +125,7 @@ public class GOBIIControllerV3Test {
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
         when(
-            projectService.getProjects(0, 1000)
+            projectService.getProjects(0, 1000, null)
         ).thenReturn(
             mockPayload
         );
@@ -144,7 +144,40 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
         .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system defined"))
         ;
+        verify(projectService, times(1)).getProjects(0, 1000, null);
+    }
 
+    @Test
+    public void listWithQueryTest() throws Exception {
+        assert projectService != null;
+        List<GobiiProjectDTO> mockList = new ArrayList<GobiiProjectDTO>();
+        GobiiProjectDTO mockItem = createMockProjectDTO();
+        mockList.add(mockItem);
+        PagedResult<GobiiProjectDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
+        when(
+            projectService.getProjects(1, 100, 2)
+        ).thenReturn(
+            mockPayload
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/projects?page=1&pageSize=100&piContactId=2")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+        .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+        .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
+        .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
+        .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system defined"))
+        ;
+        verify(projectService, times(1)).getProjects(1, 100, 2);
     }
     
     @Test

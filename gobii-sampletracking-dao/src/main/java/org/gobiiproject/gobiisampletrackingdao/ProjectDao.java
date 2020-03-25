@@ -15,7 +15,8 @@ public interface ProjectDao {
 
     List<Project> getProjects(
         Integer pageNum,
-        Integer pageSize  
+        Integer pageSize,
+        Integer piContactId
     );
 
     Project createProject(
