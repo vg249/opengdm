@@ -432,7 +432,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
-        SortedMap<Integer, Integer> dnarunHdf5OrderMap = new TreeMap<Integer, Integer>();
+        SortedMap<Integer, Integer> dnarunHdf5OrderMap =
+                new TreeMap<>();
 
         try {
 
@@ -476,11 +477,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             for(Marker marker : markers) {
 
                 if(!markerHdf5IndexMap.containsKey(datasetId.toString())) {
-                    markerHdf5IndexMap.put(datasetId.toString(), new ArrayList<>());
+                    markerHdf5IndexMap.put(
+                            datasetId.toString(),
+                            new ArrayList<>());
                 }
                 markerHdf5IndexMap.get(
                         datasetId.toString()).add(
-                        marker.getDatasetMarkerIdx().get(datasetId.toString()).textValue());
+                                marker.getDatasetMarkerIdx().get(
+                                        datasetId.toString()).textValue());
 
             }
 
@@ -497,10 +501,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 dnarunHdf5IndexMap.get(
                         datasetId.toString()).add(
-                        dnaRun.getDatasetDnaRunIdx().get(datasetId.toString()).textValue());
+                                dnaRun.getDatasetDnaRunIdx().get(
+                                        datasetId.toString()).textValue());
 
                 dnarunHdf5OrderMap.put(
-                        Integer.parseInt(dnaRun.getDatasetDnaRunIdx().get(datasetId.toString()).asText()),
+                        Integer.parseInt(
+                                dnaRun.getDatasetDnaRunIdx()
+                                        .get(datasetId.toString())
+                                        .asText()),
                         orderIndex);
 
                 orderIndex++;
@@ -513,10 +521,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 nextPageOffset += pageOffset;
             }
 
-            String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
+            String extractFilePath =
+                    this.extractGenotypes(
+                            markerHdf5IndexMap,
+                            dnarunHdf5IndexMap);
 
 
-            Integer nextColumnOffset = this.readGenotypesFromFile(genotypeCalls, extractFilePath,
+            Integer nextColumnOffset = this.readGenotypesFromFile(
+                    genotypeCalls, extractFilePath,
                     pageSize, datasetId,
                     columnOffset, markers,
                     dnaRuns, new ArrayList<>(dnarunHdf5OrderMap.values()));
@@ -573,8 +585,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     /**
      * Gets the genotype calls in given datasets.
      * @param genotypesSearchQuery - Search Query DTO.
-     * @param pageToken - String token with datasetId and markerId combination of last page's last element.
-     *                  If unspecified, first page will be extracted.
+     * @param pageToken - String token with datasetId and markerId combination
+     *                  of last page's last element. If unspecified,
+     *                  first page will be extracted.
      * @param pageSize - Page size to extract. If not specified default page size.
      * @return List of Genotype calls for given dnarunId.
      */
@@ -587,9 +600,26 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
-        List<Marker> markers;
+        List<Marker> markers = new ArrayList<>();
 
-        List<DnaRun> dnaRuns;
+        List<DnaRun> dnaRuns = new ArrayList<>();
+
+        Set<Integer> markerDatasetIds = new HashSet<>();
+        Set<Integer> dnaRunDatasetIds = new HashSet<>();
+
+
+        Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
+
+        Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
+
+        Map<Integer, SortedMap<Integer, Integer>> dnarunHdf5OrderMap =
+                new HashMap<>();
+
+        List<Integer> datasetsFromJsonNode;
+
+        Map<Integer, Integer> dnaRunOrderIndexMap = new HashMap<>();
+
+        Integer dnaRunOrderIndex;
 
         try {
 
@@ -611,6 +641,113 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         null);
 
             }
+
+            for(Marker marker : markers) {
+
+                datasetsFromJsonNode =
+                        this.getDatasetIdsFromDatasetJsonIndex(
+                                marker.getDatasetMarkerIdx());
+
+                for(Integer datasetId : datasetsFromJsonNode) {
+
+                    if(!markerHdf5IndexMap.containsKey(datasetId.toString())) {
+                        markerHdf5IndexMap.put(
+                                datasetId.toString(),
+                                new ArrayList<>());
+
+
+                    }
+                    markerHdf5IndexMap.get(
+                            datasetId.toString()).add(
+                            marker.getDatasetMarkerIdx().get(
+                                    datasetId.toString()).textValue());
+                }
+
+                markerDatasetIds.addAll(datasetsFromJsonNode);
+
+            }
+
+            for(DnaRun dnaRun : dnaRuns) {
+
+                datasetsFromJsonNode =
+                        this.getDatasetIdsFromDatasetJsonIndex(
+                                dnaRun.getDatasetDnaRunIdx());
+
+               for(Integer datasetId : datasetsFromJsonNode) {
+
+                   if(!dnarunHdf5IndexMap.containsKey(datasetId.toString())) {
+
+                       dnarunHdf5IndexMap.put(
+                               datasetId.toString(),
+                               new ArrayList<>());
+
+                       dnarunHdf5OrderMap.put(datasetId,
+                               new TreeMap<>());
+
+                       dnaRunOrderIndex = 0;
+                   }
+                   else {
+                       dnaRunOrderIndex = dnaRunOrderIndexMap.get(datasetId);
+                   }
+
+                   dnarunHdf5IndexMap.get(
+                           datasetId.toString()).add(
+                           dnaRun.getDatasetDnaRunIdx().get(
+                                   datasetId.toString()).textValue());
+
+
+                   dnarunHdf5OrderMap.get(datasetId).put(
+                           Integer.parseInt(
+                                   dnaRun.getDatasetDnaRunIdx()
+                                           .get(datasetId.toString())
+                                           .asText()),
+                           dnaRunOrderIndex);
+
+                   dnaRunOrderIndex++;
+
+                   dnaRunOrderIndexMap.put(
+                           datasetId, dnaRunOrderIndex);
+               }
+
+               dnaRunDatasetIds.addAll(datasetsFromJsonNode);
+            }
+
+            //Retains only common dataset ids
+            markerDatasetIds.retainAll(dnaRunDatasetIds);
+
+            for(Integer datasetId : markerDatasetIds) {
+
+                Map<String, ArrayList<String>> markerExtractIndex =
+                        new HashMap<>();
+
+                markerExtractIndex.put(
+                        datasetId.toString(),
+                        markerHdf5IndexMap.get(datasetId.toString()));
+
+                Map<String, ArrayList<String>> dnaRunExtractIndex =
+                        new HashMap<>();
+
+                dnaRunExtractIndex.put(
+                        datasetId.toString(),
+                        dnarunHdf5IndexMap.get(datasetId.toString()));
+
+
+                String extractFilePath =
+                        this.extractGenotypes(
+                                markerExtractIndex,
+                                dnaRunExtractIndex);
+
+
+                Integer nextColumnOffset = this.readGenotypesFromFile(
+                        genotypeCalls, extractFilePath,
+                        pageSize, datasetId,
+                        0, markers,
+                        dnaRuns, new ArrayList<>(
+                                dnarunHdf5OrderMap.get(datasetId).values()));
+            }
+
+            returnVal.setResult(genotypeCalls);
+
         }
         catch (GobiiException gE) {
 
