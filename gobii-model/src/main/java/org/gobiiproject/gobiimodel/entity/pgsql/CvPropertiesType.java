@@ -80,6 +80,7 @@ public class CvPropertiesType implements UserType {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
             throws HibernateException, SQLException {
         String jsonString = "{}";

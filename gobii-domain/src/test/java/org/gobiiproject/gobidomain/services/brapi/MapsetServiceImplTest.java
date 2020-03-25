@@ -37,9 +37,10 @@ public class MapsetServiceImplTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    @SuppressWarnings("unused")
     private List<Mapset> getMockMapsets(Integer listSize) {
 
-        List<Mapset> returnVal = new ArrayList();
+        List<Mapset> returnVal = new ArrayList<>();
 
 
         for(int i = 0; i < listSize; i++) {
@@ -59,7 +60,7 @@ public class MapsetServiceImplTest {
     @Test
     public void testMainFieldsMapping() throws Exception {
 
-        final Integer pageSize = 1000;
+        //final Integer pageSize = 1000;
 
     }
 
@@ -67,7 +68,7 @@ public class MapsetServiceImplTest {
     @Test
     public void testAdditionalInfoMapping() throws Exception {
 
-        final Integer pageSize = 1000;
+        //final Integer pageSize = 1000;
 
     }
 

@@ -11,7 +11,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "rawtypes", "unchecked"})
+@Deprecated
 public class CvProperties implements java.io.Serializable, Map<String,String> {
 
     private Map<String, String> values = new java.util.HashMap<String, String>();
@@ -54,7 +55,6 @@ public class CvProperties implements java.io.Serializable, Map<String,String> {
 
     @Override
     public void putAll(Map m) {
-        // TODO Auto-generated method stub
         values.putAll(m);
 
     }

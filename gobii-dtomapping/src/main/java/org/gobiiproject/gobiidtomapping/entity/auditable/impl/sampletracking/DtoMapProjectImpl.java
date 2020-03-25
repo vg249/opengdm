@@ -42,6 +42,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProjectDTO> getList(Integer pageToken,
                                     Integer pageSize) throws GobiiDtoMappingException {
         List<ProjectDTO> returnVal = null;

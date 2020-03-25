@@ -1,8 +1,5 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
@@ -30,6 +27,7 @@ public class CallSetServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @SuppressWarnings("unused")
     private CallSetDTO createMockDnaRunDTO() {
 
         CallSetDTO callSetDTO = new CallSetDTO();
@@ -46,7 +44,7 @@ public class CallSetServiceImplTest {
     @Test
     public void getCallsets() throws Exception {
 
-        List<CallSetDTO> callsetsMock = new ArrayList<>();
+        //List<CallSetDTO> callsetsMock = new ArrayList<>();
 
 
 

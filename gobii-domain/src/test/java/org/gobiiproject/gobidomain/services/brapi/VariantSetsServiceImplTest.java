@@ -47,6 +47,7 @@ public class VariantSetsServiceImplTest {
     ObjectMapper mapper = new ObjectMapper();
 
 
+    @SuppressWarnings("unused")
     private Analysis createMockAnalysis(Integer analysisId) {
 
         Analysis analysis = new Analysis();
@@ -62,7 +63,7 @@ public class VariantSetsServiceImplTest {
 
     private List<Dataset> getMockDatasets(Integer listSize) {
 
-        List<Dataset> returnVal = new ArrayList();
+        List<Dataset> returnVal = new ArrayList<>();
 
 
         for(int i = 0; i < listSize; i++) {

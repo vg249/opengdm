@@ -115,7 +115,8 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
                         put("nameArray", nameIdDTOList);
                     }});
 
-            Integer resultSize = getDnaSamplesFromResultSet(nameIdDTOList, resultSet, "name", "dnasample_id", gobiiFilterType);
+            //Integer resultSize = 
+            getDnaSamplesFromResultSet(nameIdDTOList, resultSet, "name", "dnasample_id", gobiiFilterType);
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);

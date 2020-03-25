@@ -112,11 +112,10 @@ public class RsCvDaoImpl implements RsCvDao {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getAllCvItems() throws GobiiDaoException {
-        // TODO Auto-generated method stub
         ResultSet returnVal = null;
 
         try {
-            Map<String, Object> parameters = new HashMap<>();
+            //Map<String, Object> parameters = new HashMap<>();
             SpGetCvItems spGetCvItems = new SpGetCvItems();
 
             storedProcExec.doWithConnection(spGetCvItems);
@@ -136,8 +135,6 @@ public class RsCvDaoImpl implements RsCvDao {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getDetailsForCvId(Integer cvId) throws GobiiDaoException {
-        // TODO Auto-generated method stub
-
         ResultSet returnVal;
 
         try {

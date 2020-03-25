@@ -42,7 +42,8 @@ public class DtoMapNameIdFetchGermplasm implements DtoMapNameIdFetch {
                         put("nameArray", nameIdDTOList);
                     }});
 
-            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "external_code", "germplasm_id");
+            //Integer resultSize = 
+            DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "external_code", "germplasm_id");
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);

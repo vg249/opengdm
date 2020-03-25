@@ -45,7 +45,8 @@ public class DtoMapNameIdFetchMarkerNames implements DtoMapNameIdFetch {
                         put("nameArray", nameIdDTOList);
                     }});
 
-            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "marker_id", gobiiFilterType);
+            //Integer resultSize = 
+            DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "marker_id", gobiiFilterType);
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);

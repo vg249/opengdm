@@ -27,7 +27,7 @@ public class ProcessMessage extends MailMessage {
     private String identifierLine;
     private String pathsLine;
     private String validationLine;
-    private String confidentialyMessage;
+    //private String confidentialyMessage;
     File fPath;
     private String color;
     final String redColor = "#E74C3C";

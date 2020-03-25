@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -25,7 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 
 @WebAppConfiguration
 public class GobiiProjectServiceImplTest {

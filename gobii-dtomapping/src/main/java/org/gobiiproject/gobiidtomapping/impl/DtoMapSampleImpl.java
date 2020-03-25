@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Created by Phil on 3/29/2016.
  */
+@SuppressWarnings("serial")
 public class DtoMapSampleImpl implements DtoMapSample {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapSampleImpl.class);
