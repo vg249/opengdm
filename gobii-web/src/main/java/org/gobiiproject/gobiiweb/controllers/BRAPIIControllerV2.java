@@ -50,16 +50,11 @@ public class BRAPIIControllerV2 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV2.class);
 
-    private final Integer brapiDefaultPageSize = 1000;
-
     @Autowired
     private GenotypeCallsService genotypeCallsService;
 
     @Autowired
     private SearchService searchService;
-
-    @Autowired
-    private ConfigSettingsService configSettingsService;
 
     @Autowired
     private MapsetService mapsetService;
@@ -162,12 +157,12 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSets(
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Used to request a specific page of data to be returned. " +
                     "The page indexing starts at 0 (the first page is 'page'= 0). " +
                     "Default is 0")
             @RequestParam(value  = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             CallSetDTO callSetsFilter
     ) {
@@ -302,7 +297,7 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws GobiiException {
 
 
         try {
@@ -365,11 +360,11 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/variants", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getVariants(
+            @ApiParam(value = "Size of the page")
+            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page Token to fetch a page. " +
                     "Value is $metadata.pagination.nextPageToken form previous page.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
-            @ApiParam(value = "Size of the page")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "ID of the variant to be extracted")
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
             @ApiParam(value = "ID of the variantSet to be extracted")
@@ -508,16 +503,20 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value="/maps", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getMaps(
-            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
-            @RequestParam(value = "type", required = false) String mapType) throws GobiiException {
+            @RequestParam(value = "page", required = false,
+                    defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @RequestParam(value = "studyDbId",
+                    required = false) Integer studyDbId) throws GobiiException {
 
         try {
 
-            PagedResult<MapsetDTO> pagedResult = mapsetService.getMapSets(pageSize, page, studyDbId);
+            PagedResult<MapsetDTO> pagedResult =
+                    mapsetService.getMapSets(pageSize, page, studyDbId);
 
-            BrApiMasterListPayload<MapsetDTO> payload = new BrApiMasterListPayload<>(pagedResult.getResult(),
+            BrApiMasterListPayload<MapsetDTO> payload =
+                    new BrApiMasterListPayload<>(pagedResult.getResult(),
                     pagedResult.getCurrentPageSize(),
                     pagedResult.getCurrentPageNum());
 
@@ -670,7 +669,7 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageToken", required = false) String pageToken,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws GobiiException {
         try {
 
             PagedResult<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByVariantDbId(
@@ -816,7 +815,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantSetById(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload> getVariantSetById(
             @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId) {
 
@@ -882,8 +881,10 @@ public class BRAPIIControllerV2 {
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId
     ){
-        VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
-        return getVariants(pageToken,pageSize, variantDbId, variantSet.getVariantSetDbId());
+        VariantSetDTO variantSet =
+                variantSetsService.getVariantSetById(variantSetDbId);
+        return getVariants(pageSize, pageToken,
+                variantDbId, variantSet.getVariantSetDbId());
     }
 
     /**
@@ -917,10 +918,13 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallSetsByVariantSetDbId(
+    public
+    @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
+    getCallSetsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page number", required = false)
+            @ApiParam(value = "Page number", required = false,
+                    defaultValue = BrapiDefaults.pageNum)
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
@@ -961,16 +965,18 @@ public class BRAPIIControllerV2 {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token", required=true,
-                    paramType = "header", dataType = "string")
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
     })
     @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
             consumes = "application/json", produces = "application/json")
-    public ResponseEntity searchGenotypeCalls(
-            @Valid  @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>>
+    searchGenotypeCalls(
+            @Valid @RequestBody
+                    GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
             HttpServletRequest request
     ) {
-
 
         try {
 
@@ -978,11 +984,12 @@ public class BRAPIIControllerV2 {
 
             if (genotypeCallsSearchQuery != null) {
 
-                SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(
-                        cropType,
+                SearchResultDTO searchResultDTO =
+                        searchService.createSearchQueryResource(cropType,
                         genotypeCallsSearchQuery);
 
-                BrApiMasterPayload<SearchResultDTO> payload = new BrApiMasterPayload<>(searchResultDTO);
+                BrApiMasterPayload<SearchResultDTO> payload =
+                        new BrApiMasterPayload<>(searchResultDTO);
 
                 return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
 
@@ -1012,13 +1019,19 @@ public class BRAPIIControllerV2 {
     @RequestMapping(value = "/search/{searchResultDbId}/calls",
             method = RequestMethod.GET,
             produces = "application/json")
-    public ResponseEntity getGenotypeCallsBySearchQuery(
+    public
+    ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
+    getGenotypeCallsBySearchQuery(
             @PathVariable String searchResultDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used.")
-            @RequestParam(value = "pageToken", required = false) String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+                    "nextPageToken form previous page's " +
+                    "meta data should be used.")
+            @RequestParam(value = "pageToken", required = false)
+                    String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             HttpServletRequest request
     ) {
 
@@ -1026,14 +1039,23 @@ public class BRAPIIControllerV2 {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO = searchService.getGenotypesSearchQuery(
-                    searchResultDbId, cropType);
+            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
+                    searchService.getGenotypesSearchQuery(
+                            searchResultDbId, cropType);
 
-            PagedResult<GenotypeCallsDTO> pagedResult = genotypeCallsService.getGenotypeCallsByExtractQuery(
-                    genotypeCallsSearchQueryDTO, pageSize, pageToken
+            PagedResult<GenotypeCallsDTO> pagedResult =
+                    genotypeCallsService.getGenotypeCallsByExtractQuery(
+                            genotypeCallsSearchQueryDTO, pageSize, pageToken
             );
 
-            return ResponseEntity.ok(genotypeCallsSearchQueryDTO);
+            BrApiMasterListPayload<GenotypeCallsDTO> payload =
+                    new BrApiMasterListPayload<>(
+                            pagedResult.getResult(),
+                            pagedResult.getCurrentPageSize(),
+                            pagedResult.getCurrentPageNum());
+
+
+            return ResponseEntity.ok(payload);
 
         }
         catch (GobiiException ge) {
@@ -1055,7 +1077,8 @@ public class BRAPIIControllerV2 {
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="GenotypeCalls")
+                            @ExtensionProperty(name="summary",
+                                    value="GenotypeCalls")
                     })
             }
             ,
@@ -1063,45 +1086,53 @@ public class BRAPIIControllerV2 {
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of Genotype Calls by VariantSetId",
+                    @ApiResponse(
+                            code = 200,
+                            message = "Successful retrieval of " +
+                                    "Genotype Calls by VariantSetId",
                             response = GenotypeCallsListResponse.class
                     )
             }
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token", required=true,
-                    paramType = "header", dataType = "string")
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
     })
     @RequestMapping(
             value="/variantsets/{variantSetDbId}/calls",
             method=RequestMethod.GET,
             produces = "application/json")
-    public @ResponseBody ResponseEntity getCallsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
+    getCallsByVariantSetDbId(
+            @ApiParam(value = "ID of the VariantSet of " +
+                    "the CallSets to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's meta data should be used." +
-                    "If pageNumber is specified pageToken will be ignored. " +
-                    "pageToken can be used to sequentially get pages faster. " +
-                    "When an invalid pageToken is given the page will start from beginning.")
-            @RequestParam(value = "pageToken", required = false) String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            HttpServletRequest request
+                    "nextPageToken form previous " +
+                    "page's meta data should be used.")
+            @RequestParam(value = "pageToken", required = false)
+                    String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize
     ){
 
         try {
 
-            PagedResult<GenotypeCallsDTO> pagedResult = new PagedResult<>();
+            PagedResult<GenotypeCallsDTO> pagedResult =
+                    genotypeCallsService.getGenotypeCallsByVariantSetDbId(
+                            variantSetDbId, pageSize, pageToken);
 
-            pagedResult = genotypeCallsService.getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
 
-
-            BrApiMasterListPayload<GenotypeCallsDTO> payload = new BrApiMasterListPayload<>(
-                    pagedResult.getResult(),
-                    pagedResult.getCurrentPageSize(),
-                    pagedResult.getNextPageToken());
+            BrApiMasterListPayload<GenotypeCallsDTO> payload =
+                    new BrApiMasterListPayload<>(
+                            pagedResult.getResult(),
+                            pagedResult.getCurrentPageSize(),
+                            pagedResult.getNextPageToken());
 
 
             return ResponseEntity.ok(payload);
@@ -1141,9 +1172,7 @@ public class BRAPIIControllerV2 {
             method=RequestMethod.GET,
             produces = "text/csv")
     public ResponseEntity<ResponseBodyEmitter> handleRbe(
-            @PathVariable("variantSetDbId") Integer variantSetDbId,
-            HttpServletRequest request
-
+            @PathVariable("variantSetDbId") Integer variantSetDbId
     ) {
 
         //Giving Response emitter to finish the download within 30 mins.
@@ -1192,18 +1221,4 @@ public class BRAPIIControllerV2 {
         ).body(emitter);
     }
 
-    /**
-     * Brapi pages are 0 indexed and first page number is 0
-     * @return First page number
-     */
-    public Integer getDefaultBrapiPage() {
-
-        return 0;
-    }
-
-    @RequestMapping("/error")
-    public String handleError(HttpServletRequest request) {
-        return "error";
-    }
-
-}// BRAPIController
+}
