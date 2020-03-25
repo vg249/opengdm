@@ -50,6 +50,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
     }
 
     @Test
+    @SuppressWarnings("unused")
     public void testSendLoaderInstructionFile() throws Exception {
 
 

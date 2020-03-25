@@ -27,6 +27,7 @@ import org.junit.rules.TemporaryFolder;
  * after processing. Generated o/p file is verified that it is as expected.
  */
 @Ignore //TODO - fix for non-windows file endings
+@SuppressWarnings("all")
 public class CSVFileReader_CSV_BOTHV2Test {
 
     private static String tempFolderLocation, resourceDestFolderLocation, loaderScriptPath;

@@ -43,6 +43,7 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
+    @SuppressWarnings("unchecked")
     public List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
                                      Integer datasetId, String datasetName,
                                      Integer experimentId, String experimentName) {
@@ -168,6 +169,7 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @Transactional
+    @SuppressWarnings("unchecked")
     public List<Object[]> getDatasetsWithAnalysesAndCounts(
           Integer pageSize, Integer rowOffset,
           Integer datasetId, String datasetName,

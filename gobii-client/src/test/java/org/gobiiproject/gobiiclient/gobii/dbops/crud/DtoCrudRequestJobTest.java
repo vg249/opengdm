@@ -339,7 +339,8 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         for (Integer currentIdx : itemToTest) {
 
-            JobDTO currentJobDto = jobDTOList.get(currentIdx);
+            //JobDTO currentJobDto = 
+            jobDTOList.get(currentIdx);
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 

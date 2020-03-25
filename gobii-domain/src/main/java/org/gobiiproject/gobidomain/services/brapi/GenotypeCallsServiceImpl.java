@@ -748,7 +748,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     genotype.append(genotypesChar);
                 }
             }
-
+            br.close();
             fstream.close();
         }
         catch (Exception e) {
@@ -843,7 +843,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         }
 
-
+        br.close();
         fstream.close();
 
         return j;
@@ -899,7 +899,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         }
 
-
+        br.close();
         fstream.close();
 
         return genotypes.toString();

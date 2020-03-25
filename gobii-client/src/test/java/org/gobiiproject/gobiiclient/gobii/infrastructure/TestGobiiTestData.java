@@ -66,6 +66,7 @@ public class TestGobiiTestData {
         return propName;
     }
 
+    @SuppressWarnings("rawtypes")
     private static void checkFkeys(NodeList fkeys, Class currentClass, Object currentDTO) throws Exception {
 
         if(fkeys != null && fkeys.getLength() > 0) {
@@ -410,6 +411,7 @@ public class TestGobiiTestData {
         return returnVal;
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void testGobiiTestData() throws Exception {
         String commandline = makeCommandLine();

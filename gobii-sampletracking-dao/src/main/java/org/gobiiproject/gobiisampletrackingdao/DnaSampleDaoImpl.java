@@ -48,6 +48,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      */
     @Override
     @Transactional
+    @SuppressWarnings({"unchecked"})
     public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset,
                                          Integer projectId, Integer dnaSampleId,
                                          Integer germplasmId, String germplasmExternalCode) throws GobiiException {
@@ -68,7 +69,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
             Session session = em.unwrap(Session.class);
 
-            Criteria dnaSampleCriteria = session.createCriteria(DnaSample.class);
+            Criteria dnaSampleCriteria = session.createCriteria(DnaSample.class); //TODO: replace this
 
             Criteria germplasmCriteria = dnaSampleCriteria.createCriteria("germplasm");
 

@@ -24,6 +24,7 @@ public class ListStatementDnaRunNamesByList implements ListStatement {
     public ListSqlId getListSqlId() { return ListSqlId.QUERY_ID_DNARUN_NAMES_BYLIST; }
 
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         List<NameIdDTO> nameArray = (ArrayList) sqlParamVals.get(PARAM_NAME_NAME_LIST);

@@ -197,21 +197,21 @@ public class DtoRequestLoaderFilePreviewTest {
 
         Scanner input = new Scanner(System.in);
 
-            int lineCtr = 0; //count lines read
-            input = new Scanner(getFileOfType(filePath, resourcesDirectory));
-            while (lineCtr<50) { //read first 50 lines only
-                int ctr=0; //count words stored
-                String line = input.nextLine();
-                for(String s: line.split("\t")){
-                    if(ctr==50) break;
-                    else{
-                        if(!previewFileItems.get(lineCtr).get(ctr).equals(s)) return false;
-                        ctr++;
-                    }
+        int lineCtr = 0; //count lines read
+        input = new Scanner(getFileOfType(filePath, resourcesDirectory));
+        while (lineCtr<50) { //read first 50 lines only
+            int ctr=0; //count words stored
+            String line = input.nextLine();
+            for(String s: line.split("\t")){
+                if(ctr==50) break;
+                else{
+                    if(!previewFileItems.get(lineCtr).get(ctr).equals(s)) return false;
+                    ctr++;
                 }
-                lineCtr++;
             }
-            input.close();
+            lineCtr++;
+        }
+        input.close();
 
 
         return true;

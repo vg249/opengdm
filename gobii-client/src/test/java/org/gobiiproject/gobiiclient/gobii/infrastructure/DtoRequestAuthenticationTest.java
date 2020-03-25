@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class DtoRequestAuthenticationTest {
 
 
@@ -308,7 +309,7 @@ public class DtoRequestAuthenticationTest {
 
 
         // now test that we get the correct borken response
-        GobiiClientContext newGobiiClientContext = gobiiClientContext.getInstance(serviceUrl, true);
+        GobiiClientContext newGobiiClientContext = GobiiClientContext.getInstance(serviceUrl, true);
 
         String testUserName = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
         String testPassword = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();

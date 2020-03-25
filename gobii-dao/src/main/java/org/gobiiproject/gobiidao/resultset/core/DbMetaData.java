@@ -18,7 +18,7 @@ public class DbMetaData {
 
     public String getCurrentDbUrl() throws SQLException {
 
-        String returnVal = "";
+        //String returnVal = "";
 //        Shared EntityManager proxy for target factory [org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean@48fde1c2]
 
 

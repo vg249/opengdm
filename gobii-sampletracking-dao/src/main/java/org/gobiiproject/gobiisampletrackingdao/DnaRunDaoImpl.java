@@ -43,6 +43,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
                                    Integer dnaRunId, String dnaRunName,
                                    Integer datasetId, Integer experimentId,

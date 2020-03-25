@@ -408,6 +408,7 @@ public class BRAPIIControllerV1Test {
 
     }
 
+    @SuppressWarnings("unused")
     private List<VariantSetDTO> createMockVariantSets(Integer pageSize) {
 
         List<VariantSetDTO> returnVal = new ArrayList<>();

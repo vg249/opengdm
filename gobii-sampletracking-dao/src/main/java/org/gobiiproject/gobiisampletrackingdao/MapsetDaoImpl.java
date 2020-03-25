@@ -51,6 +51,7 @@ public class MapsetDaoImpl implements MapsetDao {
     @PersistenceContext
     protected EntityManager em;
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public List<Mapset> getMapsetsWithCounts(
             Integer pageSize, Integer rowOffset, Integer mapsetId,
             Integer experimentId) throws GobiiException {

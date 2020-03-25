@@ -65,8 +65,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-
-        HttpServletRequest httpRequest = null;
+        //HttpServletRequest httpRequest = null;
         HttpServletResponse httpResponse = null;
 
         try {
@@ -260,6 +259,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         return returnVal;
     }
 
+    @SuppressWarnings("unused")
     private void checkLogout(HttpServletRequest httpRequest) {
         if (currentLink(httpRequest).equals(logoutLink)) {
             String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);

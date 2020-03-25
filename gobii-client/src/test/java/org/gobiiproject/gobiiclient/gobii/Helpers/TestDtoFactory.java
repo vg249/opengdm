@@ -1,32 +1,36 @@
 package org.gobiiproject.gobiiclient.gobii.Helpers;
 
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestExperimentTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestOrganizationTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestPlatformTest;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ManifestDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.children.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
-
-import java.sql.Timestamp;
-import java.util.*;
 
 /**
  * Created by Phil on 4/27/2016.
@@ -151,9 +155,8 @@ public class TestDtoFactory {
     }
 
     public static String getFolderNameWithTimestamp(String folderName) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        //Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String returnVal = folderName.replaceAll(" ", "_") + DateUtils.makeDateIdString();
-
 
         return returnVal;
     }
@@ -163,7 +166,6 @@ public class TestDtoFactory {
                                                      List<Integer> analysisIds) throws Exception {
 
         DataSetDTO returnVal = new DataSetDTO();
-
 
         // set the big-ticket items
 

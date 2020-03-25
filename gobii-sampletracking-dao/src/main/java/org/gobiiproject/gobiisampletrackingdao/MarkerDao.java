@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.Marker;
-
-import javax.persistence.Tuple;
 import java.util.List;
+
+import org.gobiiproject.gobiimodel.entity.Marker;
 
 public interface MarkerDao {
 

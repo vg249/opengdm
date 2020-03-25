@@ -43,6 +43,7 @@ public @interface CheckAtLeastOneNotNullOrEmpty {
             this.fieldNames = constraintAnnotation.fieldNames();
         }
 
+        @SuppressWarnings("unchecked")
         public boolean isValid(Object object, ConstraintValidatorContext constraintContext) {
 
 

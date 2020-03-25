@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 
+@SuppressWarnings("unused")
 public class ADLEncapsulator {
     private static final String INPUT_HOST = "-h";
     private static final String INPUT_USER = "-u";

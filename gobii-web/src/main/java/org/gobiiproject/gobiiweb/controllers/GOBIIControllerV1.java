@@ -303,9 +303,7 @@ public class GOBIIControllerV1 {
             String dtoHeaderAuthString = objectMapper.writeValueAsString(dtoHeaderAuth);
             returnVal = dtoHeaderAuthString;
 
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            String tmp = msg;
+        } catch (Exception e) {  //TODO: what is this?
             try {
                 throw (e);
             } catch (Exception e1) {
@@ -1223,8 +1221,7 @@ public class GOBIIControllerV1 {
 
         try {
 
-            PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
-
+            //PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
             CvDTO cvDTODeleted = cvService.deleteCv(cvId);
 
             PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request, response,

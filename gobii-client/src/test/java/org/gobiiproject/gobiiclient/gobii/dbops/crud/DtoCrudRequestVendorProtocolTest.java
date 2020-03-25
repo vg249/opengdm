@@ -185,6 +185,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
 
 
     @Test
+    @SuppressWarnings("all")
     public void multiProtocolTest() throws Exception {
 
         // ********** PRE-CREATE ENTITIES

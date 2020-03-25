@@ -112,6 +112,7 @@ public class ProjectDaoImplTest {
 
     @Test(expected = javax.persistence.PersistenceException.class)
     @Transactional
+    @SuppressWarnings("unused")
     public void testDoubleCreateProject() throws Exception {
         Project project = v3ProjectDao.createProject(this.createProject(4, "test", "", null, "gadm"));
         Project project2 = v3ProjectDao.createProject(this.createProject(4, "test", "", null, "gadm"));

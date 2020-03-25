@@ -46,11 +46,12 @@ import java.util.concurrent.Executors;
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI_V2)
 @CrossOrigin
 @Api
+@SuppressWarnings("unused")
 public class BRAPIIControllerV2 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV2.class);
 
-    private final Integer brapiDefaultPageSize = 1000;
+    private final Integer brapiDefaultPageSize = 1000; //TODO: remove 
 
     @Autowired
     private GenotypeCallsService genotypeCallsService;
@@ -59,7 +60,7 @@ public class BRAPIIControllerV2 {
     private SearchService searchService;
 
     @Autowired
-    private ConfigSettingsService configSettingsService;
+    private ConfigSettingsService configSettingsService; //TODO: remove
 
     @Autowired
     private MapsetService mapsetService;
@@ -79,7 +80,7 @@ public class BRAPIIControllerV2 {
     @Autowired
     private MarkerPositionsService markerPositionsService;
 
-    private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT); //TODO: remove
 
 
     private class CallSetResponse extends BrApiMasterPayload<CallSetDTO>{}
@@ -291,7 +292,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallsByCallset(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>> getCallsByCallset(
             @ApiParam(value = "Id for dna run to be fetched")
             @PathVariable(value="callSetDbId") Integer callSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
@@ -364,7 +365,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variants", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariants(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariants(
             @ApiParam(value = "Page Token to fetch a page. " +
                     "Value is $metadata.pagination.nextPageToken form previous page.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
@@ -431,7 +432,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variants/{variantDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantsByVariantDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantDTO>> getVariantsByVariantDbId(
             @ApiParam(value = "ID of the Variant to be extracted", required = true)
             @PathVariable("variantDbId") Integer variantDbId) {
 
@@ -455,7 +456,7 @@ public class BRAPIIControllerV2 {
 
     @ApiOperation(value="List samples", hidden = true)
     @RequestMapping(value="/samples", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMaps(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<SamplesDTO>> getMaps(
             @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
             @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
             @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
@@ -507,7 +508,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/maps", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMaps(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<MapsetDTO>> getMaps(
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
@@ -593,7 +594,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/markerpositions", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMarkersByMapId(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<MarkerPositions>> getMarkersByMapId(
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "minPosition", required = false) BigDecimal minPosition,
@@ -662,7 +663,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallsByVariant(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>> getCallsByVariant(
             @ApiParam(value = "Id for marker to be fetched")
             @PathVariable(value="variantDbId") Integer variantDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
@@ -739,7 +740,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantSets(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantSetDTO>> getVariantSets(
             @ApiParam(value = "Id of the VariantSet to be fetched. Also, corresponds to dataset Id")
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. study " +
@@ -819,7 +820,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantSetById(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
             @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId) {
 
@@ -877,7 +878,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantsByVariantSetDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariantsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @RequestParam(value = "pageToken", required = false) String pageToken,
@@ -920,7 +921,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallSetsByVariantSetDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSetsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @ApiParam(value = "Page number", required = false)
@@ -969,7 +970,7 @@ public class BRAPIIControllerV2 {
     })
     @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
             consumes = "application/json", produces = "application/json")
-    public ResponseEntity searchGenotypeCalls(
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchGenotypeCalls(
             @Valid  @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
             HttpServletRequest request
     ) {
@@ -1043,7 +1044,7 @@ public class BRAPIIControllerV2 {
             value="/variantsets/{variantSetDbId}/calls",
             method=RequestMethod.GET,
             produces = "application/json")
-    public @ResponseBody ResponseEntity getCallsByVariantSetDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>> getCallsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the CallSets to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +

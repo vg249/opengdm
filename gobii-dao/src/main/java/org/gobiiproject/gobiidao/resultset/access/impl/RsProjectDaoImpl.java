@@ -220,7 +220,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
         try {
 
-            Map<String, Object> parameters = new HashMap<>();
+            //Map<String, Object> parameters = new HashMap<>();
             SpGetProjectsForLoadedDatasets spGetProjectsForLoadedDatasets = new SpGetProjectsForLoadedDatasets();
 
             storedProcExec.doWithConnection(spGetProjectsForLoadedDatasets);

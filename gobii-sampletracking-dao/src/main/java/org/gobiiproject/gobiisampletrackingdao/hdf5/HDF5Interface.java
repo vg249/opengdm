@@ -1,18 +1,23 @@
 package org.gobiiproject.gobiisampletrackingdao.hdf5;
 
-import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
-
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.*;
-
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 
 /**
  * Interface to extract genotypes from HDF5.
@@ -38,6 +43,7 @@ public class HDF5Interface {
         this.pathToHDF5 = pathToHDF5;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, String> getHdf5ProcessingPaths() {
         return (Map<String, String>) hdf5ProcessingPathSelector.getHdf5ProcessPaths(
                 hdf5ProcessingPathSelector.determineCurrentLookupKey());
@@ -244,7 +250,7 @@ public class HDF5Interface {
     private String getCutString(String sampleList){
         String[] entries=sampleList.split(",");
         StringBuilder cutString=new StringBuilder();//Cutstring -> 1,2,4,5,6
-        int i=1;
+        //int i=1;
         for(String entry:entries){
             int val=-1;
             try {
@@ -257,7 +263,7 @@ public class HDF5Interface {
             if( val != -1){
                 cutString.append((val+1)+",");
             }
-            i++;
+            //i++;
         }
         cutString.deleteCharAt(cutString.length()-1);
         return cutString.toString();
