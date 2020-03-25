@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiiprocess.digester;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.nio.file.Files;
@@ -10,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -44,7 +48,6 @@ import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.email.DigesterProcessMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
@@ -53,10 +56,11 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVInstructionProcessor;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getWebserviceConnectionString;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
@@ -69,6 +73,8 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
  */
 public class Digester {
 
+    private Logger LOGGER = LoggerFactory.getLogger("Digester");
+    
     private final String VARIANT_CALL_TABNAME = "matrix";
     private final String LINKAGE_GROUP_TABNAME = "linkage_group";
     private final String GERMPLASM_PROP_TABNAME = "germplasm_prop";
@@ -83,7 +89,7 @@ public class Digester {
     private final DigesterConfig digesterConfig;
 
     private String loaderScriptPath;
-
+    
     public Digester(DigesterConfig config) {
 
         this.digesterConfig = config;
@@ -107,7 +113,7 @@ public class Digester {
         ConfigSettings configuration = null;
         try {
             configuration = new ConfigSettings(digesterConfig.getPropertiesFile());
-            Logger.logDebug("Config file path", "Opened config settings at " + digesterConfig.getPropertiesFile());
+            LOGGER.debug("Opened config settings at " + digesterConfig.getPropertiesFile());
 
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -117,7 +123,7 @@ public class Digester {
         try {
             jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), instruction.getName());
         } catch (Exception e) {
-            Logger.logError("GobiiFileReader", "Error Checking Status", e);
+            LOGGER.error("Error Checking Status", e);
         }
 
 
@@ -127,18 +133,18 @@ public class Digester {
         Path cropPath = Paths.get(digesterConfig.getRootDir() + "crops/" + procedure.getMetadata().getGobiiCropType().toLowerCase());
         if (!(Files.exists(cropPath) &&
                 Files.isDirectory(cropPath))) {
-            logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType());
+            LOGGER.error("Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType());
             return;
         }
         GobiiCropConfig gobiiCropConfig;
         try {
             gobiiCropConfig = configuration.getCropConfig(procedure.getMetadata().getGobiiCropType());
         } catch (Exception e) {
-            logError("Digester", "Unknown loading error", e);
+            LOGGER.error("Digester Unknown loading error", e);
             return;
         }
         if (gobiiCropConfig == null) {
-            logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType() + " in the Configuration File");
+            LOGGER.error("Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType() + " in the Configuration File");
             return;
         }
         if (hdf5Interface.getPathToHDF5Files() == null)
@@ -153,17 +159,20 @@ public class Digester {
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validateMarkerUpload();
         if (validationStatus != null) {
-            Logger.logError("Marker validation failed.", validationStatus);
+            LOGGER.error("Marker validation failed. " + validationStatus);
+            success = false;
         }
 
         validationStatus = instructionFileValidator.validateSampleUpload();
         if (validationStatus != null) {
-            Logger.logError("Sample validation failed.", validationStatus);
+            LOGGER.error("Sample validation failed. " + validationStatus);
+            success = false;
         }
 
         validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
-            Logger.logError("Validation failed.", validationStatus);
+            LOGGER.error("Validation failed. " + validationStatus);
+            success = false;
         }
 
         String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
@@ -172,12 +181,12 @@ public class Digester {
         String logDir = configuration.getFileSystemLog();
         String logFile = null;
         if (logDir != null) {
-            logFile = logDir + "/" + jobName + ".log";
-            String oldLogFile = Logger.getLogFilepath();
-            Logger.logDebug("Error Logger", "Moving error log to " + logFile);
-            Logger.setLogFilepath(logFile);
-            Logger.logDebug("Error Logger", "Moved error log to " + logFile);
-            FileSystemInterface.rmIfExist(oldLogFile);
+            LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+            context.putProperty("log-dir",logFile);
+            FileAppender<ILoggingEvent> appender = (FileAppender<ILoggingEvent>)context.getLoggerList().get(0).getAppender("FILE");
+            appender.stop();
+            appender.setFile(logFile);
+            appender.start();
             results.setLogFile(logFile);
         }
 
@@ -187,22 +196,25 @@ public class Digester {
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
             if (inst == null) {
-                logError("Digester", "Missing or malformed instruction in " + instruction.getName());
+                LOGGER.error("Missing or malformed instruction in " + instruction.getName());
+                success = false;
                 continue;
             }
         }
 
         if (procedure.getMetadata().getGobiiFile() == null) {
-            logError("Digester", "Instruction " + instruction.getName() + " has bad 'file' column");
+            LOGGER.error("Digester", "Instruction " + instruction.getName() + " has bad 'file' column");
+            success = false;
         }
         GobiiFileType instructionFileType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
         if (instructionFileType == null) {
-            logError("Digester", "Instruction " + instruction.getName() + " has missing file format");
+            LOGGER.error("Digester", "Instruction " + instruction.getName() + " has missing file format");
+            success = false;
         }
 
 
         //Section - Processing
-        Logger.logTrace("Digester", "Beginning List Processing");
+        LOGGER.trace("Beginning List Processing");
 
         DigesterInstructionProcessor instructionProcessor = (p, i) ->
                 new CSVInstructionProcessor(loaderScriptPath).process(p, i);
@@ -267,7 +279,7 @@ public class Digester {
 
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, procedure.getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+            LOGGER.error("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
             return;
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -276,11 +288,22 @@ public class Digester {
         guf.resourceColl(RestResourceId.GOBII_CALLS);
 
         if (LoaderGlobalConfigs.isEnableValidation()) {
-            results.setValidationResults(validateMetadata(configuration, procedure, gobiiCropConfig));
+            List<ValidationResult> validationResults = validateMetadata(configuration, procedure, gobiiCropConfig);
+            results.setValidationResults(validationResults);
+
+            boolean hasAnyFailedStatuses =
+                    validationResults.stream()
+                        .map(Objects::toString)
+                        .anyMatch(ValidationConstants.FAILURE::equalsIgnoreCase);
+
+            if (hasAnyFailedStatuses) {
+                LOGGER.error("Validation failures");
+                success = false;
+            }
         }
 
 
-        if (success && Logger.success()) {
+        if (success) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
@@ -294,7 +317,7 @@ public class Digester {
                     String inputFile = " -i " + loaderInstructionMap.get(key);
                     String outputFile = " -o " + dstDir + "/"; //Output here is temporary files, needs terminal /
 
-                    Logger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
+                    LOGGER.info("Running IFL: " + pathToIFL + " <connection string> " + inputFile + outputFile);
                     //Lines affected returned by method call - THIS IS NOW IGNORED
                     HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", digesterConfig.isVerbose() ? dstDir + "/iflOut" : null, errorPath);
 
@@ -305,12 +328,12 @@ public class Digester {
                     }
 
                     if (counts.getLoadedData() == 0) {
-                        Logger.logDebug("FileReader", "No data loaded for table " + key);
+                        LOGGER.debug("No data loaded for table " + key);
                     } else {
                         loadedData = true;
                     }
                     if (counts.getInvalidData() > 0 && !isVariableLengthTable(key)) {
-                        Logger.logWarning("FileReader", "Invalid data in table " + key);
+                        LOGGER.warn("Invalid data in table " + key);
                     } else {
                         //If there are no issues in the load, clean up temporary intermediate files
                         if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
@@ -323,18 +346,21 @@ public class Digester {
 
 
             }
-            if (!loadedData) {
-                Logger.logError("FileReader", "No new data was uploaded.");
+            if (! loadedData) {
+                LOGGER.error("No new data was uploaded.");
+                success = false;
             }
-            //Load Monet/HDF5
+
             final Integer dataSetId = procedure.getMetadata().getDataset().getId();
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "Matrix_Upload");
             String variantFilename = "DS" + dataSetId;
             File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 
             if (variantFile != null && dataSetId == null) {
-                logError("Digester", "Data Set ID is null for variant call");
+                LOGGER.error("Data Set ID is null for variant call");
+                success = false;
             }
+
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
                 jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
                 boolean HDF5Success = hdf5Interface.createHDF5FromDataset(procedure.getMetadata().getDatasetType().getName(),
@@ -342,8 +368,9 @@ public class Digester {
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
             }
-            if (success && Logger.success()) {
-                Logger.logInfo("Digester", "Successful Data Upload");
+
+            if (success) {
+                LOGGER.info("Successful Data Upload");
                 if (procedure.getMetadata().isQcCheck()) {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
 
@@ -353,40 +380,20 @@ public class Digester {
                 }
 
             } else { //endIf(success)
-                Logger.logWarning("Digester", "Unsuccessful Upload");
+                LOGGER.warn("Unsuccessful Upload");
                 jobStatus.setError("Unsuccessfully Uploaded Files");
             }
         }//endif Digest section
-        else {
-            Logger.logError("Digester", "Aborted - Unsuccessfully Generated Files");
-            jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
-        }
+
 
         DigesterProcessMessage processMessage = DigesterProcessMessage.create(configuration, digesterConfig, instruction, results);
-
-        //Send Email
-        finalizeProcessing(processMessage, configuration);
-
-    }
-
-    /**
-     * Finalize processing step
-     * *Include log files
-     * *Send Email
-     * *update status
-     *
-     * @param pm
-     * @param configuration
-     * @throws Exception
-     */
-    private void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration) throws Exception {
         try {
-            new MailInterface(configuration).send(pm);
+            new MailInterface(configuration).send(processMessage);
         } catch (Exception e) {
-            Logger.logError("MailInterface", "Error Sending Mail", e);
+            LOGGER.error("MailInterface -- Error Sending Mail", e);
         }
-
     }
+
 
     private List<ValidationResult> validateMetadata(ConfigSettings configuration, GobiiLoaderProcedure procedure, GobiiCropConfig gobiiCropConfig) throws Exception {
 
@@ -397,24 +404,14 @@ public class Digester {
         String password = configuration.getLdapPasswordForBackendProcs();
         DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
         digestFileValidator.performValidation(gobiiCropConfig, procedure.getMetadata().getDatasetOrientationType());
-        //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
+        //Call validations here, update 'success' to false with any call to ErrorLOGGER.logError()
         List<Path> pathList =
                 Files.list(Paths.get(directory))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         if (pathList.size() < 1) {
-            Logger.logError("Validation","Unable to find validation checks");
+            LOGGER.error("Validation -- Unable to find validation checks");
         }
         ValidationResult[] validationResults = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationResult[].class);
-        boolean hasAnyFailedStatuses=false;
-        for(ValidationResult status : validationResults){
-            if(status.status.equalsIgnoreCase(ValidationConstants.FAILURE)){
-                hasAnyFailedStatuses=true;
-            }
-        }
-
-        if (hasAnyFailedStatuses) {
-            Logger.logError("Validation", "Validation failures");
-        }
 
 
         return Arrays.asList(validationResults);
