@@ -79,7 +79,15 @@ public class ProjectDaoImplTest {
     @Transactional
     public void testSimpleQuery() {
         assert v3ProjectDao != null;
-        assert v3ProjectDao.getProjects(0, 1000) != null;
+        assert v3ProjectDao.getProjects(0, 1000, null) != null;
+        // assert v3ProjectDao.getProjects(0, 1000).size() > 0;
+    }
+
+    @Test
+    @Transactional
+    public void testWithContactIdQuery() {
+        assert v3ProjectDao != null;
+        assert v3ProjectDao.getProjects(0, 1000, 4) != null;
         // assert v3ProjectDao.getProjects(0, 1000).size() > 0;
     }
 

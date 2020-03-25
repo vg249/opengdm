@@ -116,14 +116,17 @@ public class GOBIIControllerV3  {
     @ResponseBody 
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,
-            @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
+            @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+            @RequestParam(required=false) Integer piContactId) {
         log.debug("Querying projects List");
         Integer pageSizeToUse = pageSize;
 
         if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+
         PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, page),
-            pageSizeToUse
+            pageSizeToUse,
+            piContactId
         );
         BrApiMasterListPayload<GobiiProjectDTO> payload = new BrApiMasterListPayload<>(
             pagedResult.getResult(),

@@ -59,7 +59,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
     private PropertiesService propertiesService;
 
     @Override
-    public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize) throws GobiiDtoMappingException {
+    public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         PagedResult<GobiiProjectDTO> pagedResult;
 
@@ -70,7 +70,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
             Objects.requireNonNull(page);
             List<GobiiProjectDTO> projectDTOs = new java.util.ArrayList<>();
 
-            List<Project> projects = projectDao.getProjects(page, pageSize);
+            List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
