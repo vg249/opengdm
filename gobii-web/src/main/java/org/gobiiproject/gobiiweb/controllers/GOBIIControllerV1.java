@@ -1890,7 +1890,8 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = 
+            CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = dataSetService.getJobDetailsByDatasetId(Integer.parseInt(datasetId));
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -2257,7 +2258,8 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = 
+            CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -2418,7 +2420,8 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = 
+            CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -3058,7 +3061,8 @@ public class GOBIIControllerV1 {
                             RestResourceId.GOBII_NAMES)
                             .addUriParam("entity", entity));
 
-            //String cropType = returnVal.getHeader().getCropType();
+            //String cropType = 
+            returnVal.getHeader().getCropType();
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
