@@ -128,7 +128,7 @@ public class Digester {
 
 
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Digest");
+        success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Digest");
 
         Path cropPath = Paths.get(digesterConfig.getRootDir() + "crops/" + procedure.getMetadata().getGobiiCropType().toLowerCase());
         if (!(Files.exists(cropPath) &&
@@ -153,7 +153,7 @@ public class Digester {
         String errorPath = getLogName(procedure, procedure.getMetadata().getGobiiCropType());
 
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
+        success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
         // Instruction file Validation
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
         instructionFileValidator.processInstructionFile();
@@ -192,7 +192,7 @@ public class Digester {
 
         SimpleTimer.start("FileRead");
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(), "Beginning file digest");
+        success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(), "Beginning file digest");
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
             if (inst == null) {
@@ -234,7 +234,7 @@ public class Digester {
         }
 
         //Database Validation
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Database Validation");
+        success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Database Validation");
         databaseValidation(loaderInstructionMap, procedure.getMetadata(), gobiiCropConfig);
 
         boolean isVCF = GobiiFileType.VCF.equals(procedure.getMetadata().getGobiiFile().getGobiiFileType());
@@ -262,7 +262,7 @@ public class Digester {
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
                 }
             }
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Metadata Transformation");
+            success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Metadata Transformation");
             String instructionName = inst.getTable();
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(procedure, inst)));
             loaderInstructionList.add(instructionName);//TODO Hack - for ordering
@@ -279,7 +279,7 @@ public class Digester {
 
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, procedure.getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            LOGGER.error("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+            LOGGER.error("Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
             return;
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -304,7 +304,7 @@ public class Digester {
 
 
         if (success) {
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
+            success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
@@ -362,7 +362,7 @@ public class Digester {
             }
 
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
-                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
+                success = jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
                 boolean HDF5Success = hdf5Interface.createHDF5FromDataset(procedure.getMetadata().getDatasetType().getName(),
                         configuration, dataSetId, procedure.getMetadata().getGobiiCropType(), errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
@@ -372,11 +372,11 @@ public class Digester {
             if (success) {
                 LOGGER.info("Successful Data Upload");
                 if (procedure.getMetadata().isQcCheck()) {
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
+                    success =jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
 
                     new QcHandler().executeQc(configuration, procedure.getMetadata());
                 } else {
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
+                    success =jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
                 }
 
             } else { //endIf(success)

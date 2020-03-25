@@ -16,9 +16,8 @@ import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulate calling and updating status.
@@ -27,7 +26,11 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
  * This is important * If you're making your own jobs, you need to create a Status and deal with it there.*
  */
 public class JobStatus {
-    /**
+
+	private Logger LOGGER = LoggerFactory.getLogger("Digester");
+
+
+	/**
      * Creates a new job object based on information about the job already in progress.
      * @param config
      * @param cropName
@@ -61,55 +64,58 @@ public class JobStatus {
 		uriFactory = context.getUriFactory();
     }
 
-    public void set(String status,String message){
+    public boolean set(String status,String message){
     	if(status==null || !acceptedStatuses.contains(status)){
-    		Logger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
+    		LOGGER.error("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
+			return false;
 		}
-            try{
-                RestUri restUri=uriFactory
-                        .resourceByUriIdParam(RestResourceId.GOBII_JOB);
-                restUri.setParamValue("id", jobName);
-            GobiiEnvelopeRestResource<JobDTO,JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource
-                    .get(JobDTO.class);
 
-				JobDTO dataSetResponse;
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                System.out.println();
-                logError("Digester", "Job table response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return;
+		try{
+			RestUri restUri=uriFactory
+					.resourceByUriIdParam(RestResourceId.GOBII_JOB);
+			restUri.setParamValue("id", jobName);
+		GobiiEnvelopeRestResource<JobDTO,JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+		PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource
+				.get(JobDTO.class);
+
+			JobDTO dataSetResponse;
+		if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+			System.out.println();
+			LOGGER.error("Digester -- Job table response errors");
+			for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+				LOGGER.error("HeaderError", currentStatusMesage.getMessage());
 			}
-				List<JobDTO> responses = resultEnvelope.getPayload().getData();
-				if(responses.size()==0){
-					logError("JobStatus","No Job record returned for job " + jobName);
-					return;
-				}
-				dataSetResponse = responses.get(0);
-
-
-				dataSetResponse.setMessage(message);
-				dataSetResponse.setStatus(status);
-
-				resultEnvelope = gobiiEnvelopeRestResource
-						.put(JobDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
-
-				//Set 'lastStatus' to the current status
-				lastStatus = dataSetResponse;
-				// if you didn't succeed, do not pass go, but do log errors to your log file
-				if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-					logError("Digester", "Data set response response errors");
-					for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-						logError("HeaderError", currentStatusMesage.getMessage());
-					}
-					return;
-				}
-			} catch (Exception e) {
-				logError("Digester", "Exception while referencing Job table in Postgresql", e);
-				return;
+			return false;
+		}
+			List<JobDTO> responses = resultEnvelope.getPayload().getData();
+			if(responses.size()==0){
+				LOGGER.error("JobStatus","No Job record returned for job " + jobName);
+				return false;
 			}
+			dataSetResponse = responses.get(0);
+
+
+			dataSetResponse.setMessage(message);
+			dataSetResponse.setStatus(status);
+
+			resultEnvelope = gobiiEnvelopeRestResource
+					.put(JobDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
+
+			//Set 'lastStatus' to the current status
+			lastStatus = dataSetResponse;
+			// if you didn't succeed, do not pass go, but do log errors to your log file
+			if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+				LOGGER.error("Digester", "Data set response response errors");
+				for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+					LOGGER.error("HeaderError", currentStatusMesage.getMessage());
+				}
+				return false;
+			}
+		} catch (Exception e) {
+			LOGGER.error("Digester", "Exception while referencing Job table in Postgresql", e);
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -121,7 +127,7 @@ public class JobStatus {
         if(lastStatus!=null){
             errorMessage="Status: " + lastStatus.getStatus()+" - " + lastStatus.getMessage() + " | \n";
         }
-        errorMessage += message + " : " + Logger.getFirstErrorReason();
+//        errorMessage += message + " : " + Logger.getFirstErrorReason();
         set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),errorMessage);
     }
 }
