@@ -5,7 +5,11 @@ import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@CheckAtLeastOneNotNullOrEmpty(fieldNames = {"callSetDbIds"})
+@CheckAtLeastOneNotNullOrEmpty(
+        fieldNames = {
+                "callSetDbIds", "callSetNames",
+                "variantDbIds", "variantNames"
+        })
 public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetIds allowed per query")

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -612,6 +613,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
+        Map<String, ArrayList<Marker>> markersByDatasetId= new HashMap<>();
+
+        Map<String, ArrayList<DnaRun>> dnarunsByDatasetId = new HashMap<>();
+
         Map<Integer, SortedMap<Integer, Integer>> dnarunHdf5OrderMap =
                 new HashMap<>();
 
@@ -623,10 +628,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         try {
 
-            if ((genotypesSearchQuery.getCallSetDbIds().size() > 0
-                    || genotypesSearchQuery.getCallSetNames().size() > 0
-                ) && (genotypesSearchQuery.getVariantDbIds().size() > 0
-                    || genotypesSearchQuery.getVariantNames().size() > 0
+            if ((!CollectionUtils.isEmpty(
+                    genotypesSearchQuery.getCallSetDbIds())
+                    || !CollectionUtils.isEmpty(
+                            genotypesSearchQuery.getCallSetNames())
+                ) && (!CollectionUtils.isEmpty(
+                        genotypesSearchQuery.getVariantDbIds())
+                    || !CollectionUtils.isEmpty(
+                            genotypesSearchQuery.getVariantNames())
                 )
             ) {
 
@@ -657,6 +666,15 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
                     }
+
+                    if(!markersByDatasetId.containsKey(datasetId.toString())) {
+                        markersByDatasetId.put(datasetId.toString(),
+                                new ArrayList<>());
+                    }
+
+                    markersByDatasetId
+                            .get(datasetId.toString()).add(marker);
+
                     markerHdf5IndexMap.get(
                             datasetId.toString()).add(
                             marker.getDatasetMarkerIdx().get(
@@ -689,6 +707,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                    else {
                        dnaRunOrderIndex = dnaRunOrderIndexMap.get(datasetId);
                    }
+
+                   if(!dnarunsByDatasetId.containsKey(datasetId.toString())) {
+                       dnarunsByDatasetId.put(datasetId.toString(),
+                               new ArrayList<>());
+                   }
+
+                   dnarunsByDatasetId
+                           .get(datasetId.toString()).add(dnaRun);
 
                    dnarunHdf5IndexMap.get(
                            datasetId.toString()).add(
@@ -741,8 +767,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 Integer nextColumnOffset = this.readGenotypesFromFile(
                         genotypeCalls, extractFilePath,
                         pageSize, datasetId,
-                        0, markers,
-                        dnaRuns, new ArrayList<>(
+                        0, markersByDatasetId.get(
+                                datasetId.toString()),
+                        dnarunsByDatasetId.get(datasetId.toString()),
+                        new ArrayList<>(
                                 dnarunHdf5OrderMap.get(datasetId).values()));
             }
 
