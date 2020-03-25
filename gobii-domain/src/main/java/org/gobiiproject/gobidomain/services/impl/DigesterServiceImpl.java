@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DigesterService;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 
@@ -14,6 +15,10 @@ public class DigesterServiceImpl implements DigesterService {
 	@Override
 	public void sendProcedure(DigesterProcedureDTO procedure) throws IOException {
 		// TODO add configurations
+
+		if (procedure == null) {
+			throw new GobiiDomainException("Procedure passed to Digester must not be null");
+		}
 
 		String ip = "gobii-compute-node";
 		int port = 1234;
