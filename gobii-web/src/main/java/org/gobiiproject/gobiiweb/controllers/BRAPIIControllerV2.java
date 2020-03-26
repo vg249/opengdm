@@ -3,8 +3,6 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
-import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobidomain.services.brapi.*;
 import org.gobiiproject.gobidomain.services.brapi.MapsetService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
@@ -14,16 +12,13 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.brapi.*;
 import org.gobiiproject.gobiimodel.dto.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
-import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +47,9 @@ public class BRAPIIControllerV2 {
 
     @Autowired
     private GenotypeCallsService genotypeCallsService;
+
+    @Autowired
+    private StudiesService studiesService;
 
     @Autowired
     private SearchService searchService;
@@ -103,7 +101,8 @@ public class BRAPIIControllerV2 {
             tags = {"ServerInfo"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="ServerInfo"),
+                            @ExtensionProperty(name="summary",
+                                    value="ServerInfo"),
                     })
             }
     )
@@ -115,15 +114,69 @@ public class BRAPIIControllerV2 {
             }
     )
     @ResponseBody
-    public ResponseEntity getCalls(
-            HttpServletRequest request) throws Exception {
+    public ResponseEntity getServerInfo(
+            HttpServletRequest request) {
+
+        BrApiMasterListPayload<ServerInfoDTO> payload =
+                new BrApiMasterListPayload<>();
+
+        try {
+
+            BrapiResponseMapCalls brapiResponseServerInfos =
+                    new BrapiResponseMapCalls(request);
 
 
-        return ResponseEntity.ok("");
+            payload.setServerInfo(
+                    brapiResponseServerInfos.getBrapi2ServerInfos(),
+                    brapiResponseServerInfos
+                            .getBrapi2ServerInfos().size(),
+                    0);
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage());
+        }
 
     }
 
 
+    @RequestMapping(value="/studies", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getStudies(
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @RequestParam(value  = "page", required = false,
+                    defaultValue = BrapiDefaults.pageNum) Integer page,
+            @RequestParam(value = "projectId", required = false) Integer projectId
+    ) {
+        try {
+
+            PagedResult<StudiesDTO> studies = studiesService.getStudies(
+                    pageSize, page,
+                    projectId);
+
+            BrApiMasterListPayload<StudiesDTO> payload = new BrApiMasterListPayload<>(
+                    studies.getResult(),
+                    studies.getCurrentPageSize(),
+                    studies.getCurrentPageNum());
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage());
+        }
+    }
 
     /**
      * Lists the dnaruns by page size and page token
