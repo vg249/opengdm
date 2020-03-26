@@ -47,10 +47,11 @@ public class DatasetDaoImpl implements DatasetDao {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        Objects.requireNonNull(pageSize, "pageSize : Required non null");
-        Objects.requireNonNull(pageSize, "rowOffset : Required non null");
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageSize, "rowOffset : Required non null");
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
@@ -59,7 +60,8 @@ public class DatasetDaoImpl implements DatasetDao {
             Root<Dataset> datasetRoot = criteriaQuery.from(Dataset.class);
             criteriaQuery.select(datasetRoot);
 
-            Join<Object, Object> experiment = (Join<Object, Object>) datasetRoot.fetch("experiment");
+            Join<Object, Object> experiment =
+                    (Join<Object, Object>) datasetRoot.fetch("experiment");
 
             if(datasetId != null) {
                 predicates.add(criteriaBuilder.equal(datasetRoot.get("datasetId"), datasetId));
