@@ -122,7 +122,8 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
                 .get(DisplayDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-        DisplayDTO displaytDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
+        //DisplayDTO displaytDTOResponseForParams = 
+        resultEnvelopeForGetById.getPayload().getData().get(0);
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DISPLAY, displayDTOResponse.getDisplayId());
 

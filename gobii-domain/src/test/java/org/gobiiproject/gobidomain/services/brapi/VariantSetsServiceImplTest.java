@@ -1,8 +1,17 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
@@ -15,13 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 @WebAppConfiguration
 public class VariantSetsServiceImplTest {
@@ -40,13 +42,12 @@ public class VariantSetsServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-
-
     Random random = new Random();
 
     ObjectMapper mapper = new ObjectMapper();
 
 
+    @SuppressWarnings("unused")
     private Analysis createMockAnalysis(Integer analysisId) {
 
         Analysis analysis = new Analysis();
@@ -62,7 +63,7 @@ public class VariantSetsServiceImplTest {
 
     private List<Dataset> getMockDatasets(Integer listSize) {
 
-        List<Dataset> returnVal = new ArrayList();
+        List<Dataset> returnVal = new ArrayList<>();
 
 
         for(int i = 0; i < listSize; i++) {

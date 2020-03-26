@@ -110,16 +110,16 @@ public class HDF5Interface {
         BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
         try{
             while (sampR.ready()) {
-                    String sampLine = sampR.readLine();
-                    if (sampLine != null) {
-                        String[] sampSplit = sampLine.split("\t");
-                        if(sampSplit.length>1) {
-                            map.put(sampSplit[0], sampSplit[1]);
-                        }
+                String sampLine = sampR.readLine();
+                if (sampLine != null) {
+                    String[] sampSplit = sampLine.split("\t");
+                    if(sampSplit.length>1) {
+                        map.put(sampSplit[0], sampSplit[1]);
                     }
                 }
             }
-        catch(Exception e){
+            sampR.close();
+        } catch(Exception e){
             Logger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
         }
         return map;
@@ -193,6 +193,7 @@ public class HDF5Interface {
                     genoFileString.append(" "+genoFile);
                 }
             }
+            posR.close();
         }catch(IOException e) {
             Logger.logError("GobiiExtractor", "MarkerList reading failed", e);
         }

@@ -217,7 +217,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         try {
             List<Integer> datasetIds = new ArrayList<>();
 
-            Iterator datasetIdsIter = jsonNode.fieldNames();
+            Iterator<String> datasetIdsIter = jsonNode.fieldNames();
 
             while (datasetIdsIter.hasNext()) {
                 datasetIds.add(Integer.parseInt(datasetIdsIter.next().toString()));
@@ -584,9 +584,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         try {
 
-
-            String outputDirPath = "";
-
+            //String outputDirPath = "";
 
         }
         catch (GobiiException gE) {
@@ -748,7 +746,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     genotype.append(genotypesChar);
                 }
             }
-
+            br.close();
             fstream.close();
         }
         catch (Exception e) {
@@ -843,7 +841,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         }
 
-
+        br.close();
         fstream.close();
 
         return j;
@@ -899,7 +897,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         }
 
-
+        br.close();
         fstream.close();
 
         return genotypes.toString();

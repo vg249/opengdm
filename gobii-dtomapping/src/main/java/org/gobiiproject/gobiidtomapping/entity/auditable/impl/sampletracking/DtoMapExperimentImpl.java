@@ -35,6 +35,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     private RsExperimentDao rsExperimentDao;
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ExperimentDTO> getList() throws GobiiDtoMappingException {
 
         List<ExperimentDTO> returnVal;

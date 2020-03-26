@@ -54,10 +54,10 @@ class ValidationUtil {
 
     static void validateMatrixSizeMarkerColumns(String fileName, List<String> columns, List<String[]> inputFileList, List<Failure> failureList, boolean markerFast) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
-        List<String> headers = Arrays.asList(inputFileList.get(0).clone());
+        //List<String> headers = Arrays.asList(inputFileList.get(0).clone());
         verifyEqualMatrixSizeMarker(failureList,getFileColumns(fileName,columns,failureList),markerFast);
 
-        }
+    }
 
     /**
      * Validates required unique columns are present and are not null or empty.

@@ -62,15 +62,14 @@ public class CvGroupServiceImpl implements CvGroupService {
         CvGroupDTO returnVal;
 
         returnVal = dtoMapCvGroup.getCvGroupDetailsByGroupName(groupName, cvGroupTypeId);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                     "The specified cv group name (" +
                             groupName + ") does not match an existig cv group");
         }
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
 

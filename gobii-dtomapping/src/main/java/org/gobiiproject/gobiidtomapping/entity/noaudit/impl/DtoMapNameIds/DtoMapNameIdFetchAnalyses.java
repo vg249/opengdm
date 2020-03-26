@@ -38,7 +38,7 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         ResultSet resultSet = rsAnalysisDao.getNameIdsForAnalysisNames(callLimit);
-        List<NameIdDTO> listDTO = new ArrayList<>();
+        //List<NameIdDTO> listDTO = new ArrayList<>();
 
         try {
 

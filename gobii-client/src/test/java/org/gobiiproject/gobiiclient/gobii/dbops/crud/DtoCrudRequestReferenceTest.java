@@ -104,7 +104,8 @@ public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
                 .get(ReferenceDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-        ReferenceDTO referenceDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
+        //ReferenceDTO referenceDTOResponseForParams = 
+        resultEnvelopeForGetById.getPayload().getData().get(0); //TODO: Convert to assertion
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.REFERENCE, referenceDTOResponse.getReferenceId());
 

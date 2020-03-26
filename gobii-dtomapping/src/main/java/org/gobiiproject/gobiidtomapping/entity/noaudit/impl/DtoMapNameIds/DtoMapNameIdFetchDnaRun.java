@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by VCalaminos on 9/24/2018.
  */
+@SuppressWarnings("serial")
 public class DtoMapNameIdFetchDnaRun implements DtoMapNameIdFetch {
 
     @Autowired
@@ -43,7 +44,8 @@ public class DtoMapNameIdFetchDnaRun implements DtoMapNameIdFetch {
                         put("nameArray", nameIdDTOList);
                     }});
 
-            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "dnarun_id");
+            //Integer resultSize = 
+            DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "dnarun_id");
 
         } catch (Exception e){
             throw new GobiiDaoException(e);

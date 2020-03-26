@@ -116,9 +116,6 @@ public class ManifestServiceImpl implements ManifestService {
         ManifestDTO returnVal;
 
         returnVal = dtoMapManifest.get(manifestId);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -126,6 +123,8 @@ public class ManifestServiceImpl implements ManifestService {
                             + manifestId
                             + ") does not match an existing manifest ");
         }
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
     }

@@ -96,6 +96,7 @@ import org.w3c.dom.NodeList;
 /**
  * Created by VCalaminos on 2/21/2017.
  */
+@SuppressWarnings("unused")
 public class GobiiAdl {
 
     private static ServerConfigItem serverConfigItem;
@@ -345,11 +346,12 @@ public class GobiiAdl {
         return type.cast(value);
     }
 
-
+    @SuppressWarnings("rawtypes")
     private static void checkStatus(PayloadEnvelope payloadEnvelope) throws Exception {
         checkStatus(payloadEnvelope, false);
     } // checkStatus()
 
+    @SuppressWarnings("rawtypes")
     private static void checkStatus(PayloadEnvelope payloadEnvelope, boolean verifyResultExists) throws Exception {
 
         Header header = payloadEnvelope.getHeader();
@@ -979,7 +981,7 @@ public class GobiiAdl {
 
         System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
         System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
-        Element propertiesElement = null;
+        //Element propertiesElement = null;
         for (int j = 0; j < propKeyList.getLength(); j++) {
             Element propKey = (Element) propKeyList.item(j);
             String propKeyLocalName = propKey.getLocalName();
@@ -1456,6 +1458,7 @@ public class GobiiAdl {
         return returnVal;
     }
 
+    @SuppressWarnings("rawtypes")
     private static void setFKeyDbPKeyForNewEntity(NodeList fkeys, Class currentClass, Object currentDTO, Element parentElement, String dbPkeysurrogateValue,
                                                   Document document, XPath xPath) throws Exception {
 
@@ -1475,6 +1478,7 @@ public class GobiiAdl {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private static void setFKeyDbPKeyForExistingEntity(NodeList fkeys, Class currentClass, Object currentDTO) throws Exception {
 
         if (fkeys != null && fkeys.getLength() > 0) {
@@ -2010,6 +2014,7 @@ public class GobiiAdl {
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
                 }
+                br.close();
                 obj = parser.parse(sb.toString());
             } else {
                 obj = parser.parse(new FileReader(instructionFilePath));
@@ -2618,7 +2623,7 @@ public class GobiiAdl {
 
             boolean isExtractSuccessful = submitExtractInstruction(gobiiExtractorInstruction, jobName);
 
-            int idx = 0;
+            //int idx = 0;
 
             if (isExtractSuccessful && dataSetExtractReturnList != null && doFileCompare) {
 
@@ -2632,7 +2637,7 @@ public class GobiiAdl {
 
                 String dataFilePath = subDirectory.getAbsolutePath() + "/" + dataFileStr;
 
-                File dataFileDir = new File(dataFilePath);
+                //File dataFileDir = new File(dataFilePath);
 
                 String localPathName = subDirectory.getAbsoluteFile() + "/" + jobName;
 

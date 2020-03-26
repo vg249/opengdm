@@ -139,9 +139,6 @@ public class MapsetServiceImpl implements MapsetService {
         MapsetDTO returnVal;
 
         returnVal = dtoMapMapset.get(mapsetId);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -149,6 +146,8 @@ public class MapsetServiceImpl implements MapsetService {
                             + mapsetId
                             + ") does not match an existing mapset ");
         }
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
     }

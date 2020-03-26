@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.Mapset;
-
-import javax.persistence.Tuple;
 import java.util.List;
+
+import org.gobiiproject.gobiimodel.entity.Mapset;
 
 public interface MapsetDao {
 

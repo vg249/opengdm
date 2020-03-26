@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestFileExtractorInstructionsTest {
 
-    private final String INSTRUCTION_FILE_EXT = ".json";
+    //private final String INSTRUCTION_FILE_EXT = ".json";
     private static GobiiUriFactory gobiiUriFactory;
 
 

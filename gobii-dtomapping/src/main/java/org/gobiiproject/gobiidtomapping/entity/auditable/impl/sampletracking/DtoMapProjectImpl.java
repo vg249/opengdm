@@ -42,6 +42,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProjectDTO> getList(Integer pageToken,
                                     Integer pageSize) throws GobiiDtoMappingException {
         List<ProjectDTO> returnVal = null;
@@ -169,7 +170,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
             Map<String, Object> spParamsParameters =
                     EntityProperties.propertiesToParams(projectId, entityProperty);
 
-            Integer propertyId = rsSampleTrackingProjectDao.createUpdateProjectProperty(spParamsParameters);
+            //Integer propertyId = 
+            rsSampleTrackingProjectDao.createUpdateProjectProperty(spParamsParameters);
         }
 
     }

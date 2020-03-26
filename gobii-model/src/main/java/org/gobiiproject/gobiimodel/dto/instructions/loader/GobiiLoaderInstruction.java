@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.util.ArrayList;
 import java.util.List;
 

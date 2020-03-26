@@ -76,7 +76,7 @@ public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
 
             ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(projectId);
 
-            List<NameIdDTO> listDTO = new ArrayList<>();
+            //List<NameIdDTO> listDTO = new ArrayList<>();
 
             while (resultSet.next()) {
                 returnVal.add(this.makeNameIdDtoForExperiment(resultSet));

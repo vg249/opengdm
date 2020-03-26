@@ -23,6 +23,7 @@ public class LinkageGroupDaoImpl implements LinkageGroupDao {
     protected EntityManager em;
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<LinkageGroup> getLinkageGroups(Integer pageSize, Integer rowOffset,
                                         Integer linkageGroupId, Integer mapsetId) {
 

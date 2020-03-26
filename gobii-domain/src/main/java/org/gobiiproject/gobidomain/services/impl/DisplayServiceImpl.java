@@ -116,9 +116,6 @@ public class DisplayServiceImpl implements DisplayService {
         DisplayDTO returnVal;
 
         returnVal = dtoMapDisplay.get(displayId);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -127,6 +124,10 @@ public class DisplayServiceImpl implements DisplayService {
                             + ") does not match an existing display ");
         }
 
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+        
         return returnVal;
     }
 
