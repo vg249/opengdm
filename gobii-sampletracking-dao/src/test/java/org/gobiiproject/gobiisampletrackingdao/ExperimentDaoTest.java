@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,29 +17,19 @@ import static junit.framework.TestCase.assertTrue;
 public class ExperimentDaoTest {
 
     @Autowired
-    private MapsetDao mapsetDao;
+    private ExperimentDao experimentDao;
 
     @Test
-    public void getMapsetsTest() {
+    public void getExperimentsTest() {
 
         Integer testPageSize = 100;
 
-        List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(testPageSize, 0,
-                null, null);
+        List<Experiment> experiments = experimentDao.getExperiments(
+                testPageSize, 0, null);
 
-        assertTrue("getMapsets page size condition fails",
-                mapsets.size() > 0 && mapsets.size() <= testPageSize);
-
-    }
-
-    @Test
-    public void getMapsetByIdTest() {
-
-        Integer testPageSize = 100;
-
-        Mapset mapset = mapsetDao.getMapsetWithCountsById(2);
-
-        assertTrue("Get Mapset By Id fails",mapset.getMapsetId() == 2);
+        assertTrue("getExperiments page size condition fails",
+                experiments.size() > 0
+                        && experiments.size() <= testPageSize);
 
     }
 }
