@@ -4,14 +4,12 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiibrapi.types.BrapiDataTypes;
-import org.gobiiproject.gobiimodel.dto.brapi.ServerInfo;
+import org.gobiiproject.gobiimodel.dto.brapi.ServerInfoDTO;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
-import org.springframework.util.MimeType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,84 +65,84 @@ public class BrapiResponseMapCalls {
         return returnVal;
     }
 
-    public List<ServerInfo> getBrapi2ServerInfos() {
+    public List<ServerInfoDTO> getBrapi2ServerInfos() {
 
-        List<ServerInfo> returnVal = new ArrayList<>();
+        List<ServerInfoDTO> returnVal = new ArrayList<>();
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_SERVER_INFO.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_STUDIES.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_MAPS_CALLS.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_MARKER_POSITIONS.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_CALLSETS.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_CALLSETS_BY_ID.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_VARIANTS.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_VARIANTS_BY_ID.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_VARIANTSETS.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_GENOTYPES_BY_VARIANTSET.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_DOWNLOAD_GENOTYPES_BY_VARIANTSET
                         .getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_CALLSETS_BY_VARIANTSET.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
-        returnVal.add(new ServerInfo(
+        returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_VARIANTS_BY_VARIANTSET.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),
                 Arrays.asList(MediaType.APPLICATION_JSON),
