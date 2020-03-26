@@ -451,6 +451,9 @@
     <bean id="dtoMapSampleTrackingDnaSample"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
 
+    <!-- ** Studies BRAPI BEANS **-->
+    <bean id="studiesService" class="org.gobiiproject.gobidomain.services.brapi.StudiesServiceImpl"/>
+    <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
 
     <!-- ** SAMPLE BRAPI BEANS **-->
