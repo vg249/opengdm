@@ -10,6 +10,34 @@ import javax.persistence.*;
 @Table(name = "experiment")
 public class Experiment extends BaseEntity{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "experiment_id")
+    @Access(AccessType.PROPERTY)
+    private Integer experimentId;
+
+    @Column(name="name")
+    private String experimentName;
+
+    @Column(name="code")
+    private String experimentCode;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
+
+    @Column(name="manifest_id")
+    private Integer manifestId;
+
+    @Column(name="data_file")
+    private String dataFile;
+
+    @Column(name="vendor_protocol_id")
+    private Integer vendorProtocolId;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
     public Integer getExperimentId() {
         return experimentId;
@@ -35,12 +63,12 @@ public class Experiment extends BaseEntity{
         this.experimentCode = experimentCode;
     }
 
-    public Integer getProjectId() {
-        return projectId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public Integer getManifestId() {
@@ -67,30 +95,6 @@ public class Experiment extends BaseEntity{
         this.vendorProtocolId = vendorProtocolId;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "experiment_id")
-    @Access(AccessType.PROPERTY)
-    private Integer experimentId;
-
-    @Column(name="name")
-    private String experimentName;
-
-    @Column(name="code")
-    private String experimentCode;
-
-    @Column(name="project_id")
-    private Integer projectId;
-
-    @Column(name="manifest_id")
-    private Integer manifestId;
-
-    @Column(name="data_file")
-    private String dataFile;
-
-    @Column(name="vendor_protocol_id")
-    private Integer vendorProtocolId;
-
     public Cv getStatus() {
         return status;
     }
@@ -98,9 +102,4 @@ public class Experiment extends BaseEntity{
     public void setStatus(Cv status) {
         this.status = status;
     }
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
-
 }
