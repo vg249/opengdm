@@ -17,13 +17,16 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
         this.result.setData(listData);
     }
 
-    public BrApiMasterListPayload(List<T> listData, Integer pageSize, Integer currentPage) {
+
+    public BrApiMasterListPayload(List<T> listData, Integer pageSize,
+                                  Integer currentPage) {
         this.result.setData(listData);
         this.getMetadata().getPagination().setPageSize(pageSize);
         this.getMetadata().getPagination().setCurrentPage(currentPage);
     }
 
-    public BrApiMasterListPayload(List<T> listData, Integer pageSize, String nextPageToken) {
+    public BrApiMasterListPayload(List<T> listData, Integer pageSize,
+                                  String nextPageToken) {
 
         this.result.setData(listData);
         this.getMetadata().getPagination().setPageSize(pageSize);
@@ -39,5 +42,11 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
         this.result = result;
     }
 
+    public void setServerInfo(List<T> listCalls, Integer pageSize,
+                              Integer currentPage) {
+        this.result.setCalls(listCalls);
+        this.getMetadata().getPagination().setPageSize(pageSize);
+        this.getMetadata().getPagination().setCurrentPage(currentPage);
+    }
 
 }
