@@ -8,10 +8,13 @@
 
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.util.List;
+
 import org.gobiiproject.gobiimodel.entity.Contact;
 
 public interface ContactDao {
 
+    List<Contact> getContacts(Integer page, Integer pageSize, Integer organizationId);
     Contact getContact(Integer contactId) throws Exception;
     Contact getContactByUsername(String username) throws Exception;
 

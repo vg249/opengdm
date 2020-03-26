@@ -288,7 +288,7 @@
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
-
+    <bean id="contactServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ContactServiceImpl"/>
     <!-- **** Display Beans *************************************** -->
     <bean id="rsDisplayDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
@@ -392,7 +392,7 @@
    <!-- **** Projects V3  Beans -->
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
     <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
-    <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.impl.GobiiProjectServiceImpl"/>
+    <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.gdmv3.ProjectServiceImpl"/>
 
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>

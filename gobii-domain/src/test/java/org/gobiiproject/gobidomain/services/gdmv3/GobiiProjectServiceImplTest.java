@@ -5,14 +5,14 @@
  * @author Rodolfo N. Duldulao, Jr.
  * @since 2020-03-07
  */
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -25,7 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 
 @WebAppConfiguration
 public class GobiiProjectServiceImplTest {
@@ -40,7 +39,7 @@ public class GobiiProjectServiceImplTest {
     private ContactDao contactDao;
 
     @InjectMocks
-    private GobiiProjectServiceImpl v3ProjectServiceImpl;
+    private ProjectServiceImpl v3ProjectServiceImpl;
 
     @Before
     public void init() {

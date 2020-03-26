@@ -11,12 +11,14 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -24,6 +26,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
@@ -62,8 +65,10 @@ import lombok.extern.slf4j.Slf4j;
 public class GOBIIControllerV3  {
     
     @Autowired
-    private GobiiProjectService projectService = null;
+    private ProjectService projectService = null;
 
+    @Autowired
+    private ContactService contactService = null;
     /**
      * Authentication Endpoint
      * Mimicking same logic used in v1
@@ -119,9 +124,7 @@ public class GOBIIControllerV3  {
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
             @RequestParam(required=false) Integer piContactId) {
         log.debug("Querying projects List");
-        Integer pageSizeToUse = pageSize;
-
-        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+        Integer pageSizeToUse = getPageSize(pageSize);
 
         PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, page),
@@ -239,9 +242,7 @@ public class GOBIIControllerV3  {
             @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) throws Exception {
         log.debug("Querying project properties List");
-        Integer pageSizeToUse = pageSize;
-
-        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+        Integer pageSizeToUse = getPageSize(pageSize);
         PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
             Math.max(0, page),
             pageSizeToUse
@@ -256,13 +257,42 @@ public class GOBIIControllerV3  {
     }
 
 
+    /**
+     * List Contacts
+     * @return
+     */
+    @GetMapping("/contacts")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getContacts(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer organizationId
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<ContactDTO> pagedResult = contactService.getContacts(
+            Math.max(0, page),
+            pageSizeToUse,
+            organizationId
+        );
+        BrApiMasterListPayload<ContactDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
 
-    public GobiiProjectService getProjectService() {
+    public ProjectService getProjectService() {
         return projectService;
     }
 
-    public void setProjectService(GobiiProjectService projectService) {
+    public void setProjectService(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    private Integer getPageSize(Integer pageSize) {
+        if (pageSize == null || pageSize <= 0) return 1000;
+        return pageSize;
     }
 
 }
