@@ -5,13 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by VCalaminos on 7/22/2019.
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrApiResult<T> {
 
-    private List<T> data = new ArrayList<T>();
+    private List<T> data;
+
+    private List<T> calls;
 
     public List<T> getData() {
         return this.data;
@@ -19,5 +18,13 @@ public class BrApiResult<T> {
 
     public void setData(List<T> data) {
         this.data = data;
+    }
+
+    public List<T> getCalls() {
+        return calls;
+    }
+
+    public void setCalls(List<T> calls) {
+        this.calls = calls;
     }
 }
