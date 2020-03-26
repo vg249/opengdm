@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
@@ -366,7 +367,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                         errorMsg);
             }
 
-            if(datasetIds != null && datasetIds.size() > 0) {
+            if(!CollectionUtils.isEmpty(datasetIds)) {
 
                 datasetIdsArray = datasetIds.toArray(new String[0]);
 
@@ -388,7 +389,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             Query query =  em.createQuery(criteria);
 
-            if(datasetIds != null && datasetIds.size() > 0) {
+            if(!CollectionUtils.isEmpty(datasetIds)) {
                 query
                         .unwrap(org.hibernate.query.Query.class)
                         .setParameter("datasetIds", datasetIdsArray, StringArrayType.INSTANCE);
