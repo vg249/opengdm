@@ -5,7 +5,7 @@
  * @author Rodolfo N. Duldulao, Jr.
  * @since 2020-03-07
  */
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.mockito.Mockito.when;
 
@@ -39,7 +39,7 @@ public class GobiiProjectServiceImplTest {
     private ContactDao contactDao;
 
     @InjectMocks
-    private GobiiProjectServiceImpl v3ProjectServiceImpl;
+    private ProjectServiceImpl v3ProjectServiceImpl;
 
     @Before
     public void init() {

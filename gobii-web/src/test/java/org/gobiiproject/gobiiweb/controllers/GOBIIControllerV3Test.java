@@ -27,10 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -65,7 +67,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GOBIIControllerV3Test {
     @Mock
-    private GobiiProjectService projectService;
+    private ProjectService projectService;
+
+    @Mock
+    private ContactService contactService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -435,6 +440,40 @@ public class GOBIIControllerV3Test {
         ;
 
         verify(projectService, times(1)).deleteProject(eq(84));
+    }
+
+    @Test
+    public void testGetContacts() throws Exception {
+        assert contactService != null;
+        List<ContactDTO> mockList = new ArrayList<ContactDTO>();
+        ContactDTO mockItem = new ContactDTO();
+        mockItem.setPiContactId(111);
+        mockItem.setPiContactFirstName("test");
+        mockList.add(mockItem);
+        PagedResult<ContactDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
+        when(
+            contactService.getContacts(0, 1000, null)
+        ).thenReturn(
+            mockPayload
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/contacts")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+        .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+        .andExpect(jsonPath("$.result.data[0].piContactId").value(mockItem.getPiContactId()))
+        .andExpect(jsonPath("$.result.data[0].piContactFirstName").value(mockItem.getPiContactFirstName()))
+        ;
+        verify(contactService, times(1)).getContacts(0, 1000, null);
     }
     
 }

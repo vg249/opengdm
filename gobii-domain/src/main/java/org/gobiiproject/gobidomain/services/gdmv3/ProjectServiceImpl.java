@@ -6,7 +6,7 @@
  * @author Rodolfo N. Duldulao, Jr.
  * @since 2020-03-07
  */
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -42,7 +41,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class GobiiProjectServiceImpl implements GobiiProjectService {
+public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     private ProjectDao projectDao;
