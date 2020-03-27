@@ -1,21 +1,19 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.DnaRun;
-import org.gobiiproject.gobiimodel.entity.Experiment;
-import org.hibernate.LazyInitializationException;
-import org.hibernate.type.IntegerType;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static junit.framework.TestCase.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.hibernate.LazyInitializationException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Test cases for DnaRunDaoImpl

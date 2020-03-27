@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "cv")
+@SuppressWarnings("serial")
 public class Cv implements Serializable{
 
     @Id

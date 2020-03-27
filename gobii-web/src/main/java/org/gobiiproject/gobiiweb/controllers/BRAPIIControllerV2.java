@@ -72,7 +72,7 @@ public class BRAPIIControllerV2 {
     @Autowired
     private MarkerPositionsService markerPositionsService;
 
-    private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT); //TODO: remove
 
 
     private class CallSetResponse extends BrApiMasterPayload<CallSetDTO>{}
@@ -209,7 +209,7 @@ public class BRAPIIControllerV2 {
                 paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallSets(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSets(
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Used to request a specific page of data to be returned. " +
@@ -272,7 +272,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<CallSetDTO>> getCallSetsByCallSetDbId(
             @ApiParam(value = "ID of the Callset to be extracted", required = true)
             @PathVariable("callSetDbId") Integer callSetDbId) {
 
@@ -339,7 +339,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallsByCallset(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>> getCallsByCallset(
             @ApiParam(value = "Id for dna run to be fetched")
             @PathVariable(value="callSetDbId") Integer callSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
@@ -412,7 +412,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variants", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariants(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariants(
             @ApiParam(value = "Size of the page")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page Token to fetch a page. " +
@@ -479,7 +479,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variants/{variantDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantsByVariantDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantDTO>> getVariantsByVariantDbId(
             @ApiParam(value = "ID of the Variant to be extracted", required = true)
             @PathVariable("variantDbId") Integer variantDbId) {
 
@@ -503,7 +503,7 @@ public class BRAPIIControllerV2 {
 
     @ApiOperation(value="List samples", hidden = true)
     @RequestMapping(value="/samples", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMaps(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<SamplesDTO>> getMaps(
             @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
             @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
             @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
@@ -555,14 +555,14 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/maps", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMaps(
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<MapsetDTO>> getMaps(
             @RequestParam(value = "page", required = false,
                     defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "studyDbId",
                     required = false) Integer studyDbId) throws GobiiException {
-
         try {
 
             PagedResult<MapsetDTO> pagedResult =
@@ -606,7 +606,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMapByMapId(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<MapsetDTO>> getMapByMapId(
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
@@ -614,7 +614,7 @@ public class BRAPIIControllerV2 {
         try {
 
             MapsetDTO mapset = mapsetService.getMapSetById(mapId);
-            BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload(mapset, pageSize, page);
+            BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>(mapset, pageSize, page);
             return ResponseEntity.ok(payload);
 
         }
@@ -645,7 +645,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/markerpositions", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getMarkersByMapId(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<MarkerPositions>> getMarkersByMapId(
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "minPosition", required = false) BigDecimal minPosition,
@@ -714,7 +714,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallsByVariant(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>> getCallsByVariant(
             @ApiParam(value = "Id for marker to be fetched")
             @PathVariable(value="variantDbId") Integer variantDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
@@ -788,7 +788,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantSets(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantSetDTO>> getVariantSets(
             @ApiParam(value = "Id of the VariantSet to be fetched. Also, corresponds to dataset Id")
             @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
             @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. study " +
@@ -868,7 +868,7 @@ public class BRAPIIControllerV2 {
             paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterPayload> getVariantSetById(
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
             @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId) {
 
@@ -926,7 +926,7 @@ public class BRAPIIControllerV2 {
                     paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getVariantsByVariantSetDbId(
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariantsByVariantSetDbId(
             @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @RequestParam(value = "pageToken", required = false) String pageToken,

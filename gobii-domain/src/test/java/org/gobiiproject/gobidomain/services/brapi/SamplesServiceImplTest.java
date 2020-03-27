@@ -54,7 +54,7 @@ public class SamplesServiceImplTest {
 
     private List<DnaSample> getMockDnaSamples(Integer listSize) {
 
-        List<DnaSample> returnVal = new ArrayList();
+        List<DnaSample> returnVal = new ArrayList<>();
 
 
         for(int i = 0; i < listSize; i++) {
@@ -89,7 +89,7 @@ public class SamplesServiceImplTest {
 
    public List<Cv> createMockCvList() {
 
-        List cvListMock = new ArrayList();
+        List<Cv> cvListMock = new ArrayList<>();
 
         Integer numberOfCvs = random.nextInt(9) + 1 ;
 

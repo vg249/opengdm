@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.Analysis;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,10 +10,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+
+import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Transactional
 public class AnalysisDaoImpl implements AnalysisDao {

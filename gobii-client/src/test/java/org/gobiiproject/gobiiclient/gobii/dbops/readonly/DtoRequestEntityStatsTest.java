@@ -86,6 +86,7 @@ public class DtoRequestEntityStatsTest {
     }
 
     @Test
+    @SuppressWarnings("unused")
     public void testGetLastModified() throws Exception {
 
 

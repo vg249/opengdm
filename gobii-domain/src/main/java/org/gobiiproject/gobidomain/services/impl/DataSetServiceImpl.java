@@ -126,11 +126,6 @@ public class DataSetServiceImpl implements DataSetService {
 
         try {
             returnVal = dtoMapDataSet.get(dataSetId);
-
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -138,6 +133,10 @@ public class DataSetServiceImpl implements DataSetService {
                                 + dataSetId
                                 + ") does not match an existing dataSet ");
             }
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
 
         } catch (Exception e) {
 

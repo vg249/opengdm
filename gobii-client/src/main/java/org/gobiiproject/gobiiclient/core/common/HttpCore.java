@@ -131,8 +131,8 @@ public class HttpCore {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String, String> headers) throws Exception {
-
 
         if (headers != null) {
             Iterator it = headers.entrySet().iterator();

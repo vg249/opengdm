@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Created by Phil on 12/15/2016.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class BrapiResponseMapStudiesSearch {
 
     @Autowired

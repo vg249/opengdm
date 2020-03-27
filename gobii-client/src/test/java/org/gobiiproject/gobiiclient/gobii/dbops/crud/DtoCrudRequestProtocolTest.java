@@ -68,7 +68,8 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
         PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetByID = restResourceForGetById
                 .get(ProtocolDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
-        ProtocolDTO protocolDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
+        //ProtocolDTO protocolDTOResponseForParams = 
+        resultEnvelopeForGetByID.getPayload().getData().get(0); //TODO: convert to assertion?
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOL, protocolDTOResponse.getProtocolId());
 

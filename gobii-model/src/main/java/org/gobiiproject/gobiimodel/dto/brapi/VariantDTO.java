@@ -1,17 +1,15 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
-import org.gobiiproject.gobiimodel.entity.Marker;
-import org.gobiiproject.gobiimodel.entity.Platform;
-import org.gobiiproject.gobiimodel.entity.Reference;
-import org.gobiiproject.gobiimodel.types.BrapiVariantTypes;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.entity.Marker;
+import org.gobiiproject.gobiimodel.types.BrapiVariantTypes;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={

@@ -25,6 +25,7 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
     @Override
     @Transactional
+    @SuppressWarnings("unchecked")
     public List<MarkerLinkageGroup> getMarkerLinkageGroups(Integer pageSize, Integer rowOffset,
                                                            Integer mapsetId, String mapsetName,
                                                            Integer linkageGroupId, String linkageGroupName,

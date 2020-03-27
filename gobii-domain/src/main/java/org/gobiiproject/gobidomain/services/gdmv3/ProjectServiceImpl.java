@@ -6,7 +6,7 @@
  * @author Rodolfo N. Duldulao, Jr.
  * @since 2020-03-07
  */
-package org.gobiiproject.gobidomain.services.impl;
+package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.GobiiProjectService;
 import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -34,17 +33,15 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
-import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class GobiiProjectServiceImpl implements GobiiProjectService {
+public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     private ProjectDao projectDao;
@@ -59,18 +56,18 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
     private PropertiesService propertiesService;
 
     @Override
-    public PagedResult<GobiiProjectDTO> getProjects(Integer pageNum, Integer pageSize) throws GobiiDtoMappingException {
-        log.debug("Getting projects list offset %d size %d", pageNum, pageSize);
+    public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
+        log.debug("Getting projects list offset %d size %d", page, pageSize);
         PagedResult<GobiiProjectDTO> pagedResult;
 
         // get Cvs
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(pageNum);
+            Objects.requireNonNull(page);
             List<GobiiProjectDTO> projectDTOs = new java.util.ArrayList<>();
 
-            List<Project> projects = projectDao.getProjects(pageNum, pageSize);
+            List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
                 GobiiProjectDTO dto = new GobiiProjectDTO();
                 ModelMapper.mapEntityToDto(project, dto);
@@ -85,7 +82,7 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
 
             pagedResult = new PagedResult<>();
             pagedResult.setResult(projectDTOs);
-            pagedResult.setCurrentPageNum(pageNum);
+            pagedResult.setCurrentPageNum(page);
             pagedResult.setCurrentPageSize(projectDTOs.size());
             return pagedResult;
         } catch (GobiiException gE) {
@@ -197,8 +194,8 @@ public class GobiiProjectServiceImpl implements GobiiProjectService {
         return dto;
     }
 
-    public PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception {
-        return propertiesService.getProperties(pageNum, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
+    public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
+        return propertiesService.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
     }
 
     @Override

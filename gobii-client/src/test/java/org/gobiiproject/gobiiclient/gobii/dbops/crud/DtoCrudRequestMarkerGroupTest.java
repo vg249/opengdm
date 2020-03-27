@@ -185,7 +185,8 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
                 .get(MarkerGroupDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-        MarkerGroupDTO markerGroupDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
+        //MarkerGroupDTO markerGroupDTOResponseForParams = 
+        resultEnvelopeForGetById.getPayload().getData().get(0); //TODO: i think this should be an assert
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKER_GROUP, markerGroupDTOResponse.getMarkerGroupId());
 

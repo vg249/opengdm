@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiapimodel.payload.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMasterPayload<T> {

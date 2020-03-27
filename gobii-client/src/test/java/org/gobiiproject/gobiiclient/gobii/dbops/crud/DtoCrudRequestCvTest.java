@@ -122,7 +122,8 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         PayloadEnvelope<CvDTO> resultEnvelopeForGetByID = restResourceForGetById
                 .get(CvDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
-        CvDTO cvDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
+        //CvDTO cvDTOResponseForParams = 
+        resultEnvelopeForGetByID.getPayload().getData().get(0);
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CV, cvDTOResponse.getCvId());
 

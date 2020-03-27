@@ -59,11 +59,6 @@ public class MarkerServiceImpl implements MarkerService {
 
         try {
             returnVal = dtoMapMarker.getMarkerDetails(markerId);
-
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -71,6 +66,9 @@ public class MarkerServiceImpl implements MarkerService {
                                 + markerId
                                 + ") does not match an existing marker ");
             }
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         } catch (Exception e) {
 

@@ -154,7 +154,8 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
                 .get(AnalysisDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-        AnalysisDTO analysisDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
+        //AnalysisDTO analysisDTOResponseForParams = 
+        resultEnvelopeForGetById.getPayload().getData().get(0);
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSIS, analysisDTOResponse.getAnalysisId());
 

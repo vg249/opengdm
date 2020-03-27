@@ -129,7 +129,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
     }
 
-
+    @SuppressWarnings("unused")
     private List<MarkerGroupMarkerDTO> getMarkerGroupMarkersByMarkerName(String markerName) throws SQLException, GobiiDaoException {
 
         List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
@@ -203,7 +203,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
         markerGroupMarkers.addAll(newMarkerDTOsForMarker); // if new markers is empty, we don't care
     }
 
-
+    @SuppressWarnings("unused")
     private void upsertMarkers(Integer markerGroupId, List<MarkerGroupMarkerDTO> markerDTOs) throws SQLException, GobiiDaoException {
 
         for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : markerDTOs) {

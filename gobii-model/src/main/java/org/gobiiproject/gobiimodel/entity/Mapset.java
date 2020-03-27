@@ -1,11 +1,20 @@
 package org.gobiiproject.gobiimodel.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.FetchProfile;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 
 @Entity
 @Table(name = "mapset")

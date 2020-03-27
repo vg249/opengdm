@@ -48,7 +48,8 @@ public class CvDaoImpl implements CvDao {
             Root<Cv> cv = criteriaQuery.from(Cv.class);
             criteriaQuery.select(cv);
 
-            Join<Object, Object> cvGroup = (Join<Object, Object>) cv.fetch("cvGroup");
+            //Join<Object, Object> cvGroup = (Join<Object, Object>) 
+            cv.fetch("cvGroup");
 
             criteriaQuery.where(criteriaBuilder.equal(cv.get("cvId"), cvId));
 
@@ -95,6 +96,7 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType, Integer page, Integer pageSize) throws GobiiException {
 
         List<Predicate> predicates = new ArrayList<>();

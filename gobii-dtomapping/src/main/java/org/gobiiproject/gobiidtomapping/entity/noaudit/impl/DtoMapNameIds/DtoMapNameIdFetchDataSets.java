@@ -34,7 +34,7 @@ public class DtoMapNameIdFetchDataSets implements DtoMapNameIdFetch {
     }
 
 
-    private List makeMapOfDataSetNames(ResultSet resultSet) throws SQLException {
+    private List<NameIdDTO> makeMapOfDataSetNames(ResultSet resultSet) throws SQLException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 

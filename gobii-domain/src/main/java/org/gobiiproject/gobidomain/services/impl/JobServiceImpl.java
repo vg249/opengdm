@@ -116,11 +116,6 @@ public class JobServiceImpl implements JobService {
         JobDTO returnVal;
 
         returnVal = dtoMapJob.getJobDetailsByJobName(jobName);
-
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -129,6 +124,9 @@ public class JobServiceImpl implements JobService {
                             + ") does not match an existing job");
 
         }
+
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
 
