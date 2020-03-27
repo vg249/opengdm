@@ -25,17 +25,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType", "status"
 })
-@JsonPropertyOrder({
-    "piContactId",
-    "piContactFirstName",
-    "piContactLastName",
-    "organizationId",
-    "organizationName",
-    "createdBy",
-    "createdDate",
-    "modifiedBy",
-    "modifiedDate"
-})
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Data
 public class ContactDTO extends DTOBaseAuditable {
