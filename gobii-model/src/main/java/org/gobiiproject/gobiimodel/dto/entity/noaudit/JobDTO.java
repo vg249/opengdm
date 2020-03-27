@@ -6,6 +6,7 @@ import java.util.List;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 
 /**
  * Created by VCalaminos on 8/25/2017.
@@ -29,6 +30,7 @@ public class JobDTO extends DTOBase {
     private Integer submittedBy;
     private Date submittedDate;
     private List<Integer> datasetIds = new ArrayList<>();
+    private String procedure;
 
     @GobiiEntityParam(paramName = "jobId")
     public Integer getJobId() { return jobId; }
@@ -84,4 +86,9 @@ public class JobDTO extends DTOBase {
     @GobiiEntityColumn(columnName = "datasetids")
     public void setDatasetIds(List<Integer> datasetIds) { this.datasetIds = datasetIds; }
 
+    @GobiiEntityParam(paramName = "procedure")
+    public String getProcedure() { return procedure; }
+
+    @GobiiEntityColumn(columnName = "procedure")
+    public void setProcedure(String procedure) { this.procedure = procedure; }
 }

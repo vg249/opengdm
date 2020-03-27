@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.tika.Tika;
 import org.gobiiproject.gobidomain.GobiiDomainException;
@@ -2205,8 +2206,29 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<DigesterProcedureDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            DigesterProcedureDTO digesterProcedureDTO = digesterProcedureSerivce.getStatus(cropType, instructionFileName);
+            // ----------------
+            // Old way --------
+            // DigesterProcedureDTO digesterProcedureDTO = digesterProcedureSerivce.getStatus(cropType, instructionFileName);
+            // ----------------
+
+            JobDTO jobDTO = jobService.getJobByJobName(instructionFileName);
+
+            if (jobDTO == null) {
+                throw new GobiiException("No job record returned for instruction name " + instructionFileName);
+            }
+
+            if (StringUtils.isEmpty(jobDTO.getProcedure())) {
+                throw new GobiiException("Instruction field empty");
+            }
+
+            DigesterProcedureDTO digesterProcedureDTO;
+            try {
+                digesterProcedureDTO = new ObjectMapper().readValue(jobDTO.getProcedure(), DigesterProcedureDTO.class);
+            } catch (Exception e) {
+                throw new GobiiException("Exception while parsing instruction file record", e);
+            }
+
+
 
             PayloadWriter<DigesterProcedureDTO> payloadWriter = new PayloadWriter<>(request, response,
                     DigesterProcedureDTO.class);

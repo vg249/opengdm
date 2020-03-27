@@ -277,7 +277,7 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
                     jobDTONew.setPayloadType(digesterProcedureDTO.getProcedure().getMetadata().getJobPayloadType().getCvName());
                     jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
                     jobDTONew.setSubmittedDate(new Date());
-                    // TODO attach instruction to job
+                    jobDTONew.setProcedure(digesterProcedureDTO.toString());
 
                     dtoMapJob.createJob(jobDTONew);
 
@@ -325,7 +325,7 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
                         GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "The specified instruction file does not exist: " + instructionFileName);
             }
         } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiException(e);
         }
         return returnVal;
