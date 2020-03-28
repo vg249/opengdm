@@ -45,19 +45,31 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     /**
      * Get Genotypes to callSetDbId.
      * BrAPI field callSetDbId corresponds to dnaRunId in GDM system
-     * @param callSetDbId - Corresponds to dnaRunId for which genotype calls need to fetched.
-     * @param pageSize - Number of genotype calls per page to be fetched.
-     * @param pageToken - Cursor to identify where the page starts. DnaRun can be in more than one dataset.
-     *                  Assume, a given dnaRun is in multiple dataset {7,5,6} and each with set of markers of their own.
-     *                  {datasetId-markerId} pageToken means, fetch Genotypes from datasetIds greater
-     *                  than or equal to given datasetId and markerId ascending order cursors until the page fills.
-     *                  nextPageToken will be where datasetId and markerId starts for next page.
+     *
+     * @param callSetDbId - Corresponds to dnaRunId for which
+     *                    genotype calls need to fetched.
+     *
+     * @param pageSize - Number of genotype calls
+     *                 per page to be fetched.
+     *
+     * @param pageToken - Cursor to identify where the page starts.
+     *                  DnaRun can be in more than one dataset.
+     *                  Assume, a given dnaRun is in multiple
+     *                  dataset {7,5,6} and each with set of markers of their own.
+     *                  {datasetId-markerId} pageToken means,
+     *                  fetch Genotypes from datasetIds greater
+     *                  than or equal to given datasetId and
+     *                  markerId ascending order cursors until the page fills.
+     *                  nextPageToken will be where datasetId
+     *                  and markerId starts for next page.
+     *
      * @return List of Genotype calls for given page.
+     *
      */
     @Override
-    public PagedResult<GenotypeCallsDTO> getGenotypeCallsByCallSetId(Integer callSetDbId,
-                                                                     Integer pageSize,
-                                                                     String pageToken) {
+    public PagedResult<GenotypeCallsDTO>
+    getGenotypeCallsByCallSetId(Integer callSetDbId, Integer pageSize,
+                                String pageToken) {
 
         PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
 
@@ -67,7 +79,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         Integer startDatasetId = null;
 
-        String nextPageToken = null;
+        String nextPageToken;
 
         Map<String, ArrayList<String>> markerHdf5IndexMap;
 
@@ -257,7 +269,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         Integer startDatasetId = null;
 
-        String nextPageToken = null;
+        String nextPageToken;
 
         Map<String, ArrayList<String>> markerHdf5IndexMap;
 
@@ -425,9 +437,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         Integer pageOffset = 0;
 
         Integer columnOffset = 0;
-        Integer dnaRunOffset = 0;
 
         Integer markerPageSize = 0;
+
+        List<DnaRun> dnaRuns;
 
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
@@ -438,18 +451,34 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         try {
 
-
-            List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageSize, dnaRunOffset);
-
-
             if(pageToken != null) {
 
-                Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
+                Map<String, Integer> pageTokenParts =
+                        PageToken.decode(pageToken);
 
-                pageOffset = pageTokenParts.get("pageOffset");
+                pageOffset = pageTokenParts
+                                .getOrDefault("pageOffset", 0);
 
-                columnOffset = pageTokenParts.get("columnOffset");
+                columnOffset =
+                        pageTokenParts
+                        .getOrDefault("columnOffset", 0);
+
+
             }
+
+            dnaRuns =
+                    dnaRunDao.getDnaRunsByDatasetId(
+                            datasetId, pageSize,
+                            columnOffset);
+
+            /**
+             * case 1: total number of dnarun in the dataset
+             * is less than page size
+             */
+            if(columnOffset == 0 && dnaRuns.size() < pageSize) {
+
+            }
+
 
             if(columnOffset > dnaRuns.size()) {
                 pageOffset = null;
