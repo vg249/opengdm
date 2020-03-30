@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
@@ -27,6 +28,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
@@ -69,6 +71,10 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private ContactService contactService = null;
+
+    @Autowired
+    private ExperimentService experimentService = null;
+
     /**
      * Authentication Endpoint
      * Mimicking same logic used in v1
@@ -275,6 +281,31 @@ public class GOBIIControllerV3  {
             organizationId
         );
         BrApiMasterListPayload<ContactDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Lists Experiments
+     * @return
+     */
+    @GetMapping("/experiments")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ExperimentDTO>> getExperiments(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer projectId
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<ExperimentDTO> pagedResult = experimentService.getExperiments(
+            Math.max(0, page),
+            pageSizeToUse,
+            projectId
+        );
+        BrApiMasterListPayload<ExperimentDTO> payload = new BrApiMasterListPayload<>(
             pagedResult.getResult(),
             pagedResult.getCurrentPageSize(),
             pagedResult.getCurrentPageNum()
