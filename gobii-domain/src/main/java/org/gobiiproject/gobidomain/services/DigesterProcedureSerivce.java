@@ -8,5 +8,4 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
  */
 public interface DigesterProcedureSerivce {
     DigesterProcedureDTO createInstruction(String cropType, DigesterProcedureDTO digesterProcedureDTO) throws GobiiDomainException;
-    DigesterProcedureDTO getStatus(String cropType, String instructionFileName) throws GobiiDomainException;
 }

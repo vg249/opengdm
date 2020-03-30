@@ -36,9 +36,9 @@ public class JobStatus {
      * @param cropName
      * @param jobName the name of the instruction file, minus the .json suffix
      */
-    GobiiUriFactory uriFactory;
-    String jobName;
-	JobDTO lastStatus;
+    private GobiiUriFactory uriFactory;
+    private String jobName;
+	private JobDTO lastStatus;
 	/**List of valid statuses. Update as appropriate. Stops 'random argument' assignment, even though Progress Status
 	 * has been stringly typed.
 	 */

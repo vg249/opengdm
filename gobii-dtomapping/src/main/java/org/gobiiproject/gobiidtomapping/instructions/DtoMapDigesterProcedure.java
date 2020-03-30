@@ -13,5 +13,4 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 public interface DtoMapDigesterProcedure {
 
     DigesterProcedureDTO createInstruction(String cropType, DigesterProcedureDTO digesterProcedureDTO) throws GobiiDtoMappingException, GobiiDaoException;
-    DigesterProcedureDTO getStatus(String cropType, String getInstructions) throws GobiiDtoMappingException;
 }

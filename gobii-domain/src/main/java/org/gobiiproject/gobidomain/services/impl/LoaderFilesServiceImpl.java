@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Angel on 11/2016.
  */
+@Deprecated
 public class LoaderFilesServiceImpl implements LoaderFilesService {
 
     private Logger LOGGER = LoggerFactory.getLogger(LoaderFilesServiceImpl.class);

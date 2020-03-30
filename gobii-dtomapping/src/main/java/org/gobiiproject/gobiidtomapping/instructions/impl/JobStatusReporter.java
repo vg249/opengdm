@@ -41,7 +41,6 @@ public class JobStatusReporter {
         JobProgressStatusType returnVal = null;
 
         JobDTO jobDTO = dtoMapJob.getJobDetailsByJobName(this.jobId);
-        JobProgressStatusType jobProgressStatus = JobProgressStatusType.byValue(jobDTO.getStatus());
 
         if (jobDTO.getStatus() != null) {
             returnVal = JobProgressStatusType.byValue(jobDTO.getStatus());
@@ -99,41 +98,6 @@ public class JobStatusReporter {
         return returnVal;
     }
 
-    /***
-     * See commenton getExtractorInstructionFileFqpn
-     * @param cropType
-     * @return
-     * @throws Exception
-     */
-    public String getLoaderInstructionFileFqpn(String cropType) throws Exception {
-
-
-        String returnVal = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS)
-                + this.jobId
-                + this.fileExtension;
-
-        if (!new File(returnVal).exists()) {
-
-            returnVal = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INPROGRESS_FILES)
-                    + this.jobId
-                    + this.fileExtension;
-
-            if (!new File(returnVal).exists()) {
-                returnVal = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES)
-                        + this.jobId
-                        + this.fileExtension;
-
-                if (!new File(returnVal).exists()) {
-                    returnVal = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_DONE)
-                            + this.jobId
-                            + this.fileExtension;
-
-                }
-            }
-        }
-
-        return returnVal;
-    }
 
     public String getLogErrorMessage() throws GobiiDtoMappingException {
 

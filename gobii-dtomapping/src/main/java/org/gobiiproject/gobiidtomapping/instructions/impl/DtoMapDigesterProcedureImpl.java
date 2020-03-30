@@ -304,30 +304,4 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
 
     } // writeInstructions
 
-    @Override
-    public DigesterProcedureDTO getStatus(String cropType, String instructionFileName) throws GobiiDtoMappingException {
-
-        DigesterProcedureDTO returnVal = new DigesterProcedureDTO();
-        JobStatusReporter jobStatusReporter = new JobStatusReporter(instructionFileName, dtoMapJob, INSTRUCTION_FILE_EXT);
-        JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
-        try {
-            returnVal.setName(instructionFileName);
-
-            InstructionFileAccess<GobiiLoaderProcedure> loaderInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderProcedure.class);
-            GobiiLoaderProcedure procedure = loaderInstructionFileAccess.getProcedure(jobStatusReporter.getLoaderInstructionFileFqpn(cropType));
-
-            procedure.getMetadata().setGobiiJobStatus(jobProgressStatus);
-
-            returnVal.setGobiiLoaderProcedure(procedure);
-
-            if (procedure == null || procedure.getInstructions() == null || procedure.getInstructions().size() == 0) {
-                throw new GobiiDtoMappingException(
-                        GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "The specified instruction file does not exist: " + instructionFileName);
-            }
-        } catch (Exception e) {
-            LOGGER.error("Gobii Mapping Error", e);
-            throw new GobiiException(e);
-        }
-        return returnVal;
-    }
 }

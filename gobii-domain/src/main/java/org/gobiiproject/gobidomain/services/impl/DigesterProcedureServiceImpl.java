@@ -22,26 +22,6 @@ public class DigesterProcedureServiceImpl implements DigesterProcedureSerivce {
 
 
     @Override
-    public DigesterProcedureDTO getStatus(String cropType, String getInstructions) throws GobiiDomainException {
-
-        DigesterProcedureDTO returnVal;
-
-        try {
-            returnVal = dtoMapDigesterProcedure.getStatus(cropType, getInstructions);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-
-
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-
-        }
-
-        return returnVal;
-    }
-
-    @Override
     public DigesterProcedureDTO createInstruction(String cropType, DigesterProcedureDTO DigesterProcedureDTO)
             throws GobiiDomainException {
         DigesterProcedureDTO returnVal;

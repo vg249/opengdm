@@ -23,6 +23,7 @@ import java.util.UUID;
 /**
  * Created by Angel on 6/8/2016.
  */
+@Deprecated
 public class FileServiceImpl implements FilesService {
 
     private Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
