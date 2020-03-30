@@ -26,6 +26,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
     protected EntityManager em;
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Experiment> getExperiments(Integer pageSize, Integer rowOffset,
                                            Integer projectId) {
 
