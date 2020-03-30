@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 /**
  * Created by Phil on 4/12/2016.
  */
+@Deprecated
 public interface FilesService {
 
     String writeJobFileForCrop(String cropType,
