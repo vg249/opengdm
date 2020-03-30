@@ -83,7 +83,7 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.rest.RestProfileDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
@@ -2140,32 +2140,32 @@ public class GOBIIControllerV1 {
     })
     @RequestMapping(value = "/instructions/loader", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<DigesterProcedureDTO> createLoaderInstruction(
+    public PayloadEnvelope<LoaderInstructionFilesDTO> createLoaderInstruction(
             @ApiParam(required = true)
-            @RequestBody PayloadEnvelope<DigesterProcedureDTO> payloadEnvelope,
+            @RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        PayloadEnvelope<DigesterProcedureDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            PayloadReader<DigesterProcedureDTO> payloadReader = new PayloadReader<>(DigesterProcedureDTO.class);
-            DigesterProcedureDTO digesterProcedureDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            DigesterProcedureDTO digesterProcedureDTONew = digesterProcedureSerivce.createInstruction(
-                    cropType, digesterProcedureDTOToCreate);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTONew = digesterProcedureSerivce.createInstruction(
+                    cropType, loaderInstructionFilesDTOToCreate);
 
-            digesterService.sendProcedure(digesterProcedureDTONew);
+            digesterService.sendProcedure(loaderInstructionFilesDTONew);
 
-            PayloadWriter<DigesterProcedureDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    DigesterProcedureDTO.class);
+            PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    LoaderInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS),
-                    digesterProcedureDTONew,
-                    digesterProcedureDTONew.getName());
+                    loaderInstructionFilesDTONew,
+                    loaderInstructionFilesDTONew.getName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2197,13 +2197,13 @@ public class GOBIIControllerV1 {
     })
     @RequestMapping(value = "/instructions/loader/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DigesterProcedureDTO> getLoaderInstruction(
+    public PayloadEnvelope<LoaderInstructionFilesDTO> getLoaderInstruction(
             @ApiParam(value = "Name of the instruction file to be retrieved.", required = true)
             @PathVariable("instructionFileName") String instructionFileName,
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        PayloadEnvelope<DigesterProcedureDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             // ----------------
@@ -2221,23 +2221,23 @@ public class GOBIIControllerV1 {
                 throw new GobiiException("Instruction field empty");
             }
 
-            DigesterProcedureDTO digesterProcedureDTO;
+            LoaderInstructionFilesDTO loaderInstructionFilesDTO;
             try {
-                digesterProcedureDTO = new ObjectMapper().readValue(jobDTO.getProcedure(), DigesterProcedureDTO.class);
+                loaderInstructionFilesDTO = new ObjectMapper().readValue(jobDTO.getProcedure(), LoaderInstructionFilesDTO.class);
             } catch (Exception e) {
                 throw new GobiiException("Exception while parsing instruction file record", e);
             }
 
 
 
-            PayloadWriter<DigesterProcedureDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    DigesterProcedureDTO.class);
+            PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    LoaderInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS),
-                    digesterProcedureDTO,
-                    digesterProcedureDTO.getName());
+                    loaderInstructionFilesDTO,
+                    loaderInstructionFilesDTO.getName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

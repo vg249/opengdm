@@ -14,7 +14,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterConfig;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 
 public class DigesterListener {
 
@@ -42,7 +42,7 @@ public class DigesterListener {
 
 				String input = clientReader.readLine();
 
-				DigesterProcedureDTO procedure = new ObjectMapper().readValue(input, DigesterProcedureDTO.class);
+				LoaderInstructionFilesDTO procedure = new ObjectMapper().readValue(input, LoaderInstructionFilesDTO.class);
 
 				executor.execute(() -> {
 					try {

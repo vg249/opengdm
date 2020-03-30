@@ -15,21 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.dto.Marshal;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigestResults;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterConfig;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
@@ -37,7 +31,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.IFLLineCounts;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
@@ -47,7 +40,6 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.email.DigesterProcessMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
-import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
@@ -95,7 +87,7 @@ public class Digester {
         this.digesterConfig = config;
     }
 
-    public void run(DigesterProcedureDTO instruction) throws Exception {
+    public void run(LoaderInstructionFilesDTO instruction) throws Exception {
 
         final GobiiLoaderProcedure procedure = instruction.getProcedure();
 

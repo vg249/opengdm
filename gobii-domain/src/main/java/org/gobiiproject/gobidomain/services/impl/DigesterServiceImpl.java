@@ -7,13 +7,13 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DigesterService;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 
 public class DigesterServiceImpl implements DigesterService {
 
 
 	@Override
-	public void sendProcedure(DigesterProcedureDTO procedure) throws IOException {
+	public void sendProcedure(LoaderInstructionFilesDTO procedure) throws IOException {
 		// TODO add configurations
 
 		if (procedure == null) {

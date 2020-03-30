@@ -6,7 +6,6 @@ import java.util.List;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterProcedureDTO;
 
 /**
  * Created by VCalaminos on 8/25/2017.

@@ -5,7 +5,7 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class DigesterProcedureDTO extends DTOBase {
+public class LoaderInstructionFilesDTO extends DTOBase {
 
 
     private GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
