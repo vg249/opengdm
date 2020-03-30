@@ -28,7 +28,7 @@ public class MarshalTest {
 		assertNotNull(proc);
 		assertNotNull(proc.getInstructions());
 		assertNotNull(proc.getMetadata());
-		assertNotNull(proc.getMetadata().getGobiiJobStatus());
+
 		assertNotNull(proc.getMetadata().getGobiiFile());
 		assertNotNull(proc.getMetadata().getGobiiFile().getDestination());
 		assertNotNull(proc.getMetadata().getGobiiFile().getSource());

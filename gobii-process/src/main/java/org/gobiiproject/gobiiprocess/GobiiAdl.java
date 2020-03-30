@@ -70,6 +70,7 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -1808,6 +1809,11 @@ public class GobiiAdl {
                         .resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS)
                         .addUriParam("instructionFileName", instructionFileName));
 
+        GobiiEnvelopeRestResource<JobDTO, JobDTO> jobResponseEnvelope = new GobiiEnvelopeRestResource<>(
+                GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceColl(RestResourceId.GOBII_FILE_LOADER_JOBS)
+                        .addUriParam("jobName", instructionFileName));
 
         boolean statusDetermined = false;
         String currentStatus = "";
@@ -1823,7 +1829,7 @@ public class GobiiAdl {
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderProcedure procedure = data.get(0).getProcedure();
 
-            String newStatus = procedure.getMetadata().getGobiiJobStatus().getCvName();
+            String newStatus = jobResponseEnvelope.get(JobDTO.class).getPayload().getData().get(0).getStatus();
 
             if (newStatus.equalsIgnoreCase("qc_processing")) {
 

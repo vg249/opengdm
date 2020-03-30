@@ -138,19 +138,6 @@ public class DnaSampleServiceImpl implements  DnaSampleService {
 
             gobiiLoaderMetadata.setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
 
-            PropNameId projectPropName = new PropNameId();
-            if(sampleMetadata.getProjectId() == null) {
-                throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                        "Project id is required");
-            }
-            ProjectDTO projectDTO = (ProjectDTO) sampleTrackingProjectService.getProjectById(
-                    sampleMetadata.getProjectId());
-            projectPropName.setId(projectDTO.getProjectId());
-            projectPropName.setName(projectDTO.getProjectName());
-            gobiiLoaderMetadata.setProject(projectPropName);
-
             InputStream sampleInputStream = new ByteArrayInputStream(sampleInputBytes);
             br = new BufferedReader(new InputStreamReader(sampleInputStream, "UTF-8"));
             String fileHeader = br.readLine();

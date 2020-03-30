@@ -11,11 +11,12 @@ import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 public class DigesterProcessMessage extends ProcessMessage{
 
-	public static DigesterProcessMessage create(ConfigSettings config, DigesterConfig digestConfig, LoaderInstructionFilesDTO instruction, DigestResults results) throws Exception {
+	public DigesterProcessMessage create(ConfigSettings config, DigesterConfig digestConfig, LoaderInstructionFilesDTO instruction, DigestResults results) throws Exception {
 
 		GobiiLoaderProcedure procedure = instruction.getProcedure();
 

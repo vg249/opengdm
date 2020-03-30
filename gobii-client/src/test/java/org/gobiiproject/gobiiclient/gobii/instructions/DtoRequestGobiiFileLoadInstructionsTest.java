@@ -236,13 +236,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         loaderInstructionFileDTOResponse.getProcedure().getInstructions().size());
 
 
-        Assert.assertNotNull("The job status field should not be null: " + loaderInstructionFileDTOResponse.getProcedure().getMetadata().getGobiiJobStatus(),
-                loaderInstructionFilesDTOToSend.getProcedure().getMetadata().getGobiiJobStatus());
-
-        Assert.assertTrue("The default reported status should not be " + JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName(),
-                !loaderInstructionFilesDTOToSend.getProcedure().getMetadata().getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName()));
-
-
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE USING THE HATEOS LINKS
 
         LinkCollection linkCollection = loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection();

@@ -25,7 +25,6 @@ public class GobiiLoaderMetadata {
 	private String gobiiCropType;
 
 	private JobPayloadType jobPayloadType;
-	private JobProgressStatusType gobiiJobStatus = JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS;
 
 	private Integer contactId;
 	private String contactEmail;
