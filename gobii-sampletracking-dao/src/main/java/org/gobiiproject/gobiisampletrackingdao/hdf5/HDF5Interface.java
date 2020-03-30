@@ -57,8 +57,8 @@ public class HDF5Interface {
      * @throws FileNotFoundException if the datasets provided contain an invalid dataset, or the temporary file folder is badly chmodded
      */
     public String getHDF5Genotypes(
-            boolean markerFast, Map<String, ArrayList<String>> datasetMarkerMap,
-            Map<String, ArrayList<String>> datasetSampleMap, String tempOutputFolderName
+            boolean markerFast, Map<String, List<String>> datasetMarkerMap,
+            Map<String, List<String>> datasetSampleMap, String tempOutputFolderName
     ) throws FileNotFoundException {
 
         StringBuilder genoFileString=new StringBuilder();
@@ -75,8 +75,11 @@ public class HDF5Interface {
         boolean createTempFolder = (new File(tempOutputFolder)).mkdirs();
 
         if(!createTempFolder) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
-                    "HDF5 Interface Error. Failed to create temporary output folder.");
+            throw new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.NONE,
+                    "HDF5 Interface Error. " +
+                            "Failed to create temporary output folder.");
         }
 
 

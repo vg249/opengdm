@@ -41,9 +41,11 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @param rowOffset - Number of rows to be offseted before fetching tuples
      * @param dnaRunId - Dna Run Id which uniquely identifies dna run
      * @param datasetId - Dataset Id to which dnaruns belong to.
-     * @param dnaSampleId - dnaSampleId filter. to fetch only dnaruns for given dnasample Id.
-     * @param dnaSampleName - dnaSample Id filter. to fetch only dnaruns for given dnasample Name.
-     * @return
+     * @param dnaSampleId - dnaSampleId filter
+     *                    to fetch only dnaruns for given dnasample Id.
+     * @param dnaSampleName - dnaSample Id filter
+     *                      to fetch only dnaruns for given dnasample Name.
+     * @return List of DnaRun entities
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -58,7 +60,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
         Objects.requireNonNull(pageSize, "Page size should not be null");
         Objects.requireNonNull(rowOffset, "Row Offset should not be null");
 
-        List<DnaRun> dnaRuns = new ArrayList<>();
+        List<DnaRun> dnaRuns;
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -66,7 +68,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<DnaRun> criteriaQuery = criteriaBuilder.createQuery(DnaRun.class);
+            CriteriaQuery<DnaRun> criteriaQuery =
+                    criteriaBuilder.createQuery(DnaRun.class);
 
             Root<DnaRun> dnaRunRoot = criteriaQuery.from(DnaRun.class);
             criteriaQuery.select(dnaRunRoot);
@@ -76,9 +79,12 @@ public class DnaRunDaoImpl implements DnaRunDao {
             Join<Object, Object> experimentJoin = null;
 
             if(fetchAssociations) {
-                dnaSampleJoin= (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
-                germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
-                experimentJoin = (Join<Object, Object>) dnaRunRoot.fetch("experiment");
+                dnaSampleJoin=
+                        (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
+                germplasmJoin =
+                        (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                experimentJoin =
+                        (Join<Object, Object>) dnaRunRoot.fetch("experiment");
             }
             else {
                 if (dnaSampleId != null || dnaSampleName != null
@@ -122,23 +128,32 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             if(experimentId != null && experimentJoin != null) {
                 predicates.add(
-                        criteriaBuilder.equal(experimentJoin.get("experimentId"), experimentId));
+                        criteriaBuilder.equal(
+                                experimentJoin.get("experimentId"),
+                                experimentId));
             }
 
             if(datasetId != null) {
-                Expression<Boolean> datasetIdExists = criteriaBuilder.function(
-                        "JSONB_EXISTS", Boolean.class,
-                        dnaRunRoot.get("datasetDnaRunIdx"), criteriaBuilder.literal(datasetId.toString()));
+                Expression<Boolean> datasetIdExists =
+                        criteriaBuilder.function(
+                                "JSONB_EXISTS",
+                                Boolean.class,
+                                dnaRunRoot.get("datasetDnaRunIdx"),
+                                criteriaBuilder.literal(datasetId.toString()));
 
                 predicates.add(criteriaBuilder.isTrue(datasetIdExists));
             }
 
             if(dnaRunId != null) {
-                predicates.add(criteriaBuilder.equal(dnaRunRoot.get("dnaRunId"), dnaRunId));
+                predicates.add(
+                        criteriaBuilder.equal(
+                                dnaRunRoot.get("dnaRunId"), dnaRunId));
             }
 
             if(dnaRunName != null) {
-                predicates.add(criteriaBuilder.equal(dnaRunRoot.get("dnaRunName"), dnaRunName));
+                predicates.add(
+                        criteriaBuilder.equal(
+                                dnaRunRoot.get("dnaRunName"), dnaRunName));
             }
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
@@ -157,7 +172,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                            + e.getCause().getMessage());
         }
 
     }
@@ -194,18 +210,24 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<DnaRun> criteriaQuery = criteriaBuilder.createQuery(DnaRun.class);
+            CriteriaQuery<DnaRun> criteriaQuery =
+                    criteriaBuilder.createQuery(DnaRun.class);
 
             Root<DnaRun> dnaRunRoot = criteriaQuery.from(DnaRun.class);
 
             if(dnaRunIdCursor != null) {
-                predicates.add(criteriaBuilder.gt(dnaRunRoot.get("dnaRunId"), dnaRunIdCursor));
+                predicates.add(
+                        criteriaBuilder.gt(dnaRunRoot.get("dnaRunId"),
+                        dnaRunIdCursor));
             }
 
             if(datasetId != null) {
-                Expression<Boolean> datasetIdExists = criteriaBuilder.function(
-                        "JSONB_EXISTS", Boolean.class,
-                        dnaRunRoot.get("datasetDnaRunIdx"), criteriaBuilder.literal(datasetId.toString()));
+                Expression<Boolean> datasetIdExists =
+                        criteriaBuilder.function(
+                                "JSONB_EXISTS",
+                                Boolean.class,
+                                dnaRunRoot.get("datasetDnaRunIdx"),
+                                criteriaBuilder.literal(datasetId.toString()));
 
                 predicates.add(criteriaBuilder.isTrue(datasetIdExists));
             }
@@ -226,7 +248,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                            + e.getCause().getMessage());
         }
     }
 
@@ -273,7 +296,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                            + e.getCause().getMessage());
 
         }
 
@@ -299,8 +323,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of result DnaRun Entities.
      */
     @Override
-    public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
-                                              Integer rowOffset) {
+    public List<DnaRun>
+    getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
+                          Integer rowOffset) {
 
         return getDnaRuns(pageSize, rowOffset,
                 null, null,
@@ -320,8 +345,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of result DnaRun Entities.
      */
     @Override
-    public List<DnaRun> getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
-                                              Integer rowOffset, boolean fetchAssociations) {
+    public List<DnaRun>
+    getDnaRunsByDatasetId(Integer datasetId, Integer pageSize,
+                          Integer rowOffset, boolean fetchAssociations) {
 
         return getDnaRuns(pageSize, rowOffset,
                 null, null,
@@ -333,8 +359,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     @Override
-    public List<DnaRun> getDnaRuns(List<Integer> dnaRunIds, List<String> dnaRunNames,
-                                   List<String> datasetIds) {
+    public List<DnaRun>
+    getDnaRuns(List<Integer> dnaRunIds, List<String> dnaRunNames,
+               List<String> datasetIds) {
 
         List<DnaRun> dnaruns;
 
@@ -362,7 +389,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 predicates.add(root.get("dnaRunName").in(dnaRunNames));
             }
 
-            /**Fetch markers only if the dnaRunIds or markerNames are not empty*/
+            /*Fetch markers only if the dnaRunIds or markerNames
+             * are not empty*/
             if(predicates.size() == 0) {
                 String errorMsg = "All predicates are null. " +
                         "Either dnaRunIds or dnaRunNames are required";
@@ -376,7 +404,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
                 datasetIdsArray = datasetIds.toArray(new String[0]);
 
-                ParameterExpression datasetIdsExp = cb.parameter(String[].class, "datasetIds");
+                ParameterExpression<String[]> datasetIdsExp =
+                        cb.parameter(String[].class, "datasetIds");
 
                 Expression<Boolean> datasetIdExists = cb.function(
                         "JSONB_EXISTS_ANY",
@@ -390,6 +419,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
             }
 
             criteria.where(predicates.toArray(new Predicate[]{}));
+
+            /*Really Important for fetching by cursor*/
             criteria.orderBy(cb.asc(root.get("dnaRunId")));
 
             Query query =  em.createQuery(criteria);
@@ -397,7 +428,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
             if(!CollectionUtils.isEmpty(datasetIds)) {
                 query
                         .unwrap(org.hibernate.query.Query.class)
-                        .setParameter("datasetIds", datasetIdsArray, StringArrayType.INSTANCE);
+                        .setParameter("datasetIds", datasetIdsArray,
+                                StringArrayType.INSTANCE);
             }
 
 
@@ -411,7 +443,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                            + e.getCause().getMessage());
 
         }
 
