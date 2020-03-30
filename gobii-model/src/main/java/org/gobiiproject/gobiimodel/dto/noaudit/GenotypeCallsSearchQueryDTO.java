@@ -5,7 +5,11 @@ import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@CheckAtLeastOneNotNullOrEmpty(fieldNames = {"callSetDbIds"})
+@CheckAtLeastOneNotNullOrEmpty(
+        fieldNames = {
+                "callSetDbIds", "callSetNames",
+                "variantDbIds", "variantNames"
+        })
 public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetIds allowed per query")
@@ -15,7 +19,7 @@ public class GenotypeCallsSearchQueryDTO {
     private List<String> callSetNames;
 
     @Size(max = 1000, message = "Only 1000 variantDbIds allowed per query")
-    private List<Integer> varinatDbIds;
+    private List<Integer> variantDbIds;
 
     @Size(max = 1000, message = "Only 1000 variantNames allowed per query")
     private List<String> variantNames;
@@ -45,12 +49,12 @@ public class GenotypeCallsSearchQueryDTO {
         this.callSetNames = callSetNames;
     }
 
-    public List<Integer> getVarinatDbIds() {
-        return varinatDbIds;
+    public List<Integer> getVariantDbIds() {
+        return variantDbIds;
     }
 
-    public void setVarinatDbIds(List<Integer> varinatDbIds) {
-        this.varinatDbIds = varinatDbIds;
+    public void setVariantDbIds(List<Integer> variantDbIds) {
+        this.variantDbIds = variantDbIds;
     }
 
     public List<String> getVariantNames() {
