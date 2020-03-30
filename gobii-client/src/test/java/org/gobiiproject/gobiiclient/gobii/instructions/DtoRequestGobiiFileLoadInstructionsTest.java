@@ -68,7 +68,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 GobiiClientContext.getInstance(null, false)
                         .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
 
-        loaderInstructionFilesDTOToSend.setName(instructionFileName);
+        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET);
         Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT);
@@ -291,7 +291,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         );
 
         // ************** VERIFY THAT A JOB RECORD WAS CREATED FOR OUR INSTRUCTION
-        String jobName = loaderInstructionFilesDTOretrieveResponse.getName();
+        String jobName = loaderInstructionFilesDTOretrieveResponse.getInstructionFileName();
         RestUri restUriForJob = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(RestResourceId.GOBII_JOB)
@@ -338,7 +338,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
         String newInstructionFileName = "testapp_" + DateUtils.makeDateIdString();
-        loaderInstructionFilesDTOToSend.setName(newInstructionFileName);
+        loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
 
         loaderInstructionFilesDTOToSend
                 .getProcedure()
@@ -369,7 +369,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** VERIFY THAT THE DIRECTORIES WE SHOULD HAVE CREATED DO EXIST
         String newInstructionFileNameNoError = "testapp_" + DateUtils.makeDateIdString();
-        loaderInstructionFilesDTOToSend.setName(newInstructionFileNameNoError);
+        loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
         loaderInstructionFilesDTOToSend
                 .getProcedure()
                 .getMetadata()
@@ -386,7 +386,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         // ************** VERIFY THAT WE GET AN ERROR WHEN A FILE ALREADY EXISTS
-        loaderInstructionFilesDTOToSend.setName(newInstructionFileNameNoError);
+        loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory.resourceColl(RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
@@ -404,7 +404,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** VERIFY THAT WE ERROR ON USER INPUT FILE THAT SHOULD EXISTS BUT DOESN'T EXIST
 
-        loaderInstructionFilesDTOToSend.setName("testapp_" + DateUtils.makeDateIdString());
+        loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
 
         loaderInstructionFilesDTOToSend
                 .getProcedure()
@@ -441,7 +441,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
         String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
 
-        loaderInstructionFilesDTOToSend.setName("testapp_" + DateUtils.makeDateIdString());
+        loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
         loaderInstructionFilesDTOToSend
                 .getProcedure()
                 .getMetadata()

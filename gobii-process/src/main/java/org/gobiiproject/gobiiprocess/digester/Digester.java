@@ -113,7 +113,7 @@ public class Digester {
 
         JobStatus jobStatus = null;
         try {
-            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), instruction.getName());
+            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), instruction.getInstructionFileName());
         } catch (Exception e) {
             LOGGER.error("Error Checking Status", e);
         }
@@ -188,19 +188,19 @@ public class Digester {
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
             if (inst == null) {
-                LOGGER.error("Missing or malformed instruction in " + instruction.getName());
+                LOGGER.error("Missing or malformed instruction in " + instruction.getInstructionFileName());
                 success = false;
                 continue;
             }
         }
 
         if (procedure.getMetadata().getGobiiFile() == null) {
-            LOGGER.error("Digester", "Instruction " + instruction.getName() + " has bad 'file' column");
+            LOGGER.error("Digester", "Instruction " + instruction.getInstructionFileName() + " has bad 'file' column");
             success = false;
         }
         GobiiFileType instructionFileType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
         if (instructionFileType == null) {
-            LOGGER.error("Digester", "Instruction " + instruction.getName() + " has missing file format");
+            LOGGER.error("Digester", "Instruction " + instruction.getInstructionFileName() + " has missing file format");
             success = false;
         }
 

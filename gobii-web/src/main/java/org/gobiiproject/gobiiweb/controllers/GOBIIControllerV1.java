@@ -2165,7 +2165,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS),
                     loaderInstructionFilesDTONew,
-                    loaderInstructionFilesDTONew.getName());
+                    loaderInstructionFilesDTONew.getInstructionFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2237,7 +2237,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS),
                     loaderInstructionFilesDTO,
-                    loaderInstructionFilesDTO.getName());
+                    loaderInstructionFilesDTO.getInstructionFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

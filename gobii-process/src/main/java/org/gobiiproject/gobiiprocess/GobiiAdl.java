@@ -1741,7 +1741,7 @@ public class GobiiAdl {
             if (null != procedure) {
                 String instructionFileName = instructionFile.getName();
                 String justName = instructionFileName.replaceFirst("[.][^.]+$", "");
-                loaderInstructionFilesDTO.setName(folderName + "_" + justName);
+                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + justName);
                 loaderInstructionFilesDTO.setGobiiLoaderProcedure(procedure);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -1785,7 +1785,7 @@ public class GobiiAdl {
                 if (payload.getData() == null || payload.getData().size() < 1) {
                     System.out.println("Could not get a valid response from server. Please try again.");
                 } else {
-                    String instructionFileName = payload.getData().get(0).getName();
+                    String instructionFileName = payload.getData().get(0).getInstructionFileName();
                     System.out.println("Request " + instructionFileName + " submitted.");
                     Integer datasetId = loaderInstructionFilesDTO.getProcedure().getMetadata().getDataset().getId();
                     returnVal = checkJobStatusLoad(instructionFileName, datasetId);

@@ -74,7 +74,7 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
 
         LoaderInstructionFilesDTO returnVal = loaderInstructionFilesDTO;
 
-        if (LineUtils.isNullOrEmpty(returnVal.getName())) {
+        if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
             throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                     "The instruction file DTO is missing the instruction file name"
@@ -250,7 +250,7 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
                 }
 
                 if (dataSetId == null || dataSetId <= 0) {
-                    throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getName());
+                    throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
                 }
 
             }
@@ -262,12 +262,12 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
 
 
                 //check for duplicate job name and provide meaningful error message
-                JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(loaderInstructionFilesDTO.getName());
+                JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(loaderInstructionFilesDTO.getInstructionFileName());
                 if (jobDTOExisting.getJobId() == null || jobDTOExisting.getJobId() <= 0) {
 
                     JobDTO jobDTONew = new JobDTO();
 
-                    jobDTONew.setJobName(loaderInstructionFilesDTO.getName());
+                    jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
                     jobDTONew.getDatasetIds().add(dataSetId);
                     jobDTONew.setSubmittedBy(contactId);
                     jobDTONew.setMessage("Instruction file written by web services");
@@ -281,13 +281,13 @@ public class DtoMapDigesterProcedureImpl implements DtoMapDigesterProcedure {
 
                 } else {
 
-                    throw new GobiiException("The specified loader job already exists: " + loaderInstructionFilesDTO.getName());
+                    throw new GobiiException("The specified loader job already exists: " + loaderInstructionFilesDTO.getInstructionFileName());
 
                 }// if-else a job with that name already exists
 
             } else {
 
-                throw new GobiiException("The specified job does not have a contact ID: " + loaderInstructionFilesDTO.getName());
+                throw new GobiiException("The specified job does not have a contact ID: " + loaderInstructionFilesDTO.getInstructionFileName());
 
             } //if-else we have a contact id
 

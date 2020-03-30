@@ -9,7 +9,7 @@ public class LoaderInstructionFilesDTO extends DTOBase {
 
 
     private GobiiLoaderProcedure procedure = new GobiiLoaderProcedure();
-    private String name = null;
+    private String instructionFileName = null;
 
 
     @Override
@@ -30,12 +30,12 @@ public class LoaderInstructionFilesDTO extends DTOBase {
         this.procedure = procedure;
     }
 
-    public String getName() {
-        return name;
+    public String getInstructionFileName() {
+        return instructionFileName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setInstructionFileName(String instructionFileName) {
+        this.instructionFileName = instructionFileName;
     }
 
 
