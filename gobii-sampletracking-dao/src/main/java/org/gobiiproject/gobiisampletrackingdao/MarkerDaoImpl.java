@@ -194,6 +194,7 @@ public class MarkerDaoImpl implements MarkerDao {
      */
     @Transactional
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public List<Marker> getMarkers(List<Integer> markerIds, List<String> markerNames, List<String> datasetIds)
             throws GobiiException {
 

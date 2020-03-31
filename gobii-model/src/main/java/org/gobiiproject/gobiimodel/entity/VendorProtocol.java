@@ -21,9 +21,6 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.Table;
 
-import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.Organization;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

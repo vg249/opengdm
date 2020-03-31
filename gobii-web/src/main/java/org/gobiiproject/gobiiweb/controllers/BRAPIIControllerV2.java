@@ -115,7 +115,7 @@ public class BRAPIIControllerV2 {
             }
     )
     @ResponseBody
-    public ResponseEntity getServerInfo(
+    public ResponseEntity<BrApiMasterListPayload<ServerInfoDTO>> getServerInfo(
             HttpServletRequest request) {
 
         BrApiMasterListPayload<ServerInfoDTO> payload =
