@@ -751,8 +751,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         Set<Integer> markerDatasetIds = new HashSet<>();
         Set<Integer> dnaRunDatasetIds = new HashSet<>();
 
-        Integer datasetIdCursor, pageOffset, columnOffset;
-        datasetIdCursor = pageOffset = columnOffset = 0;
+        Integer datasetIdCursor, pageOffset, dnaRunOffset, columnOffset;
+        datasetIdCursor = pageOffset = dnaRunOffset = columnOffset = 0;
+
 
         Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
@@ -785,9 +786,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         pageTokenParts
                                 .getOrDefault("pageOffset", 0);
 
-                columnOffset =
+                dnaRunOffset =
                         pageTokenParts
-                                .getOrDefault("columnOffset", 0);
+                                .getOrDefault("dnaRunOffset", 0);
 
 
 
@@ -929,12 +930,92 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 List<String> dnaRunHdf5IndicesDataset = dnarunHdf5IndexMap
                         .get(datasetId.toString());
 
+                int totalDnaRuns = dnaRunHdf5IndicesDataset.size();
+
+                int nextDnaRunOffset = 0;
+
+                int numOfMarkersReq = 0;
+
+                if(pageSize < totalDnaRuns) {
+
+                    if((dnaRunOffset + pageSize) <
+                            totalDnaRuns)
+                    {
+                        dnaRunHdf5IndicesDataset =
+                                dnaRunHdf5IndicesDataset
+                                        .subList(dnaRunOffset,
+                                                dnaRunOffset+pageSize);
+
+                        numOfMarkersReq = 1;
+
+                        nextDnaRunOffset = dnaRunOffset + pageSize;
+
+                        columnOffset = 0;
+
+                    }
+                    else {
+
+                        dnaRunHdf5IndicesDataset =
+                                dnaRunHdf5IndicesDataset
+                                        .subList(
+                                                dnaRunOffset,
+                                                totalDnaRuns);
+
+                        int numOfDnaRunsNeeded =
+                                pageSize - dnaRunHdf5IndicesDataset.size();
+
+                        numOfMarkersReq = 2;
+
+
+                        if(numOfDnaRunsNeeded < dnaRunOffset) {
+
+                            List<String> neededDnaRunIdxs =
+                                    dnarunHdf5IndexMap
+                                            .get(datasetId.toString())
+                                    .subList(0, numOfDnaRunsNeeded);
+
+                            neededDnaRunIdxs
+                                    .addAll(dnaRunHdf5IndicesDataset);
+
+                            dnaRunHdf5IndicesDataset = neededDnaRunIdxs;
+
+                            columnOffset = nextDnaRunOffset = numOfDnaRunsNeeded;
+
+
+                        }
+                        else {
+                            dnarunHdf5IndexMap
+                                    .get(datasetId.toString())
+                                    .subList(0, dnaRunOffset)
+                                    .addAll(dnaRunHdf5IndicesDataset);
+
+                            dnaRunHdf5IndicesDataset =
+                                    dnarunHdf5IndexMap
+                                            .get(datasetId.toString());
+
+                            columnOffset = nextDnaRunOffset = dnaRunOffset;
+
+                        }
+                    }
+
+
+                }
+                else {
+                    numOfMarkersReq = (int) Math.ceil( (double)
+                            remainingPageSize/dnaRunHdf5IndicesDataset.size());
+
+                    nextDnaRunOffset = dnaRunHdf5IndicesDataset.size() -
+                            ((numOfMarkersReq*dnaRunHdf5IndicesDataset.size())
+                                    - remainingPageSize);
+
+                    columnOffset = dnaRunOffset;
+                }
+
+
                 dnaRunExtractIndex.put(
                         datasetId.toString(),
                         dnaRunHdf5IndicesDataset);
 
-                int numOfMarkersReq = (int) Math.ceil( (double)
-                        remainingPageSize/dnaRunHdf5IndicesDataset.size());
 
                 Map<String, List<String>> markerExtractIndex =
                         new HashMap<>();
@@ -943,19 +1024,26 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         markerHdf5IndexMap
                                 .get(datasetId.toString());
 
+                if(pageOffset > markersHdf5IndicesDataset.size()) {
+                    pageOffset = 0;
+                    dnaRunOffset = 0;
+                    continue;
+                }
+
                 Integer markerLimit = pageOffset + numOfMarkersReq;
 
                 if(markerLimit > markersHdf5IndicesDataset.size()) {
                     markerLimit = markersHdf5IndicesDataset.size();
                 }
 
+                if(pageOffset == markerLimit) {
+                    pageOffset -= 1;
+                }
+
                 markerExtractIndex.put(
                         datasetId.toString(),
-                                markersHdf5IndicesDataset.subList(
-                                        pageOffset,
-                                        markerLimit));
-
-
+                        markersHdf5IndicesDataset.subList(
+                                pageOffset, markerLimit));
 
                 String extractFilePath =
                         this.extractGenotypes(
@@ -963,10 +1051,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                                 dnaRunExtractIndex);
 
 
-                Integer nextColumnOffset = this.readGenotypesFromFile(
+                this.readGenotypesFromFile(
                         genotypeCalls, extractFilePath,
                         remainingPageSize, datasetId,
-                        columnOffset, markersByDatasetId.get(
+                        columnOffset,
+                        markersByDatasetId.get(
                                 datasetId.toString()).subList(pageOffset,
                                 markerLimit),
                         dnarunsByDatasetId.get(datasetId.toString()),
@@ -980,9 +1069,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                     Integer nextPageOffset = 0;
 
-                    if(nextColumnOffset > 0
-                            && nextColumnOffset
-                            < dnaRunHdf5IndicesDataset.size()) {
+                    if(nextDnaRunOffset > 0
+                            && nextDnaRunOffset < totalDnaRuns) {
                         nextPageOffset = (pageOffset + numOfMarkersReq - 1);
                     }
                     else {
@@ -991,7 +1079,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                     //set next page offset and column offset as page token parts
                     nextPageCursorMap.put("pageOffset", nextPageOffset);
-                    nextPageCursorMap.put("columnOffset", nextColumnOffset);
+                    nextPageCursorMap.put("dnaRunOffset", nextDnaRunOffset);
                     nextPageCursorMap.put("datasetIdCursor", datasetIdIdx);
 
 
@@ -1003,7 +1091,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 else {
                     remainingPageSize = pageSize - genotypeCalls.size();
                     pageOffset = 0;
-                    columnOffset = 0;
+                    dnaRunOffset = 0;
                 }
 
 
