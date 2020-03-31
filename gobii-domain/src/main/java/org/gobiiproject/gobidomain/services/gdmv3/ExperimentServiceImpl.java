@@ -25,7 +25,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId) {
         // TODO Auto-generated method stub
-        List<Experiment> experiments = experimentDao.getExperiments(page, pageSize, projectId);
+        List<Experiment> experiments = experimentDao.getExperiments(pageSize, page * pageSize, projectId);
 
         List<ExperimentDTO> dtos = new ArrayList<>();
 

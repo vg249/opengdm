@@ -6,7 +6,7 @@
  * 
  */
 
-package org.gobiiproject.gobiimodel.entity;
+package org.gobiiproject.gobiimodel.entity.gdmv3;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.gobiiproject.gobiimodel.entity.BaseEntity;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
@@ -27,6 +30,10 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name="protocol")
+@NamedEntityGraph(
+    name = "protocol.platform",
+    attributeNodes = @NamedAttributeNode("platform")
+)
 @NoArgsConstructor
 public class Protocol extends BaseEntity {
 

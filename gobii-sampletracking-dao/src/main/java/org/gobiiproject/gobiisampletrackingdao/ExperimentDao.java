@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface ExperimentDao {
 
-    List<Experiment> getExperiments(Integer page, Integer pageSize, Integer projectId);
+    List<Experiment> getExperiments(Integer pageSize, Integer rowOffset,
+                                    Integer projectId);
 
 }
