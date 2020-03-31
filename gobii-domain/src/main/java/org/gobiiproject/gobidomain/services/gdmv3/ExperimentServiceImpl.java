@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.gdmv3.ExperimentV3;
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId) {
         // TODO Auto-generated method stub
-        List<ExperimentV3> experiments = experimentDao.getExperiments(pageSize, page * pageSize, projectId);
+        List<Experiment> experiments = experimentDao.getExperiments(pageSize, page * pageSize, projectId);
 
         List<ExperimentDTO> dtos = new ArrayList<>();
 

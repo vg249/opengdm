@@ -6,7 +6,7 @@
  * 
  */
 
-package org.gobiiproject.gobiimodel.entity.gdmv3;
+package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +21,6 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.gobiiproject.gobiimodel.entity.BaseEntity;
-import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.Platform;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
@@ -56,7 +53,7 @@ public class Protocol extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id")
-    private PlatformV3 platform;
+    private Platform platform;
 
     @Column(name="props")
     @Type(type = "CvPropertiesType")

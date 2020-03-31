@@ -11,7 +11,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.gobiiproject.gobiimodel.entity.gdmv3.ExperimentV3;
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -27,10 +27,10 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ExperimentV3> getExperiments(Integer pageSize, Integer rowOffset,
+    public List<Experiment> getExperiments(Integer pageSize, Integer rowOffset,
                                            Integer projectId) {
 
-        List<ExperimentV3> experiments;
+        List<Experiment> experiments;
 
         try {
 
@@ -41,12 +41,12 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<ExperimentV3> criteriaQuery =
-                    criteriaBuilder.createQuery(ExperimentV3.class);
+            CriteriaQuery<Experiment> criteriaQuery =
+                    criteriaBuilder.createQuery(Experiment.class);
 
-            Root<ExperimentV3> experimentRoot =
+            Root<Experiment> experimentRoot =
                     criteriaQuery
-                            .from(ExperimentV3.class);
+                            .from(Experiment.class);
 
             Join<Object, Object> project =
                     (Join<Object, Object>) experimentRoot

@@ -6,7 +6,7 @@
  * @since 2020-03-31
  */
 
-package org.gobiiproject.gobiimodel.entity.gdmv3;
+package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

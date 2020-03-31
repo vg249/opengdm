@@ -4,7 +4,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.StudiesDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.gdmv3.ExperimentV3;
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.slf4j.Logger;
@@ -38,10 +38,10 @@ public class StudiesServiceImpl implements StudiesService {
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<ExperimentV3> experiments = experimentDao.getExperiments(
+            List<Experiment> experiments = experimentDao.getExperiments(
                     pageSize, rowOffset, null);
 
-            for (ExperimentV3 experiment : experiments) {
+            for (Experiment experiment : experiments) {
 
 
                 StudiesDTO study = new StudiesDTO();
