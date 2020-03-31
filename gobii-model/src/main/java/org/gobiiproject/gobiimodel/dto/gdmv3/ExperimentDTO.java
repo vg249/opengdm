@@ -18,11 +18,13 @@ import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType", "status"
 })
+@EqualsAndHashCode(callSuper=false)
 public class ExperimentDTO extends DTOBaseAuditable {
     
     public ExperimentDTO() {

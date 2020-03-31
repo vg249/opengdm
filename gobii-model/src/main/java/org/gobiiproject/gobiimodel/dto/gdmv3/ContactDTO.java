@@ -20,12 +20,14 @@ import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType", "status"
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ContactDTO extends DTOBaseAuditable {
 
     public ContactDTO() {

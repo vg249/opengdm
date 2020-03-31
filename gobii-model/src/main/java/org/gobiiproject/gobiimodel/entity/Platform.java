@@ -18,10 +18,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
 @Table(name = "platform")
+@EqualsAndHashCode(callSuper=false)
 public class Platform extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

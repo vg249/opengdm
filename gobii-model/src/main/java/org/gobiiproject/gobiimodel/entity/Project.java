@@ -15,13 +15,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Model for Project Entity.
  * Represents the database table project.
  *
- * props - is a jsonb column. It is converted to jackson.fasterxml JsonNode using a
- * user defined hibernate converter class.
  */
 @Entity
 @Table(name = "project")
@@ -29,6 +28,7 @@ import lombok.Data;
     attributeNodes = @NamedAttributeNode("contact")
 )
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class Project extends BaseEntity {
 
     @Id

@@ -22,6 +22,7 @@ import lombok.Data;
 @NamedEntityGraph(name = "experiment.vendorProtocol",
     attributeNodes = @NamedAttributeNode("vendorProtocol")
 )
+@EqualsAndHashCode(callSuper=false)
 public class Experiment extends BaseEntity{
 
     @Id

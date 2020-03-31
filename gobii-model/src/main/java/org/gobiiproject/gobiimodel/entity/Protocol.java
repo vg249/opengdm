@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
     attributeNodes = @NamedAttributeNode("platform")
 )
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class Protocol extends BaseEntity {
 
     @Id
