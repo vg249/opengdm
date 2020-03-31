@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
