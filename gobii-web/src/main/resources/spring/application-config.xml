@@ -314,6 +314,10 @@
     <bean id="ExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
+    <!-- *** Experiment Service V3 -->
+    <bean id="ExperimentServiceV3"
+          class="org.gobiiproject.gobidomain.services.gdmv3.ExperimentServiceImpl"/>
+
 
     <!-- **** Analysis Beans *************************************** -->
     <bean id="rsAnalysisDao"

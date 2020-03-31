@@ -25,6 +25,7 @@ public class ErrorController {
             return ResponseEntity.status(httpStatus).body(errorPayload);
         }
         catch (Exception e) {
+            e.printStackTrace();
             errorPayload.setError("Internal server error");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorPayload);
         }

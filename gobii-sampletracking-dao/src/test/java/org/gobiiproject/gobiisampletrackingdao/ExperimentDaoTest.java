@@ -4,7 +4,7 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.gdmv3.ExperimentV3;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class ExperimentDaoTest {
 
         Integer testPageSize = 100;
 
-        List<Experiment> experiments = experimentDao.getExperiments(
+        List<ExperimentV3> experiments = experimentDao.getExperiments(
                 testPageSize, 0, null);
 
         assertTrue("getExperiments page size condition fails",

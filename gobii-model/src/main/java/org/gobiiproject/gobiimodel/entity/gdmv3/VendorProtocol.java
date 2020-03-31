@@ -21,6 +21,7 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.Table;
 
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Organization;
 
 import lombok.Data;
@@ -58,7 +59,8 @@ public class VendorProtocol  {
     @JoinColumn(name = "protocol_id", referencedColumnName = "protocol_id")
     private Protocol protocol;
 
-    @Column(name="status")
-    private Integer status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
     
 }

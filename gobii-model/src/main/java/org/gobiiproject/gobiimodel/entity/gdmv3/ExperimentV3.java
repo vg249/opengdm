@@ -15,7 +15,10 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "experiment")
-public class Experiment extends BaseEntity{
+@NamedEntityGraph(name = "experiment.vendorProtocol",
+    attributeNodes = @NamedAttributeNode("vendorProtocol")
+)
+public class ExperimentV3 extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +42,9 @@ public class Experiment extends BaseEntity{
     @Column(name="data_file")
     private String dataFile;
 
-    @Column(name="vendor_protocol_id")
-    private Integer vendorProtocolId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_protocol_id")
+    private VendorProtocol vendorProtocol;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
