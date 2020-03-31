@@ -5,7 +5,6 @@
  * 
  */
 
-
 package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.*;
@@ -15,6 +14,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
