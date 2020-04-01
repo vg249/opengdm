@@ -2,9 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import static junit.framework.TestCase.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Experiment;
@@ -156,7 +154,7 @@ public class DnaRunDaoTest {
 
         // TODO: Hardcoded list from api.gobii.ord:gobii-dev dnarun table
         //  Need to replace this with a standard setupcalss functionality in future.
-        List<Integer> dnarunIds = new ArrayList<>(Arrays.asList(
+        Set<Integer> dnarunIds = new HashSet<>(Arrays.asList(
                 6, 7, 8, 9, 10,
                 11, 12, 13, 14,
                 15
@@ -178,7 +176,7 @@ public class DnaRunDaoTest {
 
         // TODO: Hardcoded list from api.gobii.ord:gobii-dev dnarun table
         //  Need to replace this with a standard setupcalss functionality in future.
-        List<String> dnarunNames = new ArrayList<>(Arrays.asList(
+        Set<String> dnarunNames = new HashSet<>(Arrays.asList(
                 "WL18PVSD000001",
                 "WL18PVSD000002",
                 "WL18PVSD000003",
