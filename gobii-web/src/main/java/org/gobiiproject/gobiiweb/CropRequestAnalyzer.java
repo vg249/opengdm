@@ -64,10 +64,19 @@ public class CropRequestAnalyzer {
                     String contextPathWithoutSlashes = rawContextPath
                             .replace("/", "");
 
+                    if(requestUrl.startsWith("/")) {
+                        requestUrl = requestUrl.replaceFirst("/", "");
+                    }
 
-                    String candidateSegment = requestUrl
-                            .replace("/", "")
-                            .substring(0, contextPathWithoutSlashes.length());
+                    String[] candidateSegments = requestUrl.split("/");
+
+                    String candidateSegment = "";
+                    if(candidateSegments.length > 1) {
+                        candidateSegment =
+                                candidateSegments[0]
+                                + "-"
+                                + candidateSegments[1];
+                    }
 
                     if (candidateSegment.toLowerCase().equals(contextPathWithoutSlashes.toLowerCase())) {
 

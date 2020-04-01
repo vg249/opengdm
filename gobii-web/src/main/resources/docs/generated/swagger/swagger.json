@@ -62,7 +62,7 @@
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/gobii/v1/analyses" : {
+    "/{cropType}/gdm/v1/analyses" : {
       "get" : {
         "tags" : [ "Analyses" ],
         "summary" : "List all analyses",
@@ -116,7 +116,7 @@
         "x-summary" : "Analyses"
       }
     },
-    "/gobii/v1/analyses/{analysisId}" : {
+    "/{cropType}/gdm/v1/analyses/{analysisId}" : {
       "get" : {
         "tags" : [ "Analyses" ],
         "summary" : "Get an analyses by analysesId",
@@ -185,7 +185,7 @@
         "x-summary" : "Analyses : analysesId"
       }
     },
-    "/gobii/v1/auth" : {
+    "/{cropType}/gdm/v1/auth" : {
       "post" : {
         "tags" : [ "Authentication" ],
         "summary" : "authenticate",
@@ -228,7 +228,7 @@
         "x-summary" : "Authentication"
       }
     },
-    "/gobii/v1/configsettings" : {
+    "/{cropType}/gdm/v1/configsettings" : {
       "get" : {
         "tags" : [ "ConfigSettings" ],
         "summary" : "List all configuration settings.",
@@ -252,7 +252,7 @@
         "x-summary" : "ConfigSettings"
       }
     },
-    "/gobii/v1/contact-search" : {
+    "/{cropType}/gdm/v1/contact-search" : {
       "get" : {
         "tags" : [ "Contacts" ],
         "summary" : "List all contacts from Contacts search",
@@ -296,7 +296,7 @@
         "x-summary" : "ContactSearch"
       }
     },
-    "/gobii/v1/contacts" : {
+    "/{cropType}/gdm/v1/contacts" : {
       "get" : {
         "tags" : [ "Contacts" ],
         "summary" : "List all contacts",
@@ -350,7 +350,7 @@
         "x-summary" : "Contacts"
       }
     },
-    "/gobii/v1/contacts/{contactId}" : {
+    "/{cropType}/gdm/v1/contacts/{contactId}" : {
       "get" : {
         "tags" : [ "Contacts" ],
         "summary" : "Get a contact by contact id",
@@ -419,7 +419,7 @@
         "x-summary" : "Contacts : contactId"
       }
     },
-    "/gobii/v1/contacts/{email}" : {
+    "/{cropType}/gdm/v1/contacts/{email}" : {
       "get" : {
         "tags" : [ "Contacts" ],
         "summary" : "Get contact by email id",
@@ -450,7 +450,7 @@
         "x-summary" : "Contacts : emailId"
       }
     },
-    "/gobii/v1/cvgroups/{cvGroupId}/cvs" : {
+    "/{cropType}/gdm/v1/cvgroups/{cvGroupId}/cvs" : {
       "get" : {
         "tags" : [ "ControlledVocabularies" ],
         "summary" : "list",
@@ -481,7 +481,7 @@
         "x-summary" : "CvGroups.cvs"
       }
     },
-    "/gobii/v1/cvgroups/{cvGroupTypeId}" : {
+    "/{cropType}/gdm/v1/cvgroups/{cvGroupTypeId}" : {
       "get" : {
         "tags" : [ "ControlledVocabularies" ],
         "summary" : "Get a CV group by cvGroupTypeId",
@@ -513,7 +513,7 @@
         "x-summary" : "CvGroups : cvGroupTypeId"
       }
     },
-    "/gobii/v1/cvgroups/{groupName}" : {
+    "/{cropType}/gdm/v1/cvgroups/{groupName}" : {
       "get" : {
         "tags" : [ "ControlledVocabularies" ],
         "summary" : "Get a CV group by groupName",
@@ -550,7 +550,7 @@
         "x-summary" : "CvGroups : groupName"
       }
     },
-    "/gobii/v1/cvs" : {
+    "/{cropType}/gdm/v1/cvs" : {
       "get" : {
         "tags" : [ "ControlledVocabularies" ],
         "summary" : "List all CVs",
@@ -604,7 +604,7 @@
         "x-summary" : "Cvs"
       }
     },
-    "/gobii/v1/cvs/{cvId}" : {
+    "/{cropType}/gdm/v1/cvs/{cvId}" : {
       "get" : {
         "tags" : [ "ControlledVocabularies" ],
         "summary" : "Get a CV by cvId",
@@ -703,7 +703,7 @@
         "x-summary" : "Cvs : cvId"
       }
     },
-    "/gobii/v1/cvs/{groupName}" : {
+    "/{cropType}/gdm/v1/cvs/{groupName}" : {
       "get" : {
         "tags" : [ "ControlledVocabularies" ],
         "summary" : "List all CVs in a given groupName",
@@ -734,7 +734,7 @@
         "x-summary" : "Cvs : groupName"
       }
     },
-    "/gobii/v1/datasets" : {
+    "/{cropType}/gdm/v1/datasets" : {
       "get" : {
         "tags" : [ "Datasets" ],
         "summary" : "List all datasets",
@@ -807,7 +807,7 @@
         "x-summary" : "Datasets"
       }
     },
-    "/gobii/v1/datasets/types" : {
+    "/{cropType}/gdm/v1/datasets/types" : {
       "get" : {
         "tags" : [ "Datasets" ],
         "summary" : "List of types of datasets",
@@ -831,7 +831,7 @@
         "x-summary" : "Datasets.types"
       }
     },
-    "/gobii/v1/datasets/types/{id}" : {
+    "/{cropType}/gdm/v1/datasets/types/{id}" : {
       "get" : {
         "tags" : [ "Datasets" ],
         "summary" : "Get datasets by type id",
@@ -862,7 +862,7 @@
         "x-summary" : "Datasets.types : id"
       }
     },
-    "/gobii/v1/datasets/{dataSetId}" : {
+    "/{cropType}/gdm/v1/datasets/{dataSetId}" : {
       "get" : {
         "tags" : [ "Datasets" ],
         "summary" : "Get dataset by datasetId",
@@ -931,7 +931,7 @@
         "x-summary" : "Datasets : dataSetId"
       }
     },
-    "/gobii/v1/datasets/{dataSetId}/analyses" : {
+    "/{cropType}/gdm/v1/datasets/{dataSetId}/analyses" : {
       "get" : {
         "tags" : [ "Datasets" ],
         "summary" : "List all analyses in a dataset with given datasetId",
@@ -963,7 +963,7 @@
         "x-summary" : "Datasets.analyses"
       }
     },
-    "/gobii/v1/datasets/{datasetId}/jobs" : {
+    "/{cropType}/gdm/v1/datasets/{datasetId}/jobs" : {
       "get" : {
         "tags" : [ "Datasets" ],
         "summary" : "List all jobs for a dataset with datasetId",
@@ -993,7 +993,7 @@
         "x-summary" : "Datasets.jobs"
       }
     },
-    "/gobii/v1/displays" : {
+    "/{cropType}/gdm/v1/displays" : {
       "get" : {
         "tags" : [ "Displays" ],
         "summary" : "List all displays",
@@ -1046,7 +1046,7 @@
         "x-summary" : "Displays"
       }
     },
-    "/gobii/v1/displays/{displayId}" : {
+    "/{cropType}/gdm/v1/displays/{displayId}" : {
       "get" : {
         "tags" : [ "Displays" ],
         "summary" : "Get a display by displayId",
@@ -1115,7 +1115,7 @@
         "x-summary" : "Displays : displayId"
       }
     },
-    "/gobii/v1/entities" : {
+    "/{cropType}/gdm/v1/entities" : {
       "get" : {
         "tags" : [ "Entities" ],
         "summary" : "List all entities",
@@ -1139,7 +1139,7 @@
         "x-summary" : "Entities"
       }
     },
-    "/gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count" : {
+    "/{cropType}/gdm/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count" : {
       "get" : {
         "tags" : [ "Entities" ],
         "summary" : "Get entity count for a given entity child",
@@ -1182,7 +1182,7 @@
         "x-summary" : "Child.count"
       }
     },
-    "/gobii/v1/entities/{entityName}/count" : {
+    "/{cropType}/gdm/v1/entities/{entityName}/count" : {
       "get" : {
         "tags" : [ "Entities" ],
         "summary" : "Get count for a given entity",
@@ -1212,7 +1212,7 @@
         "x-summary" : "Entities.count"
       }
     },
-    "/gobii/v1/entities/{entityName}/lastmodified" : {
+    "/{cropType}/gdm/v1/entities/{entityName}/lastmodified" : {
       "get" : {
         "tags" : [ "Entities" ],
         "summary" : "Get last modified date of an entity",
@@ -1242,7 +1242,7 @@
         "x-summary" : "Entities.lastModified"
       }
     },
-    "/gobii/v1/experiments" : {
+    "/{cropType}/gdm/v1/experiments" : {
       "get" : {
         "tags" : [ "Experiments" ],
         "summary" : "List all experiments",
@@ -1296,7 +1296,7 @@
         "x-summary" : "Experiments"
       }
     },
-    "/gobii/v1/experiments/{experimentId}" : {
+    "/{cropType}/gdm/v1/experiments/{experimentId}" : {
       "get" : {
         "tags" : [ "Experiments" ],
         "summary" : "Get a experiment by experimentId",
@@ -1365,7 +1365,7 @@
         "x-summary" : "Experiments : experimentId"
       }
     },
-    "/gobii/v1/experiments/{experimentId}/protocols" : {
+    "/{cropType}/gdm/v1/experiments/{experimentId}/protocols" : {
       "get" : {
         "tags" : [ "Experiments" ],
         "summary" : "List all protocols for a given experimentId",
@@ -1397,7 +1397,7 @@
         "x-summary" : "Experiments.protocols"
       }
     },
-    "/gobii/v1/files/loader/{directoryName}" : {
+    "/{cropType}/gdm/v1/files/loader/{directoryName}" : {
       "get" : {
         "tags" : [ "Files" ],
         "summary" : "List of loader files in a given directory",
@@ -1468,7 +1468,7 @@
         "x-summary" : "Loader : directoryName"
       }
     },
-    "/gobii/v1/files/{destinationType}" : {
+    "/{cropType}/gdm/v1/files/{destinationType}" : {
       "post" : {
         "tags" : [ "Files" ],
         "summary" : "Upload a file to given destination",
@@ -1545,7 +1545,7 @@
         "x-summary" : "Files : destinationType"
       }
     },
-    "/gobii/v1/files/{gobiiJobId}/{destinationType}" : {
+    "/{cropType}/gdm/v1/files/{gobiiJobId}/{destinationType}" : {
       "get" : {
         "tags" : [ "Files" ],
         "summary" : "Download a job file from a given destination type",
@@ -1633,7 +1633,7 @@
         "x-summary" : "Jobs : destinationType"
       }
     },
-    "/gobii/v1/instructions/extractor" : {
+    "/{cropType}/gdm/v1/instructions/extractor" : {
       "post" : {
         "tags" : [ "Instructions" ],
         "summary" : "Create an extractor instruction file",
@@ -1664,7 +1664,7 @@
         "x-summary" : "Extractor"
       }
     },
-    "/gobii/v1/instructions/extractor/jobs/{jobName}" : {
+    "/{cropType}/gdm/v1/instructions/extractor/jobs/{jobName}" : {
       "get" : {
         "tags" : [ "Instructions" ],
         "summary" : "Get extractor job status by jobName",
@@ -1694,7 +1694,7 @@
         "x-summary" : "Extractor.jobs : jobName"
       }
     },
-    "/gobii/v1/instructions/extractor/{instructionFileName}" : {
+    "/{cropType}/gdm/v1/instructions/extractor/{instructionFileName}" : {
       "get" : {
         "tags" : [ "Instructions" ],
         "summary" : "Download an extractor instructor file",
@@ -1724,7 +1724,7 @@
         "x-summary" : "Extractor : instructionFileName"
       }
     },
-    "/gobii/v1/instructions/loader" : {
+    "/{cropType}/gdm/v1/instructions/loader" : {
       "post" : {
         "tags" : [ "Instructions" ],
         "summary" : "Create loader instruction file",
@@ -1755,7 +1755,7 @@
         "x-summary" : "Loader"
       }
     },
-    "/gobii/v1/instructions/loader/jobs/{jobName}" : {
+    "/{cropType}/gdm/v1/instructions/loader/jobs/{jobName}" : {
       "get" : {
         "tags" : [ "Instructions" ],
         "summary" : "Get loader job status by job name",
@@ -1785,7 +1785,7 @@
         "x-summary" : "Loader.jobs : jobName"
       }
     },
-    "/gobii/v1/instructions/loader/{instructionFileName}" : {
+    "/{cropType}/gdm/v1/instructions/loader/{instructionFileName}" : {
       "get" : {
         "tags" : [ "Instructions" ],
         "summary" : "Get a loader instruction file",
@@ -1815,7 +1815,7 @@
         "x-summary" : "Loader : instructionFileName"
       }
     },
-    "/gobii/v1/jobs" : {
+    "/{cropType}/gdm/v1/jobs" : {
       "get" : {
         "tags" : [ "Jobs" ],
         "summary" : "List all jobs",
@@ -1868,7 +1868,7 @@
         "x-summary" : "Jobs"
       }
     },
-    "/gobii/v1/jobs/dnasamples/{jobName}" : {
+    "/{cropType}/gdm/v1/jobs/dnasamples/{jobName}" : {
       "post" : {
         "tags" : [ "Jobs" ],
         "summary" : "Create DNA samples for a given job",
@@ -1905,7 +1905,7 @@
         "x-summary" : "DnaSamples : jobName"
       }
     },
-    "/gobii/v1/jobs/{jobName}" : {
+    "/{cropType}/gdm/v1/jobs/{jobName}" : {
       "get" : {
         "tags" : [ "Jobs" ],
         "summary" : "Get job details by job name",
@@ -1970,7 +1970,7 @@
         "x-summary" : "Jobs : jobName"
       }
     },
-    "/gobii/v1/manifests" : {
+    "/{cropType}/gdm/v1/manifests" : {
       "get" : {
         "tags" : [ "Manifests" ],
         "summary" : "List all manifests",
@@ -2024,7 +2024,7 @@
         "x-summary" : "Manifests"
       }
     },
-    "/gobii/v1/manifests/{manifestId}" : {
+    "/{cropType}/gdm/v1/manifests/{manifestId}" : {
       "get" : {
         "tags" : [ "Manifests" ],
         "summary" : "Get manifests by manifestId",
@@ -2093,7 +2093,7 @@
         "x-summary" : "Manifests : manifestId"
       }
     },
-    "/gobii/v1/maps" : {
+    "/{cropType}/gdm/v1/maps" : {
       "get" : {
         "tags" : [ "Maps" ],
         "summary" : "List all mapsets",
@@ -2118,7 +2118,7 @@
         "x-summary" : "Maps"
       }
     },
-    "/gobii/v1/mapsets" : {
+    "/{cropType}/gdm/v1/mapsets" : {
       "get" : {
         "tags" : [ "Maps" ],
         "summary" : "List all mapsets",
@@ -2172,7 +2172,7 @@
         "x-summary" : "Mapsets"
       }
     },
-    "/gobii/v1/mapsets/{mapsetId}" : {
+    "/{cropType}/gdm/v1/mapsets/{mapsetId}" : {
       "get" : {
         "tags" : [ "Maps" ],
         "summary" : "Get mapsets by mapsetId",
@@ -2241,7 +2241,7 @@
         "x-summary" : "Mapsets : mapsetId"
       }
     },
-    "/gobii/v1/marker-search" : {
+    "/{cropType}/gdm/v1/marker-search" : {
       "get" : {
         "tags" : [ "Markers" ],
         "summary" : "List all markers from markers search",
@@ -2271,7 +2271,7 @@
         "x-summary" : "MarkerSearch"
       }
     },
-    "/gobii/v1/markergroups" : {
+    "/{cropType}/gdm/v1/markergroups" : {
       "get" : {
         "tags" : [ "Markers" ],
         "summary" : "List all markergroups",
@@ -2324,7 +2324,7 @@
         "x-summary" : "MarkerGroups"
       }
     },
-    "/gobii/v1/markergroups/{markerGroupId}" : {
+    "/{cropType}/gdm/v1/markergroups/{markerGroupId}" : {
       "get" : {
         "tags" : [ "Markers" ],
         "summary" : "Gets all markers in a given markergroup",
@@ -2393,7 +2393,7 @@
         "x-summary" : "MarkerGroups : markerGroupId"
       }
     },
-    "/gobii/v1/markers" : {
+    "/{cropType}/gdm/v1/markers" : {
       "get" : {
         "tags" : [ "Markers" ],
         "summary" : "List all markers",
@@ -2447,7 +2447,7 @@
         "x-summary" : "Markers"
       }
     },
-    "/gobii/v1/markers/{markerId}" : {
+    "/{cropType}/gdm/v1/markers/{markerId}" : {
       "get" : {
         "tags" : [ "Markers" ],
         "summary" : "Get a marker by markerId",
@@ -2516,7 +2516,7 @@
         "x-summary" : "Markers : markerId"
       }
     },
-    "/gobii/v1/names/{entity}" : {
+    "/{cropType}/gdm/v1/names/{entity}" : {
       "get" : {
         "tags" : [ "Names" ],
         "summary" : "List all NameIds",
@@ -2605,7 +2605,7 @@
         "x-summary" : "Names : entity"
       }
     },
-    "/gobii/v1/organizations" : {
+    "/{cropType}/gdm/v1/organizations" : {
       "get" : {
         "tags" : [ "Organizations" ],
         "summary" : "List all organizations",
@@ -2659,7 +2659,7 @@
         "x-summary" : "Organizations"
       }
     },
-    "/gobii/v1/organizations/{organizationId}" : {
+    "/{cropType}/gdm/v1/organizations/{organizationId}" : {
       "get" : {
         "tags" : [ "Organizations" ],
         "summary" : "Get organization by organizationId",
@@ -2728,7 +2728,7 @@
         "x-summary" : "Organizations : organizationId"
       }
     },
-    "/gobii/v1/ping" : {
+    "/{cropType}/gdm/v1/ping" : {
       "post" : {
         "tags" : [ "Ping" ],
         "summary" : "ping",
@@ -2753,7 +2753,7 @@
         "x-summary" : "Ping"
       }
     },
-    "/gobii/v1/platforms" : {
+    "/{cropType}/gdm/v1/platforms" : {
       "get" : {
         "tags" : [ "Platforms" ],
         "summary" : "List all platforms",
@@ -2807,7 +2807,7 @@
         "x-summary" : "Platforms"
       }
     },
-    "/gobii/v1/platforms/protocols/{vendorProtocolId}" : {
+    "/{cropType}/gdm/v1/platforms/protocols/{vendorProtocolId}" : {
       "get" : {
         "tags" : [ "Platforms" ],
         "summary" : "GET /platforms/protocols/{vendorProtocolId}",
@@ -2839,7 +2839,7 @@
         "x-summary" : "Protocols : vendorProtocolId"
       }
     },
-    "/gobii/v1/platforms/{platformId}" : {
+    "/{cropType}/gdm/v1/platforms/{platformId}" : {
       "get" : {
         "tags" : [ "Platforms" ],
         "summary" : "Get a platform by platformId",
@@ -2908,7 +2908,7 @@
         "x-summary" : "Platforms : platformId"
       }
     },
-    "/gobii/v1/projects" : {
+    "/{cropType}/gdm/v1/projects" : {
       "get" : {
         "tags" : [ "Projects" ],
         "summary" : "List all projects",
@@ -2962,7 +2962,7 @@
         "x-summary" : "Projects"
       }
     },
-    "/gobii/v1/projects/{projectId}" : {
+    "/{cropType}/gdm/v1/projects/{projectId}" : {
       "get" : {
         "tags" : [ "Projects" ],
         "summary" : "Get a project by projectId",
@@ -3031,7 +3031,7 @@
         "x-summary" : "Projects : projectId"
       }
     },
-    "/gobii/v1/protocols" : {
+    "/{cropType}/gdm/v1/protocols" : {
       "get" : {
         "tags" : [ "Protocols" ],
         "summary" : "List all protocols",
@@ -3085,7 +3085,7 @@
         "x-summary" : "Protocols"
       }
     },
-    "/gobii/v1/protocols/{protocolId}" : {
+    "/{cropType}/gdm/v1/protocols/{protocolId}" : {
       "get" : {
         "tags" : [ "Protocols" ],
         "summary" : "Get a protocol by protocolId",
@@ -3154,7 +3154,7 @@
         "x-summary" : "Protocols : protocolId"
       }
     },
-    "/gobii/v1/protocols/{protocolId}/vendors" : {
+    "/{cropType}/gdm/v1/protocols/{protocolId}/vendors" : {
       "get" : {
         "tags" : [ "Protocols" ],
         "summary" : "List all vendors for a given protocolId",
@@ -3261,7 +3261,7 @@
         "x-summary" : "Protocols.vendors"
       }
     },
-    "/gobii/v1/references" : {
+    "/{cropType}/gdm/v1/references" : {
       "get" : {
         "tags" : [ "References" ],
         "summary" : "List all references",
@@ -3315,7 +3315,7 @@
         "x-summary" : "References"
       }
     },
-    "/gobii/v1/references/{referenceId}" : {
+    "/{cropType}/gdm/v1/references/{referenceId}" : {
       "get" : {
         "tags" : [ "References" ],
         "summary" : "GET /references/{referenceId}",
@@ -3384,7 +3384,7 @@
         "x-summary" : "References : referenceId"
       }
     },
-    "/gobii/v1/restprofiles" : {
+    "/{cropType}/gdm/v1/restprofiles" : {
       "put" : {
         "tags" : [ "RestProfiles" ],
         "summary" : "/restprofiles/",
@@ -3658,11 +3658,11 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "cvId" : {
+        "group" : {
           "type" : "integer",
           "format" : "int32"
         },
-        "group" : {
+        "cvId" : {
           "type" : "integer",
           "format" : "int32"
         }

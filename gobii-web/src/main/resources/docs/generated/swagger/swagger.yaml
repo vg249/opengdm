@@ -40,7 +40,7 @@ tags:
 schemes:
 - "http"
 paths:
-  /gobii/v1/analyses:
+  /{cropType}/gdm/v1/analyses:
     get:
       tags:
       - "Analyses"
@@ -87,7 +87,7 @@ paths:
         \ calling (variant calling), cleaning, and imputation. Additional analysis\
         \ types can be added in Controlled Vocabularies"
       x-summary: "Analyses"
-  /gobii/v1/analyses/{analysisId}:
+  /{cropType}/gdm/v1/analyses/{analysisId}:
     get:
       tags:
       - "Analyses"
@@ -143,7 +143,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
       x-summary: "Analyses : analysesId"
-  /gobii/v1/auth:
+  /{cropType}/gdm/v1/auth:
     post:
       tags:
       - "Authentication"
@@ -179,7 +179,7 @@ paths:
           schema:
             type: "string"
       x-summary: "Authentication"
-  /gobii/v1/configsettings:
+  /{cropType}/gdm/v1/configsettings:
     get:
       tags:
       - "ConfigSettings"
@@ -200,7 +200,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeConfigSettingsDTO"
       x-summary: "ConfigSettings"
-  /gobii/v1/contact-search:
+  /{cropType}/gdm/v1/contact-search:
     get:
       tags:
       - "Contacts"
@@ -235,7 +235,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
       x-summary: "ContactSearch"
-  /gobii/v1/contacts:
+  /{cropType}/gdm/v1/contacts:
     get:
       tags:
       - "Contacts"
@@ -280,7 +280,7 @@ paths:
         \ according to their system access. For example, curators can submit and extract\
         \ all projects and update CV terms."
       x-summary: "Contacts"
-  /gobii/v1/contacts/{contactId}:
+  /{cropType}/gdm/v1/contacts/{contactId}:
     get:
       tags:
       - "Contacts"
@@ -336,7 +336,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
       x-summary: "Contacts : contactId"
-  /gobii/v1/contacts/{email}:
+  /{cropType}/gdm/v1/contacts/{email}:
     get:
       tags:
       - "Contacts"
@@ -361,7 +361,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
       x-summary: "Contacts : emailId"
-  /gobii/v1/cvgroups/{cvGroupId}/cvs:
+  /{cropType}/gdm/v1/cvgroups/{cvGroupId}/cvs:
     get:
       tags:
       - "ControlledVocabularies"
@@ -386,7 +386,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
       x-summary: "CvGroups.cvs"
-  /gobii/v1/cvgroups/{cvGroupTypeId}:
+  /{cropType}/gdm/v1/cvgroups/{cvGroupTypeId}:
     get:
       tags:
       - "ControlledVocabularies"
@@ -412,7 +412,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvGroupDTO"
       x-summary: "CvGroups : cvGroupTypeId"
-  /gobii/v1/cvgroups/{groupName}:
+  /{cropType}/gdm/v1/cvgroups/{groupName}:
     get:
       tags:
       - "ControlledVocabularies"
@@ -442,7 +442,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvGroupDTO"
       x-summary: "CvGroups : groupName"
-  /gobii/v1/cvs:
+  /{cropType}/gdm/v1/cvs:
     get:
       tags:
       - "ControlledVocabularies"
@@ -489,7 +489,7 @@ paths:
         \ are identified by the suffix '_type.' These control the entries being loaded\
         \ to a field and require an exact match. "
       x-summary: "Cvs"
-  /gobii/v1/cvs/{cvId}:
+  /{cropType}/gdm/v1/cvs/{cvId}:
     get:
       tags:
       - "ControlledVocabularies"
@@ -570,7 +570,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
       x-summary: "Cvs : cvId"
-  /gobii/v1/cvs/{groupName}:
+  /{cropType}/gdm/v1/cvs/{groupName}:
     get:
       tags:
       - "ControlledVocabularies"
@@ -595,7 +595,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
       x-summary: "Cvs : groupName"
-  /gobii/v1/datasets:
+  /{cropType}/gdm/v1/datasets:
     get:
       tags:
       - "Datasets"
@@ -656,7 +656,7 @@ paths:
       x-tag-description: "In a Dataset, you can define the suite of analyses applied\
         \ to the data to generate the dataset"
       x-summary: "Datasets"
-  /gobii/v1/datasets/types:
+  /{cropType}/gdm/v1/datasets/types:
     get:
       tags:
       - "Datasets"
@@ -675,7 +675,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeNameIdDTO"
       x-summary: "Datasets.types"
-  /gobii/v1/datasets/types/{id}:
+  /{cropType}/gdm/v1/datasets/types/{id}:
     get:
       tags:
       - "Datasets"
@@ -700,7 +700,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
       x-summary: "Datasets.types : id"
-  /gobii/v1/datasets/{dataSetId}:
+  /{cropType}/gdm/v1/datasets/{dataSetId}:
     get:
       tags:
       - "Datasets"
@@ -756,7 +756,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
       x-summary: "Datasets : dataSetId"
-  /gobii/v1/datasets/{dataSetId}/analyses:
+  /{cropType}/gdm/v1/datasets/{dataSetId}/analyses:
     get:
       tags:
       - "Datasets"
@@ -782,7 +782,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
       x-summary: "Datasets.analyses"
-  /gobii/v1/datasets/{datasetId}/jobs:
+  /{cropType}/gdm/v1/datasets/{datasetId}/jobs:
     get:
       tags:
       - "Datasets"
@@ -806,7 +806,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
       x-summary: "Datasets.jobs"
-  /gobii/v1/displays:
+  /{cropType}/gdm/v1/displays:
     get:
       tags:
       - "Displays"
@@ -848,7 +848,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeDisplayDTO"
       x-summary: "Displays"
-  /gobii/v1/displays/{displayId}:
+  /{cropType}/gdm/v1/displays/{displayId}:
     get:
       tags:
       - "Displays"
@@ -904,7 +904,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeDisplayDTO"
       x-summary: "Displays : displayId"
-  /gobii/v1/entities:
+  /{cropType}/gdm/v1/entities:
     get:
       tags:
       - "Entities"
@@ -923,7 +923,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
       x-summary: "Entities"
-  /gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count:
+  /{cropType}/gdm/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count:
     get:
       tags:
       - "Entities"
@@ -958,7 +958,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
       x-summary: "Child.count"
-  /gobii/v1/entities/{entityName}/count:
+  /{cropType}/gdm/v1/entities/{entityName}/count:
     get:
       tags:
       - "Entities"
@@ -982,7 +982,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
       x-summary: "Entities.count"
-  /gobii/v1/entities/{entityName}/lastmodified:
+  /{cropType}/gdm/v1/entities/{entityName}/lastmodified:
     get:
       tags:
       - "Entities"
@@ -1006,7 +1006,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
       x-summary: "Entities.lastModified"
-  /gobii/v1/experiments:
+  /{cropType}/gdm/v1/experiments:
     get:
       tags:
       - "Experiments"
@@ -1050,7 +1050,7 @@ paths:
       x-tag-description: "An experiment defines the protocol and vendor used to generate\
         \ the genotyping data. More than one experiment can belong to a project."
       x-summary: "Experiments"
-  /gobii/v1/experiments/{experimentId}:
+  /{cropType}/gdm/v1/experiments/{experimentId}:
     get:
       tags:
       - "Experiments"
@@ -1106,7 +1106,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeExperimentDTO"
       x-summary: "Experiments : experimentId"
-  /gobii/v1/experiments/{experimentId}/protocols:
+  /{cropType}/gdm/v1/experiments/{experimentId}/protocols:
     get:
       tags:
       - "Experiments"
@@ -1133,7 +1133,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
       x-summary: "Experiments.protocols"
-  /gobii/v1/files/loader/{directoryName}:
+  /{cropType}/gdm/v1/files/loader/{directoryName}:
     get:
       tags:
       - "Files"
@@ -1191,7 +1191,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderFilePreviewDTO"
       x-summary: "Loader : directoryName"
-  /gobii/v1/files/{destinationType}:
+  /{cropType}/gdm/v1/files/{destinationType}:
     post:
       tags:
       - "Files"
@@ -1255,7 +1255,7 @@ paths:
           schema:
             type: "string"
       x-summary: "Files : destinationType"
-  /gobii/v1/files/{gobiiJobId}/{destinationType}:
+  /{cropType}/gdm/v1/files/{gobiiJobId}/{destinationType}:
     get:
       tags:
       - "Files"
@@ -1329,7 +1329,7 @@ paths:
           schema:
             type: "string"
       x-summary: "Jobs : destinationType"
-  /gobii/v1/instructions/extractor:
+  /{cropType}/gdm/v1/instructions/extractor:
     post:
       tags:
       - "Instructions"
@@ -1353,7 +1353,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeExtractorInstructionFilesDTO"
       x-summary: "Extractor"
-  /gobii/v1/instructions/extractor/jobs/{jobName}:
+  /{cropType}/gdm/v1/instructions/extractor/jobs/{jobName}:
     get:
       tags:
       - "Instructions"
@@ -1378,7 +1378,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
       x-summary: "Extractor.jobs : jobName"
-  /gobii/v1/instructions/extractor/{instructionFileName}:
+  /{cropType}/gdm/v1/instructions/extractor/{instructionFileName}:
     get:
       tags:
       - "Instructions"
@@ -1403,7 +1403,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeExtractorInstructionFilesDTO"
       x-summary: "Extractor : instructionFileName"
-  /gobii/v1/instructions/loader:
+  /{cropType}/gdm/v1/instructions/loader:
     post:
       tags:
       - "Instructions"
@@ -1427,7 +1427,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
       x-summary: "Loader"
-  /gobii/v1/instructions/loader/jobs/{jobName}:
+  /{cropType}/gdm/v1/instructions/loader/jobs/{jobName}:
     get:
       tags:
       - "Instructions"
@@ -1452,7 +1452,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
       x-summary: "Loader.jobs : jobName"
-  /gobii/v1/instructions/loader/{instructionFileName}:
+  /{cropType}/gdm/v1/instructions/loader/{instructionFileName}:
     get:
       tags:
       - "Instructions"
@@ -1477,7 +1477,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
       x-summary: "Loader : instructionFileName"
-  /gobii/v1/jobs:
+  /{cropType}/gdm/v1/jobs:
     get:
       tags:
       - "Jobs"
@@ -1519,7 +1519,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
       x-summary: "Jobs"
-  /gobii/v1/jobs/dnasamples/{jobName}:
+  /{cropType}/gdm/v1/jobs/dnasamples/{jobName}:
     post:
       tags:
       - "Jobs"
@@ -1549,7 +1549,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
       x-summary: "DnaSamples : jobName"
-  /gobii/v1/jobs/{jobName}:
+  /{cropType}/gdm/v1/jobs/{jobName}:
     get:
       tags:
       - "Jobs"
@@ -1601,7 +1601,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
       x-summary: "Jobs : jobName"
-  /gobii/v1/manifests:
+  /{cropType}/gdm/v1/manifests:
     get:
       tags:
       - "Manifests"
@@ -1646,7 +1646,7 @@ paths:
         \ the manifest to extract data by the manifest name, rather than listing the\
         \ markers contained in the manifest."
       x-summary: "Manifests"
-  /gobii/v1/manifests/{manifestId}:
+  /{cropType}/gdm/v1/manifests/{manifestId}:
     get:
       tags:
       - "Manifests"
@@ -1702,7 +1702,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeManifestDTO"
       x-summary: "Manifests : manifestId"
-  /gobii/v1/maps:
+  /{cropType}/gdm/v1/maps:
     get:
       tags:
       - "Maps"
@@ -1724,7 +1724,7 @@ paths:
         \ to linkage groups or chromosomes. A marker can belong to, or be mapped to,\
         \ one or multiple mapsets."
       x-summary: "Maps"
-  /gobii/v1/mapsets:
+  /{cropType}/gdm/v1/mapsets:
     get:
       tags:
       - "Maps"
@@ -1769,7 +1769,7 @@ paths:
         \ to linkage groups or chromosomes. A marker can belong to, or be mapped to,\
         \ one or multiple mapsets."
       x-summary: "Mapsets"
-  /gobii/v1/mapsets/{mapsetId}:
+  /{cropType}/gdm/v1/mapsets/{mapsetId}:
     get:
       tags:
       - "Maps"
@@ -1825,7 +1825,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeMapsetDTO"
       x-summary: "Mapsets : mapsetId"
-  /gobii/v1/marker-search:
+  /{cropType}/gdm/v1/marker-search:
     get:
       tags:
       - "Markers"
@@ -1849,7 +1849,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
       x-summary: "MarkerSearch"
-  /gobii/v1/markergroups:
+  /{cropType}/gdm/v1/markergroups:
     get:
       tags:
       - "Markers"
@@ -1891,7 +1891,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerGroupDTO"
       x-summary: "MarkerGroups"
-  /gobii/v1/markergroups/{markerGroupId}:
+  /{cropType}/gdm/v1/markergroups/{markerGroupId}:
     get:
       tags:
       - "Markers"
@@ -1947,7 +1947,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerGroupDTO"
       x-summary: "MarkerGroups : markerGroupId"
-  /gobii/v1/markers:
+  /{cropType}/gdm/v1/markers:
     get:
       tags:
       - "Markers"
@@ -1991,7 +1991,7 @@ paths:
       x-tag-description: "A Marker Group defines a group of markers, the marker platform,\
         \ and any optional favorable alleles for each marker."
       x-summary: "Markers"
-  /gobii/v1/markers/{markerId}:
+  /{cropType}/gdm/v1/markers/{markerId}:
     get:
       tags:
       - "Markers"
@@ -2047,7 +2047,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
       x-summary: "Markers : markerId"
-  /gobii/v1/names/{entity}:
+  /{cropType}/gdm/v1/names/{entity}:
     get:
       tags:
       - "Names"
@@ -2135,7 +2135,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeNameIdDTO"
       x-summary: "Names : entity"
-  /gobii/v1/organizations:
+  /{cropType}/gdm/v1/organizations:
     get:
       tags:
       - "Organizations"
@@ -2181,7 +2181,7 @@ paths:
         \ can also describe a vendor and be associated with a protocol to create a\
         \ vendor-protocol in the Define Protocols page."
       x-summary: "Organizations"
-  /gobii/v1/organizations/{organizationId}:
+  /{cropType}/gdm/v1/organizations/{organizationId}:
     get:
       tags:
       - "Organizations"
@@ -2237,7 +2237,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
       x-summary: "Organizations : organizationId"
-  /gobii/v1/ping:
+  /{cropType}/gdm/v1/ping:
     post:
       tags:
       - "Ping"
@@ -2256,7 +2256,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopePingDTO"
       x-summary: "Ping"
-  /gobii/v1/platforms:
+  /{cropType}/gdm/v1/platforms:
     get:
       tags:
       - "Platforms"
@@ -2313,7 +2313,7 @@ paths:
         \ one of the primary extracts will be by   platform, and so consider how the\
         \ user will want to extract data."
       x-summary: "Platforms"
-  /gobii/v1/platforms/protocols/{vendorProtocolId}:
+  /{cropType}/gdm/v1/platforms/protocols/{vendorProtocolId}:
     get:
       tags:
       - "Platforms"
@@ -2340,7 +2340,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
       x-summary: "Protocols : vendorProtocolId"
-  /gobii/v1/platforms/{platformId}:
+  /{cropType}/gdm/v1/platforms/{platformId}:
     get:
       tags:
       - "Platforms"
@@ -2396,7 +2396,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
       x-summary: "Platforms : platformId"
-  /gobii/v1/projects:
+  /{cropType}/gdm/v1/projects:
     get:
       tags:
       - "Projects"
@@ -2441,7 +2441,7 @@ paths:
         \ be, genotyped. A project belongs to a Principal Investigator (PI), also\
         \ called a PI contact. "
       x-summary: "Projects"
-  /gobii/v1/projects/{projectId}:
+  /{cropType}/gdm/v1/projects/{projectId}:
     get:
       tags:
       - "Projects"
@@ -2497,7 +2497,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeProjectDTO"
       x-summary: "Projects : projectId"
-  /gobii/v1/protocols:
+  /{cropType}/gdm/v1/protocols:
     get:
       tags:
       - "Protocols"
@@ -2546,7 +2546,7 @@ paths:
         \ marker. Examples of protocols are different enzymes used to generate GbS\
         \ data within a sequencing platform."
       x-summary: "Protocols"
-  /gobii/v1/protocols/{protocolId}:
+  /{cropType}/gdm/v1/protocols/{protocolId}:
     get:
       tags:
       - "Protocols"
@@ -2602,7 +2602,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
       x-summary: "Protocols : protocolId"
-  /gobii/v1/protocols/{protocolId}/vendors:
+  /{cropType}/gdm/v1/protocols/{protocolId}/vendors:
     get:
       tags:
       - "Protocols"
@@ -2692,7 +2692,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
       x-summary: "Protocols.vendors"
-  /gobii/v1/references:
+  /{cropType}/gdm/v1/references:
     get:
       tags:
       - "References"
@@ -2736,7 +2736,7 @@ paths:
       x-tag-description: "The authoritative genome reference and associated linked\
         \ files for a physical mapset."
       x-summary: "References"
-  /gobii/v1/references/{referenceId}:
+  /{cropType}/gdm/v1/references/{referenceId}:
     get:
       tags:
       - "References"
@@ -2792,7 +2792,7 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeReferenceDTO"
       x-summary: "References : referenceId"
-  /gobii/v1/restprofiles:
+  /{cropType}/gdm/v1/restprofiles:
     put:
       tags:
       - "RestProfiles"
@@ -3063,10 +3063,10 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-      cvId:
+      group:
         type: "integer"
         format: "int32"
-      group:
+      cvId:
         type: "integer"
         format: "int32"
   CvGroupDTO:
