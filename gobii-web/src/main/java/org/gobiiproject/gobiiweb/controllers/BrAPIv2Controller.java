@@ -41,9 +41,9 @@ import java.util.concurrent.Executors;
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI_V2)
 @CrossOrigin
 @Api
-public class BRAPIIControllerV2 {
+public class BrAPIv2Controller {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV2.class);
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BrAPIv2Controller.class);
 
     @Autowired
     private GenotypeCallsService genotypeCallsService;

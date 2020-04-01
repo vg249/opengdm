@@ -46,7 +46,7 @@ public class BRAPIIControllerV1Test {
     private VariantSetsService variantSetsService;
 
     @InjectMocks
-    private BRAPIIControllerV2 brapiiControllerV2;
+    private BrAPIv2Controller brApiV2Controller;
 
     private MockMvc mockMvc;
 
@@ -57,7 +57,7 @@ public class BRAPIIControllerV1Test {
 
         MockitoAnnotations.initMocks(this);
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(brapiiControllerV2).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(brApiV2Controller).build();
 
     }
 
