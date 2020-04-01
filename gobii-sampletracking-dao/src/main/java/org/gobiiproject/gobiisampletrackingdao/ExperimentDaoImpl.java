@@ -83,4 +83,9 @@ public class ExperimentDaoImpl implements ExperimentDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
+
+    @Override
+    public Experiment getExperiment(Integer i) throws Exception {
+            return em.find(Experiment.class, i);
+    }
 }

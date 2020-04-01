@@ -512,5 +512,51 @@ public class GOBIIControllerV3Test {
         ;
         verify(experimentService, times(1)).getExperiments(0, 1000, null);
     }
+
+    @Test
+    public void testGetExperimentById() throws Exception {
+        ExperimentDTO mockItem = new ExperimentDTO();
+        when(
+            experimentService.getExperiment(123)
+        ).thenReturn(
+            mockItem
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.result.experimentName").hasJsonPath())
+        ;
+        verify(experimentService, times(1)).getExperiment(123);
+
+    }
+
+    @Test
+    public void testGetExperimentById404() throws Exception {
+        when(
+            experimentService.getExperiment(123)
+        ).thenThrow(
+            new NullPointerException()
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        ;
+        verify(experimentService, times(1)).getExperiment(123);
+
+    }
+
+    @Test
+    public void testCreateExperimentsSimple() throws Exception {
+        
+    }
     
 }

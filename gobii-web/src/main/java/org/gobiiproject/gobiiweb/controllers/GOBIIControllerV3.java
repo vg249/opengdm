@@ -312,6 +312,26 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Get Exoeriment endpoint handler
+     * 
+     * @param experimentId
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/experiments/{experimentId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> getExperiment(
+        @PathVariable Integer experimentId
+    ) throws Exception {
+        BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
+        ExperimentDTO experiment = experimentService.getExperiment(experimentId);
+        result.setResult(experiment);
+        result.setMetadata(null);
+        return ResponseEntity.ok(result);
+
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }
