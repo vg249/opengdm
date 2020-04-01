@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,8 +19,11 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
+import org.gobiiproject.gobiimodel.entity.Germplasm;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -360,8 +364,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
     @Override
     public List<DnaRun>
-    getDnaRuns(List<Integer> dnaRunIds, List<String> dnaRunNames,
-               List<String> datasetIds) {
+    getDnaRuns(Set<Integer> dnaRunIds, Set<String> dnaRunNames,
+               Set<String> germplasmExternalCodes, Set<String> datasetIds,
+               Integer pageSize, Integer dnaRunIdCursor) {
 
         List<DnaRun> dnaruns;
 
@@ -379,13 +384,30 @@ public class DnaRunDaoImpl implements DnaRunDao {
             //Set Root entity and selected entities
             Root<DnaRun> root = criteria.from(DnaRun.class);
 
+            if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
+
+                Join<DnaRun, DnaSample> dnaSampleJoin =
+                        root.join("dnaSample");
+
+                Join<DnaSample, Germplasm> germplasmJoin =
+                        dnaSampleJoin.join("germplasm");
+
+                predicates.add(
+                        germplasmJoin
+                                .get("externalCode")
+                                .in(germplasmExternalCodes)
+                );
+
+
+            }
+
             criteria.select(root);
 
-            if(dnaRunIds != null && dnaRunIds.size() > 0) {
+            if(!CollectionUtils.isEmpty(dnaRunIds)) {
                 predicates.add(root.get("dnaRunId").in(dnaRunIds));
             }
 
-            if(dnaRunNames != null && dnaRunNames.size() > 0) {
+            if(!CollectionUtils.isEmpty(dnaRunNames)) {
                 predicates.add(root.get("dnaRunName").in(dnaRunNames));
             }
 
@@ -418,6 +440,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             }
 
+            if(!IntegerUtils.isNullOrZero(dnaRunIdCursor)) {
+                predicates.add(cb.gt(root.get("dnaRunId"), dnaRunIdCursor));
+            }
+
             criteria.where(predicates.toArray(new Predicate[]{}));
 
             /*Really Important for fetching by cursor*/
@@ -428,10 +454,14 @@ public class DnaRunDaoImpl implements DnaRunDao {
             if(!CollectionUtils.isEmpty(datasetIds)) {
                 query
                         .unwrap(org.hibernate.query.Query.class)
-                        .setParameter("datasetIds", datasetIdsArray,
+                        .setParameter(
+                                "datasetIds", datasetIdsArray,
                                 StringArrayType.INSTANCE);
             }
 
+            if(!IntegerUtils.isNullOrZero(pageSize)) {
+                query.setMaxResults(pageSize);
+            }
 
             dnaruns = query.getResultList();
 
@@ -456,9 +486,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of DnaRun Entity result
      */
     @Override
-    public List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds) {
+    public List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds) {
 
-        return this.getDnaRuns(dnaRunIds, null, null);
+        return this.getDnaRuns(dnaRunIds, null, null, null, null, null);
     }
 
 
@@ -468,8 +498,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - List of DnaRun Entity result.
      */
     @Override
-    public List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames) {
-        return this.getDnaRuns(null, dnaRunNames, null);
+    public List<DnaRun> getDnaRunsByDanRunNames(Set<String> dnaRunNames) {
+        return this.getDnaRuns(null, dnaRunNames, null, null, null, null);
     }
 
 }

@@ -3,6 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DnaRunDao {
 
@@ -13,9 +14,10 @@ public interface DnaRunDao {
                             Integer germplasmId, String germplasmName,
                             boolean fetchAssociations);
 
-    List<DnaRun> getDnaRuns(List<Integer> dnaRunIds,
-                            List<String> dnaRunNames,
-                            List<String> datasetIds);
+    List<DnaRun> getDnaRuns(
+            Set<Integer> dnaRunIds, Set<String> dnaRunNames,
+            Set<String> germplasmExternalCodes, Set<String> datasetIds,
+            Integer pageSize, Integer dnaRunIdCursor);
 
     List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
                             Integer dnaRunId, String dnaRunName,
@@ -40,9 +42,9 @@ public interface DnaRunDao {
                                        Integer rowOffset,
                                        boolean fetchAssociations);
 
-    List<DnaRun> getDnaRunsByDanRunIds(List<Integer> dnaRunIds);
+    List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds);
 
-    List<DnaRun> getDnaRunsByDanRunNames(List<String> dnaRunNames);
+    List<DnaRun> getDnaRunsByDanRunNames(Set<String> dnaRunNames);
 
 }
 
