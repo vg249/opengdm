@@ -1,12 +1,17 @@
 package org.gobiiproject.gobiimodel.entity;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
-
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Model for Dataset Entity.

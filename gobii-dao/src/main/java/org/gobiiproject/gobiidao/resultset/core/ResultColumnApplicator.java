@@ -27,10 +27,10 @@ public class ResultColumnApplicator {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ResultColumnApplicator.class);
 
+    @SuppressWarnings("unchecked")
     public static void applyColumnValues(ResultSet resultSet, Object dtoInstance) throws GobiiDaoException {
 
-        Map<String, Object> returnVal = new HashMap<>();
-
+        //Map<String, Object> returnVal = new HashMap<>();
         String currentColumnName = null;
         String currentParameterName = null;
         Type currentColumnType = null;

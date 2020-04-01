@@ -137,14 +137,15 @@ import java.util.*;
 @EnableAsync
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
 @CrossOrigin
+@SuppressWarnings("unused")
 public class BRAPIIControllerV1 {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class); //TODO: remove
 
-    private final Integer brapiDefaultPageSize = 1000;
+    private final Integer brapiDefaultPageSize = 1000; //TODO: remove
 
     @Autowired
-    private PingService pingService = null;
+    private PingService pingService = null; //TODO: remove
 
 
     @Autowired
@@ -192,7 +193,7 @@ public class BRAPIIControllerV1 {
             }
     )
     @ResponseBody
-    public ResponseEntity getCalls(
+    public ResponseEntity<BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls>> getCalls(
             HttpServletRequest request) throws Exception {
 
         BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
@@ -963,7 +964,7 @@ public class BRAPIIControllerV1 {
         String returnVal;
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             if (!LineUtils.isNullOrEmpty(germplasmDbId)) {
 
                 brapiResponseEnvelope.setResult(brapiResponseMapMarkerProfiles.getBrapiResponseMarkerProfilesByGermplasmId(germplasmDbId));

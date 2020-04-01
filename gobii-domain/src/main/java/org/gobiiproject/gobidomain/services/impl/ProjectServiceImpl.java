@@ -68,10 +68,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         try {
             returnVal = dtoMapProject.get(projectId);
 
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -79,6 +75,9 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
                                 + projectId
                                 + ") does not match an existing project ");
             }
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         } catch (Exception e) {
 

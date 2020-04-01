@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMetaData {
 

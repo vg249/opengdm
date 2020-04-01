@@ -1,21 +1,19 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobidomain.services.brapi.SearchService;
 import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.SearchResultDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 public class SearchServiceImpl implements SearchService {
 

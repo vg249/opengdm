@@ -11,17 +11,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+@SuppressWarnings({"serial", "rawtypes", "unchecked"})
+@Deprecated
 public class CvProperties implements java.io.Serializable, Map<String,String> {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -8869498320638000413L;
+
     private Map<String, String> values = new java.util.HashMap<String, String>();
     
     @Override
@@ -62,7 +55,6 @@ public class CvProperties implements java.io.Serializable, Map<String,String> {
 
     @Override
     public void putAll(Map m) {
-        // TODO Auto-generated method stub
         values.putAll(m);
 
     }

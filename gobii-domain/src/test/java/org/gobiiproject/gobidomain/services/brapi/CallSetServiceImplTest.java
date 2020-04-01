@@ -9,14 +9,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.any;
-
 /**
  * Created by VCalaminos on 7/18/2019.
  */
@@ -35,6 +27,7 @@ public class CallSetServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @SuppressWarnings("unused")
     private CallSetDTO createMockDnaRunDTO() {
 
         CallSetDTO callSetDTO = new CallSetDTO();
@@ -51,7 +44,7 @@ public class CallSetServiceImplTest {
     @Test
     public void getCallsets() throws Exception {
 
-        List<CallSetDTO> callsetsMock = new ArrayList<>();
+        //List<CallSetDTO> callsetsMock = new ArrayList<>();
 
 
 

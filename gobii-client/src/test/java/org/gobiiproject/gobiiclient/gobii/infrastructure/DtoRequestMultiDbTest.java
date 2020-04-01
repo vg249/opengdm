@@ -109,6 +109,7 @@ public class DtoRequestMultiDbTest {
     }
 
 
+    @SuppressWarnings("unused")
     @Test
     public void testCreateCvOnMultipleDb() throws Exception {
 

@@ -106,10 +106,6 @@ public class ProtocolServiceImpl implements ProtocolService {
         try {
             returnVal = dtoMapProtocol.get(ProtocolId);
 
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -117,6 +113,10 @@ public class ProtocolServiceImpl implements ProtocolService {
                                 + ProtocolId
                                 + ") does not match an existing Protocol ");
             }
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
 
         } catch (Exception e) {
 

@@ -6,9 +6,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
@@ -79,7 +77,15 @@ public class ProjectDaoImplTest {
     @Transactional
     public void testSimpleQuery() {
         assert v3ProjectDao != null;
-        assert v3ProjectDao.getProjects(0, 1000) != null;
+        assert v3ProjectDao.getProjects(0, 1000, null) != null;
+        // assert v3ProjectDao.getProjects(0, 1000).size() > 0;
+    }
+
+    @Test
+    @Transactional
+    public void testWithContactIdQuery() {
+        assert v3ProjectDao != null;
+        assert v3ProjectDao.getProjects(0, 1000, 4) != null;
         // assert v3ProjectDao.getProjects(0, 1000).size() > 0;
     }
 
@@ -114,6 +120,7 @@ public class ProjectDaoImplTest {
 
     @Test(expected = javax.persistence.PersistenceException.class)
     @Transactional
+    @SuppressWarnings("unused")
     public void testDoubleCreateProject() throws Exception {
         Project project = v3ProjectDao.createProject(this.createProject(4, "test", "", null, "gadm"));
         Project project2 = v3ProjectDao.createProject(this.createProject(4, "test", "", null, "gadm"));

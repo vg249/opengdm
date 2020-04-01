@@ -1,6 +1,11 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -13,10 +18,6 @@ import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class VariantServiceImpl implements VariantService {
 

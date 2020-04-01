@@ -1,13 +1,36 @@
+/**
+ * Experiment.java
+ * 
+ * Experiment entity class.
+ * 
+ */
+
 package org.gobiiproject.gobiimodel.entity;
 
-import javax.persistence.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.Table;
 
-/**
- * Model for Experiment Entity.
- * Represents database table Experiment.
- */
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
 @Entity
 @Table(name = "experiment")
+@NamedEntityGraph(name = "experiment.vendorProtocol",
+    attributeNodes = @NamedAttributeNode("vendorProtocol")
+)
+@EqualsAndHashCode(callSuper=false)
 public class Experiment extends BaseEntity{
 
     @Id
@@ -32,74 +55,13 @@ public class Experiment extends BaseEntity{
     @Column(name="data_file")
     private String dataFile;
 
-    @Column(name="vendor_protocol_id")
-    private Integer vendorProtocolId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_protocol_id")
+    private VendorProtocol vendorProtocol;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 
-    public Integer getExperimentId() {
-        return experimentId;
-    }
-
-    public void setExperimentId(Integer experimentId) {
-        this.experimentId = experimentId;
-    }
-
-    public String getExperimentName() {
-        return experimentName;
-    }
-
-    public void setExperimentName(String experimentName) {
-        this.experimentName = experimentName;
-    }
-
-    public String getExperimentCode() {
-        return experimentCode;
-    }
-
-    public void setExperimentCode(String experimentCode) {
-        this.experimentCode = experimentCode;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public Integer getManifestId() {
-        return manifestId;
-    }
-
-    public void setManifestId(Integer manifestId) {
-        this.manifestId = manifestId;
-    }
-
-    public String getDataFile() {
-        return dataFile;
-    }
-
-    public void setDataFile(String dataFile) {
-        this.dataFile = dataFile;
-    }
-
-    public Integer getVendorProtocolId() {
-        return vendorProtocolId;
-    }
-
-    public void setVendorProtocolId(Integer vendorProtocolId) {
-        this.vendorProtocolId = vendorProtocolId;
-    }
-
-    public Cv getStatus() {
-        return status;
-    }
-
-    public void setStatus(Cv status) {
-        this.status = status;
-    }
 }
+

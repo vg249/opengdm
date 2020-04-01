@@ -53,7 +53,7 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
         try {
 
             ResultSet resultSet = rsContactDao.getContactNamesForRoleName(roleName);
-            List<NameIdDTO> listDTO = new ArrayList<>();
+            //List<NameIdDTO> listDTO = new ArrayList<>();
 
             while (resultSet.next()) {
                 returnVal.add(this.makeNameIdDto(resultSet));

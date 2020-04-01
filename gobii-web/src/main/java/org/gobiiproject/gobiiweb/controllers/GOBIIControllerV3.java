@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.gobiiproject.gobidomain.services.GobiiProjectService;
+import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
+import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -24,6 +26,8 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
@@ -62,7 +66,13 @@ import lombok.extern.slf4j.Slf4j;
 public class GOBIIControllerV3  {
     
     @Autowired
-    private GobiiProjectService projectService = null;
+    private ProjectService projectService = null;
+
+    @Autowired
+    private ContactService contactService = null;
+
+    @Autowired
+    private ExperimentService experimentService = null;
 
     /**
      * Authentication Endpoint
@@ -108,22 +118,23 @@ public class GOBIIControllerV3  {
      * 
      * Gets list of projects
      * 
-     * @param pageNum 0-based page of data used in conjunction with pageSize
+     * @param page 0-based page of data used in conjunction with pageSize
      * @param pageSize number of items in response list.
      * @return
      */
     @GetMapping("/projects")
     @ResponseBody 
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
-            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
-            @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
+            @RequestParam(required=false, defaultValue = "0") Integer page,
+            @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+            @RequestParam(required=false) Integer piContactId) {
         log.debug("Querying projects List");
-        Integer pageSizeToUse = pageSize;
+        Integer pageSizeToUse = getPageSize(pageSize);
 
-        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
         PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
-            Math.max(0, pageNum),
-            pageSizeToUse
+            Math.max(0, page),
+            pageSizeToUse,
+            piContactId
         );
         BrApiMasterListPayload<GobiiProjectDTO> payload = new BrApiMasterListPayload<>(
             pagedResult.getResult(),
@@ -233,14 +244,12 @@ public class GOBIIControllerV3  {
     @GetMapping("/projects/properties")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getProjectProperties(
-            @RequestParam(required=false, defaultValue = "0") Integer pageNum,
+            @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize) throws Exception {
         log.debug("Querying project properties List");
-        Integer pageSizeToUse = pageSize;
-
-        if (pageSizeToUse < 0)  pageSizeToUse = 1000;
+        Integer pageSizeToUse = getPageSize(pageSize);
         PagedResult<CvPropertyDTO> pagedResult =  projectService.getProjectProperties(
-            Math.max(0, pageNum),
+            Math.max(0, page),
             pageSizeToUse
         );
         BrApiMasterListPayload<CvPropertyDTO> payload = new BrApiMasterListPayload<>(
@@ -253,13 +262,67 @@ public class GOBIIControllerV3  {
     }
 
 
+    /**
+     * List Contacts
+     * @return
+     */
+    @GetMapping("/contacts")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getContacts(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer organizationId
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<ContactDTO> pagedResult = contactService.getContacts(
+            Math.max(0, page),
+            pageSizeToUse,
+            organizationId
+        );
+        BrApiMasterListPayload<ContactDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
 
-    public GobiiProjectService getProjectService() {
+    /**
+     * Lists Experiments
+     * @return
+     */
+    @GetMapping("/experiments")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ExperimentDTO>> getExperiments(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer projectId
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<ExperimentDTO> pagedResult = experimentService.getExperiments(
+            Math.max(0, page),
+            pageSizeToUse,
+            projectId
+        );
+        BrApiMasterListPayload<ExperimentDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
+
+    public ProjectService getProjectService() {
         return projectService;
     }
 
-    public void setProjectService(GobiiProjectService projectService) {
+    public void setProjectService(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    private Integer getPageSize(Integer pageSize) {
+        if (pageSize == null || pageSize <= 0) return 1000;
+        return pageSize;
     }
 
 }

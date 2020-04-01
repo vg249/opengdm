@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Phil on 10/16/2016.
  */
+@SuppressWarnings("serial")
 public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
 
     @Autowired
@@ -74,7 +75,8 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
                     }});
 
 
-            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "reference_id");
+            //Integer resultSize = 
+            DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "reference_id");
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);

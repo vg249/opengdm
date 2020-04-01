@@ -34,7 +34,7 @@ public class MapsetDaoTest {
     @Test
     public void getMapsetByIdTest() {
 
-        Integer testPageSize = 100;
+        //Integer testPageSize = 100;
 
         Mapset mapset = mapsetDao.getMapsetWithCountsById(2);
 

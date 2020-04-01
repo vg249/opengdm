@@ -136,7 +136,8 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
                 .get(MapsetDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-        MapsetDTO mapsetDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
+        //MapsetDTO mapsetDTOResponseForParams = 
+        resultEnvelopeForGetById.getPayload().getData().get(0);
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSET, mapsetDTOResponse.getMapsetId());
     }

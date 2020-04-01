@@ -11,7 +11,7 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "allowedProcessTypes", "entityNameType", "id"
 })

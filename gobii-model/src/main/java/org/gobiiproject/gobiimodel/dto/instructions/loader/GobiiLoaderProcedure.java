@@ -2,8 +2,6 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 import java.util.LinkedList;
 import java.util.List;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 public class GobiiLoaderProcedure {
 

@@ -11,12 +11,15 @@ import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import lombok.Data;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType",
         "dataFilePath"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class ExperimentDTO extends DTOBaseAuditable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -33,11 +36,11 @@ public class ExperimentDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="dataFile", entity= Experiment.class)
     private String dataFilePath;
 
-    @GobiiEntityMap(paramName="projectId", entity= Experiment.class)
+    @GobiiEntityMap(paramName="project.projectId", entity= Experiment.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer projectId;
 
-    @GobiiEntityMap(paramName="vendorProtocolId", entity= Experiment.class)
+    @GobiiEntityMap(paramName = "vendorProtocol.vendorProtocolId", entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer vendorProtocolId;
 
@@ -58,41 +61,5 @@ public class ExperimentDTO extends DTOBaseAuditable {
 
     @Override
     public void setId(Integer id) { this.experimentId = id; }
-
-    public Integer getExperimentId() { return this.experimentId; }
-
-    public void setExperimentId(Integer id) { this.experimentId = id; }
-
-    public String getExperimentName() { return this.experimentName; }
-
-    public void setExperimentName(String name) { this.experimentName = name; }
-
-    public String getCode() { return this.experimentCode; }
-
-    public void setCode(String code) { this.experimentCode = code; }
-
-    public String getDataFilePath() { return this.dataFilePath; }
-
-    public void setDataFilePath(String dataFile) { this.dataFilePath = dataFile; }
-
-    public String getDataFileUrl() { return this.dataFileUrl; }
-
-    public void setDataFileUrl(String dataFileUrl) { this.dataFileUrl = dataFileUrl; }
-
-    public Integer getProjectId() { return this.projectId; }
-
-    public void setProjectId(Integer projectId) { this.projectId = projectId; }
-
-    public Integer getVendorProtocolId() { return this.vendorProtocolId; }
-
-    public void setVendorProtocolId(Integer vendorProtocolId) { this.vendorProtocolId = vendorProtocolId; }
-
-    public Integer getManifestId() { return this.manifestId; }
-
-    public void setManifestId(Integer manifestId) { this.manifestId = manifestId; }
-
-    public String getExperimentStatus() { return this.experimentStatus; }
-
-    public void setExperimentStatus(String status) { this.experimentStatus = status; }
 
 }

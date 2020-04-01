@@ -74,7 +74,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
                 .get(OrganizationDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
-        OrganizationDTO organizationDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
+        //OrganizationDTO organizationDTOResponseForParams = 
+        resultEnvelopeForGetByID.getPayload().getData().get(0); //TODO: convert to assertion
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATION, organizationDTOResponse.getOrganizationId());
     }

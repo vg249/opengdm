@@ -183,7 +183,7 @@ public class DtoRequestAuthorizationTest {
                 tokenFromBodyResponse.equals(tokenHeader.getValue()));
 
         Assert.assertNotNull("Crop type was not returned", dtoHeaderAuth.getGobiiCropType());
-        String gobiiCropTypeReceived = dtoHeaderAuth.getGobiiCropType();
+        //String gobiiCropTypeReceived = dtoHeaderAuth.getGobiiCropType();
 
 
         // now test we can do a request with the token we got

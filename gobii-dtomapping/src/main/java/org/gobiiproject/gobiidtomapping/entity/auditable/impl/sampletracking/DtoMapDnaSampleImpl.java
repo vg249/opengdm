@@ -18,7 +18,7 @@ public class DtoMapDnaSampleImpl {
 
     public ProjectSamplesDTO createSamples(ProjectSamplesDTO projectSamplesDTO) throws GobiiDtoMappingException {
 
-        ProjectSamplesDTO returnVal = null;
+        //ProjectSamplesDTO returnVal = null;
 
         try {
 

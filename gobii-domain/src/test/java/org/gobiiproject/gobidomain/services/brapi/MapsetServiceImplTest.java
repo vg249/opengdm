@@ -1,6 +1,11 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl;
 import org.junit.Before;
@@ -9,13 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.isNull;
 
 /**
  * Created by VCalaminos on 7/18/2019.
@@ -39,13 +37,13 @@ public class MapsetServiceImplTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    @SuppressWarnings("unused")
     private List<Mapset> getMockMapsets(Integer listSize) {
 
-        List<Mapset> returnVal = new ArrayList();
+        List<Mapset> returnVal = new ArrayList<>();
 
 
         for(int i = 0; i < listSize; i++) {
-
 
             Mapset mapset = new Mapset();
 
@@ -55,8 +53,6 @@ public class MapsetServiceImplTest {
 
         }
 
-
-
         return returnVal;
    }
 
@@ -64,8 +60,7 @@ public class MapsetServiceImplTest {
     @Test
     public void testMainFieldsMapping() throws Exception {
 
-        final Integer pageSize = 1000;
-
+        //final Integer pageSize = 1000;
 
     }
 
@@ -73,7 +68,7 @@ public class MapsetServiceImplTest {
     @Test
     public void testAdditionalInfoMapping() throws Exception {
 
-        final Integer pageSize = 1000;
+        //final Integer pageSize = 1000;
 
     }
 

@@ -1,12 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
-import org.gobiiproject.gobiimodel.entity.DnaRun;
-import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 
-import java.math.BigDecimal;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 
 public class MarkerPositions {
 

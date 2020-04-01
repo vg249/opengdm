@@ -118,7 +118,8 @@ public class DtoCrudRequestManifestTest implements DtoCrudRequestTest {
                 .get(ManifestDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-        ManifestDTO manifestDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
+        //ManifestDTO manifestDTOResponseForParams = 
+        resultEnvelopeForGetById.getPayload().getData().get(0);
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MANIFEST, manifestDTOResponse.getManifestId());
 

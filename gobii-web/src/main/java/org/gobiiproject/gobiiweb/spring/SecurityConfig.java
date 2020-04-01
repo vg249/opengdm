@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     public SecurityConfig() {
         String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-        this.CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
+        SecurityConfig.CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
     }
 
     @Override

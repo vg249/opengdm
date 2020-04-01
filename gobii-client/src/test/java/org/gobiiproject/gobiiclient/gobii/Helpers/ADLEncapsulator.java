@@ -1,17 +1,13 @@
 package org.gobiiproject.gobiiclient.gobii.Helpers;
 
+import java.io.File;
+import java.util.UUID;
+
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.UUID;
-import java.util.stream.Stream;
-
+@SuppressWarnings("unused")
 public class ADLEncapsulator {
     private static final String INPUT_HOST = "-h";
     private static final String INPUT_USER = "-u";

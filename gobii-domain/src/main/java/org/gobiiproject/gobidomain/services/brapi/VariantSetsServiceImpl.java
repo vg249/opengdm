@@ -1,6 +1,14 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.codehaus.janino.Mod;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
@@ -10,16 +18,14 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.xml.crypto.Data;
-import java.text.MessageFormat;
-import java.util.*;
 
 
 public class VariantSetsServiceImpl implements VariantSetsService {

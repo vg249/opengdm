@@ -1,11 +1,9 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 
-import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.Project;
-
 import java.util.List;
-import java.util.Map;
+
+import org.gobiiproject.gobiimodel.entity.Dataset;
 
 public interface DatasetDao {
 

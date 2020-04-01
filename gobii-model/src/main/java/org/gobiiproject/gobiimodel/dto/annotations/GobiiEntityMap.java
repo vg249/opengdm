@@ -7,6 +7,7 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@SuppressWarnings("rawtypes")
 public @interface GobiiEntityMap {
 
     String paramName();
