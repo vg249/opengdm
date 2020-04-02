@@ -40,6 +40,7 @@ import org.gobiiproject.gobidomain.services.DisplayService;
 import org.gobiiproject.gobidomain.services.EntityStatsService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
+import org.gobiiproject.gobidomain.services.ExtractorService;
 import org.gobiiproject.gobidomain.services.FilesService;
 import org.gobiiproject.gobidomain.services.JobService;
 import org.gobiiproject.gobidomain.services.LoaderFilesService;
@@ -207,6 +208,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private DigesterService digesterService = null;
+
+    @Autowired
+    private ExtractorService extractorService = null;
 
     private Tika tika = new Tika();
 

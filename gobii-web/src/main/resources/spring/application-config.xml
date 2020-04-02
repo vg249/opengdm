@@ -276,6 +276,8 @@
     <bean id="digesterService"
           class=" org.gobiiproject.gobidomain.services.impl.DigesterServiceImpl"/>
 
+    <bean id="extractorService"
+          class=" org.gobiiproject.gobidomain.services.impl.ExtractorServiceImpl"/>
     <!-- **** Loader Instruction File Beans *************************************** -->
     <bean id="dtoMapLoaderInstructions"
           class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapDigesterProcedureImpl"/>
