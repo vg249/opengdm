@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -12,7 +10,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -45,6 +42,7 @@ import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
@@ -66,7 +64,6 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.*;
@@ -80,7 +77,7 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
  *
  * @author jdl232
  */
-@SuppressWarnings("WeakerAccess")
+
 public class GobiiExtractor {
     private String propertiesFile;
     private boolean verbose;
@@ -89,21 +86,8 @@ public class GobiiExtractor {
 
     private HDF5Interface hdf5Interface = new HDF5Interface();
 
-    /**
-     * Main class of Extractor. Takes optional arguments + location of a json-based instruction file
-     *
-     * @param args Command line arguments
-     */
-    public static void main(String[] args) {
+    public GobiiExtractor(String[] args) {
 
-		new GobiiExtractor().run(args);
-    }
-
-    public GobiiExtractor() {
-
-	}
-
-    public void run(String[] args) {
 		Options o = new Options()
 				.addOption("v", "verbose", false, "Verbose output")
 				.addOption("e", "errlog", true, "Error log override location")
@@ -133,6 +117,10 @@ public class GobiiExtractor {
 			System.exit(2);
 		}
 
+	}
+
+    public void run(ExtractorInstructionFilesDTO instructionDto) {
+
 		String extractorScriptPath = rootDir + "extractors/";
 		hdf5Interface.setPathToHDF5(extractorScriptPath + "hdf5/bin/");
 
@@ -151,30 +139,15 @@ public class GobiiExtractor {
 		ProcessMessage pm;
 
 		MailInterface mailInterface = new MailInterface(configuration);
-		String instructionFile;
-		if (args.length == 0 || args[0].equals("")) {
-			Scanner s = new Scanner(System.in);
-			System.out.println("Enter Extractor Instruction File Location:");
-			instructionFile = s.nextLine();
-			if (instructionFile.equals("")) instructionFile = "scripts//jdl232_01_pretty.json";
-			s.close();
-		} else {
-			instructionFile = args[0];
-		}
 
-		Logger.logInfo("Extractor", "Beginning extract of " + instructionFile);
+		Logger.logInfo("Extractor", "Beginning extract");
 		SimpleTimer.start("Extract");
 
-		List<GobiiExtractorInstruction> list = parseExtractorInstructionFile(instructionFile);
-		if (list == null || list.isEmpty()) {
-			Logger.logError("Extractor", "No instruction for file " + instructionFile);
-			return;
-		}
 
 		String logDir = configuration.getFileSystemLog();
 		String logFile = null;
 		if (logDir != null) {
-			String instructionName = new File(instructionFile).getName();
+			String instructionName = new File(instructionDto.getInstructionFileName()).getName();
 			instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
 			logFile = logDir + "/" + instructionName + ".log";
 			String oldLogFile = Logger.getLogFilepath();
@@ -187,26 +160,26 @@ public class GobiiExtractor {
 			return;
 		}
 
-		GobiiExtractorInstruction firstExtractInstruction=list.get(0);
+		List<GobiiExtractorInstruction> instructions = instructionDto.getGobiiExtractorInstructions();
+
+		GobiiExtractorInstruction firstExtractInstruction=instructions.get(0);
 		String firstCrop = firstExtractInstruction.getGobiiCropType();
 		String firstContactEmail = firstExtractInstruction.getContactEmail();
-		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
 
 		//Job Id is the 'name' part of the job file  /asd/de/name.json
-		String filename = new File(instructionFile).getName();
-		String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
+
+		String jobName = instructionDto.getInstructionFileName();
 		JobStatus jobStatus = null;
 		try {
-			jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
+			jobStatus = new JobStatus(configuration, firstCrop, jobName);
 		} catch (Exception e) {
 			Logger.logError("GobiiFileReader", "Error Checking Status", e);
 		}
 		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 
-		for (GobiiExtractorInstruction inst : list) {
+		for (GobiiExtractorInstruction inst : instructions) {
 			String crop = inst.getGobiiCropType();
 			String extractType = "";
-			if (crop == null) crop = divineCrop(instructionFile);
 			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
@@ -454,8 +427,8 @@ public class GobiiExtractor {
 
 					pm.addCriteria("Crop", inst.getGobiiCropType());
 					pm.addCriteria("Email", inst.getContactEmail());
-					pm.addCriteria("Job ID", jobFileName);
-					esw.addItem("Job ID", jobFileName);
+					pm.addCriteria("Job ID", jobName);
+					esw.addItem("Job ID", jobName);
 					esw.addItem("Submit as", inst.getContactEmail());
 					esw.addItem("Format", formatName);
 					if (!mapName.equals(defaultMapName)) {
@@ -480,7 +453,7 @@ public class GobiiExtractor {
 					esw.addItem("Principal Investigator", extract.getPrincipleInvestigator());
 					esw.addItem("Project", extract.getProject());
 
-					//turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
+					//turns /data/gobii_bundle/crops/zoan/extractor/instructionDto/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
 					//We're moving it into the extract directory when we're done now, so lets be vague as to its location.
 					//They'll find it if they want to
 
@@ -517,7 +490,7 @@ public class GobiiExtractor {
 					}
 
 					//Note - link to place where it *will* be if there are no errors. Sadly, we won't know if it's right until we've sent all the emails already
-					String finalIFPath= configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE) + FilenameUtils.getName(instructionFile);
+					String finalIFPath= configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE) + jobName;
 					pm.addPath("Instruction File", finalIFPath , true, configuration, false);
 					pm.addFolderPath("Output Directory", extractDir, configuration);
 					pm.addPath("Error Log", logFile, true, configuration, false);
@@ -655,12 +628,6 @@ public class GobiiExtractor {
 			} catch (Exception e) {
 				handleCriticalException(configuration, jobStatus, inst.getContactEmail(), e);
 			}
-		}
-		try {
-			String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE));
-		}
-		catch(Exception e){
-			handleCriticalException(configuration, jobStatus, firstContactEmail, e);
 		}
 	}
 
@@ -958,42 +925,6 @@ public class GobiiExtractor {
         //@Siva get confirmation on lowercase crop name?
         cropName = cropName.charAt(0) + cropName.substring(1).toLowerCase();
         return "[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";
-    }
-
-
-    /**
-     * Parses the extractor instruction file from the JSON object using the Object Mapper
-     *
-     * @param filename File to parse
-     * @return List of Extractor Instructions to work on
-     */
-    //Interesting fact, there are no global settings of any kind, each instruction is an island
-    public List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        GobiiExtractorInstruction[] file = null;
-
-        try {
-            file = objectMapper.readValue(new FileInputStream(filename), GobiiExtractorInstruction[].class);
-        } catch (Exception e) {
-            Logger.logError("Extractor", "ObjectMapper could not read instructions", e);
-        }
-        if (file == null) return null;
-        return Arrays.asList(file);
-    }
-
-    /**
-     * Determine crop type by looking at the instruction file's location for the name of a crop.
-     * This is a backup in case the JSON file doesn't specify the crop internally.
-     *
-     * @param instructionFile Location of the instruction file
-     * @return String representation of the Gobii Crop
-     */
-    private String divineCrop(String instructionFile) {
-        String upper = instructionFile.toUpperCase();
-        String from = "/CROPS/";
-        int fromIndex = upper.indexOf(from) + from.length();
-        String crop = upper.substring(fromIndex, upper.indexOf('/', fromIndex));
-        return crop;
     }
 
     private String getLogName(GobiiDataSetExtract gli, GobiiCropConfig config, Integer dsid) {

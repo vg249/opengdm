@@ -414,17 +414,6 @@ public class HelperFunctions {
     }
 
     /**
-     * Moves an instruction file from it's current folder to the 'done' folder
-     *
-     * @param instructionFile Fully qualified path to the instruction file
-     */
-    public static String completeInstruction(String instructionFile, String doneFolder) {
-        //Move instruction file
-        FileSystemInterface.mvToFolder(instructionFile, doneFolder ,true);
-        return (doneFolder + FilenameUtils.getName(instructionFile));
-    }
-
-    /**
      * Checks if a file exists AND is non-empty.
      *
      * @param fileLocation String representation of the file's location (absolute or relative).

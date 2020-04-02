@@ -16,7 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 public class DigesterProcessMessage extends ProcessMessage{
 
-	public DigesterProcessMessage create(ConfigSettings config, DigesterConfig digestConfig, LoaderInstructionFilesDTO instruction, DigestResults results) throws Exception {
+	public static DigesterProcessMessage create(ConfigSettings config, DigesterConfig digestConfig, LoaderInstructionFilesDTO instruction, DigestResults results) throws Exception {
 
 		GobiiLoaderProcedure procedure = instruction.getProcedure();
 
