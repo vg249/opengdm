@@ -11,7 +11,6 @@ package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -21,12 +20,14 @@ import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType", "status"
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ContactDTO extends DTOBaseAuditable {
 
     public ContactDTO() {

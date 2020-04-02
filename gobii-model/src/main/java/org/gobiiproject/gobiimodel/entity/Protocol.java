@@ -1,8 +1,11 @@
 /**
- * Platform.java
+ * Protocol.java
  * 
- * Platform Entity for GDMV3
+ * Protocol entity class
+ * @auhtor Rodolfo N. Duldulao, Jr.
+ * 
  */
+
 package org.gobiiproject.gobiimodel.entity;
 
 import javax.persistence.Column;
@@ -13,35 +16,46 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "platform")
+@Table(name="protocol")
+@NamedEntityGraph(
+    name = "protocol.platform",
+    attributeNodes = @NamedAttributeNode("platform")
+)
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class Platform extends BaseEntity{
+public class Protocol extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "platform_id")
-    private Integer platformId;
+    @Column(name = "protocol_id")
+    private Integer protocolId;
 
-    @Column(name="name")
-    private String platformName;
-
-    @Column(name="code")
-    private String platformCode;
+    @Column(name = "name")
+    private String name;
 
     @Column(name="description")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id")
     private Cv type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "platform_id")
+    private Platform platform;
 
     @Column(name="props")
     @Type(type = "CvPropertiesType")

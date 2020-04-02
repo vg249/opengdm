@@ -42,6 +42,7 @@ public class GlobalControllerExceptionHandler {
      */
     @ExceptionHandler(GobiiException.class)
     public ResponseEntity<ErrorPayload> GobiiExceptionHandler(GobiiException gEx) {
+        gEx.printStackTrace();
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError(gEx.getMessage());
         HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -113,6 +114,7 @@ public class GlobalControllerExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorPayload> GeneralExceptionHandler(Exception e) {
+        e.printStackTrace();
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Server Error");
         LOGGER.error(e.getMessage());

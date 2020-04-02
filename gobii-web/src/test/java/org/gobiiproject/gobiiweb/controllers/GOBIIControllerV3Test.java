@@ -29,10 +29,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
+import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -71,6 +73,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private ContactService contactService;
+
+    @Mock
+    private ExperimentService experimentService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -474,6 +479,38 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].piContactFirstName").value(mockItem.getPiContactFirstName()))
         ;
         verify(contactService, times(1)).getContacts(0, 1000, null);
+    }
+
+    @Test
+    public void testGetExperimentsSimple() throws Exception {
+        assert experimentService != null;
+        List<ExperimentDTO> mockList = new ArrayList<>();
+        ExperimentDTO mockItem = new ExperimentDTO();
+
+        mockList.add(mockItem);
+        PagedResult<ExperimentDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
+        when(
+            experimentService.getExperiments(0, 1000, null)
+        ).thenReturn(
+            mockPayload
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/experiments")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
+        .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
+        .andExpect(jsonPath("$.result.data[0].experimentId").value(mockItem.getExperimentId()))
+        ;
+        verify(experimentService, times(1)).getExperiments(0, 1000, null);
     }
     
 }

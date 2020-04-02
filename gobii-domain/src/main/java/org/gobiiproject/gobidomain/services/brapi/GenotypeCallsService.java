@@ -1,7 +1,5 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import java.util.List;
-
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
