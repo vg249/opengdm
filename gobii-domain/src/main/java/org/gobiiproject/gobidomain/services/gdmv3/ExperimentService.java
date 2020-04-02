@@ -9,6 +9,7 @@
  package org.gobiiproject.gobidomain.services.gdmv3;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface ExperimentService {
@@ -16,5 +17,7 @@ public interface ExperimentService {
 	PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId);
 
 	ExperimentDTO getExperiment(Integer i) throws Exception;
+
+	Object createExperiment(ExperimentRequest any) throws Exception;
 
  }

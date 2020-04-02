@@ -95,4 +95,16 @@ public class ExperimentDaoImpl implements ExperimentDao {
         hints.put("javax.persistence.fetchgraph", graph);
         return em.find(Experiment.class, i, hints);
     }
+
+    @Override
+    public VendorProtocol getVendorProtocol(Integer vendorProtocolId) {
+        return em.find(VendorProtocol.class, vendorProtocolId);
+    }
+
+    @Override
+    public Experiment createExperiment(Experiment experiment) {
+        em.persist(experiment);
+        em.flush();
+        return experiment;
+    }
 }

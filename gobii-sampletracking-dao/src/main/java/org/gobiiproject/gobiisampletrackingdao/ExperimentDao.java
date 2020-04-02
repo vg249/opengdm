@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 
 import java.util.List;
 
@@ -10,5 +11,9 @@ public interface ExperimentDao {
                                     Integer projectId);
 
 	Experiment getExperiment(Integer i) throws Exception;
+
+	VendorProtocol getVendorProtocol(Integer vendorProtocolId);
+
+	Experiment createExperiment(Experiment experiment);
 
 }
