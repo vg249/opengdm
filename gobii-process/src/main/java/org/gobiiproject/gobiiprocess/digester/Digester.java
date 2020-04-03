@@ -602,7 +602,7 @@ public class Digester {
         if (fileList == null) return;
         for (File f : fileList) {
             if (f.getName().endsWith("." + tableName)) {
-                if(!onlyTemps || (f.getName().startsWith("digest."))) {
+                if(!onlyTemps || (!f.getName().startsWith("digest."))) {
                     rmIfExist(f);
                 }
             }
