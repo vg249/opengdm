@@ -147,7 +147,7 @@ public class GobiiExtractor {
 		Logger.logInfo("Extractor", "Beginning extract");
 		SimpleTimer.start("Extract");
 
-		GobiiExtractProcedure procedure = parseExtractorInstructionFile(instructionFile);
+		GobiiExtractProcedure procedure = instructionDto.getProcedure();
 
 
 		String logDir = configuration.getFileSystemLog();
@@ -167,7 +167,7 @@ public class GobiiExtractor {
 		}
 
 		String crop = procedure.getMetadata().getGobiiCropType();
-		List<GobiiExtractorInstruction> instructions = instructionDto.getGobiiExtractorInstructions();
+		List<GobiiExtractorInstruction> instructions = procedure.getInstructions();
 
 		//Job Id is the 'name' part of the job file  /asd/de/name.json
 
