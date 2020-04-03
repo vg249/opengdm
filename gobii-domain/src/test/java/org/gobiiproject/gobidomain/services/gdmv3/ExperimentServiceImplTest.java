@@ -12,11 +12,13 @@ import static org.mockito.Mockito.when;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
+import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
@@ -35,6 +37,9 @@ public class ExperimentServiceImplTest {
 
     @Mock
     private ProjectDao projectDao;
+
+    @Mock
+    private ContactDao contactDao;
 
     @InjectMocks
     private ExperimentServiceImpl experimentServiceImpl;
@@ -101,6 +106,13 @@ public class ExperimentServiceImplTest {
             dummyVp
         );
 
+        Contact dummyContact = new Contact();
+        dummyContact.setContactId(1);
+
+        when(
+            contactDao.getContactByUsername("test-user")
+        ).thenReturn(dummyContact);
+
         Experiment experiment = new Experiment();
         experiment.setExperimentName("test-experiment");
         experiment.setProject(dummyProject);
@@ -112,11 +124,12 @@ public class ExperimentServiceImplTest {
             experiment
         );
 
-        ExperimentDTO target = experimentServiceImpl.createExperiment(request);
+        ExperimentDTO target = experimentServiceImpl.createExperiment(request, "test-user");
         assert target.getExperimentName() == experiment.getExperimentName();
         verify(projectDao, times(1)).getProject(7);
         verify(experimentDao, times(1)).getVendorProtocol(4);
         verify(experimentDao, times(1)).createExperiment( Mockito.any(Experiment.class));
+        verify(contactDao, times(1)).getContactByUsername("test-user");
         
     }
 

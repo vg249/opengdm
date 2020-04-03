@@ -559,10 +559,13 @@ public class GOBIIControllerV3Test {
     public void testCreateExperimentsSimple() throws Exception {
         String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
         when(
-            experimentService.createExperiment( any( ExperimentRequest.class) )
+            experimentService.createExperiment( any( ExperimentRequest.class), eq("test-user" ))
         ).thenReturn(
             new ExperimentDTO()
         );
+        when(
+            projectService.getDefaultProjectEditor() //TODO: Refactor where this editor info is called
+        ).thenReturn("test-user");
 
         mockMvc.perform(
             MockMvcRequestBuilders
@@ -576,7 +579,7 @@ public class GOBIIControllerV3Test {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
-        verify(experimentService, times(1)).createExperiment( any( ExperimentRequest.class ));
+        verify(experimentService, times(1)).createExperiment( any( ExperimentRequest.class ), eq("test-user"));
     }
     
 }

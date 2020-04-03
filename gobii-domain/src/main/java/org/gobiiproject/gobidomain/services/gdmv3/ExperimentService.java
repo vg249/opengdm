@@ -8,6 +8,8 @@
 
  package org.gobiiproject.gobidomain.services.gdmv3;
 
+import javax.validation.Valid;
+
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -18,6 +20,6 @@ public interface ExperimentService {
 
 	ExperimentDTO getExperiment(Integer i) throws Exception;
 
-	Object createExperiment(ExperimentRequest any) throws Exception;
+	ExperimentDTO createExperiment(ExperimentRequest experiment, String userName) throws Exception;
 
  }

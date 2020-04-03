@@ -28,6 +28,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
@@ -313,7 +314,7 @@ public class GOBIIControllerV3  {
     }
 
     /**
-     * Get Exoeriment endpoint handler
+     * Get Experiment endpoint handler
      * 
      * @param experimentId
      * @return
@@ -329,8 +330,42 @@ public class GOBIIControllerV3  {
         result.setResult(experiment);
         result.setMetadata(null);
         return ResponseEntity.ok(result);
-
     }
+
+    /**
+     * createExperiment
+     * 
+     * Create new project
+     * @since 2020-03-13
+     */
+    @PostMapping("/experiments")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> createProject(
+            @RequestBody @Valid final ExperimentRequest experiment,
+            BindingResult bindingResult
+    ) throws Exception {
+        if (bindingResult.hasErrors()) {
+            List<String> info = new ArrayList<String>();
+        
+            bindingResult.getFieldErrors().forEach(
+                objErr -> {
+                    info.add(objErr.getField() + " " + objErr.getDefaultMessage());
+                }
+            );
+            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
+        } 
+        BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
+
+        //Get the current user
+        String userName = projectService.getDefaultProjectEditor();
+        ExperimentDTO createdDTO = experimentService.createExperiment(experiment, userName);
+        result.setResult(createdDTO);
+        result.setMetadata(null);
+        return ResponseEntity.created(null).body(result);
+    }
+
+
+    
 
     public ProjectService getProjectService() {
         return projectService;
