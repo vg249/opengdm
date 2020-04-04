@@ -146,7 +146,8 @@ public class BrAPIv2Controller {
 
 
     @RequestMapping(value="/studies", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getStudies(
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<StudiesDTO>> getStudies(
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value  = "page", required = false,
