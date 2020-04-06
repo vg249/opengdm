@@ -1,19 +1,28 @@
 #!/usr/bin/env python
 
-import sys
 import argparse
 import json
 import os
+
 
 try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict
 
-swagger_json_path = "/Users/vishnugovindaraj/gobiiproject/gobii-web/src/main/resources/docs/generated/swagger/brapi/swagger.json"
-doc_md_path = "/Users/vishnugovindaraj/gobiiproject/gobii-web/src/main/resources/docs/source/brapi/"
+#swagger_json_path = ("/Users/vishnugovindaraj/gobiiproject/"
+#                     "gobii-web/src/main/resources/docs/"
+#                     "generated/swagger/brapi/swagger.json")
 
-parser = argparse.ArgumentParser(description="Formats Swagger JSON to YAML file compatible with Apiary")
+swagger_json_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/generated/swagger/brapi/swagger.json"
+
+#doc_md_path = ("/Users/vishnugovindaraj/gobiiproject/"
+#               "gobii-web/src/main/resources/docs/source/brapi/")
+
+doc_md_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/source/brapi/"
+
+parser = argparse.ArgumentParser(
+    description="Formats Swagger JSON to YAML file compatible with Apiary")
 
 args = parser.parse_args()
 
@@ -23,7 +32,9 @@ with open(swagger_json_path) as js_f:
 paths = d["paths"]
 tags = OrderedDict()
 
-tags_order = ["ServerInfo", "CallSets", "VariantSets", "NoTag"]
+tags_order = ["ServerInfo", "Authentication", "Genome Maps",
+              "Samples", "CallSets", "Variants",
+              "VariantSets", "Search Genotypes", "NoTag"]
 
 paths_by_tags = {}
 
@@ -33,8 +44,10 @@ for path in paths:
     x_tag_description = None
     for crud in requests:
         tag = None
-        if requests[crud]["summary"] is not None:
-            md_file = doc_md_path + "_".join(requests[crud]["summary"].split(" ")) + ".md"
+        if "summary" in requests[crud] and requests[crud]["summary"] is not None:
+            md_file = (
+                doc_md_path +
+                "_".join(requests[crud]["summary"].split(" ")) + ".md")
             if os.path.isfile(md_file):
                 with open(md_file) as md_f:
                     requests[crud]["description"] = md_f.read()
@@ -65,7 +78,7 @@ for path in paths:
 security_definitions = d["securityDefinitions"]
 
 for tag in tags:
-    tag_description_file = doc_md_path + tag  + "_Overview.md"
+    tag_description_file = doc_md_path + tag + "_Overview.md"
     if os.path.isfile(tag_description_file):
         with open(tag_description_file) as tag_f:
             tags[tag]["description"] = tag_f.read()
@@ -90,5 +103,3 @@ d["paths"] = paths
 with open('result.json', 'w') as json_f:
     api_doc_str = json.dumps(d)
     json_f.write(api_doc_str)
-
-
