@@ -140,6 +140,7 @@ public class ExperimentServiceImplTest {
 
         Experiment dummyExperiment = new Experiment();
         dummyExperiment.setExperimentId(123);
+        
 
         when(
             experimentDao.getExperiment(123)
@@ -194,7 +195,7 @@ public class ExperimentServiceImplTest {
         experiment.setVendorProtocol(dummyVp);
         
         when(
-            experimentDao.createExperiment(Mockito.any(Experiment.class))
+            experimentDao.updateExperiment(Mockito.any(Experiment.class))
         ).thenReturn(
             experiment
         );
