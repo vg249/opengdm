@@ -126,11 +126,11 @@ public class BrAPIv2Controller {
                     new BrapiResponseMapCalls(request);
 
 
-            payload.setServerInfo(
-                    brapiResponseServerInfos.getBrapi2ServerInfos(),
-                    brapiResponseServerInfos
-                            .getBrapi2ServerInfos().size(),
-                    0);
+            //payload.setServerInfo(
+            //        brapiResponseServerInfos.getBrapi2ServerInfos(),
+            //        brapiResponseServerInfos
+            //                .getBrapi2ServerInfos().size(),
+            //        0);
 
             return ResponseEntity.ok(payload);
 
@@ -200,16 +200,18 @@ public class BrAPIv2Controller {
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets",
+                    @ApiResponse(code = 200, message = "",
                             response = CallSetListResponse.class
                     )
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required=true,
-                paramType = "header", dataType = "string")
+            @ApiImplicitParam(name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
     })
-    @RequestMapping(value="/callsets", method=RequestMethod.GET)
+    @RequestMapping(value="/callsets", method=RequestMethod.GET,
+            produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSets(
             @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
