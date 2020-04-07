@@ -16,4 +16,6 @@ public interface ExperimentDao {
 
 	Experiment createExperiment(Experiment experiment);
 
+	Experiment updateExperiment(Experiment target);
+
 }

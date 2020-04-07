@@ -107,4 +107,11 @@ public class ExperimentDaoImpl implements ExperimentDao {
         em.flush();
         return experiment;
     }
+
+    @Override
+    public Experiment updateExperiment(Experiment target) {
+        Experiment experiment = em.merge(target);
+        em.flush();
+        return experiment;
+    }
 }

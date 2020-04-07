@@ -92,12 +92,11 @@ public class ProjectDaoImpl implements ProjectDao {
     @Transactional
     @Override
     public Project patchProject(Project projectToBePatched) throws Exception {   
-        assert projectToBePatched.getProperties() != null;  
-        log.debug("Patch me " + projectToBePatched.getProperties());
+        //assert projectToBePatched.getProperties() != null;  
+        //log.debug("Patch me " + projectToBePatched.getProperties());
         Project patchedProject = em.merge(projectToBePatched);
         //assert patchedProject.getProperties() != null;
         em.flush();
-        //em.refresh(project);
         return patchedProject;
 
     }

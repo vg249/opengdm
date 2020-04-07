@@ -35,6 +35,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
@@ -580,6 +581,32 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
         verify(experimentService, times(1)).createExperiment( any( ExperimentRequest.class ), eq("test-user"));
+    }
+
+    @Test
+    public void testUpdateExperimentSimple() throws Exception {
+        String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
+        when(
+            experimentService.updateExperiment(123,  any( ExperimentPatchRequest.class), eq("test-user"))
+        ).thenReturn(
+            new ExperimentDTO()
+        );
+        when(
+            projectService.getDefaultProjectEditor() //TODO: replace this with AuthenticationService
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/experiments/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonRequest)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        ;
+        verify(experimentService, times(1)).updateExperiment(123,  any( ExperimentPatchRequest.class ), eq("test-user"));
     }
     
 }
