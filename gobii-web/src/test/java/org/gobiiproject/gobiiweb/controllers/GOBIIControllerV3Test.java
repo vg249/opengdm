@@ -587,7 +587,7 @@ public class GOBIIControllerV3Test {
     public void testUpdateExperimentSimple() throws Exception {
         String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
         when(
-            experimentService.updateExperiment(123,  any( ExperimentPatchRequest.class), eq("test-user"))
+            experimentService.updateExperiment(eq(123),  any( ExperimentPatchRequest.class), eq("test-user"))
         ).thenReturn(
             new ExperimentDTO()
         );
@@ -606,7 +606,7 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         ;
-        verify(experimentService, times(1)).updateExperiment(123,  any( ExperimentPatchRequest.class ), eq("test-user"));
+        verify(experimentService, times(1)).updateExperiment(eq(123),  any( ExperimentPatchRequest.class ), eq("test-user"));
     }
     
 }

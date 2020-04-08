@@ -8,8 +8,6 @@
 
  package org.gobiiproject.gobidomain.services.gdmv3;
 
-import javax.validation.Valid;
-
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;

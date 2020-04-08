@@ -108,7 +108,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         if (target == null) {
             throw new GobiiDaoException(
                 GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                 "Unknown experiment"
             );
         }
@@ -146,10 +146,8 @@ public class ExperimentServiceImpl implements ExperimentService {
         target.setModifiedBy(contact.getContactId());
         target.setModifiedDate(new java.util.Date());
 
-        target = experimentDao.updateExperiment(target);
-        ExperimentDTO dto = new ExperimentDTO();
-        ModelMapper.mapEntityToDto(target, dto);
-        return dto;
+        experimentDao.updateExperiment(target);
+        return this.getExperiment(target.getExperimentId());
     }
     
 }

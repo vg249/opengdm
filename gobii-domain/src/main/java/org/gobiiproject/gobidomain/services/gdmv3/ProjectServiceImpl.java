@@ -149,13 +149,14 @@ public class ProjectServiceImpl implements ProjectService {
     public GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy)
             throws Exception {
         Project project = projectDao.getProject(projectId);
-
         if (project == null) {
             throw new NullPointerException("Project not found.");
         }
+
+        String projContactId = project.getPiContactId().toString();
         
         //convert
-        if (request.keyInPayload("piContactId")) {   
+        if (request.keyInPayload("piContactId") && !projContactId.equals(request.getPiContactId())) {   
             this.updateAttributes(project, "piContactId", request.getPiContactId());
         }
         if (request.keyInPayload("projectName")) {
@@ -188,10 +189,8 @@ public class ProjectServiceImpl implements ProjectService {
         }
         project.setStatus(cv);
 
-        project = projectDao.patchProject(project);
-        GobiiProjectDTO dto = createProjectDTO(project, null);
-
-        return dto;
+        projectDao.patchProject(project);
+        return getProject(project.getProjectId());
     }
 
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
@@ -210,6 +209,7 @@ public class ProjectServiceImpl implements ProjectService {
     private GobiiProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
+        System.out.println("Convert " + project.getPiContactId() + " -> " + dto.getPiContactId());
         if (cvs == null) {
             cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         }

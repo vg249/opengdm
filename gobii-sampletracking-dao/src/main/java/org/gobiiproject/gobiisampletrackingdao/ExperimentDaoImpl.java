@@ -90,10 +90,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
     @Override
     public Experiment getExperiment(Integer i) throws Exception {
-        EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
-        Map<String, Object> hints = new HashMap<>();
-        hints.put("javax.persistence.fetchgraph", graph);
-        return em.find(Experiment.class, i, hints);
+        return em.find(Experiment.class, i, getHints());
     }
 
     @Override
@@ -109,9 +106,17 @@ public class ExperimentDaoImpl implements ExperimentDao {
     }
 
     @Override
-    public Experiment updateExperiment(Experiment target) {
+    public Experiment updateExperiment(Experiment target) throws Exception {
         Experiment experiment = em.merge(target);
         em.flush();
-        return experiment;
+        //em.refresh(experiment, getHints());
+        return this.getExperiment(experiment.getExperimentId());
+    }
+
+    private Map<String, Object> getHints() {
+        EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.loadgraph", graph);
+        return hints;
     }
 }
