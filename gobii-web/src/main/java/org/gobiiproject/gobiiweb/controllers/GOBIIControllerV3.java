@@ -209,7 +209,6 @@ public class GOBIIControllerV3  {
         this.checkBindingErrors(bindingResult);
         String userName = projectService.getDefaultProjectEditor();
         GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
-        assert dto.getPiContactId() != null;
         BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
         payload.setResult(dto);
         payload.setMetadata(null);
