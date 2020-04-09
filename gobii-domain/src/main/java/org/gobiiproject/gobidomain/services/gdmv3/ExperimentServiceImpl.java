@@ -109,14 +109,9 @@ public class ExperimentServiceImpl implements ExperimentService {
         experiment.setCreatedBy(contact.getContactId());
         experiment.setCreatedDate(new java.util.Date());
 
-        try {
-            experiment = experimentDao.createExperiment(experiment);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
         
-
+        experiment = experimentDao.createExperiment(experiment);
+        
         ExperimentDTO dto = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, dto);
         return dto;
