@@ -215,7 +215,6 @@ public class ProjectServiceImpl implements ProjectService {
     private GobiiProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
         GobiiProjectDTO dto = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, dto);
-        System.out.println("Convert " + project.getPiContactId() + " -> " + dto.getPiContactId());
         if (cvs == null) {
             cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         }
