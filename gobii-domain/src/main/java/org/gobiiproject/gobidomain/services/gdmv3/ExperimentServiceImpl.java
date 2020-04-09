@@ -171,7 +171,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         return this.getExperiment(target.getExperimentId());
     }
 
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     @Override
     public void deleteExperiment(Integer experimentId) throws Exception {
         Experiment experiment = experimentDao.getExperiment(experimentId);
