@@ -76,7 +76,10 @@ public class BrAPIv2Controller {
 
 
     private class CallSetResponse extends BrApiMasterPayload<CallSetDTO>{}
-    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
+    private class CallSetListResponse
+            extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
+    private class StudiesListResponse
+            extends BrApiMasterPayload<BrApiResult<StudiesDTO>>{}
     private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
     private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
     private class VariantResponse extends BrApiMasterPayload<VariantDTO>{}
@@ -144,15 +147,46 @@ public class BrAPIv2Controller {
 
     }
 
-
-    @RequestMapping(value="/studies", method=RequestMethod.GET)
+    @ApiOperation(
+            value = "List Studies",
+            notes = "List of Studies in GDM.",
+            tags = {"Studies"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Studies")
+                    })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "",
+                            response = StudiesListResponse.class
+                    )
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
+    })
+    @RequestMapping(value="/studies",
+            method=RequestMethod.GET,
+            produces = "application/json")
     public @ResponseBody
     ResponseEntity<BrApiMasterListPayload<StudiesDTO>> getStudies(
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @ApiParam(value = "Used to request a specific page " +
+                    "of data to be returned. The page indexing starts at " +
+                    "0 (the first page is 'page'= 0). Default is 0")
             @RequestParam(value  = "page", required = false,
                     defaultValue = BrapiDefaults.pageNum) Integer page,
-            @RequestParam(value = "projectId", required = false) Integer projectId
+            @ApiParam(value = "Filter by Project Id")
+            @RequestParam(value = "projectId", required = false)
+                    Integer projectId
     ) {
         try {
 
@@ -160,10 +194,10 @@ public class BrAPIv2Controller {
                     pageSize, page,
                     projectId);
 
-            BrApiMasterListPayload<StudiesDTO> payload = new BrApiMasterListPayload<>(
-                    studies.getResult(),
-                    studies.getCurrentPageSize(),
-                    studies.getCurrentPageNum());
+            BrApiMasterListPayload<StudiesDTO> payload =
+                    new BrApiMasterListPayload<>(
+                            studies.getResult(), studies.getCurrentPageSize(),
+                            studies.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -274,7 +308,7 @@ public class BrAPIv2Controller {
             @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
+    @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET, produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<CallSetDTO>> getCallSetsByCallSetDbId(
             @ApiParam(value = "ID of the Callset to be extracted", required = true)
             @PathVariable("callSetDbId") Integer callSetDbId) {

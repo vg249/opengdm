@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.dto.brapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModelProperty;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 
@@ -12,25 +13,30 @@ public class StudiesDTO {
     @GobiiEntityMap(paramName = "experimentId",
             entity = Experiment.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(example = "2")
     private Integer studyDbId;
 
     @GobiiEntityMap(paramName = "experimentName",
             entity = Experiment.class)
+    @ApiModelProperty(example = "foo study")
     private String studyName;
 
 
     @GobiiEntityMap(paramName = "project.contact.contactId",
             entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(example = "3")
     private Integer contactDbId;
 
     @GobiiEntityMap(paramName = "project.contact.email",
             entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(example = "example@***")
     private String email;
 
     @GobiiEntityMap(paramName = "experimentCode",
             entity = Experiment.class)
+    @ApiModelProperty(example = "bar code")
     private String studyCode;
 
     public Integer getStudyDbId() {

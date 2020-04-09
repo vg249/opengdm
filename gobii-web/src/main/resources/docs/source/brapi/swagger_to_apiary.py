@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+"""
+Simple python script to convert swagger json file to api blueprint file.
+"""
 
 import argparse
 import json
 import os
+import sys
 
 
 try:
@@ -10,32 +14,43 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
-#swagger_json_path = ("/Users/vishnugovindaraj/gobiiproject/"
-#                     "gobii-web/src/main/resources/docs/"
-#                     "generated/swagger/brapi/swagger.json")
-
-swagger_json_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/generated/swagger/brapi/swagger.json"
-
-#doc_md_path = ("/Users/vishnugovindaraj/gobiiproject/"
-#               "gobii-web/src/main/resources/docs/source/brapi/")
-
-doc_md_path = "/home/vg249/gobiiproject/gobii-web/src/main/resources/docs/source/brapi/"
+tags_order = ["ServerInfo", "Authentication", "Studies", "Genome Maps",
+              "Samples", "CallSets", "Variants",
+              "VariantSets", "Search Genotypes", "NoTag"]
+swagger_json_path = None
+doc_md_path = None
 
 parser = argparse.ArgumentParser(
     description="Formats Swagger JSON to YAML file compatible with Apiary")
 
+parser.add_argument("--input",
+                    help=("json file with input properties "
+                            "like swagger json path."))
+
 args = parser.parse_args()
 
-with open(swagger_json_path) as js_f:
-    d = json.load(js_f, object_pairs_hook=OrderedDict)
 
-paths = d["paths"]
+if args.input is None or not os.path.isfile(args.input):
+    """
+    Condition to check whether input properties file in provided.
+    """
+    print("Requires input file")
+    sys.exit()
+
+with open(args.input) as input_properties_file:
+    input_properties = json.load(input_properties_file)
+    if "swagger_json_path" in input_properties:
+        swagger_json_path = input_properties["swagger_json_path"]
+        with open(swagger_json_path) as js_f:
+            swagger_obj = json.load(js_f, object_pairs_hook=OrderedDict)
+    else:
+        print("Requires swagger json file")
+        sys.exit()
+    if "doc_md_path" in input_properties:
+
+
+paths = swagger_obj["paths"]
 tags = OrderedDict()
-
-tags_order = ["ServerInfo", "Authentication", "Genome Maps",
-              "Samples", "CallSets", "Variants",
-              "VariantSets", "Search Genotypes", "NoTag"]
-
 paths_by_tags = {}
 
 for path in paths:
@@ -44,13 +59,15 @@ for path in paths:
     x_tag_description = None
     for crud in requests:
         tag = None
-        if "summary" in requests[crud] and requests[crud]["summary"] is not None:
-            md_file = (
-                doc_md_path +
-                "_".join(requests[crud]["summary"].split(" ")) + ".md")
-            if os.path.isfile(md_file):
-                with open(md_file) as md_f:
-                    requests[crud]["description"] = md_f.read()
+        if ("summary" in requests[crud] and
+                requests[crud]["summary"] is not None):
+            if doc_md_path is not None:
+                md_file = (
+                    doc_md_path +
+                    "_".join(requests[crud]["summary"].split(" ")) + ".md")
+                if os.path.isfile(md_file):
+                    with open(md_file) as md_f:
+                        requests[crud]["description"] = md_f.read()
         if "tags" in requests[crud]:
             if requests[crud]["tags"][0] not in tags:
                 tag = OrderedDict()
@@ -75,15 +92,16 @@ for path in paths:
     if len(x_summary) > 0:
         requests["x-summary"] = ", ".join(x_summary)
 
-security_definitions = d["securityDefinitions"]
+security_definitions = swagger_obj["securityDefinitions"]
 
-for tag in tags:
-    tag_description_file = doc_md_path + tag + "_Overview.md"
-    if os.path.isfile(tag_description_file):
-        with open(tag_description_file) as tag_f:
-            tags[tag]["description"] = tag_f.read()
+if doc_md_path is not None:
+    for tag in tags:
+        tag_description_file = doc_md_path + tag + "_Overview.md"
+        if os.path.isfile(tag_description_file):
+            with open(tag_description_file) as tag_f:
+                tags[tag]["description"] = tag_f.read()
 
-d["tags"] = tags.values()
+swagger_obj["tags"] = tags.values()
 
 paths = OrderedDict()
 unorderder_paths = {}
@@ -92,14 +110,14 @@ if len(tags_order) > 0:
     for tag in tags_order:
         if tag in paths_by_tags:
             for path in paths_by_tags[tag]:
-                paths[path] = d["paths"][path]
+                paths[path] = swagger_obj["paths"][path]
 
-for path in d["paths"]:
+for path in swagger_obj["paths"]:
     if path not in paths:
-        paths[path] = d["paths"][path]
+        paths[path] = swagger_obj["paths"][path]
 
-d["paths"] = paths
+swagger_obj["paths"] = paths
 
 with open('result.json', 'w') as json_f:
-    api_doc_str = json.dumps(d)
+    api_doc_str = json.dumps(swagger_obj)
     json_f.write(api_doc_str)
