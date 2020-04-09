@@ -97,10 +97,25 @@ public class ExperimentServiceImpl implements ExperimentService {
         experiment.setProject(project);
         experiment.setVendorProtocol(vp);
 
+        //set code 
+        String code = String.format(
+            "%s_%d",
+            request.getExperimentName().replaceAll("\\s+", "_"),
+            project.getProjectId()
+        );
+
+        experiment.setExperimentCode(code);
+
         experiment.setCreatedBy(contact.getContactId());
         experiment.setCreatedDate(new java.util.Date());
 
-        experiment = experimentDao.createExperiment(experiment);
+        try {
+            experiment = experimentDao.createExperiment(experiment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        
 
         ExperimentDTO dto = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, dto);
