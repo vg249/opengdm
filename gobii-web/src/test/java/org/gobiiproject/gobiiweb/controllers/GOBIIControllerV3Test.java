@@ -608,5 +608,22 @@ public class GOBIIControllerV3Test {
         ;
         verify(experimentService, times(1)).updateExperiment(eq(123),  any( ExperimentPatchRequest.class ), eq("test-user"));
     }
+
+    @Test
+    public void testDeleteExperiment() throws Exception {
+        
+        doNothing().when(experimentService).deleteExperiment(eq(123));
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(experimentService, times(1)).deleteExperiment(eq(123));
+    }
+
     
 }

@@ -23,4 +23,6 @@ public interface ExperimentService {
 
 	ExperimentDTO updateExperiment(Integer experimentId, ExperimentPatchRequest any, String eq) throws Exception;
 
+	void deleteExperiment(Integer experimentId) throws Exception;
+
  }

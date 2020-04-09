@@ -116,7 +116,6 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public void deleteProject(Project project) throws Exception {
         try {
-            project = em.merge(project);
             em.remove(project);
             em.flush();
         } catch (javax.persistence.PersistenceException pe) {

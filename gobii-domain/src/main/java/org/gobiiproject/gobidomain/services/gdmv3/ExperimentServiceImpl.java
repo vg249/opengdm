@@ -155,5 +155,17 @@ public class ExperimentServiceImpl implements ExperimentService {
         experimentDao.updateExperiment(target);
         return this.getExperiment(target.getExperimentId());
     }
+
+    @org.springframework.transaction.annotation.Transactional
+    @Override
+    public void deleteExperiment(Integer experimentId) throws Exception {
+        Experiment experiment = experimentDao.getExperiment(experimentId);
+        if (experiment == null) {
+            throw new NullPointerException("Experiment not found");
+        }
+
+        experimentDao.deleteExperiment(experiment);
+
+    }
     
 }
