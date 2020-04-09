@@ -10,6 +10,8 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -39,6 +41,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired
     private ContactDao contactDao;
 
+    @Transactional
     @Override
     public PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId) {
         // TODO Auto-generated method stub
@@ -60,6 +63,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         return pagedResult;
     }
 
+    @Transactional
     @Override
     public ExperimentDTO getExperiment(Integer i) throws Exception {
         Experiment experiment = experimentDao.getExperiment(i);
@@ -70,6 +74,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         return dto;
     }
 
+    @Transactional
     @Override
     public ExperimentDTO createExperiment(ExperimentRequest request, String createdBy) throws Exception {
         Project project = projectDao.getProject(request.getProjectId());
@@ -102,6 +107,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         return dto;
     }
 
+    @Transactional
     @Override
     public ExperimentDTO updateExperiment(Integer experimentId, ExperimentPatchRequest request, String updatedBy) throws Exception {
         Experiment target = experimentDao.getExperiment(experimentId);

@@ -110,7 +110,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
         Experiment experiment = em.merge(target);
         em.flush();
         //em.refresh(experiment, getHints());
-        return this.getExperiment(experiment.getExperimentId());
+        return experiment;
     }
 
     private Map<String, Object> getHints() {
