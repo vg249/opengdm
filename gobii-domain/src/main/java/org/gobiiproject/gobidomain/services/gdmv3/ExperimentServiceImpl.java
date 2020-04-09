@@ -97,6 +97,14 @@ public class ExperimentServiceImpl implements ExperimentService {
         experiment.setProject(project);
         experiment.setVendorProtocol(vp);
 
+        //set code 
+        String code = String.format(
+            "%s_%d",
+            request.getExperimentName().replaceAll("\\s+", "_"),
+            project.getProjectId()
+        );
+
+        experiment.setExperimentCode(code);
 
         experiment.setCreatedBy(contact.getContactId());
         experiment.setCreatedDate(new java.util.Date());
