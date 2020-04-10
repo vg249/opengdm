@@ -9,21 +9,11 @@ public class BrApiResult<T> {
 
     private List<T> data;
 
-    private List<T> calls;
-
     public List<T> getData() {
         return this.data;
     }
 
     public void setData(List<T> data) {
         this.data = data;
-    }
-
-    public List<T> getCalls() {
-        return calls;
-    }
-
-    public void setCalls(List<T> calls) {
-        this.calls = calls;
     }
 }

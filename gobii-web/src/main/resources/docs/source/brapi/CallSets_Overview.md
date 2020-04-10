@@ -14,7 +14,7 @@ sampleName | String | Dna Sample Name
 variantSetIds | Array | List of datasets to which the dnarun belongs to.
 germplasmDbId | String | Germplasm to which dna sample of the dna run belongs to.
 germplasmName | String | Name of the germplasm to which dna sample of dna run belongs to.
-additionalInfo | String | User defined additional properties.
+additionalInfo | Object | Object for other miscellaneous fields.
 createdBy | Integer | Contact Id of the user who created the VariantSet.
 created | Date String | Created date string in UTC
 updatedBy | Integer | Contact Id of the user who modified the VariantSet.
@@ -26,15 +26,15 @@ updated | Date String | Modified date string in UTC
 
     {
         "callSetDbId": "6",
-        "callSetName": "WL18PVSD000001",
+        "callSetName": "call foo",
         "studyDbId": "2",
-        "sampleDbId": "6",
-        "sampleName": "WL18PVSD000001",
+        "sampleDbId": "4",
+        "sampleName": "bar sample",
         "variantSetIds": [
             2
         ],
         "germplasmDbId": "6",
-        "germplasmName": "7694609",
+        "germplasmName": "foo germplasm",
         "additionalInfo": {}
     }
 

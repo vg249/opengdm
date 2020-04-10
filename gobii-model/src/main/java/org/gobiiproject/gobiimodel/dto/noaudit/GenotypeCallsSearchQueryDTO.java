@@ -3,7 +3,9 @@ package org.gobiiproject.gobiimodel.dto.noaudit;
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @CheckAtLeastOneNotNullOrEmpty(
         fieldNames = {
@@ -13,79 +15,79 @@ import java.util.List;
 public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetIds allowed per query")
-    private List<Integer> callSetDbIds;
+    private Set<Integer> callSetDbIds = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 callSetNames allowed per query")
-    private List<String> callSetNames;
+    private Set<String> callSetNames = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 variantDbIds allowed per query")
-    private List<Integer> variantDbIds;
+    private Set<Integer> variantDbIds = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 variantNames allowed per query")
-    private List<String> variantNames;
+    private Set<String> variantNames = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 variantSetDbIds allowed per query")
-    private List<Integer> variantSetDbIds;
+    private Set<String> variantSetDbIds = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 variantSetNames allowed per query")
-    private List<String> variantSetNames;
+    private Set<String> variantSetNames = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 germplasmPUIs allowed per query")
-    private List<String> germplasmPUIs;
+    private Set<String> germplasmPUIs = new HashSet<>();
 
-    public List<Integer> getCallSetDbIds() {
+    public Set<Integer> getCallSetDbIds() {
         return callSetDbIds;
     }
 
-    public void setCallSetDbIds(List<Integer> callSetDbIds) {
+    public void setCallSetDbIds(Set<Integer> callSetDbIds) {
         this.callSetDbIds = callSetDbIds;
     }
 
-    public List<String> getCallSetNames() {
+    public Set<String> getCallSetNames() {
         return callSetNames;
     }
 
-    public void setCallSetNames(List<String> callSetNames) {
+    public void setCallSetNames(Set<String> callSetNames) {
         this.callSetNames = callSetNames;
     }
 
-    public List<Integer> getVariantDbIds() {
+    public Set<Integer> getVariantDbIds() {
         return variantDbIds;
     }
 
-    public void setVariantDbIds(List<Integer> variantDbIds) {
+    public void setVariantDbIds(Set<Integer> variantDbIds) {
         this.variantDbIds = variantDbIds;
     }
 
-    public List<String> getVariantNames() {
+    public Set<String> getVariantNames() {
         return variantNames;
     }
 
-    public void setVariantNames(List<String> variantNames) {
+    public void setVariantNames(Set<String> variantNames) {
         this.variantNames = variantNames;
     }
 
-    public List<Integer> getVariantSetDbIds() {
+    public Set<String> getVariantSetDbIds() {
         return variantSetDbIds;
     }
 
-    public void setVariantSetDbIds(List<Integer> variantSetDbIds) {
+    public void setVariantSetDbIds(Set<String> variantSetDbIds) {
         this.variantSetDbIds = variantSetDbIds;
     }
 
-    public List<String> getVariantSetNames() {
+    public Set<String> getVariantSetNames() {
         return variantSetNames;
     }
 
-    public void setVariantSetNames(List<String> variantSetNames) {
+    public void setVariantSetNames(Set<String> variantSetNames) {
         this.variantSetNames = variantSetNames;
     }
 
-    public List<String> getGermplasmPUIs() {
+    public Set<String> getGermplasmPUIs() {
         return germplasmPUIs;
     }
 
-    public void setGermplasmPUIs(List<String> germplasmPUIs) {
+    public void setGermplasmPUIs(Set<String> germplasmPUIs) {
         this.germplasmPUIs = germplasmPUIs;
     }
 }

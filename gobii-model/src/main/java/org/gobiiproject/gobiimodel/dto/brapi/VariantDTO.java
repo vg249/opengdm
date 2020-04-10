@@ -6,19 +6,25 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.BrapiVariantTypes;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType", "datasetMarkerIndex"
+        "id", "allowedProcessTypes", "entityNameType", "createdBy",
+        "modifiedBy", "modifiedDate", "createdDate"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VariantDTO extends DTOBase {
+public class VariantDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName="markerId", entity = Marker.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer variantDbId;
 
     private List<String> variantNames = new ArrayList<>();
@@ -30,23 +36,23 @@ public class VariantDTO extends DTOBase {
     @GobiiEntityMap(paramName="alts", entity = Marker.class)
     private String[] alternateBases;
 
-    private List<Integer> ciend = new ArrayList<>();
+    private List<Integer> ciend;
 
-    private List<Integer> cipos = new ArrayList<>();
+    private List<Integer> cipos;
 
-    private boolean filtersApplied;
-
-    private List<String> filtersFailed = new ArrayList<>();
+    private List<String> filtersFailed;
 
     private List<String> filtersPassed;
 
-    @GobiiEntityMap(paramName="reference.referenceName", entity = Marker.class, deep=true)
+    @GobiiEntityMap(paramName="reference.referenceName", entity = Marker.class,
+            deep=true)
     private String referenceName;
 
     @GobiiEntityMap(paramName="ref", entity = Marker.class)
     private String referenceBases;
 
-    @GobiiEntityMap(paramName="platform.platformName", entity = Marker.class, deep=true)
+    @GobiiEntityMap(paramName="platform.platformName", entity = Marker.class,
+            deep=true)
     private String platformName;
 
     private String svlen;
@@ -65,14 +71,6 @@ public class VariantDTO extends DTOBase {
 
     public void setCipos(List<Integer> cipos) {
         this.cipos = cipos;
-    }
-
-    public boolean isFiltersApplied() {
-        return filtersApplied;
-    }
-
-    public void setFiltersApplied(boolean filtersApplied) {
-        this.filtersApplied = filtersApplied;
     }
 
     public List<String> getFiltersFailed() {
@@ -148,6 +146,10 @@ public class VariantDTO extends DTOBase {
         this.variantType = variantType;
     }
 
+    public void setVariantDbId(Integer variantDbId) {
+        this.variantDbId = variantDbId;
+    }
+
     public List<String> getVariantSetDbId() {
         return variantSetDbId;
     }
@@ -164,6 +166,7 @@ public class VariantDTO extends DTOBase {
         this.alternateBases = alternateBases;
     }
 
+
     @Override
     public Integer getId() {
         return this.variantDbId;
@@ -174,5 +177,7 @@ public class VariantDTO extends DTOBase {
         this.variantDbId = id;
     }
 
+
+    public VariantDTO() { super(GobiiEntityNameType.MARKER);}
 
 }

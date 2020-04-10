@@ -69,6 +69,35 @@ public class BrapiResponseMapCalls {
 
         List<ServerInfoDTO> returnVal = new ArrayList<>();
 
+        returnVal.add(
+                new ServerInfoDTO(
+                        RestResourceId.BRAPI_LOGIN.getResourcePath(),
+                        Arrays.asList(HttpMethod.POST),
+                        Arrays.asList(MediaType.APPLICATION_JSON),
+                        Arrays.asList("1.0", "2.0")));
+
+        returnVal.add(
+                new ServerInfoDTO(
+                        RestResourceId.BRAPI_STUDIES_SEARCH.getResourcePath(),
+                        Arrays.asList(HttpMethod.GET),
+                        Arrays.asList(MediaType.APPLICATION_JSON),
+                        Arrays.asList("1.0")));
+
+        returnVal.add(
+                new ServerInfoDTO(
+                        RestResourceId.BRAPI_ALLELE_MATRICES.getResourcePath(),
+                        Arrays.asList(HttpMethod.GET),
+                        Arrays.asList(MediaType.APPLICATION_JSON),
+                        Arrays.asList("1.0")));
+
+        returnVal.add(
+                new ServerInfoDTO(
+                        RestResourceId.BRAPI_ALLELE_MATRIX_SEARCH
+                                .getResourcePath(),
+                        Arrays.asList(HttpMethod.GET),
+                        Arrays.asList(MediaType.APPLICATION_JSON),
+                        Arrays.asList("1.0")));
+
         returnVal.add(new ServerInfoDTO(
                 RestResourceId.BRAPI_SERVER_INFO.getResourcePath(),
                 Arrays.asList(HttpMethod.GET),

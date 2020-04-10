@@ -42,11 +42,5 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
         this.result = result;
     }
 
-    public void setServerInfo(List<T> listCalls, Integer pageSize,
-                              Integer currentPage) {
-        this.result.setCalls(listCalls);
-        this.getMetadata().getPagination().setPageSize(pageSize);
-        this.getMetadata().getPagination().setCurrentPage(currentPage);
-    }
 
 }

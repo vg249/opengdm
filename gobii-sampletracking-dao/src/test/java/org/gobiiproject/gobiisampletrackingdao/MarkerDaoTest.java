@@ -2,10 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import static junit.framework.TestCase.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.junit.Test;
@@ -127,7 +124,7 @@ public class MarkerDaoTest {
 
         // TODO: Hardcoded list from api.gobii.ord:gobii-dev marker table
         //  Need to replace this with a standard setupcalss functionality in future.
-        List<Integer> markerIds = new ArrayList<>(Arrays.asList(
+        Set<Integer> markerIds = new HashSet<>(Arrays.asList(
                 6, 7, 8, 9, 10,
                 11, 12, 13, 14,
                 15
@@ -148,7 +145,7 @@ public class MarkerDaoTest {
     public void testGetMarkersByMarkerNames() {
 
 
-        List<String> markerNames = new ArrayList<>(Arrays.asList(
+        Set<String> markerNames = new HashSet<>(Arrays.asList(
                 "BS00062676", "kw004_Sbm1", "TaMoc-7A_2433",
                 "Tsn1", "TaCKX-D1", "TaCwi-4A_1523",
                 "TaCwi-A1a/b", "snp3BS-8", "TaGASR-A1", "TaGS-D1",
@@ -169,24 +166,26 @@ public class MarkerDaoTest {
     public void testGetMarkersByMarkerNamesAndDatasetIds() {
 
 
-        List<String> markerNames = new ArrayList<>(Arrays.asList(
+        Set<String> markerNames = new HashSet<>(Arrays.asList(
                 "BS00062676", "kw004_Sbm1", "TaMoc-7A_2433",
                 "Tsn1", "TaCKX-D1", "TaCwi-4A_1523",
                 "TaCwi-A1a/b", "snp3BS-8", "TaGASR-A1", "TaGS-D1",
                 "TaGW2-HAP-A/G", "TaSus2-2B_SNP", "TaTGW6-A1_1050",
                 "snpOS0312", "Xsnp3BS-2"));
 
-        List<String> datasetIds = new ArrayList<>(Arrays.asList(
-                "2", "5"));
+        String[] datasetIdsList = {"2", "5"};
+        Set<String> datasetIds = new HashSet<>(Arrays.asList(datasetIdsList));
 
-        List<Marker> markers = markerDao.getMarkers(null, markerNames, datasetIds);
+        List<Marker> markers = markerDao.getMarkers(
+                null, markerNames,
+                datasetIds, null, null);
 
         assertTrue(markers.size() <= markerNames.size());
 
         for(Marker marker : markers) {
             assertTrue(markerNames.contains(marker.getMarkerName()));
-            assertTrue(marker.getDatasetMarkerIdx().has(datasetIds.get(0)) ||
-                    marker.getDatasetMarkerIdx().has(datasetIds.get(1)));
+            assertTrue(marker.getDatasetMarkerIdx().has(datasetIdsList[0]) ||
+                    marker.getDatasetMarkerIdx().has(datasetIdsList[1]));
         }
 
     }

@@ -6,23 +6,20 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-/**
- * Created by VCalaminos on 6/25/2019.
- * Modified By VishnuG
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType",
+        "id", "allowedProcessTypes", "entityNameType", "createdBy",
+        "modifiedBy", "modifiedDate", "createdDate"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CallSetDTO extends DTOBase {
+public class CallSetDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "dnaRunId", entity = DnaRun.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -134,4 +131,16 @@ public class CallSetDTO extends DTOBase {
     public void setAdditionalInfo(Map<String, String> additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
+
+    @JsonSerialize(using= UtcDateSerializer.class)
+    public Date getCreated() {
+        return this.getCreatedDate();
+    }
+
+    @JsonSerialize(using= UtcDateSerializer.class)
+    public Date getUpdated() {
+        return this.getModifiedDate();
+    }
+
+    public CallSetDTO() { super(GobiiEntityNameType.DNARUN);}
 }
