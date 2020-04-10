@@ -10,13 +10,11 @@ variantSetDbId | Integer | Id of the VariantSet. Corresponds to dataset Id.
 variantSetName | String | The name of the dataset. VariantSet name is unique under a study.
 studyDbId | Integer | Study under which the VariantSet is created. Corresponds to the experiment Id.
 analyses | Array | List of Analysis Resource. Lists all the analyses associated with the dataset.
-availableFormats | Array | List of Formats in which the data can be extracted.
+availableFormats | Array | List of [File Format Objects](#fileformatobject).
 referenceSetDbId | String | The ID of the reference set that describes the sequences used by the variants in this set.
 variantCount | Integer | Number of Variants(Markers or SNPs) in corresponding VariantSet
-callSetCount | Integer | Number of CallSets (Dnaruns) in a corresponding VariantSet
-extractReady | Boolean | Genotypes are ready to be extracted, if True.
-dataFormat | String | Structure of the data within a file (ie DartSeq, VCF, Hapmap, tabular, etc)
-fileFormat | String | 
+callSetCount | Integer | Number of CallSets (DnaRuns) in a corresponding VariantSet
+extractReady | Boolean | **Non BrAPI Field** Genotypes are ready to be extracted, if True. 
 createdBy | Integer | Contact Id of the user who created the VariantSet.
 created | String | Created date string in UTC
 modifiedBy | Integer | Contact Id of the user who modified the VariantSet.
@@ -51,5 +49,21 @@ modified | Integer | Modified date string in UTC
         } 
 
 ```
+<a name="fileformatsobject">**File Format Object**</a>
+
+Field | Type | Description
+------|------|------------
+dataFormat | String | Structure of the data within a file (ie DartSeq, VCF, Hapmap, tabular, etc)
+fileFormat | String | MIME type of the file (ie text/csv, application/excel, application/zip).
+fileUrl | String | Relative URL to download variantset.
 
 
+<a name="fileformatobjectexample">**Resource Example**</a>
+
+```json
+    {
+        "fileUrl": "/variantsets/13/calls/download",
+        "fileFormat": "text/csv",
+        "dataFormat": "tabular"
+    }
+```

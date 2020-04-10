@@ -12,10 +12,6 @@ import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
 import java.util.Date;
 
-/**
- * Created by VCalaminos on 7/11/2019.
- */
-
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType", "createdBy",
         "modifiedBy", "modifiedDate", "createdDate"

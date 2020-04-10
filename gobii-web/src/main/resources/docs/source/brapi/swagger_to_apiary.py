@@ -47,7 +47,7 @@ with open(args.input) as input_properties_file:
         print("Requires swagger json file")
         sys.exit()
     if "doc_md_path" in input_properties:
-
+        doc_md_path = input_properties["doc_md_path"]
 
 paths = swagger_obj["paths"]
 tags = OrderedDict()
@@ -66,6 +66,7 @@ for path in paths:
                     doc_md_path +
                     "_".join(requests[crud]["summary"].split(" ")) + ".md")
                 if os.path.isfile(md_file):
+                    requests[crud]["summary"] = requests[crud]["description"]
                     with open(md_file) as md_f:
                         requests[crud]["description"] = md_f.read()
         if "tags" in requests[crud]:
