@@ -198,6 +198,8 @@ public class ProjectServiceImpl implements ProjectService {
         return getProject(project.getProjectId());
     }
 
+    @Transactional
+    @Override
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
         return propertiesService.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
     }
