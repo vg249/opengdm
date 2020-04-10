@@ -18,7 +18,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
@@ -41,7 +40,6 @@ public class ProjectDaoImpl implements ProjectDao {
 
     final int defaultPageSize = 1000;
 
-    @Transactional
     @Override
     public List<Project> getProjects(Integer pageNum, Integer pageSize, Integer piContactId) {
         log.debug("DAO getting projects");
@@ -77,7 +75,6 @@ public class ProjectDaoImpl implements ProjectDao {
 
     }
 
-    @Transactional
     @Override
     public Project createProject(Project projectToBeCreated) throws Exception {
         em.persist(projectToBeCreated);
@@ -89,7 +86,6 @@ public class ProjectDaoImpl implements ProjectDao {
         return em.find(Cv.class, id);
     }
 
-    @Transactional
     @Override
     public Project patchProject(Project projectToBePatched) throws Exception {   
         assert projectToBePatched.getProperties() != null;  
@@ -108,7 +104,6 @@ public class ProjectDaoImpl implements ProjectDao {
         return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
     }
 
-    @Transactional
     @Override
     public Project getProject(Integer projectId) {
         Project project = em.find(Project.class, projectId, getContactHints());
@@ -122,7 +117,6 @@ public class ProjectDaoImpl implements ProjectDao {
         return hints;
     }
 
-    @Transactional
     @Override
     public void deleteProject(Project project) throws Exception {
         try {

@@ -12,7 +12,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
@@ -21,10 +20,10 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Transactional
-public class ExperimentDaoImpl implements ExperimentDao {
+import lombok.extern.slf4j.Slf4j;
 
-    Logger LOGGER = LoggerFactory.getLogger(ExperimentDaoImpl.class);
+@Slf4j
+public class ExperimentDaoImpl implements ExperimentDao {
 
     @PersistenceContext
     protected EntityManager em;
@@ -81,7 +80,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
@@ -90,10 +89,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
     @Override
     public Experiment getExperiment(Integer i) throws Exception {
-        EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
-        Map<String, Object> hints = new HashMap<>();
-        hints.put("javax.persistence.fetchgraph", graph);
-        return em.find(Experiment.class, i, hints);
+        return em.find(Experiment.class, i, getHints());
     }
 
     @Override
@@ -102,9 +98,18 @@ public class ExperimentDaoImpl implements ExperimentDao {
     }
 
     @Override
-    public Experiment createExperiment(Experiment experiment) {
+    public Experiment createExperiment(Experiment experiment) throws Exception {
         em.persist(experiment);
         em.flush();
+        em.refresh(experiment, getHints());
+        assert experiment.getVendorProtocol().getProtocol().getPlatform() != null;
         return experiment;
+    }
+
+    private Map<String, Object> getHints() {
+        EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;    
     }
 }

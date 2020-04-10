@@ -10,18 +10,24 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +43,10 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired 
     private ContactDao contactDao;
 
+    @Autowired
+    private CvDao cvDao;
 
+    @Transactional
     @Override
     public PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId) {
         // TODO Auto-generated method stub
@@ -69,6 +78,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         return dto;
     }
 
+    @Transactional
     @Override
     public ExperimentDTO createExperiment(ExperimentRequest request, String createdBy) throws Exception {
         Project project = projectDao.getProject(request.getProjectId());
@@ -106,6 +116,19 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         experiment.setExperimentCode(code);
 
+        //set status
+        // Get the Cv for status, new row
+        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
+
+        experiment.setStatus(cv);
+
+        //audit elements
         experiment.setCreatedBy(contact.getContactId());
         experiment.setCreatedDate(new java.util.Date());
 

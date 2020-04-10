@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -55,6 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private PropertiesService propertiesService;
 
+    @Transactional
     @Override
     public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
         log.debug("Getting projects list offset %d size %d", page, pageSize);
@@ -93,6 +96,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
+    @Transactional
     @Override
     public GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception {
         // check if contact exists
@@ -145,6 +149,7 @@ public class ProjectServiceImpl implements ProjectService {
         return null;
     }
 
+    @Transactional
     @Override
     public GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy)
             throws Exception {
@@ -194,10 +199,13 @@ public class ProjectServiceImpl implements ProjectService {
         return dto;
     }
 
+    @Transactional
+    @Override
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
         return propertiesService.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
     }
 
+    @Transactional
     @Override
     public GobiiProjectDTO getProject(Integer projectId) throws Exception {
         Project project = projectDao.getProject(projectId);
