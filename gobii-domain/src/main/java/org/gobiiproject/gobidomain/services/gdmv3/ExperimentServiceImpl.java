@@ -20,6 +20,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -136,6 +137,13 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         ExperimentDTO dto = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, dto);
+        //TODO: debug this, why is the mapper failing at mapping subobject
+        Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
+
+        dto.setPlatformId(platform.getPlatformId());
+        dto.setPlatformName(platform.getPlatformName());
+
+
         return dto;
     }
     

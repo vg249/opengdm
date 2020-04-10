@@ -102,7 +102,6 @@ public class ExperimentDaoImpl implements ExperimentDao {
         em.persist(experiment);
         em.flush();
         em.refresh(experiment, getHints());
-        assert experiment.getVendorProtocol().getProtocol().getPlatform() != null;
         return experiment;
     }
 
