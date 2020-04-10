@@ -10,16 +10,22 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
@@ -41,6 +47,9 @@ public class ExperimentServiceImplTest {
 
     @Mock
     private ContactDao contactDao;
+
+    @Mock
+    private CvDao cvDao;
 
     @InjectMocks
     private ExperimentServiceImpl experimentServiceImpl;
@@ -84,6 +93,16 @@ public class ExperimentServiceImplTest {
             projectDao.getProject(7)
         ).thenReturn(
             dummyProject
+        );
+
+        List<Cv> dummyCvList = new java.util.ArrayList<>();
+        Cv dummyCv = new Cv();
+        dummyCvList.add(dummyCv);
+
+        when(
+            cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM)
+        ).thenReturn(
+            dummyCvList
         );
 
         VendorProtocol dummyVp = new VendorProtocol();

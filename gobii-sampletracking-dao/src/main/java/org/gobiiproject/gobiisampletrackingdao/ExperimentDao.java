@@ -14,7 +14,7 @@ public interface ExperimentDao {
 
 	VendorProtocol getVendorProtocol(Integer vendorProtocolId);
 
-	Experiment createExperiment(Experiment experiment);
+	Experiment createExperiment(Experiment experiment) throws Exception;
 
 	Experiment updateExperiment(Experiment target) throws Exception;
 

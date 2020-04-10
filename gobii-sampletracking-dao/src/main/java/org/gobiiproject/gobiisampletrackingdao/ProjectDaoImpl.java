@@ -19,7 +19,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Cv;
