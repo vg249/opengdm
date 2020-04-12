@@ -39,19 +39,22 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
 
     @Override
-    public PagedResult<VariantSetDTO> getVariantSets(Integer pageSize, Integer pageNum,
-                                      Integer variantSetDbId, String variantSetName,
-                                      Integer studyDbId, String studyName) throws GobiiException {
+    public PagedResult<VariantSetDTO>
+    getVariantSets(Integer pageSize, Integer pageNum,
+                   Integer variantSetDbId, String variantSetName,
+                   Integer studyDbId, String studyName) throws GobiiException {
 
         PagedResult<VariantSetDTO> returnVal = new PagedResult<>();
 
         List<VariantSetDTO> variantSets = new ArrayList<>();
 
-        //To map variantsetdto by datasetid to avoid mapping more than once
-        HashMap<Integer, VariantSetDTO> variantSetDtoMapByDatasetId = new HashMap<>();
+        //To map variantset by datasetid to avoid mapping more than once
+        HashMap<Integer, VariantSetDTO>
+                variantSetDtoMapByDatasetId = new HashMap<>();
 
         //To map analysisdto by analysisid to avoid mapping more than once
-        HashMap<Integer, AnalysisDTO> analysisDtoMapByAnalysisId = new HashMap<>();
+        HashMap<Integer, AnalysisDTO>
+                analysisDtoMapByAnalysisId = new HashMap<>();
 
         Objects.requireNonNull(pageSize, "pageSize: Required non null");
         Objects.requireNonNull(pageNum, "pageNum: Required non null");
@@ -60,10 +63,11 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<Object[]> resultTuple = datasetDao.getDatasetsWithAnalysesAndCounts(
-                    pageSize, rowOffset,
-                    variantSetDbId, variantSetName,
-                    studyDbId, studyName);
+            List<Object[]> resultTuple =
+                    datasetDao.getDatasetsWithAnalysesAndCounts(
+                            pageSize, rowOffset,
+                            variantSetDbId, variantSetName,
+                            studyDbId, studyName);
 
             Set<Integer> analysisIds = new HashSet<>();
 
@@ -77,7 +81,8 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                 Integer markerCount = (Integer) tuple[2];
                 Integer dnaRunCount = (Integer) tuple[3];
 
-                if(!variantSetDtoMapByDatasetId.containsKey(dataset.getDatasetId())) {
+                if(!variantSetDtoMapByDatasetId
+                        .containsKey(dataset.getDatasetId())) {
                     variantSetDTO = new VariantSetDTO();
 
                     ModelMapper.mapEntityToDto(dataset, variantSetDTO);
@@ -86,7 +91,9 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                     //Set dataset download url
                     variantSetDTO.setFileUrl(
-                            MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
+                            MessageFormat.format(
+                                    this.fileUrlFormat,
+                                    dataset.getDatasetId()));
 
                     //Set Marker and DnaRun Counts
                     variantSetDTO.setVariantCount(markerCount);
@@ -95,38 +102,66 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                     //Map extract ready of dataset
                     mapVariantSetExtractReady(dataset, variantSetDTO);
 
-                    variantSetDtoMapByDatasetId.put(dataset.getDatasetId(), variantSetDTO);
+                    variantSetDtoMapByDatasetId.put(
+                            dataset.getDatasetId(), variantSetDTO);
 
                     //Map Calling analysis
                     if(dataset.getCallingAnalysis() != null) {
-                        if(analysisDtoMapByAnalysisId.containsKey(
-                                dataset.getCallingAnalysis().getAnalysisId())) {
-                            variantSetDTO.getAnalyses().add(analysisDtoMapByAnalysisId.get(
-                                    dataset.getCallingAnalysis().getAnalysisId()));
+                        if(analysisDtoMapByAnalysisId
+                                .containsKey(dataset
+                                                .getCallingAnalysis()
+                                                .getAnalysisId())) {
+
+                            variantSetDTO
+                                    .getAnalyses()
+                                    .add(analysisDtoMapByAnalysisId.get(
+                                            dataset
+                                                    .getCallingAnalysis()
+                                                    .getAnalysisId()));
                         }
                         else {
+
                             analysisDTO = new AnalysisDTO();
-                            ModelMapper.mapEntityToDto(dataset.getCallingAnalysis(), analysisDTO);
+
+                            ModelMapper.mapEntityToDto(
+                                    dataset.getCallingAnalysis(), analysisDTO);
+
                             variantSetDTO.getAnalyses().add(analysisDTO);
-                            analysisDtoMapByAnalysisId.put(dataset.getCallingAnalysis().getAnalysisId(),
-                                    analysisDTO);
+
+                            analysisDtoMapByAnalysisId
+                                    .put(
+                                            dataset
+                                                    .getCallingAnalysis()
+                                                    .getAnalysisId(),
+                                            analysisDTO);
                         }
                     }
                 }
                 else {
-                    variantSetDTO = variantSetDtoMapByDatasetId.get(dataset.getDatasetId());
+                    variantSetDTO =
+                            variantSetDtoMapByDatasetId
+                                    .get(dataset.getDatasetId());
                 }
 
                 if(analysis != null) {
-                    if(analysisDtoMapByAnalysisId.containsKey(analysis.getAnalysisId())) {
-                        variantSetDTO.getAnalyses().add(analysisDtoMapByAnalysisId.get(
-                                analysis.getAnalysisId()));
+                    if(analysisDtoMapByAnalysisId
+                            .containsKey(analysis.getAnalysisId())) {
+
+                        variantSetDTO
+                                .getAnalyses()
+                                .add(analysisDtoMapByAnalysisId
+                                        .get(analysis.getAnalysisId()));
                     }
                     else {
+
                         analysisDTO = new AnalysisDTO();
+
                         ModelMapper.mapEntityToDto(analysis, analysisDTO);
+
                         variantSetDTO.getAnalyses().add(analysisDTO);
-                        analysisDtoMapByAnalysisId.put(dataset.getCallingAnalysis().getAnalysisId(),
+
+                        analysisDtoMapByAnalysisId.put(
+                                dataset.getCallingAnalysis().getAnalysisId(),
                                 analysisDTO);
                     }
                 }
@@ -165,11 +200,13 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
         try {
             //Overload getvariantsets by passing
-            PagedResult<VariantSetDTO> variantSets = this.getVariantSets(1000, 0,
-                    variantSetDbId, null,
-                    null, null);
+            PagedResult<VariantSetDTO> variantSets =
+                    this.getVariantSets(2, 0,
+                            variantSetDbId, null,
+                            null, null);
 
-            if(variantSets.getResult() != null && variantSets.getResult().size() < 1) {
+            if(variantSets.getResult() !=
+                    null && variantSets.getResult().size() < 1) {
                 throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "VariantSet for given id does not exist");
@@ -199,15 +236,20 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     private void mapVariantSetExtractReady(Dataset dataset, VariantSetDTO variantSetDTO) {
 
+        variantSetDTO.setAdditionalInfo(new HashMap<>());
+
         try {
             if(dataset.getJob() == null) {
-                variantSetDTO.setExtractReady(false);
+                variantSetDTO.getAdditionalInfo().put("extractReady", false);
             }
             else {
-                variantSetDTO.setExtractReady(
-                        (dataset.getJob().getType().getTerm() == JobType.CV_JOBTYPE_LOAD.getCvName() &&
-                                dataset.getJob().getStatus().getTerm() == GobiiJobStatus.COMPLETED.getCvTerm()) ||
-                                (dataset.getJob().getType().getTerm() != JobType.CV_JOBTYPE_LOAD.getCvName()));
+                variantSetDTO.getAdditionalInfo().put("extractReady",
+                        (dataset.getJob().getType().getTerm()
+                                    == JobType.CV_JOBTYPE_LOAD.getCvName()
+                                && dataset.getJob().getStatus().getTerm()
+                                    == GobiiJobStatus.COMPLETED.getCvTerm())
+                                || (dataset.getJob().getType().getTerm()
+                                    != JobType.CV_JOBTYPE_LOAD.getCvName()));
 
             }
 

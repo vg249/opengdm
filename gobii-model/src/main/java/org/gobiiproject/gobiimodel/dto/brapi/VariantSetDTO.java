@@ -33,14 +33,17 @@ public class VariantSetDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="datasetName", entity = Dataset.class)
     private String variantSetName;
 
-    @GobiiEntityMap(paramName="experiment.experimentId", entity = Dataset.class, deep=true)
+    @GobiiEntityMap(paramName="experiment.experimentId",
+            entity = Dataset.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer studyDbId;
 
-    @GobiiEntityMap(paramName="experiment.experimentName", entity = Dataset.class, deep=true)
+    @GobiiEntityMap(paramName="experiment.experimentName",
+            entity = Dataset.class, deep=true)
     private String studyName;
 
-    @GobiiEntityMap(paramName="callingAnalysis.reference.referenceId", entity = Dataset.class, deep=true)
+    @GobiiEntityMap(paramName="callingAnalysis.reference.referenceId",
+            entity = Dataset.class, deep=true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceSetDbId;
 
@@ -57,13 +60,13 @@ public class VariantSetDTO extends DTOBaseAuditable {
 
     private Set<AnalysisDTO> analyses = new HashSet<>();
 
-    private boolean extractReady;
-
     @GobiiEntityMap(paramName="dnaRunCount", entity = Dataset.class)
     private Integer callSetCount = 0;
 
     @GobiiEntityMap(paramName="markerCount", entity = Dataset.class)
     private Integer variantCount = 0;
+
+    private Map<String, Object> additionalInfo;
 
     public Integer getId() {
         return 0;
@@ -186,11 +189,11 @@ public class VariantSetDTO extends DTOBaseAuditable {
         this.variantSetType = variantSetType;
     }
 
-    public boolean isExtractReady() {
-        return extractReady;
+    public Map<String, Object> getAdditionalInfo() {
+        return additionalInfo;
     }
 
-    public void setExtractReady(boolean extractReady) {
-        this.extractReady = extractReady;
+    public void setAdditionalInfo(Map<String, Object> additionalInfo) {
+        this.additionalInfo = additionalInfo;
     }
 }
