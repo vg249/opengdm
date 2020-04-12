@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.brapi.*;
 import org.gobiiproject.gobidomain.services.brapi.MapsetService;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiResult;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.*;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -80,6 +77,8 @@ public class BrAPIv2Controller {
             extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
     private class StudiesListResponse
             extends BrApiMasterPayload<BrApiResult<StudiesDTO>>{}
+    private class SamplesListResponse
+            extends BrApiMasterPayload<BrApiResult<SamplesDTO>>{}
     private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
     private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
     private class VariantResponse extends BrApiMasterPayload<VariantDTO>{}
@@ -112,30 +111,26 @@ public class BrAPIv2Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "Successful",
-                            response = BrapiResponseMapCalls.class
-                    )
+                            response = BrapiResponseMapCalls.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<ServerInfoDTO>> getServerInfo(
+    public ResponseEntity<BrApiMasterPayload> getServerInfo(
             HttpServletRequest request) {
-
-        BrApiMasterListPayload<ServerInfoDTO> payload =
-                new BrApiMasterListPayload<>();
 
         try {
 
             BrapiResponseMapCalls brapiResponseServerInfos =
                     new BrapiResponseMapCalls(request);
 
+            BrApiServerInfoPayload serverInfoPayload =
+                    new BrApiServerInfoPayload(
+                            brapiResponseServerInfos.getBrapi2ServerInfos());
 
-            //payload.setServerInfo(
-            //        brapiResponseServerInfos.getBrapi2ServerInfos(),
-            //        brapiResponseServerInfos
-            //                .getBrapi2ServerInfos().size(),
-            //        0);
 
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok(serverInfoPayload);
 
         }
         catch (Exception e) {
@@ -162,8 +157,13 @@ public class BrAPIv2Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "",
-                            response = StudiesListResponse.class
-                    )
+                            response = StudiesListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
@@ -240,8 +240,14 @@ public class BrAPIv2Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "",
-                            response = CallSetListResponse.class
-                    )
+                            response = CallSetListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+
             }
     )
     @ApiImplicitParams({
@@ -255,7 +261,7 @@ public class BrAPIv2Controller {
     public @ResponseBody
     ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSets(
             @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000. Maximum page size is 1000")
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Used to request a specific page of " +
@@ -318,7 +324,14 @@ public class BrAPIv2Controller {
                     @ApiResponse(
                             code = 200,
                             message = "",
-                            response = CallSetResponse.class)
+                            response = CallSetResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+
             }
     )
     @ApiImplicitParams({
@@ -396,8 +409,13 @@ public class BrAPIv2Controller {
                     @ApiResponse(
                             code = 200,
                             message = "",
-                            response = GenotypeCallsResponse.class
-                    )
+                            response = GenotypeCallsResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
@@ -413,12 +431,12 @@ public class BrAPIv2Controller {
             @ApiParam(value = "Id for dna run to be fetched")
             @PathVariable(value="callSetDbId") Integer callSetDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous " +
-                    "page's meta data should be used.")
+                    "Value is $metadata.pagination.nextPageToken " +
+                    "form previous page.")
             @RequestParam(value = "pageToken", required = false)
                     String pageToken,
             @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000. Maximum page size is 1000")
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize)
             throws GobiiException {
@@ -465,7 +483,7 @@ public class BrAPIv2Controller {
      */
     @ApiOperation(
             value = "List Variants",
-            notes = "List Variants in GDM System.",
+            notes = "Lists Variants in GDM System.",
             tags = {"Variants"},
             extensions = {
                     @Extension(properties = {
@@ -477,8 +495,13 @@ public class BrAPIv2Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "",
-                            response = VariantListResponse.class
-                    )
+                            response = VariantListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
@@ -558,8 +581,13 @@ public class BrAPIv2Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "",
-                            response = VariantResponse.class
-                    )
+                            response = VariantResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
@@ -598,13 +626,152 @@ public class BrAPIv2Controller {
         }
     }
 
-    @ApiOperation(value="List samples", hidden = true)
-    @RequestMapping(value="/samples", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<SamplesDTO>> getMaps(
-            @RequestParam(value="sampleDbId", required=false) Integer sampleDbId,
-            @RequestParam(value="observationUnitDbId", required=false) String observationUnitDbId,
-            @RequestParam(value="germplasmDbId", required=false) Integer germplasmDbId,
-            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
+    /**
+     * Returns the list of genotypes calls in a given Marker id.
+     * It fetches calls in all the datasets where the marker_id is present.
+     * The calls is paged.
+     *
+     * @param variantDbId - Marker run Id.
+     * @param pageSize - Size of the page to fetched.
+     * @param pageToken - Page token to fetch the page.
+     *                  User will get the pageToken from the nextPageToken
+     *                  parameter in the previous response.
+     *
+     * @return BrApi Response entity with
+     * list of genotypes calls for given dnarun id.
+     * TODO: Add page number parameter to comply BrApi standards.
+     */
+    @ApiOperation(
+            value = "List Genotype Calls",
+            notes = "List of all the genotype calls in a given " +
+                    "Marker identified by Marker Id",
+            tags = {"Variants"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary",
+                                    value="Get Genotypes by Variant")
+                    })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "",
+                            response = GenotypeCallsResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
+    })
+    @RequestMapping(value="/variants/{variantDbId}/calls",
+            method=RequestMethod.GET)
+    public @ResponseBody
+    ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>>
+    getCallsByVariant(
+            @ApiParam(value = "Id for marker to be fetched")
+            @PathVariable(value="variantDbId") Integer variantDbId,
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "Value is $metadata.pagination.nextPageToken " +
+                    "form previous page.")
+            @RequestParam(value = "pageToken",
+                    required = false) String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize)
+            throws GobiiException {
+        try {
+
+            PagedResult<GenotypeCallsDTO> genotypeCallsList =
+                    genotypeCallsService.getGenotypeCallsByVariantDbId(
+                            variantDbId, pageSize, pageToken);
+
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
+                    new BrApiMasterPayload<>(genotypeCallsList.getResult());
+
+            if(genotypeCallsList.getNextPageToken() != null) {
+
+                payload
+                        .getMetadata()
+                        .getPagination()
+                        .setNextPageToken(genotypeCallsList.getNextPageToken());
+            }
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(
+            value = "List Samples",
+            notes = "Lists Dna Samples in GDM System.",
+            tags = {"Samples"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(
+                                    name="summary", value="List Samples")
+                    })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "",
+                            response = VariantListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
+    })
+    @RequestMapping(value="/samples", method=RequestMethod.GET,
+            produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<SamplesDTO>> getSamples(
+            @ApiParam(value = "Id of the Sample to be fetched")
+            @RequestParam(value="sampleDbId", required=false)
+                    Integer sampleDbId,
+            @ApiParam(value = "Filter samples by observationUnitDbId. " +
+                    "Observation unit corresponds to project.")
+            @RequestParam(value="observationUnitDbId", required=false)
+                    String observationUnitDbId,
+            @ApiParam(value = "Filter list of samples by germplasmDbId.")
+            @RequestParam(value="germplasmDbId", required=false)
+                    Integer germplasmDbId,
+            @ApiParam(value = "Used to request a specific page of " +
+                    "data to be returned. " +
+                    "The page indexing starts at 0 " +
+                    "(the first page is 'page'= 0). Default is 0")
+            @RequestParam(
+                    value = "page", required = false,
+                    defaultValue = BrapiDefaults.pageNum) Integer page,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize) {
 
@@ -616,10 +783,10 @@ public class BrAPIv2Controller {
                     sampleDbId, germplasmDbId,
                     observationUnitDbId);
 
-            BrApiMasterListPayload<SamplesDTO> payload = new BrApiMasterListPayload<>(
-                    samples.getResult(),
-                    samples.getCurrentPageSize(),
-                    samples.getCurrentPageNum());
+            BrApiMasterListPayload<SamplesDTO> payload =
+                    new BrApiMasterListPayload<>(
+                            samples.getResult(), samples.getCurrentPageSize(),
+                            samples.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -776,94 +943,6 @@ public class BrAPIv2Controller {
     }
 
     /**
-     * Returns the list of genotypes calls in a given Marker id.
-     * It fetches calls in all the datasets where the marker_id is present.
-     * The calls is paged.
-     *
-     * @param variantDbId - Marker run Id.
-     * @param pageSize - Size of the page to fetched.
-     * @param pageToken - Page token to fetch the page.
-     *                  User will get the pageToken from the nextPageToken
-     *                  parameter in the previous response.
-     *
-     * @return BrApi Response entity with
-     * list of genotypes calls for given dnarun id.
-     * TODO: Add page number parameter to comply BrApi standards.
-     */
-    @ApiOperation(
-            value = "List Genotype Calls",
-            notes = "List of all the genotype calls in a given " +
-                    "Marker identified by Marker Id",
-            tags = {"Variants"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="GenotypeCalls")
-                    })
-            }
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval " +
-                            "of Genotype Calls",
-                            response = GenotypeCallsResponse.class
-                    )
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
-    })
-    @RequestMapping(value="/variants/{variantDbId}/calls",
-            method=RequestMethod.GET)
-    public @ResponseBody
-    ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>>
-    getCallsByVariant(
-            @ApiParam(value = "Id for marker to be fetched")
-            @PathVariable(value="variantDbId") Integer variantDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous " +
-                    "page's meta data should be used.")
-            @RequestParam(value = "pageToken",
-                    required = false) String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize)
-            throws GobiiException {
-        try {
-
-            PagedResult<GenotypeCallsDTO> genotypeCallsList =
-                    genotypeCallsService.getGenotypeCallsByVariantDbId(
-                            variantDbId, pageSize, pageToken);
-
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
-                    new BrApiMasterPayload<>(genotypeCallsList.getResult());
-
-            if(genotypeCallsList.getNextPageToken() != null) {
-
-                payload
-                        .getMetadata()
-                        .getPagination()
-                        .setNextPageToken(genotypeCallsList.getNextPageToken());
-            }
-
-            return ResponseEntity.ok(payload);
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage());
-        }
-    }
-
-    /**
      * Lists the variantsets by page size and page token
      *
      * @param pageNum - Page number to be fetched. 0 indexed.
@@ -910,7 +989,7 @@ public class BrAPIv2Controller {
             @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
             @ApiParam(value = "Study Name for which list of Variantsets need to be fetched")
             @RequestParam(value = "studyName", required = false) String studyName,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page number to be fetched")
             @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer pageNum
@@ -1044,7 +1123,7 @@ public class BrAPIv2Controller {
             @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @RequestParam(value = "pageToken", required = false) String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @RequestParam(value = "variantDbId", required = false) Integer variantDbId
     ){

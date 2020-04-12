@@ -9,11 +9,11 @@ public class BrApiResultServerInfo<ServerInfoDTO> {
 
     private List<ServerInfoDTO> calls;
 
-    public List<ServerInfoDTO> getData() {
+    public List<ServerInfoDTO> getCalls() {
         return this.calls;
     }
 
-    public void setData(List<ServerInfoDTO> calls) {
+    public void setCalls(List<ServerInfoDTO> calls) {
         this.calls = calls;
     }
 }

@@ -6,41 +6,29 @@ import java.util.List;
 
 @SuppressWarnings("rawtypes")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BrApiServerInfoPayload<T>  extends BrApiMasterPayload {
+public class BrApiServerInfoPayload<ServerInfoDTO>  extends BrApiMasterPayload {
 
-    private BrApiResult<T> result = new BrApiResult<>();
+    private BrApiResultServerInfo<ServerInfoDTO> result =
+            new BrApiResultServerInfo<>();
 
-    public BrApiServerInfoPayload() {
+    public BrApiServerInfoPayload(List<ServerInfoDTO> listCalls) {
+        this.result.setCalls(listCalls);
     }
 
-    public BrApiServerInfoPayload(List<T> listData) {
-        this.result.setData(listData);
-    }
-
-
-    public BrApiServerInfoPayload(List<T> listData, Integer pageSize,
+    public BrApiServerInfoPayload(List<ServerInfoDTO> listCalls,
+                                  Integer pageSize,
                                   Integer currentPage) {
-        this.result.setData(listData);
+        this.result.setCalls(listCalls);
         this.getMetadata().getPagination().setPageSize(pageSize);
         this.getMetadata().getPagination().setCurrentPage(currentPage);
     }
 
-    public BrApiServerInfoPayload(List<T> listData, Integer pageSize,
-                                  String nextPageToken) {
-
-        this.result.setData(listData);
-        this.getMetadata().getPagination().setPageSize(pageSize);
-        this.getMetadata().getPagination().setNextPageToken(nextPageToken);
-    }
-
-
-    public BrApiResult<T> getResult() {
+    public BrApiResultServerInfo<ServerInfoDTO> getResult() {
         return this.result;
     }
 
-    public void setResult(BrApiResult<T> result) {
+    public void setResult(BrApiResultServerInfo<ServerInfoDTO> result) {
         this.result = result;
     }
-
 
 }

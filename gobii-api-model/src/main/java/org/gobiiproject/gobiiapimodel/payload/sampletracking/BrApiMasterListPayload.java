@@ -17,7 +17,6 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
         this.result.setData(listData);
     }
 
-
     public BrApiMasterListPayload(List<T> listData, Integer pageSize,
                                   Integer currentPage) {
         this.result.setData(listData);
