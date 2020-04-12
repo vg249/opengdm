@@ -50,13 +50,7 @@ public class VariantSetDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="type.term", entity = Dataset.class, deep=true)
     private String variantSetType;
 
-    private String fileUrl;
-
-    private String fileFormat = "text/csv";
-
-    private String dataFormat = "tabular";
-
-    private List<Object> availableFormats;
+    private List<FileFormatDTO> availableFormats;
 
     private Set<AnalysisDTO> analyses = new HashSet<>();
 
@@ -125,35 +119,11 @@ public class VariantSetDTO extends DTOBaseAuditable {
         this.referenceSetDbId = referenceSetDbId;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
-    public String getFileFormat() {
-        return fileFormat;
-    }
-
-    public void setFileFormat(String fileFormat) {
-        this.fileFormat = fileFormat;
-    }
-
-    public String getDataFormat() {
-        return dataFormat;
-    }
-
-    public void setDataFormat(String dataFormat) {
-        this.dataFormat = dataFormat;
-    }
-
-    public List<Object> getAvailableFormats() {
+    public List<FileFormatDTO> getAvailableFormats() {
         return availableFormats;
     }
 
-    public void setAvailableFormats(List<Object> availableFormats) {
+    public void setAvailableFormats(List<FileFormatDTO> availableFormats) {
         this.availableFormats = availableFormats;
     }
 
