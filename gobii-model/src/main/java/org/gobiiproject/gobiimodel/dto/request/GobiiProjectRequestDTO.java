@@ -27,8 +27,7 @@ import javax.validation.constraints.Pattern;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 
 public class GobiiProjectRequestDTO {
-    
-    
+       
     @NotEmpty
     @Pattern(regexp="^(0|[1-9][0-9]*)$")
     private String piContactId;
