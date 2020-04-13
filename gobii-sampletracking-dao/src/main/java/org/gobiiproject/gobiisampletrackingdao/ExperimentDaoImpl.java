@@ -1,8 +1,11 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -12,6 +15,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -82,5 +86,13 @@ public class ExperimentDaoImpl implements ExperimentDao {
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
+    }
+
+    @Override
+    public Experiment getExperiment(Integer i) throws Exception {
+        EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return em.find(Experiment.class, i, hints);
     }
 }

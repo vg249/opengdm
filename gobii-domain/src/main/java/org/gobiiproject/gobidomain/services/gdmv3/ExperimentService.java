@@ -15,4 +15,6 @@ public interface ExperimentService {
 
 	PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId);
 
+	ExperimentDTO getExperiment(Integer i) throws Exception;
+
  }

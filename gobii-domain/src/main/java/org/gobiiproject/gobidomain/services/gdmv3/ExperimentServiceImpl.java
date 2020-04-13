@@ -42,5 +42,14 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         return pagedResult;
     }
+
+    @Override
+    public ExperimentDTO getExperiment(Integer i) throws Exception {
+        Experiment experiment = experimentDao.getExperiment(i);
+        if (experiment == null)  throw new NullPointerException("Experiment does not exist");
+        ExperimentDTO dto = new ExperimentDTO();
+        ModelMapper.mapEntityToDto(experiment, dto);
+        return dto;
+    }
     
 }
