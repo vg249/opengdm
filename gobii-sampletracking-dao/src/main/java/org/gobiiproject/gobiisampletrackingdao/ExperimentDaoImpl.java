@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -118,5 +119,21 @@ public class ExperimentDaoImpl implements ExperimentDao {
         Map<String, Object> hints = new HashMap<>();
         hints.put("javax.persistence.fetchgraph", graph);
         return hints;    
+    }
+
+    @Override
+    public void deleteExperiment(Experiment experiment) {
+        try {
+                em.remove(experiment);
+                em.flush();
+            } catch (javax.persistence.PersistenceException pe) {
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                    "Associated resources found. Cannot complete the action unless they are deleted.");
+            } catch (Exception e) {
+                throw e;
+            }
+
     }
 }

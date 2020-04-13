@@ -130,8 +130,9 @@ public class ExperimentServiceImpl implements ExperimentService {
         experiment.setCreatedBy(contact.getContactId());
         experiment.setCreatedDate(new java.util.Date());
 
+        
         experiment = experimentDao.createExperiment(experiment);
-
+        
         ExperimentDTO dto = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, dto);
         //TODO: debug this, why is the mapper failing at mapping subobject
@@ -191,6 +192,18 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         experimentDao.updateExperiment(target);
         return this.getExperiment(target.getExperimentId());
+    }
+
+    @Transactional
+    @Override
+    public void deleteExperiment(Integer experimentId) throws Exception {
+        Experiment experiment = experimentDao.getExperiment(experimentId);
+        if (experiment == null) {
+            throw new NullPointerException("Experiment not found");
+        }
+
+        experimentDao.deleteExperiment(experiment);
+
     }
     
 }

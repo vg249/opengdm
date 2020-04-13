@@ -280,8 +280,8 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testPatchWithProperties() throws Exception {
-        String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
-            "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
+        String requestJson = "{\"piContactId\" : \"4\",\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+            "\"properties\" : [ {\"propertyId\" : \"4\",  \"propertyValue\" : \"test-value\"} ]}";
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
@@ -608,5 +608,40 @@ public class GOBIIControllerV3Test {
         ;
         verify(experimentService, times(1)).updateExperiment(eq(123),  any( ExperimentPatchRequest.class ), eq("test-user"));
     }
+
+    @Test
+    public void testDeleteExperiment() throws Exception {
+        
+        doNothing().when(experimentService).deleteExperiment(eq(123));
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(experimentService, times(1)).deleteExperiment(eq(123));
+    }
+
+    @Test
+    public void testDeleteExperimentException409() throws Exception {
+        Exception exc = new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.FOREIGN_KEY_VIOLATION, "test");
+        doThrow(exc).when(experimentService).deleteExperiment(eq(123));
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(409))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("test")))
+        ;
+        verify(experimentService, times(1)).deleteExperiment(eq(123));
+    }
+
+
     
 }

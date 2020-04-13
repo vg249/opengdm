@@ -18,4 +18,6 @@ public interface ExperimentDao {
 
 	Experiment updateExperiment(Experiment target) throws Exception;
 
+	void deleteExperiment(Experiment experiment);
+
 }

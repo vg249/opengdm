@@ -209,7 +209,6 @@ public class GOBIIControllerV3  {
         this.checkBindingErrors(bindingResult);
         String userName = projectService.getDefaultProjectEditor();
         GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
-        assert dto.getPiContactId() != null;
         BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
         payload.setResult(dto);
         payload.setMetadata(null);
@@ -360,7 +359,7 @@ public class GOBIIControllerV3  {
 
 
     /**
-     * Get Experiment endpoint handler
+     * Update Experiment endpoint handler
      * 
      * @param experimentId
      * @return
@@ -380,6 +379,22 @@ public class GOBIIControllerV3  {
         result.setResult(experiment);
         result.setMetadata(null);
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Delete Experiment endpoint handler
+     * 
+     * @param experimentId
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/experiments/{experimentId}")
+    @ResponseBody
+    public ResponseEntity<String> deleteExperiment(
+        @PathVariable Integer experimentId
+    ) throws Exception {
+        experimentService.deleteExperiment(experimentId);
+        return ResponseEntity.noContent().build();
     }
     
 
