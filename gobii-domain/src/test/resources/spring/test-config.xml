@@ -54,6 +54,8 @@
 
     <bean id="projectService"
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
+    <bean id="experimentDao"
+          class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
     <bean id="sampleTrackingProjectService"
           class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>

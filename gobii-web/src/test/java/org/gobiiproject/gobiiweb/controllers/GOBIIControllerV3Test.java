@@ -35,6 +35,8 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -278,8 +280,8 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testPatchWithProperties() throws Exception {
-        String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
-            "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
+        String requestJson = "{\"piContactId\" : \"4\",\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+            "\"properties\" : [ {\"propertyId\" : \"4\",  \"propertyValue\" : \"test-value\"} ]}";
 
         GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
         //let's leave it empty since it's a mock anyways
@@ -512,5 +514,134 @@ public class GOBIIControllerV3Test {
         ;
         verify(experimentService, times(1)).getExperiments(0, 1000, null);
     }
+
+    @Test
+    public void testGetExperimentById() throws Exception {
+        ExperimentDTO mockItem = new ExperimentDTO();
+        when(
+            experimentService.getExperiment(123)
+        ).thenReturn(
+            mockItem
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.result.experimentName").hasJsonPath())
+        ;
+        verify(experimentService, times(1)).getExperiment(123);
+
+    }
+
+    @Test
+    public void testGetExperimentById404() throws Exception {
+        when(
+            experimentService.getExperiment(123)
+        ).thenThrow(
+            new NullPointerException()
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        ;
+        verify(experimentService, times(1)).getExperiment(123);
+
+    }
+
+    @Test
+    public void testCreateExperimentsSimple() throws Exception {
+        String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
+        when(
+            experimentService.createExperiment( any( ExperimentRequest.class), eq("test-user" ))
+        ).thenReturn(
+            new ExperimentDTO()
+        );
+        when(
+            projectService.getDefaultProjectEditor() //TODO: Refactor where this editor info is called
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/experiments")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonRequest)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.metadata").doesNotExist())
+        ;
+        verify(experimentService, times(1)).createExperiment( any( ExperimentRequest.class ), eq("test-user"));
+    }
+
+    @Test
+    public void testUpdateExperimentSimple() throws Exception {
+        String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
+        when(
+            experimentService.updateExperiment(eq(123),  any( ExperimentPatchRequest.class), eq("test-user"))
+        ).thenReturn(
+            new ExperimentDTO()
+        );
+        when(
+            projectService.getDefaultProjectEditor() //TODO: replace this with AuthenticationService
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/experiments/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonRequest)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        ;
+        verify(experimentService, times(1)).updateExperiment(eq(123),  any( ExperimentPatchRequest.class ), eq("test-user"));
+    }
+
+    @Test
+    public void testDeleteExperiment() throws Exception {
+        
+        doNothing().when(experimentService).deleteExperiment(eq(123));
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(experimentService, times(1)).deleteExperiment(eq(123));
+    }
+
+    @Test
+    public void testDeleteExperimentException409() throws Exception {
+        Exception exc = new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.FOREIGN_KEY_VIOLATION, "test");
+        doThrow(exc).when(experimentService).deleteExperiment(eq(123));
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/experiments/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().is(409))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("test")))
+        ;
+        verify(experimentService, times(1)).deleteExperiment(eq(123));
+    }
+
+
     
 }

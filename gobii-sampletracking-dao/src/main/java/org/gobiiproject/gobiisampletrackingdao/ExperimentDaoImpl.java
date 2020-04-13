@@ -1,26 +1,30 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Transactional
-public class ExperimentDaoImpl implements ExperimentDao {
+import lombok.extern.slf4j.Slf4j;
 
-    Logger LOGGER = LoggerFactory.getLogger(ExperimentDaoImpl.class);
+@Slf4j
+public class ExperimentDaoImpl implements ExperimentDao {
 
     @PersistenceContext
     protected EntityManager em;
@@ -77,10 +81,59 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
+    }
+
+    @Override
+    public Experiment getExperiment(Integer i) throws Exception {
+        return em.find(Experiment.class, i, getHints());
+    }
+
+    @Override
+    public VendorProtocol getVendorProtocol(Integer vendorProtocolId) {
+        return em.find(VendorProtocol.class, vendorProtocolId);
+    }
+
+    @Override
+    public Experiment createExperiment(Experiment experiment) throws Exception {
+        em.persist(experiment);
+        em.flush();
+        em.refresh(experiment, getHints());
+        return experiment;
+    }
+
+    @Override
+    public Experiment updateExperiment(Experiment target) throws Exception {
+        Experiment experiment = em.merge(target);
+        em.flush();
+        //em.refresh(experiment, getHints());
+        return experiment;
+    }
+    
+    private Map<String, Object> getHints() {
+        EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;    
+    }
+
+    @Override
+    public void deleteExperiment(Experiment experiment) {
+        try {
+                em.remove(experiment);
+                em.flush();
+            } catch (javax.persistence.PersistenceException pe) {
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                    "Associated resources found. Cannot complete the action unless they are deleted.");
+            } catch (Exception e) {
+                throw e;
+            }
+
     }
 }

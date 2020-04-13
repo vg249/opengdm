@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -27,8 +28,21 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "experiment")
-@NamedEntityGraph(name = "experiment.vendorProtocol",
-    attributeNodes = @NamedAttributeNode("vendorProtocol")
+@NamedEntityGraph(name = "graph.experiment",
+    attributeNodes = {
+        @NamedAttributeNode(value = "vendorProtocol", subgraph = "graph.vp.protocol"),
+        @NamedAttributeNode(value = "project")
+    },
+    subgraphs = {
+        @NamedSubgraph(
+            name = "graph.vp.protocol",
+            attributeNodes = @NamedAttributeNode(value = "protocol", subgraph = "graph.protocol.platform")
+        ),
+        @NamedSubgraph(
+            name = "graph.protocol.platform",
+            attributeNodes = @NamedAttributeNode(value = "platform")
+        )
+    }
 )
 @EqualsAndHashCode(callSuper=false)
 public class Experiment extends BaseEntity{

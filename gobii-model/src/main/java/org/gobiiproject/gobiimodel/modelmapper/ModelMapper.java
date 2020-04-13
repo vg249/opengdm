@@ -78,14 +78,12 @@ public class ModelMapper {
                                 entityField = getDeclaredField(deepParams[0], entityToSetOrGet.getClass());
 
                                 for(int i = 1; i < deepParams.length; i++) {
-
                                     if(entityField == null) {
                                         break;
                                     }
 
                                     entityField.setAccessible(true);
                                     entityToSetOrGet = entityField.get(entityToSetOrGet);
-
                                     if(entityToSetOrGet == null) {
                                         break;
                                     }
@@ -100,11 +98,12 @@ public class ModelMapper {
                                 continue;
                             }
 
+                           
+
                             dtoField.setAccessible(true);
                             entityField.setAccessible(true);
 
                             if(!entityField.getType().equals(dtoField.getType())) {
-
                                 LoggerFactory.getLogger(ModelMapper.class).error(
                                         "Unable to map DTO to Entity: DTO field " + dtoFieldName +
                                                 " of type " + dtoField.getType().toString() +
@@ -131,7 +130,6 @@ public class ModelMapper {
             }
         }
         catch(Exception e) {
-
             LoggerFactory.getLogger(ModelMapper.class).error(e.getMessage());
 
             throw new GobiiException(

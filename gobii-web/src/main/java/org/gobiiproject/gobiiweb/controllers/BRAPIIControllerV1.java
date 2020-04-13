@@ -140,7 +140,7 @@ import java.util.*;
 @SuppressWarnings("unused")
 public class BRAPIIControllerV1 {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class); //TODO: remove
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class); //u
 
     private final Integer brapiDefaultPageSize = 1000; //TODO: remove
 
