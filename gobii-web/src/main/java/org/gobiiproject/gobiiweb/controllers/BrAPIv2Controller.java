@@ -79,12 +79,22 @@ public class BrAPIv2Controller {
             extends BrApiMasterPayload<BrApiResult<StudiesDTO>>{}
     private class SamplesListResponse
             extends BrApiMasterPayload<BrApiResult<SamplesDTO>>{}
-    private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
-    private class GenotypeCallsListResponse extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
+    private class GenotypeCallsResponse
+            extends BrApiMasterPayload<GenotypeCallsDTO>{}
+    private class GenotypeCallsListResponse
+            extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
     private class VariantResponse extends BrApiMasterPayload<VariantDTO>{}
-    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
+    private class VariantListResponse
+            extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
     private class VariantSetResponse extends BrApiMasterPayload<VariantSetDTO>{}
-    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<VariantSetDTO>>{}
+    private class VariantSetListResponse
+            extends BrApiMasterPayload<BrApiResult<VariantSetDTO>>{}
+    private class MapsListResponse
+            extends BrApiMasterListPayload<BrApiResult<MapsetDTO>>{}
+    private class MapsResponse
+            extends BrApiMasterPayload<MapsetDTO>{}
+    private class SearchResultResponse
+            extends BrApiMasterPayload<SearchResultDTO>{}
 
 
     /**
@@ -227,7 +237,7 @@ public class BrAPIv2Controller {
      */
     @ApiOperation(
             value = "List CallSets",
-            notes = "List CallSets in GDM System.",
+            notes = "Lists CallSets in GDM System.",
             tags = {"CallSets"},
             extensions = {
                     @Extension(properties = {
@@ -394,8 +404,8 @@ public class BrAPIv2Controller {
      */
     @ApiOperation(
             value = "List Genotypes by CallSet",
-            notes = "List of all the genotype calls in a given " +
-                    "Dna run identified by Dna run Id",
+            notes = "List of all the genotype calls in a " +
+                    "CallSet with callSetDbId",
             tags = {"CallSets"},
             extensions = {
                     @Extension(properties = {
@@ -568,7 +578,7 @@ public class BrAPIv2Controller {
      */
     @ApiOperation(
             value = "Get Variant by variantDbId",
-            notes = "Retrieves the Variant resource having the given Id",
+            notes = "Retrieves the Variant with variantDbId",
             tags = {"Variants"},
             extensions = {
                     @Extension(properties = {
@@ -642,9 +652,9 @@ public class BrAPIv2Controller {
      * TODO: Add page number parameter to comply BrApi standards.
      */
     @ApiOperation(
-            value = "List Genotype Calls",
-            notes = "List of all the genotype calls in a given " +
-                    "Marker identified by Marker Id",
+            value = "List Genotypes by Variant",
+            notes = "List of all the genotype calls in the marker " +
+                    "with variantDbId",
             tags = {"Variants"},
             extensions = {
                     @Extension(properties = {
@@ -756,8 +766,7 @@ public class BrAPIv2Controller {
             @ApiParam(value = "Id of the Sample to be fetched")
             @RequestParam(value="sampleDbId", required=false)
                     Integer sampleDbId,
-            @ApiParam(value = "Filter samples by observationUnitDbId. " +
-                    "Observation unit corresponds to project.")
+            @ApiParam(value = "Filter samples by observationUnitDbId.")
             @RequestParam(value="observationUnitDbId", required=false)
                     String observationUnitDbId,
             @ApiParam(value = "Filter list of samples by germplasmDbId.")
@@ -803,28 +812,48 @@ public class BrAPIv2Controller {
 
 
     @ApiOperation(
-            value = "List Maps",
-            notes = "List Genome maps in the database",
-            tags = {"Maps"},
+            value = "List Genome Maps",
+            notes = "Lists Genome maps in GDM system.",
+            tags = {"Genome Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Maps")
+                            @ExtensionProperty(
+                                    name="summary", value="List Genome Maps")
                     })
             }
-            ,
-            hidden = true
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "",
+                            response = MapsListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+            }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
+            @ApiImplicitParam(name="Authorization",
+                    value="Authentication Token", required = true,
                     paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/maps", method=RequestMethod.GET)
+    @RequestMapping(value="/maps", method=RequestMethod.GET,
+            produces = "application/json")
     public @ResponseBody
     ResponseEntity<BrApiMasterListPayload<MapsetDTO>> getMaps(
+            @ApiParam(value = "Used to request a specific page of " +
+                    "data to be returned. " +
+                    "The page indexing starts at 0 " +
+                    "(the first page is 'page'= 0). Default is 0")
             @RequestParam(value = "page", required = false,
                     defaultValue = BrapiDefaults.pageNum) Integer page,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @ApiParam(value = "Filter by studyDbId.")
             @RequestParam(value = "studyDbId",
                     required = false) Integer studyDbId) throws GobiiException {
         try {
@@ -853,32 +882,38 @@ public class BrAPIv2Controller {
     }
 
     @ApiOperation(
-            value = "Get Map by mapId",
-            notes = "List Genome maps in the database",
-            tags = {"Maps"},
+            value = "Get Map by mapDbId",
+            notes = "Gets a genome map by map id",
+            tags = {"Genome Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Maps : mapId")
+                            @ExtensionProperty(
+                                    name="summary", value="Get Map by Id")
                     })
             }
-            ,
-            hidden = true
 
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
-                    paramType = "header", dataType = "string"),
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required = true, paramType = "header",
+                    dataType = "string"),
     })
-    @RequestMapping(value="/maps/{mapId}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterPayload<MapsetDTO>> getMapByMapId(
-            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @PathVariable(value = "mapId") Integer mapId) throws GobiiException {
+    @RequestMapping(value="/maps/{mapDbId}", method=RequestMethod.GET,
+            produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<BrApiMasterPayload<MapsetDTO>> getMapByMapId(
+            @ApiParam(value = "ID of the Genome Map",
+                    required = true)
+            @PathVariable(value = "mapDbId") Integer mapDbId)
+            throws GobiiException
+    {
 
         try {
 
-            MapsetDTO mapset = mapsetService.getMapSetById(mapId);
-            BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>(mapset, pageSize, page);
+            MapsetDTO mapset = mapsetService.getMapSetById(mapDbId);
+            BrApiMasterPayload<MapsetDTO> payload =
+                    new BrApiMasterPayload<>(mapset);
             return ResponseEntity.ok(payload);
 
         }
@@ -893,38 +928,55 @@ public class BrAPIv2Controller {
     }
 
     @ApiOperation(
-            value = "Get Markers positions",
-            notes = "List Genome maps in the database",
-            tags = {"Maps"},
+            value = "List Marker positions",
+            notes = "Lists Marker positions in GDM system.",
+            tags = {"Genome Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Markers")
+                            @ExtensionProperty(
+                                    name="summary",
+                                    value="List Marker positions")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
-                    paramType = "header", dataType = "string"),
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required = true, paramType = "header", dataType = "string"),
     })
     @RequestMapping(value="/markerpositions", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<MarkerPositions>> getMarkersByMapId(
-            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @RequestParam(value = "minPosition", required = false) BigDecimal minPosition,
-            @RequestParam(value = "maxPosition", required = false) BigDecimal maxPosition,
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<MarkerPositions>> getMarkersByMapId(
+            @ApiParam(value = "Used to request a specific page of " +
+                    "data to be returned. " +
+                    "The page indexing starts at 0 " +
+                    "(the first page is 'page'= 0). Default is 0")
+            @RequestParam(value = "page", required = false,
+                    defaultValue = BrapiDefaults.pageNum) Integer page,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @ApiParam(value = "Filter positions greater than given value")
+            @RequestParam(value = "minPosition", required = false)
+                    BigDecimal minPosition,
+            @ApiParam(value = "Filter positions less than given value")
+            @RequestParam(value = "maxPosition", required = false)
+                    BigDecimal maxPosition,
             MarkerPositions markerPositionsFilter) throws GobiiException {
 
         try {
 
-            PagedResult<MarkerPositions> pagedResult = markerPositionsService.getMarkerPositions(pageSize, page,
-                    markerPositionsFilter, minPosition, maxPosition);
+            PagedResult<MarkerPositions> pagedResult =
+                    markerPositionsService.getMarkerPositions(
+                            pageSize, page,
+                            markerPositionsFilter, minPosition, maxPosition);
 
-            BrApiMasterListPayload<MarkerPositions> payload = new BrApiMasterListPayload<>(
-                    pagedResult.getResult(),
-                    pagedResult.getCurrentPageSize(),
-                    pagedResult.getCurrentPageNum());
+            BrApiMasterListPayload<MarkerPositions> payload =
+                    new BrApiMasterListPayload<>(
+                            pagedResult.getResult(),
+                            pagedResult.getCurrentPageSize(),
+                            pagedResult.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -946,17 +998,19 @@ public class BrAPIv2Controller {
      * Lists the variantsets by page size and page token
      *
      * @param pageNum - Page number to be fetched. 0 indexed.
-     * @param pageSize - Page size set by the user. If page size is more than maximum allowed
+     * @param pageSize - Page size set by the user.
+     *                 If page size is more than maximum allowed
      *                 page size, then the response will have maximum page size
      * @return Brapi response with list of variantsets
      */
     @ApiOperation(
             value = "List VariantSets",
-            notes = "List of all Variantsets",
+            notes = "Lists VariantSets in GDM system.",
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="VariantSets")
+                            @ExtensionProperty(
+                                    name="summary", value="List VariantSets")
                     })
             }
     )
@@ -970,40 +1024,52 @@ public class BrAPIv2Controller {
                             response = ErrorPayload.class),
                     @ApiResponse(code = 401, message = "Unauthorized",
                             response = ErrorPayload.class),
-                    @ApiResponse(code = 403, message = "Forbidden",
-                            response = ErrorPayload.class),
                     @ApiResponse(code = 500, message = "Internal Server Error",
                             response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required=true,
-                    paramType = "header", dataType = "string")
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/variantsets", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantSetDTO>> getVariantSets(
-            @ApiParam(value = "Id of the VariantSet to be fetched. Also, corresponds to dataset Id")
-            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
-            @ApiParam(value = "Study Id for which list of Variantsets need to be fetched. study " +
-                    "corresponds to experiment")
-            @RequestParam(value = "studyDbId", required = false) Integer studyDbId,
-            @ApiParam(value = "Study Name for which list of Variantsets need to be fetched")
-            @RequestParam(value = "studyName", required = false) String studyName,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+    @RequestMapping(value="/variantsets", method=RequestMethod.GET,
+            produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<VariantSetDTO>> getVariantSets(
+            @ApiParam(value = "Id of the VariantSet to be fetched. " +
+                    "Corresponds to dataset Id")
+            @RequestParam(value = "variantSetDbId", required = false)
+                    Integer variantSetDbId,
+            @ApiParam(value = "Study Id for which list of " +
+                    "VariantSets need to be fetched. " +
+                    "Study corresponds to experiment")
+            @RequestParam(value = "studyDbId", required = false)
+                    Integer studyDbId,
+            @ApiParam(value = "Study Name for which list of " +
+                    "VariantSets need to be fetched")
+            @RequestParam(value = "studyName", required = false)
+                    String studyName,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Page number to be fetched")
-            @RequestParam(value = "page", required = false, defaultValue = BrapiDefaults.pageNum) Integer pageNum
+            @RequestParam(value = "page", required = false,
+                    defaultValue = BrapiDefaults.pageNum) Integer pageNum
     ) {
         try {
 
-            PagedResult<VariantSetDTO> pagedResult = variantSetsService.getVariantSets(pageSize, pageNum,
-                    variantSetDbId, null,
-                    studyDbId, studyName);
+            PagedResult<VariantSetDTO> pagedResult =
+                    variantSetsService.getVariantSets(pageSize, pageNum,
+                            variantSetDbId, null,
+                            studyDbId, studyName);
 
-            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(
-                    pagedResult.getResult(),
-                    pagedResult.getCurrentPageSize(),
-                    pagedResult.getCurrentPageNum());
+            BrApiMasterListPayload<VariantSetDTO> payload =
+                    new BrApiMasterListPayload<>(
+                            pagedResult.getResult(),
+                            pagedResult.getCurrentPageSize(),
+                            pagedResult.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -1024,7 +1090,8 @@ public class BrAPIv2Controller {
      * Endpoint for getting a specific variantSet with a given variantSetDbId
      *
      * @param variantSetDbId ID of the requested variantSet
-     * @return ResponseEntity with http status code specifying if retrieval of the variantSet is successful.
+     * @return ResponseEntity with http status code specifying,
+     *          if retrieval of the variantSet is successful.
      * Response body contains the requested variantSet information
      */
     @ApiOperation(
@@ -1033,43 +1100,49 @@ public class BrAPIv2Controller {
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="VariantSets : variantSetDbId")
+                            @ExtensionProperty(
+                                    name="summary",
+                                    value="Get VariantSet by Id")
                     })
             }
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of VariantSet By ID",
+                    @ApiResponse(code = 200, message = "",
                             response = VariantSetResponse.class
                     ),
-                    @ApiResponse(code = 500, message = "Internal Server Error",
+                    @ApiResponse(code = 400, message = "",
                             response = ErrorPayload.class),
-                    @ApiResponse(code = 400, message = "Bad Request",
+                    @ApiResponse(code = 401, message = "",
                             response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "Unauthorized",
+                    @ApiResponse(code = 404, message = "",
                             response = ErrorPayload.class),
-                    @ApiResponse(code = 403, message = "Forbidden",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "Resource Not Found",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "Internal Server Error",
+                    @ApiResponse(code = 500, message = "",
                             response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
-            paramType = "header", dataType = "string"),
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required = true, paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
-            @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
-            @PathVariable("variantSetDbId") Integer variantSetDbId) {
-
+    @RequestMapping(
+            value="/variantsets/{variantSetDbId:[\\d]+}",
+            method=RequestMethod.GET,
+            produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
+            @ApiParam(value = "ID of the VariantSet to be extracted",
+                    required = true)
+            @PathVariable("variantSetDbId") Integer variantSetDbId)
+    {
         try {
 
-            VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
+            VariantSetDTO variantSetDTO =
+                    variantSetsService.getVariantSetById(variantSetDbId);
 
-            BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
+            BrApiMasterPayload<VariantSetDTO> payload =
+                    new BrApiMasterPayload<>(variantSetDTO);
 
             return ResponseEntity.ok(payload);
 
@@ -1091,72 +1164,113 @@ public class BrAPIv2Controller {
      *
      * @param variantSetDbId - Integer ID of the VariantSet to be fetched
      * @param pageToken - String page token
-     * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size,
+     * @param pageSize - Page size set by the user.
+     *                 If page size is more than maximum allowed page size,
      *                 then the response will have maximum page size
      * @return Brapi response with list of CallSets
      */
     @ApiOperation(
-            value = "List Variants by VariantSetDbId",
-            notes = "List of all the Variants in a specific VariantSet",
+            value = "List Variants in VariantSet",
+            notes = "Lists all the Variants in VariantSet with variantSetDbId",
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Variants")
+                            @ExtensionProperty(name="summary",
+                                    value="List Variants in VariantSet")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of Variants by VariantSetId",
-                            response = VariantListResponse.class
-                    )
+                    @ApiResponse(code = 200, message = "",
+                            response = VariantListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization", value="Authentication Token", required = true,
-                    paramType = "header", dataType = "string")
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required = true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariantsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
+    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants",
+            method=RequestMethod.GET, produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<VariantDTO>>
+    getVariantsByVariantSetDbId(
+            @ApiParam(value = "ID of the VariantSet of the " +
+                    "Variants to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @RequestParam(value = "pageToken", required = false) String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
-            @RequestParam(value = "pageSize", required = false, defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @RequestParam(value = "variantDbId", required = false) Integer variantDbId
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "Value is $metadata.pagination.nextPageToken " +
+                    "form previous page.")
+            @RequestParam(value = "pageToken", required = false)
+                    String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @ApiParam(value = "Get Variant with given variantDbId.")
+            @RequestParam(value = "variantDbId", required = false)
+                    Integer variantDbId
     ){
-        VariantSetDTO variantSet =
-                variantSetsService.getVariantSetById(variantSetDbId);
-        return getVariants(pageSize, pageToken,
-                variantDbId, variantSet.getVariantSetDbId());
+        try {
+            VariantSetDTO variantSet =
+                    variantSetsService.getVariantSetById(variantSetDbId);
+            return getVariants(pageSize, pageToken,
+                    variantDbId, variantSet.getVariantSetDbId());
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist"
+            );
+        }
     }
 
     /**
      * Lists the callsets for a given VariantSetDbId by page size and page token
      *
      * @param variantSetDbId - Integer ID of the VariantSet to be fetched
-     * @param pageSize - Page size set by the user. If page size is more than maximum allowed page size, then the response will have maximum page size
+     * @param pageSize - Page size set by the user. If page size is more
+     *                 than maximum allowed page size,
+     *                 then the response will have maximum page size
      * @return Brapi response with list of CallSets
      */
     @ApiOperation(
-            value = "List Callsets by VariantSetDbId",
-            notes = "List of all the CallSets in a specific VariantSet",
+            value = "List CallSets in VariantSet",
+            notes = "Lists CallSets in VariantSet",
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Callsets")
+                            @ExtensionProperty(
+                                    name="summary",
+                                    value="List CallSets in VariantSet")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful retrieval of CallSets by VariantSetId",
-                            response = CallSetListResponse.class
-                    )
+                    @ApiResponse(code = 200, message = "",
+                            response = CallSetListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
             }
     )
     @ApiImplicitParams({
@@ -1169,15 +1283,14 @@ public class BrAPIv2Controller {
     public
     @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
     getCallSetsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet of the " +
-                    "CallSets to be extracted", required = true)
+            @ApiParam(value = "ID of the VariantSet", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
             @ApiParam(value = "Page number",
                     defaultValue = BrapiDefaults.pageNum)
             @RequestParam(value = "page", required = false,
                     defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000. Maximum page size is 1000")
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             CallSetDTO callSetsFilter
@@ -1185,8 +1298,10 @@ public class BrAPIv2Controller {
 
         try {
 
-            VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
-            return getCallSets(pageSize, page, variantSet.getVariantSetDbId(), callSetsFilter);
+            VariantSetDTO variantSet =
+                    variantSetsService.getVariantSetById(variantSetDbId);
+            return getCallSets(pageSize, page,
+                    variantSet.getVariantSetDbId(), callSetsFilter);
         }
         catch (GobiiException gE) {
             throw gE;
@@ -1202,18 +1317,116 @@ public class BrAPIv2Controller {
         }
     }
 
+    @ApiOperation(
+            value = "List Genotypes in VariantSet",
+            notes = "List of all the genotype calls in a given VariantSet",
+            tags = {"VariantSets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary",
+                                    value="List Genotypes in VariantSet")
+                    })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "",
+                            response = GenotypeCallsListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
+    })
+    @RequestMapping(
+            value="/variantsets/{variantSetDbId}/calls",
+            method=RequestMethod.GET,
+            produces = "application/json")
+    public @ResponseBody
+    ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
+    getCallsByVariantSetDbId(
+            @ApiParam(value = "ID of the VariantSet", required = true)
+            @PathVariable("variantSetDbId") Integer variantSetDbId,
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "Value is $metadata.pagination.nextPageToken " +
+                    "form previous page.")
+            @RequestParam(value = "pageToken", required = false)
+                    String pageToken,
+            @ApiParam(value = "Size of the page to be fetched. " +
+                    "Default is 1000.")
+            @RequestParam(value = "pageSize", required = false,
+                    defaultValue = BrapiDefaults.pageSize) Integer pageSize
+    ){
+
+        try {
+
+            PagedResult<GenotypeCallsDTO> pagedResult =
+                    genotypeCallsService.getGenotypeCallsByVariantSetDbId(
+                            variantSetDbId, pageSize, pageToken);
+
+
+            BrApiMasterListPayload<GenotypeCallsDTO> payload =
+                    new BrApiMasterListPayload<>(
+                            pagedResult.getResult(),
+                            pagedResult.getCurrentPageSize(),
+                            pagedResult.getNextPageToken());
+
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage()
+            );
+        }
+    }
+
 
 
     @ApiOperation(
-            value = "Creates a searchResultDbId for Genotype Calls search",
-            notes = "Creates ",
-            tags = {"GenotypeCalls"},
+            value = "Search Genotypes",
+            notes = "Creates a search query for genotypes search",
+            tags = {"Genotype Calls"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Search")
+                            @ExtensionProperty(
+                                    name="summary", value="Search Genotypes")
                     })
-            },
-            hidden = true
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 201, message = "",
+                            response = SearchResultResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+            }
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -1268,20 +1481,56 @@ public class BrAPIv2Controller {
         }
     }
 
-    @RequestMapping(value = "/search/{searchResultDbId}/calls",
+    @ApiOperation(
+            value = "List Genotypes for SearchQuery",
+            notes = "List of all the genotype calls for given search query",
+            tags = {"Genotype Calls"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary",
+                                    value="List Genotypes for SearchQuery")
+                    })
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "",
+                            response = GenotypeCallsListResponse.class),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header",
+                    dataType = "string")
+    })
+    @RequestMapping(value = "/search/calls/{searchResultDbId}",
             method = RequestMethod.GET,
             produces = "application/json")
     public
     ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
     getGenotypeCallsBySearchQuery(
+            @ApiParam(value = "Search Query Id for which genotypes " +
+                    "need to be fetched.")
             @PathVariable String searchResultDbId,
             @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous page's " +
-                    "meta data should be used.")
+                    "Value is $metadata.pagination.nextPageToken " +
+                    "form previous page.")
             @RequestParam(value = "pageToken", required = false)
                     String pageToken,
             @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000. Maximum page size is 1000")
+                    "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                     defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             HttpServletRequest request
@@ -1319,85 +1568,6 @@ public class BrAPIv2Controller {
                     "Internal Server Error " + e.getMessage()
             );
 
-        }
-    }
-
-    @ApiOperation(
-            value = "List Genotype Calls",
-            notes = "List of all the genotype calls in a given Variantset",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="GenotypeCalls")
-                    })
-            }
-            ,
-            hidden = true
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 200,
-                            message = "Successful retrieval of " +
-                                    "Genotype Calls by VariantSetId",
-                            response = GenotypeCallsListResponse.class
-                    )
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
-    })
-    @RequestMapping(
-            value="/variantsets/{variantSetDbId}/calls",
-            method=RequestMethod.GET,
-            produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
-    getCallsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet of " +
-                    "the CallSets to be extracted", required = true)
-            @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "nextPageToken form previous " +
-                    "page's meta data should be used.")
-            @RequestParam(value = "pageToken", required = false)
-                    String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000. Maximum page size is 1000")
-            @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize
-    ){
-
-        try {
-
-            PagedResult<GenotypeCallsDTO> pagedResult =
-                    genotypeCallsService.getGenotypeCallsByVariantSetDbId(
-                            variantSetDbId, pageSize, pageToken);
-
-
-            BrApiMasterListPayload<GenotypeCallsDTO> payload =
-                    new BrApiMasterListPayload<>(
-                            pagedResult.getResult(),
-                            pagedResult.getCurrentPageSize(),
-                            pagedResult.getNextPageToken());
-
-
-            return ResponseEntity.ok(payload);
-
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage()
-            );
         }
     }
 

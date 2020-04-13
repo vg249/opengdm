@@ -97,7 +97,8 @@ security_definitions = swagger_obj["securityDefinitions"]
 
 if doc_md_path is not None:
     for tag in tags:
-        tag_description_file = doc_md_path + tag + "_Overview.md"
+        tag_description_file = (
+            doc_md_path + "_".join(tag.split(" ")) + "_Overview.md")
         if os.path.isfile(tag_description_file):
             with open(tag_description_file) as tag_f:
                 tags[tag]["description"] = tag_f.read()
