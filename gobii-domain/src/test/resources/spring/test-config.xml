@@ -57,8 +57,6 @@
     <bean id="experimentDao"
           class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
-    <bean id="sampleTrackingProjectService"
-          class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
@@ -69,8 +67,6 @@
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
-    <!-- gdm v3 contactSErvice-->
-     <bean id="contactServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ContactServiceImpl"/>
 
     <bean id="rsContact"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
