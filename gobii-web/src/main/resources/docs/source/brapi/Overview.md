@@ -5,7 +5,7 @@ Below are links to other GDM API references,
 
 * [GDM BrAPI v1 API reference](https://gdm2.docs.apiary.io/reference/brapi)
 * [GDM API v1 reference](https://gdm2.docs.apiary.io/)
-* [BrAPI Genotyping v2.0 specification](https://brapigermplasm.docs.apiary.io/)
+* [BrAPI Genotyping v2.0 specification](https://brapigenotyping.docs.apiary.io/)
 
 **BrAPI GDM terminologies Map**
 
@@ -19,6 +19,7 @@ Germplasm  | Germplasm
 Study      | Experiment
 germpalasmPUI | Germplasm External Code
 Calls      | Genotypes
+Genome Map | Mapset
 
 Postman Collection URL: https://www.getpostman.com/collections/973110d1a1f89af7eaec
 
