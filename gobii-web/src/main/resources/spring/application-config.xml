@@ -288,6 +288,7 @@
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
+    <bean id="contactServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ContactServiceImpl"/>
     <!-- **** Display Beans *************************************** -->
     <bean id="rsDisplayDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
@@ -313,6 +314,9 @@
     <bean id="ExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
+    <!-- *** Experiment Service V3 -->
+    <bean id="ExperimentServiceV3"
+          class="org.gobiiproject.gobidomain.services.gdmv3.ExperimentServiceImpl"/>
 
 
     <!-- **** Analysis Beans *************************************** -->
@@ -392,6 +396,7 @@
    <!-- **** Projects V3  Beans -->
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
     <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
+    <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.gdmv3.ProjectServiceImpl"/>
 
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
@@ -809,7 +814,6 @@
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
-
                 <!-- DNA RUN NAMES BY LIST -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_NAMES_BYLIST}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
@@ -830,10 +834,8 @@
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
-
             </map>
         </property>
-
     </bean>
 
 
@@ -874,6 +876,8 @@
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
+
+
             </map>
         </property>
     </bean>
