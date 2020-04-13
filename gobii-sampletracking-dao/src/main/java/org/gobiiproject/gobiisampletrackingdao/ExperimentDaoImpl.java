@@ -105,6 +105,14 @@ public class ExperimentDaoImpl implements ExperimentDao {
         return experiment;
     }
 
+    @Override
+    public Experiment updateExperiment(Experiment target) throws Exception {
+        Experiment experiment = em.merge(target);
+        em.flush();
+        //em.refresh(experiment, getHints());
+        return experiment;
+    }
+    
     private Map<String, Object> getHints() {
         EntityGraph<?> graph = em.getEntityGraph("graph.experiment");
         Map<String, Object> hints = new HashMap<>();

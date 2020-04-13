@@ -28,6 +28,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
@@ -159,16 +160,7 @@ public class GOBIIControllerV3  {
             @RequestBody @Valid final GobiiProjectRequestDTO project,
             BindingResult bindingResult
     ) throws Exception {
-        if (bindingResult.hasErrors()) {
-            List<String> info = new ArrayList<String>();
-        
-            bindingResult.getFieldErrors().forEach(
-                objErr -> {
-                    info.add(objErr.getField() + " " + objErr.getDefaultMessage());
-                }
-            );
-            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
-        } 
+        this.checkBindingErrors(bindingResult);
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
@@ -214,8 +206,10 @@ public class GOBIIControllerV3  {
         @RequestBody @Valid final GobiiProjectPatchDTO project,
         BindingResult bindingResult
     ) throws Exception {
+        this.checkBindingErrors(bindingResult);
         String userName = projectService.getDefaultProjectEditor();
         GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
+        assert dto.getPiContactId() != null;
         BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
         payload.setResult(dto);
         payload.setMetadata(null);
@@ -365,6 +359,28 @@ public class GOBIIControllerV3  {
     }
 
 
+    /**
+     * Get Experiment endpoint handler
+     * 
+     * @param experimentId
+     * @return
+     * @throws Exception
+     */
+    @PatchMapping("/experiments/{experimentId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> updateExperiment(
+        @PathVariable Integer experimentId,
+        @RequestBody @Valid final ExperimentPatchRequest request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
+        String user = projectService.getDefaultProjectEditor();
+        ExperimentDTO experiment = experimentService.updateExperiment(experimentId, request, user);
+        result.setResult(experiment);
+        result.setMetadata(null);
+        return ResponseEntity.ok(result);
+    }
     
 
     public ProjectService getProjectService() {
@@ -378,6 +394,19 @@ public class GOBIIControllerV3  {
     private Integer getPageSize(Integer pageSize) {
         if (pageSize == null || pageSize <= 0) return 1000;
         return pageSize;
+    }
+
+    private void checkBindingErrors(BindingResult bindingResult) throws Exception {
+        if (bindingResult.hasErrors()) {
+            List<String> info = new ArrayList<String>();
+        
+            bindingResult.getFieldErrors().forEach(
+                objErr -> {
+                    info.add(objErr.getField() + " " + objErr.getDefaultMessage());
+                }
+            );
+            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
+        } 
     }
 
 }

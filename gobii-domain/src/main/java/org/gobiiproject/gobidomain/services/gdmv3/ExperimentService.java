@@ -8,9 +8,8 @@
 
  package org.gobiiproject.gobidomain.services.gdmv3;
 
-import javax.validation.Valid;
-
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
@@ -21,5 +20,7 @@ public interface ExperimentService {
 	ExperimentDTO getExperiment(Integer i) throws Exception;
 
 	ExperimentDTO createExperiment(ExperimentRequest experiment, String userName) throws Exception;
+
+	ExperimentDTO updateExperiment(Integer experimentId, ExperimentPatchRequest any, String eq) throws Exception;
 
  }

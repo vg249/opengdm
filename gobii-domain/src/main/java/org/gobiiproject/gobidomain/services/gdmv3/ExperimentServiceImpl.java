@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -27,6 +28,7 @@ import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
@@ -41,7 +43,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired
     private ProjectDao projectDao;
 
-    @Autowired 
+    @Autowired
     private ContactDao contactDao;
 
     @Autowired
@@ -85,25 +87,19 @@ public class ExperimentServiceImpl implements ExperimentService {
     public ExperimentDTO createExperiment(ExperimentRequest request, String createdBy) throws Exception {
         Project project = projectDao.getProject(request.getProjectId());
         if (project == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR, 
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Unknown project"
-            );
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown project");
         }
 
         VendorProtocol vp = experimentDao.getVendorProtocol(request.getVendorProtocolId());
         if (vp == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR, 
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Unknown vendor protocol"
-            );
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown vendor protocol");
         }
 
-        //get contact info
+        // get contact info
         Contact contact = contactDao.getContactByUsername(createdBy);
-       
+
         Experiment experiment = new Experiment();
         experiment.setExperimentName(request.getExperimentName());
         experiment.setProject(project);
@@ -146,6 +142,55 @@ public class ExperimentServiceImpl implements ExperimentService {
 
 
         return dto;
+    }
+
+    @Transactional
+    @Override
+    public ExperimentDTO updateExperiment(Integer experimentId, ExperimentPatchRequest request, String updatedBy) throws Exception {
+        Experiment target = experimentDao.getExperiment(experimentId);
+        if (target == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Unknown experiment"
+            );
+        }
+
+        if (request.getProjectId() != null) {
+            Project project = projectDao.getProject(request.getProjectId());
+            if (project == null) {
+                throw new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown project"
+                );
+            }
+            target.setProject(project);
+        }
+
+        if (!LineUtils.isNullOrEmpty(request.getExperimentName())) {
+            target.setExperimentName(request.getExperimentName());
+        }
+
+        if (request.getVendorProtocolId() != null ) {
+            VendorProtocol vp = experimentDao.getVendorProtocol(request.getVendorProtocolId());
+            if (vp == null) {
+                throw new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                   "Unknown vendor protocol"
+                );
+            }
+            target.setVendorProtocol(vp);
+        }
+
+        // get contact info
+        Contact contact = contactDao.getContactByUsername(updatedBy);
+        target.setModifiedBy(contact.getContactId());
+        target.setModifiedDate(new java.util.Date());
+
+        experimentDao.updateExperiment(target);
+        return this.getExperiment(target.getExperimentId());
     }
     
 }

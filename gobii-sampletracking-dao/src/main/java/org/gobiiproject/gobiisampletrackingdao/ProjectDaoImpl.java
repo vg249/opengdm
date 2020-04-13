@@ -88,14 +88,9 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Override
     public Project patchProject(Project projectToBePatched) throws Exception {   
-        assert projectToBePatched.getProperties() != null;  
-        log.debug("Patch me " + projectToBePatched.getProperties());
-        Project patchedProject = em.merge(projectToBePatched);
-        //assert patchedProject.getProperties() != null;
+        Project project = em.merge(projectToBePatched);
         em.flush();
-        //em.refresh(project);
-        return patchedProject;
-
+        return project;
     }
 
 
