@@ -120,7 +120,7 @@ public class BrAPIv2Controller {
     )
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successful",
+                    @ApiResponse(code = 200, message = "",
                             response = BrapiResponseMapCalls.class),
                     @ApiResponse(code = 500, message = "",
                             response = ErrorPayload.class)
@@ -1572,27 +1572,42 @@ public class BrAPIv2Controller {
     }
 
     @ApiOperation(
-            value = "Download Genotype Calls",
+            value = "Download Genotypes in VariantSet",
             notes = "Download of all the genotype calls in a given Variantset",
             tags = {"VariantSets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="GenotypeCalls")
+                            @ExtensionProperty(name="summary",
+                                    value="Download Genotypes in VariantSet")
                     })
             }
-            ,
-            hidden = true
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token", required=true,
-                    paramType = "header", dataType = "string")
+                    name="Authorization", value="Authentication Token",
+                    required=true, paramType = "header", dataType = "string")
     })
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200, message = ""),
+                    @ApiResponse(code = 400, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 401, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 404, message = "",
+                            response = ErrorPayload.class),
+                    @ApiResponse(code = 500, message = "",
+                            response = ErrorPayload.class)
+
+            }
+    )
     @RequestMapping(
             value="/variantsets/{variantSetDbId:[\\d]+}/calls/download",
             method=RequestMethod.GET,
             produces = "text/csv")
     public ResponseEntity<ResponseBodyEmitter> handleRbe(
+            @ApiParam(value = "Id of the variantset to download")
             @PathVariable("variantSetDbId") Integer variantSetDbId
     ) {
 

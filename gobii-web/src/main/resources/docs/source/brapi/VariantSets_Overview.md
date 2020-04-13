@@ -14,7 +14,7 @@ availableFormats | Array | List of [File Format Objects](#fileformatobject).
 referenceSetDbId | String | The ID of the reference set that describes the sequences used by the variants in this set.
 variantCount | Integer | Number of Variants(Markers or SNPs) in corresponding VariantSet
 callSetCount | Integer | Number of CallSets (DnaRuns) in a corresponding VariantSet
-additionalInfo | Object | [Additional Information](#variantsetadditionalinfo) not defined in brapi.
+additionalInfo | Object | [Additional Information](#variantsetadditionalinfo).
 createdBy | Integer | Contact Id of the user who created the VariantSet.
 created | String | Created date string in UTC
 modifiedBy | Integer | Contact Id of the user who modified the VariantSet.
