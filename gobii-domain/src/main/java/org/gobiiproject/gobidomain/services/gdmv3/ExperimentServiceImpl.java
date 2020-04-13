@@ -69,6 +69,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         return pagedResult;
     }
 
+    @Transactional
     @Override
     public ExperimentDTO getExperiment(Integer i) throws Exception {
         Experiment experiment = experimentDao.getExperiment(i);
