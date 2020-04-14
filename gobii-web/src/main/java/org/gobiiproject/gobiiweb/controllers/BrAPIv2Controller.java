@@ -69,9 +69,6 @@ public class BrAPIv2Controller {
     @Autowired
     private MarkerPositionsService markerPositionsService;
 
-    private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT); //TODO: remove
-
-
     private class CallSetResponse extends BrApiMasterPayload<CallSetDTO>{}
     private class CallSetListResponse
             extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}

@@ -101,6 +101,14 @@ public enum RestResourceId {
 
     BRAPI_CALLSETS_BY_VARIANTSET(
             "variantsets/{variantSetDbId}/callsets",
+            ServerType.BRAPI),
+
+    BRAPI_SEARCH_GENOTYPES(
+            "search/calls",
+            ServerType.BRAPI),
+
+    BRAPI_GENOTYPES_BY_SEARCH_QUERY(
+            "search/calls/{searchResultDbId}",
             ServerType.BRAPI);
 
     private String requestPath;
