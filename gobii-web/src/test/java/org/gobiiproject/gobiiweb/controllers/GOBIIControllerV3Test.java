@@ -27,12 +27,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -78,6 +80,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private ExperimentService experimentService;
+
+    @Mock
+    private AnalysisService analysisService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -640,6 +645,34 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.error").value(StringContains.containsString("test")))
         ;
         verify(experimentService, times(1)).deleteExperiment(eq(123));
+    }
+
+    @Test
+    public void testListAnalysis() throws Exception {
+        AnalysisDTO mockAnalysisDTO  = new AnalysisDTO();
+        List<AnalysisDTO> mockList = new ArrayList<>();
+        mockList.add(mockAnalysisDTO);
+        PagedResult<AnalysisDTO> mockPayload = new PagedResult<>();
+        mockPayload.setResult(mockList);
+        mockPayload.setCurrentPageNum(0);
+        mockPayload.setCurrentPageSize(1);
+
+        when(
+            analysisService.getAnalyses(eq(0), eq(1000))
+        ).thenReturn(
+            mockPayload
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/analyses")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(analysisService, times(1)).getAnalyses(eq(0), eq(1000));
+        
     }
 
 
