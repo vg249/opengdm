@@ -177,6 +177,18 @@ public class BrapiResponseMapCalls {
                 Arrays.asList(MediaType.APPLICATION_JSON),
                 Arrays.asList("2.0")));
 
+        returnVal.add(new ServerInfoDTO(
+                RestResourceId.BRAPI_SEARCH_GENOTYPES.getResourcePath(),
+                Arrays.asList(HttpMethod.GET),
+                Arrays.asList(MediaType.APPLICATION_JSON),
+                Arrays.asList("2.0")));
+
+        returnVal.add(new ServerInfoDTO(
+                RestResourceId.BRAPI_GENOTYPES_BY_SEARCH_QUERY.getResourcePath(),
+                Arrays.asList(HttpMethod.GET),
+                Arrays.asList(MediaType.APPLICATION_JSON),
+                Arrays.asList("2.0")));
+
         return returnVal;
     }
 
