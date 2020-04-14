@@ -38,6 +38,12 @@ public class Analysis extends BaseEntity {
     @Column(name = "program")
     private String program;
 
+    @Column(name = "programversion")
+    private String programVersion;
+
+    @Column(name = "algorithm")
+    private String algorithm;
+
     @Column(name = "sourcename")
     private String sourceName;
 
