@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -18,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,11 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Autowired
     private ReferenceDao referenceDao;
 
+    @Autowired
+    private ContactDao contactDao;
+
+    @Transactional
+    @Override
     public PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception {
         List<Analysis> analyses = analysisDao.getAnalyses(page * pageSize, pageSize);
         List<AnalysisDTO> dtos = new ArrayList<>();
@@ -93,6 +100,12 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysis.setStatus(cv);
 
         ModelMapper.mapDtoToEntity(analysisRequest, analysis);
+
+        // audit items
+        Contact creator = contactDao.getContactByUsername(user);
+        if (creator != null)
+            analysis.setCreatedBy(creator.getContactId());
+        analysis.setCreatedDate(new java.util.Date());
 
         analysis = analysisDao.createAnalysis(analysis);
 

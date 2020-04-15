@@ -6,6 +6,8 @@
  */
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -85,5 +87,8 @@ public class AnalysisDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "reference.referenceName", entity = Analysis.class)
     private String referenceName;
+
+    @GobiiEntityMap(paramName = "parameters", entity = Analysis.class)
+    private Map<String, String> parameters;
 
 }
