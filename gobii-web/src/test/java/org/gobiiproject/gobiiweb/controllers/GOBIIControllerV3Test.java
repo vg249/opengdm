@@ -37,6 +37,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -672,7 +673,33 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isOk())
         ;
         verify(analysisService, times(1)).getAnalyses(eq(0), eq(1000));
+    }
+    
+    @Test
+    public void testCreateAnalysisSimple() throws Exception {
         
+        String jsonRequest = "{\"analysisName\": \"test-name\", \"analysisTypeId\": \"93\" }";
+        when(
+            analysisService.createAnalysis(any(AnalysisRequest.class), any(String.class))
+        ).thenReturn(
+            new AnalysisDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor() //TODO: Refactor where this editor info is called
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/analyses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonRequest)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+        verify(analysisService, times(1)).createAnalysis(any(AnalysisRequest.class), eq("test-user"));
     }
 
 

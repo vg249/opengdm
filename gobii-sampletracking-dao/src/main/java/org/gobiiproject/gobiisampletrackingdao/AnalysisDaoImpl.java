@@ -25,8 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AnalysisDaoImpl implements AnalysisDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(AnalysisDaoImpl.class);
-
     @PersistenceContext
     protected EntityManager em;
 
@@ -55,7 +53,7 @@ public class AnalysisDaoImpl implements AnalysisDao {
         }
         catch(Exception e) {
 
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
@@ -95,6 +93,13 @@ public class AnalysisDaoImpl implements AnalysisDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
+    }
+
+    @Override
+    public Analysis createAnalysis(Analysis analysis) throws Exception {
+        em.persist(analysis);
+        em.flush();
+        return analysis;
     }
 
 }
