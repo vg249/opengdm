@@ -15,7 +15,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Autowired
     private AnalysisDao analysisDao;
 
-    public PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) {
+    public PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception {
         List<Analysis> analyses = analysisDao.getAnalyses(page * pageSize, pageSize);
         List<AnalysisDTO> dtos = new ArrayList<>();
 

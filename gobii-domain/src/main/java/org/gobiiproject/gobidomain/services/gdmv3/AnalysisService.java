@@ -5,7 +5,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface AnalysisService {
 
-	PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize);
+	PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception;
 
 	
 
