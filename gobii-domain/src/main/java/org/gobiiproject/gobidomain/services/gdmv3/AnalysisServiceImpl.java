@@ -8,7 +8,9 @@ import javax.transaction.Transactional;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
+import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -61,34 +63,30 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public AnalysisDTO createAnalysis(AnalysisRequest analysisRequest, String user) throws Exception {
         Analysis analysis = new Analysis();
-        //Get analysis type
+        // Get analysis type
         Cv analysisType = cvDao.getCvByCvId(analysisRequest.getAnalysisTypeId());
         if (analysisType == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Unknown analysis type");
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown analysis type");
         }
 
-        if (
-            !analysisType.getCvGroup().getCvGroupName().equals(
-                CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()
-            )
-        ) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Invalid analysis type id");
+        if (!analysisType.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName())) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid analysis type id");
         }
         analysis.setType(analysisType);
-       
-        //TODO check if the reference Id 
+
+        // TODO check if the reference Id
 
         if (analysisRequest.getReferenceId() != null) {
             Reference reference = referenceDao.getReference(analysisRequest.getReferenceId());
-            if (reference == null) throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Unknown reference"
-            );
+            if (reference == null)
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                        "Unknown reference");
             analysis.setReference(reference);
         }
 
-        //set status
+        // set status
         List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
@@ -112,6 +110,48 @@ public class AnalysisServiceImpl implements AnalysisService {
         AnalysisDTO dto = new AnalysisDTO();
 
         ModelMapper.mapEntityToDto(analysis, dto);
-        return dto; 
+        return dto;
+    }
+
+    @Transactional
+    @Override
+    public AnalysisTypeDTO createAnalysisType(AnalysisTypeRequest analysisTypeRequest, String creatorId) throws Exception {
+        
+        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+            CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
+            2 //TODO:  this is custom type
+        );
+        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
+
+        Cv cv = new Cv();
+        cv.setCvGroup(cvGroup);
+        cv.setTerm(analysisTypeRequest.getAnalysisTypeName());
+        cv.setDefinition(analysisTypeRequest.getAnalysisTypeDescription());
+
+        //get the new row status
+        // Get the Cv for status, new row
+        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        Cv status = null;
+        if (!cvList.isEmpty()) {
+            status = cvList.get(0);
+        }
+        cv.setStatus(status.getCvId());
+
+        //set rank
+        cv.setRank(0);
+        
+        try {
+         cv = cvDao.createCv(cv);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        AnalysisTypeDTO dto = new AnalysisTypeDTO();
+        ModelMapper.mapEntityToDto(cv, dto);
+        return dto;
+
     }
 }

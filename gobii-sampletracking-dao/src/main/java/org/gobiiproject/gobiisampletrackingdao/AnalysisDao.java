@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.Analysis;
-import org.gobiiproject.gobiimodel.entity.Cv;
-
 import java.util.List;
 import java.util.Set;
+
+import org.gobiiproject.gobiimodel.entity.Analysis;
 
 public interface AnalysisDao {
 
@@ -18,6 +17,6 @@ public interface AnalysisDao {
 
 	List<Analysis> getAnalyses(Integer offset, Integer pageSize);
 
-	Analysis createAnalysis(Analysis analysis) throws Exception;
-
+    Analysis createAnalysis(Analysis analysis) throws Exception;
+    
 }

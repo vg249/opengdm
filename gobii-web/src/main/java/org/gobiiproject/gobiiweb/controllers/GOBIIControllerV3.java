@@ -28,9 +28,11 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
+import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -444,6 +446,26 @@ public class GOBIIControllerV3  {
         AnalysisDTO result = analysisService.createAnalysis(analysisRequest, user);
 
         BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Create Analysis Type
+     * @return
+     */
+    @PostMapping("/analyses/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<AnalysisTypeDTO>> createAnalysisType(
+        @RequestBody @Valid final AnalysisTypeRequest analysisTypeRequest,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        AnalysisTypeDTO result = analysisService.createAnalysisType(analysisTypeRequest, user);
+        BrApiMasterPayload<AnalysisTypeDTO> payload = new BrApiMasterPayload<>();
         payload.setMetadata(null);
         payload.setResult(result);
 

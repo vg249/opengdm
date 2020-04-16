@@ -2,6 +2,9 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
+
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -10,10 +13,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "cv")
 @SuppressWarnings("serial")
+@Data
 public class Cv implements Serializable{
 
     @Id
     @Column(name = "cv_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cvId;
 
     @Column(name="term")
@@ -36,11 +41,16 @@ public class Cv implements Serializable{
     private Integer dbxrefId;
 
     @Column(name = "status")
-    private String status;
+    private Integer status;
+
+
+    // @Column(name="props", columnDefinition = "jsonb")
+    // @Convert(converter = JsonbConverter.class)
+    // private JsonNode props;
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
-    private JsonNode props;
+    @Type(type = "CvPropertiesType")
+    private java.util.Map<String, String> properties;
 
     public Integer getCvId() {
         return cvId;
@@ -50,68 +60,5 @@ public class Cv implements Serializable{
         this.cvId = cvId;
     }
 
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
-
-    public Integer getRank() {
-        return rank;
-    }
-
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
-
-    public CvGroup getCvGroup() {
-        return cvGroup;
-    }
-
-    public void setCvGroup(CvGroup cvGroup) {
-        this.cvGroup = cvGroup;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public Integer getDbxrefId() {
-        return dbxrefId;
-    }
-
-    public void setDbxrefId(Integer dbxrefId) {
-        this.dbxrefId = dbxrefId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public JsonNode getProps() {
-        return props;
-    }
-
-    public void setProps(JsonNode props) {
-        this.props = props;
-    }
 
 }

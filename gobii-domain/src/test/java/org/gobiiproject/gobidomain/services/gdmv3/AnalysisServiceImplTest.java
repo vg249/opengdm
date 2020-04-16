@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -7,10 +8,17 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
+import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -23,6 +31,15 @@ public class AnalysisServiceImplTest {
     @Mock
     private AnalysisDao analysisDao;
 
+    @Mock
+    private CvDao cvDao;
+
+    @Mock
+    private ReferenceDao referenceDao;
+
+    @Mock
+    private ContactDao contactDao;
+
     @InjectMocks
     private AnalysisServiceImpl analysisServiceImpl;
 
@@ -30,7 +47,6 @@ public class AnalysisServiceImplTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
     }
-    
 
     @Test
     public void testGetAnalyses() throws Exception {
@@ -38,17 +54,43 @@ public class AnalysisServiceImplTest {
         List<Analysis> mockItems = new ArrayList<>();
         Integer offset = 0;
         Integer pageSize = 1000;
-        when(
-            analysisDao.getAnalyses( 0, 1000) 
-        ).thenReturn(
-            mockItems
-        );
-
+        when(analysisDao.getAnalyses(0, 1000)).thenReturn(mockItems);
 
         PagedResult<AnalysisDTO> results = analysisServiceImpl.getAnalyses(0, 1000);
         assert results != null;
-        verify(analysisDao, times(1)).getAnalyses( offset, pageSize);
+        verify(analysisDao, times(1)).getAnalyses(offset, pageSize);
 
     }
 
+    @Test
+    public void testCreateAnalysisType() throws Exception {
+        assert cvDao != null;
+
+        when(
+            cvDao.getCvGroupByNameAndType( CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), 2)
+        ).thenReturn(
+            new org.gobiiproject.gobiimodel.entity.CvGroup()
+        );
+        
+        when(
+            cvDao.createCv(
+                any(Cv.class)
+            )
+        ).thenReturn(new Cv());
+
+        AnalysisTypeRequest analysisTypeRequest = new AnalysisTypeRequest();
+        analysisTypeRequest.setAnalysisTypeName("test-name");
+        analysisTypeRequest.setAnalysisTypeDescription("test-description");
+        AnalysisTypeDTO analysisType = analysisServiceImpl.createAnalysisType(analysisTypeRequest, "test-user");
+        assert analysisType != null;
+        verify(
+            cvDao, times(1)
+        ).getCvGroupByNameAndType(CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), 2);
+        verify(
+            cvDao, times(1)
+        ).createCv(any(Cv.class));
+        
+    }
+
+  
 }
