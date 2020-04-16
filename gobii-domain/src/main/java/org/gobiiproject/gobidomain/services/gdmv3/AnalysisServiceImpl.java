@@ -141,17 +141,29 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         //set rank
         cv.setRank(0);
+        cv = cvDao.createCv(cv);
         
-        try {
-         cv = cvDao.createCv(cv);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-
         AnalysisTypeDTO dto = new AnalysisTypeDTO();
         ModelMapper.mapEntityToDto(cv, dto);
         return dto;
 
+    }
+
+    @Override
+    public PagedResult<AnalysisTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
+        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
+        List<AnalysisTypeDTO> dtos = new ArrayList<>();
+
+        cvs.forEach(cv -> {
+            AnalysisTypeDTO dto = new AnalysisTypeDTO();
+            ModelMapper.mapEntityToDto(cv, dto);
+            dtos.add(dto);
+        });
+        PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
+        result.setCurrentPageNum(page);
+        result.setCurrentPageSize(dtos.size());
+        result.setResult(dtos);
+
+        return result;
     }
 }

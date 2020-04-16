@@ -472,6 +472,26 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    /**
+     * List Analysis Types
+     * @return
+     */
+    @GetMapping("/analyses/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<AnalysisTypeDTO>> getAnalysisTypes(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<AnalysisTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
+        BrApiMasterListPayload<AnalysisTypeDTO> payload = new BrApiMasterListPayload<>(
+            result.getResult(),
+            result.getCurrentPageNum(),
+            result.getCurrentPageSize()
+        );
+        return ResponseEntity.ok(payload);
+    }
+
 
     public ProjectService getProjectService() {
         return projectService;
