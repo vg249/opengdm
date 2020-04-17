@@ -51,7 +51,7 @@ public class AnalysisDTO extends DTOBaseAuditable {
 
     }
 
-    @GobiiEntityMap(paramName = "analysisId", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "analysisId", entity = Analysis.class, ignoreOnDtoToEntity = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer analysisId;
     
@@ -60,7 +60,7 @@ public class AnalysisDTO extends DTOBaseAuditable {
     @NotBlank(groups = AnalysisDTO.Create.class )
     private String analysisName;
 
-    @GobiiEntityMap(paramName = "type.cvId", entity = Analysis.class, deep =  true)
+    @GobiiEntityMap(paramName = "type.cvId", entity = Analysis.class, deep =  true, ignoreOnDtoToEntity = true)
     @JsonSerialize(using = ToStringSerializer.class)
     @Positive(groups = AnalysisDTO.Create.class)
     private Integer analysisTypeId;
@@ -69,7 +69,7 @@ public class AnalysisDTO extends DTOBaseAuditable {
     private String description;
     
 
-    @GobiiEntityMap(paramName = "type.term", entity = Analysis.class, deep =  true)
+    @GobiiEntityMap(paramName = "type.term", entity = Analysis.class, deep =  true, ignoreOnDtoToEntity = true)
     private String analysisTypeName;
 
     @GobiiEntityMap(paramName = "program", entity = Analysis.class)
@@ -90,11 +90,11 @@ public class AnalysisDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "sourceUri", entity = Analysis.class)
     private String sourceUri;
 
-    @GobiiEntityMap(paramName = "reference.referenceId", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "reference.referenceId", entity = Analysis.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceId;
 
-    @GobiiEntityMap(paramName = "reference.referenceName", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "reference.referenceName", entity = Analysis.class, deep = true, ignoreOnDtoToEntity = true)
     private String referenceName;
 
     @GobiiEntityMap(paramName = "parameters", entity = Analysis.class)

@@ -60,7 +60,7 @@ public class ModelMapper {
                     GobiiEntityMap[] entityMaps = dtoField.getAnnotationsByType(GobiiEntityMap.class);
 
                     for (GobiiEntityMap entityMap : entityMaps) {
-
+                        if (dtoToEntity && entityMap.ignoreOnDtoToEntity()) continue;
                         if (entityMap.entity().equals(entityInstance.getClass()) || entityMap.base() == true) {
 
                             String dtoFieldName = dtoField.getName();

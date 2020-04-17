@@ -464,7 +464,15 @@ public class GOBIIControllerV3  {
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
-        return null;
+        String user = this.getCurrentUser();
+
+        AnalysisDTO result = analysisService.updateAnalysis(analysisId, analysisRequest, user);
+
+        BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+
+        return ResponseEntity.ok(payload);
     }
 
     /**

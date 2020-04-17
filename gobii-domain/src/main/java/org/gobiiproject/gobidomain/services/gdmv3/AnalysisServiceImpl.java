@@ -9,7 +9,6 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
@@ -97,15 +96,20 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         analysis.setStatus(cv);
 
-        ModelMapper.mapDtoToEntity(analysisRequest, analysis);
+        ModelMapper.mapDtoToEntity(analysisRequest, analysis, true);
 
         // audit items
         Contact creator = contactDao.getContactByUsername(user);
         if (creator != null)
             analysis.setCreatedBy(creator.getContactId());
         analysis.setCreatedDate(new java.util.Date());
-
+        try {
         analysis = analysisDao.createAnalysis(analysis);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
         AnalysisDTO dto = new AnalysisDTO();
 
@@ -169,7 +173,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Transactional
     @Override
-    public AnalysisDTO updateAnalysis(Integer id, AnalysisDTO any, String updatedBy) throws Exception {
+    public AnalysisDTO updateAnalysis(Integer id, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
         Analysis analysis = analysisDao.getAnalysis(id);
         if (analysis == null) {
             throw new GobiiDaoException(
@@ -179,7 +183,40 @@ public class AnalysisServiceImpl implements AnalysisService {
             );
         }
 
-        ModelMapper.mapDtoToEntity(dtoInstance, entityInstance, true);
-        return null;
+        if (analysisDTO.getReferenceId() != null) {
+            //check if the reference exists
+            Reference reference = referenceDao.getReference(analysisDTO.getReferenceId());
+            if (reference == null) {
+                throw new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown reference"
+                );
+            }
+            analysis.setReference(reference);
+        }
+
+        ModelMapper.mapDtoToEntity(analysisDTO, analysis, true); //ignore the nulls
+
+        // audit items
+        Contact updater = contactDao.getContactByUsername(updatedBy);
+        if (updater != null)
+            analysis.setModifiedBy(updater.getContactId());
+        analysis.setModifiedDate(new java.util.Date());
+
+        //set new status
+        List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
+        analysis.setStatus(cv);
+
+        Analysis updatedAnalysis = analysisDao.updateAnalysis(analysis);
+    
+        AnalysisDTO dto = new AnalysisDTO();
+        ModelMapper.mapEntityToDto(updatedAnalysis, dto);
+        return dto;
     }
 }

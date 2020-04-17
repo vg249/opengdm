@@ -104,7 +104,7 @@ public class AnalysisDaoImpl implements AnalysisDao {
 
     @Override
     public Analysis getAnalysis(Integer id) {
-        return em.find(Analysis.class, getAnalysisHints());
+        return em.find(Analysis.class, id, getAnalysisHints());
     }
 
     private Map<String, Object> getAnalysisHints() {
@@ -112,5 +112,13 @@ public class AnalysisDaoImpl implements AnalysisDao {
         Map<String, Object> hints = new HashMap<>();
         hints.put("javax.persistence.fetchgraph", graph);
         return hints;
+    }
+
+    @Override
+    public Analysis updateAnalysis(Analysis analysis) {
+        em.merge(analysis);
+        em.flush();
+        em.refresh(analysis, getAnalysisHints());
+        return analysis;
     }
 }
