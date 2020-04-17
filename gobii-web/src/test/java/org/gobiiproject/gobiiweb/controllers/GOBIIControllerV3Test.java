@@ -682,7 +682,7 @@ public class GOBIIControllerV3Test {
         
         String jsonRequest = "{\"analysisName\": \"test-name\", \"analysisTypeId\": \"93\" }";
         when(
-            analysisService.createAnalysis(any(AnalysisRequest.class), any(String.class))
+            analysisService.createAnalysis(any(AnalysisDTO.class), any(String.class))
         ).thenReturn(
             new AnalysisDTO()
         );
@@ -701,7 +701,7 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isCreated())
         ;
-        verify(analysisService, times(1)).createAnalysis(any(AnalysisRequest.class), eq("test-user"));
+        verify(analysisService, times(1)).createAnalysis(any(AnalysisDTO.class), eq("test-user"));
     }
 
     @Test
@@ -757,5 +757,19 @@ public class GOBIIControllerV3Test {
         verify(analysisService, times(1)).getAnalysisTypes(0, 1000);
     }
 
+
+    @Test
+    public void testPatchAnalysisById() throws Exception {
+        String jsonRequest = "{}";
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/analyses/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonRequest)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+    }
     
 }

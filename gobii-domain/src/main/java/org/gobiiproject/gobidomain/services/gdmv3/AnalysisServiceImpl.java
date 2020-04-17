@@ -61,7 +61,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Transactional
     @Override
-    public AnalysisDTO createAnalysis(AnalysisRequest analysisRequest, String user) throws Exception {
+    public AnalysisDTO createAnalysis(AnalysisDTO analysisRequest, String user) throws Exception {
         Analysis analysis = new Analysis();
         // Get analysis type
         Cv analysisType = cvDao.getCvByCvId(analysisRequest.getAnalysisTypeId());

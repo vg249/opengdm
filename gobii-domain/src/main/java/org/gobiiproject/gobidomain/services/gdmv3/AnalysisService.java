@@ -12,7 +12,7 @@ public interface AnalysisService {
 
 	PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception;
 
-	AnalysisDTO createAnalysis(AnalysisRequest analysisRequest, String creatorId) throws Exception;
+	AnalysisDTO createAnalysis(AnalysisDTO analysisRequest, String creatorId) throws Exception;
 
 	AnalysisTypeDTO createAnalysisType(AnalysisTypeRequest analysisTypeRequest, String creatorId) throws Exception;
 

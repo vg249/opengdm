@@ -48,6 +48,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -438,7 +439,7 @@ public class GOBIIControllerV3  {
     @PostMapping("/analyses")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> createAnalysis(
-        @RequestBody @Valid final AnalysisRequest analysisRequest,
+        @RequestBody @Validated(AnalysisDTO.Create.class) final AnalysisDTO analysisRequest,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -450,6 +451,20 @@ public class GOBIIControllerV3  {
         payload.setResult(result);
 
         return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Update Analysis  By Id
+     */
+    @PatchMapping("/analyses/{analysisId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> patchAnalysis(
+        @PathVariable Integer analysisId,
+        @RequestBody final AnalysisDTO analysisRequest,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        return null;
     }
 
     /**
