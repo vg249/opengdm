@@ -18,6 +18,8 @@ public interface AnalysisService {
 
 	PagedResult<AnalysisTypeDTO> getAnalysisTypes(Integer page, Integer pageSize);
 
+	AnalysisDTO updateAnalysis(Integer eq, AnalysisDTO any, String eq2) throws Exception;
+
 	
 
 }

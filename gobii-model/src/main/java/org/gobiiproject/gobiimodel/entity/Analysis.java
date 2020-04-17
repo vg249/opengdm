@@ -1,15 +1,24 @@
 package org.gobiiproject.gobiimodel.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import java.util.Date;
+import java.util.Map;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.*;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Model for Analysis Entity.
@@ -18,6 +27,12 @@ import java.util.Map;
  */
 @Entity
 @Table(name = "analysis")
+@NamedEntityGraph(name = "graph.analysis",
+    attributeNodes = {
+        @NamedAttributeNode(value = "type"),
+        @NamedAttributeNode(value = "reference")
+    }
+)
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class Analysis extends BaseEntity {
@@ -58,7 +73,7 @@ public class Analysis extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id", referencedColumnName = "reference_id")
     private Reference reference;
-    
+
     //@Column(name="parameters", columnDefinition = "jsonb")
     //@Convert(converter = JsonbConverter.class)
     //private JsonNode parameters;

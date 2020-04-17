@@ -166,4 +166,20 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         return result;
     }
+
+    @Transactional
+    @Override
+    public AnalysisDTO updateAnalysis(Integer id, AnalysisDTO any, String updatedBy) throws Exception {
+        Analysis analysis = analysisDao.getAnalysis(id);
+        if (analysis == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Analysis not found"
+            );
+        }
+
+        ModelMapper.mapDtoToEntity(dtoInstance, entityInstance, true);
+        return null;
+    }
 }

@@ -47,7 +47,7 @@ public class ModelMapper {
         }
     }
 
-    private static void mapper(Object entityInstance, Object dtoInstance, boolean dtoToEntity) {
+    private static void mapper(Object entityInstance, Object dtoInstance, boolean dtoToEntity, boolean ignoreNull) {
 
         try {
 
@@ -98,8 +98,6 @@ public class ModelMapper {
                                 continue;
                             }
 
-                           
-
                             dtoField.setAccessible(true);
                             entityField.setAccessible(true);
 
@@ -117,7 +115,9 @@ public class ModelMapper {
 
                             }
                             if(dtoToEntity) {
-                                entityField.set(entityToSetOrGet, dtoField.get(dtoInstance));
+                                Object value = dtoField.get(dtoInstance);
+                                if (ignoreNull && value == null) continue;
+                                entityField.set(entityToSetOrGet, value);
                             }
                             else {
                                 dtoField.set(dtoInstance, entityField.get(entityToSetOrGet));
@@ -139,12 +139,16 @@ public class ModelMapper {
         }
     }
 
+    public static void mapDtoToEntity(Object dtoInstance, Object entityInstance, boolean ignoreNull) throws  GobiiException {
+        ModelMapper.mapper(entityInstance, dtoInstance, true, ignoreNull);
+    }
+
     public static void mapDtoToEntity(Object dtoInstance, Object entityInstance) throws  GobiiException {
-        ModelMapper.mapper(entityInstance, dtoInstance, true);
+        ModelMapper.mapper(entityInstance, dtoInstance, true, false);
     }
 
     public static void mapEntityToDto(Object entityInstance, Object dtoInstance) throws GobiiException {
-        ModelMapper.mapper(entityInstance, dtoInstance, false);
+        ModelMapper.mapper(entityInstance, dtoInstance, false, false);
     }
 
     @SuppressWarnings("all")
