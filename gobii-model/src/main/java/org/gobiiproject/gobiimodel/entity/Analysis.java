@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -45,10 +46,10 @@ public class Analysis extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id", referencedColumnName = "reference_id")
-    private Reference reference = new Reference();
+    private Reference reference;
 
     @Column(name="parameters", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode parameters;
 
     @ManyToOne(fetch = FetchType.LAZY)
