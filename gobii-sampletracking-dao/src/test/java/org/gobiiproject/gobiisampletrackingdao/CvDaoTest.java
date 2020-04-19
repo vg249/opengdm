@@ -27,7 +27,8 @@ public class CvDaoTest {
         GobiiCvGroupType testCvType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
 
         List<Cv> cvList = cvDao.getCvListByCvGroup(
-                CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+                CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
 
@@ -53,7 +54,8 @@ public class CvDaoTest {
     public void getCvsByCvTermAndCvGroup() {
 
         List<Cv> cvList = cvDao.getCvs( "new",
-                CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+                CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
 
