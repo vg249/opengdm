@@ -72,15 +72,15 @@ public class ProjectServiceImpl implements ProjectService {
 
             List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
-                GobiiProjectDTO dto = new GobiiProjectDTO();
-                ModelMapper.mapEntityToDto(project, dto);
+                GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+                ModelMapper.mapEntityToDto(project, projectDTO);
 
                 List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs,
                         project.getProperties());
 
-                dto.setProperties(propDTOs);
+                projectDTO.setProperties(propDTOs);
 
-                projectDTOs.add(dto);
+                projectDTOs.add(projectDTO);
             });
 
             pagedResult = new PagedResult<>();
@@ -130,14 +130,14 @@ public class ProjectServiceImpl implements ProjectService {
         project.setCreatedDate(new java.util.Date());
         projectDao.createProject(project);
 
-        GobiiProjectDTO dto = new GobiiProjectDTO();
-        ModelMapper.mapEntityToDto(project, dto);
+        GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+        ModelMapper.mapEntityToDto(project, projectDTO);
 
         //transform Cv
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
-        dto.setProperties(propDTOs);
-        return dto;
+        projectDTO.setProperties(propDTOs);
+        return projectDTO;
 
     }
 
@@ -210,20 +210,20 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectDao.getProject(projectId);
         if (project == null) return null;
 
-        GobiiProjectDTO dto = this.createProjectDTO(project, null);
-        return dto;
+        GobiiProjectDTO projectDTO = this.createProjectDTO(project, null);
+        return projectDTO;
     }
 
     private GobiiProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
-        GobiiProjectDTO dto = new GobiiProjectDTO();
-        ModelMapper.mapEntityToDto(project, dto);
+        GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+        ModelMapper.mapEntityToDto(project, projectDTO);
         if (cvs == null) {
             cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         }
 
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
-        dto.setProperties(propDTOs);
-        return dto;
+        projectDTO.setProperties(propDTOs);
+        return projectDTO;
     }
 
 
