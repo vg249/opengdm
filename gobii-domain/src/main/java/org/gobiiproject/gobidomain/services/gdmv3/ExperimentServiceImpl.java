@@ -56,9 +56,9 @@ public class ExperimentServiceImpl implements ExperimentService {
         List<ExperimentDTO> experimentDTOs = new ArrayList<>();
 
         experiments.forEach(experiment -> {
-            ExperimentDTO dto = new ExperimentDTO();
-            ModelMapper.mapEntityToDto(experiment, dto);
-            experimentDTOs.add(dto);
+            ExperimentDTO experimentDTO = new ExperimentDTO();
+            ModelMapper.mapEntityToDto(experiment, experimentDTO);
+            experimentDTOs.add(experimentDTO);
         });
 
         PagedResult<ExperimentDTO> pagedResult = new PagedResult<>();
@@ -75,9 +75,9 @@ public class ExperimentServiceImpl implements ExperimentService {
         Experiment experiment = experimentDao.getExperiment(i);
         if (experiment == null)
             throw new NullPointerException("Experiment does not exist");
-        ExperimentDTO dto = new ExperimentDTO();
-        ModelMapper.mapEntityToDto(experiment, dto);
-        return dto;
+        ExperimentDTO experimentDTO = new ExperimentDTO();
+        ModelMapper.mapEntityToDto(experiment, experimentDTO);
+        return experimentDTO;
     }
 
     @Transactional
@@ -131,16 +131,16 @@ public class ExperimentServiceImpl implements ExperimentService {
         
         experiment = experimentDao.createExperiment(experiment);
         
-        ExperimentDTO dto = new ExperimentDTO();
-        ModelMapper.mapEntityToDto(experiment, dto);
+        ExperimentDTO experimentDTO = new ExperimentDTO();
+        ModelMapper.mapEntityToDto(experiment, experimentDTO);
         //TODO: debug this, why is the mapper failing at mapping subobject
         Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
 
-        dto.setPlatformId(platform.getPlatformId());
-        dto.setPlatformName(platform.getPlatformName());
+        experimentDTO.setPlatformId(platform.getPlatformId());
+        experimentDTO.setPlatformName(platform.getPlatformName());
 
 
-        return dto;
+        return experimentDTO;
     }
 
     @Transactional

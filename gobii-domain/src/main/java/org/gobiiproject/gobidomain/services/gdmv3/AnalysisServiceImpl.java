@@ -46,9 +46,9 @@ public class AnalysisServiceImpl implements AnalysisService {
         List<AnalysisDTO> analysisDTOs = new ArrayList<>();
 
         analyses.forEach((analysis) -> {
-            AnalysisDTO dto = new AnalysisDTO();
-            ModelMapper.mapEntityToDto(analysis, dto);
-            analysisDTOs.add(dto);
+            AnalysisDTO analysisDTO = new AnalysisDTO();
+            ModelMapper.mapEntityToDto(analysis, analysisDTO);
+            analysisDTOs.add(analysisDTO);
         });
 
         PagedResult<AnalysisDTO> result = new PagedResult<>();
@@ -111,10 +111,10 @@ public class AnalysisServiceImpl implements AnalysisService {
             throw e;
         }
 
-        AnalysisDTO dto = new AnalysisDTO();
+        AnalysisDTO analysisDTO = new AnalysisDTO();
 
-        ModelMapper.mapEntityToDto(analysis, dto);
-        return dto;
+        ModelMapper.mapEntityToDto(analysis, analysisDTO);
+        return analysisDTO;
     }
 
     @Transactional
@@ -147,9 +147,9 @@ public class AnalysisServiceImpl implements AnalysisService {
         cv.setRank(0);
         cv = cvDao.createCv(cv);
         
-        AnalysisTypeDTO dto = new AnalysisTypeDTO();
-        ModelMapper.mapEntityToDto(cv, dto);
-        return dto;
+        AnalysisTypeDTO analysisDTO = new AnalysisTypeDTO();
+        ModelMapper.mapEntityToDto(cv, analysisDTO);
+        return analysisDTO;
 
     }
 
@@ -159,9 +159,9 @@ public class AnalysisServiceImpl implements AnalysisService {
         List<AnalysisTypeDTO> analysisTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
-            AnalysisTypeDTO dto = new AnalysisTypeDTO();
-            ModelMapper.mapEntityToDto(cv, dto);
-            analysisTypeDTOs.add(dto);
+            AnalysisTypeDTO analysisTypeDTO = new AnalysisTypeDTO();
+            ModelMapper.mapEntityToDto(cv, analysisTypeDTO);
+            analysisTypeDTOs.add(analysisTypeDTO);
         });
         PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
