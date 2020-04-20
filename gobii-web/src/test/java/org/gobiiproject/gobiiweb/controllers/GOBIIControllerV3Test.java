@@ -796,5 +796,28 @@ public class GOBIIControllerV3Test {
         verify(analysisService, times(1)).updateAnalysis(eq(testId), any(AnalysisDTO.class), eq("test-user"));
         verify(projectService, times(1)).getDefaultProjectEditor();
     }
+
+    @Test
+    public void getAnalysisByIdTest() throws Exception {
+        AnalysisDTO mockDTO = new AnalysisDTO();
+        Integer mockId = 123;
+        when(
+            analysisService.getAnalysis(mockId)
+        ).thenReturn(
+            mockDTO
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/analyses/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(analysisService, times(1)).getAnalysis(eq(123));
+        
+    }
     
 }

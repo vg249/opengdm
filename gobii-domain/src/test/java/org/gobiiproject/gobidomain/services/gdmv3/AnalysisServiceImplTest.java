@@ -19,6 +19,7 @@ import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
+import org.hibernate.engine.transaction.jta.platform.internal.SapNetWeaverJtaPlatform;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -60,6 +61,16 @@ public class AnalysisServiceImplTest {
         assert results != null;
         verify(analysisDao, times(1)).getAnalyses(offset, pageSize);
 
+    }
+
+    @Test
+    public void testGetAnalysisById() throws Exception {
+        Analysis mockAnalysis = new Analysis();
+        when(analysisDao.getAnalysis(123)).thenReturn(mockAnalysis);
+
+        AnalysisDTO sampleDTO = analysisServiceImpl.getAnalysis(123);
+        assert sampleDTO != null;
+        verify(analysisDao, times(1)).getAnalysis(123);
     }
 
     @Test

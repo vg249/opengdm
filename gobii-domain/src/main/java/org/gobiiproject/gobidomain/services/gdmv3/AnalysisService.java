@@ -20,6 +20,8 @@ public interface AnalysisService {
 
 	AnalysisDTO updateAnalysis(Integer eq, AnalysisDTO any, String eq2) throws Exception;
 
+	AnalysisDTO getAnalysis(Integer mockId) throws Exception;
+
 	
 
 }

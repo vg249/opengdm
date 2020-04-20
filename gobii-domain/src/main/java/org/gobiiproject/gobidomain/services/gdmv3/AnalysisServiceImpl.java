@@ -215,8 +215,16 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         Analysis updatedAnalysis = analysisDao.updateAnalysis(analysis);
     
-        AnalysisDTO dto = new AnalysisDTO();
-        ModelMapper.mapEntityToDto(updatedAnalysis, dto);
-        return dto;
+        AnalysisDTO updatedAnalysisDTO = new AnalysisDTO();
+        ModelMapper.mapEntityToDto(updatedAnalysis, updatedAnalysisDTO);
+        return updatedAnalysisDTO;
+    }
+
+    @Override
+    public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {
+        AnalysisDTO analysisDTO = new AnalysisDTO();
+        Analysis analysis = analysisDao.getAnalysis(analysisId);
+        ModelMapper.mapEntityToDto(analysis, analysisDTO);
+        return analysisDTO;
     }
 }

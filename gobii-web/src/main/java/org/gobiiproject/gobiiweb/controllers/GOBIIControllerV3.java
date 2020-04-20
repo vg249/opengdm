@@ -476,6 +476,22 @@ public class GOBIIControllerV3  {
     }
 
     /**
+     * Get Analysis By Id
+     */
+    @GetMapping("/analyses/{analysisId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> getAnalysis(
+        @PathVariable Integer analysisId
+    ) throws Exception {
+        AnalysisDTO analysisDTO = analysisService.getAnalysis(analysisId);
+        BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(analysisDTO);
+
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
      * Create Analysis Type
      * @return
      */
