@@ -11,7 +11,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -26,17 +28,39 @@ public class AnalysisDaoImpl implements AnalysisDao {
     protected EntityManager em;
 
     @Override
+    public Analysis createAnalysis(Analysis analysisToCreate) {
+
+        try {
+            em.persist(analysisToCreate);
+            em.flush();
+            return analysisToCreate;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: "
+                            + e.getCause().getMessage());
+        }
+    }
+
+    @Override
     public List<Analysis> getAnalysesByAnalysisIds(Set<Integer> analysisIds) {
 
         List<Analysis> analyses;
 
-        Objects.requireNonNull(analysisIds, "analysisId : Required non null");
 
         try {
 
+            Objects.requireNonNull(
+                    analysisIds,
+                    "analysisId : Required non null");
+
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<Analysis> criteriaQuery = criteriaBuilder.createQuery(Analysis.class);
+            CriteriaQuery<Analysis> criteriaQuery =
+                    criteriaBuilder.createQuery(Analysis.class);
 
             Root<Analysis> analysisRoot = criteriaQuery.from(Analysis.class);
 
@@ -54,9 +78,29 @@ public class AnalysisDaoImpl implements AnalysisDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                            + e.getCause().getMessage());
         }
 
     }
+
+    @Override
+    public void deleteAnalysis(Integer analysisId) throws Exception {
+        try {
+            Analysis analysisToDelete = em.find(Analysis.class, analysisId);
+            em.remove(analysisToDelete);
+            em.flush();
+        } catch (javax.persistence.PersistenceException pe) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                    "Associated resources found." +
+                            " Cannot complete the action" +
+                            " unless they are deleted.");
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 
 }
