@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -129,15 +131,36 @@ public class GlobalControllerExceptionHandler {
      * @return ResponseEntity with "Bad Request" as status code and as message
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorPayload> InvalidParameterTypeExceptionHandler(MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<ErrorPayload>
+    InvalidParameterTypeExceptionHandler(MethodArgumentTypeMismatchException e) {
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Invalid Request Arguments");
         LOGGER.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
     }
 
+    /**
+     * Handles exceptions when the Request Parameters are invalid.
+     *
+     * @param e - exception object.
+     * @return ResponseEntity with "Bad Request" as status code and as message
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorPayload>
+    InvalidMethodArgumentsExceptionHandler(MethodArgumentNotValidException e) {
+        ErrorPayload errorPayload = new ErrorPayload();
+        String errorMessage = "";
+        for(ObjectError error : e.getBindingResult().getAllErrors()) {
+            errorMessage += error.getDefaultMessage() + " ";
+        }
+        errorPayload.setError(errorMessage);
+        LOGGER.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+    }
+
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorPayload> ValidationExceptionHandler(ValidationException ve) {
+    public ResponseEntity<ErrorPayload>
+    ValidationExceptionHandler(ValidationException ve) {
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError(ve.getMessage());
         LOGGER.error(ve.getMessage());

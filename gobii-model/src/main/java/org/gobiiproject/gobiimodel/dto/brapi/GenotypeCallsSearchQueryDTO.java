@@ -10,7 +10,8 @@ import java.util.Set;
 @CheckAtLeastOneNotNullOrEmpty(
         fieldNames = {
                 "callSetDbIds", "callSetNames",
-                "variantDbIds", "variantNames"
+                "variantDbIds", "variantNames",
+                "germplasmPUIs"
         })
 public class GenotypeCallsSearchQueryDTO {
 
