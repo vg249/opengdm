@@ -6,7 +6,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;

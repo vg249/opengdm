@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.noaudit;
+package org.gobiiproject.gobiimodel.dto.brapi;
 
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
@@ -34,6 +34,7 @@ public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 germplasmPUIs allowed per query")
     private Set<String> germplasmPUIs = new HashSet<>();
+
 
     public Set<Integer> getCallSetDbIds() {
         return callSetDbIds;
