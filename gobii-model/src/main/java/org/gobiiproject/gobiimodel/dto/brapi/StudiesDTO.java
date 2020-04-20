@@ -26,6 +26,10 @@ public class StudiesDTO {
 
     private List<ContactDTO> contacts = new ArrayList<>();
 
+    @GobiiEntityMap(paramName = "experimentCode",
+            entity = Experiment.class)
+    @ApiModelProperty(example = "bar code")
+    private String studyCode;
 
     public Integer getStudyDbId() {
         return studyDbId;
@@ -41,6 +45,14 @@ public class StudiesDTO {
 
     public void setStudyName(String studyName) {
         this.studyName = studyName;
+    }
+
+    public String getStudyCode() {
+        return studyCode;
+    }
+
+    public void setStudyCode(String studyCode) {
+        this.studyCode = studyCode;
     }
 
     public List<ContactDTO> getContacts() {
