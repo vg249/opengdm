@@ -56,7 +56,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
                     (Join<Object, Object>) experimentRoot
                             .fetch("project");
 
-            project.fetch("contact");
+            project.fetch("contact").fetch("organization");
 
             Join<Object, Object>  vendorProtocol =
                     (Join<Object, Object>) experimentRoot
