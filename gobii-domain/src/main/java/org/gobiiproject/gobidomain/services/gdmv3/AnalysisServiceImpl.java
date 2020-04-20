@@ -43,18 +43,18 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception {
         List<Analysis> analyses = analysisDao.getAnalyses(page * pageSize, pageSize);
-        List<AnalysisDTO> dtos = new ArrayList<>();
+        List<AnalysisDTO> analysisDTOs = new ArrayList<>();
 
         analyses.forEach((analysis) -> {
             AnalysisDTO dto = new AnalysisDTO();
             ModelMapper.mapEntityToDto(analysis, dto);
-            dtos.add(dto);
+            analysisDTOs.add(dto);
         });
 
         PagedResult<AnalysisDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
         result.setCurrentPageSize(analyses.size());
-        result.setResult(dtos);
+        result.setResult(analysisDTOs);
         return result;
     }
 
@@ -156,17 +156,17 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public PagedResult<AnalysisTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
         List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
-        List<AnalysisTypeDTO> dtos = new ArrayList<>();
+        List<AnalysisTypeDTO> analysisTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
             AnalysisTypeDTO dto = new AnalysisTypeDTO();
             ModelMapper.mapEntityToDto(cv, dto);
-            dtos.add(dto);
+            analysisTypeDTOs.add(dto);
         });
         PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
-        result.setCurrentPageSize(dtos.size());
-        result.setResult(dtos);
+        result.setCurrentPageSize(analysisTypeDTOs.size());
+        result.setResult(analysisTypeDTOs);
 
         return result;
     }

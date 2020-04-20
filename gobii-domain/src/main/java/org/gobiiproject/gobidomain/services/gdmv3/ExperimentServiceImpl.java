@@ -52,19 +52,17 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Transactional
     @Override
     public PagedResult<ExperimentDTO> getExperiments(Integer page, Integer pageSize, Integer projectId) {
-        // TODO Auto-generated method stub
         List<Experiment> experiments = experimentDao.getExperiments(pageSize, page * pageSize, projectId);
-
-        List<ExperimentDTO> dtos = new ArrayList<>();
+        List<ExperimentDTO> experimentDTOs = new ArrayList<>();
 
         experiments.forEach(experiment -> {
             ExperimentDTO dto = new ExperimentDTO();
             ModelMapper.mapEntityToDto(experiment, dto);
-            dtos.add(dto);
+            experimentDTOs.add(dto);
         });
 
         PagedResult<ExperimentDTO> pagedResult = new PagedResult<>();
-        pagedResult.setResult(dtos);
+        pagedResult.setResult(experimentDTOs);
         pagedResult.setCurrentPageNum(page);
         pagedResult.setCurrentPageSize(pageSize);
 
