@@ -1,7 +1,9 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.StudiesDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Experiment;
@@ -31,8 +33,8 @@ public class StudiesServiceImpl implements StudiesService {
 
         try {
 
-            Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(pageNum);
+            Objects.requireNonNull(pageSize, "pageSize: Required non null.");
+            Objects.requireNonNull(pageNum, "pageNum: Required non null.");
 
             List<StudiesDTO> studies = new ArrayList<>();
 
@@ -47,6 +49,14 @@ public class StudiesServiceImpl implements StudiesService {
                 StudiesDTO study = new StudiesDTO();
 
                 ModelMapper.mapEntityToDto(experiment, study);
+
+                if(experiment.getProject().getContact() != null) {
+                    ContactDTO contactDTO = new ContactDTO();
+                    ModelMapper.mapEntityToDto(
+                            experiment.getProject().getContact(),
+                            contactDTO);
+                    study.getContacts().add(contactDTO);
+                }
 
                 studies.add(study);
 

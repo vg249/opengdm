@@ -18,7 +18,7 @@ import java.util.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType",
-        "createdDate", "modifiedDate"
+        "createdDate", "modifiedDate", "createdBy", "modifiedBy"
 })
 public class VariantSetDTO extends DTOBaseAuditable {
 
