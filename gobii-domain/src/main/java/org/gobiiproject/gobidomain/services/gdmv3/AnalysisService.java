@@ -1,10 +1,7 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
-import java.util.List;
-
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
@@ -20,7 +17,9 @@ public interface AnalysisService {
 
 	AnalysisDTO updateAnalysis(Integer eq, AnalysisDTO any, String eq2) throws Exception;
 
-	AnalysisDTO getAnalysis(Integer mockId) throws Exception;
+	AnalysisDTO getAnalysis(Integer id) throws Exception;
+
+	void deleteAnalysis(Integer id) throws Exception;
 
 	
 

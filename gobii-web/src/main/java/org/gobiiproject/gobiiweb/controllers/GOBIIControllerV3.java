@@ -492,6 +492,19 @@ public class GOBIIControllerV3  {
     }
 
     /**
+     * Get Analysis By Id
+     */
+    @DeleteMapping("/analyses/{analysisId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteAnalysis(
+        @PathVariable Integer analysisId
+    ) throws Exception {
+        analysisService.deleteAnalysis(analysisId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * Create Analysis Type
      * @return
      */

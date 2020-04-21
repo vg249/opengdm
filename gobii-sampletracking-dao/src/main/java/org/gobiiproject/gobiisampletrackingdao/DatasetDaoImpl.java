@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -24,13 +25,14 @@ import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Data access object Implementation for dataset Entity in the database
  *
  */
+@Slf4j
 public class DatasetDaoImpl implements DatasetDao {
-
-    Logger LOGGER = LoggerFactory.getLogger(DatasetDao.class);
 
     @PersistenceContext
     protected EntityManager em;
@@ -97,7 +99,7 @@ public class DatasetDaoImpl implements DatasetDao {
         }
         catch(Exception e) {
 
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
@@ -125,7 +127,7 @@ public class DatasetDaoImpl implements DatasetDao {
                     null, null);
 
             if (datasetsById.size() > 1) {
-                LOGGER.error("More than one duplicate entries found.");
+                log.error("More than one duplicate entries found.");
 
                 throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
@@ -143,7 +145,7 @@ public class DatasetDaoImpl implements DatasetDao {
             throw ge;
         }
         catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
@@ -233,13 +235,36 @@ public class DatasetDaoImpl implements DatasetDao {
 
         }
         catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
 
         }
+
+    }
+
+    @Override
+    public int getDatasetCountByAnalysisId(Integer id) {
+        
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Dataset> dataset = criteriaQuery.from(Dataset.class);
+        Join<Object, Object> callingAnalysis = dataset.join("callingAnalysis");
+        //Fetch<Object, Object> callingAnalysis = dataset.fetch("callingAnalysis");
+        criteriaQuery.select(
+            criteriaBuilder.count(
+                dataset
+            )
+        ).where(
+            criteriaBuilder.equal(
+                callingAnalysis.get("analysisId"),
+                id
+            )
+        );
+
+        return em.createQuery(criteriaQuery).getSingleResult().intValue();
 
     }
 
