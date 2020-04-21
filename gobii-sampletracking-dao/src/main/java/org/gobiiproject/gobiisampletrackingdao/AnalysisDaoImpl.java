@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -46,17 +47,14 @@ public class AnalysisDaoImpl implements AnalysisDao {
             criteriaQuery.select(analysisRoot);
             criteriaQuery.where(analysisRoot.get("analysisId").in(analysisIds));
 
-            analyses = em.createQuery(criteriaQuery)
-                    .getResultList();
+            analyses = em.createQuery(criteriaQuery).getResultList();
 
             return analyses;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
 
             log.error(e.getMessage(), e);
 
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
@@ -74,18 +72,17 @@ public class AnalysisDaoImpl implements AnalysisDao {
             CriteriaQuery<Analysis> criteriaQuery = criteriaBuilder.createQuery(Analysis.class);
 
             Root<Analysis> root = criteriaQuery.from(Analysis.class);
-            
-            //root.fetch("reference");
+
+            // root.fetch("reference");
             root.join("reference", JoinType.LEFT);
             root.fetch("type");
             root.fetch("status");
             criteriaQuery.select(root);
-            
+
             criteriaQuery.orderBy(criteriaBuilder.asc(root.get("analysisId")));
 
-            analyses = em.createQuery(criteriaQuery).setFirstResult(offset).setMaxResults(pageSize)
-                    .getResultList();
-            
+            analyses = em.createQuery(criteriaQuery).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+
             return analyses;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -101,5 +98,4 @@ public class AnalysisDaoImpl implements AnalysisDao {
         em.flush();
         return analysis;
     }
-
 }
