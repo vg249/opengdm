@@ -65,6 +65,8 @@
     <bean id="spRunnerCallable"
           class="org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable"/>
 
+    <!-- Analysis Dao -->
+    <bean id="analysisDao" class="org.gobiiproject.gobiisampletrackingdao.AnalysisDaoImpl"/>
 
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>

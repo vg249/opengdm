@@ -326,6 +326,10 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisImpl"/>
     <bean id="AnalysisService"
           class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
+    
+    <!-- Analysis Service V3 -->
+    <bean id="AnalysisServiceV3"
+          class="org.gobiiproject.gobidomain.services.gdmv3.AnalysisServiceImpl"/>
 
     <!-- **** Platform Beans *************************************** -->
     <bean id="rsPlatformDao"

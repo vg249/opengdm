@@ -1,11 +1,14 @@
 package org.gobiiproject.gobiimodel.entity;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
+
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Model for Analysis Entity.
@@ -14,6 +17,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "analysis")
+@Data
 public class Analysis extends BaseEntity {
 
     @Id
@@ -34,6 +38,12 @@ public class Analysis extends BaseEntity {
     @Column(name = "program")
     private String program;
 
+    @Column(name = "programversion")
+    private String programVersion;
+
+    @Column(name = "algorithm")
+    private String algorithm;
+
     @Column(name = "sourcename")
     private String sourceName;
 
@@ -47,9 +57,13 @@ public class Analysis extends BaseEntity {
     @JoinColumn(name = "reference_id", referencedColumnName = "reference_id")
     private Reference reference = new Reference();
 
+    //@Column(name="parameters", columnDefinition = "jsonb")
+    //@Convert(converter = JsonbConverter.class)
+    //private JsonNode parameters;
     @Column(name="parameters", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
-    private JsonNode parameters;
+    @Type(type = "CvPropertiesType")
+    private Map<String, String> parameters;
+    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
@@ -57,100 +71,4 @@ public class Analysis extends BaseEntity {
 
     @Column(name = "timeexecuted")
     private Date timeExecuted;
-
-    public Integer getAnalysisId() {
-        return analysisId;
-    }
-
-    public void setAnalysisId(Integer analysisId) {
-        this.analysisId = analysisId;
-    }
-
-    public String getAnalysisName() {
-        return analysisName;
-    }
-
-    public void setAnalysisName(String analysisName) {
-        this.analysisName = analysisName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Cv getType() {
-        return type;
-    }
-
-    public void setType(Cv type) {
-        this.type = type;
-    }
-
-    public String getProgram() {
-        return program;
-    }
-
-    public void setProgram(String program) {
-        this.program = program;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
-    }
-
-    public String getSourceVersion() {
-        return sourceVersion;
-    }
-
-    public void setSourceVersion(String sourceVersion) {
-        this.sourceVersion = sourceVersion;
-    }
-
-    public String getSourceUri() {
-        return sourceUri;
-    }
-
-    public void setSourceUri(String sourceUri) {
-        this.sourceUri = sourceUri;
-    }
-
-    public Reference getReference() {
-        return reference;
-    }
-
-    public void setReference(Reference reference) {
-        this.reference = reference;
-    }
-
-    public JsonNode getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(JsonNode parameters) {
-        this.parameters = parameters;
-    }
-
-    public Cv getStatus() {
-        return status;
-    }
-
-    public void setStatus(Cv status) {
-        this.status = status;
-    }
-
-    public Date getTimeExecuted() {
-        return timeExecuted;
-    }
-
-    public void setTimeExecuted(Date timeExecuted) {
-        this.timeExecuted = timeExecuted;
-    }
 }

@@ -15,4 +15,6 @@ public interface AnalysisDao {
      */
     List<Analysis> getAnalysesByAnalysisIds(Set<Integer> analysisIds);
 
+	List<Analysis> getAnalyses(Integer offset, Integer pageSize);
+
 }

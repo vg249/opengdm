@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
@@ -26,6 +27,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -75,6 +77,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private ExperimentService experimentService = null;
+
+    @Autowired
+    private AnalysisService analysisService = null;
 
     /**
      * Authentication Endpoint
@@ -397,6 +402,29 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
     
+
+    /**
+     * List Analyses
+     * 
+     * @return
+     */
+    @GetMapping("/analyses")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<AnalysisDTO>> getAnalyses(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<AnalysisDTO> pagedResult = analysisService.getAnalyses(page, pageSizeToUse);
+
+        BrApiMasterListPayload<AnalysisDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+
+        return ResponseEntity.ok(payload);
+    }
 
     public ProjectService getProjectService() {
         return projectService;
