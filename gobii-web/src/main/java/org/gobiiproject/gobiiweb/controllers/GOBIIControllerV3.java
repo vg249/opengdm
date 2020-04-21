@@ -30,6 +30,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -169,7 +170,8 @@ public class GOBIIControllerV3  {
         BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
-        String userName = projectService.getDefaultProjectEditor();
+        String userName = this.getCurrentUser();
+
         GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
         result.setResult(createdDTO);
         result.setMetadata(null);
@@ -212,7 +214,7 @@ public class GOBIIControllerV3  {
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
-        String userName = projectService.getDefaultProjectEditor();
+        String userName = this.getCurrentUser();
         GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
         BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
         payload.setResult(dto);
@@ -355,7 +357,7 @@ public class GOBIIControllerV3  {
         BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
-        String userName = projectService.getDefaultProjectEditor();
+        String userName = this.getCurrentUser();
         ExperimentDTO createdDTO = experimentService.createExperiment(experiment, userName);
         result.setResult(createdDTO);
         result.setMetadata(null);
@@ -379,7 +381,7 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
-        String user = projectService.getDefaultProjectEditor();
+        String user = this.getCurrentUser();
         ExperimentDTO experiment = experimentService.updateExperiment(experimentId, request, user);
         result.setResult(experiment);
         result.setMetadata(null);
@@ -426,12 +428,39 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Create Analyses
+     * 
+     * @return
+     */
+    @PostMapping("/analyses")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> createAnalysis(
+        @RequestBody @Valid final AnalysisRequest analysisRequest,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        AnalysisDTO result = analysisService.createAnalysis(analysisRequest, user);
+
+        BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+
+        return ResponseEntity.created(null).body(payload);
+    }
+
+
     public ProjectService getProjectService() {
         return projectService;
     }
 
     public void setProjectService(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    private String getCurrentUser() {
+        return projectService.getDefaultProjectEditor();
     }
 
     private Integer getPageSize(Integer pageSize) {

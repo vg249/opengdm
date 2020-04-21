@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Entity
 @Table(name = "analysis")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class Analysis extends BaseEntity {
 
     @Id
@@ -55,8 +57,8 @@ public class Analysis extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id", referencedColumnName = "reference_id")
-    private Reference reference = new Reference();
-
+    private Reference reference;
+    
     //@Column(name="parameters", columnDefinition = "jsonb")
     //@Convert(converter = JsonbConverter.class)
     //private JsonNode parameters;
