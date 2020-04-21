@@ -731,5 +731,31 @@ public class GOBIIControllerV3Test {
         
     }
 
+    @Test
+    public void testListAnalysisTypes() throws Exception {
+        List<AnalysisTypeDTO> analysisTypes = new ArrayList<>();
+        Integer page = 0;
+        Integer pageSize = 1000;
+        PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
+        result.setResult(analysisTypes);
+
+        when(
+            analysisService.getAnalysisTypes(page, pageSize)
+        ).thenReturn(
+            result
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/analyses/types")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(analysisService, times(1)).getAnalysisTypes(0, 1000);
+    }
+
     
 }
