@@ -11,6 +11,8 @@ import java.util.Set;
         fieldNames = {
                 "callSetDbIds", "callSetNames",
                 "variantDbIds", "variantNames",
+                "sampleDbIds", "sampleNames",
+                "samplePUIs", "variantSetDbIds",
                 "germplasmPUIs"
         })
 public class GenotypeCallsSearchQueryDTO {
@@ -20,6 +22,15 @@ public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetNames allowed per query")
     private Set<String> callSetNames = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
+    private Set<Integer> sampleDbIds = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
+    private Set<String> sampleNames = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
+    private Set<String> samplePUIs = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 variantDbIds allowed per query")
     private Set<Integer> variantDbIds = new HashSet<>();
@@ -91,5 +102,29 @@ public class GenotypeCallsSearchQueryDTO {
 
     public void setGermplasmPUIs(Set<String> germplasmPUIs) {
         this.germplasmPUIs = germplasmPUIs;
+    }
+
+    public Set<Integer> getSampleDbIds() {
+        return sampleDbIds;
+    }
+
+    public void setSampleDbIds(Set<Integer> sampleDbIds) {
+        this.sampleDbIds = sampleDbIds;
+    }
+
+    public Set<String> getSampleNames() {
+        return sampleNames;
+    }
+
+    public void setSampleNames(Set<String> sampleNames) {
+        this.sampleNames = sampleNames;
+    }
+
+    public Set<String> getSamplePUIs() {
+        return samplePUIs;
+    }
+
+    public void setSamplePUIs(Set<String> samplePUIs) {
+        this.samplePUIs = samplePUIs;
     }
 }
