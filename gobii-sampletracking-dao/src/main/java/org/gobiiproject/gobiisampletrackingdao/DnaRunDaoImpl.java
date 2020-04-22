@@ -364,8 +364,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
     @Override
     public List<DnaRun>
     getDnaRuns(Set<Integer> dnaRunIds, Set<String> dnaRunNames,
-               Set<String> germplasmExternalCodes, Set<String> datasetIds,
-               Integer pageSize, Integer dnaRunIdCursor) {
+               Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
+               Set<String> dnaSampleUuids, Set<String> germplasmExternalCodes,
+               Set<String> datasetIds, Integer pageSize,
+               Integer dnaRunIdCursor) {
 
         List<DnaRun> dnaruns;
 
@@ -383,19 +385,44 @@ public class DnaRunDaoImpl implements DnaRunDao {
             //Set Root entity and selected entities
             Root<DnaRun> root = criteria.from(DnaRun.class);
 
-            if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
+            if(!CollectionUtils.isEmpty(dnaSampleIds) ||
+                    !CollectionUtils.isEmpty(dnaSampleNames) ||
+                    !CollectionUtils.isEmpty(dnaSampleUuids) ||
+                    !CollectionUtils.isEmpty(germplasmExternalCodes)) {
 
                 Join<DnaRun, DnaSample> dnaSampleJoin =
                         root.join("dnaSample");
 
-                Join<DnaSample, Germplasm> germplasmJoin =
-                        dnaSampleJoin.join("germplasm");
+                if(!CollectionUtils.isEmpty(dnaSampleIds)) {
+                    predicates.add(
+                            dnaSampleJoin.get("dnaSampleId").in(dnaSampleIds));
+                }
 
-                predicates.add(
-                        germplasmJoin
-                                .get("externalCode")
-                                .in(germplasmExternalCodes)
-                );
+                if(!CollectionUtils.isEmpty(dnaSampleNames)) {
+                    predicates.add(
+                            dnaSampleJoin
+                                    .get("dnaSampleName")
+                                    .in(dnaSampleNames));
+                }
+
+                if(!CollectionUtils.isEmpty(dnaSampleUuids)) {
+                    predicates.add(
+                            dnaSampleJoin
+                                    .get("dnaSampleUuid")
+                                    .in(dnaSampleUuids));
+                }
+
+                if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
+
+                    Join<DnaSample, Germplasm> germplasmJoin =
+                            dnaSampleJoin.join("germplasm");
+
+                    predicates.add(
+                            germplasmJoin
+                                    .get("externalCode")
+                                    .in(germplasmExternalCodes)
+                    );
+                }
 
 
             }
@@ -487,7 +514,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
     @Override
     public List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds) {
 
-        return this.getDnaRuns(dnaRunIds, null, null, null, null, null);
+        return this.getDnaRuns(
+                dnaRunIds, null, null,
+                null, null, null,
+                null, null, null);
     }
 
 
@@ -498,7 +528,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
      */
     @Override
     public List<DnaRun> getDnaRunsByDanRunNames(Set<String> dnaRunNames) {
-        return this.getDnaRuns(null, dnaRunNames, null, null, null, null);
+        return this.getDnaRuns(null, dnaRunNames, null,
+                null, null, null,
+                null, null, null);
     }
 
 }

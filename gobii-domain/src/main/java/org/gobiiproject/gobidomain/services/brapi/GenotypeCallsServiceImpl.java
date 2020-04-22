@@ -6,7 +6,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.noaudit.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
@@ -31,7 +31,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);
 
-
     @Autowired
     private DnaRunDao dnaRunDao = null;
 
@@ -40,7 +39,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     @Autowired
     private HDF5Interface hdf5Interface;
-
 
     /**
      * Get Genotypes to callSetDbId.
@@ -842,9 +840,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 if (
                         !CollectionUtils.isEmpty(
                                 genotypesSearchQuery.getCallSetDbIds())
-
                                 || !CollectionUtils.isEmpty(
-                                        genotypesSearchQuery.getCallSetNames())
+                                genotypesSearchQuery.getCallSetNames())
+                                || !CollectionUtils.isEmpty(
+                                genotypesSearchQuery.getSampleDbIds())
+                                || !CollectionUtils.isEmpty(
+                                genotypesSearchQuery.getSampleNames())
+                                || !CollectionUtils.isEmpty(
+                                        genotypesSearchQuery.getSamplePUIs())
                                 || !CollectionUtils.isEmpty(
                                         genotypesSearchQuery.getGermplasmPUIs())
                 ) {
@@ -853,6 +856,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                             dnaRunDao.getDnaRuns(
                                     genotypesSearchQuery.getCallSetDbIds(),
                                     genotypesSearchQuery.getCallSetNames(),
+                                    genotypesSearchQuery.getSampleDbIds(),
+                                    genotypesSearchQuery.getSampleNames(),
+                                    genotypesSearchQuery.getSamplePUIs(),
                                     genotypesSearchQuery.getGermplasmPUIs(),
                                     genotypesSearchQuery.getVariantSetDbIds(),
                                     dnaRunBinSize, dnaRunBinCursor);
@@ -1149,8 +1155,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         nextPageCursorMap.put("pageOffset", nextPageOffset);
                         nextPageCursorMap.put("dnaRunOffset", nextDnaRunOffset);
                         nextPageCursorMap.put("datasetIdCursor", datasetIdIdx);
-
-
                         break;
                     } else {
                         remainingPageSize = pageSize - genotypeCalls.size();
