@@ -18,5 +18,9 @@ public interface AnalysisDao {
 	List<Analysis> getAnalyses(Integer offset, Integer pageSize);
 
     Analysis createAnalysis(Analysis analysis) throws Exception;
+
+	Analysis getAnalysis(Integer id);
+
+	Analysis updateAnalysis(Analysis analysis);
     
 }

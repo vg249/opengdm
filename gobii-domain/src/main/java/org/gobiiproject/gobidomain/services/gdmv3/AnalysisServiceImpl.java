@@ -9,7 +9,6 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
@@ -44,24 +43,24 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception {
         List<Analysis> analyses = analysisDao.getAnalyses(page * pageSize, pageSize);
-        List<AnalysisDTO> dtos = new ArrayList<>();
+        List<AnalysisDTO> analysisDTOs = new ArrayList<>();
 
         analyses.forEach((analysis) -> {
-            AnalysisDTO dto = new AnalysisDTO();
-            ModelMapper.mapEntityToDto(analysis, dto);
-            dtos.add(dto);
+            AnalysisDTO analysisDTO = new AnalysisDTO();
+            ModelMapper.mapEntityToDto(analysis, analysisDTO);
+            analysisDTOs.add(analysisDTO);
         });
 
         PagedResult<AnalysisDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
         result.setCurrentPageSize(analyses.size());
-        result.setResult(dtos);
+        result.setResult(analysisDTOs);
         return result;
     }
 
     @Transactional
     @Override
-    public AnalysisDTO createAnalysis(AnalysisRequest analysisRequest, String user) throws Exception {
+    public AnalysisDTO createAnalysis(AnalysisDTO analysisRequest, String user) throws Exception {
         Analysis analysis = new Analysis();
         // Get analysis type
         Cv analysisType = cvDao.getCvByCvId(analysisRequest.getAnalysisTypeId());
@@ -97,20 +96,25 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         analysis.setStatus(cv);
 
-        ModelMapper.mapDtoToEntity(analysisRequest, analysis);
+        ModelMapper.mapDtoToEntity(analysisRequest, analysis, true);
 
         // audit items
         Contact creator = contactDao.getContactByUsername(user);
         if (creator != null)
             analysis.setCreatedBy(creator.getContactId());
         analysis.setCreatedDate(new java.util.Date());
-
+        try {
         analysis = analysisDao.createAnalysis(analysis);
 
-        AnalysisDTO dto = new AnalysisDTO();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
-        ModelMapper.mapEntityToDto(analysis, dto);
-        return dto;
+        AnalysisDTO analysisDTO = new AnalysisDTO();
+
+        ModelMapper.mapEntityToDto(analysis, analysisDTO);
+        return analysisDTO;
     }
 
     @Transactional
@@ -143,27 +147,84 @@ public class AnalysisServiceImpl implements AnalysisService {
         cv.setRank(0);
         cv = cvDao.createCv(cv);
         
-        AnalysisTypeDTO dto = new AnalysisTypeDTO();
-        ModelMapper.mapEntityToDto(cv, dto);
-        return dto;
+        AnalysisTypeDTO analysisDTO = new AnalysisTypeDTO();
+        ModelMapper.mapEntityToDto(cv, analysisDTO);
+        return analysisDTO;
 
     }
 
     @Override
     public PagedResult<AnalysisTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
         List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
-        List<AnalysisTypeDTO> dtos = new ArrayList<>();
+        List<AnalysisTypeDTO> analysisTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
-            AnalysisTypeDTO dto = new AnalysisTypeDTO();
-            ModelMapper.mapEntityToDto(cv, dto);
-            dtos.add(dto);
+            AnalysisTypeDTO analysisTypeDTO = new AnalysisTypeDTO();
+            ModelMapper.mapEntityToDto(cv, analysisTypeDTO);
+            analysisTypeDTOs.add(analysisTypeDTO);
         });
         PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
-        result.setCurrentPageSize(dtos.size());
-        result.setResult(dtos);
+        result.setCurrentPageSize(analysisTypeDTOs.size());
+        result.setResult(analysisTypeDTOs);
 
         return result;
+    }
+
+    @Transactional
+    @Override
+    public AnalysisDTO updateAnalysis(Integer id, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
+        Analysis analysis = analysisDao.getAnalysis(id);
+        if (analysis == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Analysis not found"
+            );
+        }
+
+        if (analysisDTO.getReferenceId() != null) {
+            //check if the reference exists
+            Reference reference = referenceDao.getReference(analysisDTO.getReferenceId());
+            if (reference == null) {
+                throw new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown reference"
+                );
+            }
+            analysis.setReference(reference);
+        }
+
+        ModelMapper.mapDtoToEntity(analysisDTO, analysis, true); //ignore the nulls
+
+        // audit items
+        Contact updater = contactDao.getContactByUsername(updatedBy);
+        if (updater != null)
+            analysis.setModifiedBy(updater.getContactId());
+        analysis.setModifiedDate(new java.util.Date());
+
+        //set new status
+        List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
+        analysis.setStatus(cv);
+
+        Analysis updatedAnalysis = analysisDao.updateAnalysis(analysis);
+    
+        AnalysisDTO updatedAnalysisDTO = new AnalysisDTO();
+        ModelMapper.mapEntityToDto(updatedAnalysis, updatedAnalysisDTO);
+        return updatedAnalysisDTO;
+    }
+
+    @Override
+    public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {
+        AnalysisDTO analysisDTO = new AnalysisDTO();
+        Analysis analysis = analysisDao.getAnalysis(analysisId);
+        ModelMapper.mapEntityToDto(analysis, analysisDTO);
+        return analysisDTO;
     }
 }

@@ -12,11 +12,15 @@ public interface AnalysisService {
 
 	PagedResult<AnalysisDTO> getAnalyses(Integer page, Integer pageSize) throws Exception;
 
-	AnalysisDTO createAnalysis(AnalysisRequest analysisRequest, String creatorId) throws Exception;
+	AnalysisDTO createAnalysis(AnalysisDTO analysisRequest, String creatorId) throws Exception;
 
 	AnalysisTypeDTO createAnalysisType(AnalysisTypeRequest analysisTypeRequest, String creatorId) throws Exception;
 
 	PagedResult<AnalysisTypeDTO> getAnalysisTypes(Integer page, Integer pageSize);
+
+	AnalysisDTO updateAnalysis(Integer eq, AnalysisDTO any, String eq2) throws Exception;
+
+	AnalysisDTO getAnalysis(Integer mockId) throws Exception;
 
 	
 

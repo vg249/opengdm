@@ -2,7 +2,6 @@ package org.gobiiproject.gobiimodel.dto.request;
 
 import java.util.Map;
 
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
@@ -45,11 +44,11 @@ public class AnalysisRequest {
     //TODO: url validation?
     @GobiiEntityMap(paramName = "sourceUrl", entity = Analysis.class)
     private String sourceUrl;
-    
+
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceId;
 
-    @GobiiEntityMap(paramName = "parameters", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "analysisName", entity = Analysis.class)
     private Map<String, String> parameters;
 
 }

@@ -8,6 +8,9 @@ package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -29,6 +32,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class AnalysisDTO extends DTOBaseAuditable {
 
+    //validation groups
+    public static interface Create {}
+    public static interface Update {}
+
     public AnalysisDTO() {
         super(GobiiEntityNameType.ANALYSIS);
     }
@@ -44,23 +51,25 @@ public class AnalysisDTO extends DTOBaseAuditable {
 
     }
 
-    @GobiiEntityMap(paramName = "analysisId", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "analysisId", entity = Analysis.class, ignoreOnDtoToEntity = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer analysisId;
     
 
     @GobiiEntityMap(paramName = "analysisName", entity = Analysis.class)
+    @NotBlank(groups = AnalysisDTO.Create.class )
     private String analysisName;
 
-    @GobiiEntityMap(paramName = "type.cvId", entity = Analysis.class, deep =  true)
+    @GobiiEntityMap(paramName = "type.cvId", entity = Analysis.class, deep =  true, ignoreOnDtoToEntity = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Positive(groups = AnalysisDTO.Create.class)
     private Integer analysisTypeId;
 
     @GobiiEntityMap(paramName = "description", entity = Analysis.class)
     private String description;
     
 
-    @GobiiEntityMap(paramName = "type.term", entity = Analysis.class, deep =  true)
+    @GobiiEntityMap(paramName = "type.term", entity = Analysis.class, deep =  true, ignoreOnDtoToEntity = true)
     private String analysisTypeName;
 
     @GobiiEntityMap(paramName = "program", entity = Analysis.class)
@@ -81,11 +90,11 @@ public class AnalysisDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "sourceUri", entity = Analysis.class)
     private String sourceUri;
 
-    @GobiiEntityMap(paramName = "reference.referenceId", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "reference.referenceId", entity = Analysis.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceId;
 
-    @GobiiEntityMap(paramName = "reference.referenceName", entity = Analysis.class)
+    @GobiiEntityMap(paramName = "reference.referenceName", entity = Analysis.class, deep = true, ignoreOnDtoToEntity = true)
     private String referenceName;
 
     @GobiiEntityMap(paramName = "parameters", entity = Analysis.class)

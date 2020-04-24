@@ -111,10 +111,10 @@ public class CvMapper {
         try {
             for(Cv cv : cvList) {
                 if(props.containsKey(cv.getCvId().toString())) {
-                    CvPropertyDTO dto = new CvPropertyDTO();
-                    ModelMapper.mapEntityToDto(cv, dto);
-                    dto.setPropertyValue(props.get(cv.getCvId().toString()));
-                    dtoList.add(dto);
+                    CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
+                    ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
+                    cvPropertyDTO.setPropertyValue(props.get(cv.getCvId().toString()));
+                    dtoList.add(cvPropertyDTO);
                 }
             }
         }
@@ -153,9 +153,9 @@ public class CvMapper {
         List<CvPropertyDTO> dtoList = new java.util.ArrayList<>();
         try {
             for(Cv cv : cvList) {
-                CvPropertyDTO dto = new CvPropertyDTO();
-                ModelMapper.mapEntityToDto(cv, dto);
-                dtoList.add(dto);
+                CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
+                ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
+                dtoList.add(cvPropertyDTO);
             }
         }
         catch(Exception e) {

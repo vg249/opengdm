@@ -23,14 +23,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
-import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
+import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
@@ -38,7 +39,6 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
@@ -682,7 +682,7 @@ public class GOBIIControllerV3Test {
         
         String jsonRequest = "{\"analysisName\": \"test-name\", \"analysisTypeId\": \"93\" }";
         when(
-            analysisService.createAnalysis(any(AnalysisRequest.class), any(String.class))
+            analysisService.createAnalysis(any(AnalysisDTO.class), any(String.class))
         ).thenReturn(
             new AnalysisDTO()
         );
@@ -701,7 +701,7 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isCreated())
         ;
-        verify(analysisService, times(1)).createAnalysis(any(AnalysisRequest.class), eq("test-user"));
+        verify(analysisService, times(1)).createAnalysis(any(AnalysisDTO.class), eq("test-user"));
     }
 
     @Test
@@ -757,5 +757,67 @@ public class GOBIIControllerV3Test {
         verify(analysisService, times(1)).getAnalysisTypes(0, 1000);
     }
 
+
+    @Test
+    public void testPatchAnalysisById() throws Exception {
+
+        AnalysisDTO patchData = new AnalysisDTO();
+        patchData.setAnalysisName("New Name");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(patchData);
+        Integer testId = 123;
+
+        AnalysisDTO mockDTO = new AnalysisDTO();
+
+        when(
+            analysisService.updateAnalysis(eq(testId), any(AnalysisDTO.class), eq("test-user"))
+        ).thenReturn(
+            mockDTO
+        );
+
+        when(
+            projectService.getDefaultProjectEditor() //TODO: Refactor where this editor info is called
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/analyses/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(analysisService, times(1)).updateAnalysis(eq(testId), any(AnalysisDTO.class), eq("test-user"));
+        verify(projectService, times(1)).getDefaultProjectEditor();
+    }
+
+    @Test
+    public void getAnalysisByIdTest() throws Exception {
+        AnalysisDTO mockDTO = new AnalysisDTO();
+        Integer mockId = 123;
+        when(
+            analysisService.getAnalysis(mockId)
+        ).thenReturn(
+            mockDTO
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/analyses/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(analysisService, times(1)).getAnalysis(eq(123));
+        
+    }
     
 }

@@ -18,11 +18,11 @@ public class CvPropertyDTOTest {
 
         entity.setCvGroup(group);
 
-        CvPropertyDTO dto = new CvPropertyDTO();
+        CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
 
-        ModelMapper.mapEntityToDto(entity, dto);
-        assert dto.getPropertyGroupType() == 1;
-        assert dto.getPropertyType() == "system defined";
+        ModelMapper.mapEntityToDto(entity, cvPropertyDTO);
+        assert cvPropertyDTO.getPropertyGroupType() == 1;
+        assert cvPropertyDTO.getPropertyType() == "system defined";
 
         
     }

@@ -32,9 +32,9 @@ public class ContactServiceImpl implements ContactService {
 
             List<Contact> contacts = contactDao.getContacts(page, pageSize, organizationId);
             contacts.forEach(contact -> {
-                ContactDTO dto = new ContactDTO();
-                ModelMapper.mapEntityToDto(contact, dto);
-                contactDTOs.add(dto);
+                ContactDTO contactDTO = new ContactDTO();
+                ModelMapper.mapEntityToDto(contact, contactDTO);
+                contactDTOs.add(contactDTO);
             });
 
             pagedResult = new PagedResult<>();

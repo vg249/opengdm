@@ -1,10 +1,12 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,11 +16,8 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.entity.Analysis;
-import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -96,6 +95,26 @@ public class AnalysisDaoImpl implements AnalysisDao {
     public Analysis createAnalysis(Analysis analysis) throws Exception {
         em.persist(analysis);
         em.flush();
+        return analysis;
+    }
+
+    @Override
+    public Analysis getAnalysis(Integer id) {
+        return em.find(Analysis.class, id, getAnalysisHints());
+    }
+
+    private Map<String, Object> getAnalysisHints() {
+        EntityGraph<?> graph = this.em.getEntityGraph("graph.analysis");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;
+    }
+
+    @Override
+    public Analysis updateAnalysis(Analysis analysis) {
+        em.merge(analysis);
+        em.flush();
+        em.refresh(analysis, getAnalysisHints());
         return analysis;
     }
 }

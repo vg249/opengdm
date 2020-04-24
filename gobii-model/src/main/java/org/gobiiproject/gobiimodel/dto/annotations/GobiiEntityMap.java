@@ -18,4 +18,6 @@ public @interface GobiiEntityMap {
 
     boolean base() default false;
 
+	boolean ignoreOnDtoToEntity() default false;
+
 }
