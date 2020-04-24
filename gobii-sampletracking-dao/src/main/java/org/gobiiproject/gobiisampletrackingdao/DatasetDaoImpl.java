@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Fetch;
@@ -247,7 +248,6 @@ public class DatasetDaoImpl implements DatasetDao {
 
     @Override
     public int getDatasetCountByAnalysisId(Integer id) {
-        
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Dataset> dataset = criteriaQuery.from(Dataset.class);
@@ -267,5 +267,17 @@ public class DatasetDaoImpl implements DatasetDao {
         return em.createQuery(criteriaQuery).getSingleResult().intValue();
 
     }
+
+	@Override
+	public int getDatasetCountWithAnalysesContaining(Integer id) {
+		Query query = em.createNativeQuery(
+            "SELECT COUNT(*) FROM dataset WHERE ? = ANY(analyses)"
+        );
+        query.setParameter(1, id); 
+        int count = ((Number) query.getSingleResult()).intValue();
+		return count;
+	}
+
+    
 
 }

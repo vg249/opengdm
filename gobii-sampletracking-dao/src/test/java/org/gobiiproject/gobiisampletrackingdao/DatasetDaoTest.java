@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +20,7 @@ import static junit.framework.TestCase.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@Slf4j
 public class DatasetDaoTest {
 
     @Autowired
@@ -116,5 +119,12 @@ public class DatasetDaoTest {
 
         assertTrue(resultTuple.size() <= testPageSize);
 
+    }
+
+    @Test
+    public void testCountAnalysesArray() {
+        int count = datasetDao.getDatasetCountWithAnalysesContaining(1);
+        log.info("Count: " + count);
+        assert count >= 0;
     }
 }

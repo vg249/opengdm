@@ -252,15 +252,19 @@ public class AnalysisServiceImpl implements AnalysisService {
             );
         }
 
-        //check for data sets
-        int linkedDatasetCount = datasetDao.getDatasetCountByAnalysisId(analysisId);
-        if (linkedDatasetCount > 0) {
+        //check for data sets calling analysis or analyses column
+        if (
+            datasetDao.getDatasetCountByAnalysisId(analysisId) > 0 ||
+            datasetDao.getDatasetCountWithAnalysesContaining(analysisId) > 0
+        ) {
             throw new GobiiDaoException(
                 GobiiStatusLevel.ERROR,
                 GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
                 "Associated resources found. Cannot complete the action unless they are deleted."
             );
         }
+
+       
 
         analysisDao.deleteAnalysis(analysis);
     }

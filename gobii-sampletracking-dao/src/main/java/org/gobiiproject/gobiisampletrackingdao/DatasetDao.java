@@ -17,5 +17,8 @@ public interface DatasetDao {
                                                     Integer datasetId, String datasetName,
                                                     Integer experimentId, String experimentName);
 
-    int getDatasetCountByAnalysisId(Integer id);
+    int getDatasetCountByAnalysisId(Integer id); //this is for callinganalyses
+    
+    int getDatasetCountWithAnalysesContaining(Integer id);
+
 }
