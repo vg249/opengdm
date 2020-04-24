@@ -22,5 +22,7 @@ public interface AnalysisDao {
 	Analysis getAnalysis(Integer id);
 
 	Analysis updateAnalysis(Analysis analysis);
+
+	void deleteAnalysis(Analysis analysis) throws Exception;
     
 }

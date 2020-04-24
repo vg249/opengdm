@@ -817,7 +817,26 @@ public class GOBIIControllerV3Test {
         ;
 
         verify(analysisService, times(1)).getAnalysis(eq(123));
-        
+
     }
+
+    @Test
+    public void deleteAnalysisByIdTest() throws Exception {
+        Integer analysisId = 123;
+        doNothing().when(analysisService).deleteAnalysis(analysisId);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/analyses/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+        ;
+        verify(analysisService, times(1)).deleteAnalysis(123);
+
+      
+    }
+
     
 }

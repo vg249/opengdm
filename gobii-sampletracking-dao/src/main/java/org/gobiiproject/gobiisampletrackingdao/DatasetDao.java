@@ -16,4 +16,6 @@ public interface DatasetDao {
     List<Object[]> getDatasetsWithAnalysesAndCounts(Integer pageSize, Integer rowOffset,
                                                     Integer datasetId, String datasetName,
                                                     Integer experimentId, String experimentName);
+
+    int getDatasetCountByAnalysisId(Integer id);
 }

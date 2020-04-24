@@ -117,4 +117,10 @@ public class AnalysisDaoImpl implements AnalysisDao {
         em.refresh(analysis, getAnalysisHints());
         return analysis;
     }
+
+    @Override
+    public void deleteAnalysis(Analysis analysis) throws Exception {
+        em.remove(analysis);
+        em.flush();
+    }
 }

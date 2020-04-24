@@ -22,6 +22,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +39,9 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Autowired
     private ContactDao contactDao;
+
+    @Autowired
+    private DatasetDao datasetDao;
 
     @Transactional
     @Override
@@ -224,7 +228,40 @@ public class AnalysisServiceImpl implements AnalysisService {
     public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {
         AnalysisDTO analysisDTO = new AnalysisDTO();
         Analysis analysis = analysisDao.getAnalysis(analysisId);
+        if (analysis == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Analysis not found"
+            );
+        }
         ModelMapper.mapEntityToDto(analysis, analysisDTO);
         return analysisDTO;
+    }
+
+    @Transactional
+    @Override
+    public void deleteAnalysis(Integer analysisId) throws Exception {
+        //Check if analysis exists
+        Analysis analysis = analysisDao.getAnalysis(analysisId);
+        if (analysis == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Analysis not found"
+            );
+        }
+
+        //check for data sets
+        int linkedDatasetCount = datasetDao.getDatasetCountByAnalysisId(analysisId);
+        if (linkedDatasetCount > 0) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                "Associated resources found. Cannot complete the action unless they are deleted."
+            );
+        }
+
+        analysisDao.deleteAnalysis(analysis);
     }
 }
