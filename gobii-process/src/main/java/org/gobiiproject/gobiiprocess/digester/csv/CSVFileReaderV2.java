@@ -293,6 +293,15 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
         String parentDirectory = outputFile.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
+
+        //Temporary home of output of running VCF reading
+        String matrixTempFileLocation = parentDirectory + "/digest.matrix_raw";
+        //Place to store the indel lookup table, for an indel storage table
+        String matrixIndelLookupTable = parentDirectory + "/digest.matrix_indel";
+
+
+
+
         MatrixValidation matrixValidation = new MatrixValidation(procedure.getMetadata().getDatasetType().getName(), missingFile, markerFile);
         if (matrixValidation.setUp()) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
@@ -301,6 +310,9 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 ArrayList<String> inputRowList, outputRowList;
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+                if (isVCF) {
+                    try{
+                   // File processedVCF = HTSInterface.writeVariantOnlyFile(file,new File(outputFile.getParent(),"procVCF"),"","\t"));
                 while ((fileRow = bufferedReader.readLine()) != null) {
                     if (rowNo >= csv_BothColumn.getrCoord()) {
                         inputRowList = Arrays.stream(fileRow.split(delimiter))

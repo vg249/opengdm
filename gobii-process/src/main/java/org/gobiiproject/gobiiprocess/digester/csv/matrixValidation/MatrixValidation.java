@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
@@ -21,6 +22,7 @@ public class MatrixValidation {
     private RowProcessor diploidProcessor;
     private MatrixErrorUtil matrixErrorUtil;
     private NucleotideSeparatorSplitter tetraploidSplitter;
+    private Iterator<String> vcfRawFileOutput;
 
     public MatrixErrorUtil getMatrixErrorUtil() {
         return matrixErrorUtil;
@@ -108,6 +110,12 @@ public class MatrixValidation {
             }
 
         if (isVCF) {
+            if(vcfRawFileOutput==null){
+                //create VCF matrix file
+            }
+            else{
+               // inputRowList = vcfRawFileOutput.next().split("\t");
+            }
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(markerFile)))) {
                 int lineNo = 0;
                 int refPos = -1, altPos = -1;
@@ -168,6 +176,45 @@ public class MatrixValidation {
             boolean datasetValidationStatus=DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, matrixErrorUtil);
             return ret.success(datasetValidationStatus);
         } else return ret.success(false);
+    }
+}
+
+/**
+ * Quick method to turn a line reader into an interator. ANY read error effectively equals EoF.
+ */
+class BufferedReaderIteratorReader implements Iterator<String>{
+    BufferedReader br;
+    String nextLine;
+    private String readNextLine(){
+        try{
+            return br.readLine();
+        } catch(Exception e){
+            return null;
+        }
+    }
+    BufferedReaderIteratorReader(BufferedReader br){
+        this.br=br;
+        this.nextLine=readNextLine();
+    }
+    @Override
+    public boolean hasNext() {
+        return nextLine!=null;
+    }
+    @Override
+    public String next() {
+        String ret = nextLine;
+        nextLine=readNextLine();
+        return ret;
+    }
+    @Override
+    public void remove() {
+      nextLine=readNextLine();
+    }
+    @Override
+    public void forEachRemaining(Consumer<? super String> action) {
+        while(hasNext()){
+            action.accept(next());
+        }
     }
 }
 
