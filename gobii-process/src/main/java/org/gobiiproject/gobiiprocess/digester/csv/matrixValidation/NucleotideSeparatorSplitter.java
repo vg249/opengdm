@@ -18,6 +18,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private static Set<String> validSeparators = new HashSet<>(Arrays.asList(
             ",",
             "/",
+            ":", //GSD-165 add : to valid separators
             "|"
     ));
 
