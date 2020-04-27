@@ -70,9 +70,11 @@ public class CvDaoImpl implements CvDao {
     @Override
     public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) throws GobiiException {
 
-        Objects.requireNonNull(cvGroupName, "CV group name should not be null");
 
         try {
+            Objects.requireNonNull(
+                    cvGroupName,
+                    "CV group name should not be null");
             return this.getCvs(null, cvGroupName, cvType, null, null);
         } catch (Exception e) {
 

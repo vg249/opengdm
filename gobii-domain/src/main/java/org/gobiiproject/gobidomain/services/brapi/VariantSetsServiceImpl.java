@@ -13,6 +13,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.FileFormatDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
@@ -89,11 +90,22 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                     variantSets.add(variantSetDTO);
 
+
+                    variantSetDTO.setAvailableFormats(new ArrayList<>());
+
+                    FileFormatDTO fileFormat = new FileFormatDTO();
+
+                    fileFormat.setDataFormat("tabular");
+
+                    fileFormat.setFileFormat("text/csv");
+
                     //Set dataset download url
-                    variantSetDTO.setFileUrl(
+                    fileFormat.setFileURL(
                             MessageFormat.format(
                                     this.fileUrlFormat,
                                     dataset.getDatasetId()));
+
+                    variantSetDTO.getAvailableFormats().add(fileFormat);
 
                     //Set Marker and DnaRun Counts
                     variantSetDTO.setVariantCount(markerCount);

@@ -7,6 +7,9 @@ import io.swagger.annotations.ApiModelProperty;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StudiesDTO {
 
@@ -21,18 +24,7 @@ public class StudiesDTO {
     @ApiModelProperty(example = "foo study")
     private String studyName;
 
-
-    @GobiiEntityMap(paramName = "project.contact.contactId",
-            entity = Experiment.class, deep = true)
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(example = "3")
-    private Integer contactDbId;
-
-    @GobiiEntityMap(paramName = "project.contact.email",
-            entity = Experiment.class, deep = true)
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(example = "example@***")
-    private String email;
+    private List<ContactDTO> contacts = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "experimentCode",
             entity = Experiment.class)
@@ -55,14 +47,6 @@ public class StudiesDTO {
         this.studyName = studyName;
     }
 
-    public Integer getContactDbId() {
-        return contactDbId;
-    }
-
-    public void setContactDbId(Integer contactDbId) {
-        this.contactDbId = contactDbId;
-    }
-
     public String getStudyCode() {
         return studyCode;
     }
@@ -71,11 +55,11 @@ public class StudiesDTO {
         this.studyCode = studyCode;
     }
 
-    public String getEmail() {
-        return email;
+    public List<ContactDTO> getContacts() {
+        return contacts;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setContacts(List<ContactDTO> contacts) {
+        this.contacts = contacts;
     }
 }

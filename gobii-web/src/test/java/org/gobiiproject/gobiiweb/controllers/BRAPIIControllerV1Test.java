@@ -3,10 +3,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobidomain.services.brapi.SamplesService;
 import org.gobiiproject.gobidomain.services.brapi.VariantSetsService;
-import org.gobiiproject.gobiimodel.dto.brapi.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -420,14 +417,17 @@ public class BRAPIIControllerV1Test {
 
 
             variantSet.setStudyDbId(random.nextInt(10));
+            variantSet.setVariantSetDbId(random.nextInt(2));
 
             variantSet.setVariantCount(100);
             variantSet.setCallSetCount(1000);
 
-            variantSet.setFileUrl(RandomStringUtils.random(10, true, true));
-            variantSet.setFileFormat(RandomStringUtils.random(4, true, true));
-            variantSet.setVariantSetDbId(random.nextInt(2));
-            variantSet.setDataFormat(RandomStringUtils.random(4, true, true));
+            variantSet.setAvailableFormats(new ArrayList<>());
+            FileFormatDTO fileFormat = new FileFormatDTO();
+            fileFormat.setFileURL(RandomStringUtils.random(10, true, true));
+            fileFormat.setFileFormat(RandomStringUtils.random(4, true, true));
+            fileFormat.setDataFormat(RandomStringUtils.random(4, true, true));
+            variantSet.getAvailableFormats().add(fileFormat);
 
             variantSet.setReferenceSetDbId(random.nextInt(2));
             variantSet.setVariantSetName(RandomStringUtils.random(5, true, true));

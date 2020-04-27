@@ -57,8 +57,6 @@
     <bean id="experimentDao"
           class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
-    <bean id="sampleTrackingProjectService"
-          class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>

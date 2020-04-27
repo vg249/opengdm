@@ -14,8 +14,8 @@ public class ServerInfoDTO {
     private List<String> versions;
 
 
-    public ServerInfoDTO(String service, List<String> dataTypes,
-                         List<String> methods, List<String> versions) {
+    public ServerInfoDTO(String service, List<String> methods,
+                         List<String> dataTypes, List<String> versions) {
 
         this.service = service;
         this.dataTypes = dataTypes;

@@ -6,7 +6,6 @@ import java.util.Set;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 
 public interface AnalysisDao {
-
     /**
      * Gets analyses for given list of analysis ids
      * @param analysisIds - List of analysis ids for which

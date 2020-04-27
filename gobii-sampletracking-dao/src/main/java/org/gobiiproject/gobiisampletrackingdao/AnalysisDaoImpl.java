@@ -15,7 +15,9 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
@@ -28,18 +30,23 @@ public class AnalysisDaoImpl implements AnalysisDao {
     @PersistenceContext
     protected EntityManager em;
 
+
     @Override
     public List<Analysis> getAnalysesByAnalysisIds(Set<Integer> analysisIds) {
 
         List<Analysis> analyses;
 
-        Objects.requireNonNull(analysisIds, "analysisId : Required non null");
 
         try {
 
+            Objects.requireNonNull(
+                    analysisIds,
+                    "analysisId : Required non null");
+
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<Analysis> criteriaQuery = criteriaBuilder.createQuery(Analysis.class);
+            CriteriaQuery<Analysis> criteriaQuery =
+                    criteriaBuilder.createQuery(Analysis.class);
 
             Root<Analysis> analysisRoot = criteriaQuery.from(Analysis.class);
 

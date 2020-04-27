@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.noaudit;
+package org.gobiiproject.gobiimodel.dto.brapi;
 
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
@@ -10,7 +10,10 @@ import java.util.Set;
 @CheckAtLeastOneNotNullOrEmpty(
         fieldNames = {
                 "callSetDbIds", "callSetNames",
-                "variantDbIds", "variantNames"
+                "variantDbIds", "variantNames",
+                "sampleDbIds", "sampleNames",
+                "samplePUIs", "variantSetDbIds",
+                "germplasmPUIs"
         })
 public class GenotypeCallsSearchQueryDTO {
 
@@ -19,6 +22,15 @@ public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetNames allowed per query")
     private Set<String> callSetNames = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
+    private Set<Integer> sampleDbIds = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
+    private Set<String> sampleNames = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
+    private Set<String> samplePUIs = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 variantDbIds allowed per query")
     private Set<Integer> variantDbIds = new HashSet<>();
@@ -34,6 +46,7 @@ public class GenotypeCallsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 germplasmPUIs allowed per query")
     private Set<String> germplasmPUIs = new HashSet<>();
+
 
     public Set<Integer> getCallSetDbIds() {
         return callSetDbIds;
@@ -89,5 +102,29 @@ public class GenotypeCallsSearchQueryDTO {
 
     public void setGermplasmPUIs(Set<String> germplasmPUIs) {
         this.germplasmPUIs = germplasmPUIs;
+    }
+
+    public Set<Integer> getSampleDbIds() {
+        return sampleDbIds;
+    }
+
+    public void setSampleDbIds(Set<Integer> sampleDbIds) {
+        this.sampleDbIds = sampleDbIds;
+    }
+
+    public Set<String> getSampleNames() {
+        return sampleNames;
+    }
+
+    public void setSampleNames(Set<String> sampleNames) {
+        this.sampleNames = sampleNames;
+    }
+
+    public Set<String> getSamplePUIs() {
+        return samplePUIs;
+    }
+
+    public void setSamplePUIs(Set<String> samplePUIs) {
+        this.samplePUIs = samplePUIs;
     }
 }

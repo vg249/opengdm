@@ -22,12 +22,14 @@ public class GenotypeCallsDTO extends DTOBase{
     private Integer variantSetDbId;
 
     @GobiiEntityMap(paramName="dnaRunId", entity = DnaRun.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer callSetDbId;
 
     @GobiiEntityMap(paramName="dnaRunName", entity = DnaRun.class)
     private String callSetName;
 
     @GobiiEntityMap(paramName="markerId", entity = Marker.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer variantDbId;
 
     @GobiiEntityMap(paramName="markerName", entity = Marker.class)

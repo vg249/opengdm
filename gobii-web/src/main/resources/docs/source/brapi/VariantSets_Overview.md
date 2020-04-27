@@ -14,7 +14,7 @@ availableFormats | Array | List of [File Format Objects](#fileformatobject).
 referenceSetDbId | String | The ID of the reference set that describes the sequences used by the variants in this set.
 variantCount | Integer | Number of Variants(Markers or SNPs) in corresponding VariantSet
 callSetCount | Integer | Number of CallSets (DnaRuns) in a corresponding VariantSet
-extractReady | Boolean | **Non BrAPI Field** Genotypes are ready to be extracted, if True. 
+additionalInfo | Object | [Additional Information](#variantsetadditionalinfo).
 createdBy | Integer | Contact Id of the user who created the VariantSet.
 created | String | Created date string in UTC
 modifiedBy | Integer | Contact Id of the user who modified the VariantSet.
@@ -23,33 +23,39 @@ modified | Integer | Modified date string in UTC
 <a name="variantsetresourceexample">**Resource Example**</a>
 
 ```json
-
-        {
-            "createdBy": 1,
-            "modifiedBy": 4,
-            "variantSetDbId": "2",
-            "variantSetName": "CIMMYT Wheat - M51STIBWSN_2",
-            "studyDbId": "2",
-            "fileUrl": "/gobii-dev/variantsets/2/calls/download",
-            "fileFormat": "text/csv",
-            "dataFormat": "tabular",
-            "analyses": [
-                {
-                    "analysisDbId": "2",
-                    "analysisName": "None",
-                    "description": "",
-                    "created": "2019-12-19T05:00:00"
-                }
-            ],
-            "extractReady": true,
-            "callSetCount": 710,
-            "variantCount": 54,
-            "created": "2019-12-19T05:00:00",
-            "updated": "2019-12-19T05:00:00"
-        } 
+    
+    {
+        "createdBy": "1",
+        "variantSetDbId": "13",
+        "variantSetName": "foo dataset",
+        "studyDbId": "11",
+        "studyName": "bar study",
+        "availableFormats": [
+            {
+                "dataFormat": "tabular",
+                "fileFormat": "text/csv",
+                "fileURL": "/variantsets/13/calls/download"
+            }
+        ],
+        "analyses": [
+            {
+                "analysisDbId": "2",
+                "analysisName": "calling",
+                "description": "",
+                "created": "2019-12-19T05:00:00"
+            }
+        ],
+        "callSetCount": 0,
+        "variantCount": 100,
+        "additionalInfo": {
+            "extractReady": true
+        },
+        "created": "2020-01-08T05:00:00"
+    } 
 
 ```
-<a name="fileformatsobject">**File Format Object**</a>
+
+<a name="fileformatobject">**File Format Object**</a>
 
 Field | Type | Description
 ------|------|------------
@@ -67,3 +73,17 @@ fileUrl | String | Relative URL to download variantset.
         "dataFormat": "tabular"
     }
 ```
+<a name="variantsetadditionalinfo">**Additional Info Object**</a>
+
+Field | Type | Description
+------|------|------------
+extractReady | Boolean | Tells whether the dataset is extract ready or not.
+
+<a name="variantsetadditionalinfoexample">**Resource Example**</a>
+
+```json
+    {
+        "extractReady" : true
+    }
+```
+
