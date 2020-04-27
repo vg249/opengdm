@@ -45,6 +45,13 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
                     //noinspection ConstantConditions - This is for readability
                     result = unknownSegment;
                 }else{
+
+                    //Override for one character in 2 letter - duplicate the letter GSD-166
+                    if((element.length() == 1) && (nucleotideCount == 2)){
+                        Logger.logDebug("NucleotideSeparatorSplitter","Found single letter homozygous in biallelic data, converted to two versions of it");
+                        element = element+element;
+                    }
+
                     error = validateInputElement(element);
                     if(error==null) {
                         result = processInputElement(element);
@@ -114,7 +121,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private String processInputElement(String element){
         int length = element.length();
         boolean hasSeparators=((length != nucleotideCount));
-        if(hasSeparators) { //If nucleotideCount=1, there's no separator character
+        if(hasSeparators && length>1) { //If nucleotideCount=1, there's no separator character
             char separator = element.charAt(1);
             //Pattern.quote to escape literals like / and | being interpreted as regular expression syntax
             return element.replaceAll(Pattern.quote( ""+separator ), "");
