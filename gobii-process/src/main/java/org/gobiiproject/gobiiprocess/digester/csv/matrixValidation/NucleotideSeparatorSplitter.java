@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -73,6 +74,16 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private String validateInputElement(String element){
         int expectedLengthWithSeparators = (nucleotideCount * 2) - 1;
         int length = element.length();
+
+
+        //Override for one character in 2 letter - duplicate the letter GSD-156
+        if((length == 1) && (nucleotideCount == 2)){
+            Logger.logDebug("NucleotideSeparatorSplitter","Found single letter homozygous in biallelic data, converted to two versions of it");
+            element = element+element;
+            length = 2;
+        }
+
+
         boolean hasSeparators=(length != nucleotideCount);
         if((length != nucleotideCount) && (length != expectedLengthWithSeparators)){
             return "Unexpected Length Element " + element; // incorrect length
