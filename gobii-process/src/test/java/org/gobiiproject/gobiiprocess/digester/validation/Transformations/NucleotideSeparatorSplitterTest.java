@@ -179,6 +179,30 @@ public class NucleotideSeparatorSplitterTest {
         assertEquals("Transform equals input",expectedOutput,output);
     }
 
+    @Test
+    public void test2LetterColonAndSingleLetter(){
+        List<String> input = Arrays.asList("?","A:C","C","A/C","C");
+        List<String> expectedOutput = Arrays.asList("NN","AC","CC","AC","CC");
+        //Reset error flag and values
+        runnerHadError=false;
+        runnerErrorMessage = new ArrayList<String>();
+
+        List<String> output = new ArrayList<String>();
+
+        //Override setError to capture error messages
+        MatrixErrorUtil dummy = new MatrixErrorUtil(){
+            public void setError(String s){
+                runnerHadError=true;
+                runnerErrorMessage.add(s);
+            }
+        };
+
+        new NucleotideSeparatorSplitter(2,normalMissingSegments).process(0,input,output,dummy);
+
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+    }
+
     private void noErrorsExpected(){
         String firstMessage = "no messagte";
         if(runnerErrorMessage.size()>0) firstMessage = runnerErrorMessage.get(0);
