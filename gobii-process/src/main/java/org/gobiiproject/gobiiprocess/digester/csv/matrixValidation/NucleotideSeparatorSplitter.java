@@ -83,13 +83,6 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
         int length = element.length();
 
 
-        //Override for one character in 2 letter - duplicate the letter GSD-166
-        if((length == 1) && (nucleotideCount == 2)){
-            Logger.logDebug("NucleotideSeparatorSplitter","Found single letter homozygous in biallelic data, converted to two versions of it");
-            element = element+element;
-            length = 2;
-        }
-
 
         boolean hasSeparators=(length != nucleotideCount);
         if((length != nucleotideCount) && (length != expectedLengthWithSeparators)){
