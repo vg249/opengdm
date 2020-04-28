@@ -883,5 +883,38 @@ public class GOBIIControllerV3Test {
 
     }
 
+    @Test
+    public void testCreateDatasetWithAnalysisIds() throws Exception {
+        assert datasetService != null;
+        String requestJson = "{\"datasetName\" : \"test-name\", \"experimentId\" : \"1\", \"callingAnalysisId\" : \"1\", \"analysisIds\" : [ \"2\", \"3\", \"4\" ]}";
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn(
+            "test-user"
+        );
+
+        when(
+            datasetService.createDataset(any(DatasetRequestDTO.class), eq("test-user"))
+        ).thenReturn(
+            new DatasetDTO()
+        );
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/datasets")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .characterEncoding("UTF-8")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify( datasetService, times(1)).createDataset(any(DatasetRequestDTO.class), eq("test-user"));
+
+
+    }
     
 }

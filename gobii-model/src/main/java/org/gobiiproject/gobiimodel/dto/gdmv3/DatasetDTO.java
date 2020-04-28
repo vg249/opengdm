@@ -1,13 +1,13 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
 import java.util.List;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -51,22 +51,42 @@ public class DatasetDTO extends DTOBaseAuditable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer experimentId;
 
+
+    @GobiiEntityMap(paramName = "experiment.experimentName", entity = Dataset.class, deep = true )
+    private String experimentName;
+
+    
+    @GobiiEntityMap(paramName = "experiment.project.projectId", entity = Dataset.class, deep = true )
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer projectId;
+
+
+    @GobiiEntityMap(paramName = "experiment.project.projectName", entity = Dataset.class, deep = true )
     private String projectName;
 
+    
+    @GobiiEntityMap(paramName = "experiment.project.contact.contactId", entity = Dataset.class, deep = true )
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer piContactId;
-    private String  piContactName;
 
 
-    @GobiiEntityMap(paramName = "datasetTypeId", entity = Dataset.class )
+    @GobiiEntityMap(paramName="experiment.project.contact.lastName", entity = Dataset.class, deep=true)
+    @JsonIgnore
+    private String piContactLastName;
+
+    @GobiiEntityMap(paramName="experiment.project.contact.firstName", entity = Dataset.class, deep=true)
+    @JsonIgnore
+    private String piContactFirstName;
+
+    @GobiiEntityMap(paramName = "type.cvId", entity = Dataset.class, deep = true )
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer datasetTypeId;
 
+    @GobiiEntityMap(paramName = "type.term", entity = Dataset.class, deep = true)
     private String datasetTypeName;
 
 
     @GobiiEntityMap(paramName = "analyses", entity = Dataset.class)
-    @JsonSerialize(using = ToStringSerializer.class)
     private Integer[] analysisIds;
 
 
@@ -80,6 +100,21 @@ public class DatasetDTO extends DTOBaseAuditable {
 
     //manually set this before transporting
     private List<AnalysisDTO> analyses;
+
+    @JsonProperty("piContactName")
+    public String getPiContactName() {
+        if (!isNullOrEmpty(piContactFirstName) &&
+            !isNullOrEmpty(piContactLastName)) {
+            return String.format("%s, %s", piContactLastName, piContactFirstName);
+        }
+        if (!isNullOrEmpty(piContactFirstName)) {
+            return piContactFirstName; //covers one-name persons
+        }
+        if (!isNullOrEmpty(piContactLastName)) {
+            return piContactLastName;
+        }
+        return null;
+    }
 
 
 }

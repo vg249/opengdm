@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import java.util.List;
+
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
@@ -35,7 +37,6 @@ public class DatasetRequestDTO {
     @Digits(integer = 10, fraction = 0, groups = DatasetRequestDTO.Create.class)
     private Integer callingAnalysisId;
 
-    @JsonSerialize(using = ToStringSerializer.class)
     private Integer[] analysisIds;
 
 
