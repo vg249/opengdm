@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -38,6 +39,8 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -86,6 +89,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private AnalysisService analysisService;
+
+    @Mock
+    private DatasetService datasetService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -836,6 +842,45 @@ public class GOBIIControllerV3Test {
         verify(analysisService, times(1)).deleteAnalysis(123);
 
       
+    }
+
+    @Test 
+    public void createDatasetSimpleTest() throws Exception {
+        assert datasetService != null;
+        DatasetRequestDTO request = new DatasetRequestDTO();
+        request.setDatasetName("test-name");
+        request.setExperimentId(1);
+        request.setCallingAnalysisId(1);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(request);
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn(
+            "test-user"
+        );
+        when(
+            datasetService.createDataset(any(DatasetRequestDTO.class), eq("test-user"))
+        ).thenReturn(
+            new DatasetDTO()
+        );
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/datasets")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+        verify( datasetService, times(1)).createDataset(any(DatasetRequestDTO.class), eq("test-user"));
+
+
     }
 
     

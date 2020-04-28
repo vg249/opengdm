@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
@@ -26,10 +27,13 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.sampletracking.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
@@ -74,16 +78,19 @@ import lombok.extern.slf4j.Slf4j;
 public class GOBIIControllerV3  {
     
     @Autowired
-    private ProjectService projectService = null;
+    private ProjectService projectService;
 
     @Autowired
-    private ContactService contactService = null;
+    private ContactService contactService;
 
     @Autowired
-    private ExperimentService experimentService = null;
+    private ExperimentService experimentService;
 
     @Autowired
-    private AnalysisService analysisService = null;
+    private AnalysisService analysisService;
+
+    @Autowired
+    private DatasetService datasetService;
 
     /**
      * Authentication Endpoint
@@ -347,16 +354,7 @@ public class GOBIIControllerV3  {
             @RequestBody @Valid final ExperimentRequest experiment,
             BindingResult bindingResult
     ) throws Exception {
-        if (bindingResult.hasErrors()) {
-            List<String> info = new ArrayList<String>();
-        
-            bindingResult.getFieldErrors().forEach(
-                objErr -> {
-                    info.add(objErr.getField() + " " + objErr.getDefaultMessage());
-                }
-            );
-            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
-        } 
+        this.checkBindingErrors(bindingResult);
         BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
@@ -542,6 +540,29 @@ public class GOBIIControllerV3  {
             result.getCurrentPageSize()
         );
         return ResponseEntity.ok(payload);
+    }
+
+    //-----Dataset API Handlers section
+
+    /**
+     * Create Dataset
+     * @return
+     */
+    @PostMapping("/datasets")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<DatasetDTO>> createDataset(
+        @RequestBody @Validated(DatasetRequestDTO.Create.class) final DatasetRequestDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+       this.checkBindingErrors(bindingResult);
+       String user = this.getCurrentUser();
+
+       DatasetDTO result = datasetService.createDataset(request, user);
+       BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
+       payload.setResult(result);
+       payload.setMetadata(null);
+       return ResponseEntity.created(null).body(payload);
+           
     }
 
 
