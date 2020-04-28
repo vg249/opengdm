@@ -20,6 +20,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
             ",",
             "/",
             ":", //GSD-165 add : to valid separators
+            ";", //As per 4/28/2020 standup, 165 needs semicolons as well
             "|"
     ));
 
