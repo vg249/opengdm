@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -99,6 +100,10 @@ public class JsonNodeType implements UserType {
 
     @Override
     public Object deepCopy(Object value) throws HibernateException {
+        if (value instanceof ObjectNode) {
+            ObjectNode objectNode = (ObjectNode) value;
+            return objectNode.deepCopy();
+        }
         try {
             // use serialization to create a deep copy
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
