@@ -5,6 +5,6 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 
 public interface DatasetService {
 
-	DatasetDTO createDataset(DatasetRequestDTO request, String user);
+	DatasetDTO createDataset(DatasetRequestDTO request, String user) throws Exception;
 
 }

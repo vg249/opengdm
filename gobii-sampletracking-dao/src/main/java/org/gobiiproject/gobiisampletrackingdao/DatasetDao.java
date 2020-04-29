@@ -3,6 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 
 public interface DatasetDao {
@@ -20,5 +21,7 @@ public interface DatasetDao {
     int getDatasetCountByAnalysisId(Integer id); //this is for callinganalyses
     
     int getDatasetCountWithAnalysesContaining(Integer id);
+
+    Dataset saveDataset(Dataset dataset) throws Exception;
 
 }

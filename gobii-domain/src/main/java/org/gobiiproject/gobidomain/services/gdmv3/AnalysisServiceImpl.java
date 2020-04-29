@@ -89,15 +89,8 @@ public class AnalysisServiceImpl implements AnalysisService {
             analysis.setReference(reference);
         }
 
-        // set status
-        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
-
+        //get new status
+        Cv cv = cvDao.getNewStatus();       
         analysis.setStatus(cv);
 
         ModelMapper.mapDtoToEntity(analysisRequest, analysis, true);
@@ -138,13 +131,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         //get the new row status
         // Get the Cv for status, new row
-        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv status = null;
-        if (!cvList.isEmpty()) {
-            status = cvList.get(0);
-        }
+        Cv status = cvDao.getNewStatus();
         cv.setStatus(status.getCvId());
 
         //set rank
@@ -208,13 +195,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             analysis.setModifiedBy(updater.getContactId());
         analysis.setModifiedDate(new java.util.Date());
 
-        //set new status
-        List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
+        Cv cv = cvDao.getModifiedStatus();
         analysis.setStatus(cv);
 
         Analysis updatedAnalysis = analysisDao.updateAnalysis(analysis);
