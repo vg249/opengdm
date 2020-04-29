@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -9,15 +10,19 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
@@ -37,6 +42,9 @@ public class DatasetServiceImpl implements DatasetService {
 	
 	@Autowired
 	private AnalysisDao analysisDao;
+
+	@Autowired
+	private ContactDao contactDao;
 	
 	@Transactional
 	@Override
@@ -74,10 +82,11 @@ public class DatasetServiceImpl implements DatasetService {
 			)
 		);
 		
+		List<Analysis> analyses = null;
 		if (
 			!analysisIds.isEmpty()
 		) {
-			List<Analysis> analyses = analysisDao.getAnalysesByAnalysisIds(analysisIds);
+			analyses = analysisDao.getAnalysesByAnalysisIds(analysisIds);
 			if (analyses.size() != analysisIds.size()) {
 				throw new GobiiDaoException(
 					GobiiStatusLevel.ERROR,
@@ -122,8 +131,34 @@ public class DatasetServiceImpl implements DatasetService {
 		dataset.setType(datasetType);
 
 		//status item
+		Cv newStatus = cvDao.getNewStatus();
+		dataset.setStatus(newStatus);
+
+		//audit items
+		// audit items
+		Contact creator = contactDao.getContactByUsername(user);
+		if (creator != null)
+			dataset.setCreatedBy(creator.getContactId());
+		dataset.setCreatedDate(new java.util.Date());
+
+		Dataset savedDataset = datasetDao.saveDataset(dataset);
 		
-		return null;
+		DatasetDTO datasetDTO = new DatasetDTO();
+		//manual load the analysis DTOs
+		if (analyses != null) {
+			List<AnalysisDTO> analysisDTOs = new ArrayList<>();
+			analyses.forEach(analysis -> {
+				AnalysisDTO analysisDTO = new AnalysisDTO();
+				ModelMapper.mapEntityToDto(analysis, analysisDTO);
+				analysisDTOs.add(analysisDTO);
+			});
+			datasetDTO.setAnalyses(analysisDTOs);
+		}
+		
+
+		ModelMapper.mapEntityToDto(savedDataset, datasetDTO);
+		
+		return datasetDTO;
 	}
 
 }

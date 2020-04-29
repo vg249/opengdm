@@ -100,9 +100,9 @@ public class AnalysisServiceImpl implements AnalysisService {
         if (creator != null)
             analysis.setCreatedBy(creator.getContactId());
         analysis.setCreatedDate(new java.util.Date());
+        
         try {
-        analysis = analysisDao.createAnalysis(analysis);
-
+            analysis = analysisDao.createAnalysis(analysis);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

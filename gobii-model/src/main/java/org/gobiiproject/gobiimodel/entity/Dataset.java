@@ -72,7 +72,7 @@ public class Dataset extends BaseEntity {
     private Analysis callingAnalysis = new Analysis();
 
     @Column(name = "analyses")
-    @Convert(converter = IntegerArrayConverter.class)
+    //@Convert(converter = IntegerArrayConverter.class)
     @Type(type = "IntArrayType")
     private Integer[] analyses;
 
@@ -89,7 +89,7 @@ public class Dataset extends BaseEntity {
     private String qualityFile;
 
     @Column(name="scores")
-    @Convert(converter = JsonbConverter.class)
+    //@Convert(converter = JsonbConverter.class)
     @Type(type = "JsonNodeType")
     private JsonNode scores;
 
