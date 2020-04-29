@@ -16,7 +16,6 @@ import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
@@ -100,7 +99,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         if (creator != null)
             analysis.setCreatedBy(creator.getContactId());
         analysis.setCreatedDate(new java.util.Date());
-        
+
         try {
             analysis = analysisDao.createAnalysis(analysis);
         } catch (Exception e) {

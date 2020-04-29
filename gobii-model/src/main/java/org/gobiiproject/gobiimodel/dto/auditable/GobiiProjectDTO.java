@@ -27,6 +27,7 @@ import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -53,6 +54,7 @@ import lombok.Data;
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GobiiProjectDTO extends DTOBaseAuditable {
 
     public GobiiProjectDTO() {

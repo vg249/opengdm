@@ -39,5 +39,4 @@ public class DatasetRequestDTO {
 
     private Integer[] analysisIds;
 
-
 }

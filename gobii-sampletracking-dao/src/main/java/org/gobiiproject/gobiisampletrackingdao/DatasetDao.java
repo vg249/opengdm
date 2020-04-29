@@ -3,7 +3,6 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 
 public interface DatasetDao {

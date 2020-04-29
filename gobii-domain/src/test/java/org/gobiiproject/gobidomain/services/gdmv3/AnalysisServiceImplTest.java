@@ -19,7 +19,6 @@ import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
-import org.hibernate.engine.transaction.jta.platform.internal.SapNetWeaverJtaPlatform;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
