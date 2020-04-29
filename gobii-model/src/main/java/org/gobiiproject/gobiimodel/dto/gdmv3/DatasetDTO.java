@@ -30,7 +30,6 @@ public class DatasetDTO extends DTOBaseAuditable {
 
 	@Override
 	public Integer getId() {
-		// TODO Auto-generated method stub
 		return datasetId;
 	}
 
@@ -87,6 +86,7 @@ public class DatasetDTO extends DTOBaseAuditable {
 
 
     @GobiiEntityMap(paramName = "analyses", entity = Dataset.class)
+    @JsonIgnore
     private Integer[] analysisIds;
 
 
