@@ -65,11 +65,11 @@ public class Dataset extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "experiment_id")
-    private Experiment experiment = new Experiment();
+    private Experiment experiment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "callinganalysis_id", referencedColumnName = "analysis_id")
-    private Analysis callingAnalysis = new Analysis();
+    private Analysis callingAnalysis;
 
     @Column(name = "analyses")
     //@Convert(converter = IntegerArrayConverter.class)

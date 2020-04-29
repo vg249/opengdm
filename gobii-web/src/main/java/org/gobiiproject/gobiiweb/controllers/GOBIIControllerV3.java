@@ -27,7 +27,6 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.sampletracking.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
@@ -35,7 +34,6 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisRequest;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
@@ -556,12 +554,16 @@ public class GOBIIControllerV3  {
     ) throws Exception {
        this.checkBindingErrors(bindingResult);
        String user = this.getCurrentUser();
-
+       try {
        DatasetDTO result = datasetService.createDataset(request, user);
        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
        payload.setResult(result);
        payload.setMetadata(null);
        return ResponseEntity.created(null).body(payload);
+       } catch (Exception e) {
+           e.printStackTrace();
+           throw e;
+       }
            
     }
 
@@ -585,6 +587,7 @@ public class GOBIIControllerV3  {
 
     private void checkBindingErrors(BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
+            
             List<String> info = new ArrayList<String>();
         
             bindingResult.getFieldErrors().forEach(

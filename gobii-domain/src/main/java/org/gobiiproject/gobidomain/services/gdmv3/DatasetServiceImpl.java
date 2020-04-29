@@ -26,7 +26,7 @@ import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
-import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DatasetServiceImpl implements DatasetService {
