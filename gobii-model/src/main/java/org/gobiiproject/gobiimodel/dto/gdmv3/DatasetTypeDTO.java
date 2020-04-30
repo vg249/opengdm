@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,11 +22,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DatasetTypeDTO {
 
+
+    public static interface Create {}
+
     @GobiiEntityMap(paramName = "cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer datasetTypeId;
 
     @GobiiEntityMap(paramName = "term", entity = Cv.class)
+    @NotBlank(groups = {DatasetTypeDTO.Create.class})
     private String datasetTypeName;
 
     @GobiiEntityMap(paramName = "definition", entity = Cv.class)

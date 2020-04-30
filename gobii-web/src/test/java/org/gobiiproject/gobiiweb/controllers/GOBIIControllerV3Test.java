@@ -1048,5 +1048,31 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    public void testAddDatasetType() throws Exception {
+        when(
+            datasetService.createDatasetType("test-name", "datasetTypeDescription", "user")
+        ).thenReturn(
+            new DatasetTypeDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("user");
+
+
+        String requestJson = "{\"datatsetTypeName\" : \"test-name\", \"datasetTypeDescription\": \"datasetTypeDescription\"}";
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/datasets/types")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+    }
     
 }
