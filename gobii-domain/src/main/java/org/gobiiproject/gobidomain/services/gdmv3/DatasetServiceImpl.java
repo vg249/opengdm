@@ -347,6 +347,7 @@ public class DatasetServiceImpl implements DatasetService {
 
 	}
 
+	@Transactional
 	@Override
 	public void deleteDataset(Integer datasetId) throws Exception {
 		Dataset dataset = datasetDao.getDataset(datasetId);
@@ -359,7 +360,7 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		datasetDao.deleteDataset(dataset);
-		
+
 
 	}
 
