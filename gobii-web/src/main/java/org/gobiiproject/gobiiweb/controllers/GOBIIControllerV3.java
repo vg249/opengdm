@@ -628,6 +628,20 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Delete dataset
+     * @return
+     */
+    @DeleteMapping("/datasets/{datasetId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteDataset(
+        @PathVariable Integer datasetId
+    ) throws Exception {
+        datasetService.deleteDataset(datasetId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     public ProjectService getProjectService() {
         return projectService;
