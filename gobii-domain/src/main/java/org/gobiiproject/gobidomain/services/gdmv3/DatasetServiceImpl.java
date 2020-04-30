@@ -375,8 +375,6 @@ public class DatasetServiceImpl implements DatasetService {
 			}
 		}
 		datasetDao.deleteDataset(dataset);
-
-
 	}
 
 }
