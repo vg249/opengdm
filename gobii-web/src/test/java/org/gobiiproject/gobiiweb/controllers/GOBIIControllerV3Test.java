@@ -937,5 +937,28 @@ public class GOBIIControllerV3Test {
         verify(datasetService, times(1)).getDatasets(0, 1000, null, null);
 
     }
+
+
+    @Test
+    public void testDatasetListingWithQuery() throws Exception {
+        when(
+            datasetService.getDatasets(5, 100, 1, 2)
+        ).thenReturn(
+            new PagedResult<DatasetDTO>()
+        );
+
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/datasets?page=5&pageSize=100&experimentId=1&datasetTypeId=2")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(datasetService, times(1)).getDatasets(5, 100, 1, 2);
+
+    }
     
 }
