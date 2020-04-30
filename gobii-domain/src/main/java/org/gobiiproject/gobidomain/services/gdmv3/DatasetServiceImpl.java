@@ -9,11 +9,11 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -28,7 +28,6 @@ import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DatasetServiceImpl implements DatasetService {
@@ -130,16 +129,10 @@ public class DatasetServiceImpl implements DatasetService {
 		DatasetDTO datasetDTO = new DatasetDTO();
 		//manual load the analysis DTOs
 		if (analyses != null) {
-			List<AnalysisDTO> analysisDTOs = new ArrayList<>();
-			analyses.forEach(analysis -> {
-				AnalysisDTO analysisDTO = new AnalysisDTO();
-				ModelMapper.mapEntityToDto(analysis, analysisDTO);
-				analysisDTOs.add(analysisDTO);
-			});
+			List<AnalysisDTO> analysisDTOs = this.getAnalysisDTOs(analyses);
 			datasetDTO.setAnalyses(analysisDTOs);
 		}
 		
-
 		ModelMapper.mapEntityToDto(savedDataset, datasetDTO);
 		
 		return datasetDTO;
@@ -210,8 +203,43 @@ public class DatasetServiceImpl implements DatasetService {
 		analyses.forEach(analysis -> {
 			AnalysisDTO analysisDTO = new AnalysisDTO();
 			ModelMapper.mapEntityToDto(analysis, analysisDTO);
+			analysisDTOs.add(analysisDTO);
 		});
 		return analysisDTOs;
+	}
+
+	@Transactional
+	@Override
+	public DatasetDTO getDataset(Integer datasetId) throws Exception {
+		Dataset dataset = datasetDao.getDataset(datasetId);
+		if (dataset == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Dataset not found"
+            );
+        }
+		DatasetDTO datasetDTO = new DatasetDTO();
+
+		ModelMapper.mapEntityToDto(dataset, datasetDTO);
+		//set the analyses
+		Set<Integer> analysisIds = new HashSet<>(
+				Arrays.asList(
+					Optional.ofNullable(dataset.getAnalyses()).orElse(new Integer[]{})
+				)
+			);
+		if (analysisIds.size() > 0) {
+			//convert
+			List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
+				analysisDao.getAnalysesByAnalysisIds(analysisIds)
+			);
+
+			datasetDTO.setAnalyses(
+				analysesDTOs
+			);
+		}
+
+		return datasetDTO;
 	}
 
 }
