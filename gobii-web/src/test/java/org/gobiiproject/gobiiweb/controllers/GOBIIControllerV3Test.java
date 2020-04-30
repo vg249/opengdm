@@ -913,7 +913,28 @@ public class GOBIIControllerV3Test {
         ;
 
         verify( datasetService, times(1)).createDataset(any(DatasetRequestDTO.class), eq("test-user"));
+    }
 
+
+    @Test
+    public void testDatasetListing() throws Exception {
+        when(
+            datasetService.getDatasets(0, 1000, null, null)
+        ).thenReturn(
+            new PagedResult<DatasetDTO>()
+        );
+
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/datasets")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(datasetService, times(1)).getDatasets(0, 1000, null, null);
 
     }
     

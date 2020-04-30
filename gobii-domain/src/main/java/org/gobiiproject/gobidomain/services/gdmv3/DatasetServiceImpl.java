@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -165,6 +166,49 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		return datasetType;
+	}
+
+	@Transactional
+	@Override
+	public PagedResult<DatasetDTO> getDatasets(Integer page, Integer pageSize, Integer experimentId,
+			Integer datasetTypeId) {
+		Integer rowOffset = page * pageSize;
+		List<Dataset> datasets = datasetDao.getDatasets(pageSize, rowOffset, null, null,  datasetTypeId, experimentId, null);
+
+		List<DatasetDTO> datasetDTOs = new java.util.ArrayList<>();
+
+		datasets.forEach(dataset -> {
+			DatasetDTO datasetDTO = new DatasetDTO();
+			ModelMapper.mapEntityToDto(dataset, datasetDTO);
+			//check analysisIds
+			Set<Integer> analysisIds = new HashSet<>(
+				Arrays.asList(
+					Optional.ofNullable(dataset.getAnalyses()).orElse(new Integer[]{})
+				)
+			);
+			if (analysisIds.size() > 0) {
+
+				//convert
+				List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
+					analysisDao.getAnalysesByAnalysisIds(analysisIds)
+				);
+
+				datasetDTO.setAnalyses(analysesDTOs);
+			}
+			datasetDTOs.add(datasetDTO);
+
+		});
+		
+		return null;
+	}
+
+	private List<AnalysisDTO> getAnalysisDTOs(List<Analysis> analyses) {
+		List<AnalysisDTO> analysisDTOs = new ArrayList<>();
+		analyses.forEach(analysis -> {
+			AnalysisDTO analysisDTO = new AnalysisDTO();
+			ModelMapper.mapEntityToDto(analysis, analysisDTO);
+		});
+		return analysisDTOs;
 	}
 
 }

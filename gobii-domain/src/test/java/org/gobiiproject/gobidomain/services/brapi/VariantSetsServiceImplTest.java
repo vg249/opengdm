@@ -118,6 +118,7 @@ public class VariantSetsServiceImplTest {
                 datasetDao.getDatasets(
                         any(Integer.TYPE), any(Integer.TYPE),
                         any(Integer.TYPE), any(String.class),
+                        any(Integer.TYPE), //datasetTypeId
                         any(Integer.TYPE), any(String.class))
         ).thenReturn(datasetsMock);
 

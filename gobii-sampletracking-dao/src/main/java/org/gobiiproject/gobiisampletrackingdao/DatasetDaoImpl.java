@@ -49,6 +49,7 @@ public class DatasetDaoImpl implements DatasetDao {
     @SuppressWarnings("unchecked")
     public List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
                                      Integer datasetId, String datasetName,
+                                     Integer datasetTypeId, 
                                      Integer experimentId, String experimentName) {
 
         List<Dataset> datasets;
@@ -79,6 +80,10 @@ public class DatasetDaoImpl implements DatasetDao {
                 predicates.add(criteriaBuilder.equal(datasetRoot.get("datasetName"), datasetName));
             }
 
+            if(datasetTypeId != null) {
+                predicates.add(criteriaBuilder.equal(datasetRoot.get("type").get("cvId"), datasetTypeId));
+            }
+
             if(experimentId != null) {
                 predicates.add(criteriaBuilder.equal(experiment.get("experimentId"), experimentId));
             }
@@ -89,7 +94,9 @@ public class DatasetDaoImpl implements DatasetDao {
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
 
+            EntityGraph<?> graph = this.em.getEntityGraph("graph.dataset");
             datasets = em.createQuery(criteriaQuery)
+                    .setHint("javax.persistence.fetchgraph", graph)
                     .setFirstResult(rowOffset)
                     .setMaxResults(pageSize)
                     .getResultList();
@@ -125,6 +132,7 @@ public class DatasetDaoImpl implements DatasetDao {
             //Overload the getDatasets
             List<Dataset> datasetsById = this.getDatasets(1000, 0,
                     datasetId, null,
+                    null, //datasetTypeId
                     null, null);
 
             if (datasetsById.size() > 1) {

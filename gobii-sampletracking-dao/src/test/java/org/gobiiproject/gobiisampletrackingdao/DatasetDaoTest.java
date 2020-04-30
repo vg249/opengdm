@@ -37,6 +37,7 @@ public class DatasetDaoTest {
         List<Dataset> datasets = datasetDao.getDatasets(
                 testPageSize, testRowOffset,
                 null, null,
+                null,
                 null, null);
 
 
@@ -53,6 +54,7 @@ public class DatasetDaoTest {
 
         List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
                 null, null,
+                null,
                 null, null);
 
         assertTrue(datasets.size() == 10);
@@ -67,6 +69,7 @@ public class DatasetDaoTest {
 
         List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
                 null, null,
+                null,
                 null, null);
 
         assertTrue(datasets.size() == testPageSize);
@@ -88,6 +91,7 @@ public class DatasetDaoTest {
 
         List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
                 null, null,
+                null,
                 null, null);
 
 
@@ -97,6 +101,7 @@ public class DatasetDaoTest {
 
         List<Dataset> datasetsByExperimentId = datasetDao.getDatasets(testPageSize, testRowOffset,
                 null, null,
+                null,
                 experimentId, null);
 
         for (Dataset dataset : datasetsByExperimentId) {

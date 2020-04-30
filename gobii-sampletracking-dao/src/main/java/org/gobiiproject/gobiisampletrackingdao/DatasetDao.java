@@ -9,6 +9,7 @@ public interface DatasetDao {
 
     List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
                               Integer datasetId, String datasetName,
+                              Integer datasetTypeId,
                               Integer experimentId, String experimentName);
 
     Dataset getDatasetById(Integer datasetId);

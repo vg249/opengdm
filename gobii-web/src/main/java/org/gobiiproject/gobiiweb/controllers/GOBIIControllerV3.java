@@ -567,6 +567,32 @@ public class GOBIIControllerV3  {
            
     }
 
+    /**
+     * Datasets listing
+     * @return
+     */
+    @GetMapping("/datasets")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<DatasetDTO>> getDatasets(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer experimentId,
+        @RequestParam(required=false) Integer datasetTypeId
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<DatasetDTO> pagedResult = datasetService.getDatasets(
+            page, pageSizeToUse, experimentId, datasetTypeId
+        );
+
+        BrApiMasterListPayload<DatasetDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        
+        return ResponseEntity.ok(payload);
+    }
+
 
     public ProjectService getProjectService() {
         return projectService;
