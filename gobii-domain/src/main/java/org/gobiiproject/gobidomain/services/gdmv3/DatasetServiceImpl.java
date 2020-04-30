@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -101,25 +102,7 @@ public class DatasetServiceImpl implements DatasetService {
 		if (
 			request.getDatasetTypeId() != null
 		) {
-			datasetType = cvDao.getCvByCvId(request.getDatasetTypeId()) ;
-			if (datasetType == null) {
-				throw new GobiiDaoException(
-					GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.BAD_REQUEST,
-					"Unknown dataset type"
-				);
-			}
-
-			//check if cv is the right type
-			if (
-				datasetType.getCvGroup().getCvGroupName() != CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName()
-			) {
-				throw new GobiiDaoException(
-					GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.BAD_REQUEST,
-					"Incorrect type group name"
-				);
-			}
+			datasetType = this.getDatasetCv(request.getDatasetTypeId());
 		}
 
 		//everything is ok
@@ -159,6 +142,29 @@ public class DatasetServiceImpl implements DatasetService {
 		ModelMapper.mapEntityToDto(savedDataset, datasetDTO);
 		
 		return datasetDTO;
+	}
+
+	private Cv getDatasetCv(Integer id) throws Exception {
+		Cv datasetType = cvDao.getCvByCvId(id);
+		
+		if (datasetType == null ) {
+			throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+				GobiiValidationStatusType.BAD_REQUEST,
+				"Unknown dataset type id"
+			);
+		}
+
+		//check if the cv is a dataset type
+		if (datasetType.getCvGroup().getCvGroupName() != CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName()) {
+			throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+				GobiiValidationStatusType.BAD_REQUEST,
+				"Invalid dataset type id"
+			);
+		}
+
+		return datasetType;
 	}
 
 }
