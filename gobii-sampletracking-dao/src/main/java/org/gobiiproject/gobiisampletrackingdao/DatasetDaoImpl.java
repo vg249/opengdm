@@ -45,7 +45,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * @return List of DatsetEntity
      */
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
     public List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
                                      Integer datasetId, String datasetName,
@@ -122,7 +121,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * @return
      */
     @Override
-    @Transactional
     public Dataset getDatasetById(Integer datasetId) throws GobiiException {
 
         Objects.requireNonNull(datasetId, "datasetId : Required non null");

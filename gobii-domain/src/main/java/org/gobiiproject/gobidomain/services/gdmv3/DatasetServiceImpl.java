@@ -358,7 +358,22 @@ public class DatasetServiceImpl implements DatasetService {
 				"Dataset not found"
 			);
 		}
+		//check run counts
+		List<Object[]> datasetStats = datasetDao.getDatasetsWithAnalysesAndCounts(1, 0, datasetId, null, null, null);
+		//check 2 and 3
+		if (datasetStats.size() > 0) {
+			Object[] entry = datasetStats.get(0);
+			Integer markerCount = (Integer) entry[2];
+			Integer dnarunCount = (Integer) entry[3];
 
+			if (markerCount + dnarunCount > 0) {
+				throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+					"Associated resources found. Cannot complete the action unless they are deleted."
+				);
+			}
+		}
 		datasetDao.deleteDataset(dataset);
 
 
