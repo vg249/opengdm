@@ -23,6 +23,7 @@ import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -75,28 +76,8 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check analysis ids
-		Set<Integer> analysisIds = new HashSet<>(
-			Arrays.asList(
-				Optional.ofNullable(request.getAnalysisIds()).orElse(
-					new Integer[]{}
-				)
-			)
-		);
+		List<Analysis> analyses = this.checkAndGetAnalysesFromIds(request.getAnalysisIds());
 		
-		List<Analysis> analyses = null;
-		if (
-			!analysisIds.isEmpty()
-		) {
-			analyses = analysisDao.getAnalysesByAnalysisIds(analysisIds);
-			if (analyses.size() != analysisIds.size()) {
-				throw new GobiiDaoException(
-					GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.BAD_REQUEST,
-					"Unknown analysis id"
-				);
-			}
-		}
-
 		//check datasetTypeId
 		Cv datasetType = null;
 		if (
@@ -117,7 +98,6 @@ public class DatasetServiceImpl implements DatasetService {
 		Cv newStatus = cvDao.getNewStatus();
 		dataset.setStatus(newStatus);
 
-		//audit items
 		// audit items
 		Contact creator = contactDao.getContactByUsername(user);
 		if (creator != null)
@@ -202,6 +182,32 @@ public class DatasetServiceImpl implements DatasetService {
 		return pagedResult;
 	}
 
+	private List<Analysis> checkAndGetAnalysesFromIds(Integer[] analysisIdArray) throws Exception {
+		//check analysis ids
+		Set<Integer> analysisIds = new HashSet<>(
+			Arrays.asList(
+				Optional.ofNullable(analysisIdArray).orElse(
+					new Integer[]{}
+				)
+			)
+		);
+
+		List<Analysis> analyses = null;
+		if (
+			!analysisIds.isEmpty()
+		) {
+			analyses = analysisDao.getAnalysesByAnalysisIds(analysisIds);
+			if (analyses.size() != analysisIds.size()) {
+				throw new GobiiDaoException(
+					GobiiStatusLevel.ERROR,
+					GobiiValidationStatusType.BAD_REQUEST,
+					"Unknown analysis id"
+				);
+			}
+		}
+		return analyses;
+	}
+
 	private List<AnalysisDTO> getAnalysisDTOs(List<Analysis> analyses) {
 		List<AnalysisDTO> analysisDTOs = new ArrayList<>();
 		analyses.forEach(analysis -> {
@@ -244,6 +250,93 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		return datasetDTO;
+	}
+
+	@Transactional
+	@Override
+	public DatasetDTO updateDataset(Integer datasetId, DatasetRequestDTO request, String user) throws Exception {
+		//check if  datasetId exists
+		Dataset targetDataset = datasetDao.getDataset(datasetId);
+		if (targetDataset == null) {
+			throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+				GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+				"Dataset not found"
+			);
+		}
+
+		boolean modified = false;
+		//check if datasetName change
+		if (!LineUtils.isNullOrEmpty(request.getDatasetName())) {
+			targetDataset.setDatasetName(request.getDatasetName());
+			modified = true;
+		}
+
+		//check if experiment change
+		if (request.getExperimentId() != null && request.getExperimentId() > 0) {
+			//check if experiment exists
+			Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
+			if (experiment == null) {
+				throw new GobiiDaoException(
+					GobiiStatusLevel.ERROR,
+					GobiiValidationStatusType.BAD_REQUEST,
+					"Invalid experiment"
+				);
+			}
+
+			targetDataset.setExperiment(experiment);
+			modified = true;
+		}
+
+		//check if callingAnalysisId
+		if (request.getCallingAnalysisId() != null &&  request.getCallingAnalysisId() > 0) {
+			Analysis analysis = analysisDao.getAnalysis(request.getCallingAnalysisId());
+			if (analysis == null) {
+				throw new GobiiDaoException(
+					GobiiStatusLevel.ERROR,
+					GobiiValidationStatusType.BAD_REQUEST,
+					"Invalid calling analysis"
+				);
+			}
+			targetDataset.setCallingAnalysis(analysis);
+			modified = true;
+		}
+
+		//check for datasetTypeId
+		if (request.getDatasetTypeId() != null && request.getDatasetTypeId() > 0) {
+			Cv cv = this.getDatasetCv(request.getDatasetTypeId());
+			targetDataset.setType(cv);
+			modified = true;
+		}
+
+		//check for analysisIds
+		if (request.getAnalysisIds() != null && request.getAnalysisIds().length > 0) {
+			this.checkAndGetAnalysesFromIds(request.getAnalysisIds());
+			targetDataset.setAnalyses(request.getAnalysisIds());
+			modified = true;
+		}
+		
+		Dataset updatedDataset = targetDataset;
+		
+		if (modified) {
+			//audit items
+			//status item
+			Cv modifiedStatus = cvDao.getModifiedStatus();
+			targetDataset.setStatus(modifiedStatus);
+
+			// audit items
+			Contact creator = contactDao.getContactByUsername(user);
+			if (creator != null)
+				targetDataset.setModifiedBy(creator.getContactId());
+			targetDataset.setModifiedDate(new java.util.Date());
+
+			updatedDataset = datasetDao.updateDataset(targetDataset);
+		} 
+
+		DatasetDTO datasetDTO = new DatasetDTO();
+		ModelMapper.mapEntityToDto(updatedDataset, datasetDTO);
+		return datasetDTO;
+
 	}
 
 }

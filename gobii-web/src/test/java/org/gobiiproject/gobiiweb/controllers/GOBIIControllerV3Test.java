@@ -982,5 +982,36 @@ public class GOBIIControllerV3Test {
 
         verify(datasetService, times(1)).getDataset(target);
     }
+
+    @Test
+    public void testDatasetByIdUpdate() throws Exception {
+        Integer target = 112;
+        when(
+            datasetService.updateDataset(
+                eq(target),
+                any(DatasetRequestDTO.class),
+                eq("test-user")
+            )
+        ).thenReturn(
+            new DatasetDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        String requestJson = "{\"datasetName\" : \"test-name-edited\", \"experimentId\" : \"1\", \"callingAnalysisId\" : \"1\", \"analysisIds\" : [ \"2\", \"3\", \"4\" ]}";
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/datasets/112")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+    }
     
 }

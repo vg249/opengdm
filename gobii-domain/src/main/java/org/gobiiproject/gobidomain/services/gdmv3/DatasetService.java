@@ -12,4 +12,6 @@ public interface DatasetService {
 
 	DatasetDTO getDataset(Integer target) throws Exception;
 
+	DatasetDTO updateDataset(Integer datasetId, DatasetRequestDTO request, String user) throws Exception;
+
 }

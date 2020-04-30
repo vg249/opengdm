@@ -307,4 +307,12 @@ public class DatasetDaoImpl implements DatasetDao {
 		return em.find(Dataset.class, datasetId, getDatasetHints());
 	}
 
+	@Override
+	public Dataset updateDataset(Dataset dataset) throws Exception {
+        em.merge(dataset);
+        em.flush();
+        em.refresh(dataset, this.getDatasetHints());
+		return dataset;
+	}
+
 }

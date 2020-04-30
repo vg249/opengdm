@@ -609,6 +609,26 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Update dataset by Id
+     * @return
+     */
+    @PatchMapping("/datasets/{datasetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<DatasetDTO>> updateDataset(
+        @PathVariable Integer datasetId,
+        @RequestBody @Valid final DatasetRequestDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        String user = this.getCurrentUser();
+
+        DatasetDTO datasetDTO = datasetService.updateDataset(datasetId, request, user);
+        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(datasetDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
     public ProjectService getProjectService() {
         return projectService;
