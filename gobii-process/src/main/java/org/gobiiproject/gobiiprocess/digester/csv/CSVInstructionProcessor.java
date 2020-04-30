@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -245,8 +247,10 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
                     if (rowNo >= csvBothColumn.getrCoord()) {
-                        inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
+                        inputRowList = Arrays.stream(fileRow.split(delimiter))
+                                .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
                         outputRowList = new ArrayList<>();
+                        getRow(inputRowList, csv_BothColumn);
                         getRow(inputRowList, csvBothColumn);
                         ValidationResult validationResult=matrixValidation.validate(rowNo, csvBothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
                         if (validationResult.success) {
