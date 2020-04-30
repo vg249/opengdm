@@ -29,7 +29,6 @@ import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 
 public class DatasetServiceImpl implements DatasetService {
 
@@ -135,6 +134,10 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 		
 		ModelMapper.mapEntityToDto(savedDataset, datasetDTO);
+		//force set -- TODO:  debug why piContactId and piContactName is null 
+		datasetDTO.setPiContactFirstName(savedDataset.getExperiment().getProject().getContact().getFirstName());
+		datasetDTO.setPiContactLastName(savedDataset.getExperiment().getProject().getContact().getLastName());
+		datasetDTO.setPiContactId(savedDataset.getExperiment().getProject().getContact().getContactId());
 		
 		return datasetDTO;
 	}
