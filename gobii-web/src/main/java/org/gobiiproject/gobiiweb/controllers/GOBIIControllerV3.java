@@ -621,7 +621,6 @@ public class GOBIIControllerV3  {
         BindingResult bindingResult
     ) throws Exception {
         String user = this.getCurrentUser();
-
         DatasetDTO datasetDTO = datasetService.updateDataset(datasetId, request, user);
         BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
         payload.setMetadata(null);

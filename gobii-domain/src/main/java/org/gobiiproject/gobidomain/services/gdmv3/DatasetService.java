@@ -8,7 +8,7 @@ public interface DatasetService {
 
 	DatasetDTO createDataset(DatasetRequestDTO request, String user) throws Exception;
 
-	PagedResult<DatasetDTO> getDatasets(Integer page, Integer pageSize, Integer experimentId, Integer datasetTypeId);
+	PagedResult<DatasetDTO> getDatasets(Integer page, Integer pageSize, Integer experimentId, Integer datasetTypeId) throws Exception;
 
 	DatasetDTO getDataset(Integer target) throws Exception;
 

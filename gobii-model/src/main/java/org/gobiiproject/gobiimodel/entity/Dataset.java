@@ -36,6 +36,7 @@ import lombok.Data;
 @NamedEntityGraph(name = "graph.dataset",
     attributeNodes = {
         @NamedAttributeNode(value = "experiment", subgraph = "graph.dataset.experiment"),
+        @NamedAttributeNode(value = "callingAnalysis"),
         @NamedAttributeNode(value = "type")
     },
     subgraphs = {

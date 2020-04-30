@@ -148,7 +148,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Transactional
 	@Override
 	public PagedResult<DatasetDTO> getDatasets(Integer page, Integer pageSize, Integer experimentId,
-			Integer datasetTypeId) {
+			Integer datasetTypeId)  throws Exception {
 		Integer rowOffset = page * pageSize;
 		List<Dataset> datasets = datasetDao.getDatasets(pageSize, rowOffset, null, null,  datasetTypeId, experimentId, null);
 
@@ -157,21 +157,20 @@ public class DatasetServiceImpl implements DatasetService {
 		datasets.forEach(dataset -> {
 			DatasetDTO datasetDTO = new DatasetDTO();
 			ModelMapper.mapEntityToDto(dataset, datasetDTO);
-			//check analysisIds
-			Set<Integer> analysisIds = new HashSet<>(
-				Arrays.asList(
-					Optional.ofNullable(dataset.getAnalyses()).orElse(new Integer[]{})
-				)
-			);
-			if (analysisIds.size() > 0) {
-
-				//convert
-				List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
-					analysisDao.getAnalysesByAnalysisIds(analysisIds)
+			
+			//convert
+			List<AnalysisDTO> analysesDTOs = null;
+			try {
+				 analysesDTOs = this.getAnalysisDTOs(
+					this.checkAndGetAnalysesFromIds(
+						dataset.getAnalyses()
+					)
 				);
-
-				datasetDTO.setAnalyses(analysesDTOs);
+			} catch (Exception exc) {
+				//pass
 			}
+
+			datasetDTO.setAnalyses(analysesDTOs);
 			datasetDTOs.add(datasetDTO);
 
 		});
@@ -315,7 +314,7 @@ public class DatasetServiceImpl implements DatasetService {
 			targetDataset.setAnalyses(request.getAnalysisIds());
 			modified = true;
 		}
-		
+
 		Dataset updatedDataset = targetDataset;
 		
 		if (modified) {
@@ -335,6 +334,15 @@ public class DatasetServiceImpl implements DatasetService {
 
 		DatasetDTO datasetDTO = new DatasetDTO();
 		ModelMapper.mapEntityToDto(updatedDataset, datasetDTO);
+
+		//set the analysis
+		datasetDTO.setAnalyses(
+			this.getAnalysisDTOs(
+				this.checkAndGetAnalysesFromIds(
+					targetDataset.getAnalyses()
+				)
+			)
+		);
 		return datasetDTO;
 
 	}
