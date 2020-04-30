@@ -347,4 +347,20 @@ public class DatasetServiceImpl implements DatasetService {
 
 	}
 
+	@Override
+	public void deleteDataset(Integer datasetId) throws Exception {
+		Dataset dataset = datasetDao.getDataset(datasetId);
+		if (dataset == null) {
+			throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+				GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+				"Dataset not found"
+			);
+		}
+
+		datasetDao.deleteDataset(dataset);
+		
+
+	}
+
 }

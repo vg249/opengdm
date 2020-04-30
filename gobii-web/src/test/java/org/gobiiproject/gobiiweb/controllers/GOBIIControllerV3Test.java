@@ -1013,5 +1013,23 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isOk())
         ;
     }
+
+    @Test
+    public void testDatasetDeleteById() throws Exception {
+        Integer datasetId = 112;
+        doNothing().when(datasetService).deleteDataset(datasetId);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/datasets/112")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(datasetService, times(1)).deleteDataset(datasetId);
+
+
+    }
     
 }

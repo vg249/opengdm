@@ -315,4 +315,10 @@ public class DatasetDaoImpl implements DatasetDao {
 		return dataset;
 	}
 
+	@Override
+	public void deleteDataset(Dataset dataset) {
+        em.remove(dataset);
+        em.flush();
+	}
+
 }

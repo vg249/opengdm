@@ -25,4 +25,6 @@ public interface DatasetDao {
 
     Dataset saveDataset(Dataset dataset) throws Exception;
     Dataset updateDataset(Dataset dataset) throws Exception;
+
+	void deleteDataset(Dataset dataset);
 }

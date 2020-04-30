@@ -14,4 +14,6 @@ public interface DatasetService {
 
 	DatasetDTO updateDataset(Integer datasetId, DatasetRequestDTO request, String user) throws Exception;
 
+	void deleteDataset(Integer datasetId) throws Exception;
+
 }
