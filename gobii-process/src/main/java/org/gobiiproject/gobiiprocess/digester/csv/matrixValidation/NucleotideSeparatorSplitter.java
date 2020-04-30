@@ -35,6 +35,11 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     public boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
+
+            if(element.contains("INS")){ //Replace INS with + for Intertek data, based on 4/30 convo
+                element=element.replaceAll("INS","+");
+            }
+
             if (element.length() < 1) {
                 String errMsg = "SNPSepRemoval Unsupported empty Allele Call in row " + rowNo;
                 matrixErrorUtil.setError(errMsg);

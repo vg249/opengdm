@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -302,7 +303,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
                     if (rowNo >= csv_BothColumn.getrCoord()) {
-                        inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
+                        inputRowList = Arrays.stream(fileRow.split(delimiter))
+                                .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
                         outputRowList = new ArrayList<>();
                         getRow(inputRowList, csv_BothColumn);
                         ValidationResult validationResult=matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
