@@ -554,16 +554,11 @@ public class GOBIIControllerV3  {
     ) throws Exception {
        this.checkBindingErrors(bindingResult);
        String user = this.getCurrentUser();
-       try {
        DatasetDTO result = datasetService.createDataset(request, user);
        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
        payload.setResult(result);
        payload.setMetadata(null);
        return ResponseEntity.created(null).body(payload);
-       } catch (Exception e) {
-           e.printStackTrace();
-           throw e;
-       }
            
     }
 
@@ -580,6 +575,7 @@ public class GOBIIControllerV3  {
         @RequestParam(required=false) Integer datasetTypeId
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
+        try {
         PagedResult<DatasetDTO> pagedResult = datasetService.getDatasets(
             page, pageSizeToUse, experimentId, datasetTypeId
         );
@@ -589,8 +585,12 @@ public class GOBIIControllerV3  {
             pagedResult.getCurrentPageSize(),
             pagedResult.getCurrentPageNum()
         );
-        
+
         return ResponseEntity.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 

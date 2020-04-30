@@ -198,8 +198,11 @@ public class DatasetServiceImpl implements DatasetService {
 			datasetDTOs.add(datasetDTO);
 
 		});
-		
-		return null;
+		PagedResult<DatasetDTO> pagedResult = new PagedResult<>();
+		pagedResult.setCurrentPageNum(page);
+		pagedResult.setCurrentPageSize(datasets.size());
+		pagedResult.setResult(datasetDTOs);
+		return pagedResult;
 	}
 
 	private List<AnalysisDTO> getAnalysisDTOs(List<Analysis> analyses) {
