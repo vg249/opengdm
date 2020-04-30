@@ -301,6 +301,10 @@ public class DatasetDaoImpl implements DatasetDao {
         hints.put("javax.persistence.fetchgraph", graph);
         return hints;
     }
-    
+
+	@Override
+	public Dataset getDataset(Integer datasetId) {
+		return em.find(Dataset.class, datasetId, getDatasetHints());
+	}
 
 }

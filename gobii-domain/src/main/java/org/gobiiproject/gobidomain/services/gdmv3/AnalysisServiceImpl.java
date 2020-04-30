@@ -205,8 +205,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {
-        AnalysisDTO analysisDTO = new AnalysisDTO();
+    public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {  
         Analysis analysis = analysisDao.getAnalysis(analysisId);
         if (analysis == null) {
             throw new GobiiDaoException(
@@ -215,6 +214,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 "Analysis not found"
             );
         }
+        AnalysisDTO analysisDTO = new AnalysisDTO();
         ModelMapper.mapEntityToDto(analysis, analysisDTO);
         return analysisDTO;
     }

@@ -30,6 +30,7 @@ import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 
 public class DatasetServiceImpl implements DatasetService {
 
@@ -212,6 +213,40 @@ public class DatasetServiceImpl implements DatasetService {
 			ModelMapper.mapEntityToDto(analysis, analysisDTO);
 		});
 		return analysisDTOs;
+	}
+
+	@Transactional
+	@Override
+	public DatasetDTO getDataset(Integer datasetId) throws Exception {
+		Dataset dataset = datasetDao.getDataset(datasetId);
+		if (dataset == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Dataset not found"
+            );
+        }
+		DatasetDTO datasetDTO = new DatasetDTO();
+
+		ModelMapper.mapEntityToDto(dataset, datasetDTO);
+		//set the analyses
+		Set<Integer> analysisIds = new HashSet<>(
+				Arrays.asList(
+					Optional.ofNullable(dataset.getAnalyses()).orElse(new Integer[]{})
+				)
+			);
+		if (analysisIds.size() > 0) {
+			//convert
+			List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
+				analysisDao.getAnalysesByAnalysisIds(analysisIds)
+			);
+
+			datasetDTO.setAnalyses(
+				analysesDTOs
+			);
+		}
+
+		return datasetDTO;
 	}
 
 }

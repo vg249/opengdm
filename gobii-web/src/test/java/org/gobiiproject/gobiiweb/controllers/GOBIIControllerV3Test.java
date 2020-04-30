@@ -960,5 +960,27 @@ public class GOBIIControllerV3Test {
         verify(datasetService, times(1)).getDatasets(5, 100, 1, 2);
 
     }
+
+
+    @Test
+    public void testDatasetGetById() throws Exception {
+        Integer target = 112;
+        when(
+            datasetService.getDataset(target)
+        ).thenReturn(
+            new DatasetDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/datasets/112")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(datasetService, times(1)).getDataset(target);
+    }
     
 }

@@ -10,4 +10,6 @@ public interface DatasetService {
 
 	PagedResult<DatasetDTO> getDatasets(Integer page, Integer pageSize, Integer experimentId, Integer datasetTypeId);
 
+	DatasetDTO getDataset(Integer target) throws Exception;
+
 }

@@ -593,6 +593,22 @@ public class GOBIIControllerV3  {
         }
     }
 
+    /**
+     * Get datasets by Id
+     * 
+     */
+    @GetMapping("/datasets/{datasetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<DatasetDTO>> getDataset(
+        @PathVariable Integer datasetId
+    ) throws Exception {
+        DatasetDTO datasetDTO = datasetService.getDataset(datasetId);
+        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(datasetDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
     public ProjectService getProjectService() {
         return projectService;
