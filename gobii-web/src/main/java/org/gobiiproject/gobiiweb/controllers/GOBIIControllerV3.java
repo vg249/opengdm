@@ -674,7 +674,7 @@ public class GOBIIControllerV3  {
     @PostMapping("/datasets/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<DatasetTypeDTO>> createDatasetType(
-        @RequestBody @Valid final DatasetTypeDTO datasetTypeRequest,
+        @RequestBody @Validated(DatasetTypeDTO.Create.class) final DatasetTypeDTO datasetTypeRequest,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
