@@ -41,6 +41,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -1028,8 +1029,24 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         verify(datasetService, times(1)).deleteDataset(datasetId);
+    }
 
+    @Test
+    public void testListDatasetTypes() throws Exception {
 
+        when(
+            datasetService.getDatasetTypes(0, 1000)
+        ).thenReturn(
+            new PagedResult<DatasetTypeDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/datasets/types")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
 }

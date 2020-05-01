@@ -33,6 +33,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -640,6 +641,30 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         datasetService.deleteDataset(datasetId);
         return ResponseEntity.noContent().build();
+    }
+
+    //------ DatasetTypes
+    /**
+     * List dataset types
+     * @return
+     */
+    @GetMapping("/datasets/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<DatasetTypeDTO>> getDatasetTypes(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = this.getPageSize(pageSize);
+
+        PagedResult<DatasetTypeDTO> pagedResult = datasetService.getDatasetTypes(page, pageSizeToUse);
+        
+        BrApiMasterListPayload<DatasetTypeDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+
+        return ResponseEntity.ok(payload);
     }
 
 

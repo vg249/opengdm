@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface DatasetService {
@@ -15,5 +16,7 @@ public interface DatasetService {
 	DatasetDTO updateDataset(Integer datasetId, DatasetRequestDTO request, String user) throws Exception;
 
 	void deleteDataset(Integer datasetId) throws Exception;
+
+	PagedResult<DatasetTypeDTO> getDatasetTypes(Integer page, Integer pageSize) throws Exception;
 
 }

@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -390,5 +391,26 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 		datasetDao.deleteDataset(dataset);
 	}
+
+	//---Dataset Types
+
+	@Override
+    public PagedResult<DatasetTypeDTO> getDatasetTypes(Integer page, Integer pageSize) {
+        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(), null, page, pageSize);
+        List<DatasetTypeDTO> datasetTypeDTOs = new ArrayList<>();
+
+        cvs.forEach(cv -> {
+            DatasetTypeDTO datasetTypeDTO = new DatasetTypeDTO();
+            ModelMapper.mapEntityToDto(cv, datasetTypeDTO);
+            datasetTypeDTOs.add(datasetTypeDTO);
+		});
+		
+        PagedResult<DatasetTypeDTO> result = new PagedResult<>();
+        result.setCurrentPageNum(page);
+        result.setCurrentPageSize(datasetTypeDTOs.size());
+        result.setResult(datasetTypeDTOs);
+
+        return result;
+    }
 
 }

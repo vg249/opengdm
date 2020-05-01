@@ -22,7 +22,7 @@ public class DatasetTypeDTO {
 
     @GobiiEntityMap(paramName = "cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer analysisTypeId;
+    private Integer datasetTypeId;
 
     @GobiiEntityMap(paramName = "term", entity = Cv.class)
     private String datasetTypeName;
