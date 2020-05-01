@@ -554,17 +554,92 @@ public class GOBIIControllerV3  {
     ) throws Exception {
        this.checkBindingErrors(bindingResult);
        String user = this.getCurrentUser();
-       try {
        DatasetDTO result = datasetService.createDataset(request, user);
        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
        payload.setResult(result);
        payload.setMetadata(null);
        return ResponseEntity.created(null).body(payload);
-       } catch (Exception e) {
-           e.printStackTrace();
-           throw e;
-       }
            
+    }
+
+    /**
+     * Datasets listing
+     * @return
+     */
+    @GetMapping("/datasets")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<DatasetDTO>> getDatasets(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer experimentId,
+        @RequestParam(required=false) Integer datasetTypeId
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        try {
+        PagedResult<DatasetDTO> pagedResult = datasetService.getDatasets(
+            page, pageSizeToUse, experimentId, datasetTypeId
+        );
+
+        BrApiMasterListPayload<DatasetDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+
+        return ResponseEntity.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Get datasets by Id
+     * 
+     */
+    @GetMapping("/datasets/{datasetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<DatasetDTO>> getDataset(
+        @PathVariable Integer datasetId
+    ) throws Exception {
+        DatasetDTO datasetDTO = datasetService.getDataset(datasetId);
+        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(datasetDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Update dataset by Id
+     * @return
+     */
+    @PatchMapping("/datasets/{datasetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<DatasetDTO>> updateDataset(
+        @PathVariable Integer datasetId,
+        @RequestBody @Valid final DatasetRequestDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        String user = this.getCurrentUser();
+        DatasetDTO datasetDTO = datasetService.updateDataset(datasetId, request, user);
+        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(datasetDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete dataset
+     * @return
+     */
+    @DeleteMapping("/datasets/{datasetId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteDataset(
+        @PathVariable Integer datasetId
+    ) throws Exception {
+        datasetService.deleteDataset(datasetId);
+        return ResponseEntity.noContent().build();
     }
 
 

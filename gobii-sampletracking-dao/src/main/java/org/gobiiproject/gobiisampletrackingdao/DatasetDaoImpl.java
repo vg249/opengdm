@@ -45,10 +45,10 @@ public class DatasetDaoImpl implements DatasetDao {
      * @return List of DatsetEntity
      */
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
     public List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
                                      Integer datasetId, String datasetName,
+                                     Integer datasetTypeId, 
                                      Integer experimentId, String experimentName) {
 
         List<Dataset> datasets;
@@ -79,6 +79,10 @@ public class DatasetDaoImpl implements DatasetDao {
                 predicates.add(criteriaBuilder.equal(datasetRoot.get("datasetName"), datasetName));
             }
 
+            if(datasetTypeId != null) {
+                predicates.add(criteriaBuilder.equal(datasetRoot.get("type").get("cvId"), datasetTypeId));
+            }
+
             if(experimentId != null) {
                 predicates.add(criteriaBuilder.equal(experiment.get("experimentId"), experimentId));
             }
@@ -89,7 +93,9 @@ public class DatasetDaoImpl implements DatasetDao {
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
 
+            EntityGraph<?> graph = this.em.getEntityGraph("graph.dataset");
             datasets = em.createQuery(criteriaQuery)
+                    .setHint("javax.persistence.fetchgraph", graph)
                     .setFirstResult(rowOffset)
                     .setMaxResults(pageSize)
                     .getResultList();
@@ -115,7 +121,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * @return
      */
     @Override
-    @Transactional
     public Dataset getDatasetById(Integer datasetId) throws GobiiException {
 
         Objects.requireNonNull(datasetId, "datasetId : Required non null");
@@ -125,6 +130,7 @@ public class DatasetDaoImpl implements DatasetDao {
             //Overload the getDatasets
             List<Dataset> datasetsById = this.getDatasets(1000, 0,
                     datasetId, null,
+                    null, //datasetTypeId
                     null, null);
 
             if (datasetsById.size() > 1) {
@@ -293,6 +299,24 @@ public class DatasetDaoImpl implements DatasetDao {
         hints.put("javax.persistence.fetchgraph", graph);
         return hints;
     }
-    
+
+	@Override
+	public Dataset getDataset(Integer datasetId) {
+		return em.find(Dataset.class, datasetId, getDatasetHints());
+	}
+
+	@Override
+	public Dataset updateDataset(Dataset dataset) throws Exception {
+        em.merge(dataset);
+        em.flush();
+        em.refresh(dataset, this.getDatasetHints());
+		return dataset;
+	}
+
+	@Override
+	public void deleteDataset(Dataset dataset) {
+        em.remove(dataset);
+        em.flush();
+	}
 
 }

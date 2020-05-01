@@ -35,18 +35,19 @@ import lombok.Data;
 @Data
 @NamedEntityGraph(name = "graph.dataset",
     attributeNodes = {
-        @NamedAttributeNode(value = "experiment", subgraph = "graph.experiment"),
+        @NamedAttributeNode(value = "experiment", subgraph = "graph.dataset.experiment"),
+        @NamedAttributeNode(value = "callingAnalysis"),
         @NamedAttributeNode(value = "type")
     },
     subgraphs = {
         @NamedSubgraph(
-            name = "graph.experiment",
+            name = "graph.dataset.experiment",
             attributeNodes = {
-                @NamedAttributeNode(value = "project", subgraph = "graph.experiment.project")
+                @NamedAttributeNode(value = "project", subgraph = "graph.dataset.experiment.project")
             }
         ),
         @NamedSubgraph(
-            name = "graph.experiment.project",
+            name = "graph.dataset.experiment.project",
             attributeNodes = {
                 @NamedAttributeNode(value = "contact")
             }
