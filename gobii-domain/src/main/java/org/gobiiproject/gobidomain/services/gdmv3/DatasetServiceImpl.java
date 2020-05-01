@@ -19,7 +19,9 @@ import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Dataset;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -28,7 +30,9 @@ import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
+import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
+import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DatasetServiceImpl implements DatasetService {
@@ -47,6 +51,12 @@ public class DatasetServiceImpl implements DatasetService {
 
 	@Autowired
 	private ContactDao contactDao;
+
+	@Autowired
+	private MarkerDao markerDao;
+
+	@Autowired
+	private DnaRunDao dnaRunDao;
 	
 	@Transactional
 	@Override
@@ -359,20 +369,24 @@ public class DatasetServiceImpl implements DatasetService {
 			);
 		}
 		//check run counts
-		List<Object[]> datasetStats = datasetDao.getDatasetsWithAnalysesAndCounts(1, 0, datasetId, null, null, null);
-		//check 2 and 3
-		if (datasetStats.size() > 0) {
-			Object[] entry = datasetStats.get(0);
-			Integer markerCount = (Integer) entry[2];
-			Integer dnarunCount = (Integer) entry[3];
-
-			if (markerCount + dnarunCount > 0) {
-				throw new GobiiDaoException(
+		//check marker 
+		List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, 1, 0);
+		if (markers != null && markers.size() > 0) {
+			throw new GobiiDaoException(
 				GobiiStatusLevel.ERROR,
 					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
 					"Associated resources found. Cannot complete the action unless they are deleted."
 				);
-			}
+		}
+
+		//check dnarun
+		List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, 1, 0);
+		if (dnaRuns != null && dnaRuns.size() > 0) {
+			throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+					"Associated resources found. Cannot complete the action unless they are deleted."
+				);
 		}
 		datasetDao.deleteDataset(dataset);
 	}
