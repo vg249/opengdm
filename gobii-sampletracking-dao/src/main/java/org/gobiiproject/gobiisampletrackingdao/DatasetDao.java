@@ -21,4 +21,6 @@ public interface DatasetDao {
     
     int getDatasetCountWithAnalysesContaining(Integer id);
 
+    Dataset saveDataset(Dataset dataset) throws Exception;
+
 }

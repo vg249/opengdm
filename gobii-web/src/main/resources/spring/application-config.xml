@@ -410,6 +410,7 @@
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
     <!-- **** New Dataset Dao -->
+    <bean id="datasetServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.DatasetServiceImpl"/>
     <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
 
     <!-- **** New Samples DAO for accessing DNA samples -->

@@ -10,12 +10,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
+
+import lombok.Data;
 
 /**
  * Model for Dataset Entity.
@@ -26,6 +32,27 @@ import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
  */
 @Entity
 @Table(name = "dataset")
+@Data
+@NamedEntityGraph(name = "graph.dataset",
+    attributeNodes = {
+        @NamedAttributeNode(value = "experiment", subgraph = "graph.experiment"),
+        @NamedAttributeNode(value = "type")
+    },
+    subgraphs = {
+        @NamedSubgraph(
+            name = "graph.experiment",
+            attributeNodes = {
+                @NamedAttributeNode(value = "project", subgraph = "graph.experiment.project")
+            }
+        ),
+        @NamedSubgraph(
+            name = "graph.experiment.project",
+            attributeNodes = {
+                @NamedAttributeNode(value = "contact")
+            }
+        ),
+    }
+)
 public class Dataset extends BaseEntity {
 
     @Id
@@ -38,14 +65,15 @@ public class Dataset extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "experiment_id")
-    private Experiment experiment = new Experiment();
+    private Experiment experiment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "callinganalysis_id", referencedColumnName = "analysis_id")
-    private Analysis callingAnalysis = new Analysis();
+    private Analysis callingAnalysis;
 
     @Column(name = "analyses")
-    @Convert(converter = IntegerArrayConverter.class)
+    //@Convert(converter = IntegerArrayConverter.class)
+    @Type(type = "IntArrayType")
     private Integer[] analyses;
 
     @Column(name="data_table")
@@ -61,122 +89,20 @@ public class Dataset extends BaseEntity {
     private String qualityFile;
 
     @Column(name="scores")
-    @Convert(converter = JsonbConverter.class)
+    //@Convert(converter = JsonbConverter.class)
+    @Type(type = "JsonNodeType")
     private JsonNode scores;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    private Cv status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
-    private Cv type = new Cv();
+    private Cv type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
-    private Job job = new Job();
+    private Job job;
 
-    public Integer getDatasetId() {
-        return datasetId;
-    }
-
-    public void setDatasetId(Integer datasetId) {
-        this.datasetId = datasetId;
-    }
-
-    public String getDatasetName() {
-        return datasetName;
-    }
-
-    public void setDatasetName(String datasetName) {
-        this.datasetName = datasetName;
-    }
-
-    public Experiment getExperiment() {
-        return experiment;
-    }
-
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
-    }
-
-    public Analysis getCallingAnalysis() {
-        return callingAnalysis;
-    }
-
-    public void setCallingAnalysis(Analysis callingAnalysis) {
-        this.callingAnalysis = callingAnalysis;
-    }
-
-    public Integer[] getAnalyses() {
-        return analyses;
-    }
-
-    public void setAnalyses(Integer[] analyses) {
-        this.analyses = analyses;
-    }
-
-    public String getDataTable() {
-        return dataTable;
-    }
-
-    public void setDataTable(String dataTable) {
-        this.dataTable = dataTable;
-    }
-
-    public String getDataFile() {
-        return dataFile;
-    }
-
-    public void setDataFile(String dataFile) {
-        this.dataFile = dataFile;
-    }
-
-    public String getQualityTable() {
-        return qualityTable;
-    }
-
-    public void setQualityTable(String qualityTable) {
-        this.qualityTable = qualityTable;
-    }
-
-    public JsonNode getScores() {
-        return scores;
-    }
-
-    public void setScores(JsonNode scores) {
-        this.scores = scores;
-    }
-
-    public Cv getStatus() {
-        return status;
-    }
-
-    public void setStatus(Cv status) {
-        this.status = status;
-    }
-
-    public Cv getType() {
-        return type;
-    }
-
-    public void setType(Cv type) {
-        this.type = type;
-    }
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public String getQualityFile() {
-        return qualityFile;
-    }
-
-    public void setQualityFile(String qualityFile) {
-        this.qualityFile = qualityFile;
-    }
 }

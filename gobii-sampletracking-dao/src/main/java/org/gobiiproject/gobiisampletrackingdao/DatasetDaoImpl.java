@@ -1,15 +1,17 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -23,8 +25,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -278,6 +278,21 @@ public class DatasetDaoImpl implements DatasetDao {
 		return count;
 	}
 
+	@Override
+	public Dataset saveDataset(Dataset dataset) throws Exception {
+        em.persist(dataset);
+        em.flush();
+        em.refresh(dataset, getDatasetHints());
+        return dataset;
+    }
+    
+
+    private Map<String, Object> getDatasetHints() {
+        EntityGraph<?> graph = this.em.getEntityGraph("graph.dataset");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;
+    }
     
 
 }

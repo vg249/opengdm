@@ -173,4 +173,27 @@ public class CvDaoImpl implements CvDao {
 
         return cv;
     }
+
+	@Override
+	public Cv getNewStatus() {
+        return this.getStatusCv("new");
+	}
+
+	@Override
+	public Cv getModifiedStatus() {
+        return this.getStatusCv("modified");
+    }
+    
+    private Cv getStatusCv(String status) {
+        List<Cv> cvList = this.getCvs(
+            status,
+            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM
+        );
+        Cv cv = null;
+        if (!cvList.isEmpty()) {
+            cv = cvList.get(0);
+        }
+        return cv;
+    }
 }
