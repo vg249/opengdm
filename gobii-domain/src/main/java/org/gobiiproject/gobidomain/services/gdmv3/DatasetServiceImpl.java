@@ -393,7 +393,7 @@ public class DatasetServiceImpl implements DatasetService {
 	}
 
 	//---Dataset Types
-
+	@Transactional
 	@Override
     public PagedResult<DatasetTypeDTO> getDatasetTypes(Integer page, Integer pageSize) {
         List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(), null, page, pageSize);
@@ -411,6 +411,37 @@ public class DatasetServiceImpl implements DatasetService {
         result.setResult(datasetTypeDTOs);
 
         return result;
+    }
+
+	@Transactional
+	@Override
+	public DatasetTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
+        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+            CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(),
+            2 //TODO:  this is custom type
+        );
+        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
+
+        Cv cv = new Cv();
+        cv.setCvGroup(cvGroup);
+		cv.setTerm(datasetTypeName);
+		
+		if (datasetTypeDescription != null)
+        	cv.setDefinition(datasetTypeDescription);
+
+        //get the new row status
+        // Get the Cv for status, new row
+        Cv status = cvDao.getNewStatus();
+        cv.setStatus(status.getCvId());
+
+        //set rank
+        cv.setRank(0);
+        cv = cvDao.createCv(cv);
+        
+        DatasetTypeDTO datasetDTO = new DatasetTypeDTO();
+        ModelMapper.mapEntityToDto(cv, datasetDTO);
+        return datasetDTO;
+
     }
 
 }

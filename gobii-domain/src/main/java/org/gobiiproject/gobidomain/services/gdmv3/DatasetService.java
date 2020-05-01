@@ -19,4 +19,6 @@ public interface DatasetService {
 
 	PagedResult<DatasetTypeDTO> getDatasetTypes(Integer page, Integer pageSize) throws Exception;
 
+	DatasetTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user);
+
 }

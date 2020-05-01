@@ -667,6 +667,30 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Create Analysis Type
+     * @return
+     */
+    @PostMapping("/datasets/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<DatasetTypeDTO>> createDatasetType(
+        @RequestBody @Validated(DatasetTypeDTO.Create.class) final DatasetTypeDTO datasetTypeRequest,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        DatasetTypeDTO result = datasetService.createDatasetType(
+            datasetTypeRequest.getDatasetTypeName(),
+            datasetTypeRequest.getDatasetTypeDescription(),
+            user
+        );
+        BrApiMasterPayload<DatasetTypeDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+
+        return ResponseEntity.created(null).body(payload);
+    }
+
 
     public ProjectService getProjectService() {
         return projectService;
