@@ -406,6 +406,10 @@
     <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
     <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.gdmv3.ProjectServiceImpl"/>
 
+    <!-- **** VednorProtocol V3  Beans -->
+    <bean id="vendorProtocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
+    <bean id="vendorProtocolService" class="org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService"/>
+
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
