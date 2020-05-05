@@ -4,6 +4,7 @@ package org.gobiiproject.gobiimodel.entity;
 import javax.persistence.*;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Model for Reference Entity.
@@ -13,6 +14,7 @@ import lombok.Data;
 @Entity
 @Table(name = "reference")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class Reference extends BaseEntity{
 
     @Id
