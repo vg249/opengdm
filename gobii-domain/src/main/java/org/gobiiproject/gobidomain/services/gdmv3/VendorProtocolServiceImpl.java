@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ßVendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
