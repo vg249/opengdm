@@ -9,15 +9,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "mapset")
+@NamedEntityGraph(
+    name = "graph.mapset",
+    attributeNodes = {
+        @NamedAttributeNode(value = "type"),
+        @NamedAttributeNode(value = "reference")
+    }
+)
 public class Mapset extends BaseEntity {
 
     @Id
@@ -43,7 +53,8 @@ public class Mapset extends BaseEntity {
     private Cv type;
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    //@Convert(converter = JsonbConverter.class)
+    @Type(type = "JsonNodeType")
     private JsonNode properties;
 
     @Column(name = "status")

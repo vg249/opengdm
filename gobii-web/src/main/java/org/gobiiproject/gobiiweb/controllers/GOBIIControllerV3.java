@@ -768,7 +768,7 @@ public class GOBIIControllerV3  {
         @RequestParam(required=false) Integer mapsetTypeId
     ) throws Exception {
         Integer pageSizeToUse = this.getPageSize(pageSize);
-        PagedResult<MapsetDTO> pagedResult = mapsetService.getMapsets(page, pageSize, mapsetTypeId);
+        PagedResult<MapsetDTO> pagedResult = mapsetService.getMapsets(page, pageSizeToUse, mapsetTypeId);
 
         BrApiMasterListPayload<MapsetDTO> payload = new BrApiMasterListPayload<>(
             pagedResult.getResult(),
@@ -776,6 +776,30 @@ public class GOBIIControllerV3  {
             pagedResult.getCurrentPageNum()
         );
         return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Create mapset entry
+     * @return
+     */
+    @PostMapping("/mapsets")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetDTO>> createMapset(
+        @RequestBody @Validated(MapsetDTO.Create.class) final MapsetDTO mapset,
+        BindingResult bindingResult
+    ) throws Exception {
+        try {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        MapsetDTO mapsetDTO = mapsetService.createMapset(mapset, user);
+        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(mapsetDTO);
+        return ResponseEntity.created(null).body(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 

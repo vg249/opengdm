@@ -7,6 +7,11 @@
  */
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -24,6 +29,8 @@ import lombok.EqualsAndHashCode;
 @JsonIgnoreProperties({"id", "allowedProcessTypes", "entityNameType"})
 public class MapsetDTO extends DTOBaseAuditable {
 
+    public static interface Create{};
+
     public MapsetDTO(){
         super(GobiiEntityNameType.MAPSET);
     }
@@ -39,9 +46,11 @@ public class MapsetDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "mapsetId", entity = Mapset.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Null(groups = {MapsetDTO.Create.class})
     private Integer mapsetId;
 
     @GobiiEntityMap(paramName = "mapsetName", entity = Mapset.class)
+    @NotBlank(groups = {MapsetDTO.Create.class})
     private String mapsetName;
 
     @GobiiEntityMap(paramName = "mapSetDescription", entity = Mapset.class)
@@ -49,9 +58,12 @@ public class MapsetDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "type.cvId", entity = Mapset.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @NotNull(groups = {MapsetDTO.Create.class})
+    @Digits(integer = 10, fraction = 0, groups = {MapsetDTO.Create.class})
     private Integer mapsetTypeId;
 
     @GobiiEntityMap(paramName = "type.term", entity = Mapset.class, deep = true)
+    @Null(groups = {MapsetDTO.Create.class})
     private String mapsetTypeName;
 
     @GobiiEntityMap(paramName = "reference.referenceId", entity = Mapset.class, deep = true)
@@ -59,9 +71,7 @@ public class MapsetDTO extends DTOBaseAuditable {
     private Integer referenceId;
 
     @GobiiEntityMap(paramName = "reference.name", entity = Mapset.class, deep = true)
+    @Null(groups = {MapsetDTO.Create.class})
     private String referenceName; 
-
-
-    
-    
+  
 }

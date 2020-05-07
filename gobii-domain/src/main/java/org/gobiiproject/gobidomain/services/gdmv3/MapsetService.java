@@ -5,4 +5,6 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface MapsetService {
     PagedResult<MapsetDTO> getMapsets(Integer page, Integer pageSize, Integer mapsetTypeId) throws Exception;
+
+	MapsetDTO createMapset(MapsetDTO mapset, String user) throws Exception;
 }

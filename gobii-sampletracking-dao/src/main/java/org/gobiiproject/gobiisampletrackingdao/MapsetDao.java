@@ -15,5 +15,7 @@ public interface MapsetDao {
 
     List<Mapset> getMapsets(
         Integer pageSize, Integer offset, Integer mapsetTypeId
-    ) throws Exception; 
+    ) throws Exception;
+
+	Mapset createMapset(Mapset createdMapset); 
 }

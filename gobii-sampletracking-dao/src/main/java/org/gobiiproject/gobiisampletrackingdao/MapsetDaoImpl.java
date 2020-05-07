@@ -1,9 +1,11 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -186,5 +188,21 @@ public class MapsetDaoImpl implements MapsetDao {
 
       }
       return mapsets;
+  }
+
+  @Override
+  public Mapset createMapset(Mapset createdMapset) {
+      em.persist(createdMapset);
+      em.flush();
+      em.refresh(createdMapset, getMapsetHints());
+      return createdMapset;
+
+  }
+
+  private Map<String, Object> getMapsetHints() {
+    EntityGraph<?> graph = this.em.getEntityGraph("graph.mapset");
+    Map<String, Object> hints = new HashMap<>();
+    hints.put("javax.persistence.fetchgraph", graph);
+    return hints;
   }
 }
