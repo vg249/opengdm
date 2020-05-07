@@ -737,7 +737,6 @@ public class GOBIIControllerV3  {
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize
     ) throws Exception {
-        try {
         Integer pageSizeToUse = this.getPageSize(pageSize);
         PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
         BrApiMasterListPayload<ReferenceDTO> payload = new BrApiMasterListPayload<>(
@@ -747,12 +746,7 @@ public class GOBIIControllerV3  {
         );
 
         return ResponseEntity.ok(payload);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
-
 
 
     public ProjectService getProjectService() {
