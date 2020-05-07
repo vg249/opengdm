@@ -250,7 +250,7 @@ public class CSVInstructionProcessor implements DigesterInstructionProcessor {
                         inputRowList = Arrays.stream(fileRow.split(delimiter))
                                 .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
                         outputRowList = new ArrayList<>();
-                        getRow(inputRowList, csv_BothColumn);
+                        getRow(inputRowList, csvBothColumn);
                         getRow(inputRowList, csvBothColumn);
                         ValidationResult validationResult=matrixValidation.validate(rowNo, csvBothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
                         if (validationResult.success) {
