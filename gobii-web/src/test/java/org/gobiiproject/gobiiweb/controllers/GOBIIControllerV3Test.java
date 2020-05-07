@@ -1099,5 +1099,17 @@ public class GOBIIControllerV3Test {
         verify(referenceService, times(1)).getReferences(0, 1000);
 
     }
+
+    @Test
+    public void testGetMapsets() throws Exception {
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+    }
     
 }
