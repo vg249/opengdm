@@ -20,6 +20,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
+import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
@@ -37,6 +38,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
@@ -100,6 +102,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private ReferenceService referenceService;
+
+    @Autowired
+    private MapsetService mapsetService;
 
     /**
      * Authentication Endpoint
@@ -757,14 +762,21 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/mapsets")
     @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<Object>> getMapsets(
+    public ResponseEntity<BrApiMasterListPayload<MapsetDTO>> getMapsets(
         @RequestParam(required=false, defaultValue="0") Integer page,
         @RequestParam(required=false, defaultValue="1000") Integer pageSize,
         @RequestParam(required=false) Integer mapsetTypeId
     ) throws Exception {
-        
-    }
+        Integer pageSizeToUse = this.getPageSize(pageSize);
+        PagedResult<MapsetDTO> pagedResult = mapsetService.getMapsets(page, pageSize, mapsetTypeId);
 
+        BrApiMasterListPayload<MapsetDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
 
 
     public ProjectService getProjectService() {

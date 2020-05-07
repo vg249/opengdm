@@ -9,6 +9,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,5 +42,12 @@ public class MapsetDaoTest {
 
         assertTrue("Get Mapset By Id fails",mapset.getMapsetId() == 2);
 
+    }
+
+    @Test
+    @Transactional
+    public void getMapsetsSimpleTest() throws Exception {
+        List<Mapset> mapsets = mapsetDao.getMapsets(1000, 0, null);
+        assertTrue("getMapsets fails",mapsets != null);
     }
 }
