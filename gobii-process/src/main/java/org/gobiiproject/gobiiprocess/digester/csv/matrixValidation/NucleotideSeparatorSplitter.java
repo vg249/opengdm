@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -18,6 +19,8 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private static Set<String> validSeparators = new HashSet<>(Arrays.asList(
             ",",
             "/",
+            ":", //GSD-165 add : to valid separators
+            ";", //As per 4/28/2020 standup, 165 needs semicolons as well
             "|"
     ));
 
@@ -32,6 +35,11 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     public boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
+
+            if(element.contains("INS")){ //Replace INS with + for Intertek data, based on 4/30 convo
+                element=element.replaceAll("INS","+");
+            }
+
             if (element.length() < 1) {
                 String errMsg = "SNPSepRemoval Unsupported empty Allele Call in row " + rowNo;
                 matrixErrorUtil.setError(errMsg);
@@ -43,6 +51,13 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
                     //noinspection ConstantConditions - This is for readability
                     result = unknownSegment;
                 }else{
+
+                    //Override for one character in 2 letter - duplicate the letter GSD-166
+                    if((element.length() == 1) && (nucleotideCount == 2)){
+                        Logger.logDebug("NucleotideSeparatorSplitter","Found single letter homozygous in biallelic data, converted to two versions of it");
+                        element = element+element;
+                    }
+
                     error = validateInputElement(element);
                     if(error==null) {
                         result = processInputElement(element);
@@ -72,6 +87,9 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private String validateInputElement(String element){
         int expectedLengthWithSeparators = (nucleotideCount * 2) - 1;
         int length = element.length();
+
+
+
         boolean hasSeparators=(length != nucleotideCount);
         if((length != nucleotideCount) && (length != expectedLengthWithSeparators)){
             return "Unexpected Length Element " + element; // incorrect length
@@ -102,7 +120,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     private String processInputElement(String element){
         int length = element.length();
         boolean hasSeparators=((length != nucleotideCount));
-        if(hasSeparators) { //If nucleotideCount=1, there's no separator character
+        if(hasSeparators && length>1) { //If nucleotideCount=1, there's no separator character
             char separator = element.charAt(1);
             //Pattern.quote to escape literals like / and | being interpreted as regular expression syntax
             return element.replaceAll(Pattern.quote( ""+separator ), "");
