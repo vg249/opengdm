@@ -17,5 +17,7 @@ public interface MapsetDao {
         Integer pageSize, Integer offset, Integer mapsetTypeId
     ) throws Exception;
 
-	Mapset createMapset(Mapset createdMapset); 
+	Mapset createMapset(Mapset createdMapset);
+
+	Mapset getMapset(Integer mapsetId); 
 }

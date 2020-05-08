@@ -205,4 +205,9 @@ public class MapsetDaoImpl implements MapsetDao {
     hints.put("javax.persistence.fetchgraph", graph);
     return hints;
   }
+
+  @Override
+  public Mapset getMapset(Integer mapsetId) {
+      return em.find(Mapset.class, mapsetId, this.getMapsetHints());
+  }
 }

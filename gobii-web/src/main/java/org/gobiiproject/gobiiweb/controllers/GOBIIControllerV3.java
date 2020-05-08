@@ -802,6 +802,21 @@ public class GOBIIControllerV3  {
         }
     }
 
+    /**
+     * Get mapset entry by id
+     * @return
+     */
+    @GetMapping("/mapsets/{mapsetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetDTO>> getMapset(
+        @PathVariable Integer mapsetId
+    ) throws Exception {
+        MapsetDTO result = mapsetService.getMapset(mapsetId);
+        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+        return ResponseEntity.ok(payload);
+    }
 
     public ProjectService getProjectService() {
         return projectService;

@@ -106,6 +106,18 @@ public class MapsetServiceImpl implements MapsetService {
         ModelMapper.mapEntityToDto(createdMapset, createdMapsetDTO);
         return createdMapsetDTO;
     }
+
+    @Transactional
+    @Override
+    public MapsetDTO getMapset(Integer mapsetId) {
+        Mapset mapset = mapsetDao.getMapset(mapsetId);
+        if (mapset == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Not found");
+        }
+        MapsetDTO mapsetDTO = new MapsetDTO();
+        ModelMapper.mapEntityToDto(mapset, mapsetDTO);
+        return mapsetDTO;
+    }
     
     
 }

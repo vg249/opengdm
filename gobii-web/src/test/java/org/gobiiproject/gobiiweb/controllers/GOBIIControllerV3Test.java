@@ -1167,5 +1167,41 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         ;
     }
+
+    @Test
+    public void testGetMapsetById() throws Exception {
+        when(
+            mapsetService.getMapset(122)
+        ).thenReturn(
+            new MapsetDTO()
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(mapsetService, times(1)).getMapset(122);
+    }
+
+    @Test
+    public void testGetMapsetByIdNotFound() throws Exception {
+        when(
+            mapsetService.getMapset(122)
+        ).thenThrow(
+            new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Mapset not found")
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        ;
+        verify(mapsetService, times(1)).getMapset(122);
+    }
     
 }
