@@ -210,4 +210,11 @@ public class MapsetDaoImpl implements MapsetDao {
   public Mapset getMapset(Integer mapsetId) {
       return em.find(Mapset.class, mapsetId, this.getMapsetHints());
   }
+
+  @Override
+  public Mapset updateMapset(Mapset mapset) {
+      Mapset updatedMapset = em.merge(mapset);
+      em.flush();
+      return updatedMapset;
+  }
 }

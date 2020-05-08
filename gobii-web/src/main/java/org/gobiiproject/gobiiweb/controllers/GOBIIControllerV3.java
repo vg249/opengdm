@@ -818,6 +818,27 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Update mapset
+     * @return
+     */
+    @PatchMapping("/mapsets/{mapsetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetDTO>> updateMapset(
+        @PathVariable Integer mapsetId,
+        @RequestBody @Validated(MapsetDTO.Update.class) final MapsetDTO patchData,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String editedBy = this.getCurrentUser();
+
+        MapsetDTO result = mapsetService.updateMapset(mapsetId, patchData, editedBy);
+        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

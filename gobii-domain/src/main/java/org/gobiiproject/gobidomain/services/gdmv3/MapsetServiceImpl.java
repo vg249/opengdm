@@ -16,6 +16,7 @@ import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
@@ -60,25 +61,12 @@ public class MapsetServiceImpl implements MapsetService {
     @Override
     public MapsetDTO createMapset(MapsetDTO mapset, String createdBy) throws Exception {
         //check if mapset has mapsetTypeId and if it's a valid mapsetTypeId
-        Integer mapsetTypeId = mapset.getMapsetTypeId();
-
-        Cv type = cvDao.getCvByCvId(mapsetTypeId);
-        if (type == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Mapset type not found");
-        }
-
-        //check type is correct type
-        if (!type.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName())) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Invalid type");
-        }
+        Cv type = this.getType(mapset.getMapsetTypeId());
 
         //check the referenceId
         Reference reference = null;
         if (mapset.getReferenceId() != null) {
-            reference = referenceDao.getReference(mapset.getReferenceId());
-            if (reference == null) {
-                throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Unknown reference");
-            }
+            reference = this.getReference(mapset.getReferenceId());
         }
 
         Mapset createdMapset = new Mapset();
@@ -117,6 +105,75 @@ public class MapsetServiceImpl implements MapsetService {
         MapsetDTO mapsetDTO = new MapsetDTO();
         ModelMapper.mapEntityToDto(mapset, mapsetDTO);
         return mapsetDTO;
+    }
+
+    @Transactional
+    @Override
+    public MapsetDTO updateMapset(Integer mapsetId, MapsetDTO patchData, String editedBy) throws Exception {
+        Mapset mapset = mapsetDao.getMapset(mapsetId);
+        if (mapset == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Not found");
+        }
+        
+        if (patchData.getMapsetName() != null) {
+            mapset.setMapsetName(patchData.getMapsetName());
+            //TODO: also update code?
+        }
+
+        if (patchData.getMapsetDescription() != null) {
+            mapset.setMapSetDescription(patchData.getMapsetDescription()); //TODO: refactor MapSetDescription
+        }
+
+        if (patchData.getMapsetTypeId() != null) {
+            Cv type = this.getType(patchData.getMapsetTypeId());
+            mapset.setType(type);
+        }
+
+        if (patchData.getReferenceId() != null) {
+            Reference reference  = this.getReference(patchData.getReferenceId());
+            mapset.setReference(reference);
+        }
+
+        //audit items
+        // audit items
+        Contact creator = contactDao.getContactByUsername(editedBy);
+        if (creator != null)
+            mapset.setModifiedBy(creator.getContactId());
+        mapset.setModifiedDate(new java.util.Date());
+        
+        //updated status
+        //status
+        Cv status = cvDao.getModifiedStatus();
+        mapset.setStatus(status.getCvId()); //TODO: replace the status with cv type
+
+        mapset = mapsetDao.updateMapset(mapset);
+        MapsetDTO updatedMapsetDTO = new MapsetDTO();
+        ModelMapper.mapEntityToDto(mapset, updatedMapsetDTO);
+        return updatedMapsetDTO;
+
+    }
+
+
+    private Reference getReference(Integer referenceId) throws Exception {
+        Reference reference = referenceDao.getReference(referenceId);
+        if (reference == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Unknown reference");
+        }
+        return reference;
+        
+    }
+
+    private Cv getType(Integer cvId) throws Exception {
+        Cv type = cvDao.getCvByCvId(cvId);
+        if (type == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Mapset type not found");
+        }
+
+        //check type is correct type
+        if (!type.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName())) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Invalid type");
+        }
+        return type;
     }
     
     

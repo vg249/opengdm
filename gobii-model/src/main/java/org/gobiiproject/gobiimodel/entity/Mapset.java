@@ -16,7 +16,7 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+//import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import org.hibernate.annotations.Type;
 
 @Entity

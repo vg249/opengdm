@@ -1203,5 +1203,33 @@ public class GOBIIControllerV3Test {
         ;
         verify(mapsetService, times(1)).getMapset(122);
     }
+
+    @Test
+    public void testPatchSimpleMapset() throws Exception {
+        String requestJson = "{\"mapsetName\": \"test-mapset\", \"mapsetDescription\": \"test-description\"}";
+
+        when(
+            projectService.getDefaultProjectEditor()   
+        ).thenReturn("test-user");
+
+        when(
+            mapsetService.updateMapset(eq(122), any(MapsetDTO.class), eq("test-user"))
+        ).thenReturn(
+            new MapsetDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/mapsets/122")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(mapsetService, times(1)).updateMapset(eq(122), any(MapsetDTO.class), eq("test-user"));
+    }
     
 }

@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 public class MapsetDTO extends DTOBaseAuditable {
 
     public static interface Create{};
+    public static interface Update{}
 
     public MapsetDTO(){
         super(GobiiEntityNameType.MAPSET);
@@ -46,7 +47,7 @@ public class MapsetDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "mapsetId", entity = Mapset.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    @Null(groups = {MapsetDTO.Create.class})
+    @Null(groups = {MapsetDTO.Create.class, MapsetDTO.Update.class})
     private Integer mapsetId;
 
     @GobiiEntityMap(paramName = "mapsetName", entity = Mapset.class)
@@ -63,15 +64,15 @@ public class MapsetDTO extends DTOBaseAuditable {
     private Integer mapsetTypeId;
 
     @GobiiEntityMap(paramName = "type.term", entity = Mapset.class, deep = true)
-    @Null(groups = {MapsetDTO.Create.class})
+    @Null(groups = {MapsetDTO.Create.class, MapsetDTO.Update.class})
     private String mapsetTypeName;
 
     @GobiiEntityMap(paramName = "reference.referenceId", entity = Mapset.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer referenceId;
 
-    @GobiiEntityMap(paramName = "reference.name", entity = Mapset.class, deep = true)
-    @Null(groups = {MapsetDTO.Create.class})
+    @GobiiEntityMap(paramName = "reference.referenceName", entity = Mapset.class, deep = true)
+    @Null(groups = {MapsetDTO.Create.class, MapsetDTO.Update.class})
     private String referenceName; 
   
 }
