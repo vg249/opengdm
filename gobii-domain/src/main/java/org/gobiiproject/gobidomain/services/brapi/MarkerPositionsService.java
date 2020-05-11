@@ -7,8 +7,9 @@ import java.math.BigDecimal;
 
 public interface MarkerPositionsService {
 
-    PagedResult<MarkerPositions> getMarkerPositions(Integer pageSize, Integer pageNum,
-                                                    MarkerPositions markerPositionsFilter, BigDecimal minPosition,
-                                                    BigDecimal maxPosition);
+    PagedResult<MarkerPositions> getMarkerPositions(
+        Integer pageSize, Integer pageNum,
+        MarkerPositions markerPositionsFilter, BigDecimal minPosition,
+        BigDecimal maxPosition, Integer variantSetDbId);
 
 }

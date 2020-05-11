@@ -38,7 +38,8 @@ public class MarkerLinkageGroupDaoTest {
                 testMapsetId, null,
                 null, null,
                 null, null,
-                null, null);
+                null, null,
+                null);
 
 
         assertTrue("Empty MarkerLinkageGroup list",markerLinkageGroups.size() > 0);
@@ -66,7 +67,7 @@ public class MarkerLinkageGroupDaoTest {
                 null, null,
                 null, null,
                 testMarkerId, null,
-                null, null);
+                null, null, null);
 
         assertTrue("Empty MarkerLinkageGroup list",markerLinkageGroups.size() > 0);
         assertTrue("MarkerLinkageGroups size not equal to the page size",
@@ -94,7 +95,7 @@ public class MarkerLinkageGroupDaoTest {
                 null, null,
                 null, null,
                 null, null,
-                testMinPosition, testMaxPosition);
+                testMinPosition, testMaxPosition, null);
 
         assertTrue("Empty MarkerLinkageGroup list",markerLinkageGroups.size() > 0);
         assertTrue("MarkerLinkageGroups size not equal to the page size",

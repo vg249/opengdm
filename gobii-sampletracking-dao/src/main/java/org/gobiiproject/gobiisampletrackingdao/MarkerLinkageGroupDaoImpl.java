@@ -24,15 +24,14 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
     protected EntityManager em;
 
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
-    public List<MarkerLinkageGroup> getMarkerLinkageGroups(Integer pageSize, Integer rowOffset,
-                                                           Integer mapsetId, String mapsetName,
-                                                           Integer linkageGroupId, String linkageGroupName,
-                                                           Integer markerId, String markerName,
-                                                           BigDecimal minPosition, BigDecimal maxPosition
-    ) throws GobiiException
-
+    public List<MarkerLinkageGroup>
+    getMarkerLinkageGroups(Integer pageSize, Integer rowOffset,
+                           Integer mapsetId, String mapsetName,
+                           Integer linkageGroupId, String linkageGroupName,
+                           Integer markerId, String markerName,
+                           BigDecimal minPosition, BigDecimal maxPosition,
+                           Integer datasetId) throws GobiiException
     {
         List<MarkerLinkageGroup> markerLinkageGroups = new ArrayList<>();
 
@@ -45,17 +44,22 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            CriteriaQuery<MarkerLinkageGroup> criteriaQuery = cb.createQuery(MarkerLinkageGroup.class);
+            CriteriaQuery<MarkerLinkageGroup> criteriaQuery =
+                cb.createQuery(MarkerLinkageGroup.class);
 
-            Root<MarkerLinkageGroup> markerLinkageGroup = criteriaQuery.from(MarkerLinkageGroup.class);
+            Root<MarkerLinkageGroup> markerLinkageGroup =
+                criteriaQuery.from(MarkerLinkageGroup.class);
+
             criteriaQuery.select(markerLinkageGroup);
 
-            Join<Object, Object> marker = (Join<Object, Object>) markerLinkageGroup.fetch("marker");
+            Join<Object, Object> marker =
+                (Join<Object, Object>) markerLinkageGroup.fetch("marker");
 
             //Join LinkageGroup to root
             Join<Object, Object> linkageGroup = (Join<Object, Object>) (
                     markerLinkageGroup.fetch("linkageGroup"));
-            Join<Object, Object> mapset = (Join<Object, Object>) linkageGroup.fetch("mapset");
+            Join<Object, Object> mapset =
+                (Join<Object, Object>) linkageGroup.fetch("mapset");
 
             //Associated Tables that needs to be fetched along with root table
 
@@ -67,10 +71,12 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
             }
 
             if(linkageGroupId != null) {
-                predicates.add(cb.equal(linkageGroup.get("linkageGroupId"), linkageGroupId));
+                predicates.add(cb.equal(
+                    linkageGroup.get("linkageGroupId"), linkageGroupId));
             }
             if(linkageGroupName != null) {
-                predicates.add(cb.equal(linkageGroup.get("linkageGroupName"), linkageGroupName));
+                predicates.add(cb.equal(
+                    linkageGroup.get("linkageGroupName"), linkageGroupName));
             }
 
             if(markerId != null) {
@@ -81,12 +87,22 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
             }
 
             if(minPosition != null) {
-                predicates.add(cb.ge(markerLinkageGroup.get("start"), minPosition));
+                predicates.add(
+                    cb.ge(markerLinkageGroup.get("start"), minPosition));
             }
             if(maxPosition != null) {
-                predicates.add(cb.le(markerLinkageGroup.get("stop"), maxPosition));
+                predicates.add(
+                    cb.le(markerLinkageGroup.get("stop"), maxPosition));
             }
 
+            if(datasetId != null) {
+                Expression<Boolean> datasetIdExists =
+                    cb.function(
+                        "JSONB_EXISTS", Boolean.class,
+                        marker.get("datasetMarkerIdx"),
+                        cb.literal(datasetId.toString()));
+                predicates.add(cb.isTrue(datasetIdExists));
+            }
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
 
@@ -104,7 +120,8 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                        + e.getCause().getMessage());
         }
 
     }
