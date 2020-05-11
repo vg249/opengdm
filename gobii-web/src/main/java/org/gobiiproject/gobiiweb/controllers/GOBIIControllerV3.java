@@ -849,9 +849,16 @@ public class GOBIIControllerV3  {
     }
 
     //----Mapset Type
+    /**
+     * Create Mapset Type
+     * @param mapsetTypeRequest
+     * @param bindingResult
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/mapsets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createDatasetType(
+    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createMapsetType(
         @RequestBody @Validated(MapsetTypeDTO.Create.class) final MapsetTypeDTO mapsetTypeRequest,
         BindingResult bindingResult
     ) throws Exception {
@@ -869,6 +876,14 @@ public class GOBIIControllerV3  {
 
         return ResponseEntity.created(null).body(payload);
     }
+
+    /**
+     * Get Mapset Types
+     * @return
+     */
+    @GetMapping("/mapsets/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MapsetTypeDTO>> getData
 
     
     public ProjectService getProjectService() {

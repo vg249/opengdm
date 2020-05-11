@@ -1276,5 +1276,17 @@ public class GOBIIControllerV3Test {
 
         verify(mapsetService, times(1)).createMapsetType("test-name", "test-desc", "user");
     }
+
+    @Test
+    public void getMapsetTypes() throws Exception {
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets/types")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+    }
     
 }
