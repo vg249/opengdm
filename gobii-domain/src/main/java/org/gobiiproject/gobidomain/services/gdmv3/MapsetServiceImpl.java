@@ -224,6 +224,25 @@ public class MapsetServiceImpl implements MapsetService {
         ModelMapper.mapEntityToDto(cv, mapsetDTO);
         return mapsetDTO;
     }
+
+    @Transactional
+    @Override
+    public PagedResult<MapsetTypeDTO> getMapsetTypes(Integer page, Integer pageSize) {
+        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(), null, page, pageSize);
+        List<MapsetTypeDTO> mapsetTypeDTOs = new ArrayList<>();
+
+        cvs.forEach(cv -> {
+            MapsetTypeDTO mapsetTypeDTO = new MapsetTypeDTO();
+            ModelMapper.mapEntityToDto(cv, mapsetTypeDTO);
+            mapsetTypeDTOs.add(mapsetTypeDTO);
+        });
+        PagedResult<MapsetTypeDTO> result = new PagedResult<>();
+        result.setCurrentPageNum(page);
+        result.setCurrentPageSize(mapsetTypeDTOs.size());
+        result.setResult(mapsetTypeDTOs);
+
+        return result;
+    }
     
     
     

@@ -1279,6 +1279,12 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void getMapsetTypes() throws Exception {
+        when(
+            mapsetService.getMapsetTypes(0, 1000)
+        ).thenReturn(
+            new PagedResult<MapsetTypeDTO>()
+        );
+
         mockMvc.perform(
             MockMvcRequestBuilders
             .get("/gobii-dev/gobii/v3/mapsets/types")
@@ -1287,6 +1293,7 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isOk())
         ;
+        verify(mapsetService, times(1)).getMapsetTypes(0, 1000);
     }
     
 }

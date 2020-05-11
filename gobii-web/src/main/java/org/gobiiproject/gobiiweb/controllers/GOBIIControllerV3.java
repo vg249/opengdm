@@ -883,7 +883,19 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/mapsets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<MapsetTypeDTO>> getData
+    public ResponseEntity<BrApiMasterListPayload<MapsetTypeDTO>> getMapsetTypes(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<MapsetTypeDTO> result = mapsetService.getMapsetTypes(page, pageSizeToUse);
+        BrApiMasterListPayload<MapsetTypeDTO> payload = new BrApiMasterListPayload<>(
+            result.getResult(),
+            result.getCurrentPageNum(),
+            result.getCurrentPageSize()
+        );
+        return ResponseEntity.ok(payload);
+    }
 
     
     public ProjectService getProjectService() {

@@ -17,4 +17,6 @@ public interface MapsetService {
 	void deleteMapset(Integer mapsetId) throws Exception;
 
 	MapsetTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user);
+
+	PagedResult<MapsetTypeDTO> getMapsetTypes(Integer page, Integer pageSizeToUse);
 }
