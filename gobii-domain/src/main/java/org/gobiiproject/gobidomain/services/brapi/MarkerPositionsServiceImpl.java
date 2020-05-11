@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,11 @@ public class MarkerPositionsServiceImpl implements MarkerPositionsService {
     private MarkerLinkageGroupDao markerLinkageGroupDao;
 
     @Override
-    public PagedResult<MarkerPositions> getMarkerPositions(Integer pageSize, Integer pageNum,
-                                                           MarkerPositions markerPositionsFilter, BigDecimal minPosition,
-                                                           BigDecimal maxPosition) throws GobiiException {
+    @Transactional
+    public PagedResult<MarkerPositions> getMarkerPositions(
+        Integer pageSize, Integer pageNum,
+        MarkerPositions markerPositionsFilter, BigDecimal minPosition,
+        BigDecimal maxPosition, Integer variantSetDbId) throws GobiiException {
 
         PagedResult<MarkerPositions> returnVal = new PagedResult<>();
 
@@ -41,12 +44,18 @@ public class MarkerPositionsServiceImpl implements MarkerPositionsService {
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<MarkerLinkageGroup> markerLinkageGroups = markerLinkageGroupDao.getMarkerLinkageGroups(
+            List<MarkerLinkageGroup> markerLinkageGroups =
+                markerLinkageGroupDao.getMarkerLinkageGroups(
                     pageSize, rowOffset,
-                    markerPositionsFilter.getMapDbId(), markerPositionsFilter.getMapName(),
-                    null, markerPositionsFilter.getLinkageGroupName(),
-                    markerPositionsFilter.getVariantDbId(), null,
-                    minPosition, maxPosition);
+                    markerPositionsFilter.getMapDbId(),
+                    markerPositionsFilter.getMapName(),
+                    null,
+                    markerPositionsFilter.getLinkageGroupName(),
+                    markerPositionsFilter.getVariantDbId(),
+                    null,
+                    minPosition,
+                    maxPosition,
+                    variantSetDbId);
 
             MarkerPositions markerPositions;
 

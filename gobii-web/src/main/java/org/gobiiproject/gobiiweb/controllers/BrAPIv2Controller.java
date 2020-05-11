@@ -943,29 +943,33 @@ public class BrAPIv2Controller {
     public @ResponseBody
     ResponseEntity<BrApiMasterListPayload<MarkerPositions>> getMarkersByMapId(
             @ApiParam(value = "Used to request a specific page of " +
-                    "data to be returned. " +
-                    "The page indexing starts at 0 " +
-                    "(the first page is 'page'= 0). Default is 0")
+               "data to be returned. " +
+               "The page indexing starts at 0 " +
+               "(the first page is 'page'= 0). Default is 0")
             @RequestParam(value = "page", required = false,
-                    defaultValue = BrapiDefaults.pageNum) Integer page,
+               defaultValue = BrapiDefaults.pageNum) Integer page,
             @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+               "Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+               defaultValue = BrapiDefaults.pageSize) Integer pageSize,
             @ApiParam(value = "Filter positions greater than given value")
             @RequestParam(value = "minPosition", required = false)
-                    BigDecimal minPosition,
+               BigDecimal minPosition,
             @ApiParam(value = "Filter positions less than given value")
             @RequestParam(value = "maxPosition", required = false)
-                    BigDecimal maxPosition,
+               BigDecimal maxPosition,
+            @ApiParam(value = "Filter By VariantSet Db Id")
+            @RequestParam(value = "variantSetDbId", required = false)
+                Integer variantSetDbId,
             MarkerPositions markerPositionsFilter) throws GobiiException {
 
         try {
 
             PagedResult<MarkerPositions> pagedResult =
                     markerPositionsService.getMarkerPositions(
-                            pageSize, page,
-                            markerPositionsFilter, minPosition, maxPosition);
+                        pageSize, page,
+                        markerPositionsFilter, minPosition,
+                        maxPosition, variantSetDbId);
 
             BrApiMasterListPayload<MarkerPositions> payload =
                     new BrApiMasterListPayload<>(
