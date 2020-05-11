@@ -347,13 +347,15 @@ public class DatasetServiceImpl implements DatasetService {
 		ModelMapper.mapEntityToDto(updatedDataset, datasetDTO);
 
 		//set the analysis
-		datasetDTO.setAnalyses(
-			this.getAnalysisDTOs(
-				this.checkAndGetAnalysesFromIds(
-					targetDataset.getAnalyses()
+		if (targetDataset.getAnalyses() != null && targetDataset.getAnalyses().length > 0) {
+			datasetDTO.setAnalyses(
+				this.getAnalysisDTOs(
+					this.checkAndGetAnalysesFromIds(
+						targetDataset.getAnalyses()
+					)
 				)
-			)
-		);
+			);
+		}
 		return datasetDTO;
 
 	}
