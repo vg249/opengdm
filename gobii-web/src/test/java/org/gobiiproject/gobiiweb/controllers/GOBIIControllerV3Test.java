@@ -1231,5 +1231,22 @@ public class GOBIIControllerV3Test {
 
         verify(mapsetService, times(1)).updateMapset(eq(122), any(MapsetDTO.class), eq("test-user"));
     }
+
+
+    @Test
+    public void testDeleteMapset() throws Exception {
+        Integer mapsetId = 122;
+        doNothing().when(mapsetService).deleteMapset(mapsetId);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/mapsets/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(mapsetService, times(1)).deleteMapset(122);
+    }
     
 }

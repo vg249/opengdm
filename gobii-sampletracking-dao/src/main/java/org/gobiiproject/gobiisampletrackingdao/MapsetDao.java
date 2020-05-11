@@ -21,5 +21,7 @@ public interface MapsetDao {
 
 	Mapset getMapset(Integer mapsetId);
 
-	Mapset updateMapset(Mapset mapset); 
+	Mapset updateMapset(Mapset mapset);
+
+	void deleteMapset(Mapset mapset) throws Exception; 
 }

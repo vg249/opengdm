@@ -11,4 +11,6 @@ public interface MapsetService {
 	MapsetDTO getMapset(Integer mapsetId);
 
 	MapsetDTO updateMapset(Integer mapsetId, MapsetDTO any, String editedBy) throws Exception;
+
+	void deleteMapset(Integer mapsetId) throws Exception;
 }

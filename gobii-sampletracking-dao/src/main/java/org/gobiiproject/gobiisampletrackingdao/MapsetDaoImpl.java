@@ -217,4 +217,10 @@ public class MapsetDaoImpl implements MapsetDao {
       em.flush();
       return updatedMapset;
   }
+
+  @Override
+  public void deleteMapset(Mapset mapset) throws Exception {
+      em.remove(mapset);
+      em.flush();
+  }
 }

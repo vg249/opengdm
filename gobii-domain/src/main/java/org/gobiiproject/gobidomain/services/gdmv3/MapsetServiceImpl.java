@@ -175,6 +175,17 @@ public class MapsetServiceImpl implements MapsetService {
         }
         return type;
     }
+
+    @Transactional
+    @Override
+    public void deleteMapset(Integer mapsetId) throws Exception {
+        Mapset mapset = mapsetDao.getMapset(mapsetId);
+        if (mapset == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Not found");
+        }
+
+        mapsetDao.deleteMapset(mapset);
+    }
     
     
 }

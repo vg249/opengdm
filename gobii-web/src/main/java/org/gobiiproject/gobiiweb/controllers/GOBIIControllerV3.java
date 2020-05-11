@@ -788,7 +788,6 @@ public class GOBIIControllerV3  {
         @RequestBody @Validated(MapsetDTO.Create.class) final MapsetDTO mapset,
         BindingResult bindingResult
     ) throws Exception {
-        try {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
         MapsetDTO mapsetDTO = mapsetService.createMapset(mapset, user);
@@ -796,10 +795,6 @@ public class GOBIIControllerV3  {
         payload.setMetadata(null);
         payload.setResult(mapsetDTO);
         return ResponseEntity.created(null).body(payload);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     /**
@@ -837,6 +832,19 @@ public class GOBIIControllerV3  {
         payload.setMetadata(null);
         payload.setResult(result);
         return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete mapset
+     */
+    @DeleteMapping("/mapsets/{mapsetId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteMapset(
+        @PathVariable Integer mapsetId
+    ) throws Exception {
+        mapsetService.deleteMapset(mapsetId);
+        return ResponseEntity.noContent().build();
     }
 
     public ProjectService getProjectService() {
