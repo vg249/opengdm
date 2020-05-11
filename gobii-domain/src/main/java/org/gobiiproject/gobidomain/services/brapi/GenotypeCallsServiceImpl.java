@@ -2,11 +2,13 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.system.Hdf5InterfaceResultDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
@@ -20,6 +22,7 @@ import org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -174,12 +177,17 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 }
 
-                String extractListPath =
+
+                Hdf5InterfaceResultDTO extractResult =
                         extractGenotypes(
                                 markerHdf5IndexMap,
                                 dnarunHdf5IndexMap);
 
-                readGenotypesFromFile(genotypeCalls, extractListPath);
+                readGenotypesFromFile(genotypeCalls,
+                    extractResult.getGenotypeFile());
+
+                FileUtils.deleteDirectory(
+                    new File(extractResult.getOutputFolder()));
 
                 if(markers.size() >= genotypesToBeRead) {
                     break;
@@ -377,11 +385,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 }
                 if(dnaRuns.size() > 0) {
-                    String extractListPath =
+                    Hdf5InterfaceResultDTO extractResult =
                             extractGenotypes(
                                     markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-                    readGenotypesFromFile(genotypeCalls, extractListPath);
+                    readGenotypesFromFile(genotypeCalls,
+                        extractResult.getGenotypeFile());
+                    FileUtils.deleteDirectory(
+                        new File(extractResult.getOutputFolder()));
                 }
                 else {
                     continue;
@@ -664,17 +675,18 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
 
 
-            String extractFilePath =
+            Hdf5InterfaceResultDTO extractResult =
                     this.extractGenotypes(
                             markerHdf5IndexMap,
                             dnarunHdf5IndexMap);
 
 
             this.readGenotypesFromFile(
-                    genotypeCalls, extractFilePath,
+                    genotypeCalls, extractResult.getGenotypeFile(),
                     pageSize, datasetId,
                     columnOffset, markers,
                     dnaRuns, new ArrayList<>(dnarunHdf5OrderMap.values()));
+
 
             //result values
             returnVal.setResult(genotypeCalls);
@@ -699,14 +711,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
-            if(extractFilePath != null
-                    && extractFilePath.endsWith("result.genotypes")) {
-                File extractFile = new File(extractFilePath);
-                String parent = extractFile.getParent();
-                File extractFolder = new File(parent);
-                extractFolder.delete();
-            }
-
+            FileUtils.deleteDirectory(new File(extractResult.getOutputFolder()));
 
 
         }
@@ -1121,14 +1126,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                             markersHdf5IndicesDataset.subList(
                                     pageOffset, markerLimit));
 
-                    String extractFilePath =
+                    Hdf5InterfaceResultDTO extractResult =
                             this.extractGenotypes(
                                     markerExtractIndex,
                                     dnaRunExtractIndex);
 
 
                     this.readGenotypesFromFile(
-                            genotypeCalls, extractFilePath,
+                            genotypeCalls, extractResult.getGenotypeFile(),
                             remainingPageSize, Integer.parseInt(datasetId),
                             columnOffset,
                             markersByDatasetId.get(
@@ -1137,6 +1142,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                             dnarunsByDatasetId.get(datasetId),
                             new ArrayList<>(
                                     dnarunHdf5OrderMap.get(datasetId).values()));
+
+                    FileUtils.deleteDirectory(
+                        new File(extractResult.getOutputFolder()));
 
                     if (genotypeCalls.size() >= pageSize) {
 
@@ -1291,8 +1299,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 headerString = String.join(",", headerValues);
             }
 
-            String extractFilePath = this.extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
-            returnVal = this.readGenotypesFromFile(extractFilePath, markers, dnaRuns, headerString);
+            Hdf5InterfaceResultDTO extractResult = this.extractGenotypes(markerHdf5IndexMap,
+                dnarunHdf5IndexMap);
+
+            returnVal = this.readGenotypesFromFile(
+                extractResult.getGenotypeFile(), markers,
+                dnaRuns, headerString);
+
+            FileUtils.deleteDirectory(new File(extractResult.getOutputFolder()));
 
             return returnVal;
         }
@@ -1317,19 +1331,19 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * Extracts genotypes from the hdf5.
      *
      */
-    private String
+    private Hdf5InterfaceResultDTO
     extractGenotypes(Map<String, List<String>> markerHdf5IndexMap,
                      Map<String, List<String>> sampleHdf5IndexMap)
             throws Exception {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        String genotypCallsFilePath = hdf5Interface.getHDF5Genotypes(
+        Hdf5InterfaceResultDTO extractResult = hdf5Interface.getHDF5Genotypes(
                 true,
                 markerHdf5IndexMap,
                 sampleHdf5IndexMap, tempFolder);
 
-        return genotypCallsFilePath;
+        return extractResult;
 
     }
 
