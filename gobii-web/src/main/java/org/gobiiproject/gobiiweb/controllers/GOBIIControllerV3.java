@@ -577,8 +577,8 @@ public class GOBIIControllerV3  {
         PagedResult<AnalysisTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
         BrApiMasterListPayload<AnalysisTypeDTO> payload = new BrApiMasterListPayload<>(
             result.getResult(),
-            result.getCurrentPageNum(),
-            result.getCurrentPageSize()
+            result.getCurrentPageSize(),
+            result.getCurrentPageNum()
         );
         return ResponseEntity.ok(payload);
     }
@@ -891,8 +891,9 @@ public class GOBIIControllerV3  {
         PagedResult<MapsetTypeDTO> result = mapsetService.getMapsetTypes(page, pageSizeToUse);
         BrApiMasterListPayload<MapsetTypeDTO> payload = new BrApiMasterListPayload<>(
             result.getResult(),
-            result.getCurrentPageNum(),
-            result.getCurrentPageSize()
+            result.getCurrentPageSize(),
+            result.getCurrentPageNum()
+           
         );
         return ResponseEntity.ok(payload);
     }
