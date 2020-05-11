@@ -46,6 +46,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -1247,6 +1248,33 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isNoContent())
         ;
         verify(mapsetService, times(1)).deleteMapset(122);
+    }
+
+    @Test
+    public void createMapsetTypeTest() throws Exception {
+        String requestJson = "{\"mapsetTypeName\": \"test-name\", \"mapsetTypeDescription\": \"test-desc\"}";
+        when(
+            mapsetService.createMapsetType("test-name", "test-desc", "user")
+        ).thenReturn(
+            new MapsetTypeDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/mapsets/types")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(mapsetService, times(1)).createMapsetType("test-name", "test-desc", "user");
     }
     
 }

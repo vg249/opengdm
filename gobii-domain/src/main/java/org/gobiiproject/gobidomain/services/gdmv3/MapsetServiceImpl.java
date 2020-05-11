@@ -5,9 +5,12 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -53,17 +56,17 @@ public class MapsetServiceImpl implements MapsetService {
         result.setCurrentPageNum(page);
         result.setCurrentPageSize(mapsets.size());
         result.setResult(mapsetDTOs);
-        
+
         return result;
     }
 
     @Transactional
     @Override
     public MapsetDTO createMapset(MapsetDTO mapset, String createdBy) throws Exception {
-        //check if mapset has mapsetTypeId and if it's a valid mapsetTypeId
+        // check if mapset has mapsetTypeId and if it's a valid mapsetTypeId
         Cv type = this.getType(mapset.getMapsetTypeId());
 
-        //check the referenceId
+        // check the referenceId
         Reference reference = null;
         if (mapset.getReferenceId() != null) {
             reference = this.getReference(mapset.getReferenceId());
@@ -71,7 +74,8 @@ public class MapsetServiceImpl implements MapsetService {
 
         Mapset createdMapset = new Mapset();
         createdMapset.setMapsetName(mapset.getMapsetName());
-        if (mapset.getMapsetDescription() != null) createdMapset.setMapSetDescription(mapset.getMapsetDescription());
+        if (mapset.getMapsetDescription() != null)
+            createdMapset.setMapSetDescription(mapset.getMapsetDescription());
         createdMapset.setType(type);
         createdMapset.setReference(reference);
         // audit items
@@ -80,15 +84,14 @@ public class MapsetServiceImpl implements MapsetService {
             createdMapset.setCreatedBy(creator.getContactId());
         createdMapset.setCreatedDate(new java.util.Date());
 
-        //other required colums
-        createdMapset.setMapSetCode(
-            String.format("%s_%s", type.getTerm(), createdMapset.getMapsetName()).replace(' ',  '_')
-        );
+        // other required colums
+        createdMapset
+                .setMapSetCode(String.format("%s_%s", type.getTerm(), createdMapset.getMapsetName()).replace(' ', '_'));
 
-        //status
+        // status
         Cv status = cvDao.getNewStatus();
-        createdMapset.setStatus(status.getCvId()); //TODO: replace the status with cv type
-    
+        createdMapset.setStatus(status.getCvId()); // TODO: replace the status with cv type
+
         createdMapset = mapsetDao.createMapset(createdMapset);
         MapsetDTO createdMapsetDTO = new MapsetDTO();
         ModelMapper.mapEntityToDto(createdMapset, createdMapsetDTO);
@@ -100,7 +103,8 @@ public class MapsetServiceImpl implements MapsetService {
     public MapsetDTO getMapset(Integer mapsetId) {
         Mapset mapset = mapsetDao.getMapset(mapsetId);
         if (mapset == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Not found");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Not found");
         }
         MapsetDTO mapsetDTO = new MapsetDTO();
         ModelMapper.mapEntityToDto(mapset, mapsetDTO);
@@ -112,16 +116,17 @@ public class MapsetServiceImpl implements MapsetService {
     public MapsetDTO updateMapset(Integer mapsetId, MapsetDTO patchData, String editedBy) throws Exception {
         Mapset mapset = mapsetDao.getMapset(mapsetId);
         if (mapset == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Not found");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Not found");
         }
-        
+
         if (patchData.getMapsetName() != null) {
             mapset.setMapsetName(patchData.getMapsetName());
-            //TODO: also update code?
+            // TODO: also update code?
         }
 
         if (patchData.getMapsetDescription() != null) {
-            mapset.setMapSetDescription(patchData.getMapsetDescription()); //TODO: refactor MapSetDescription
+            mapset.setMapSetDescription(patchData.getMapsetDescription()); // TODO: refactor MapSetDescription
         }
 
         if (patchData.getMapsetTypeId() != null) {
@@ -130,21 +135,21 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         if (patchData.getReferenceId() != null) {
-            Reference reference  = this.getReference(patchData.getReferenceId());
+            Reference reference = this.getReference(patchData.getReferenceId());
             mapset.setReference(reference);
         }
 
-        //audit items
+        // audit items
         // audit items
         Contact creator = contactDao.getContactByUsername(editedBy);
         if (creator != null)
             mapset.setModifiedBy(creator.getContactId());
         mapset.setModifiedDate(new java.util.Date());
-        
-        //updated status
-        //status
+
+        // updated status
+        // status
         Cv status = cvDao.getModifiedStatus();
-        mapset.setStatus(status.getCvId()); //TODO: replace the status with cv type
+        mapset.setStatus(status.getCvId()); // TODO: replace the status with cv type
 
         mapset = mapsetDao.updateMapset(mapset);
         MapsetDTO updatedMapsetDTO = new MapsetDTO();
@@ -153,23 +158,24 @@ public class MapsetServiceImpl implements MapsetService {
 
     }
 
-
     private Reference getReference(Integer referenceId) throws Exception {
         Reference reference = referenceDao.getReference(referenceId);
         if (reference == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Unknown reference");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Unknown reference");
         }
         return reference;
-        
+
     }
 
     private Cv getType(Integer cvId) throws Exception {
         Cv type = cvDao.getCvByCvId(cvId);
         if (type == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Mapset type not found");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Mapset type not found");
         }
 
-        //check type is correct type
+        // check type is correct type
         if (!type.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName())) {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Invalid type");
         }
@@ -181,11 +187,44 @@ public class MapsetServiceImpl implements MapsetService {
     public void deleteMapset(Integer mapsetId) throws Exception {
         Mapset mapset = mapsetDao.getMapset(mapsetId);
         if (mapset == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Not found");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Not found");
         }
 
         mapsetDao.deleteMapset(mapset);
     }
+
+    @Transactional
+    @Override
+    public MapsetTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user) {
+        
+        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+            CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(),
+            2 //TODO:  this is custom type
+        );
+        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
+
+        Cv cv = new Cv();
+        cv.setCvGroup(cvGroup);
+		cv.setTerm(mapsetTypeName);
+		
+		if (mapsetTypeDescription != null)
+        	cv.setDefinition(mapsetTypeDescription);
+
+        //get the new row status
+        // Get the Cv for status, new row
+        Cv status = cvDao.getNewStatus();
+        cv.setStatus(status.getCvId());
+
+        //set rank
+        cv.setRank(0);
+        cv = cvDao.createCv(cv);
+        
+        MapsetTypeDTO mapsetDTO = new MapsetTypeDTO();
+        ModelMapper.mapEntityToDto(cv, mapsetDTO);
+        return mapsetDTO;
+    }
+    
     
     
 }

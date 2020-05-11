@@ -39,6 +39,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
@@ -847,6 +848,29 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    //----Mapset Type
+    @PostMapping("/mapsets/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createDatasetType(
+        @RequestBody @Validated(MapsetTypeDTO.Create.class) final MapsetTypeDTO mapsetTypeRequest,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        MapsetTypeDTO result = mapsetService.createMapsetType(
+            mapsetTypeRequest.getMapsetTypeName(),
+            mapsetTypeRequest.getMapsetTypeDescription(),
+            user
+        );
+
+        BrApiMasterPayload<MapsetTypeDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    
     public ProjectService getProjectService() {
         return projectService;
     }
