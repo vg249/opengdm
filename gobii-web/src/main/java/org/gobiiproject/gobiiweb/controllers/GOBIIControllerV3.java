@@ -851,7 +851,7 @@ public class GOBIIControllerV3  {
     //----Mapset Type
     @PostMapping("/mapsets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createDatasetType(
+    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createMapsetType(
         @RequestBody @Validated(MapsetTypeDTO.Create.class) final MapsetTypeDTO mapsetTypeRequest,
         BindingResult bindingResult
     ) throws Exception {
