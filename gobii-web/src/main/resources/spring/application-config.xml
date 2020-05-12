@@ -332,6 +332,8 @@
           class="org.gobiiproject.gobidomain.services.gdmv3.AnalysisServiceImpl"/>
     <bean id="AnalysisDao"
           class="org.gobiiproject.gobiisampletrackingdao.AnalysisDaoImpl"/>
+    <bean id="ReferenceServiceV3"
+          class="org.gobiiproject.gobidomain.services.gdmv3.ReferenceServiceImpl"/>
     <bean id="ReferenceDao"
           class="org.gobiiproject.gobiisampletrackingdao.ReferenceDaoImpl"/>
 

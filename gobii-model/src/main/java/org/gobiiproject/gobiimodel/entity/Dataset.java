@@ -2,7 +2,6 @@ package org.gobiiproject.gobiimodel.entity;
 
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,14 +16,13 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * Model for Dataset Entity.
+ * Model for Dataset Entity.ß
  * Represents the database table dataset.
  *
  * props - is a jsonb column. It is converted to jackson.fasterxml JsonNode using a
@@ -33,6 +31,7 @@ import lombok.Data;
 @Entity
 @Table(name = "dataset")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NamedEntityGraph(name = "graph.dataset",
     attributeNodes = {
         @NamedAttributeNode(value = "experiment", subgraph = "graph.dataset.experiment"),

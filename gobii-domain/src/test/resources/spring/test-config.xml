@@ -72,6 +72,8 @@
     <!-- gdm v3 contactSErvice-->
      <bean id="contactServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ContactServiceImpl"/>
 
+      <!-- gdm v3 ReferenceSErvice-->
+     <bean id="referenceServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ReferenceServiceImpl"/>
     <bean id="rsContact"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
     <bean id="rsProject"
