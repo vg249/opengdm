@@ -1,10 +1,18 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -14,13 +22,13 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.IntegerType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Transactional
+@Slf4j
 public class MapsetDaoImpl implements MapsetDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(MapsetDaoImpl.class);
 
     String mapsByExperimentIdListQueryString = "SELECT DISTINCT {mapset.*}, {typecv.*}, " +
             "COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
@@ -99,7 +107,7 @@ public class MapsetDaoImpl implements MapsetDao {
         }
         catch (Exception e) {
 
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
@@ -119,7 +127,7 @@ public class MapsetDaoImpl implements MapsetDao {
 
           if (mapsetsById.size() > 1) {
 
-              LOGGER.error("More than one duplicate entries found.");
+              log.error("More than one duplicate entries found.");
 
               throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                       GobiiValidationStatusType.NONE,
@@ -139,7 +147,7 @@ public class MapsetDaoImpl implements MapsetDao {
       }
       catch (Exception e) {
 
-          LOGGER.error(e.getMessage(), e);
+          log.error(e.getMessage(), e);
 
           throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                   GobiiValidationStatusType.UNKNOWN,
@@ -147,5 +155,72 @@ public class MapsetDaoImpl implements MapsetDao {
 
       }
 
+  }
+
+  @Override
+  public List<Mapset> getMapsets(Integer pageSize, Integer offset, Integer mapsetTypeId) throws Exception {
+      List<Mapset> mapsets = new ArrayList<>();
+      List<Predicate> predicates = new ArrayList<>();
+
+      try {
+          CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+          CriteriaQuery<Mapset> criteriaQuery = criteriaBuilder.createQuery(Mapset.class);
+
+          Root<Mapset> root = criteriaQuery.from(Mapset.class);
+          
+          root.fetch("reference", JoinType.LEFT);
+          root.fetch("type", JoinType.LEFT);
+
+          if (mapsetTypeId != null) {
+              predicates.add(
+                  criteriaBuilder.equal(root.get("type").get("cvId"), mapsetTypeId)
+              );
+          }
+          criteriaQuery.select(root);
+          criteriaQuery.where(predicates.toArray(new Predicate[] {}));
+
+          mapsets = em.createQuery(criteriaQuery).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+
+        throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+      }
+      return mapsets;
+  }
+
+  @Override
+  public Mapset createMapset(Mapset createdMapset) {
+      em.persist(createdMapset);
+      em.flush();
+      em.refresh(createdMapset, getMapsetHints());
+      return createdMapset;
+
+  }
+
+  private Map<String, Object> getMapsetHints() {
+    EntityGraph<?> graph = this.em.getEntityGraph("graph.mapset");
+    Map<String, Object> hints = new HashMap<>();
+    hints.put("javax.persistence.fetchgraph", graph);
+    return hints;
+  }
+
+  @Override
+  public Mapset getMapset(Integer mapsetId) {
+      return em.find(Mapset.class, mapsetId, this.getMapsetHints());
+  }
+
+  @Override
+  public Mapset updateMapset(Mapset mapset) {
+      Mapset updatedMapset = em.merge(mapset);
+      em.flush();
+      return updatedMapset;
+  }
+
+  @Override
+  public void deleteMapset(Mapset mapset) throws Exception {
+      em.remove(mapset);
+      em.flush();
   }
 }

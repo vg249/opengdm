@@ -20,6 +20,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
+import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
@@ -37,6 +38,8 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
@@ -100,6 +103,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private ReferenceService referenceService;
+
+    @Autowired
+    private MapsetService mapsetService;
 
     /**
      * Authentication Endpoint
@@ -571,8 +577,8 @@ public class GOBIIControllerV3  {
         PagedResult<AnalysisTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
         BrApiMasterListPayload<AnalysisTypeDTO> payload = new BrApiMasterListPayload<>(
             result.getResult(),
-            result.getCurrentPageNum(),
-            result.getCurrentPageSize()
+            result.getCurrentPageSize(),
+            result.getCurrentPageNum()
         );
         return ResponseEntity.ok(payload);
     }
@@ -746,9 +752,153 @@ public class GOBIIControllerV3  {
         );
 
         return ResponseEntity.ok(payload);
+        
     }
 
+    //-------- Mapsets ------------
 
+    /**
+     * Get Mapsets list
+     * @return
+     */
+    @GetMapping("/mapsets")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MapsetDTO>> getMapsets(
+        @RequestParam(required=false, defaultValue="0") Integer page,
+        @RequestParam(required=false, defaultValue="1000") Integer pageSize,
+        @RequestParam(required=false) Integer mapsetTypeId
+    ) throws Exception {
+        Integer pageSizeToUse = this.getPageSize(pageSize);
+        PagedResult<MapsetDTO> pagedResult = mapsetService.getMapsets(page, pageSizeToUse, mapsetTypeId);
+
+        BrApiMasterListPayload<MapsetDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Create mapset entry
+     * @return
+     */
+    @PostMapping("/mapsets")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetDTO>> createMapset(
+        @RequestBody @Validated(MapsetDTO.Create.class) final MapsetDTO mapset,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        MapsetDTO mapsetDTO = mapsetService.createMapset(mapset, user);
+        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(mapsetDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Get mapset entry by id
+     * @return
+     */
+    @GetMapping("/mapsets/{mapsetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetDTO>> getMapset(
+        @PathVariable Integer mapsetId
+    ) throws Exception {
+        MapsetDTO result = mapsetService.getMapset(mapsetId);
+        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Update mapset
+     * @return
+     */
+    @PatchMapping("/mapsets/{mapsetId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetDTO>> updateMapset(
+        @PathVariable Integer mapsetId,
+        @RequestBody @Validated(MapsetDTO.Update.class) final MapsetDTO patchData,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String editedBy = this.getCurrentUser();
+
+        MapsetDTO result = mapsetService.updateMapset(mapsetId, patchData, editedBy);
+        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete mapset
+     */
+    @DeleteMapping("/mapsets/{mapsetId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteMapset(
+        @PathVariable Integer mapsetId
+    ) throws Exception {
+        mapsetService.deleteMapset(mapsetId);
+        return ResponseEntity.noContent().build();
+    }
+
+    //----Mapset Type
+    /**
+     * Create Mapset Type
+     * @param mapsetTypeRequest
+     * @param bindingResult
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/mapsets/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createMapsetType(
+        @RequestBody @Validated(MapsetTypeDTO.Create.class) final MapsetTypeDTO mapsetTypeRequest,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        MapsetTypeDTO result = mapsetService.createMapsetType(
+            mapsetTypeRequest.getMapsetTypeName(),
+            mapsetTypeRequest.getMapsetTypeDescription(),
+            user
+        );
+
+        BrApiMasterPayload<MapsetTypeDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(result);
+
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Get Mapset Types
+     * @return
+     */
+    @GetMapping("/mapsets/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MapsetTypeDTO>> getMapsetTypes(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = getPageSize(pageSize);
+        PagedResult<MapsetTypeDTO> result = mapsetService.getMapsetTypes(page, pageSizeToUse);
+        BrApiMasterListPayload<MapsetTypeDTO> payload = new BrApiMasterListPayload<>(
+            result.getResult(),
+            result.getCurrentPageSize(),
+            result.getCurrentPageNum()
+           
+        );
+        return ResponseEntity.ok(payload);
+    }
+
+    
     public ProjectService getProjectService() {
         return projectService;
     }

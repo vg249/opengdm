@@ -32,6 +32,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
+import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -44,6 +45,8 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -98,6 +101,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private ReferenceService referenceService;
+
+    @Mock
+    private MapsetService mapsetService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -1098,6 +1104,196 @@ public class GOBIIControllerV3Test {
 
         verify(referenceService, times(1)).getReferences(0, 1000);
 
+    }
+
+    @Test
+    public void testGetMapsets() throws Exception {
+        when(
+            mapsetService.getMapsets(0, 1000, null)
+        ).thenReturn(
+            new PagedResult<MapsetDTO>()
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(mapsetService, times(1)).getMapsets(0, 1000, null);
+    }
+
+    @Test
+    public void testCreateSimpleMapset() throws Exception {
+        String requestJson = "{\"mapsetName\": \"test-mapset\", \"mapsetDescription\": \"test-description\", \"mapsetTypeId\": \"10\", \"referenceId\": \"12\"}";
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        when(
+            mapsetService.createMapset(any(MapsetDTO.class), eq("test-user"))
+        ).thenReturn(
+            new MapsetDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/mapsets")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(mapsetService, times(1)).createMapset(any(MapsetDTO.class), eq("test-user"));
+    }
+
+    @Test
+    public void testCreateSimpleMapsetMissingMapsetTypeId() throws Exception {
+        String requestJson = "{\"mapsetName\": \"test-mapset\", \"mapsetDescription\": \"test-description\", \"referenceId\": \"12\"}";
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/mapsets")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        ;
+    }
+
+    @Test
+    public void testGetMapsetById() throws Exception {
+        when(
+            mapsetService.getMapset(122)
+        ).thenReturn(
+            new MapsetDTO()
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(mapsetService, times(1)).getMapset(122);
+    }
+
+    @Test
+    public void testGetMapsetByIdNotFound() throws Exception {
+        when(
+            mapsetService.getMapset(122)
+        ).thenThrow(
+            new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "Mapset not found")
+        );
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        ;
+        verify(mapsetService, times(1)).getMapset(122);
+    }
+
+    @Test
+    public void testPatchSimpleMapset() throws Exception {
+        String requestJson = "{\"mapsetName\": \"test-mapset\", \"mapsetDescription\": \"test-description\"}";
+
+        when(
+            projectService.getDefaultProjectEditor()   
+        ).thenReturn("test-user");
+
+        when(
+            mapsetService.updateMapset(eq(122), any(MapsetDTO.class), eq("test-user"))
+        ).thenReturn(
+            new MapsetDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/mapsets/122")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(mapsetService, times(1)).updateMapset(eq(122), any(MapsetDTO.class), eq("test-user"));
+    }
+
+
+    @Test
+    public void testDeleteMapset() throws Exception {
+        Integer mapsetId = 122;
+        doNothing().when(mapsetService).deleteMapset(mapsetId);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/mapsets/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(mapsetService, times(1)).deleteMapset(122);
+    }
+
+    @Test
+    public void createMapsetTypeTest() throws Exception {
+        String requestJson = "{\"mapsetTypeName\": \"test-name\", \"mapsetTypeDescription\": \"test-desc\"}";
+        when(
+            mapsetService.createMapsetType("test-name", "test-desc", "user")
+        ).thenReturn(
+            new MapsetTypeDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/mapsets/types")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(mapsetService, times(1)).createMapsetType("test-name", "test-desc", "user");
+    }
+
+    @Test
+    public void getMapsetTypes() throws Exception {
+        when(
+            mapsetService.getMapsetTypes(0, 1000)
+        ).thenReturn(
+            new PagedResult<MapsetTypeDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/mapsets/types")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(mapsetService, times(1)).getMapsetTypes(0, 1000);
     }
     
 }

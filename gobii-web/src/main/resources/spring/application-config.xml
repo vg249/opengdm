@@ -482,6 +482,9 @@
     <bean id="mapsetService" class="org.gobiiproject.gobidomain.services.brapi.MapsetServiceImpl"/>
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
 
+    <!-- ** Mapset GDMV v3 Bean -->
+    <bean id="mapsetServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.MapsetServiceImpl"/>
+
     <!-- ** Marker Positions BRAPI BEANS **-->
     <bean id="markerPositionService" class="org.gobiiproject.gobidomain.services.brapi.MarkerPositionsServiceImpl"/>
     <bean id="markerLinkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerLinkageGroupDaoImpl"/>
