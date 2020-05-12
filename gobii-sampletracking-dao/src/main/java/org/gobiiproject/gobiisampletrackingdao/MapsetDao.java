@@ -13,4 +13,15 @@ public interface MapsetDao {
     Mapset getMapsetWithCountsById(Integer mapsetId);
 
 
+    List<Mapset> getMapsets(
+        Integer pageSize, Integer offset, Integer mapsetTypeId
+    ) throws Exception;
+
+	Mapset createMapset(Mapset createdMapset);
+
+	Mapset getMapset(Integer mapsetId);
+
+	Mapset updateMapset(Mapset mapset);
+
+	void deleteMapset(Mapset mapset) throws Exception; 
 }

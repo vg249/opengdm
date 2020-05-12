@@ -13,13 +13,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.entity.VendorProtocol;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
-import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-import org.gobiiproject.gobiimodel.entity.Contact;
-import org.gobiiproject.gobiimodel.entity.VendorProtocol;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType", "status"
