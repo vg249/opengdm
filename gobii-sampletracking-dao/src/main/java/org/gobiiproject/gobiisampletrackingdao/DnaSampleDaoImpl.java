@@ -47,7 +47,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
     @SuppressWarnings({"unchecked"})
     public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset,
                                          Integer projectId, Integer dnaSampleId,
@@ -118,7 +117,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
     public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset) {
 
         return getDnaSamples(pageSize, rowOffset,
@@ -133,7 +131,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return dnaSample entity for given dnaSampleId or null
      */
     @Override
-    @Transactional
     public DnaSample getDnaSampleByDnaSampleId(Integer dnaSampleId) throws GobiiException {
 
         List<DnaSample> dnaSamples = getDnaSamples(null, null,
@@ -165,7 +162,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
     public List<DnaSample> getDnaSamplesByProjectId(Integer projectId, Integer pageSize, Integer rowOffset) {
 
         return getDnaSamples(pageSize, rowOffset,
@@ -182,7 +178,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
     public List<DnaSample> getDnaSamplesByGermplasmId(Integer germplasmId, Integer pageSize, Integer rowOffset) {
 
         return getDnaSamples(pageSize, rowOffset,
@@ -199,7 +194,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
     public List<DnaSample> getDnaSamplesByGermplasmExternalCode(String germplasmExternalCode,
                                                                 Integer pageSize,
                                                                 Integer rowOffset) {

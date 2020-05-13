@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Transactional
 public class LinkageGroupDaoImpl implements LinkageGroupDao {
 
     Logger LOGGER = LoggerFactory.getLogger(LinkageGroupDaoImpl.class);

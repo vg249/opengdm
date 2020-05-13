@@ -17,7 +17,6 @@ import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Transactional
 public class MapsetDaoImpl implements MapsetDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MapsetDaoImpl.class);

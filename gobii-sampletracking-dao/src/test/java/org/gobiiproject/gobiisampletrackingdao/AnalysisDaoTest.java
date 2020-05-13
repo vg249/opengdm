@@ -1,12 +1,17 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertTrue;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,12 +23,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
+import junit.framework.TestCase;
 
-import static junit.framework.TestCase.assertTrue;
+import javax.transaction.Transactional;
 
+/**
+ *  @Transactional mean if you annotate your test suite with it? Well it means
+ *  that every test method in your suite is surrounded by an overarching
+ *  Spring transaction. This transaction will be rolled back at the end of the
+ *  test method regardless of it's outcome.
+ *  https://www.marcobehler.com/2014/06/25/should-my-tests-be-transactional
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@Transactional
 public class AnalysisDaoTest {
 
     @Autowired
@@ -38,15 +51,10 @@ public class AnalysisDaoTest {
     static Set<Integer> createdAnalysisIds = new HashSet<>();
 
 
-    @BeforeClass
-    public static void createTestData() {
+    @Before
+    public void createTestData() {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext(
-                "classpath:/spring/test-config.xml");
         Random random = new Random();
-
-        CvDao cvDao = context.getBean(CvDao.class);
-        AnalysisDao analysisDao = context.getBean(AnalysisDao.class);
 
         List<Cv> analysisTypes = cvDao.getCvListByCvGroup(
                 CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
@@ -71,7 +79,12 @@ public class AnalysisDaoTest {
            analysis.setType(analysisTypes.get(analysisTypeIndex));
            analysis.setStatus(newStatus);
 
-           analysisDao.createAnalysis(analysis);
+           try {
+               analysisDao.createAnalysis(analysis);
+           }
+           catch (Exception e) {
+               TestCase.fail("Unknown Exception: "+ e.getMessage());
+           }
 
            createdAnalysisIds.add(analysis.getAnalysisId());
        }
@@ -94,23 +107,6 @@ public class AnalysisDaoTest {
     }
 
 
-    @AfterClass
-    public static void clearTestData() {
-
-        ApplicationContext context = new ClassPathXmlApplicationContext(
-                "classpath:/spring/test-config.xml");
-
-        AnalysisDao analysisDao = context.getBean(AnalysisDao.class);
-
-        for(Integer analysisId : createdAnalysisIds) {
-            try {
-                analysisDao.deleteAnalysis(analysisId);
-            }
-            catch (Exception e) {
-                TestCase.fail("Unknown Exception: "+ e.getMessage());
-            }
-        }
-    }
 
 
 }

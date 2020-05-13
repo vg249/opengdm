@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+
+@Transactional
 public class VariantServiceImpl implements VariantService {
 
     Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);

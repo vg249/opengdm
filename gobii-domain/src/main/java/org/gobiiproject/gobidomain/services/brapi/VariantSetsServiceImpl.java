@@ -28,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 
+@Transactional
 public class VariantSetsServiceImpl implements VariantSetsService {
 
     Logger LOGGER = LoggerFactory.getLogger(VariantSetsServiceImpl.class);

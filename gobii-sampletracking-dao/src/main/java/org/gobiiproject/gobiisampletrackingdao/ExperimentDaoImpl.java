@@ -17,7 +17,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Transactional
 public class ExperimentDaoImpl implements ExperimentDao {
 
     Logger LOGGER = LoggerFactory.getLogger(ExperimentDaoImpl.class);

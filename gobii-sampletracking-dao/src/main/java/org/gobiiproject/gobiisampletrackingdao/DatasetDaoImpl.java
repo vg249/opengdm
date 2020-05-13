@@ -35,6 +35,24 @@ public class DatasetDaoImpl implements DatasetDao {
     @PersistenceContext
     protected EntityManager em;
 
+    @Override
+    public Dataset createDataset(Dataset datasetToCreate) {
+
+        try {
+            em.persist(datasetToCreate);
+            em.flush();
+            return datasetToCreate;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: "
+                    + e.getCause().getMessage());
+        }
+    }
+
     /**
      * @param pageSize - size of the page
      * @param rowOffset - Row offset after which the pages need to be fetched
@@ -42,7 +60,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * @return List of DatsetEntity
      */
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
     public List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
                                      Integer datasetId, String datasetName,
@@ -112,7 +129,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * @return
      */
     @Override
-    @Transactional
     public Dataset getDatasetById(Integer datasetId) throws GobiiException {
 
         Objects.requireNonNull(datasetId, "datasetId : Required non null");
@@ -170,7 +186,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * Object[3] - dnaruns count for each database entity
      */
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
     public List<Object[]> getDatasetsWithAnalysesAndCounts(
           Integer pageSize, Integer rowOffset,

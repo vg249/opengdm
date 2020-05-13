@@ -24,12 +24,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileSystemUtils;
 
+import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
+@Transactional
 public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);
