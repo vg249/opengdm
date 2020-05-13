@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +40,20 @@ public class OrganizationServiceImpl implements OrganizationService {
         pagedResult.setResult(orgDTOs);
 
         return pagedResult;   
+    }
+
+    @Transactional
+    @Override
+    public OrganizationDTO getOrganization(Integer organizationId) throws Exception {
+        Organization organization = organizationDao.getOrganization(organizationId);
+        if (organization == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Not found");
+        }
+
+        OrganizationDTO organizationDTO = new OrganizationDTO();
+        ModelMapper.mapEntityToDto(organization, organizationDTO);
+        return organizationDTO;
     }
     
 }

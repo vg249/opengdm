@@ -6,5 +6,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 public interface OrganizationService {
 
 	PagedResult<OrganizationDTO> getOrganizations(Integer page, Integer pageSizetoUse) throws Exception;
+
+	OrganizationDTO getOrganization(Integer organizationId) throws Exception;
     
 }

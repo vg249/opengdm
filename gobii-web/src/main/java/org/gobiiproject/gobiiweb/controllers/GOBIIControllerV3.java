@@ -923,7 +923,21 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
-    
+    /**
+     * Get Organization by Id
+     */
+    @GetMapping("/organizations/{organizationId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> getOrganizationById(
+        @PathVariable Integer organizationId
+    ) throws Exception {
+        OrganizationDTO organizationDTO = organizationService.getOrganization(organizationId);
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload();
+        payload.setMetadata(null);
+        payload.setResult(organizationDTO);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

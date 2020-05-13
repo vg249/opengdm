@@ -39,5 +39,10 @@ public class OrganizationDaoImpl implements OrganizationDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
+
+    @Override
+    public Organization getOrganization(Integer organizationId) throws Exception {
+        return em.find(Organization.class, organizationId);
+    }
     
 }

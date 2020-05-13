@@ -1317,6 +1317,28 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isOk())
         ;
+        verify(organizationService, times(1)).getOrganizations(0, 1000);
+    }
+
+    @Test
+    public void getOrganizationById() throws Exception {
+        Integer organizationId = 122;
+        when(
+            organizationService.getOrganization(organizationId)
+        ).thenReturn(
+            new OrganizationDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/organizations/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(organizationService, times(1)).getOrganization(122);
     }
     
 }
