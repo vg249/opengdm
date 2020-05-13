@@ -1,0 +1,43 @@
+package org.gobiiproject.gobiisampletrackingdao;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import org.gobiiproject.gobiimodel.entity.Organization;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class OrganizationDaoImpl implements OrganizationDao {
+
+    @PersistenceContext
+    EntityManager em;
+    
+    @Override
+    public List<Organization> getOrganizations(Integer offset, Integer pageSize) throws Exception {
+        List<Organization> orgList = null;
+        try {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Organization> criteriaQuery = criteriaBuilder.createQuery(Organization.class);
+            
+            Root<Organization> organizationRoot = criteriaQuery.from(Organization.class);
+            criteriaQuery.select(organizationRoot);
+            criteriaQuery.orderBy(criteriaBuilder.asc(organizationRoot.get("organizationId")));
+
+            orgList = em.createQuery(criteriaQuery).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+            return orgList;
+        } catch (Exception e) {
+            log.error("Error getting org list: %s", e.getMessage());
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+    }
+    
+}

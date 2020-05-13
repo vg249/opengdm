@@ -33,6 +33,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -47,6 +48,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -104,6 +106,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private MapsetService mapsetService;
+
+    @Mock
+    private OrganizationService organizationService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -1294,6 +1299,24 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isOk())
         ;
         verify(mapsetService, times(1)).getMapsetTypes(0, 1000);
+    }
+
+    @Test
+    public void getOrganizationsList() throws Exception {
+        when(
+            organizationService.getOrganizations(0, 1000)
+        ).thenReturn(
+            new PagedResult<OrganizationDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/organizations")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
     }
     
 }
