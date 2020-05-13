@@ -932,10 +932,30 @@ public class GOBIIControllerV3  {
         @PathVariable Integer organizationId
     ) throws Exception {
         OrganizationDTO organizationDTO = organizationService.getOrganization(organizationId);
-        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload();
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
         payload.setMetadata(null);
         payload.setResult(organizationDTO);
         return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Create Organization
+     * @return
+     */
+    @PostMapping("/organizations")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> createOrganization(
+        @RequestBody @Validated(OrganizationDTO.Create.class) final OrganizationDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user  = this.getCurrentUser();
+
+        OrganizationDTO createdOrganization = organizationService.createOrganization(request, user);
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(createdOrganization);
+        return ResponseEntity.created(null).body(payload);
     }
 
     public ProjectService getProjectService() {

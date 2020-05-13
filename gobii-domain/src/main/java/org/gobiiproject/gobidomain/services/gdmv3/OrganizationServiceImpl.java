@@ -8,17 +8,31 @@ import javax.transaction.Transactional;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class OrganizationServiceImpl implements OrganizationService {
 
     @Autowired
     OrganizationDao organizationDao;
+    
+
+    @Autowired
+    CvDao cvDao;
+
+    @Autowired
+    ContactDao contactDao;
     
 
     @Transactional
@@ -54,6 +68,30 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationDTO organizationDTO = new OrganizationDTO();
         ModelMapper.mapEntityToDto(organization, organizationDTO);
         return organizationDTO;
+    }
+
+    @Transactional
+    @Override
+    public OrganizationDTO createOrganization(OrganizationDTO request, String createdBy) throws Exception {
+        Organization organization = new Organization();
+        organization.setName(request.getOrganizationName());
+        organization.setAddress(request.getOrganizationAddress());
+        organization.setWebsite(request.getOrganizationWebsite());
+
+         // Get the Cv for status, new row
+        Cv cv = cvDao.getNewStatus();
+        organization.setStatus(cv.getCvId()); //TODO:  use status cv?
+
+        //audit
+        Contact creator = contactDao.getContactByUsername(createdBy);
+        if (creator != null)
+            organization.setCreatedBy(creator.getContactId());
+        organization.setCreatedDate(new java.util.Date());
+        organization = organizationDao.createOrganization(organization);
+
+        OrganizationDTO createdOrganization = new OrganizationDTO();
+        ModelMapper.mapEntityToDto(organization, createdOrganization);
+        return createdOrganization;
     }
     
 }

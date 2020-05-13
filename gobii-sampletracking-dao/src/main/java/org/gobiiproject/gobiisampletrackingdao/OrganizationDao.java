@@ -9,5 +9,7 @@ public interface OrganizationDao {
     public List<Organization> getOrganizations(Integer offset, Integer pageSize) throws Exception;
 
 	public Organization getOrganization(Integer organizationId) throws Exception;
+
+	public Organization createOrganization(Organization organization) throws Exception;
     
 }

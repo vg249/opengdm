@@ -44,5 +44,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
     public Organization getOrganization(Integer organizationId) throws Exception {
         return em.find(Organization.class, organizationId);
     }
+
+    @Override
+    public Organization createOrganization(Organization organization) throws Exception {
+        em.persist(organization);
+        em.flush();
+        return organization;
+    }
     
 }

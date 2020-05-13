@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import javax.validation.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -18,6 +20,9 @@ import lombok.EqualsAndHashCode;
 @JsonIgnoreProperties({"id", "allowedProcessTypes", "entityNameType", "status"})
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class OrganizationDTO extends DTOBaseAuditable  {
+
+    public static interface Create{}
+
     @Override
     public Integer getId() {
         return organizationId;
@@ -36,6 +41,7 @@ public class OrganizationDTO extends DTOBaseAuditable  {
     private Integer organizationId;
 
     @GobiiEntityMap(paramName = "name", entity = Organization.class)
+    @NotEmpty(groups = {OrganizationDTO.Create.class})
     private String organizationName;
 
     @GobiiEntityMap(paramName = "address", entity = Organization.class)
