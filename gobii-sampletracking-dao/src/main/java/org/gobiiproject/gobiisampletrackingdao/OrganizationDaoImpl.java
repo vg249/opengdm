@@ -51,5 +51,13 @@ public class OrganizationDaoImpl implements OrganizationDao {
         em.flush();
         return organization;
     }
+
+    @Override
+    public Organization updateOrganization(Organization organization) throws Exception {
+        em.merge(organization);
+        em.flush();
+        em.refresh(organization);
+        return organization;
+    }
     
 }

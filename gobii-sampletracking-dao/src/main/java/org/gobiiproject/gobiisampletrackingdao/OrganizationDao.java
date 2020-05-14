@@ -11,5 +11,7 @@ public interface OrganizationDao {
 	public Organization getOrganization(Integer organizationId) throws Exception;
 
 	public Organization createOrganization(Organization organization) throws Exception;
+
+	public Organization updateOrganization(Organization organization) throws Exception;
     
 }

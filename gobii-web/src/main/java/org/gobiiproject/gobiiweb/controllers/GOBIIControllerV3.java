@@ -958,6 +958,25 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    /**
+     * Patch organization
+     */
+    @PatchMapping("/organizations/{organizationId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> updateOrganization(
+        @PathVariable Integer organizationId,
+        @RequestBody @Validated final OrganizationDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        OrganizationDTO updatedOrganization = organizationService.updateOrganization(organizationId, request, user);
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(updatedOrganization);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

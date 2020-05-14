@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
@@ -59,12 +60,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional
     @Override
     public OrganizationDTO getOrganization(Integer organizationId) throws Exception {
-        Organization organization = organizationDao.getOrganization(organizationId);
-        if (organization == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Not found");
-        }
-
+        Organization organization = this.loadOrganization(organizationId);
         OrganizationDTO organizationDTO = new OrganizationDTO();
         ModelMapper.mapEntityToDto(organization, organizationDTO);
         return organizationDTO;
@@ -92,6 +88,46 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationDTO createdOrganization = new OrganizationDTO();
         ModelMapper.mapEntityToDto(organization, createdOrganization);
         return createdOrganization;
+    }
+
+    @Transactional
+    @Override
+    public OrganizationDTO updateOrganization(Integer organizationId, OrganizationDTO request, String updatedBy) throws Exception {
+        Organization organization = this.loadOrganization(organizationId);
+        if (request.getOrganizationName() != null) {
+            //name cannot be empty
+            if (LineUtils.isNullOrEmpty(request.getOrganizationName())) throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Organization Name cannot be empty");
+            organization.setName(request.getOrganizationName());
+        }
+
+        if (request.getOrganizationAddress() != null) {
+            organization.setAddress(request.getOrganizationAddress());
+        }
+
+        if (request.getOrganizationWebsite() != null) {
+            organization.setWebsite(request.getOrganizationWebsite());
+        }
+        //audit items
+        //audit
+        Contact creator = contactDao.getContactByUsername(updatedBy);
+        if (creator != null)
+            organization.setModifiedBy(creator.getContactId());
+        organization.setModifiedDate(new java.util.Date());
+
+        organization = organizationDao.updateOrganization(organization);
+        OrganizationDTO organizationDTO = new OrganizationDTO();
+        ModelMapper.mapEntityToDto(organization, organizationDTO);
+        return organizationDTO;
+
+    }
+
+    private Organization loadOrganization(Integer organizationId) throws Exception {
+        Organization organization = organizationDao.getOrganization(organizationId);
+        if (organization == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Not found");
+        }
+        return organization;
     }
     
 }

@@ -1368,5 +1368,33 @@ public class GOBIIControllerV3Test {
 
         verify(organizationService, times(1)).createOrganization(any(OrganizationDTO.class), eq("test-user"));
     }
+
+    @Test
+    public void testUpdateOrganization() throws Exception {
+        String requestJson = "{\"organizationName\": \"test-org\", \"organizationAddress\": \"organization-address\", \"organizationWebsite\": \"https://website.com\"}";
+
+        when(
+            organizationService.updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user"))
+        ).thenReturn(
+            new OrganizationDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/organizations/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(organizationService, times(1)).updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user"));
+    }
     
 }

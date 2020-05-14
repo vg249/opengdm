@@ -10,5 +10,7 @@ public interface OrganizationService {
 	OrganizationDTO getOrganization(Integer organizationId) throws Exception;
 
 	OrganizationDTO createOrganization(OrganizationDTO request, String createdBy) throws Exception;
+
+	OrganizationDTO updateOrganization(Integer organizationId, OrganizationDTO request, String updatedBy) throws Exception;
     
 }
