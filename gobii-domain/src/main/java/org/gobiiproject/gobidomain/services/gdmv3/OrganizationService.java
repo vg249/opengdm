@@ -5,12 +5,14 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface OrganizationService {
 
-	PagedResult<OrganizationDTO> getOrganizations(Integer page, Integer pageSizetoUse) throws Exception;
+	public PagedResult<OrganizationDTO> getOrganizations(Integer page, Integer pageSizetoUse) throws Exception;
 
-	OrganizationDTO getOrganization(Integer organizationId) throws Exception;
+	public OrganizationDTO getOrganization(Integer organizationId) throws Exception;
 
-	OrganizationDTO createOrganization(OrganizationDTO request, String createdBy) throws Exception;
+	public OrganizationDTO createOrganization(OrganizationDTO request, String createdBy) throws Exception;
 
-	OrganizationDTO updateOrganization(Integer organizationId, OrganizationDTO request, String updatedBy) throws Exception;
+    public OrganizationDTO updateOrganization(Integer organizationId, OrganizationDTO request, String updatedBy) throws Exception;
+    
+    public void deleteOrganization(Integer organizationId) throws Exception;
     
 }

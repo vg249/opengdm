@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -58,6 +59,22 @@ public class OrganizationDaoImpl implements OrganizationDao {
         em.flush();
         em.refresh(organization);
         return organization;
+    }
+
+    @Override
+    public void deleteOrganization(Organization organization) throws Exception {
+        try {
+            em.remove(organization);
+            em.flush();
+        } catch (javax.persistence.PersistenceException pe) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                "Associated resources found. Cannot complete the action unless they are deleted.");
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
     
 }

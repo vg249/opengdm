@@ -1396,5 +1396,19 @@ public class GOBIIControllerV3Test {
 
         verify(organizationService, times(1)).updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user"));
     }
-    
+
+    @Test
+    public void testDeleteOrganization() throws Exception {
+        doNothing().when(organizationService).deleteOrganization(123);
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/organizations/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(organizationService, times(1)).deleteOrganization(123);
+    }
+  
 }

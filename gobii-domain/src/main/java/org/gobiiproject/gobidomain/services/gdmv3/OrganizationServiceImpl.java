@@ -121,6 +121,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     }
 
+    @Transactional
+    @Override
+    public void deleteOrganization(Integer organizationId) throws Exception {
+        Organization organization = this.loadOrganization(organizationId);
+        organizationDao.deleteOrganization(organization);
+    }
+
     private Organization loadOrganization(Integer organizationId) throws Exception {
         Organization organization = organizationDao.getOrganization(organizationId);
         if (organization == null) {

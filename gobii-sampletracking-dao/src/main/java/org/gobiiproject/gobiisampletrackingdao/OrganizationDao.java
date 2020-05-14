@@ -13,5 +13,7 @@ public interface OrganizationDao {
 	public Organization createOrganization(Organization organization) throws Exception;
 
 	public Organization updateOrganization(Organization organization) throws Exception;
+
+	public void deleteOrganization(Organization organization) throws Exception;
     
 }

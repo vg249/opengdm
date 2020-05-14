@@ -977,6 +977,20 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Delete organization
+     */
+    @DeleteMapping("/organizations/{organizationId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteOrganiztion(
+        @PathVariable Integer organizationId
+    ) throws Exception {
+        organizationService.deleteOrganization(organizationId);
+        return ResponseEntity.noContent().build();
+    }
+
+
     public ProjectService getProjectService() {
         return projectService;
     }
