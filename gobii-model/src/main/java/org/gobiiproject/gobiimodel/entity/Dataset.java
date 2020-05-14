@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.gobiiproject.gobiimodel.entity.JpaConverters.IntegerArrayConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 /**
  * Model for Dataset Entity.
@@ -44,8 +45,8 @@ public class Dataset extends BaseEntity {
     @JoinColumn(name = "callinganalysis_id", referencedColumnName = "analysis_id")
     private Analysis callingAnalysis = new Analysis();
 
-    @Column(name = "analyses")
-    @Convert(converter = IntegerArrayConverter.class)
+    @Column(name = "analyses", columnDefinition = "integer[]")
+    @Type(type = "int-array")
     private Integer[] analyses;
 
     @Column(name="data_table")
@@ -60,21 +61,21 @@ public class Dataset extends BaseEntity {
     @Column(name="quality_file")
     private String qualityFile;
 
-    @Column(name="scores")
-    @Convert(converter = JsonbConverter.class)
+    @Column(name="scores", columnDefinition = "jsonb")
+    @Type(type = "jsonb")
     private JsonNode scores;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    private Cv status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
-    private Cv type = new Cv();
+    private Cv type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
-    private Job job = new Job();
+    private Job job;
 
     public Integer getDatasetId() {
         return datasetId;

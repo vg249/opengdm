@@ -63,12 +63,12 @@ public class AnalysisDaoTest {
         assertTrue("System defined analysis type values are not found.",
                 analysisTypes.size() > 0);
 
-       Cv newStatus = cvDao.getCvs(
+        Cv newStatus = cvDao.getCvs(
                "new",
                CvGroup.CVGROUP_STATUS.getCvGroupName(),
                GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
-       for (int i = 0; i < testPageSize; i++) {
+        for (int i = 0; i < testPageSize; i++) {
 
            Integer analysisTypeIndex = random.nextInt(analysisTypes.size());
            String analysisName = RandomStringUtils.random(7, true, true);

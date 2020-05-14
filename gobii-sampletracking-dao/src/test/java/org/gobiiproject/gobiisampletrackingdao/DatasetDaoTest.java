@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Dataset;
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,10 +36,13 @@ public class DatasetDaoTest {
     private DatasetDao datasetDao;
 
     @Autowired
-    private AnalysisDao analysisDao;
+    private  CvDao cvDao;
 
     @Autowired
-    private  CvDao cvDao;
+    private  ExperimentDao experimentDao;
+
+    @Autowired
+    private AnalysisDao analysisDao;
 
     Random random = new Random();
 
@@ -52,31 +56,40 @@ public class DatasetDaoTest {
 
         Random random = new Random();
 
-        List<Cv> datasetTypes = cvDao.getCvListByCvGroup(
-            CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(),
+        List<Cv> analysisTypes = cvDao.getCvListByCvGroup(
+            CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
-        assertTrue("System defined dataset type values are not found.",
-            datasetTypes.size() > 0);
+        assertTrue("System defined analysis type values are not found.",
+            analysisTypes.size() > 0);
 
         Cv newStatus = cvDao.getCvs(
             "new",
             CvGroup.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
+        List<Experiment> experiments = experimentDao.getExperiments(
+            100, 0, null);
+
+        Integer analysisTypeIndex = random.nextInt(analysisTypes.size());
+        String analysisName = RandomStringUtils.random(7, true, true);
+
+        Analysis callingAnalysis = new Analysis();
+        callingAnalysis.setAnalysisName(analysisName);
+        callingAnalysis.setType(analysisTypes.get(analysisTypeIndex));
+        callingAnalysis.setStatus(newStatus);
+
+        analysisDao.createAnalysis(callingAnalysis);
+
         for (int i = 0; i < testPageSize; i++) {
 
-            Integer datasetTypeIndex = random.nextInt(datasetTypes.size());
             String datasetName = RandomStringUtils.random(7, true, true);
 
             Dataset dataset = new Dataset();
 
-            Analysis callingAnalysis = new Analysis();
-            callingAnalysis.setAnalysisId(random.nextInt(4));
-
             dataset.setDatasetName(datasetName);
-            dataset.setType(datasetTypes.get(datasetTypeIndex));
             dataset.setCallingAnalysis(callingAnalysis);
+            dataset.setExperiment(experiments.get(0));
 
             try {
                 datasetDao.createDataset(dataset);
