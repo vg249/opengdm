@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
@@ -397,27 +398,27 @@ public class DatasetServiceImpl implements DatasetService {
 	//---Dataset Types
 	@Transactional
 	@Override
-    public PagedResult<DatasetTypeDTO> getDatasetTypes(Integer page, Integer pageSize) {
+    public PagedResult<CvTypeDTO> getDatasetTypes(Integer page, Integer pageSize) {
         List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(), null, page, pageSize);
-        List<DatasetTypeDTO> datasetTypeDTOs = new ArrayList<>();
+        List<CvTypeDTO> cvTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
-            DatasetTypeDTO datasetTypeDTO = new DatasetTypeDTO();
-            ModelMapper.mapEntityToDto(cv, datasetTypeDTO);
-            datasetTypeDTOs.add(datasetTypeDTO);
+            CvTypeDTO cvTypeDTO = new CvTypeDTO();
+            ModelMapper.mapEntityToDto(cv, cvTypeDTO);
+            cvTypeDTOs.add(cvTypeDTO);
 		});
 		
-        PagedResult<DatasetTypeDTO> result = new PagedResult<>();
+        PagedResult<CvTypeDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
-        result.setCurrentPageSize(datasetTypeDTOs.size());
-        result.setResult(datasetTypeDTOs);
+        result.setCurrentPageSize(cvTypeDTOs.size());
+        result.setResult(cvTypeDTOs);
 
         return result;
     }
 
 	@Transactional
 	@Override
-	public DatasetTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
+	public CvTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
         org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
@@ -440,7 +441,7 @@ public class DatasetServiceImpl implements DatasetService {
         cv.setRank(0);
         cv = cvDao.createCv(cv);
         
-        DatasetTypeDTO datasetDTO = new DatasetTypeDTO();
+        CvTypeDTO datasetDTO = new CvTypeDTO();
         ModelMapper.mapEntityToDto(cv, datasetDTO);
         return datasetDTO;
 

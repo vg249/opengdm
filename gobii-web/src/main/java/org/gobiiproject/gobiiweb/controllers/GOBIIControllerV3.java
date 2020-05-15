@@ -35,6 +35,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
@@ -511,14 +512,14 @@ public class GOBIIControllerV3  {
      */
     @PostMapping("/analyses/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<AnalysisTypeDTO>> createAnalysisType(
-        @RequestBody @Valid final AnalysisTypeRequest analysisTypeRequest,
+    public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createAnalysisType(
+        @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO analysisTypeRequest,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
-        AnalysisTypeDTO result = analysisService.createAnalysisType(analysisTypeRequest, user);
-        BrApiMasterPayload<AnalysisTypeDTO> payload = this.getMasterPayload(result);
+        CvTypeDTO result = analysisService.createAnalysisType(analysisTypeRequest, user);
+        BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -529,13 +530,13 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/analyses/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<AnalysisTypeDTO>> getAnalysisTypes(
+    public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getAnalysisTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
-        PagedResult<AnalysisTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
-        BrApiMasterListPayload<AnalysisTypeDTO> payload = this.getMasterListPayload(result);
+        PagedResult<CvTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
+        BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(result);
         return ResponseEntity.ok(payload);
     }
 
@@ -638,15 +639,15 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/datasets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<DatasetTypeDTO>> getDatasetTypes(
+    public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getDatasetTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize
     ) throws Exception {
         Integer pageSizeToUse = this.getPageSize(pageSize);
 
-        PagedResult<DatasetTypeDTO> pagedResult = datasetService.getDatasetTypes(page, pageSizeToUse);
+        PagedResult<CvTypeDTO> pagedResult = datasetService.getDatasetTypes(page, pageSizeToUse);
         
-        BrApiMasterListPayload<DatasetTypeDTO> payload = this.getMasterListPayload(pagedResult);
+        BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
 
@@ -656,18 +657,18 @@ public class GOBIIControllerV3  {
      */
     @PostMapping("/datasets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<DatasetTypeDTO>> createDatasetType(
-        @RequestBody @Validated(DatasetTypeDTO.Create.class) final DatasetTypeDTO datasetTypeRequest,
+    public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createDatasetType(
+        @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO datasetTypeRequest,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
-        DatasetTypeDTO result = datasetService.createDatasetType(
-            datasetTypeRequest.getDatasetTypeName(),
-            datasetTypeRequest.getDatasetTypeDescription(),
+        CvTypeDTO result = datasetService.createDatasetType(
+            datasetTypeRequest.getTypeName(),
+            datasetTypeRequest.getTypeDescription(),
             user
         );
-        BrApiMasterPayload<DatasetTypeDTO> payload = this.getMasterPayload(result);
+        BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -783,19 +784,19 @@ public class GOBIIControllerV3  {
      */
     @PostMapping("/mapsets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<MapsetTypeDTO>> createMapsetType(
-        @RequestBody @Validated(MapsetTypeDTO.Create.class) final MapsetTypeDTO mapsetTypeRequest,
+    public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createMapsetType(
+        @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO mapsetTypeRequest,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
-        MapsetTypeDTO result = mapsetService.createMapsetType(
-            mapsetTypeRequest.getMapsetTypeName(),
-            mapsetTypeRequest.getMapsetTypeDescription(),
+        CvTypeDTO result = mapsetService.createMapsetType(
+            mapsetTypeRequest.getTypeName(),
+            mapsetTypeRequest.getTypeDescription(),
             user
         );
 
-        BrApiMasterPayload<MapsetTypeDTO> payload = this.getMasterPayload(result);
+        BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -806,13 +807,13 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/mapsets/types")
     @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<MapsetTypeDTO>> getMapsetTypes(
+    public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getMapsetTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
-        PagedResult<MapsetTypeDTO> result = mapsetService.getMapsetTypes(page, pageSizeToUse);
-        BrApiMasterListPayload<MapsetTypeDTO> payload = this.getMasterListPayload(result);
+        PagedResult<CvTypeDTO> result = mapsetService.getMapsetTypes(page, pageSizeToUse);
+        BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(result);
         return ResponseEntity.ok(payload);
     }
 
