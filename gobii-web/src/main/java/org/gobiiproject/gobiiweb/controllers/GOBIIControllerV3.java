@@ -174,11 +174,7 @@ public class GOBIIControllerV3  {
             pageSizeToUse,
             piContactId
         );
-        BrApiMasterListPayload<GobiiProjectDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<GobiiProjectDTO> payload = this.getMasterListPayload(pagedResult);
            
         
         return ResponseEntity.ok(payload);
@@ -197,14 +193,12 @@ public class GOBIIControllerV3  {
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
-        BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
 
         //Get the current user
         String userName = this.getCurrentUser();
 
         GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
-        result.setResult(createdDTO);
-        result.setMetadata(null);
+        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(createdDTO);
         return ResponseEntity.created(null).body(result);
     }
 
@@ -220,13 +214,11 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> getProject(
         @PathVariable Integer projectId
     ) throws Exception {
-        BrApiMasterPayload<GobiiProjectDTO> result = new BrApiMasterPayload<>();
         GobiiProjectDTO project = projectService.getProject(projectId);
         if (project == null) {
             throw new NullPointerException("Project does not exist");
         }
-        result.setResult(project);
-        result.setMetadata(null);
+        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(project);
         return ResponseEntity.ok(result);
 
     }
@@ -246,9 +238,7 @@ public class GOBIIControllerV3  {
         this.checkBindingErrors(bindingResult);
         String userName = this.getCurrentUser();
         GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> payload = new BrApiMasterPayload<>();
-        payload.setResult(dto);
-        payload.setMetadata(null);
+        BrApiMasterPayload<GobiiProjectDTO> payload = this.getMasterPayload(dto);
         return ResponseEntity.ok(payload);
     }
 
@@ -283,11 +273,7 @@ public class GOBIIControllerV3  {
             Math.max(0, page),
             pageSizeToUse
         );
-        BrApiMasterListPayload<CvPropertyDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<CvPropertyDTO> payload = this.getMasterListPayload(pagedResult);
            
         return ResponseEntity.ok(payload);
     }
@@ -310,11 +296,7 @@ public class GOBIIControllerV3  {
             pageSizeToUse,
             organizationId
         );
-        BrApiMasterListPayload<ContactDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<ContactDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
 
@@ -335,11 +317,7 @@ public class GOBIIControllerV3  {
             pageSizeToUse,
             projectId
         );
-        BrApiMasterListPayload<ExperimentDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<ExperimentDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
 
@@ -355,10 +333,8 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> getExperiment(
         @PathVariable Integer experimentId
     ) throws Exception {
-        BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
         ExperimentDTO experiment = experimentService.getExperiment(experimentId);
-        result.setResult(experiment);
-        result.setMetadata(null);
+        BrApiMasterPayload<ExperimentDTO> result = this.getMasterPayload(experiment);
         return ResponseEntity.ok(result);
     }
 
@@ -375,13 +351,11 @@ public class GOBIIControllerV3  {
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
-        BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
-
         //Get the current user
         String userName = this.getCurrentUser();
+
         ExperimentDTO createdDTO = experimentService.createExperiment(experiment, userName);
-        result.setResult(createdDTO);
-        result.setMetadata(null);
+        BrApiMasterPayload<ExperimentDTO> result = this.getMasterPayload(createdDTO);
         return ResponseEntity.created(null).body(result);
     }
 
@@ -401,11 +375,10 @@ public class GOBIIControllerV3  {
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
-        BrApiMasterPayload<ExperimentDTO> result = new BrApiMasterPayload<>();
         String user = this.getCurrentUser();
+
         ExperimentDTO experiment = experimentService.updateExperiment(experimentId, request, user);
-        result.setResult(experiment);
-        result.setMetadata(null);
+        BrApiMasterPayload<ExperimentDTO> result = this.getMasterPayload(experiment);
         return ResponseEntity.ok(result);
     }
 
@@ -443,12 +416,7 @@ public class GOBIIControllerV3  {
                         Math.max(0, page),
                         pageSizeToUse
         );
-        BrApiMasterListPayload<VendorProtocolDTO> payload =
-                new BrApiMasterListPayload<>(
-                        pagedResult.getResult(),
-                        pagedResult.getCurrentPageSize(),
-                        pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<VendorProtocolDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
 
@@ -466,11 +434,7 @@ public class GOBIIControllerV3  {
         Integer pageSizeToUse = getPageSize(pageSize);
         PagedResult<AnalysisDTO> pagedResult = analysisService.getAnalyses(page, pageSizeToUse);
 
-        BrApiMasterListPayload<AnalysisDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<AnalysisDTO> payload = this.getMasterListPayload(pagedResult);
 
         return ResponseEntity.ok(payload);
     }
@@ -490,9 +454,7 @@ public class GOBIIControllerV3  {
         String user = this.getCurrentUser();
         AnalysisDTO result = analysisService.createAnalysis(analysisRequest, user);
 
-        BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -512,9 +474,7 @@ public class GOBIIControllerV3  {
 
         AnalysisDTO result = analysisService.updateAnalysis(analysisId, analysisRequest, user);
 
-        BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.ok(payload);
     }
@@ -528,10 +488,7 @@ public class GOBIIControllerV3  {
         @PathVariable Integer analysisId
     ) throws Exception {
         AnalysisDTO analysisDTO = analysisService.getAnalysis(analysisId);
-        BrApiMasterPayload<AnalysisDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(analysisDTO);
-
+        BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(analysisDTO);
         return ResponseEntity.ok(payload);
     }
 
@@ -561,9 +518,7 @@ public class GOBIIControllerV3  {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
         AnalysisTypeDTO result = analysisService.createAnalysisType(analysisTypeRequest, user);
-        BrApiMasterPayload<AnalysisTypeDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<AnalysisTypeDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -580,11 +535,7 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
         PagedResult<AnalysisTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
-        BrApiMasterListPayload<AnalysisTypeDTO> payload = new BrApiMasterListPayload<>(
-            result.getResult(),
-            result.getCurrentPageSize(),
-            result.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<AnalysisTypeDTO> payload = this.getMasterListPayload(result);
         return ResponseEntity.ok(payload);
     }
 
@@ -603,9 +554,7 @@ public class GOBIIControllerV3  {
        this.checkBindingErrors(bindingResult);
        String user = this.getCurrentUser();
        DatasetDTO result = datasetService.createDataset(request, user);
-       BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
-       payload.setResult(result);
-       payload.setMetadata(null);
+       BrApiMasterPayload<DatasetDTO> payload = this.getMasterPayload(result);
        return ResponseEntity.created(null).body(payload);
            
     }
@@ -628,11 +577,7 @@ public class GOBIIControllerV3  {
             page, pageSizeToUse, experimentId, datasetTypeId
         );
 
-        BrApiMasterListPayload<DatasetDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<DatasetDTO> payload = this.getMasterListPayload(pagedResult);
 
         return ResponseEntity.ok(payload);
         } catch (Exception e) {
@@ -651,9 +596,7 @@ public class GOBIIControllerV3  {
         @PathVariable Integer datasetId
     ) throws Exception {
         DatasetDTO datasetDTO = datasetService.getDataset(datasetId);
-        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(datasetDTO);
+        BrApiMasterPayload<DatasetDTO> payload = this.getMasterPayload(datasetDTO);
         return ResponseEntity.ok(payload);
     }
 
@@ -670,9 +613,7 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         String user = this.getCurrentUser();
         DatasetDTO datasetDTO = datasetService.updateDataset(datasetId, request, user);
-        BrApiMasterPayload<DatasetDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(datasetDTO);
+        BrApiMasterPayload<DatasetDTO> payload = this.getMasterPayload(datasetDTO);
         return ResponseEntity.ok(payload);
     }
 
@@ -705,12 +646,7 @@ public class GOBIIControllerV3  {
 
         PagedResult<DatasetTypeDTO> pagedResult = datasetService.getDatasetTypes(page, pageSizeToUse);
         
-        BrApiMasterListPayload<DatasetTypeDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
-
+        BrApiMasterListPayload<DatasetTypeDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
 
@@ -731,9 +667,7 @@ public class GOBIIControllerV3  {
             datasetTypeRequest.getDatasetTypeDescription(),
             user
         );
-        BrApiMasterPayload<DatasetTypeDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<DatasetTypeDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -750,11 +684,7 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         Integer pageSizeToUse = this.getPageSize(pageSize);
         PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
-        BrApiMasterListPayload<ReferenceDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<ReferenceDTO> payload = this.getMasterListPayload(pagedResult);
 
         return ResponseEntity.ok(payload);
         
@@ -776,11 +706,7 @@ public class GOBIIControllerV3  {
         Integer pageSizeToUse = this.getPageSize(pageSize);
         PagedResult<MapsetDTO> pagedResult = mapsetService.getMapsets(page, pageSizeToUse, mapsetTypeId);
 
-        BrApiMasterListPayload<MapsetDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<MapsetDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
 
@@ -797,9 +723,7 @@ public class GOBIIControllerV3  {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
         MapsetDTO mapsetDTO = mapsetService.createMapset(mapset, user);
-        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(mapsetDTO);
+        BrApiMasterPayload<MapsetDTO> payload = this.getMasterPayload(mapsetDTO);
         return ResponseEntity.created(null).body(payload);
     }
 
@@ -813,9 +737,7 @@ public class GOBIIControllerV3  {
         @PathVariable Integer mapsetId
     ) throws Exception {
         MapsetDTO result = mapsetService.getMapset(mapsetId);
-        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<MapsetDTO> payload = this.getMasterPayload(result);
         return ResponseEntity.ok(payload);
     }
 
@@ -834,9 +756,7 @@ public class GOBIIControllerV3  {
         String editedBy = this.getCurrentUser();
 
         MapsetDTO result = mapsetService.updateMapset(mapsetId, patchData, editedBy);
-        BrApiMasterPayload<MapsetDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<MapsetDTO> payload = this.getMasterPayload(result);
         return ResponseEntity.ok(payload);
     }
 
@@ -875,9 +795,7 @@ public class GOBIIControllerV3  {
             user
         );
 
-        BrApiMasterPayload<MapsetTypeDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(result);
+        BrApiMasterPayload<MapsetTypeDTO> payload = this.getMasterPayload(result);
 
         return ResponseEntity.created(null).body(payload);
     }
@@ -894,12 +812,7 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
         PagedResult<MapsetTypeDTO> result = mapsetService.getMapsetTypes(page, pageSizeToUse);
-        BrApiMasterListPayload<MapsetTypeDTO> payload = new BrApiMasterListPayload<>(
-            result.getResult(),
-            result.getCurrentPageSize(),
-            result.getCurrentPageNum()
-           
-        );
+        BrApiMasterListPayload<MapsetTypeDTO> payload = this.getMasterListPayload(result);
         return ResponseEntity.ok(payload);
     }
 
@@ -915,11 +828,7 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         Integer pageSizetoUse = getPageSize(pageSize);
         PagedResult<OrganizationDTO> result = organizationService.getOrganizations(page, pageSizetoUse);
-        BrApiMasterListPayload<OrganizationDTO> payload = new BrApiMasterListPayload<>(
-            result.getResult(),
-            result.getCurrentPageSize(),
-            result.getCurrentPageNum()
-        );
+        BrApiMasterListPayload<OrganizationDTO> payload = this.getMasterListPayload(result);
         return ResponseEntity.ok(payload);
     }
 
@@ -932,9 +841,7 @@ public class GOBIIControllerV3  {
         @PathVariable Integer organizationId
     ) throws Exception {
         OrganizationDTO organizationDTO = organizationService.getOrganization(organizationId);
-        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(organizationDTO);
+        BrApiMasterPayload<OrganizationDTO> payload = this.getMasterPayload(organizationDTO);
         return ResponseEntity.ok(payload);
     }
 
@@ -952,9 +859,7 @@ public class GOBIIControllerV3  {
         String user  = this.getCurrentUser();
 
         OrganizationDTO createdOrganization = organizationService.createOrganization(request, user);
-        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(createdOrganization);
+        BrApiMasterPayload<OrganizationDTO> payload = this.getMasterPayload(createdOrganization);
         return ResponseEntity.created(null).body(payload);
     }
 
@@ -971,9 +876,7 @@ public class GOBIIControllerV3  {
         this.checkBindingErrors(bindingResult);
         String user = this.getCurrentUser();
         OrganizationDTO updatedOrganization = organizationService.updateOrganization(organizationId, request, user);
-        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
-        payload.setMetadata(null);
-        payload.setResult(updatedOrganization);
+        BrApiMasterPayload<OrganizationDTO> payload = this.getMasterPayload(updatedOrganization);
         return ResponseEntity.ok(payload);
     }
 
@@ -1022,5 +925,19 @@ public class GOBIIControllerV3  {
         } 
     }
 
-}
+    private <T> BrApiMasterPayload<T> getMasterPayload(T dtoObject) {
+        BrApiMasterPayload<T> masterPayload = new BrApiMasterPayload<>();
+        masterPayload.setMetadata(null);
+        masterPayload.setResult(dtoObject);
+        return masterPayload;
+    }
 
+    private <T> BrApiMasterListPayload<T> getMasterListPayload(PagedResult<T> objectList) {
+        return new BrApiMasterListPayload<T>(
+            objectList.getResult(),
+            objectList.getCurrentPageSize(),
+            objectList.getCurrentPageNum()
+        );
+    }
+
+}

@@ -1078,7 +1078,7 @@ public class GOBIIControllerV3Test {
         ).thenReturn("user");
 
 
-        String requestJson = "{\"datatsetTypeName\" : \"test-name\", \"datasetTypeDescription\": \"datasetTypeDescription\"}";
+        String requestJson = "{\"datasetTypeName\" : \"test-name\", \"datasetTypeDescription\": \"datasetTypeDescription\"}";
         mockMvc.perform(
             MockMvcRequestBuilders
             .post("/gobii-dev/gobii/v3/datasets/types")
