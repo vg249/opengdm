@@ -42,7 +42,8 @@ public class DnaRunDaoTest {
     @Before
     public void testCreateData() {
         daoTestSetUp = new DaoTestSetUp(em, cvDao);
-        daoTestSetUp.createTestDnaRuns();
+        daoTestSetUp.createTestDnaRuns(testPageSize);
+        em.flush();
     }
 
     @Test
