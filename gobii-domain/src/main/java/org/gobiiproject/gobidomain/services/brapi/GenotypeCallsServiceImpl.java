@@ -515,7 +515,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             dnaRuns =
                     dnaRunDao.getDnaRunsByDatasetId(
                             datasetId, pageSize,
-                            dnaRunOffset);
+                            dnaRunOffset, false);
 
 
             /**
@@ -759,12 +759,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
-        List<Marker> markers = new ArrayList<>();
+        List<Marker> markers;
 
-        List<DnaRun> dnaRuns = new ArrayList<>();
+        List<DnaRun> dnaRuns;
 
-        Set<String> markerDatasetIds = new HashSet<>();
-        Set<String> dnaRunDatasetIds = new HashSet<>();
+        Set<String> markerDatasetIds;
+        Set<String> dnaRunDatasetIds;
 
         Integer datasetIdCursor, pageOffset, dnaRunOffset, columnOffset;
         datasetIdCursor = pageOffset = dnaRunOffset = columnOffset = 0;
@@ -772,7 +772,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         Integer dnaRunBinCursor, markerBinCursor;
         dnaRunBinCursor = markerBinCursor = 0;
 
-        Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
+        Map<String, ArrayList<String>> markerHdf5IndexMap;
 
         Map<String, ArrayList<String>> dnarunHdf5IndexMap = new HashMap<>();
 
@@ -873,7 +873,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 }
 
                 for (DnaRun dnaRun : dnaRuns) {
-
                     datasetsFromJsonNode =
                             this.getDatasetIdsFromDatasetJsonIndex(
                                     dnaRun.getDatasetDnaRunIdx());

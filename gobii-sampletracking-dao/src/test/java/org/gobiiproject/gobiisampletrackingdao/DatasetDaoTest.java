@@ -1,12 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import junit.framework.TestCase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.entity.Analysis;
-import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,98 +11,140 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
-/**
- * This tests are created with knowledge of exisiting data
- * in api.gobii.org:gobii-dev database
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 @Transactional
 public class DatasetDaoTest {
 
+
+    @PersistenceContext
+    protected EntityManager em;
+
     @Autowired
     private DatasetDao datasetDao;
 
     @Autowired
-    private  CvDao cvDao;
-
-    @Autowired
-    private  ExperimentDao experimentDao;
-
-    @Autowired
-    private AnalysisDao analysisDao;
+    private CvDao cvDao;
 
     Random random = new Random();
 
-    static final Integer testPageSize = 10;
+    final Integer testPageSize = 10;
 
-    static Set<Integer> createdDatasetIds = new HashSet<>();
-
+    List<Integer> createdDatasetIds = new ArrayList<>();
+    List<Integer> createdExperimentIds = new ArrayList<>();
 
     @Before
     public void createTestData() {
 
-        Random random = new Random();
-
-        List<Cv> analysisTypes = cvDao.getCvListByCvGroup(
-            CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        assertTrue("System defined analysis type values are not found.",
-            analysisTypes.size() > 0);
+        if(createdDatasetIds.size() > 0) {
+            return;
+        }
 
         Cv newStatus = cvDao.getCvs(
             "new",
             CvGroup.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
-        List<Experiment> experiments = experimentDao.getExperiments(
-            100, 0, null);
+        //Add Contact
+        Contact piContact = new Contact();
+        piContact.setFirstName(RandomStringUtils.random(7, true, true));
+        piContact.setLastName(RandomStringUtils.random(7, true, true));
+        piContact.setCode(RandomStringUtils.random(7, true, true));
+        piContact.setEmail(RandomStringUtils.random(7, true, true));
+        em.persist(piContact);
 
+        //Add Project
+        Project project = new Project();
+        project.setContact(piContact);
+        project.setProjectName(RandomStringUtils.random(7, true, true));
+        project.setStatus(newStatus);
+        em.persist(project);
+
+        //Add Experiments
+        List<Experiment> experiments = new ArrayList<>();
+
+        for(int i = 0; i < (testPageSize/5); i++) {
+
+            Experiment experiment = new Experiment();
+            experiment.setExperimentName(
+                RandomStringUtils.random(7, true, true));
+            experiment.setExperimentCode(
+                RandomStringUtils.random(7, true, true));
+            experiment.setProject(project);
+
+            experiment.setStatus(newStatus);
+
+            VendorProtocol vendorProtocol = new VendorProtocol();
+
+            Organization vendor = new Organization();
+            vendor.setName(RandomStringUtils.random(7, true, true));
+            vendor.setStatus(newStatus);
+
+            Protocol protocol = new Protocol();
+            protocol.setName(RandomStringUtils.random(7, true, true));
+
+            em.persist(vendor);
+            em.persist(protocol);
+
+            vendorProtocol.setProtocol(protocol);
+            vendorProtocol.setVendor(vendor);
+            em.persist(vendorProtocol);
+
+            experiment.setVendorProtocol(vendorProtocol);
+            em.persist(experiment);
+
+            experiments.add(experiment);
+
+        }
+
+        //Add Calling Analysis
+        Analysis callingAnalysis = new Analysis();
+        List<Cv> analysisTypes = cvDao.getCvListByCvGroup(
+            CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+        assertTrue("System defined analysis type values are not found.",
+            analysisTypes.size() > -1);
         Integer analysisTypeIndex = random.nextInt(analysisTypes.size());
         String analysisName = RandomStringUtils.random(7, true, true);
-
-        Analysis callingAnalysis = new Analysis();
         callingAnalysis.setAnalysisName(analysisName);
         callingAnalysis.setType(analysisTypes.get(analysisTypeIndex));
         callingAnalysis.setStatus(newStatus);
-
-        analysisDao.createAnalysis(callingAnalysis);
+        em.persist(callingAnalysis);
 
         for (int i = 0; i < testPageSize; i++) {
 
             String datasetName = RandomStringUtils.random(7, true, true);
 
+
+
             Dataset dataset = new Dataset();
+
+            Experiment experiment = experiments.get(
+                random.nextInt(experiments.size()));
 
             dataset.setDatasetName(datasetName);
             dataset.setCallingAnalysis(callingAnalysis);
-            dataset.setExperiment(experiments.get(0));
+            dataset.setExperiment(experiment);
 
-            try {
-                datasetDao.createDataset(dataset);
-            }
-            catch (Exception e) {
-                TestCase.fail("Unknown Exception: "+ e.getMessage());
-            }
+            em.persist(dataset);
 
             createdDatasetIds.add(dataset.getDatasetId());
+            createdExperimentIds.add(experiment.getExperimentId());
         }
+        em.flush();
 
     }
 
     @Test
     public void testListDatasets() {
 
-        Integer testPageSize = 10;
         Integer testRowOffset = 0;
 
         List<Dataset> datasets = datasetDao.getDatasets(
@@ -123,30 +161,23 @@ public class DatasetDaoTest {
     @Test
     public void testListDatasetsWithPageSize() {
 
-        Integer testPageSize = 10;
         Integer testRowOffset = 0;
 
-        List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
-                null, null,
-                null, null);
+        List<Dataset> datasets = datasetDao.getDatasets(
+            testPageSize, testRowOffset,
+            null, null,
+            null, null);
 
-        assertTrue(datasets.size() == 10);
+        assertTrue("Dataset Page Size condition failed",
+            datasets.size() <= testPageSize && datasets.size() > 0);
 
     }
 
     @Test
     public void testGetDatasetById() {
 
-        Integer testPageSize = 10;
-        Integer testRowOffset = 0;
-
-        List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
-                null, null,
-                null, null);
-
-        assertTrue(datasets.size() == testPageSize);
-
-        Integer datasetId = datasets.get(random.nextInt(datasets.size())).getDatasetId();
+        Integer datasetId = createdDatasetIds
+            .get(random.nextInt(createdDatasetIds.size()));
 
         Dataset dataset = datasetDao.getDatasetById(datasetId);
 
@@ -158,21 +189,18 @@ public class DatasetDaoTest {
     @Test
     public void testGetDatasetByExperiemntId() {
 
-        Integer testPageSize = 100;
-        Integer testRowOffset = 0;
+        Integer experimentId =
+            createdExperimentIds
+                .get(random.nextInt(createdExperimentIds.size()));
 
-        List<Dataset> datasets = datasetDao.getDatasets(testPageSize, testRowOffset,
-                null, null,
-                null, null);
-
-
-        assertTrue(datasets.size() <= testPageSize);
-
-        Integer experimentId = datasets.get(random.nextInt(datasets.size())).getExperiment().getExperimentId();
-
-        List<Dataset> datasetsByExperimentId = datasetDao.getDatasets(testPageSize, testRowOffset,
+        List<Dataset> datasetsByExperimentId =
+            datasetDao.getDatasets(testPageSize, 0,
                 null, null,
                 experimentId, null);
+
+        assertTrue("No Dataset to test",
+            datasetsByExperimentId.size() <= testPageSize
+            && datasetsByExperimentId.size() > 0);
 
         for (Dataset dataset : datasetsByExperimentId) {
             assertTrue("Failing Experiment Id Filter",
@@ -184,15 +212,16 @@ public class DatasetDaoTest {
     @Test
     public void testGetDatasetsWithAnalysisAndCounts() {
 
-        Integer testPageSize = 100;
-        Integer testRowOffset = 0;
 
-        List<Object[]> resultTuple = datasetDao.getDatasetsWithAnalysesAndCounts(testPageSize, testRowOffset,
+        List<Object[]> resultTuple =
+            datasetDao.getDatasetsWithAnalysesAndCounts(
+                testPageSize, 0,
                 null, null,
                 null, null);
 
 
-        assertTrue(resultTuple.size() <= testPageSize);
+        assertTrue("Failed getDatasetsWithAnalysisAndCounts",
+            resultTuple.size() <= testPageSize && resultTuple.size() > 0);
 
     }
 }

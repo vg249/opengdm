@@ -42,9 +42,6 @@ public class Contact extends BaseEntity {
     @JoinColumn(name="organization_id", referencedColumnName="organization_id")
     private Organization organization;
 
-	//@Column(name="organization_id")	
-	//private Integer organizationId;	
-    
     @Column(name="username")
     private String username;
 

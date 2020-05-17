@@ -36,7 +36,8 @@ public class DatasetDaoImpl implements DatasetDao {
     protected EntityManager em;
 
     @Override
-    public Dataset createDataset(Dataset datasetToCreate) {
+    public Dataset createDataset(Dataset datasetToCreate)
+        throws GobiiDaoException {
 
         try {
             em.persist(datasetToCreate);
