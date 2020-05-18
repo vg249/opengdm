@@ -27,6 +27,8 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data access object Implementation for dataset Entity in the database
@@ -37,6 +39,8 @@ public class DatasetDaoImpl implements DatasetDao {
 
     @PersistenceContext
     protected EntityManager em;
+    Logger LOGGER = LoggerFactory.getLogger(Dataset.class);
+
 
     /**
      * @param pageSize - size of the page
@@ -179,7 +183,6 @@ public class DatasetDaoImpl implements DatasetDao {
      * Object[3] - dnaruns count for each database entity
      */
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
     public List<Object[]> getDatasetsWithAnalysesAndCounts(
           Integer pageSize, Integer rowOffset,

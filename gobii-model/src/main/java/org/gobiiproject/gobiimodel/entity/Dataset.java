@@ -72,7 +72,6 @@ public class Dataset extends BaseEntity {
     private Analysis callingAnalysis;
 
     @Column(name = "analyses")
-    //@Convert(converter = IntegerArrayConverter.class)
     @Type(type = "IntArrayType")
     private Integer[] analyses;
 
@@ -89,7 +88,6 @@ public class Dataset extends BaseEntity {
     private String qualityFile;
 
     @Column(name="scores")
-    //@Convert(converter = JsonbConverter.class)
     @Type(type = "JsonNodeType")
     private JsonNode scores;
 
@@ -104,5 +102,81 @@ public class Dataset extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", referencedColumnName = "job_id")
     private Job job;
+
+    public Integer getDatasetId() {
+        return datasetId;
+    }
+
+    public void setDatasetId(Integer datasetId) {
+        this.datasetId = datasetId;
+    }
+
+    public String getDatasetName() {
+        return datasetName;
+    }
+
+    public void setDatasetName(String datasetName) {
+        this.datasetName = datasetName;
+    }
+
+    public Experiment getExperiment() {
+        return experiment;
+    }
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
+    }
+
+    public Analysis getCallingAnalysis() {
+        return callingAnalysis;
+    }
+
+    public void setCallingAnalysis(Analysis callingAnalysis) {
+        this.callingAnalysis = callingAnalysis;
+    }
+
+    public Integer[] getAnalyses() {
+        return analyses;
+    }
+
+    public void setAnalyses(Integer[] analyses) {
+        this.analyses = analyses;
+    }
+
+    public String getDataTable() {
+        return dataTable;
+    }
+
+    public void setDataTable(String dataTable) {
+        this.dataTable = dataTable;
+    }
+
+    public String getDataFile() {
+        return dataFile;
+    }
+
+    public void setDataFile(String dataFile) {
+        this.dataFile = dataFile;
+    }
+
+    public String getQualityTable() {
+        return qualityTable;
+    }
+
+    public void setQualityTable(String qualityTable) {
+        this.qualityTable = qualityTable;
+    }
+
+    public JsonNode getScores() {
+        return scores;
+    }
+
+    public void setScores(JsonNode scores) {
+        this.scores = scores;
+    }
+
+    public Cv getStatus() {
+        return status;
+    }
 
 }

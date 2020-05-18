@@ -12,19 +12,18 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import junit.framework.TestCase;
 
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 /**
@@ -45,55 +44,30 @@ public class AnalysisDaoTest {
     @Autowired
     private AnalysisDao analysisDao;
 
+    @PersistenceContext
+    protected EntityManager em;
 
     static final Integer testPageSize = 10;
 
-    static Set<Integer> createdAnalysisIds = new HashSet<>();
-
+    DaoTestSetUp daoTestSetUp;
 
     @Before
     public void createTestData() {
 
-        Random random = new Random();
-
-        List<Cv> analysisTypes = cvDao.getCvListByCvGroup(
-                CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        assertTrue("System defined analysis type values are not found.",
-                analysisTypes.size() > 0);
-
-       Cv newStatus = cvDao.getCvs(
-               "new",
-               CvGroup.CVGROUP_STATUS.getCvGroupName(),
-               GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-
-       for (int i = 0; i < testPageSize; i++) {
-
-           Integer analysisTypeIndex = random.nextInt(analysisTypes.size());
-           String analysisName = RandomStringUtils.random(7, true, true);
-
-           Analysis analysis = new Analysis();
-
-           analysis.setAnalysisName(analysisName);
-           analysis.setType(analysisTypes.get(analysisTypeIndex));
-           analysis.setStatus(newStatus);
-
-           try {
-               analysisDao.createAnalysis(analysis);
-           }
-           catch (Exception e) {
-               TestCase.fail("Unknown Exception: "+ e.getMessage());
-           }
-
-           createdAnalysisIds.add(analysis.getAnalysisId());
-       }
-
+        daoTestSetUp = new DaoTestSetUp(em, cvDao);
+        daoTestSetUp.createTestAnalyses(testPageSize);
+        em.flush();
     }
 
 
     @Test
     public void getAnalysesByAnalysisIdsTest() {
+
+        Set<Integer> createdAnalysisIds = new HashSet<>();
+
+        for(Analysis analysis : daoTestSetUp.getCreatedAnalyses()) {
+            createdAnalysisIds.add(analysis.getAnalysisId());
+        }
 
         List<Analysis> analyses = analysisDao.getAnalysesByAnalysisIds(
                 createdAnalysisIds);

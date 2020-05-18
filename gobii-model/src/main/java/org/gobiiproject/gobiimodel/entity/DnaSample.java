@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -53,7 +54,7 @@ public class DnaSample extends BaseEntity {
     private Germplasm germplasm = new Germplasm();
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode properties;
 
     @ManyToOne(fetch = FetchType.LAZY)

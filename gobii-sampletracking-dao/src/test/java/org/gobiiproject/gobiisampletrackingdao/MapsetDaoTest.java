@@ -1,13 +1,18 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Mapset;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Random;
 
 import javax.transaction.Transactional;
 
@@ -15,10 +20,30 @@ import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@Transactional
 public class MapsetDaoTest {
+
+    @PersistenceContext
+    protected EntityManager em;
 
     @Autowired
     private MapsetDao mapsetDao;
+
+    @Autowired
+    private CvDao cvDao;
+
+    Random random = new Random();
+
+    final int testPageSize = 10;
+
+    private DaoTestSetUp daoTestSetUp;
+
+    @Before
+    public void createTestData() {
+        daoTestSetUp = new DaoTestSetUp(em, cvDao);
+        daoTestSetUp.createTestMapsets(testPageSize);
+        em.flush();
+    }
 
     @Test
     public void getMapsetsTest() {
@@ -28,7 +53,7 @@ public class MapsetDaoTest {
         List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(testPageSize, 0,
                 null, null);
 
-        assertTrue("getMapsets page size condition fails",
+        assertTrue("getMapset with pageSize failed",
                 mapsets.size() > 0 && mapsets.size() <= testPageSize);
 
     }
@@ -36,11 +61,17 @@ public class MapsetDaoTest {
     @Test
     public void getMapsetByIdTest() {
 
-        //Integer testPageSize = 100;
+        Integer testMapsetId =
+            daoTestSetUp
+                .getCreatedMapsets()
+                .get(random.nextInt(daoTestSetUp.getCreatedMapsets().size()))
+                .getMapsetId();
 
-        Mapset mapset = mapsetDao.getMapsetWithCountsById(2);
+        Mapset mapset = mapsetDao.getMapsetWithCountsById(testMapsetId);
 
-        assertTrue("Get Mapset By Id fails",mapset.getMapsetId() == 2);
+        assertTrue(
+            "Get Mapset By Id failed",
+            mapset.getMapsetId() == testMapsetId);
 
     }
 

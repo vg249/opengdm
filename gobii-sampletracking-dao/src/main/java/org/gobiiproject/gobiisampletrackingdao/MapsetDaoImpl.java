@@ -25,36 +25,38 @@ import org.hibernate.type.IntegerType;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Transactional
 @Slf4j
 public class MapsetDaoImpl implements MapsetDao {
 
 
-    String mapsByExperimentIdListQueryString = "SELECT DISTINCT {mapset.*}, {typecv.*}, " +
-            "COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
-            " COUNT(marker_id) AS marker_count " +
-            "FROM experiment " +
-            "INNER JOIN dataset USING(experiment_id) " +
-            "INNER JOIN marker ON(jsonb_exists(marker.dataset_marker_idx, CAST(dataset.dataset_id AS TEXT))) " +
-            "INNER JOIN marker_linkage_group USING(marker_id) " +
-            "INNER JOIN linkage_group USING(linkage_group_id) " +
-            "INNER JOIN mapset ON(mapset.mapset_id = linkage_group.map_id) " +
-            "LEFT JOIN cv typecv ON(mapset.type_id = typecv.cv_id) " +
-            "WHERE (:experimentId IS NULL OR experiment.experiment_id = :experimentId) " +
-            "AND (:mapsetId IS NULL OR mapset.mapset_Id = :mapsetId) " +
-            "GROUP BY mapset.mapset_id, typecv.cv_id " +
-            "LIMIT :pageSize OFFSET :rowOffset";
+    String mapsByExperimentIdListQueryString = "SELECT DISTINCT {mapset.*}, " +
+        "{typecv.*}, COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
+        " COUNT(marker_id) AS marker_count FROM experiment " +
+        "INNER JOIN dataset USING(experiment_id) " +
+        "INNER JOIN marker " +
+        "ON(jsonb_exists(marker.dataset_marker_idx, " +
+            "CAST(dataset.dataset_id AS TEXT))) " +
+        "INNER JOIN marker_linkage_group USING(marker_id) " +
+        "INNER JOIN linkage_group USING(linkage_group_id) " +
+        "INNER JOIN mapset ON(mapset.mapset_id = linkage_group.map_id) " +
+        "LEFT JOIN cv typecv ON(mapset.type_id = typecv.cv_id) " +
+        "WHERE (:experimentId IS NULL " +
+            "OR experiment.experiment_id = :experimentId) " +
+        "AND (:mapsetId IS NULL OR mapset.mapset_Id = :mapsetId) " +
+        "GROUP BY mapset.mapset_id, typecv.cv_id " +
+        "LIMIT :pageSize OFFSET :rowOffset";
 
     String mapsListQueryString = "SELECT DISTINCT {mapset.*}, {typecv.*}, " +
-            "COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
-            "COUNT(marker_id) AS marker_count " +
-            "FROM mapset " +
-            "LEFT OUTER JOIN cv typecv ON(mapset.type_id = typecv.cv_id) " +
-            "LEFT OUTER JOIN linkage_group ON(mapset.mapset_id = linkage_group.map_id) " +
-            "LEFT OUTER JOIN marker_linkage_group USING(linkage_group_id) " +
-            "WHERE (:mapsetId IS NULL OR mapset.mapset_Id = :mapsetId) " +
-            "GROUP BY mapset.mapset_id, typecv.cv_id " +
-            "LIMIT :pageSize OFFSET :rowOffset";
+        "COUNT(DISTINCT linkage_group_id) AS linkage_group_count, " +
+        "COUNT(marker_id) AS marker_count " +
+        "FROM mapset " +
+        "LEFT OUTER JOIN cv typecv ON(mapset.type_id = typecv.cv_id) " +
+        "LEFT OUTER JOIN linkage_group " +
+        "ON(mapset.mapset_id = linkage_group.map_id) " +
+        "LEFT OUTER JOIN marker_linkage_group USING(linkage_group_id) " +
+        "WHERE (:mapsetId IS NULL OR mapset.mapset_Id = :mapsetId) " +
+        "GROUP BY mapset.mapset_id, typecv.cv_id " +
+        "LIMIT :pageSize OFFSET :rowOffset";
 
     @PersistenceContext
     protected EntityManager em;
@@ -111,7 +113,8 @@ public class MapsetDaoImpl implements MapsetDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                        + e.getCause().getMessage());
 
         }
 

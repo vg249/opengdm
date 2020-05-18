@@ -17,7 +17,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
@@ -30,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-@Transactional
 public class DnaRunDaoImpl implements DnaRunDao {
 
     Logger LOGGER = LoggerFactory.getLogger(DnaRunDaoImpl.class);
@@ -60,14 +58,15 @@ public class DnaRunDaoImpl implements DnaRunDao {
                                    boolean fetchAssociations) {
 
 
-        Objects.requireNonNull(pageSize, "Page size should not be null");
-        Objects.requireNonNull(rowOffset, "Row Offset should not be null");
-
         List<DnaRun> dnaRuns;
 
         List<Predicate> predicates = new ArrayList<>();
 
         try {
+
+            Objects.requireNonNull(pageSize, "Page size should not be null");
+            Objects.requireNonNull(rowOffset, "Row Offset should not be null");
+
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
@@ -92,6 +91,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
             else {
                 if (dnaSampleId != null || dnaSampleName != null
                         || germplasmId != null || germplasmName != null) {
+
                     dnaSampleJoin = dnaRunRoot.join("dnaSample");
 
                     if (germplasmId != null || germplasmName != null) {

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional
 public class MarkerPositionsServiceImpl implements MarkerPositionsService {
 
     Logger LOGGER = LoggerFactory.getLogger(MarkerPositionsServiceImpl.class);

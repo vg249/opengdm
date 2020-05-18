@@ -35,7 +35,6 @@ public class MarkerDaoImpl implements MarkerDao {
     protected EntityManager em;
 
     @Override
-    @Transactional
     public List<Marker> getMarkers(Integer pageSize, Integer rowOffset, Integer markerId, Integer datasetId)
             throws GobiiException {
 
@@ -87,7 +86,6 @@ public class MarkerDaoImpl implements MarkerDao {
     }
 
     @Override
-    @Transactional
     public Marker getMarkerById(Integer markerId) {
 
         try {
@@ -129,7 +127,6 @@ public class MarkerDaoImpl implements MarkerDao {
     }
 
     @Override
-    @Transactional
     public List<Marker> getMarkersByMarkerIdCursor(Integer pageSize, Integer markerIdCursor, Integer markerId,
             Integer datasetId) {
 
@@ -183,7 +180,6 @@ public class MarkerDaoImpl implements MarkerDao {
     }
 
     @Override
-    @Transactional
     public List<Marker> getMarkersByDatasetId(Integer datasetId, Integer pageSize, Integer rowOffset) {
         return getMarkers(pageSize, rowOffset, null, datasetId);
     }
@@ -194,7 +190,6 @@ public class MarkerDaoImpl implements MarkerDao {
      * @param markerIds - List of Marker Ids
      * @return Lis of Marker Entities
      */
-    @Transactional
     @Override
     public List<Marker>
     getMarkers(Set<Integer> markerIds, Set<String> markerNames,
@@ -283,7 +278,6 @@ public class MarkerDaoImpl implements MarkerDao {
      * @param markerIds - List of Marker Ids
      * @return Lis of Marker Entities
      */
-    @Transactional
     @Override
     public List<Marker> getMarkersByMarkerIds(Set<Integer> markerIds) {
         return this.getMarkers(markerIds, null, null, null, null);
@@ -294,7 +288,6 @@ public class MarkerDaoImpl implements MarkerDao {
      * @param markerNames - Marker
      * @return
      */
-    @Transactional
     @Override
     public List<Marker> getMarkersByMarkerNames(Set<String> markerNames) {
         return this.getMarkers(null, markerNames, null, null, null);
