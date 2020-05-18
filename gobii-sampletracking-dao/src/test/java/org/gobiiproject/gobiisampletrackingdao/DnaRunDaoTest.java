@@ -82,13 +82,28 @@ public class DnaRunDaoTest {
     public void testGetDnaRunsByDatasetIdWithNoAssociations() {
 
         Integer rowOffset = 0;
-        Integer datasetId = 9;
+
+        Integer dnaRunWithDatasetIndex = 0;
+
+        String testDatasetId = daoTestSetUp
+            .getCreatedDnaRuns()
+            .get(random.nextInt(daoTestSetUp.getCreatedDnaRuns().size()))
+            .getDatasetDnaRunIdx().fieldNames().next();
+
+        for(DnaRun dnaRun : daoTestSetUp.getCreatedDnaRuns()) {
+            if(dnaRun.getDatasetDnaRunIdx().has(testDatasetId)) {
+                dnaRunWithDatasetIndex++;
+            }
+        }
+
+        Integer datasetId = Integer.parseInt(testDatasetId);
 
         List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(
                 datasetId, testPageSize,
                 rowOffset, false);
 
-        assertTrue("Empty dnaRun list: ", dnaRuns.size() > 0);
+        assertTrue("Empty dnaRun list: ",
+            dnaRuns.size() == dnaRunWithDatasetIndex);
 
         for(DnaRun dnaRun : dnaRuns) {
             assertTrue("Filter by datasetId failed",
@@ -100,9 +115,19 @@ public class DnaRunDaoTest {
     public void testGetDnaRunsFilterByGermplasmFields() {
 
         Integer rowOffset = 0;
+
         String germplasmName = daoTestSetUp.getCreatedGermplasms()
             .get(random.nextInt(daoTestSetUp.getCreatedGermplasms().size()))
             .getGermplasmName();
+
+        int numOfDnaRunsInGermaplasmName = 0;
+
+        for(DnaRun dnaRun : daoTestSetUp.getCreatedDnaRuns()) {
+            if(dnaRun.getDnaSample().getGermplasm().getGermplasmName()
+                == germplasmName) {
+                numOfDnaRunsInGermaplasmName++;
+            }
+        }
 
         List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(testPageSize, rowOffset,
                 null, null,
@@ -112,7 +137,8 @@ public class DnaRunDaoTest {
 
         //there is only one dnarun for this germplasm
         assertTrue("DnaRunDao test setup for germplasm filter not working",
-            dnaRuns.size() <= testPageSize && dnaRuns.size() > 0);
+            dnaRuns.size() <= testPageSize &&
+                dnaRuns.size() == numOfDnaRunsInGermaplasmName);
 
         for(DnaRun dnaRun : dnaRuns) {
             assertTrue("Filter By Germplasm Name Failed",
@@ -125,6 +151,15 @@ public class DnaRunDaoTest {
             .get(random.nextInt(daoTestSetUp.getCreatedGermplasms().size()))
             .getGermplasmId();
 
+        int numOfDnaRunsInGermplasmId = 0;
+
+        for(DnaRun dnaRun : daoTestSetUp.getCreatedDnaRuns()) {
+            if(dnaRun.getDnaSample().getGermplasm().getGermplasmId()
+                == germplasmId) {
+                numOfDnaRunsInGermplasmId++;
+            }
+        }
+
         List<DnaRun> dnaRunsByGermplasmId =
             dnaRunDao.getDnaRuns(testPageSize, rowOffset,
                 null, null,
@@ -134,7 +169,9 @@ public class DnaRunDaoTest {
 
         //there is only one dnarun for this germplasm
         assertTrue("DnaRunDao test setup for germplasm filter not working",
-            dnaRuns.size() <= testPageSize && dnaRuns.size() > 0);
+            dnaRuns.size() <= testPageSize &&
+                dnaRunsByGermplasmId.size() == numOfDnaRunsInGermplasmId);
+
 
         for(DnaRun dnaRun : dnaRunsByGermplasmId) {
             assertTrue("Filter By Germplasm Id Failed",
@@ -147,9 +184,18 @@ public class DnaRunDaoTest {
     public void testGetDnaRunsFilterByExperimentFields() {
 
         Integer rowOffset = 0;
+
         Integer experimentId = daoTestSetUp.getCreatedExperiments()
             .get(random.nextInt(daoTestSetUp.getCreatedExperiments().size()))
             .getExperimentId();
+
+        int numOfDnaRunsInExperiments = 0;
+
+        for(DnaRun dnaRun : daoTestSetUp.getCreatedDnaRuns()) {
+            if(dnaRun.getExperiment().getExperimentId() == experimentId) {
+                numOfDnaRunsInExperiments++;
+            }
+        }
 
         List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(testPageSize, rowOffset,
             null, null,
@@ -159,7 +205,8 @@ public class DnaRunDaoTest {
 
         //there is only one dnarun for this germplasm
         assertTrue("DnaRunDao test setup for germplasm filter not working",
-            dnaRuns.size() <= testPageSize && dnaRuns.size() > 0);
+            dnaRuns.size() <= testPageSize &&
+                dnaRuns.size() == numOfDnaRunsInExperiments);
 
         for(DnaRun dnaRun : dnaRuns) {
             assertTrue("Filter By Experiment Failed",
@@ -172,54 +219,34 @@ public class DnaRunDaoTest {
     @Test
     public void testGetDnaRunsByDatasetId() {
 
-
         Integer rowOffset = 0;
-
-        List<DnaRun> dnaruns = dnaRunDao.getDnaRuns(
-                testPageSize, rowOffset,
-                null, null,
-                null, null,
-                null, null,
-                null, null);
-
-        assertTrue("Empty dnaRun list: ",dnaruns.size() > 0);
 
         Integer dnaRunWithDatasetIndex = 0;
 
-        while(
-            (dnaruns.get(dnaRunWithDatasetIndex).getDatasetDnaRunIdx() == null
-                || dnaruns
-                    .get(dnaRunWithDatasetIndex)
-                    .getDatasetDnaRunIdx().size() == 0)
-                && dnaRunWithDatasetIndex < dnaruns.size()) {
+        String testDatasetId = daoTestSetUp
+            .getCreatedDnaRuns()
+            .get(random.nextInt(daoTestSetUp.getCreatedDnaRuns().size()))
+            .getDatasetDnaRunIdx().fieldNames().next();
 
-            dnaRunWithDatasetIndex++;
-
-        }
-
-        assertTrue("No DnaRuns with a dataset mapped to it",
-                dnaRunWithDatasetIndex < dnaruns.size());
-
-        if(dnaRunWithDatasetIndex < dnaruns.size()) {
-
-
-            Integer datasetId = Integer.parseInt(
-                    dnaruns.get(dnaRunWithDatasetIndex)
-                        .getDatasetDnaRunIdx().fieldNames().next());
-
-            List<DnaRun> dnarunsByDatasetId = dnaRunDao.getDnaRunsByDatasetId(
-                    datasetId, testPageSize, rowOffset);
-
-            assertTrue("Empty dnarun list for given dataset id",
-                dnarunsByDatasetId.size() > 0);
-
-            for(DnaRun dnaRun : dnarunsByDatasetId) {
-                assertTrue("Fetch by dataset id not working",
-                        dnaRun.getDatasetDnaRunIdx().has(datasetId.toString()));
+        for(DnaRun dnaRun : daoTestSetUp.getCreatedDnaRuns()) {
+            if(dnaRun.getDatasetDnaRunIdx().has(testDatasetId)) {
+                dnaRunWithDatasetIndex++;
             }
-
         }
 
+
+        Integer datasetId = Integer.parseInt(testDatasetId);
+
+        List<DnaRun> dnarunsByDatasetId = dnaRunDao.getDnaRunsByDatasetId(
+                datasetId, testPageSize, rowOffset);
+
+        assertTrue("DnaRunDao test setup failed.",
+            dnarunsByDatasetId.size() == dnaRunWithDatasetIndex);
+
+        for(DnaRun dnaRun : dnarunsByDatasetId) {
+            assertTrue("Filter by datasetId failed.",
+                    dnaRun.getDatasetDnaRunIdx().has(datasetId.toString()));
+        }
 
     }
 

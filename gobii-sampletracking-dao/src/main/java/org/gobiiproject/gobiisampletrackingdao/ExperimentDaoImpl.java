@@ -24,7 +24,6 @@ public class ExperimentDaoImpl implements ExperimentDao {
     @PersistenceContext
     protected EntityManager em;
 
-
     @Override
     @SuppressWarnings("unchecked")
     public List<Experiment> getExperiments(Integer pageSize, Integer rowOffset,
@@ -79,8 +78,10 @@ public class ExperimentDaoImpl implements ExperimentDao {
             e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
 
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
 }

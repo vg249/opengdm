@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import javax.xml.crypto.Data;
 import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
@@ -108,9 +109,17 @@ public class DatasetDaoTest {
                 null, null,
                 experimentId, null);
 
+        int numOfDatasetsInExperiemt = 0;
+
+        for(Dataset dataset : daoTestSetUp.getCreatedDatasets()) {
+            if(dataset.getExperiment().getExperimentId() == experimentId) {
+                numOfDatasetsInExperiemt++;
+            }
+        }
+
         assertTrue("No Dataset to test",
             datasetsByExperimentId.size() <= testPageSize
-            && datasetsByExperimentId.size() > 0);
+            && datasetsByExperimentId.size() == numOfDatasetsInExperiemt);
 
         for (Dataset dataset : datasetsByExperimentId) {
             assertTrue("Failing Experiment Id Filter",

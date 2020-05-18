@@ -23,8 +23,11 @@ public class LinkageGroupDaoImpl implements LinkageGroupDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<LinkageGroup> getLinkageGroups(Integer pageSize, Integer rowOffset,
-                                        Integer linkageGroupId, Integer mapsetId) {
+    public List<LinkageGroup>
+    getLinkageGroups(
+        Integer pageSize, Integer rowOffset,
+        Integer linkageGroupId, Integer mapsetId
+    ) {
 
         Objects.requireNonNull(pageSize);
         Objects.requireNonNull(rowOffset);
@@ -37,15 +40,21 @@ public class LinkageGroupDaoImpl implements LinkageGroupDao {
 
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            CriteriaQuery<LinkageGroup> criteriaQuery = cb.createQuery(LinkageGroup.class);
+            CriteriaQuery<LinkageGroup> criteriaQuery =
+                cb.createQuery(LinkageGroup.class);
 
-            Root<LinkageGroup> linkageGroup = criteriaQuery.from(LinkageGroup.class);
+            Root<LinkageGroup> linkageGroup =
+                criteriaQuery.from(LinkageGroup.class);
             criteriaQuery.select(linkageGroup);
 
-            Join<Object, Object> mapset = (Join<Object, Object>) linkageGroup.fetch("mapset");
+            Join<Object, Object> mapset =
+                (Join<Object, Object>) linkageGroup.fetch("mapset");
 
             if(linkageGroupId != null) {
-                predicates.add(cb.equal(linkageGroup.get("linkageGroupId"), linkageGroupId));
+                predicates.add(
+                    cb.equal(
+                        linkageGroup.get("linkageGroupId"),
+                        linkageGroupId));
             }
 
             if(mapsetId != null) {
@@ -68,7 +77,8 @@ public class LinkageGroupDaoImpl implements LinkageGroupDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() + " Cause Message: "
+                        + e.getCause().getMessage());
         }
 
     }

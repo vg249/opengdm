@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "mapset")
@@ -43,11 +44,12 @@ public class Mapset extends BaseEntity {
     private Cv type;
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode properties;
 
-    @Column(name = "status")
-    private Integer status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status;
 
     @Transient
     private Integer markerCount;
@@ -111,14 +113,6 @@ public class Mapset extends BaseEntity {
         this.properties = properties;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     public Integer getMarkerCount() {
         return markerCount;
     }
@@ -133,5 +127,13 @@ public class Mapset extends BaseEntity {
 
     public void setLinkageGroupCount(Integer linkageGroupCount) {
         this.linkageGroupCount = linkageGroupCount;
+    }
+
+    public Cv getStatus() {
+        return status;
+    }
+
+    public void setStatus(Cv status) {
+        this.status = status;
     }
 }

@@ -1,14 +1,15 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -35,6 +36,10 @@ public class DaoTestSetUp {
     private List<DnaSample> createdDnaSamples = new ArrayList<>();
     private List<Analysis> createdAnalyses = new ArrayList<>();
     private List<Dataset> createdDatasets = new ArrayList<>();
+    private List<Mapset> createdMapsets = new ArrayList<>();
+    private List<LinkageGroup> createdLinkageGroups = new ArrayList<>();
+    private List<Protocol> createdProtocols = new ArrayList<>();
+    private List<Marker> createdMarkers = new ArrayList<>();
 
     public void createTestContacts(int numOfContacts) {
         for(int i = 0; i < numOfContacts; i++) {
@@ -59,9 +64,10 @@ public class DaoTestSetUp {
         }
         for(int i = 0; i < numOfProjects; i++) {
             //Add Project
-            Project project = new Project();;
-            project.setContact(createdContacts
-                .get(random.nextInt(createdContacts.size())));
+            Project project = new Project();
+            Contact piContact = createdContacts
+                .get(random.nextInt(createdContacts.size()));
+            project.setContact(piContact);
             project.setProjectName(RandomStringUtils.random(7, true, true));
             project.setStatus(newStatus);
             em.persist(project);
@@ -78,6 +84,7 @@ public class DaoTestSetUp {
             Germplasm germplasm = new Germplasm();
             germplasm.setGermplasmName(
                 RandomStringUtils.random(7, true, true));
+            germplasm.setExternalCode(RandomStringUtils.random(7, true, true));
             germplasm.setStatus(newStatus);
             em.persist(germplasm);
             createdGermplasms.add(germplasm);
@@ -114,6 +121,17 @@ public class DaoTestSetUp {
         }
     }
 
+    public void createTestProtocols(int numOfProtocols) {
+
+        for(int i = 0; i < numOfProtocols; i++) {
+            Protocol protocol = new Protocol();
+            protocol.setName(RandomStringUtils.random(7, true, true));
+            em.persist(protocol);
+            createdProtocols.add(protocol);
+        }
+
+    }
+
     public void createTestExperiments(int numOfExperiments) {
 
         Cv newStatus = cvDao.getCvs(
@@ -123,6 +141,10 @@ public class DaoTestSetUp {
 
         if(createdProjects.size() == 0) {
             createTestProjects(Math.round(numOfExperiments/2));
+        }
+
+        if(createdProtocols.size() == 0) {
+            createTestProtocols(numOfExperiments/2);
         }
 
         //Add Experiment
@@ -144,13 +166,13 @@ public class DaoTestSetUp {
             vendor.setName(RandomStringUtils.random(7, true, true));
             vendor.setStatus(newStatus);
 
-            Protocol protocol = new Protocol();
-            protocol.setName(RandomStringUtils.random(7, true, true));
-
             em.persist(vendor);
-            em.persist(protocol);
 
-            vendorProtocol.setProtocol(protocol);
+            vendorProtocol
+                .setProtocol(
+                    createdProtocols
+                        .get(random.nextInt(createdProtocols.size())));
+
             vendorProtocol.setVendor(vendor);
             em.persist(vendorProtocol);
 
@@ -194,10 +216,10 @@ public class DaoTestSetUp {
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         if(createdExperiments.size() == 0) {
-            createTestExperiments(numOfDatasets/2);
+            createTestExperiments(Math.round(numOfDatasets/2));
         }
         if(createdAnalyses.size() == 0) {
-            createTestAnalyses(numOfDatasets/2);
+            createTestAnalyses(Math.round(numOfDatasets/2));
         }
 
         for(int i = 0; i < numOfDatasets; i++) {
@@ -211,12 +233,63 @@ public class DaoTestSetUp {
                 .get(random.nextInt(createdExperiments.size())));
             dataset.setType(datasetTypes
                 .get(random.nextInt(datasetTypes.size())));
-
             em.persist(dataset);
             createdDatasets.add(dataset);
 
         }
 
+    }
+
+    public void createTestMapsets(int numOfMapsets) {
+
+        Cv newStatus = cvDao.getCvs(
+            "new",
+            CvGroup.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+
+        List<Cv> mapsetTypes = cvDao.getCvListByCvGroup(
+            CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+
+        for(int i = 0; i < numOfMapsets; i++) {
+            Mapset mapset = new Mapset();
+            mapset.setType(mapsetTypes.get(random.nextInt(mapsetTypes.size())));
+            mapset.setMapsetName(RandomStringUtils.random(7, true, true));
+            mapset.setMapSetCode(RandomStringUtils.random(7, true, true));
+            mapset.setStatus(newStatus);
+            em.persist(mapset);
+            createdMapsets.add(mapset);
+        }
+    }
+
+    public void createTestLinkageGroups(int numOfLinkageGroups) {
+
+        if(createdMapsets.size() == 0) {
+            createTestMapsets(Math.round(testPageSize/2));
+        }
+
+        for(int i = 0; i < numOfLinkageGroups; i++) {
+
+            LinkageGroup linkageGroup = new LinkageGroup();
+
+            linkageGroup
+                .setLinkageGroupName(RandomStringUtils.random(7, true, true));
+
+            linkageGroup.setLinkageGrpupStart(
+                NumberUtils
+                    .toScaledBigDecimal(random.nextFloat()+10, 3, null));
+
+            linkageGroup.setLinkageGroupStop(
+                NumberUtils
+                    .toScaledBigDecimal(random.nextFloat()+20, 3, null));
+
+            linkageGroup.setMapset(
+                createdMapsets
+                    .get(random.nextInt(createdMapsets.size())));
+
+            em.persist(linkageGroup);
+            createdLinkageGroups.add(linkageGroup);
+        }
     }
 
     public void createTestDnaRuns(int numOfDnaRuns) {
@@ -227,7 +300,14 @@ public class DaoTestSetUp {
         if(createdExperiments.size() == 0) {
             createTestExperiments(Math.round(numOfDnaRuns/2));
         }
+        if(createdDatasets.size() == 0) {
+            createTestDatasets(Math.round(numOfDnaRuns/2));
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
         for(int i = 0; i < testPageSize; i++) {
+
             DnaRun dnaRun = new DnaRun();
 
             dnaRun.setDnaRunName(RandomStringUtils.random(7, true, true));
@@ -235,11 +315,23 @@ public class DaoTestSetUp {
                 createdExperiments
                     .get(random.nextInt(createdExperiments.size())));
             dnaRun.setDnaSample(
-                createdDnaSamples.get(random.nextInt(createdDnaSamples.size())));
+                createdDnaSamples
+                    .get(random.nextInt(createdDnaSamples.size())));
+            ObjectNode dnaRunDaatsetIdx =  objectMapper.createObjectNode();
+            Integer datasetId =
+                createdDatasets
+                    .get(random.nextInt(createdDatasets.size())).getDatasetId();
+            Integer hdf5Index = random.nextInt(1000);
+            dnaRunDaatsetIdx.put(datasetId.toString(), hdf5Index.toString());
+            dnaRun.setDatasetDnaRunIdx(dnaRunDaatsetIdx);
             em.persist(dnaRun);
 
             createdDnaRuns.add(dnaRun);
         }
+
+    }
+
+    public void createTestMarkers(int numOfMarkers) {
 
     }
 
@@ -305,5 +397,21 @@ public class DaoTestSetUp {
 
     public void setCreatedDatasets(List<Dataset> createdDatasets) {
         this.createdDatasets = createdDatasets;
+    }
+
+    public List<Mapset> getCreatedMapsets() {
+        return createdMapsets;
+    }
+
+    public void setCreatedMapsets(List<Mapset> createdMapsets) {
+        this.createdMapsets = createdMapsets;
+    }
+
+    public List<LinkageGroup> getCreatedLinkageGroups() {
+        return createdLinkageGroups;
+    }
+
+    public void setCreatedLinkageGroups(List<LinkageGroup> createdLinkageGroups) {
+        this.createdLinkageGroups = createdLinkageGroups;
     }
 }
