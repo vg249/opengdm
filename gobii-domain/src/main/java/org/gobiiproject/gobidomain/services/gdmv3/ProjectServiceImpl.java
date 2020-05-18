@@ -105,13 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
 
         // Get the Cv for status, new row
-        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
+        Cv cv = cvDao.getNewStatus();
         log.debug("Cv " + cv.getTerm());
 
         Project project = new Project();

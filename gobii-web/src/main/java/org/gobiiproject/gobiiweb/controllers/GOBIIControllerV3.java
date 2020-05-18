@@ -21,6 +21,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
@@ -40,6 +41,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
@@ -106,6 +108,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private MapsetService mapsetService;
+
+    @Autowired
+    private OrganizationService organizationService;
 
     /**
      * Authentication Endpoint
@@ -898,7 +903,94 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
-    
+    //-------Organizations----------
+    /**
+     * Get Organizations
+     */
+    @GetMapping("/organizations")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<OrganizationDTO>> getOrganizations(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizetoUse = getPageSize(pageSize);
+        PagedResult<OrganizationDTO> result = organizationService.getOrganizations(page, pageSizetoUse);
+        BrApiMasterListPayload<OrganizationDTO> payload = new BrApiMasterListPayload<>(
+            result.getResult(),
+            result.getCurrentPageSize(),
+            result.getCurrentPageNum()
+        );
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Get Organization by Id
+     */
+    @GetMapping("/organizations/{organizationId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> getOrganizationById(
+        @PathVariable Integer organizationId
+    ) throws Exception {
+        OrganizationDTO organizationDTO = organizationService.getOrganization(organizationId);
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(organizationDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Create Organization
+     * @return
+     */
+    @PostMapping("/organizations")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> createOrganization(
+        @RequestBody @Validated(OrganizationDTO.Create.class) final OrganizationDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user  = this.getCurrentUser();
+
+        OrganizationDTO createdOrganization = organizationService.createOrganization(request, user);
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(createdOrganization);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Patch organization
+     */
+    @PatchMapping("/organizations/{organizationId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> updateOrganization(
+        @PathVariable Integer organizationId,
+        @RequestBody @Validated final OrganizationDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+        OrganizationDTO updatedOrganization = organizationService.updateOrganization(organizationId, request, user);
+        BrApiMasterPayload<OrganizationDTO> payload = new BrApiMasterPayload<>();
+        payload.setMetadata(null);
+        payload.setResult(updatedOrganization);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete organization
+     */
+    @DeleteMapping("/organizations/{organizationId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteOrganiztion(
+        @PathVariable Integer organizationId
+    ) throws Exception {
+        organizationService.deleteOrganization(organizationId);
+        return ResponseEntity.noContent().build();
+    }
+
+
     public ProjectService getProjectService() {
         return projectService;
     }
