@@ -33,6 +33,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -47,6 +48,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -104,6 +106,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private MapsetService mapsetService;
+
+    @Mock
+    private OrganizationService organizationService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -1295,5 +1300,115 @@ public class GOBIIControllerV3Test {
         ;
         verify(mapsetService, times(1)).getMapsetTypes(0, 1000);
     }
-    
+
+    @Test
+    public void getOrganizationsList() throws Exception {
+        when(
+            organizationService.getOrganizations(0, 1000)
+        ).thenReturn(
+            new PagedResult<OrganizationDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/organizations")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(organizationService, times(1)).getOrganizations(0, 1000);
+    }
+
+    @Test
+    public void getOrganizationById() throws Exception {
+        Integer organizationId = 122;
+        when(
+            organizationService.getOrganization(organizationId)
+        ).thenReturn(
+            new OrganizationDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/organizations/122")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(organizationService, times(1)).getOrganization(122);
+    }
+
+    @Test
+    public void testCreateOrganization() throws Exception {
+        String requestJson = "{\"organizationName\": \"test-org\", \"organizationAddress\": \"organization-address\", \"organizationWebsite\": \"https://website.com\"}";
+
+        when(
+            organizationService.createOrganization(any(OrganizationDTO.class), eq("test-user"))
+        ).thenReturn(
+            new OrganizationDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/organizations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(organizationService, times(1)).createOrganization(any(OrganizationDTO.class), eq("test-user"));
+    }
+
+    @Test
+    public void testUpdateOrganization() throws Exception {
+        String requestJson = "{\"organizationName\": \"test-org\", \"organizationAddress\": \"organization-address\", \"organizationWebsite\": \"https://website.com\"}";
+
+        when(
+            organizationService.updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user"))
+        ).thenReturn(
+            new OrganizationDTO()
+        );
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/organizations/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(organizationService, times(1)).updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user"));
+    }
+
+    @Test
+    public void testDeleteOrganization() throws Exception {
+        doNothing().when(organizationService).deleteOrganization(123);
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/organizations/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+        verify(organizationService, times(1)).deleteOrganization(123);
+    }
+  
 }

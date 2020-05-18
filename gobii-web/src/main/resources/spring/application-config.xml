@@ -445,6 +445,9 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapOrganizationImpl"/>
     <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
 
+    <!-- **** Organization Beans V3 -->
+    <bean id="OrganizationServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.OrganizationServiceImpl"/>
+    <bean id="OrganizationDaoV3" class="org.gobiiproject.gobiisampletrackingdao.OrganizationDaoImpl"/>
 
     <!-- **** Protocol Beans *************************************** -->
     <bean id="rsProtocolDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProtocolDaoImpl"/>
