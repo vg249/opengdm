@@ -48,7 +48,6 @@ public class MapsetDaoTest {
     @Test
     public void getMapsetsTest() {
 
-        Integer testPageSize = 100;
 
         List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(testPageSize, 0,
                 null, null);
@@ -76,7 +75,6 @@ public class MapsetDaoTest {
     }
 
     @Test
-    @Transactional
     public void getMapsetsSimpleTest() throws Exception {
         List<Mapset> mapsets = mapsetDao.getMapsets(1000, 0, null);
         assertTrue("getMapsets fails",mapsets != null);
