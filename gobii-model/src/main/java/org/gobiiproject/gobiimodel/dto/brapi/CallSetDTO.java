@@ -41,7 +41,8 @@ public class CallSetDTO extends DTOBaseAuditable {
 
     private List<Integer> variantSetIds = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmId", entity = DnaRun.class, deep = true)
+    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmId",
+        entity = DnaRun.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer germplasmDbId;
 
