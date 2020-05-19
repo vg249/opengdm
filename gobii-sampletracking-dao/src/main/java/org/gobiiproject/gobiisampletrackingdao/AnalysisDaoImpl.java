@@ -13,7 +13,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -21,7 +20,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Transactional
 @Slf4j
 public class AnalysisDaoImpl implements AnalysisDao {
 

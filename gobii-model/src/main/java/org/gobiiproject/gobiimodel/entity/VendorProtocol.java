@@ -58,6 +58,6 @@ public class VendorProtocol  {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    private Cv status;
     
 }

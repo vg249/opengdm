@@ -733,7 +733,7 @@
                             <springmvc>true</springmvc>
                             <locations>
                                 <location>
-                                    org.gobiiproject.gobiiweb.controllers.BrAPIv2Controller
+                                    org.gobiiproject.gobiiweb.controllers.BrapiV2Controller
                                 </location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
