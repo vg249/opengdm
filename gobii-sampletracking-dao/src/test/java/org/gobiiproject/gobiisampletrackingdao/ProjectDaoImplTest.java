@@ -8,7 +8,6 @@ package org.gobiiproject.gobiisampletrackingdao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +16,10 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiisampletrackingdao.spring.TestConfigSupplement;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
