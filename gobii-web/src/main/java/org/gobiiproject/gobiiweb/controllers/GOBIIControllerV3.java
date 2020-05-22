@@ -171,9 +171,7 @@ public class GOBIIControllerV3  {
             pageSizeToUse,
             piContactId
         );
-        BrApiMasterListPayload<GobiiProjectDTO> payload = this.getMasterListPayload(pagedResult);
-           
-        
+        BrApiMasterListPayload<GobiiProjectDTO> payload = this.getMasterListPayload(pagedResult);   
         return ResponseEntity.ok(payload);
     }
 
@@ -217,7 +215,6 @@ public class GOBIIControllerV3  {
         }
         BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(project);
         return ResponseEntity.ok(result);
-
     }
 
 
@@ -270,8 +267,7 @@ public class GOBIIControllerV3  {
             Math.max(0, page),
             pageSizeToUse
         );
-        BrApiMasterListPayload<CvPropertyDTO> payload = this.getMasterListPayload(pagedResult);
-           
+        BrApiMasterListPayload<CvPropertyDTO> payload = this.getMasterListPayload(pagedResult);   
         return ResponseEntity.ok(payload);
     }
 
@@ -432,7 +428,6 @@ public class GOBIIControllerV3  {
         PagedResult<AnalysisDTO> pagedResult = analysisService.getAnalyses(page, pageSizeToUse);
 
         BrApiMasterListPayload<AnalysisDTO> payload = this.getMasterListPayload(pagedResult);
-
         return ResponseEntity.ok(payload);
     }
 
@@ -452,7 +447,6 @@ public class GOBIIControllerV3  {
         AnalysisDTO result = analysisService.createAnalysis(analysisRequest, user);
 
         BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(result);
-
         return ResponseEntity.created(null).body(payload);
     }
 
@@ -472,7 +466,6 @@ public class GOBIIControllerV3  {
         AnalysisDTO result = analysisService.updateAnalysis(analysisId, analysisRequest, user);
 
         BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(result);
-
         return ResponseEntity.ok(payload);
     }
 
@@ -516,7 +509,6 @@ public class GOBIIControllerV3  {
         String user = this.getCurrentUser();
         CvTypeDTO result = analysisService.createAnalysisType(analysisTypeRequest, user);
         BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
-
         return ResponseEntity.created(null).body(payload);
     }
 
@@ -552,8 +544,7 @@ public class GOBIIControllerV3  {
        String user = this.getCurrentUser();
        DatasetDTO result = datasetService.createDataset(request, user);
        BrApiMasterPayload<DatasetDTO> payload = this.getMasterPayload(result);
-       return ResponseEntity.created(null).body(payload);
-           
+       return ResponseEntity.created(null).body(payload);    
     }
 
     /**
@@ -574,7 +565,6 @@ public class GOBIIControllerV3  {
         );
 
         BrApiMasterListPayload<DatasetDTO> payload = this.getMasterListPayload(pagedResult);
-
         return ResponseEntity.ok(payload);
     }
 
@@ -660,7 +650,6 @@ public class GOBIIControllerV3  {
             user
         );
         BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
-
         return ResponseEntity.created(null).body(payload);
     }
 
@@ -677,13 +666,10 @@ public class GOBIIControllerV3  {
         Integer pageSizeToUse = this.getPageSize(pageSize);
         PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
         BrApiMasterListPayload<ReferenceDTO> payload = this.getMasterListPayload(pagedResult);
-
-        return ResponseEntity.ok(payload);
-        
+        return ResponseEntity.ok(payload);  
     }
 
     //-------- Mapsets ------------
-
     /**
      * Get Mapsets list
      * @return
@@ -788,7 +774,6 @@ public class GOBIIControllerV3  {
         );
 
         BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
-
         return ResponseEntity.created(null).body(payload);
     }
 
@@ -931,5 +916,4 @@ public class GOBIIControllerV3  {
             objectList.getCurrentPageNum()
         );
     }
-
 }
