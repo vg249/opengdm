@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +83,32 @@ public class AnalysisDaoTest {
 
     }
 
+    @Test
+    public void testCreateUpdatedAndDeleteAnalysis() throws Exception {
+        Analysis analysis = new Analysis();
+        analysis.setAnalysisName(RandomStringUtils.random(10, true, true));
+        analysis.setAlgorithm(RandomStringUtils.random(10, true, true));
+        analysis.setDescription(RandomStringUtils.random(20, true, true));
 
+        analysis = analysisDao.createAnalysis(analysis);
+        assertTrue("Analysis not created", analysis != null && analysis.getAnalysisId() > 0);
+
+        assertTrue("Program is already set", LineUtils.isNullOrEmpty(analysis.getProgram()));
+        String dummyProgram = RandomStringUtils.random(10, true, true);
+        analysis.setProgram(dummyProgram);
+        analysis = analysisDao.updateAnalysis(analysis);
+        assertEquals("Incorrect program name", analysis.getProgram(), dummyProgram);
+
+        //delete
+        Integer id = analysis.getAnalysisId();
+        analysisDao.deleteAnalysis(analysis);
+
+        analysis = analysisDao.getAnalysis(id);
+        assertNull("analysis should be null after delete", analysis);
+
+    }
+
+   
 
 
 }
