@@ -196,4 +196,9 @@ public class CvDaoImpl implements CvDao {
         }
         return cv;
     }
+
+    @Override
+    public CvGroup getCvGroupById(Integer id) {
+        return em.find(CvGroup.class, id);
+    }
 }

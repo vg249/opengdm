@@ -15,7 +15,8 @@ public interface CvDao {
 
     //new - added by rnduldulaojr
     List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType, Integer page, Integer pageSize);
-	CvGroup getCvGroupByNameAndType(String cvGroupName, Integer type);
+    CvGroup getCvGroupByNameAndType(String cvGroupName, Integer type);
+    CvGroup getCvGroupById(Integer id);
     Cv createCv(Cv cv);
     
     //convenience routines

@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
@@ -34,6 +35,7 @@ import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
@@ -108,6 +110,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private OrganizationService organizationService;
+
+    @Autowired
+    private CvService cvService;
 
     /**
      * Authentication Endpoint
@@ -868,6 +873,19 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         organizationService.deleteOrganization(organizationId);
         return ResponseEntity.noContent().build();
+    }
+
+    //--- Cv 
+
+    @PostMapping("/cvs")
+    @ResponseBody
+    public ResponseEntity<CvDTO> createCv(
+        @RequestBody @Validated(CvDTO.Create.class) final CvDTO requestCvDTO,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        CvDTO createdCvDTO = cvService.createCv(requestCvDTO);
+        return ResponseEntity.created(null).body(createdCvDTO);
     }
 
 
