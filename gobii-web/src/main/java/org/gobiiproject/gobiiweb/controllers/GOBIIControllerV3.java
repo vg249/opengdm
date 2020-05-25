@@ -883,9 +883,14 @@ public class GOBIIControllerV3  {
         @RequestBody @Validated(CvDTO.Create.class) final CvDTO requestCvDTO,
         BindingResult bindingResult
     ) throws Exception {
+        try {
         this.checkBindingErrors(bindingResult);
         CvDTO createdCvDTO = cvService.createCv(requestCvDTO);
         return ResponseEntity.created(null).body(createdCvDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 

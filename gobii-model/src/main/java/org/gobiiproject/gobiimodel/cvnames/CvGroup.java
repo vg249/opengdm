@@ -23,6 +23,7 @@ public enum CvGroup {
     CVGROUP_MARKER_STRAND("marker_strand"),
     CVGROUP_PLATFORM_TYPE("platform_type"),
     CVGROUP_PROJECT_PROP("project_prop"),
+    CVGROUP_CV_PROP("cv_prop"),
     CVGROUP_STATUS("status");
 
 

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,14 +65,25 @@ public class CvServiceImpl implements CvService {
 
         cv.setTerm(request.getCvName());
         cv.setDefinition(request.getCvDescription());
+        cv.setRank(0);
         
         //TODO:  no auditing on Cv?
-        cv.setStatus(cvDao.getNewStatus().getCvId());
+        Cv newStatus = cvDao.getNewStatus();
+        cv.setStatus(newStatus.getCvId());
 
         cvDao.createCv(cv);
 
         CvDTO resultDTO = new CvDTO();
         ModelMapper.mapEntityToDto(cv, resultDTO);
+
+        //set status
+        resultDTO.setCvStatus(newStatus.getTerm());
+
+        //convert props
+         //transform Cv
+        List<Cv> cvs = cvDao.getCvListByCvGroup(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(), null);
+        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, resultDTO.getPropertiesMap());
+        resultDTO.setProperties(propDTOs);
 
         return resultDTO;
     }
