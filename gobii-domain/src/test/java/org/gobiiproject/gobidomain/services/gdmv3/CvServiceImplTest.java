@@ -101,6 +101,14 @@ public class CvServiceImplTest {
 
         when(cvDao.updateCv(any(Cv.class))).thenReturn(mockCv2);
 
+        Cv mockModStatus = new Cv();
+        mockModStatus.setTerm("modified");
+        mockModStatus.setCvId(57);
+
+        when(cvDao.getModifiedStatus()).thenReturn(
+            mockModStatus
+        );
+
         CvDTO updatedCvDTO = cvServiceImpl.updateCv(123, cvDTORequest);
 
         assertTrue("test update failed", updatedCvDTO.getCvName() == "test-name"); //TODO: integ test better

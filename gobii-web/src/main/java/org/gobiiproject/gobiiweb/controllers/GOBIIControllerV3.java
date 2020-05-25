@@ -887,7 +887,6 @@ public class GOBIIControllerV3  {
         CvDTO createdCvDTO = cvService.createCv(requestCvDTO);
         BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(createdCvDTO);
         return ResponseEntity.created(null).body(payload);
-       
     }
 
     @PatchMapping("/cvs/{cvId}")
@@ -901,7 +900,19 @@ public class GOBIIControllerV3  {
         CvDTO updatedCvDTO = cvService.updateCv(cvId, requestCvDTO);
         BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(updatedCvDTO);
         return ResponseEntity.ok(payload);
+    }
 
+    @GetMapping("/cvs")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvDTO>> getCvs(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) String cvGroupName,
+        @RequestParam(required=false) String cvGroupType
+    ) throws Exception {
+        PagedResult<CvDTO> pagedResult = cvService.getCvs(page, pageSize, cvGroupName, cvGroupType);
+        BrApiMasterListPayload<CvDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
     }
 
 

@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -84,7 +85,8 @@ public class CvServiceImpl implements CvService {
     @Transactional
     @Override
     public CvDTO updateCv(Integer id, CvDTO request) throws Exception {
-        // check
+        //check
+        boolean updated = false;
         Cv cv = cvDao.getCvByCvId(id);
         if (cv == null) {
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -94,12 +96,13 @@ public class CvServiceImpl implements CvService {
         // check if change of name
         if (!LineUtils.isNullOrEmpty(request.getCvName())) {
             cv.setTerm(request.getCvName());
-        }
-        ;
+            updated = true;
+        };
 
         // check if change description
         if (!LineUtils.isNullOrEmpty(request.getCvDescription())) {
             cv.setDefinition(request.getCvDescription());
+            updated = true;
         }
 
         // check if change of group
@@ -111,6 +114,7 @@ public class CvServiceImpl implements CvService {
                         "Invalid cv group Id");
             }
             cv.setCvGroup(cvGroup);
+            updated = true;
         }
 
         // check if change of properties
@@ -141,10 +145,14 @@ public class CvServiceImpl implements CvService {
                 }
             }
             cv.setProperties(properties);
+            updated = true;
         }
 
+        if (updated) {
+            Cv modifiedCv = cvDao.getModifiedStatus();
+            cv.setStatus(modifiedCv.getCvId());
+        }
         
-
         Cv updatedCv = cvDao.updateCv(cv);
         CvDTO updatedCvDTO = new CvDTO();
 
@@ -168,16 +176,41 @@ public class CvServiceImpl implements CvService {
     @Transactional
     @Override
     public PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType) {
-        Integer offset = page * pageSize;
-        List<Cv> cvs = cvDao.getCvs(offset, pageSize, cvGroupName, cvGroupType);
+        GobiiCvGroupType groupType = null;
+        if (cvGroupType.toLowerCase().equals("system_defined") || cvGroupType.equals("1")) {
+            groupType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
+        } else if (cvGroupType.toLowerCase().equals("user_defined") || cvGroupType.equals("2")) {
+            groupType = GobiiCvGroupType.GROUP_TYPE_USER;
+        } else if (!LineUtils.isNullOrEmpty(cvGroupType)) {
+            groupType = GobiiCvGroupType.GROUP_TYPE_UNKNOWN;
+        }
+        List<Cv> cvs = cvDao.getCvs(null, cvGroupName, groupType, page, pageSize);
         List<CvDTO> cvDTOs = new ArrayList<>();
         
+        Cv newStatus = cvDao.getNewStatus();
+        Cv modStatus = cvDao.getModifiedStatus();
+
         cvs.forEach(cv -> {
             CvDTO cvDTO = new CvDTO();
             ModelMapper.mapEntityToDto(cv, cvDTO);
-            cvDTO.setProperties()
+            cvDTO.setProperties(this.convertToListDTO(cvDTO.getPropertiesMap()));
+            
+            if(cvDTO.getStatus() == newStatus.getCvId()) {
+                cvDTO.setCvStatus(newStatus.getTerm());
+            } else {
+                cvDTO.setCvStatus(modStatus.getTerm());
+            }
+
+            cvDTOs.add(cvDTO);
+
         });
-        return null;
+
+        PagedResult<CvDTO> pagedResult = new PagedResult<>();
+        pagedResult.setCurrentPageNum(page);
+        pagedResult.setCurrentPageSize(pageSize);
+        pagedResult.setResult(cvDTOs);
+
+        return pagedResult;
     }
     
 }

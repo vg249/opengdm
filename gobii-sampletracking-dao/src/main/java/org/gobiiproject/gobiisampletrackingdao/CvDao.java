@@ -23,5 +23,4 @@ public interface CvDao {
     Cv getNewStatus();
     Cv getModifiedStatus();
 	Cv updateCv(Cv cv);
-
 }
