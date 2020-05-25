@@ -169,31 +169,42 @@ public class CvServiceImpl implements CvService {
         return propDTOs;
     }
 
+    private List<CvPropertyDTO> convertToListDTO(List<Cv> cvs, Map<String, String> propertiesMap) {
+        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, propertiesMap);
+        return propDTOs;
+    }
+
     private boolean isExistingProperty(Map<String, String> properties, CvPropertyDTO cvPropertyDTO) {
         return properties.get(cvPropertyDTO.getPropertyId().toString()) != null;
     }
 
     @Transactional
     @Override
-    public PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType) {
+    public PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType) throws Exception {
         GobiiCvGroupType groupType = null;
-        if (cvGroupType.toLowerCase().equals("system_defined") || cvGroupType.equals("1")) {
-            groupType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
-        } else if (cvGroupType.toLowerCase().equals("user_defined") || cvGroupType.equals("2")) {
-            groupType = GobiiCvGroupType.GROUP_TYPE_USER;
-        } else if (!LineUtils.isNullOrEmpty(cvGroupType)) {
-            groupType = GobiiCvGroupType.GROUP_TYPE_UNKNOWN;
+        if (!LineUtils.isNullOrEmpty(cvGroupType)) {
+            if (cvGroupType.toLowerCase().equals("system_defined") || cvGroupType.equals("1")) {
+                groupType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
+            } else if (cvGroupType.toLowerCase().equals("user_defined") || cvGroupType.equals("2")) {
+                groupType = GobiiCvGroupType.GROUP_TYPE_USER;
+            } else {
+                groupType = GobiiCvGroupType.GROUP_TYPE_UNKNOWN;
+            }
         }
+
         List<Cv> cvs = cvDao.getCvs(null, cvGroupName, groupType, page, pageSize);
         List<CvDTO> cvDTOs = new ArrayList<>();
         
         Cv newStatus = cvDao.getNewStatus();
         Cv modStatus = cvDao.getModifiedStatus();
-
+        List<Cv> cvProps = cvDao.getCvListByCvGroup(
+            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(),
+            null
+        );
         cvs.forEach(cv -> {
             CvDTO cvDTO = new CvDTO();
             ModelMapper.mapEntityToDto(cv, cvDTO);
-            cvDTO.setProperties(this.convertToListDTO(cvDTO.getPropertiesMap()));
+            cvDTO.setProperties(this.convertToListDTO(cvProps, cvDTO.getPropertiesMap()));
             
             if(cvDTO.getStatus() == newStatus.getCvId()) {
                 cvDTO.setCvStatus(newStatus.getTerm());
@@ -207,7 +218,7 @@ public class CvServiceImpl implements CvService {
 
         PagedResult<CvDTO> pagedResult = new PagedResult<>();
         pagedResult.setCurrentPageNum(page);
-        pagedResult.setCurrentPageSize(pageSize);
+        pagedResult.setCurrentPageSize(cvs.size());
         pagedResult.setResult(cvDTOs);
 
         return pagedResult;

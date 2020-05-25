@@ -8,5 +8,5 @@ public interface CvService {
 
 	CvDTO updateCv(Integer id, CvDTO request) throws Exception;
 
-	PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType);
+	PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType) throws Exception;
 }

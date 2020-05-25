@@ -910,9 +910,14 @@ public class GOBIIControllerV3  {
         @RequestParam(required=false) String cvGroupName,
         @RequestParam(required=false) String cvGroupType
     ) throws Exception {
+        try {
         PagedResult<CvDTO> pagedResult = cvService.getCvs(page, pageSize, cvGroupName, cvGroupType);
         BrApiMasterListPayload<CvDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 
