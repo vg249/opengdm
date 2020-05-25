@@ -43,7 +43,19 @@ public class CvServiceImpl implements CvService {
                         "Invalid property Id"
                     );
                 }
-                //TODO: check correct type?
+                if (!propCv.getCvGroup()
+                          .getCvGroupName()
+                          .equals(
+                              org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName()
+                          )
+                ) {
+                    throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST, 
+                        "Invalid cv property"
+                    );
+
+                }
                 propsMap.put(cvPropDTO.getPropertyId().toString(), cvPropDTO.getPropertyValue());
 
             } 
@@ -67,7 +79,6 @@ public class CvServiceImpl implements CvService {
         cv.setDefinition(request.getCvDescription());
         cv.setRank(0);
         
-        //TODO:  no auditing on Cv?
         Cv newStatus = cvDao.getNewStatus();
         cv.setStatus(newStatus.getCvId());
 
