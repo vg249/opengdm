@@ -21,8 +21,8 @@ import lombok.Data;
 @Data
 public class CvDTO {
     
-    private final static String PROPERTY_TYPE_SYSTEM = "SYSTEM_DEFINED";
-    private final static String PROPERTY_TYPE_CUSTOM = "USER_DEFINED";
+    public final static String PROPERTY_TYPE_SYSTEM = "SYSTEM_DEFINED";
+    public final static String PROPERTY_TYPE_CUSTOM = "USER_DEFINED";
 
     public static interface Create{}
 
