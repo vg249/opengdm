@@ -887,7 +887,6 @@ public class GOBIIControllerV3  {
         CvDTO createdCvDTO = cvService.createCv(requestCvDTO);
         BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(createdCvDTO);
         return ResponseEntity.created(null).body(payload);
-       
     }
 
     @PatchMapping("/cvs/{cvId}")
@@ -901,7 +900,6 @@ public class GOBIIControllerV3  {
         CvDTO updatedCvDTO = cvService.updateCv(cvId, requestCvDTO);
         BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(updatedCvDTO);
         return ResponseEntity.ok(payload);
-
     }
 
 

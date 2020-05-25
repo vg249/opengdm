@@ -93,9 +93,11 @@ public class CvServiceImpl implements CvService {
         return resultDTO;
     }
 
+    @Transactional
     @Override
     public CvDTO updateCv(Integer id, CvDTO request) throws Exception {
         //check
+        boolean updated = false;
         Cv cv = cvDao.getCvByCvId(id);
         if (cv == null) {
             throw new GobiiDaoException(
@@ -110,6 +112,7 @@ public class CvServiceImpl implements CvService {
             !LineUtils.isNullOrEmpty(request.getCvName())
         ) {
             cv.setTerm(request.getCvName());
+            updated = true;
         };
 
         //check if change description
@@ -117,6 +120,7 @@ public class CvServiceImpl implements CvService {
             !LineUtils.isNullOrEmpty(request.getCvDescription())
         ) {
             cv.setDefinition(request.getCvDescription());
+            updated = true;
         }
 
         //check if change of group
@@ -133,6 +137,7 @@ public class CvServiceImpl implements CvService {
                     );
             }
             cv.setCvGroup(cvGroup);
+            updated = true;
         }
 
         //check if change of properties
@@ -169,8 +174,14 @@ public class CvServiceImpl implements CvService {
                 }
             }
             cv.setProperties(properties);
+            updated = true;
         }
 
+        if (updated) {
+            Cv modifiedCv = cvDao.getModifiedStatus();
+            cv.setStatus(modifiedCv.getCvId());
+        }
+        
         Cv updatedCv = cvDao.updateCv(cv);
         CvDTO updatedCvDTO = new CvDTO();
 
