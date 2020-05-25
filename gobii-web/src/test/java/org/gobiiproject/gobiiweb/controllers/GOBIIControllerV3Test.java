@@ -1480,5 +1480,20 @@ public class GOBIIControllerV3Test {
         verify(cvService, times(1)).getCvs(0, 1000, null, null);
 
     }
+
+    @Test
+    public void testGetCvById() throws Exception {
+        when(cvService.getCv(123)).thenReturn(new CvDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/cvs/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(cvService, times(1)).getCv(123);
+    }
   
 }

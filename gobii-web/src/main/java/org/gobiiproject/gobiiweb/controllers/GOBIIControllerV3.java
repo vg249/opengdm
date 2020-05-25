@@ -920,6 +920,16 @@ public class GOBIIControllerV3  {
         }
     }
 
+    @GetMapping("/cvs/{cvId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvDTO>> getCv(
+        @PathVariable Integer cvId
+    ) throws Exception {
+        CvDTO cvDTO = cvService.getCv(cvId);
+        BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(cvDTO);
+        return ResponseEntity.ok(payload);
+
+    }
 
     public ProjectService getProjectService() {
         return projectService;

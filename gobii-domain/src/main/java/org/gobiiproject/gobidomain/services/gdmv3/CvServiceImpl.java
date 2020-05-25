@@ -223,5 +223,26 @@ public class CvServiceImpl implements CvService {
 
         return pagedResult;
     }
+
+    @Transactional
+    @Override
+    public CvDTO getCv(Integer id) throws Exception {
+        Cv cv = cvDao.getCvByCvId(id);
+        if (cv == null) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Cv not found");
+        }
+
+        CvDTO cvDTO = new CvDTO();
+        ModelMapper.mapEntityToDto(cv, cvDTO);
+
+        //get status cv
+        Cv statusCv = cvDao.getCvByCvId(cv.getStatus());
+
+        cvDTO.setProperties(this.convertToListDTO( cvDTO.getPropertiesMap()));
+        cvDTO.setCvStatus(statusCv.getTerm());
+
+        return cvDTO;
+    }
     
 }
