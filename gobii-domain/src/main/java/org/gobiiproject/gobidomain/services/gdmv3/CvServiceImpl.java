@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.transaction.Transactional;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
@@ -29,55 +31,41 @@ public class CvServiceImpl implements CvService {
     @Override
     public CvDTO createCv(CvDTO request) throws Exception {
         Cv cv = new Cv();
-        //check the properties first if the propertyId exists and it is a property
+        // check the properties first if the propertyId exists and it is a property
         if (request.getProperties() != null && request.getProperties().size() > 0) {
             Map<String, String> propsMap = new HashMap<>();
-            for (int i=0; i<request.getProperties().size(); i++) {
+            for (int i = 0; i < request.getProperties().size(); i++) {
                 CvPropertyDTO cvPropDTO = request.getProperties().get(i);
                 Cv propCv = cvDao.getCvByCvId(cvPropDTO.getPropertyId());
                 if (propCv == null) {
-                    throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.BAD_REQUEST, 
-                        "Invalid property Id"
-                    );
+                    throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid property Id");
                 }
-                if (!propCv.getCvGroup()
-                          .getCvGroupName()
-                          .equals(
-                              org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName()
-                          )
-                ) {
-                    throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.BAD_REQUEST, 
-                        "Invalid cv property"
-                    );
+                if (!propCv.getCvGroup().getCvGroupName()
+                        .equals(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName())) {
+                    throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid cv property");
 
                 }
                 propsMap.put(cvPropDTO.getPropertyId().toString(), cvPropDTO.getPropertyValue());
 
-            } 
+            }
             cv.setProperties(propsMap);
         }
-    
 
-        //check cvGroup Id
+        // check cvGroup Id
         CvGroup cvGroup = cvDao.getCvGroupById(request.getCvGroupId());
         if (cvGroup == null) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Invalid cv group id"
-            );
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid cv group id");
         }
-        //check correct cv group type?
+        // check correct cv group type?
         cv.setCvGroup(cvGroup);
 
         cv.setTerm(request.getCvName());
         cv.setDefinition(request.getCvDescription());
         cv.setRank(0);
-        
+
         Cv newStatus = cvDao.getNewStatus();
         cv.setStatus(newStatus.getCvId());
 
@@ -86,77 +74,61 @@ public class CvServiceImpl implements CvService {
         CvDTO resultDTO = new CvDTO();
         ModelMapper.mapEntityToDto(cv, resultDTO);
 
-        //set status
+        // set status
         resultDTO.setCvStatus(newStatus.getTerm());
         resultDTO.setProperties(this.convertToListDTO(resultDTO.getPropertiesMap()));
 
         return resultDTO;
     }
 
+    @Transactional
     @Override
     public CvDTO updateCv(Integer id, CvDTO request) throws Exception {
-        //check
+        // check
         Cv cv = cvDao.getCvByCvId(id);
         if (cv == null) {
-            throw new GobiiDaoException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, 
-                        "Cv not found"
-                    );
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Cv not found");
         }
 
-        //check if change of name
-        if (
-            !LineUtils.isNullOrEmpty(request.getCvName())
-        ) {
+        // check if change of name
+        if (!LineUtils.isNullOrEmpty(request.getCvName())) {
             cv.setTerm(request.getCvName());
-        };
+        }
+        ;
 
-        //check if change description
-        if (
-            !LineUtils.isNullOrEmpty(request.getCvDescription())
-        ) {
+        // check if change description
+        if (!LineUtils.isNullOrEmpty(request.getCvDescription())) {
             cv.setDefinition(request.getCvDescription());
         }
 
-        //check if change of group
-        if (
-            request.getCvGroupId() != null
-        ) {
-            //check if new group id exists
+        // check if change of group
+        if (request.getCvGroupId() != null) {
+            // check if new group id exists
             CvGroup cvGroup = cvDao.getCvGroupById(request.getCvGroupId());
             if (cvGroup == null) {
-                throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.BAD_REQUEST, 
-                        "Invalid cv group Id"
-                    );
+                throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                        "Invalid cv group Id");
             }
             cv.setCvGroup(cvGroup);
         }
 
-        //check if change of properties
-        if (
-            request.getProperties() != null &&  request.getProperties().size() > 0
-        ) {
+        // check if change of properties
+        if (request.getProperties() != null && request.getProperties().size() > 0) {
             Map<String, String> properties = request.getPropertiesMap();
             for (int i = 0; i < request.getProperties().size(); i++) {
                 CvPropertyDTO cvPropertyDTO = request.getProperties().get(i);
-                //check if id does exist and correct group
+                // check if id does exist and correct group
                 Cv propertyCv = cvDao.getCvByCvId(cvPropertyDTO.getPropertyId());
-                if (propertyCv == null || !propertyCv.getCvGroup().getCvGroupName().equals(
-                    org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName()
-                )) {
-                    throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.BAD_REQUEST, 
-                        "Invalid cv property"
-                    );   
+                if (propertyCv == null || !propertyCv.getCvGroup().getCvGroupName()
+                        .equals(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName())) {
+                    throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid cv property");
                 }
-                //check which operation is being done
+                // check which operation is being done
                 boolean existingProperty = this.isExistingProperty(properties, cvPropertyDTO);
                 if (existingProperty) {
-                    //check if delete or update value
+                    // check if delete or update value
                     if (cvPropertyDTO.getPropertyValue() == null) {
                         properties.remove(cvPropertyDTO.getPropertyId().toString());
                     } else {
@@ -171,25 +143,41 @@ public class CvServiceImpl implements CvService {
             cv.setProperties(properties);
         }
 
+        
+
         Cv updatedCv = cvDao.updateCv(cv);
         CvDTO updatedCvDTO = new CvDTO();
 
         ModelMapper.mapEntityToDto(updatedCv, updatedCvDTO);
-        updatedCvDTO.setProperties(
-            this.convertToListDTO(updatedCvDTO.getPropertiesMap())
-        );
+        updatedCvDTO.setProperties(this.convertToListDTO(updatedCvDTO.getPropertiesMap()));
 
         return updatedCvDTO;
     }
 
     private List<CvPropertyDTO> convertToListDTO(Map<String, String> propertiesMap) {
-        List<Cv> cvs = cvDao.getCvListByCvGroup(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(), null);
+        List<Cv> cvs = cvDao
+                .getCvListByCvGroup(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(), null);
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, propertiesMap);
         return propDTOs;
     }
 
     private boolean isExistingProperty(Map<String, String> properties, CvPropertyDTO cvPropertyDTO) {
         return properties.get(cvPropertyDTO.getPropertyId().toString()) != null;
+    }
+
+    @Transactional
+    @Override
+    public PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType) {
+        Integer offset = page * pageSize;
+        List<Cv> cvs = cvDao.getCvs(offset, pageSize, cvGroupName, cvGroupType);
+        List<CvDTO> cvDTOs = new ArrayList<>();
+        
+        cvs.forEach(cv -> {
+            CvDTO cvDTO = new CvDTO();
+            ModelMapper.mapEntityToDto(cv, cvDTO);
+            cvDTO.setProperties()
+        });
+        return null;
     }
     
 }

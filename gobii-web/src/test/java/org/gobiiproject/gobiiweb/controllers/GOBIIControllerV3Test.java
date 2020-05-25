@@ -1459,5 +1459,26 @@ public class GOBIIControllerV3Test {
 
         verify(cvService, times(1)).updateCv(eq(123), any(CvDTO.class));
     }
+
+    @Test
+    public void testListCvsDefault()  throws Exception {
+
+        when(
+            cvService.getCvs(0, 1000, null, null)
+        ).thenReturn(
+            new PagedResult<CvDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/cvs")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(cvService, times(1)).getCvs(0, 1000, null, null);
+
+    }
   
 }
