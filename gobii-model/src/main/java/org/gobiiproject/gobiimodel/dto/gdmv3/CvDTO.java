@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,9 +26,11 @@ public class CvDTO {
     public final static String PROPERTY_TYPE_CUSTOM = "USER_DEFINED";
 
     public static interface Create{}
+    public static interface Update{}
 
     @GobiiEntityMap(paramName = "cvId", entity = Cv.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Null(groups = {CvDTO.Create.class, CvDTO.Update.class})
     private Integer cvId;
 
     @GobiiEntityMap(paramName = "term", entity = Cv.class)
@@ -45,6 +48,7 @@ public class CvDTO {
     private Integer cvGroupId;
 
     @GobiiEntityMap(paramName = "cvGroup.cvGroupName", entity = Cv.class, deep = true)
+    @Null(groups = {CvDTO.Create.class, CvDTO.Update.class})
     private String cvGroupName;
 
     @GobiiEntityMap(paramName = "status", entity = Cv.class)
@@ -64,10 +68,10 @@ public class CvDTO {
 
     private java.util.List<CvPropertyDTO> properties;
 
-    //determine from cvGroupTypeIn
+    //determine from cvGroupTypeInt
     @JsonProperty("cvGroupType")
     public String getCvGroupType() {
-        if (cvGroupTypeInt == 1) return PROPERTY_TYPE_SYSTEM;
+        if (cvGroupTypeInt != null && cvGroupTypeInt == 1) return PROPERTY_TYPE_SYSTEM;
         return PROPERTY_TYPE_CUSTOM;
     }
 

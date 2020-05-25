@@ -1436,5 +1436,28 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isCreated())
         ;
     }
+
+    @Test
+    public void testUpdateCv() throws Exception {
+        String requestJson = "{\"cvName\": \"updated-cv-name\"}";
+
+        when(
+            cvService.updateCv(eq(123), any(CvDTO.class))
+        ).thenReturn(
+            new CvDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/cvs/123")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(cvService, times(1)).updateCv(eq(123), any(CvDTO.class));
+    }
   
 }

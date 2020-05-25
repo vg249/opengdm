@@ -22,5 +22,6 @@ public interface CvDao {
     //convenience routines
     Cv getNewStatus();
     Cv getModifiedStatus();
+	Cv updateCv(Cv cv);
 
 }

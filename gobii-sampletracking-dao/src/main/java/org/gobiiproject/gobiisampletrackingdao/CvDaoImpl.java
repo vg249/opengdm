@@ -204,4 +204,19 @@ public class CvDaoImpl implements CvDao {
     public CvGroup getCvGroupById(Integer id) {
         return em.find(CvGroup.class, id);
     }
+
+    @Override
+    public Cv updateCv(Cv cv) {
+        em.merge(cv);
+        em.flush();
+        em.refresh(cv, this.getCvHints());
+        return cv;
+    }
+
+    private Map<String, Object> getCvHints() {
+        EntityGraph<?> graph = this.em.getEntityGraph("graph.cv");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;
+    }
 }
