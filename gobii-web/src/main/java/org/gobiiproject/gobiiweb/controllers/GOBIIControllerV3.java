@@ -879,18 +879,14 @@ public class GOBIIControllerV3  {
 
     @PostMapping("/cvs")
     @ResponseBody
-    public ResponseEntity<CvDTO> createCv(
+    public ResponseEntity<BrApiMasterPayload<CvDTO>> createCv(
         @RequestBody @Validated(CvDTO.Create.class) final CvDTO requestCvDTO,
         BindingResult bindingResult
     ) throws Exception {
-        try {
         this.checkBindingErrors(bindingResult);
         CvDTO createdCvDTO = cvService.createCv(requestCvDTO);
-        return ResponseEntity.created(null).body(createdCvDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(createdCvDTO);
+        return ResponseEntity.created(null).body(payload);
     }
 
 
