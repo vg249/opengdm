@@ -262,6 +262,7 @@ public class CvServiceImpl implements CvService {
         return PagedResult.createFrom(page, cvPropDTOs);
     }
 
+    @Transactional
     @Override
     public CvPropertyDTO addCvProperty(CvPropertyDTO request) {
         Cv cv = new Cv();
