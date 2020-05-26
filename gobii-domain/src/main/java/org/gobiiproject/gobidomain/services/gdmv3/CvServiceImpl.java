@@ -56,7 +56,7 @@ public class CvServiceImpl implements CvService {
 
         // check cvGroup Id
         CvGroup cvGroup = cvDao.getCvGroupById(request.getCvGroupId());
-        if (cvGroup == null) {
+        if (cvGroup == null || !cvGroup.getCvGroupType().equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                     "Invalid cv group id");
         }
