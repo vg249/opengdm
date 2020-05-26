@@ -58,7 +58,7 @@ public class CvServiceImpl implements CvService {
         CvGroup cvGroup = cvDao.getCvGroupById(request.getCvGroupId());
         if (cvGroup == null || !cvGroup.getCvGroupType().equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid cv group id");
+                    "Invalid cv group");
         }
         // check correct cv group type?
         cv.setCvGroup(cvGroup);
@@ -105,9 +105,9 @@ public class CvServiceImpl implements CvService {
         if (request.getCvGroupId() != null) {
             // check if new group id exists
             CvGroup cvGroup = cvDao.getCvGroupById(request.getCvGroupId());
-            if (cvGroup == null) {
+            if (cvGroup == null || !cvGroup.getCvGroupType().equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())) {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                        "Invalid cv group Id");
+                        "Invalid cv group");
             }
             cv.setCvGroup(cvGroup);
             updated = true;
