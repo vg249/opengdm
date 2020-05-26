@@ -216,12 +216,7 @@ public class CvServiceImpl implements CvService {
 
         });
 
-        PagedResult<CvDTO> pagedResult = new PagedResult<>();
-        pagedResult.setCurrentPageNum(page);
-        pagedResult.setCurrentPageSize(cvs.size());
-        pagedResult.setResult(cvDTOs);
-
-        return pagedResult;
+        return PagedResult.createFrom(page, cvDTOs);
     }
 
     @Transactional
