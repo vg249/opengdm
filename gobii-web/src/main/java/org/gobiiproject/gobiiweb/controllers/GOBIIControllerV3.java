@@ -927,6 +927,7 @@ public class GOBIIControllerV3  {
     }
 
     @GetMapping("/cvs/properties")
+    @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getCvProperties(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize
@@ -934,6 +935,18 @@ public class GOBIIControllerV3  {
         PagedResult<CvPropertyDTO> pagedResult = cvService.getCvProperties(page, pageSize);
         BrApiMasterListPayload<CvPropertyDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
+    }
+
+    @PostMapping("/cvs/properties")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvPropertyDTO>> createCvProperty(
+        @RequestBody @Validated(CvPropertyDTO.Create.class) final CvPropertyDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        CvPropertyDTO cvPropertyDTO = cvService.addCvProperty(request);
+        BrApiMasterPayload<CvPropertyDTO> payload = this.getMasterPayload(cvPropertyDTO);
+        return ResponseEntity.created(null).body(payload);
     }
 
     public ProjectService getProjectService() {
