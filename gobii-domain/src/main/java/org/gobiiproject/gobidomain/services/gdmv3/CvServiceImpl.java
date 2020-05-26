@@ -261,5 +261,29 @@ public class CvServiceImpl implements CvService {
 
         return PagedResult.createFrom(page, cvPropDTOs);
     }
+
+    @Override
+    public CvPropertyDTO addCvProperty(CvPropertyDTO request) {
+        Cv cv = new Cv();
+        cv.setTerm(request.getPropertyName());
+        cv.setDefinition(request.getPropertyDescription());
+
+        //set the group
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId()
+        );
+
+        cv.setCvGroup(cvGroup);
+        cv.setRank(0);
+        cv.setStatus(cvDao.getNewStatus().getCvId());
+
+        cvDao.createCv(cv);
+
+        CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
+        ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
+
+        return cvPropertyDTO;
+    }
     
 }

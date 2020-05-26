@@ -14,4 +14,6 @@ public interface CvService {
 	CvDTO getCv(Integer id) throws Exception;
 
 	PagedResult<CvPropertyDTO> getCvProperties(Integer page, Integer pageSize);
+
+	CvPropertyDTO addCvProperty(CvPropertyDTO request);
 }

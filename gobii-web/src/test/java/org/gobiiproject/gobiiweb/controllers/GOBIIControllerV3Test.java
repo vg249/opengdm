@@ -1510,5 +1510,24 @@ public class GOBIIControllerV3Test {
 
         verify(cvService, times(1)).getCvProperties(0, 1000);
     }
+
+    @Test
+    public void testAddCvProps() throws Exception {
+        String requestJson = "{\"propertyName\": \"test-prop\", \"propertyDescription\": \"test-desc\"}";
+
+        when(cvService.addCvProperty(any(CvPropertyDTO.class))).thenReturn(new CvPropertyDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/cvs/properties")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        verify(cvService, times(1)).addCvProperty(any(CvPropertyDTO.class));
+    }
   
 }
