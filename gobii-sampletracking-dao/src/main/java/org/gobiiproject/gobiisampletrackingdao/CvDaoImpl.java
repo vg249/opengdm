@@ -39,34 +39,11 @@ public class CvDaoImpl implements CvDao {
     protected EntityManager em;
 
     @Override
-    public Cv getCvByCvId(Integer cvId) throws GobiiException {
+    public Cv getCvByCvId(Integer cvId) throws Exception {
 
         Objects.requireNonNull(cvId, "Cv Id should not be null");
 
-        try {
-
-            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-
-            CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
-
-            Root<Cv> cv = criteriaQuery.from(Cv.class);
-            criteriaQuery.select(cv);
-
-            // Join<Object, Object> cvGroup = (Join<Object, Object>)
-            cv.fetch("cvGroup");
-
-            criteriaQuery.where(criteriaBuilder.equal(cv.get("cvId"), cvId));
-
-            Cv result = em.createQuery(criteriaQuery).getSingleResult();
-
-            return result;
-        } catch (Exception e) {
-
-            log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
-
-        }
+        return em.find(Cv.class, cvId, this.getCvHints());
 
     }
 

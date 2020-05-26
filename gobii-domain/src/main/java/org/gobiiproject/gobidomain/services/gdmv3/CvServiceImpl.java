@@ -114,8 +114,11 @@ public class CvServiceImpl implements CvService {
         }
 
         // check if change of properties
+        try {
         if (request.getProperties() != null && request.getProperties().size() > 0) {
-            Map<String, String> properties = request.getPropertiesMap();
+            Map<String, String> properties;
+            if (request.getPropertiesMap() != null) properties =  request.getPropertiesMap();
+            else properties = new HashMap<>();
             for (int i = 0; i < request.getProperties().size(); i++) {
                 CvPropertyDTO cvPropertyDTO = request.getProperties().get(i);
                 // check if id does exist and correct group
@@ -142,6 +145,10 @@ public class CvServiceImpl implements CvService {
             }
             cv.setProperties(properties);
             updated = true;
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
 
         if (updated) {
