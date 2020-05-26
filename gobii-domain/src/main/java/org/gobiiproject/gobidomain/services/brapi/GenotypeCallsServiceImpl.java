@@ -518,16 +518,16 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                             dnaRunOffset, false);
 
 
-            /**
-             * case 1: total number of dnarun in the dataset
-             * is less than page size
-             */
             if(dnaRuns.size() == pageSize) {
                 markerPageSize = 1;
                 columnOffset = 0;
                 nextDnaRunOffset = dnaRunOffset + dnaRuns.size();
                 nextPageOffset = pageOffset;
             }
+            /**
+             * case 2: total number of dnarun in the dataset
+             * is less than page size
+             */
             else if(dnaRunOffset == 0 && dnaRuns.size() < pageSize) {
 
                 markerPageSize = (int) Math.ceil(
@@ -561,11 +561,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 if(remainingDnaRuns.size() < remainingPageSize) {
 
                     int prevPageExcess = 0;
-                    if(dnaRuns.size() > 0) {
-                        prevPageExcess = 1;
+                    if(dnaRuns.size() == 0) {
+                        columnOffset = 0;
                     }
+                    else {
+                        prevPageExcess = 1;
+                        columnOffset = dnaRunOffset;
 
-                    columnOffset = dnaRunOffset;
+                    }
 
                     dnaRuns = remainingDnaRuns;
 
