@@ -949,6 +949,16 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    @DeleteMapping("/cvs/{cvId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteCv(
+        @PathVariable Integer cvId
+    ) throws Exception {
+        cvService.deleteCv(cvId);
+        return ResponseEntity.noContent().build();
+    } 
+
     public ProjectService getProjectService() {
         return projectService;
     }

@@ -219,4 +219,10 @@ public class CvDaoImpl implements CvDao {
         hints.put("javax.persistence.fetchgraph", graph);
         return hints;
     }
+
+    @Override
+    public void deleteCv(Cv cv) throws Exception {
+        em.remove(cv);
+        em.flush();
+    }
 }

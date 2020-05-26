@@ -15,5 +15,7 @@ public interface CvService {
 
 	PagedResult<CvPropertyDTO> getCvProperties(Integer page, Integer pageSize);
 
-	CvPropertyDTO addCvProperty(CvPropertyDTO request);
+	CvPropertyDTO addCvProperty(CvPropertyDTO request) throws Exception;
+
+	void deleteCv(Integer id) throws Exception;
 }

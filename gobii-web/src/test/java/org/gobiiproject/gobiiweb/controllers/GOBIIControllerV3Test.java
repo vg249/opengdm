@@ -1529,5 +1529,21 @@ public class GOBIIControllerV3Test {
 
         verify(cvService, times(1)).addCvProperty(any(CvPropertyDTO.class));
     }
+
+
+    @Test
+    public void testDeleteCv() throws Exception {
+        doNothing().when(cvService).deleteCv(123);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/cvs/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(cvService, times(1)).deleteCv(123);
+    }
   
 }

@@ -87,11 +87,7 @@ public class CvServiceImpl implements CvService {
     public CvDTO updateCv(Integer id, CvDTO request) throws Exception {
         //check
         boolean updated = false;
-        Cv cv = cvDao.getCvByCvId(id);
-        if (cv == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Cv not found");
-        }
+        Cv cv = this.loadCv(id);
 
         // check if change of name
         if (!LineUtils.isNullOrEmpty(request.getCvName())) {
@@ -222,11 +218,7 @@ public class CvServiceImpl implements CvService {
     @Transactional
     @Override
     public CvDTO getCv(Integer id) throws Exception {
-        Cv cv = cvDao.getCvByCvId(id);
-        if (cv == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Cv not found");
-        }
+        Cv cv = this.loadCv(id);
 
         CvDTO cvDTO = new CvDTO();
         ModelMapper.mapEntityToDto(cv, cvDTO);
@@ -285,6 +277,30 @@ public class CvServiceImpl implements CvService {
         ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
 
         return cvPropertyDTO;
+    }
+
+    @Transactional
+    @Override
+    public void deleteCv(Integer id) throws Exception {
+        Cv cv = this.loadCv(id);
+
+        //check group
+        if (cv.getCvGroup().getCvGroupType() != GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId()) {
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                            "Cannot delete system defined cv");
+        }
+
+        cvDao.deleteCv(cv);
+
+    }
+
+    private Cv loadCv(Integer id) throws Exception {
+        Cv cv = cvDao.getCvByCvId(id);
+        if (cv == null) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Cv not found");
+        }
+        return cv;
     }
     
 }

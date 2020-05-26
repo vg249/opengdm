@@ -23,4 +23,5 @@ public interface CvDao {
     Cv getNewStatus();
     Cv getModifiedStatus();
 	Cv updateCv(Cv cv);
+	void deleteCv(Cv cv) throws Exception;
 }
