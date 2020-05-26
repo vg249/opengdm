@@ -244,5 +244,27 @@ public class CvServiceImpl implements CvService {
 
         return cvDTO;
     }
+
+    @Transactional
+    @Override
+    public PagedResult<CvPropertyDTO> getCvProperties(Integer page, Integer pageSize) {
+        List<Cv> cvProps = cvDao.getCvs(
+            null,
+            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(),
+            null,
+            page,
+            pageSize
+        );
+
+        List<CvPropertyDTO> cvPropDTOs = new ArrayList<>();
+
+        cvProps.forEach(cv -> {
+            CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
+            ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
+            cvPropDTOs.add(cvPropertyDTO);
+        });
+
+        return PagedResult.createFrom(page, cvPropDTOs);
+    }
     
 }

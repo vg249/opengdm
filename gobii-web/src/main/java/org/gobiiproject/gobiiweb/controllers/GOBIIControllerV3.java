@@ -910,14 +910,9 @@ public class GOBIIControllerV3  {
         @RequestParam(required=false) String cvGroupName,
         @RequestParam(required=false) String cvGroupType
     ) throws Exception {
-        try {
         PagedResult<CvDTO> pagedResult = cvService.getCvs(page, pageSize, cvGroupName, cvGroupType);
         BrApiMasterListPayload<CvDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     @GetMapping("/cvs/{cvId}")
@@ -929,6 +924,16 @@ public class GOBIIControllerV3  {
         BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(cvDTO);
         return ResponseEntity.ok(payload);
 
+    }
+
+    @GetMapping("/cvs/properties")
+    public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getCvProperties(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvPropertyDTO> pagedResult = cvService.getCvProperties(page, pageSize);
+        BrApiMasterListPayload<CvPropertyDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
     }
 
     public ProjectService getProjectService() {
