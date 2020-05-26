@@ -335,7 +335,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 datasetId, null,
                 null, null,
                 null, null,
-                true);
+                true );
 
     }
 
