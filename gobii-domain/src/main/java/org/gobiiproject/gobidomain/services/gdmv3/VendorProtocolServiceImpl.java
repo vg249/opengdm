@@ -24,8 +24,6 @@ public class VendorProtocolServiceImpl implements VendorProtocolService {
     @Override
     public PagedResult<VendorProtocolDTO>
     getVendorProtocols(Integer page, Integer pageSize) throws Exception {
-
-        PagedResult<VendorProtocolDTO> pagedResult;
         
         try {
 
@@ -42,11 +40,7 @@ public class VendorProtocolServiceImpl implements VendorProtocolService {
                 vendorProtocolDTOS.add(vendorProtocolDTO);
             });
 
-            pagedResult = new PagedResult<>();
-            pagedResult.setResult(vendorProtocolDTOS);
-            pagedResult.setCurrentPageNum(page);
-            pagedResult.setCurrentPageSize(vendorProtocolDTOS.size());
-            return pagedResult;
+            return PagedResult.createFrom(page, vendorProtocolDTOS);
         } catch (GobiiException gE) {
             throw gE;
         } catch (Exception e) {

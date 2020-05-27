@@ -186,11 +186,8 @@ public class DatasetServiceImpl implements DatasetService {
 			datasetDTOs.add(datasetDTO);
 
 		});
-		PagedResult<DatasetDTO> pagedResult = new PagedResult<>();
-		pagedResult.setCurrentPageNum(page);
-		pagedResult.setCurrentPageSize(datasets.size());
-		pagedResult.setResult(datasetDTOs);
-		return pagedResult;
+
+		return PagedResult.createFrom(page, datasetDTOs);
 	}
 
 	private List<Analysis> checkAndGetAnalysesFromIds(Integer[] analysisIdArray) throws Exception {
@@ -408,12 +405,7 @@ public class DatasetServiceImpl implements DatasetService {
             cvTypeDTOs.add(cvTypeDTO);
 		});
 		
-        PagedResult<CvTypeDTO> result = new PagedResult<>();
-        result.setCurrentPageNum(page);
-        result.setCurrentPageSize(cvTypeDTOs.size());
-        result.setResult(cvTypeDTOs);
-
-        return result;
+        return PagedResult.createFrom(page, cvTypeDTOs);
     }
 
 	@Transactional

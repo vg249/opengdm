@@ -23,7 +23,6 @@ public class ContactServiceImpl implements ContactService {
     
     @Override
     public PagedResult<ContactDTO> getContacts(Integer page, Integer pageSize, Integer organizationId) throws Exception {
-        PagedResult<ContactDTO> pagedResult;
         
         try {
             Objects.requireNonNull(page);
@@ -37,11 +36,7 @@ public class ContactServiceImpl implements ContactService {
                 contactDTOs.add(contactDTO);
             });
 
-            pagedResult = new PagedResult<>();
-            pagedResult.setResult(contactDTOs);
-            pagedResult.setCurrentPageNum(page);
-            pagedResult.setCurrentPageSize(contactDTOs.size());
-            return pagedResult;
+            return PagedResult.createFrom(page, contactDTOs);
         } catch (GobiiException gE) {
             throw gE;
         } catch (Exception e) {

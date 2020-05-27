@@ -38,18 +38,13 @@ public class PropertiesServiceImpl implements PropertiesService {
 
     @Override
     public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroup cvGroup) throws Exception {
-        PagedResult<CvPropertyDTO> pagedResult;
 
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
             List<Cv> cvs = cvDao.getCvs(null, cvGroup.getCvGroupName(), null, page, pageSize);
             List<CvPropertyDTO> converted = CvMapper.convert(cvs);
-            pagedResult = new PagedResult<>();
-            pagedResult.setResult(converted);
-            pagedResult.setCurrentPageNum(page);
-            pagedResult.setCurrentPageSize(converted.size());
-            return pagedResult;
+            return PagedResult.createFrom(page, converted);
         } catch (GobiiException gE) {
             throw gE;
         } catch (Exception e) {

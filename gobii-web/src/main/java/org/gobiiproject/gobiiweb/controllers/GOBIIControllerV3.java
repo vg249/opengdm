@@ -889,6 +889,75 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    @PatchMapping("/cvs/{cvId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvDTO>> updateCv(
+        @PathVariable Integer cvId,
+        @RequestBody @Validated(CvDTO.Update.class) final CvDTO requestCvDTO,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        CvDTO updatedCvDTO = cvService.updateCv(cvId, requestCvDTO);
+        BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(updatedCvDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    @GetMapping("/cvs")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvDTO>> getCvs(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) String cvGroupName,
+        @RequestParam(required=false) String cvGroupType
+    ) throws Exception {
+        PagedResult<CvDTO> pagedResult = cvService.getCvs(page, pageSize, cvGroupName, cvGroupType);
+        BrApiMasterListPayload<CvDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
+    }
+
+    @GetMapping("/cvs/{cvId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvDTO>> getCv(
+        @PathVariable Integer cvId
+    ) throws Exception {
+        CvDTO cvDTO = cvService.getCv(cvId);
+        BrApiMasterPayload<CvDTO> payload = this.getMasterPayload(cvDTO);
+        return ResponseEntity.ok(payload);
+
+    }
+
+    @GetMapping("/cvs/properties")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getCvProperties(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvPropertyDTO> pagedResult = cvService.getCvProperties(page, pageSize);
+        BrApiMasterListPayload<CvPropertyDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
+    }
+
+    @PostMapping("/cvs/properties")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvPropertyDTO>> createCvProperty(
+        @RequestBody @Validated(CvPropertyDTO.Create.class) final CvPropertyDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        CvPropertyDTO cvPropertyDTO = cvService.addCvProperty(request);
+        BrApiMasterPayload<CvPropertyDTO> payload = this.getMasterPayload(cvPropertyDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    @DeleteMapping("/cvs/{cvId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteCv(
+        @PathVariable Integer cvId
+    ) throws Exception {
+        cvService.deleteCv(cvId);
+        return ResponseEntity.noContent().build();
+    } 
 
     public ProjectService getProjectService() {
         return projectService;

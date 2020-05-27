@@ -49,12 +49,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             orgDTOs.add(organizationDTO);
         });
 
-        PagedResult<OrganizationDTO> pagedResult = new PagedResult<>();
-        pagedResult.setCurrentPageNum(page);
-        pagedResult.setCurrentPageSize(orgDTOs.size());
-        pagedResult.setResult(orgDTOs);
-
-        return pagedResult;   
+        return PagedResult.createFrom(page, orgDTOs);   
     }
 
     @Transactional

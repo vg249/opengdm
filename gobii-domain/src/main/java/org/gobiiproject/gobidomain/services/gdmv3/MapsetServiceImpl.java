@@ -51,12 +51,7 @@ public class MapsetServiceImpl implements MapsetService {
             mapsetDTOs.add(mapsetDTO);
         });
 
-        PagedResult<MapsetDTO> result = new PagedResult<>();
-        result.setCurrentPageNum(page);
-        result.setCurrentPageSize(mapsets.size());
-        result.setResult(mapsetDTOs);
-
-        return result;
+        return PagedResult.createFrom(page, mapsetDTOs);
     }
 
     @Transactional
@@ -235,12 +230,8 @@ public class MapsetServiceImpl implements MapsetService {
             ModelMapper.mapEntityToDto(cv, mapsetTypeDTO);
             mapsetTypeDTOs.add(mapsetTypeDTO);
         });
-        PagedResult<CvTypeDTO> result = new PagedResult<>();
-        result.setCurrentPageNum(page);
-        result.setCurrentPageSize(mapsetTypeDTOs.size());
-        result.setResult(mapsetTypeDTOs);
 
-        return result;
+        return PagedResult.createFrom(page, mapsetTypeDTOs);
     }
     
     
