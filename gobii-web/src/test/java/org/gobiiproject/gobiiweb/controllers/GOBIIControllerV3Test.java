@@ -35,6 +35,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
+import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -49,6 +50,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
@@ -111,6 +113,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private CvService cvService;
+
+    @Mock
+    private PlatformService platformService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -1544,6 +1549,36 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         verify(cvService, times(1)).deleteCv(123);
+    }
+
+    //--Platforms
+    @Test
+    public void testCreatePlatform() throws Exception {
+        String requestJson = "{\"platformName\": \"test-platform-name\", \"platformTypeId\": \"7\"}";
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        when(
+            platformService.createPlatform(any(PlatformDTO.class), eq("test-user"))
+        ).thenReturn(
+            new PlatformDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/platforms")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(platformService, times(1)).createPlatform(any(PlatformDTO.class), eq("test-user"));
+
     }
   
 }

@@ -23,6 +23,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
+import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
@@ -42,6 +43,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -50,6 +52,7 @@ import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
@@ -113,6 +116,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private CvService cvService;
+
+    @Autowired
+    private PlatformService platformService;
 
     /**
      * Authentication Endpoint
@@ -958,6 +964,21 @@ public class GOBIIControllerV3  {
         cvService.deleteCv(cvId);
         return ResponseEntity.noContent().build();
     } 
+
+    // --- Platforms
+    @PostMapping("/platforms")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<PlatformDTO>> addPlatform(
+        @RequestBody @Validated(PlatformDTO.Create.class) final PlatformDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+
+        PlatformDTO platformDTO = platformService.createPlatform(request, user);
+        BrApiMasterPayload<PlatformDTO> payload = this.getMasterPayload(platformDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
 
     public ProjectService getProjectService() {
         return projectService;
