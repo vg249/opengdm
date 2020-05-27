@@ -1,8 +1,7 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface MapsetService {
@@ -16,7 +15,7 @@ public interface MapsetService {
 
 	void deleteMapset(Integer mapsetId) throws Exception;
 
-	MapsetTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user);
+	CvTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user);
 
-	PagedResult<MapsetTypeDTO> getMapsetTypes(Integer page, Integer pageSizeToUse);
+	PagedResult<CvTypeDTO> getMapsetTypes(Integer page, Integer pageSizeToUse);
 }

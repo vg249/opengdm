@@ -10,8 +10,7 @@ import java.util.List;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -88,10 +87,10 @@ public class AnalysisServiceImplTest {
             )
         ).thenReturn(new Cv());
 
-        AnalysisTypeRequest analysisTypeRequest = new AnalysisTypeRequest();
-        analysisTypeRequest.setAnalysisTypeName("test-name");
-        analysisTypeRequest.setAnalysisTypeDescription("test-description");
-        AnalysisTypeDTO analysisType = analysisServiceImpl.createAnalysisType(analysisTypeRequest, "test-user");
+        CvTypeDTO analysisTypeRequest = new CvTypeDTO();
+        analysisTypeRequest.setTypeName("test-name");
+        analysisTypeRequest.setTypeDescription("test-description");
+        CvTypeDTO analysisType = analysisServiceImpl.createAnalysisType(analysisTypeRequest, "test-user");
         assert analysisType != null;
         verify(
             cvDao, times(1)

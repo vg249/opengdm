@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -20,6 +22,11 @@ import lombok.Data;
 @Table(name = "cv")
 @SuppressWarnings("serial")
 @Data
+@NamedEntityGraph(name = "graph.cv",
+    attributeNodes = {
+        @NamedAttributeNode(value="cvGroup")
+    }
+)
 public class Cv implements Serializable{
 
     @Id

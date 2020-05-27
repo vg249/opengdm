@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
@@ -40,17 +41,15 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -109,6 +108,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private OrganizationService organizationService;
+
+    @Mock
+    private CvService cvService;
 
     @InjectMocks
     private GOBIIControllerV3 gobiiControllerV3;
@@ -732,9 +734,9 @@ public class GOBIIControllerV3Test {
         String jsonRequest = "{\"analysisTypeName\" : \"testType\"}";
 
         when(
-            analysisService.createAnalysisType(any(AnalysisTypeRequest.class), any(String.class))
+            analysisService.createAnalysisType(any(CvTypeDTO.class), any(String.class))
         ).thenReturn(
-            new AnalysisTypeDTO()
+            new CvTypeDTO()
         );
 
         when(
@@ -756,10 +758,10 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testListAnalysisTypes() throws Exception {
-        List<AnalysisTypeDTO> analysisTypes = new ArrayList<>();
+        List<CvTypeDTO> analysisTypes = new ArrayList<>();
         Integer page = 0;
         Integer pageSize = 1000;
-        PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
+        PagedResult<CvTypeDTO> result = new PagedResult<>();
         result.setResult(analysisTypes);
 
         when(
@@ -1053,7 +1055,7 @@ public class GOBIIControllerV3Test {
         when(
             datasetService.getDatasetTypes(0, 1000)
         ).thenReturn(
-            new PagedResult<DatasetTypeDTO>()
+            new PagedResult<CvTypeDTO>()
         );
 
         mockMvc.perform(
@@ -1070,7 +1072,7 @@ public class GOBIIControllerV3Test {
         when(
             datasetService.createDatasetType("test-name", "datasetTypeDescription", "user")
         ).thenReturn(
-            new DatasetTypeDTO()
+            new CvTypeDTO()
         );
 
         when(
@@ -1078,7 +1080,7 @@ public class GOBIIControllerV3Test {
         ).thenReturn("user");
 
 
-        String requestJson = "{\"datatsetTypeName\" : \"test-name\", \"datasetTypeDescription\": \"datasetTypeDescription\"}";
+        String requestJson = "{\"typeName\" : \"test-name\", \"typeDescription\": \"datasetTypeDescription\"}";
         mockMvc.perform(
             MockMvcRequestBuilders
             .post("/gobii-dev/gobii/v3/datasets/types")
@@ -1261,7 +1263,7 @@ public class GOBIIControllerV3Test {
         when(
             mapsetService.createMapsetType("test-name", "test-desc", "user")
         ).thenReturn(
-            new MapsetTypeDTO()
+            new CvTypeDTO()
         );
 
         when(
@@ -1287,7 +1289,7 @@ public class GOBIIControllerV3Test {
         when(
             mapsetService.getMapsetTypes(0, 1000)
         ).thenReturn(
-            new PagedResult<MapsetTypeDTO>()
+            new PagedResult<CvTypeDTO>()
         );
 
         mockMvc.perform(
@@ -1409,6 +1411,30 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isNoContent())
         ;
         verify(organizationService, times(1)).deleteOrganization(123);
+    }
+
+    //--- Cv tests
+
+    @Test
+    public void testCreateCv() throws Exception {
+        String requestJson = "{\"cvName\": \"test-cv\", \"cvDescription\": \"test-desc\", \"cvGroupId\" : \"16\"}";
+
+        when(
+            cvService.createCv(any(CvDTO.class))
+        ).thenReturn(
+            new CvDTO()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/cvs")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
     }
   
 }
