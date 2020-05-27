@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
@@ -115,7 +116,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Transactional
     @Override
-    public AnalysisTypeDTO createAnalysisType(AnalysisTypeRequest analysisTypeRequest, String creatorId) throws Exception {
+    public CvTypeDTO createAnalysisType(CvTypeDTO analysisTypeRequest, String creatorId) throws Exception {
         
         org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
@@ -125,8 +126,8 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         Cv cv = new Cv();
         cv.setCvGroup(cvGroup);
-        cv.setTerm(analysisTypeRequest.getAnalysisTypeName());
-        cv.setDefinition(analysisTypeRequest.getAnalysisTypeDescription());
+        cv.setTerm(analysisTypeRequest.getTypeName());
+        cv.setDefinition(analysisTypeRequest.getTypeDescription());
 
         //get the new row status
         // Get the Cv for status, new row
@@ -137,23 +138,23 @@ public class AnalysisServiceImpl implements AnalysisService {
         cv.setRank(0);
         cv = cvDao.createCv(cv);
         
-        AnalysisTypeDTO analysisDTO = new AnalysisTypeDTO();
+        CvTypeDTO analysisDTO = new CvTypeDTO();
         ModelMapper.mapEntityToDto(cv, analysisDTO);
         return analysisDTO;
 
     }
 
     @Override
-    public PagedResult<AnalysisTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
+    public PagedResult<CvTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
         List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
-        List<AnalysisTypeDTO> analysisTypeDTOs = new ArrayList<>();
+        List<CvTypeDTO> analysisTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
-            AnalysisTypeDTO analysisTypeDTO = new AnalysisTypeDTO();
+            CvTypeDTO analysisTypeDTO = new CvTypeDTO();
             ModelMapper.mapEntityToDto(cv, analysisTypeDTO);
             analysisTypeDTOs.add(analysisTypeDTO);
         });
-        PagedResult<AnalysisTypeDTO> result = new PagedResult<>();
+        PagedResult<CvTypeDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
         result.setCurrentPageSize(analysisTypeDTOs.size());
         result.setResult(analysisTypeDTOs);

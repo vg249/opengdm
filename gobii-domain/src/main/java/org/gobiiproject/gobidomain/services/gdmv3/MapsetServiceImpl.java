@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -88,7 +89,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         // status
         Cv status = cvDao.getNewStatus();
-        createdMapset.setStatus(status.getCvId()); // TODO: replace the status with cv type
+        createdMapset.setStatus(status); // TODO: replace the status with cv type
 
         createdMapset = mapsetDao.createMapset(createdMapset);
         MapsetDTO createdMapsetDTO = new MapsetDTO();
@@ -147,7 +148,7 @@ public class MapsetServiceImpl implements MapsetService {
         // updated status
         // status
         Cv status = cvDao.getModifiedStatus();
-        mapset.setStatus(status.getCvId()); // TODO: replace the status with cv type
+        mapset.setStatus(status); // TODO: replace the status with cv type
 
         mapset = mapsetDao.updateMapset(mapset);
         MapsetDTO updatedMapsetDTO = new MapsetDTO();
@@ -194,7 +195,7 @@ public class MapsetServiceImpl implements MapsetService {
 
     @Transactional
     @Override
-    public MapsetTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user) {
+    public CvTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user) {
         
         org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(),
@@ -218,23 +219,23 @@ public class MapsetServiceImpl implements MapsetService {
         cv.setRank(0);
         cv = cvDao.createCv(cv);
         
-        MapsetTypeDTO mapsetDTO = new MapsetTypeDTO();
+        CvTypeDTO mapsetDTO = new CvTypeDTO();
         ModelMapper.mapEntityToDto(cv, mapsetDTO);
         return mapsetDTO;
     }
 
     @Transactional
     @Override
-    public PagedResult<MapsetTypeDTO> getMapsetTypes(Integer page, Integer pageSize) {
+    public PagedResult<CvTypeDTO> getMapsetTypes(Integer page, Integer pageSize) {
         List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(), null, page, pageSize);
-        List<MapsetTypeDTO> mapsetTypeDTOs = new ArrayList<>();
+        List<CvTypeDTO> mapsetTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
-            MapsetTypeDTO mapsetTypeDTO = new MapsetTypeDTO();
+            CvTypeDTO mapsetTypeDTO = new CvTypeDTO();
             ModelMapper.mapEntityToDto(cv, mapsetTypeDTO);
             mapsetTypeDTOs.add(mapsetTypeDTO);
         });
-        PagedResult<MapsetTypeDTO> result = new PagedResult<>();
+        PagedResult<CvTypeDTO> result = new PagedResult<>();
         result.setCurrentPageNum(page);
         result.setCurrentPageSize(mapsetTypeDTOs.size());
         result.setResult(mapsetTypeDTOs);

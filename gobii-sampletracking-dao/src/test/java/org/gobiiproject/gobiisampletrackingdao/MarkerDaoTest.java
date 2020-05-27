@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 /**
  * Test cases for MarkerDaoImpl
  * TODO: The dataset test are written with knowledge of undelying data in
@@ -20,10 +23,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 public class MarkerDaoTest {
 
+    @PersistenceContext
+    protected EntityManager em;
+
     @Autowired
     private MarkerDao markerDao;
 
+    @Autowired
+    private CvDao cvDao;
+
     Random random = new Random();
+
+    private DaoTestSetUp daoTestSetUp;
+
+    public void createTestData() {
+        daoTestSetUp = new DaoTestSetUp(em, cvDao);
+    }
 
     @Test
     public void testGetMarkers() {

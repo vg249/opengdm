@@ -31,8 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/application-config.xml"})
 @WebAppConfiguration
 public class BRAPIIControllerV1Test {
 
@@ -43,7 +41,7 @@ public class BRAPIIControllerV1Test {
     private VariantSetsService variantSetsService;
 
     @InjectMocks
-    private BrAPIv2Controller brApiV2Controller;
+    private BrapiV2Controller brApiV2Controller;
 
     private MockMvc mockMvc;
 
@@ -319,14 +317,14 @@ public class BRAPIIControllerV1Test {
 
         when(
                 samplesBrapiService.getSamples(
-                        any(Integer.TYPE), eq(pageSize),
-                        isNull(Integer.class), isNull(Integer.class),
+                        eq(pageSize), any(Integer.TYPE),
+                        isNull(Integer.class),isNull(Integer.class),
                         isNull(String.class))
         ).thenReturn(result);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/samples")
+                        "/gobii-dev/brapi/v2/samples")
                         .param("pageSize",  pageSize.toString())
                         .contextPath("/gobii-dev")).andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -379,17 +377,16 @@ public class BRAPIIControllerV1Test {
         result.setCurrentPageNum(pageNum);
         result.setResult(mockSamples);
 
-
         when(
                 samplesBrapiService.getSamples(
-                        any(Integer.TYPE), eq(pageSize),
+                        eq(pageSize), any(Integer.TYPE),
                         isNull(Integer.class), isNull(Integer.class),
                         isNull(String.class))
         ).thenReturn(result);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(
-                        "/gobii-dev/brapi/v1/samples")
+                        "/gobii-dev/brapi/v2/samples")
                         .param("pageSize",  pageSize.toString())
                         .param("page",  pageNum.toString())
                         .contextPath("/gobii-dev")).andDo(print())

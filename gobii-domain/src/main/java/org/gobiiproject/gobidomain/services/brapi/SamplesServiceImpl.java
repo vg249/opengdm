@@ -18,7 +18,9 @@ import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaSampleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 
+@Transactional
 public class SamplesServiceImpl implements SamplesService {
 
 

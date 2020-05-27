@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,19 +14,19 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.junit.AfterClass;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import junit.framework.TestCase;
 
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 /**
@@ -45,55 +47,30 @@ public class AnalysisDaoTest {
     @Autowired
     private AnalysisDao analysisDao;
 
+    @PersistenceContext
+    protected EntityManager em;
 
     static final Integer testPageSize = 10;
 
-    static Set<Integer> createdAnalysisIds = new HashSet<>();
-
+    DaoTestSetUp daoTestSetUp;
 
     @Before
     public void createTestData() {
 
-        Random random = new Random();
-
-        List<Cv> analysisTypes = cvDao.getCvListByCvGroup(
-                CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        assertTrue("System defined analysis type values are not found.",
-                analysisTypes.size() > 0);
-
-       Cv newStatus = cvDao.getCvs(
-               "new",
-               CvGroup.CVGROUP_STATUS.getCvGroupName(),
-               GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-
-       for (int i = 0; i < testPageSize; i++) {
-
-           Integer analysisTypeIndex = random.nextInt(analysisTypes.size());
-           String analysisName = RandomStringUtils.random(7, true, true);
-
-           Analysis analysis = new Analysis();
-
-           analysis.setAnalysisName(analysisName);
-           analysis.setType(analysisTypes.get(analysisTypeIndex));
-           analysis.setStatus(newStatus);
-
-           try {
-               analysisDao.createAnalysis(analysis);
-           }
-           catch (Exception e) {
-               TestCase.fail("Unknown Exception: "+ e.getMessage());
-           }
-
-           createdAnalysisIds.add(analysis.getAnalysisId());
-       }
-
+        daoTestSetUp = new DaoTestSetUp(em, cvDao);
+        daoTestSetUp.createTestAnalyses(testPageSize);
+        em.flush();
     }
 
 
     @Test
     public void getAnalysesByAnalysisIdsTest() {
+
+        Set<Integer> createdAnalysisIds = new HashSet<>();
+
+        for(Analysis analysis : daoTestSetUp.getCreatedAnalyses()) {
+            createdAnalysisIds.add(analysis.getAnalysisId());
+        }
 
         List<Analysis> analyses = analysisDao.getAnalysesByAnalysisIds(
                 createdAnalysisIds);
@@ -106,7 +83,32 @@ public class AnalysisDaoTest {
 
     }
 
+    @Test
+    public void testCreateUpdatedAndDeleteAnalysis() throws Exception {
+        Analysis analysis = new Analysis();
+        analysis.setAnalysisName(RandomStringUtils.random(10, true, true));
+        analysis.setAlgorithm(RandomStringUtils.random(10, true, true));
+        analysis.setDescription(RandomStringUtils.random(20, true, true));
 
+        analysis = analysisDao.createAnalysis(analysis);
+        assertTrue("Analysis not created", analysis != null && analysis.getAnalysisId() > 0);
+
+        assertTrue("Program is already set", LineUtils.isNullOrEmpty(analysis.getProgram()));
+        String dummyProgram = RandomStringUtils.random(10, true, true);
+        analysis.setProgram(dummyProgram);
+        analysis = analysisDao.updateAnalysis(analysis);
+        assertEquals("Incorrect program name", analysis.getProgram(), dummyProgram);
+
+        //delete
+        Integer id = analysis.getAnalysisId();
+        analysisDao.deleteAnalysis(analysis);
+
+        analysis = analysisDao.getAnalysis(id);
+        assertNull("analysis should be null after delete", analysis);
+
+    }
+
+   
 
 
 }

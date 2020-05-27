@@ -20,7 +20,6 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 public class ExperimentDaoImpl implements ExperimentDao {
 
@@ -81,8 +80,10 @@ public class ExperimentDaoImpl implements ExperimentDao {
             e.printStackTrace();
             log.error(e.getMessage(), e);
 
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
 

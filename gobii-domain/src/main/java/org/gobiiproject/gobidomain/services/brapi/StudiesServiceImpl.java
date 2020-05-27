@@ -13,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional
 public class StudiesServiceImpl implements StudiesService {
 
     Logger LOGGER = LoggerFactory.getLogger(StudiesServiceImpl.class);
