@@ -35,10 +35,10 @@ public class CallSetServiceImpl implements CallSetService {
     @Autowired
     private CvDao cvDao;
 
-    public PagedResult<CallSetDTO> getCallSets(Integer pageSize,
-                                               Integer pageNum,
-                                               Integer variantSetDbId,
-                                               CallSetDTO callSetsFilter) throws GobiiException {
+    public PagedResult<CallSetDTO> getCallSets(
+        Integer pageSize, Integer pageNum,
+        Integer variantSetDbId,
+        CallSetDTO callSetsFilter) throws GobiiException {
 
         PagedResult<CallSetDTO> pagedResult = new PagedResult<>();
 
@@ -46,18 +46,29 @@ public class CallSetServiceImpl implements CallSetService {
 
         try {
 
-            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(
+                pageSize, "pageSize : Required non null");
             Objects.requireNonNull(pageNum, "pageNum : Required non null");
-            Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
+            Objects.requireNonNull(
+                callSetsFilter, "callSetsFilter : Required non null");
 
 
             Integer rowOffset = pageNum * pageSize;
 
-            List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(pageSize, rowOffset,
-                    callSetsFilter.getCallSetDbId(), callSetsFilter.getCallSetName(),
-                    variantSetDbId, callSetsFilter.getStudyDbId(),
-                    callSetsFilter.getSampleDbId(), callSetsFilter.getSampleName(),
-                    callSetsFilter.getGermplasmDbId(), callSetsFilter.getGermplasmName());
+            DnaRun dnaRunFilter = new DnaRun();
+            ModelMapper.mapDtoToEntity(callSetsFilter, dnaRunFilter);
+
+            List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
+                pageSize,
+                rowOffset,
+                callSetsFilter.getCallSetDbId(),
+                callSetsFilter.getCallSetName(),
+                variantSetDbId,
+                callSetsFilter.getStudyDbId(),
+                callSetsFilter.getSampleDbId(),
+                callSetsFilter.getSampleName(),
+                callSetsFilter.getGermplasmDbId(),
+                callSetsFilter.getGermplasmName());
 
             List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
                     CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
