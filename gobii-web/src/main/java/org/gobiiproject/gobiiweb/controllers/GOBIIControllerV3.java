@@ -1017,6 +1017,16 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @DeleteMapping("/platforms/{platformId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deletePlatform(
+        @PathVariable Integer platformId
+    ) throws Exception {
+        platformService.deletePlatform(platformId);
+        return ResponseEntity.noContent().build();
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

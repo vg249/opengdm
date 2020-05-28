@@ -1644,5 +1644,20 @@ public class GOBIIControllerV3Test {
         verify(platformService, times(1)).updatePlatform(eq(123), any(PlatformDTO.class), eq("test-user"));
 
     }
+
+    @Test
+    public void testDeletePlatform() throws Exception {
+        doNothing().when(platformService).deletePlatform(123);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/platforms/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(platformService, times(1)).deletePlatform(123);
+    }
   
 }

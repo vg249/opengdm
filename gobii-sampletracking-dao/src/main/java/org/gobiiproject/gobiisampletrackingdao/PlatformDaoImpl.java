@@ -81,5 +81,12 @@ public class PlatformDaoImpl implements PlatformDao {
         em.refresh(platform, this.getHints());
         return platform;
     }
+
+    @Override
+    public void deletePlatform(Platform platform) {
+        em.remove(platform);
+        em.flush();
+
+    }
     
 }

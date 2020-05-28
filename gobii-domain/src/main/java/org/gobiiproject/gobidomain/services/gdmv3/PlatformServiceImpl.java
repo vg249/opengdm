@@ -147,6 +147,15 @@ public class PlatformServiceImpl implements PlatformService {
 
     }
 
+    @Transactional
+    @Override
+    public void deletePlatform(Integer platformId) throws Exception {
+        Platform platform = this.loadPlatform(platformId);
+
+        platformDao.deletePlatform(platform);
+
+    }
+
     
     
 }

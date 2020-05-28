@@ -13,5 +13,7 @@ public interface PlatformDao {
 	Platform getPlatform(Integer platformId);
 
 	Platform updatePlatform(Platform platform);
+
+	void deletePlatform(Platform platform);
     
 }

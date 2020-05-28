@@ -12,5 +12,7 @@ public interface PlatformService {
 	PlatformDTO getPlatform(Integer platformId) throws Exception;
 
 	PlatformDTO updatePlatform(Integer platformId, PlatformDTO request, String updatedBy) throws Exception;
+
+	void deletePlatform(Integer platformId) throws Exception;
     
 }
