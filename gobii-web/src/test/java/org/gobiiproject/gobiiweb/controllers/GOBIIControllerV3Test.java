@@ -1580,5 +1580,23 @@ public class GOBIIControllerV3Test {
         verify(platformService, times(1)).createPlatform(any(PlatformDTO.class), eq("test-user"));
 
     }
+
+    @Test
+    public void testListPlatforms() throws Exception {
+        when(
+            platformService.getPlatforms(0, 1000, null)
+        ).thenReturn( new PagedResult<PlatformDTO>());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/platforms")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(platformService, times(1)).getPlatforms(0, 1000, null);
+    }
   
 }

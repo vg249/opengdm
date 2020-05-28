@@ -980,6 +980,18 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    @GetMapping("/platforms")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<PlatformDTO>> getPlatforms(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer platformTypeId
+    ) throws Exception {
+        PagedResult<PlatformDTO> results = platformService.getPlatforms(page, pageSize, platformTypeId);
+        BrApiMasterListPayload<PlatformDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }
