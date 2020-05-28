@@ -182,6 +182,30 @@ public class PlatformServiceImpl implements PlatformService {
         return cvTypeDTO;
     }
 
+    @Transactional
+    @Override
+    public PagedResult<CvTypeDTO> getPlatformTypes(Integer page, Integer pageSize) {
+        List<Cv> platformTypes = cvDao.getCvs(
+            null,
+            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
+             null,
+             page,
+             pageSize
+        );
+
+        List<CvTypeDTO> platformTypeDTOs = new ArrayList<>();
+
+        platformTypes.forEach(platformType -> {
+            CvTypeDTO cvTypeDTO = new CvTypeDTO();
+            ModelMapper.mapEntityToDto(platformType, cvTypeDTO);
+
+            platformTypeDTOs.add(cvTypeDTO);
+        });
+
+        return PagedResult.createFrom(page, platformTypeDTOs);
+
+    }
+
     
     
 }

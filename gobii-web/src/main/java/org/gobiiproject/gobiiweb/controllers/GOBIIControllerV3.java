@@ -1037,6 +1037,17 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    @GetMapping("/platforms/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getPlatformTypes(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvTypeDTO> results = platformService.getPlatformTypes(page, pageSize);
+        BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

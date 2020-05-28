@@ -17,5 +17,7 @@ public interface PlatformService {
 	void deletePlatform(Integer platformId) throws Exception;
 
 	CvTypeDTO createPlatformType(CvTypeDTO request);
+
+	PagedResult<CvTypeDTO> getPlatformTypes(Integer page, Integer pageSize);
     
 }

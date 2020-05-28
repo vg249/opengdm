@@ -1678,5 +1678,19 @@ public class GOBIIControllerV3Test {
             
         verify(platformService, times(1)).createPlatformType(any(CvTypeDTO.class));
     }
-  
+
+    @Test
+    public void testListPlatformTypes() throws Exception {
+        when(platformService.getPlatformTypes(0,1000)).thenReturn(new PagedResult<CvTypeDTO>());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/platforms/types")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(platformService, times(1)).getPlatformTypes(0, 1000);
+    }
 }
