@@ -1002,6 +1002,21 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @PatchMapping("/platforms/{platformId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<PlatformDTO>> updatePlatform(
+        @PathVariable Integer platformId,
+        @RequestBody @Validated(PlatformDTO.Update.class) final PlatformDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+
+        PlatformDTO platformDTO = platformService.updatePlatform(platformId, request, updatedBy);
+        BrApiMasterPayload<PlatformDTO> payload = this.getMasterPayload(platformDTO);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

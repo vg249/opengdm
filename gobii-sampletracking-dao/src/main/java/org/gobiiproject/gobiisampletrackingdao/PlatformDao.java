@@ -11,5 +11,7 @@ public interface PlatformDao {
 	List<Platform> getPlatforms(Integer offset, Integer pageSize, Integer platformTypeId);
 
 	Platform getPlatform(Integer platformId);
+
+	Platform updatePlatform(Platform platform);
     
 }

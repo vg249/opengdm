@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -73,6 +72,14 @@ public class PlatformDaoImpl implements PlatformDao {
     @Override
     public Platform getPlatform(Integer platformId) {
         return em.find(Platform.class, platformId, this.getHints());
+    }
+
+    @Override
+    public Platform updatePlatform(Platform platform) {
+        em.merge(platform);
+        em.flush();
+        em.refresh(platform, this.getHints());
+        return platform;
     }
     
 }

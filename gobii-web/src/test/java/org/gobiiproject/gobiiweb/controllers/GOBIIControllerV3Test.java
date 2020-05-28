@@ -1615,7 +1615,34 @@ public class GOBIIControllerV3Test {
         ;
 
         verify(platformService, times(1)).getPlatform(123);
-        
+
+    }
+
+    @Test
+    public void testUpdatePlatform() throws Exception {
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        when(
+            platformService.updatePlatform(eq(123), any(PlatformDTO.class), eq("test-user"))
+        ).thenReturn(new PlatformDTO());
+
+        String requestJson = "{\"platformName\": \"updated-platform-name\", \"platformTypeId\": \"12\"}";
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/platforms/123")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(platformService, times(1)).updatePlatform(eq(123), any(PlatformDTO.class), eq("test-user"));
+
     }
   
 }
