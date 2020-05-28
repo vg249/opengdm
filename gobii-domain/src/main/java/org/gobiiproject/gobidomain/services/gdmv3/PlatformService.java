@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
@@ -14,5 +15,7 @@ public interface PlatformService {
 	PlatformDTO updatePlatform(Integer platformId, PlatformDTO request, String updatedBy) throws Exception;
 
 	void deletePlatform(Integer platformId) throws Exception;
+
+	CvTypeDTO createPlatformType(CvTypeDTO request);
     
 }

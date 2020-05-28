@@ -6,13 +6,15 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -64,12 +66,13 @@ public class PlatformServiceImpl implements PlatformService {
 
     @Transactional
     @Override
-    public PagedResult<PlatformDTO> getPlatforms(Integer page, Integer pageSize, Integer platformTypeId) throws Exception {
+    public PagedResult<PlatformDTO> getPlatforms(Integer page, Integer pageSize, Integer platformTypeId)
+            throws Exception {
         Integer offset = page * pageSize;
 
         List<Platform> platforms = platformDao.getPlatforms(offset, pageSize, platformTypeId);
         List<PlatformDTO> platformDTOs = new ArrayList<>();
-        
+
         platforms.forEach(platform -> {
             PlatformDTO platformDTO = new PlatformDTO();
             ModelMapper.mapEntityToDto(platform, platformDTO);
@@ -83,7 +86,7 @@ public class PlatformServiceImpl implements PlatformService {
     @Override
     public PlatformDTO getPlatform(Integer platformId) throws Exception {
         Platform platform = this.loadPlatform(platformId);
-        
+
         PlatformDTO platformDTO = new PlatformDTO();
         ModelMapper.mapEntityToDto(platform, platformDTO);
         return platformDTO;
@@ -99,7 +102,7 @@ public class PlatformServiceImpl implements PlatformService {
         if (!LineUtils.isNullOrEmpty(request.getPlatformName())) {
             platform.setPlatformName(request.getPlatformName());
             updated = true;
-            //TODO: update the code too?
+            // TODO: update the code too?
         }
 
         if (request.getPlatformTypeId() != null) {
@@ -125,11 +128,12 @@ public class PlatformServiceImpl implements PlatformService {
         return updatedPlatformDTO;
     }
 
-    private Cv loadPlatformType(Integer platformTypeId) throws Exception{
+    private Cv loadPlatformType(Integer platformTypeId) throws Exception {
         // Get Cv
         Cv platformType = cvDao.getCvByCvId(platformTypeId);
         if (platformType == null || // no platform found
-            !platformType.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName()) // incorrect cv type                                                                                                       // type
+                !platformType.getCvGroup().getCvGroupName().equals(
+                    org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName()) 
         ) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                     "Invalid platform type");
@@ -154,6 +158,28 @@ public class PlatformServiceImpl implements PlatformService {
 
         platformDao.deletePlatform(platform);
 
+    }
+
+    @Transactional
+    @Override
+    public CvTypeDTO createPlatformType(CvTypeDTO request) {
+        Cv platformType = new Cv();
+        platformType.setTerm(request.getTypeName());
+        platformType.setDefinition(request.getTypeDescription());
+
+        //set group
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId()
+        );
+        platformType.setCvGroup(cvGroup);
+        platformType.setStatus( cvDao.getNewStatus().getCvId());
+        platformType.setRank(0);
+
+        platformType = cvDao.createCv(platformType);
+        CvTypeDTO cvTypeDTO = new CvTypeDTO();
+        ModelMapper.mapEntityToDto(platformType, cvTypeDTO);
+        return cvTypeDTO;
     }
 
     

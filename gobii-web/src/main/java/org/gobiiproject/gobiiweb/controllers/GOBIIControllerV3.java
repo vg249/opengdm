@@ -1027,6 +1027,16 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/platforms/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createPlatformType(
+        @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO request 
+    ) throws Exception {
+        CvTypeDTO cvTypeDTO = platformService.createPlatformType(request);
+        BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(cvTypeDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }

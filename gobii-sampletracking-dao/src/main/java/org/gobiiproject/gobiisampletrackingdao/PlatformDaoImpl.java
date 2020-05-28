@@ -47,19 +47,19 @@ public class PlatformDaoImpl implements PlatformDao {
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Platform> criteriaQuery = criteriaBuilder.createQuery(Platform.class);
-            
+
             Root<Platform> platformRoot = criteriaQuery.from(Platform.class);
             criteriaQuery.select(platformRoot);
-            
+
             platformRoot.fetch("type", JoinType.LEFT);
-            
+
             criteriaQuery.orderBy(criteriaBuilder.asc(platformRoot.get("platformId")));
             if (platformTypeId != null) {
                 List<Predicate> predicates = new ArrayList<>();
                 predicates.add(criteriaBuilder.equal(platformRoot.get("type").get("cvId"), platformTypeId));
-                criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+                criteriaQuery.where(predicates.toArray(new Predicate[] {}));
             }
-           
+
             platforms = em.createQuery(criteriaQuery).setFirstResult(offset).setMaxResults(pageSize).getResultList();
             return platforms;
         } catch (Exception e) {

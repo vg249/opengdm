@@ -1659,5 +1659,24 @@ public class GOBIIControllerV3Test {
 
         verify(platformService, times(1)).deletePlatform(123);
     }
+
+    @Test
+    public void testCreatePlatformType() throws Exception {
+        String requestJson = "{\"typeName\": \"new-platform-type\", \"typeDescription\": \"12\"}";
+
+        when(platformService.createPlatformType(any(CvTypeDTO.class))).thenReturn(new CvTypeDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/platforms/types")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated());
+            
+        verify(platformService, times(1)).createPlatformType(any(CvTypeDTO.class));
+    }
   
 }
