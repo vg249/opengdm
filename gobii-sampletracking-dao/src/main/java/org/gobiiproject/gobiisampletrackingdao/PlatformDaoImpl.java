@@ -69,5 +69,10 @@ public class PlatformDaoImpl implements PlatformDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
+
+    @Override
+    public Platform getPlatform(Integer platformId) {
+        return em.find(Platform.class, platformId, this.getHints());
+    }
     
 }

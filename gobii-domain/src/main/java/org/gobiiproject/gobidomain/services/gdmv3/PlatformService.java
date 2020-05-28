@@ -8,5 +8,7 @@ public interface PlatformService {
 	PlatformDTO createPlatform(PlatformDTO request, String createdBy) throws Exception;
 
 	PagedResult<PlatformDTO> getPlatforms(Integer page, Integer pageSize, Integer platformTypeId) throws Exception;
+
+	PlatformDTO getPlatform(Integer platformId) throws Exception;
     
 }

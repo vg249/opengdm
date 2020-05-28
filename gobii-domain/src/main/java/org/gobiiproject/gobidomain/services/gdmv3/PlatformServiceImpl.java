@@ -84,5 +84,19 @@ public class PlatformServiceImpl implements PlatformService {
 
         return PagedResult.createFrom(page, platformDTOs);
     }
+
+    @Transactional
+    @Override
+    public PlatformDTO getPlatform(Integer platformId) throws Exception {
+        Platform platform = platformDao.getPlatform(platformId);
+        if (platform == null) {
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Not found");
+        }
+        
+        PlatformDTO platformDTO = new PlatformDTO();
+        ModelMapper.mapEntityToDto(platform, platformDTO);
+        return platformDTO;
+    }
     
 }

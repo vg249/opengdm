@@ -1598,5 +1598,24 @@ public class GOBIIControllerV3Test {
 
         verify(platformService, times(1)).getPlatforms(0, 1000, null);
     }
+
+    @Test
+    public void testGetPlatform() throws Exception {
+        when(
+            platformService.getPlatform(123)
+        ).thenReturn( new PlatformDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/platforms/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(platformService, times(1)).getPlatform(123);
+        
+    }
   
 }

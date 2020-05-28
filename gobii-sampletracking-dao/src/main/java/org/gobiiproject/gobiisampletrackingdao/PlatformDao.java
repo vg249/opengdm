@@ -9,5 +9,7 @@ public interface PlatformDao {
 	Platform createPlatform(Platform platform);
 
 	List<Platform> getPlatforms(Integer offset, Integer pageSize, Integer platformTypeId);
+
+	Platform getPlatform(Integer platformId);
     
 }

@@ -992,6 +992,16 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @GetMapping("/platforms/{platformId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<PlatformDTO>> getPlatform(
+        @PathVariable Integer platformId
+    ) throws Exception {
+        PlatformDTO platformDTO = platformService.getPlatform(platformId);
+        BrApiMasterPayload<PlatformDTO> payload = this.getMasterPayload(platformDTO);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }
