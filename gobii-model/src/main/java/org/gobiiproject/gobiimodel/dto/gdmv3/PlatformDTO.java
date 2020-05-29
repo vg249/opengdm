@@ -24,6 +24,7 @@ import lombok.EqualsAndHashCode;
 public class PlatformDTO extends DTOBaseAuditable {
 
     public static interface Create {}
+    public static interface Update {}
 
     public PlatformDTO() {
         super(GobiiEntityNameType.PLATFORM);
@@ -40,7 +41,7 @@ public class PlatformDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "platformId", entity = Platform.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    @Null(groups = {PlatformDTO.Create.class})
+    @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer platformId;
 
     @GobiiEntityMap(paramName = "platformName", entity = Platform.class)
@@ -50,26 +51,26 @@ public class PlatformDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "type.cvId", entity = Platform.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
-    @Positive(groups = {PlatformDTO.Create.class})
+    @Positive(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer platformTypeId;
 
     @GobiiEntityMap(paramName = "type.term", entity = Platform.class, deep = true)
     @Null(groups = {PlatformDTO.Create.class})
     private String platformTypeName;
 
-    @Null(groups = {PlatformDTO.Create.class})
+    @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer protocolCount;
 
-    @Null(groups = {PlatformDTO.Create.class})
+    @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer vendorProtocolCount;
 
-    @Null(groups = {PlatformDTO.Create.class})
+    @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer experimentCount;
 
-    @Null(groups = {PlatformDTO.Create.class})
+    @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer markerCount;
 
-    @Null(groups = {PlatformDTO.Create.class})
+    @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
     private Integer dnaRunCount;
     
 }

@@ -1580,5 +1580,117 @@ public class GOBIIControllerV3Test {
         verify(platformService, times(1)).createPlatform(any(PlatformDTO.class), eq("test-user"));
 
     }
-  
+
+    @Test
+    public void testListPlatforms() throws Exception {
+        when(
+            platformService.getPlatforms(0, 1000, null)
+        ).thenReturn( new PagedResult<PlatformDTO>());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/platforms")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(platformService, times(1)).getPlatforms(0, 1000, null);
+    }
+
+    @Test
+    public void testGetPlatform() throws Exception {
+        when(
+            platformService.getPlatform(123)
+        ).thenReturn( new PlatformDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/platforms/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(platformService, times(1)).getPlatform(123);
+
+    }
+
+    @Test
+    public void testUpdatePlatform() throws Exception {
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        when(
+            platformService.updatePlatform(eq(123), any(PlatformDTO.class), eq("test-user"))
+        ).thenReturn(new PlatformDTO());
+
+        String requestJson = "{\"platformName\": \"updated-platform-name\", \"platformTypeId\": \"12\"}";
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/platforms/123")
+            .contextPath("/gobii-dev")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(platformService, times(1)).updatePlatform(eq(123), any(PlatformDTO.class), eq("test-user"));
+
+    }
+
+    @Test
+    public void testDeletePlatform() throws Exception {
+        doNothing().when(platformService).deletePlatform(123);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/platforms/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(platformService, times(1)).deletePlatform(123);
+    }
+
+    @Test
+    public void testCreatePlatformType() throws Exception {
+        String requestJson = "{\"typeName\": \"new-platform-type\", \"typeDescription\": \"12\"}";
+
+        when(platformService.createPlatformType(any(CvTypeDTO.class))).thenReturn(new CvTypeDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/platforms/types")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated());
+            
+        verify(platformService, times(1)).createPlatformType(any(CvTypeDTO.class));
+    }
+
+    @Test
+    public void testListPlatformTypes() throws Exception {
+        when(platformService.getPlatformTypes(0,1000)).thenReturn(new PagedResult<CvTypeDTO>());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/platforms/types")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(platformService, times(1)).getPlatformTypes(0, 1000);
+    }
 }
