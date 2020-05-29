@@ -31,11 +31,7 @@ public class ReferenceServiceImpl implements ReferenceService {
             referenceDTOs.add(referenceDTO);
         });
 
-        PagedResult<ReferenceDTO> pagedResult = new PagedResult<>();
-        pagedResult.setResult(referenceDTOs);
-        pagedResult.setCurrentPageNum(page);
-        pagedResult.setCurrentPageSize(referenceDTOs.size());
-        return pagedResult;
+        return PagedResult.createFrom(page, referenceDTOs);
 
     }
     

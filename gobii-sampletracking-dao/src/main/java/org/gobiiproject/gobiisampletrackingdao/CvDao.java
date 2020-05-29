@@ -11,15 +11,17 @@ public interface CvDao {
 
     List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvGroupType);
     List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType);
-    Cv getCvByCvId(Integer cvId);
+    Cv getCvByCvId(Integer cvId) throws Exception;
 
     //new - added by rnduldulaojr
     List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType, Integer page, Integer pageSize);
-	CvGroup getCvGroupByNameAndType(String cvGroupName, Integer type);
+    CvGroup getCvGroupByNameAndType(String cvGroupName, Integer type);
+    CvGroup getCvGroupById(Integer id);
     Cv createCv(Cv cv);
     
     //convenience routines
     Cv getNewStatus();
     Cv getModifiedStatus();
-
+	Cv updateCv(Cv cv);
+	void deleteCv(Cv cv) throws Exception;
 }

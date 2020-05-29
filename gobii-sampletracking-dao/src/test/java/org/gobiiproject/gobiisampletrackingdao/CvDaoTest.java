@@ -45,7 +45,7 @@ public class CvDaoTest {
     }
 
     @Test
-    public void getCvByCvId() {
+    public void getCvByCvId() throws Exception {
 
         Integer cvId = 4;
 

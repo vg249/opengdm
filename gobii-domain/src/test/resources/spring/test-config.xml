@@ -78,7 +78,15 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
     <bean id="rsProject"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
-
+    <!-- gdm v3 platform service -->
+    <bean id="platformServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.PlatformServiceImpl"/>
+    <bean id="platformDaoV3" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
+    <!-- *** Cv Service Bean -->
+    <bean id="cvServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.CvServiceImpl"/>
+    
+    <!-- **** New CV DAO -->
+    <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
+    
     <!-- **** Projects Beans *************************************** -->
     <bean id="rsProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>

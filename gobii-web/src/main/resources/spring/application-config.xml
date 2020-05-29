@@ -412,6 +412,9 @@
     <bean id="vendorProtocolDao" class="org.gobiiproject.gobiisampletrackingdao.VendorProtocolDaoImpl"/>
     <bean id="vendorProtocolService" class="org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolServiceImpl"/>
 
+    <!-- *** Cv Service Bean -->
+    <bean id="cvServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.CvServiceImpl"/>
+    
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
@@ -431,7 +434,9 @@
     <!-- **** New DnaRun Dao -->
     <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
 
-
+     <!-- gdm v3 platform service -->
+    <bean id="platformServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.PlatformServiceImpl"/>
+    <bean id="platformDaoV3" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
 
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>

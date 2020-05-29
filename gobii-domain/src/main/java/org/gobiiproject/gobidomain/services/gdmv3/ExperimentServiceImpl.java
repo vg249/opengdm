@@ -61,12 +61,7 @@ public class ExperimentServiceImpl implements ExperimentService {
             experimentDTOs.add(experimentDTO);
         });
 
-        PagedResult<ExperimentDTO> pagedResult = new PagedResult<>();
-        pagedResult.setResult(experimentDTOs);
-        pagedResult.setCurrentPageNum(page);
-        pagedResult.setCurrentPageSize(pageSize);
-
-        return pagedResult;
+        return PagedResult.createFrom(page, experimentDTOs);
     }
 
     @Transactional
