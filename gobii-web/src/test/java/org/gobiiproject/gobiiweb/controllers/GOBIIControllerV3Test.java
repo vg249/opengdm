@@ -1693,4 +1693,29 @@ public class GOBIIControllerV3Test {
 
         verify(platformService, times(1)).getPlatformTypes(0, 1000);
     }
+
+    @Test
+    public void testCreateGenomeReference() throws Exception {
+        when(
+            referenceService.createReference(any(ReferenceDTO.class), eq("test-user"))
+        ).thenReturn( new ReferenceDTO());
+
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+        
+        String requestJson = "{\"referenceName\": \"test-ref\", \"version\": \"vtest\"}";
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/references")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(referenceService, times(1)).createReference(any(ReferenceDTO.class), eq("test-user"));
+    }
 }

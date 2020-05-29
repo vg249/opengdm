@@ -5,12 +5,17 @@
  */
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.util.Date;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +24,10 @@ public class ReferenceServiceImpl implements ReferenceService {
     @Autowired
     private ReferenceDao referenceDao;
 
+    @Autowired
+    private ContactDao contactDao;
+
+    @Transactional
     @Override
     public PagedResult<ReferenceDTO> getReferences(Integer page, Integer pageSize) {
         Integer offset = page * pageSize;
@@ -33,6 +42,28 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         return PagedResult.createFrom(page, referenceDTOs);
 
+    }
+
+    @Transactional
+    @Override
+    public ReferenceDTO createReference(ReferenceDTO request, String createdBy) throws Exception {
+        Reference reference = new Reference();
+
+        reference.setReferenceName(request.getReferenceName());
+        reference.setVersion(request.getVersion());
+        
+        //not in spec : filePath and link
+        //audit
+        Contact contact = contactDao.getContactByUsername(createdBy);
+        if (contact != null) reference.setCreatedBy(contact.getContactId());
+        reference.setCreatedDate(new Date());
+        
+        Reference createdReference = referenceDao.createReference(reference);
+        ReferenceDTO referenceDTO = new ReferenceDTO();
+
+        ModelMapper.mapEntityToDto(createdReference, referenceDTO);
+
+        return referenceDTO;
     }
     
 }

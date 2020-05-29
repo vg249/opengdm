@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.transaction.Transactional;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
@@ -21,6 +23,7 @@ public class ContactServiceImpl implements ContactService {
     @Autowired
     private ContactDao contactDao;
     
+    @Transactional
     @Override
     public PagedResult<ContactDTO> getContacts(Integer page, Integer pageSize, Integer organizationId) throws Exception {
         

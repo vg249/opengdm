@@ -11,5 +11,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 public interface ReferenceService {
 
     PagedResult<ReferenceDTO> getReferences(Integer page, Integer pageSize);
+
+	ReferenceDTO createReference(ReferenceDTO request, String createdBy) throws Exception;
     
 }
