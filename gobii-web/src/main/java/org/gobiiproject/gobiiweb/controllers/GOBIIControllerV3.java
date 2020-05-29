@@ -1066,6 +1066,20 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    /**
+     * Get Reference by Id
+     * @return
+     */
+    @GetMapping("/references/{referenceId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> getReference(
+        @PathVariable Integer referenceId
+    ) throws Exception {
+        ReferenceDTO referenceDTO = referenceService.getReference(referenceId);
+        BrApiMasterPayload<ReferenceDTO> payload = this.getMasterPayload(referenceDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
 
     public ProjectService getProjectService() {

@@ -9,6 +9,7 @@ package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -27,7 +28,7 @@ import lombok.EqualsAndHashCode;
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType"
 })
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReferenceDTO extends DTOBaseAuditable {
 
     public static interface Create{}
@@ -57,7 +58,8 @@ public class ReferenceDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "version", entity = Reference.class)
     private String version;
 
-    @GobiiEntityMap(paramName = "link", entity = Reference.class) 
+    @GobiiEntityMap(paramName = "link", entity = Reference.class)
+    @JsonIgnore
     private String referenceLink;
 
 }

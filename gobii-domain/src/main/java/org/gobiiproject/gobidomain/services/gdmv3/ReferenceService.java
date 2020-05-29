@@ -13,5 +13,7 @@ public interface ReferenceService {
     PagedResult<ReferenceDTO> getReferences(Integer page, Integer pageSize);
 
 	ReferenceDTO createReference(ReferenceDTO request, String createdBy) throws Exception;
+
+	ReferenceDTO getReference(Integer referenceId) throws Exception;
     
 }

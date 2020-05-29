@@ -1694,6 +1694,7 @@ public class GOBIIControllerV3Test {
         verify(platformService, times(1)).getPlatformTypes(0, 1000);
     }
 
+    // -- References
     @Test
     public void testCreateGenomeReference() throws Exception {
         when(
@@ -1717,5 +1718,23 @@ public class GOBIIControllerV3Test {
         ;
 
         verify(referenceService, times(1)).createReference(any(ReferenceDTO.class), eq("test-user"));
+    }
+
+    @Test
+    public void testGetReference() throws Exception {
+        when(
+            referenceService.getReference(123)
+        ).thenReturn(new ReferenceDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/references/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(referenceService, times(1)).getReference(123);
     }
 }

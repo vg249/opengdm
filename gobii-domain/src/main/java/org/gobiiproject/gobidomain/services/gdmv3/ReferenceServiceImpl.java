@@ -10,11 +10,14 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +67,28 @@ public class ReferenceServiceImpl implements ReferenceService {
         ModelMapper.mapEntityToDto(createdReference, referenceDTO);
 
         return referenceDTO;
+    }
+
+    @Transactional
+    @Override
+    public ReferenceDTO getReference(Integer referenceId) throws Exception  {
+        Reference reference = this.loadReference(referenceId);
+        ReferenceDTO referenceDTO = new ReferenceDTO();
+        ModelMapper.mapEntityToDto(reference, referenceDTO);
+        return referenceDTO;      
+    }
+
+    private Reference loadReference(Integer referenceId) throws Exception {
+        Reference reference = referenceDao.getReference(referenceId);
+        if (reference == null) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Reference not found"
+            );
+        }
+        return reference;
+
     }
     
 }
