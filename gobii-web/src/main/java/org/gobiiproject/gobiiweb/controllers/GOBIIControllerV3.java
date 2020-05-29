@@ -1097,6 +1097,20 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Delete
+     * @return
+     */
+    @DeleteMapping("/references/{referenceId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteReference(
+        @PathVariable Integer referenceId
+    ) throws Exception {
+        referenceService.deleteReference(referenceId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
     public ProjectService getProjectService() {

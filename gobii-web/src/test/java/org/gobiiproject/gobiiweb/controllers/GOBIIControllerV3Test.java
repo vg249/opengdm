@@ -1762,4 +1762,22 @@ public class GOBIIControllerV3Test {
 
         verify(referenceService, times(1)).updateReference(eq(123), any(ReferenceDTO.class), eq("test-user"));
     }
+
+    @Test
+    public void testDeleteReference() throws Exception {
+        doNothing().when(referenceService).deleteReference(123);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/references/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        ;
+
+        verify(referenceService, times(1)).deleteReference(123);
+
+    
+    }
 }

@@ -17,5 +17,7 @@ public interface ReferenceService {
 	ReferenceDTO getReference(Integer referenceId) throws Exception;
 
 	ReferenceDTO updateReference(Integer referenceId, ReferenceDTO request, String updatedBy) throws Exception;
+
+	void deleteReference(Integer referenceId) throws Exception;
     
 }

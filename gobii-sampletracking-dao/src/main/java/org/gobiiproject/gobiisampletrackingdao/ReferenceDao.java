@@ -13,4 +13,6 @@ public interface ReferenceDao {
 	Reference createReference(Reference reference) throws Exception;
 
 	Reference updateReference(Reference reference) throws Exception;
+
+	void deleteReference(Reference reference);
 }

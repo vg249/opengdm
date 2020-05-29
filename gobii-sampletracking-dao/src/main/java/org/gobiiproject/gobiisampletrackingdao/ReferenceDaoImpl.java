@@ -64,6 +64,12 @@ public class ReferenceDaoImpl implements ReferenceDao {
         return reference;
     }
 
+    @Override
+    public void deleteReference(Reference reference) {
+        em.remove(reference);
+        em.flush();
+    }
+
     
 
 }

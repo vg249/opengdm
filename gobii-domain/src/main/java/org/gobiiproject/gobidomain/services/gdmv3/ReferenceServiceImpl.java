@@ -20,6 +20,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -121,6 +122,22 @@ public class ReferenceServiceImpl implements ReferenceService {
         ModelMapper.mapEntityToDto(reference, referenceDTO);
 
         return referenceDTO;
+    }
+
+    @Transactional
+    @Override
+    public void deleteReference(Integer referenceId) throws Exception {
+        Reference reference = this.loadReference(referenceId);
+        try {
+            referenceDao.deleteReference(reference);
+        } catch (Exception e) {
+            //most likely a PersistenceException
+            throw new GobiiDaoException(
+				GobiiStatusLevel.ERROR,
+					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+					"Associated resources found. Cannot complete the action unless they are deleted."
+				);
+        }
     }
     
 }
