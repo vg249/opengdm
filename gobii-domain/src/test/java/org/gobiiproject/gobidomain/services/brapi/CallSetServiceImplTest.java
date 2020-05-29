@@ -1,6 +1,8 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,12 +11,17 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * Created by VCalaminos on 7/18/2019.
  */
 @WebAppConfiguration
 public class CallSetServiceImplTest {
 
+    final int testPageSize = 10;
 
     @InjectMocks
     private CallSetServiceImpl callSetBrapiService;
@@ -22,22 +29,24 @@ public class CallSetServiceImplTest {
     @Mock
     private DnaRunDaoImpl dnaRunDao;
 
+    Random random = new Random();
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
     }
 
-    @SuppressWarnings("unused")
-    private CallSetDTO createMockDnaRunDTO() {
+    private List<DnaRun> createMockDnaRuns(int numOfDnaRuns) {
 
-        CallSetDTO callSetDTO = new CallSetDTO();
+        List<DnaRun> dnaRuns = new ArrayList<>();
 
-        callSetDTO.setCallSetDbId(34);
-        callSetDTO.setCallSetName("test-callset");
-        callSetDTO.setGermplasmDbId(1);
+        for(int i = 0; i < numOfDnaRuns; i++) {
+            DnaRun dnaRun = new DnaRun();
+            dnaRun.setDnaRunName(RandomStringUtils.random(7, true, true));
 
-        return callSetDTO;
+        }
 
+        return dnaRuns;
     }
 
 

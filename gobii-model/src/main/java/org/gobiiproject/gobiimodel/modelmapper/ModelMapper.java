@@ -58,6 +58,7 @@ public class ModelMapper {
                 if (dtoField.isAnnotationPresent(GobiiEntityMap.class)) {
 
                     GobiiEntityMap[] entityMaps = dtoField.getAnnotationsByType(GobiiEntityMap.class);
+                    dtoField.setAccessible(true);
 
                     for (GobiiEntityMap entityMap : entityMaps) {
                         if (dtoToEntity && entityMap.ignoreOnDtoToEntity()) continue;
@@ -69,13 +70,16 @@ public class ModelMapper {
 
                             String entityFieldName = entityMap.paramName();
 
-                            Field entityField = getDeclaredField(entityFieldName, entityInstance.getClass());
+                            Field entityField = getDeclaredField(
+                                entityFieldName, entityInstance.getClass());
 
                             if(entityMap.deep()) {
                                 //escape regular expression dot
-                                String[] deepParams = entityFieldName.split("\\.");
+                                String[] deepParams =
+                                    entityFieldName.split("\\.");
 
-                                entityField = getDeclaredField(deepParams[0], entityToSetOrGet.getClass());
+                                entityField = getDeclaredField(
+                                    deepParams[0], entityToSetOrGet.getClass());
 
                                 for(int i = 1; i < deepParams.length; i++) {
                                     if(entityField == null) {
@@ -83,12 +87,35 @@ public class ModelMapper {
                                     }
 
                                     entityField.setAccessible(true);
-                                    entityToSetOrGet = entityField.get(entityToSetOrGet);
-                                    if(entityToSetOrGet == null) {
-                                        break;
+                                    Object entityFieldValue = entityField
+                                        .get(entityToSetOrGet);
+
+                                    // Instantiate entity value when
+                                    // dto value is not null
+                                    if(entityFieldValue == null
+                                        && dtoToEntity
+                                        && dtoField.get(dtoInstance) != null) {
+
+                                        Object emptyFieldValue =
+                                            Class.forName(entityField.getType()
+                                                .getName())
+                                                .getConstructor()
+                                                .newInstance();
+
+                                        entityField.set(
+                                            entityToSetOrGet, emptyFieldValue);
+
+                                        entityToSetOrGet = emptyFieldValue;
+                                    }
+                                    else {
+                                        entityToSetOrGet = entityFieldValue;
+                                        if(entityToSetOrGet == null) {
+                                            break;
+                                        }
                                     }
 
-                                    entityField = getDeclaredField(deepParams[i], entityToSetOrGet.getClass());
+                                    entityField = getDeclaredField(deepParams[i],
+                                        entityToSetOrGet.getClass());
 
                                 }
                             }
@@ -98,7 +125,6 @@ public class ModelMapper {
                                 continue;
                             }
 
-                            dtoField.setAccessible(true);
                             entityField.setAccessible(true);
 
                             if(!entityField.getType().equals(dtoField.getType())) {

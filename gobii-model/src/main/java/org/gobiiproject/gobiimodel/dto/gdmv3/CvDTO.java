@@ -1,8 +1,5 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
-import java.util.List;
-
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
