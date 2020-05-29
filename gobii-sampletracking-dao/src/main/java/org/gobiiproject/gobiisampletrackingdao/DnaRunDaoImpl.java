@@ -335,7 +335,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 datasetId, null,
                 null, null,
                 null, null,
-                true);
+                true );
 
     }
 
@@ -437,16 +437,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 predicates.add(root.get("dnaRunName").in(dnaRunNames));
             }
 
-            /*Fetch markers only if the dnaRunIds or markerNames
-             * are not empty*/
-            if(predicates.size() == 0) {
-                String errorMsg = "All predicates are null. " +
-                        "Either dnaRunIds or dnaRunNames are required";
-                LOGGER.error(errorMsg);
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.UNKNOWN,
-                        errorMsg);
-            }
 
             if(!CollectionUtils.isEmpty(datasetIds)) {
 
@@ -458,12 +448,22 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 Expression<Boolean> datasetIdExists = cb.function(
                         "JSONB_EXISTS_ANY",
                         Boolean.class,
-                        root.get("datasetMarkerIdx"),
+                        root.get("datasetDnaRunIdx"),
                         datasetIdsExp
                 );
 
                 predicates.add(cb.isTrue(datasetIdExists));
 
+            }
+            /*Fetch markers only if the dnaRunIds or markerNames
+             * are not empty*/
+            if(predicates.size() == 0) {
+                String errorMsg = "All predicates are null. " +
+                    "Either dnaRunIds or dnaRunNames are required";
+                LOGGER.error(errorMsg);
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    errorMsg);
             }
 
             if(!IntegerUtils.isNullOrZero(dnaRunIdCursor)) {
