@@ -1737,4 +1737,29 @@ public class GOBIIControllerV3Test {
 
         verify(referenceService, times(1)).getReference(123);
     }
+
+    @Test
+    public void testUpdateReference() throws Exception {
+        when(
+            projectService.getDefaultProjectEditor()
+        ).thenReturn("test-user");
+
+        when(
+            referenceService.updateReference(eq(123), any(ReferenceDTO.class), eq("test-user"))
+        ).thenReturn(new ReferenceDTO());
+
+        String requestJson = "{\"referenceName\": \"test-ref-update\", \"version\": \"vtest1\"}";
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/references/123")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(referenceService, times(1)).updateReference(eq(123), any(ReferenceDTO.class), eq("test-user"));
+    }
 }

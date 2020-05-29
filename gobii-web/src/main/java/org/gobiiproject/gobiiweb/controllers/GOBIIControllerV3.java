@@ -1080,6 +1080,23 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    /**
+     * Update
+     */
+    @PatchMapping("/references/{referenceId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> updateReference(
+        @PathVariable Integer referenceId,
+        @RequestBody @Validated(ReferenceDTO.Update.class) final ReferenceDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+        ReferenceDTO referenceDTO = referenceService.updateReference(referenceId, request, updatedBy);
+        BrApiMasterPayload<ReferenceDTO> payload = this.getMasterPayload(referenceDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
 
     public ProjectService getProjectService() {

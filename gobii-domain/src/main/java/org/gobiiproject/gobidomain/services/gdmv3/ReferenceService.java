@@ -15,5 +15,7 @@ public interface ReferenceService {
 	ReferenceDTO createReference(ReferenceDTO request, String createdBy) throws Exception;
 
 	ReferenceDTO getReference(Integer referenceId) throws Exception;
+
+	ReferenceDTO updateReference(Integer referenceId, ReferenceDTO request, String updatedBy) throws Exception;
     
 }

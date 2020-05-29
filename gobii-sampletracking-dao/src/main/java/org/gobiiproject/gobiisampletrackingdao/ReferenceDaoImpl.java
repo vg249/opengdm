@@ -57,6 +57,13 @@ public class ReferenceDaoImpl implements ReferenceDao {
         return reference;
     }
 
+    @Override
+    public Reference updateReference(Reference reference) throws Exception {
+        em.merge(reference);
+        em.flush();
+        return reference;
+    }
+
     
 
 }

@@ -18,6 +18,7 @@ import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,37 @@ public class ReferenceServiceImpl implements ReferenceService {
         }
         return reference;
 
+    }
+
+    @Transactional
+    @Override
+    public ReferenceDTO updateReference(Integer referenceId, ReferenceDTO request, String updatedBy) throws Exception {
+        Reference reference = this.loadReference(referenceId);
+        
+        boolean updated = false;
+        if (!LineUtils.isNullOrEmpty(request.getReferenceName())){
+            reference.setReferenceName(request.getReferenceName());
+            updated = true;
+        }
+
+        if (!LineUtils.isNullOrEmpty(request.getVersion())) {
+            reference.setVersion(request.getVersion());
+            updated = true;
+        }
+
+        if (updated) {
+            Contact contact = contactDao.getContactByUsername(updatedBy);
+            if (contact != null) reference.setModifiedBy(contact.getContactId());
+            reference.setModifiedDate(new Date());
+
+            reference = referenceDao.updateReference(reference);
+            
+        }
+
+        ReferenceDTO referenceDTO = new ReferenceDTO();
+        ModelMapper.mapEntityToDto(reference, referenceDTO);
+
+        return referenceDTO;
     }
     
 }

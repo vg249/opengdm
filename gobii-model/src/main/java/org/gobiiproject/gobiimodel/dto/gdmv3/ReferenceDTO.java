@@ -8,10 +8,10 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -32,6 +32,7 @@ import lombok.EqualsAndHashCode;
 public class ReferenceDTO extends DTOBaseAuditable {
 
     public static interface Create{}
+    public static interface Update{}
 
     public ReferenceDTO() {
         super(GobiiEntityNameType.REFERENCE);
@@ -49,6 +50,7 @@ public class ReferenceDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "referenceId", entity = Reference.class )
     @JsonSerialize(using = ToStringSerializer.class)
+    @Null(groups={ReferenceDTO.Create.class, ReferenceDTO.Update.class})
     private Integer referenceId;
 
     @GobiiEntityMap(paramName = "referenceName", entity = Reference.class)
@@ -60,6 +62,9 @@ public class ReferenceDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "link", entity = Reference.class)
     @JsonIgnore
+    @Null(groups={ReferenceDTO.Create.class, ReferenceDTO.Update.class})
     private String referenceLink;
+
+	
 
 }

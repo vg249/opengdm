@@ -11,4 +11,6 @@ public interface ReferenceDao {
 	List<Reference> getReferences(Integer page, Integer offset);
 
 	Reference createReference(Reference reference) throws Exception;
+
+	Reference updateReference(Reference reference) throws Exception;
 }
