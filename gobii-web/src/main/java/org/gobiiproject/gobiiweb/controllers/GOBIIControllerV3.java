@@ -22,6 +22,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
@@ -42,6 +43,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
@@ -110,6 +112,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private MapsetService mapsetService;
+
+    @Autowired
+    private MarkerGroupService markerGroupService;
 
     @Autowired
     private OrganizationService organizationService;
@@ -1109,6 +1114,21 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         referenceService.deleteReference(referenceId);
         return ResponseEntity.noContent().build();
+    }
+
+    //---- Marker Group
+
+    @PostMapping("/markergroups")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> createMarkerGroup(
+        @RequestBody @Validated(MarkerGroupDTO.Create.class) final MarkerGroupDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String creator = this.getCurrentUser();
+        MarkerGroupDTO markerGroupDTO = markerGroupService.createMarkerGroup(request, creator);
+        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
+        return ResponseEntity.created(null).body(payload);
     }
 
 

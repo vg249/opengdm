@@ -14,8 +14,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.hibernate.annotations.Type;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
 @Entity
 @Table(name="marker_group")
+@NoArgsConstructor
 public class MarkerGroup extends BaseEntity {
 
     @Id

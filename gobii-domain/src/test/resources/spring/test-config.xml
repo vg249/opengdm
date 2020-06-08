@@ -87,6 +87,9 @@
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
     
+    <!-- **** Marker Group Service/DAo-->
+    <bean id="markerGroupService" class="org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupServiceImpl"/>
+    <bean id="markerGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerGroupDaoImpl"/>
     <!-- **** Projects Beans *************************************** -->
     <bean id="rsProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>

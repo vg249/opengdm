@@ -42,17 +42,8 @@ import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.*;
+
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -1786,6 +1777,9 @@ public class GOBIIControllerV3Test {
     @Test
     public void testCreateMarkerSet() throws Exception {
         String requestJson = "{\"markerGroupName\": \"test-marker-group\", \"germplasmGroup\": \"test-germplasm-group\"}";
+
+        when( projectService.getDefaultProjectEditor() ).thenReturn("test-user");
+        when( markerGroupService.createMarkerGroup( any(MarkerGroupDTO.class), eq("test-user"))).thenReturn(new MarkerGroupDTO());
         mockMvc.perform(
             MockMvcRequestBuilders
             .post("/gobii-dev/gobii/v3/markergroups")
@@ -1796,7 +1790,7 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isCreated())
         ;
-        
 
+        verify(markerGroupService, times(1)).createMarkerGroup(any(MarkerGroupDTO.class), eq("test-user"));
     }
 }
