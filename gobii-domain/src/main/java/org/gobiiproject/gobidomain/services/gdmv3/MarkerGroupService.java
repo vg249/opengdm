@@ -8,5 +8,7 @@ public interface MarkerGroupService {
 	MarkerGroupDTO createMarkerGroup(MarkerGroupDTO request, String creator) throws Exception;
 
 	PagedResult<MarkerGroupDTO> getMarkerGroups(Integer page, Integer pageSize);
+
+	MarkerGroupDTO getMarkerGroup(Integer markerGroupId);
     
 }

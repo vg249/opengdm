@@ -54,5 +54,11 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
         
 		
 	}
+
+
+	@Override
+	public MarkerGroup getMarkerGroup(Integer markerGroupId) {
+		return em.find(MarkerGroup.class, markerGroupId);
+	}
     
 }

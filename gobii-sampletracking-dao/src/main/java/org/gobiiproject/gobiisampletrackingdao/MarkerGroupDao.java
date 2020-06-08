@@ -9,5 +9,7 @@ public interface MarkerGroupDao {
 	MarkerGroup createMarkerGroup(MarkerGroup markerGroup);
 
 	List<MarkerGroup> getMarkerGroups(Integer offset, Integer pageSize);
+
+	MarkerGroup getMarkerGroup(Integer markerGroupId);
     
 }

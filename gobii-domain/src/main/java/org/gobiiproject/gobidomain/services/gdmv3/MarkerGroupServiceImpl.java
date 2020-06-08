@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.MarkerGroup;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerGroupDao;
@@ -70,6 +73,19 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         });
 
 		return PagedResult.createFrom(page, markerGroupDTOs);
+	}
+
+    @Transactional
+	@Override
+	public MarkerGroupDTO getMarkerGroup(Integer markerGroupId) {
+        MarkerGroup markerGroup = markerGroupDao.getMarkerGroup(markerGroupId);
+        if (markerGroup == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Not found");
+        }
+        MarkerGroupDTO markerGroupDTO = new MarkerGroupDTO();
+        ModelMapper.mapEntityToDto(markerGroup, markerGroupDTO);
+        return markerGroupDTO;
 	}
     
 }

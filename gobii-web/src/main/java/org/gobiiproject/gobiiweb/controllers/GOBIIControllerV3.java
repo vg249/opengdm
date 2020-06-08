@@ -1144,6 +1144,16 @@ public class GOBIIControllerV3  {
 
     }
 
+    @GetMapping("/markergroups/{markerGroupId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> getMarkerGroupById(
+        @PathVariable Integer markerGroupId
+    ) throws Exception {
+        MarkerGroupDTO markerGroupDTO = markerGroupService.getMarkerGroup(markerGroupId);
+        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
 
     public ProjectService getProjectService() {

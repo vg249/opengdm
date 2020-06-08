@@ -1812,4 +1812,19 @@ public class GOBIIControllerV3Test {
 
         verify( markerGroupService, times(1)).getMarkerGroups(0, 1000);
     }
+
+    @Test
+    public void testGetMarkerGroupById() throws Exception {
+        when( markerGroupService.getMarkerGroup(123)).thenReturn(new MarkerGroupDTO());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/markergroups/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(markerGroupService, times(1)).getMarkerGroup(123);
+    }
 }
