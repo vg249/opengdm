@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.dto.gdmv3;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -16,6 +17,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties({"id", "allowedProcessTypes", "entityNameType"})
 public class MarkerGroupDTO extends DTOBaseAuditable{
 
     public static interface Create{}
