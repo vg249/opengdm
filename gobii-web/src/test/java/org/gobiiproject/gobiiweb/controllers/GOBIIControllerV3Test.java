@@ -34,6 +34,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
@@ -107,6 +108,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private MapsetService mapsetService;
+
+    @Mock
+    private MarkerGroupService markerGroupService;
 
     @Mock
     private OrganizationService organizationService;
@@ -1777,7 +1781,22 @@ public class GOBIIControllerV3Test {
         ;
 
         verify(referenceService, times(1)).deleteReference(123);
+    }
 
-    
+    @Test
+    public void testCreateMarkerSet() throws Exception {
+        String requestJson = "{\"markerGroupName\": \"test-marker-group\", \"germplasmGroup\": \"test-germplasm-group\"}";
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/markergroups")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+        
+
     }
 }
