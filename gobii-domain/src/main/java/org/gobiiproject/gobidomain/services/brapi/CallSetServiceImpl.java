@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
@@ -16,6 +17,7 @@ import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.slf4j.Logger;
@@ -79,7 +81,8 @@ public class CallSetServiceImpl implements CallSetService {
                     null);
 
             for (DnaRun dnaRun : dnaRuns) {
-                CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
+                CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun,
+                    dnaSampleGroupCvs, germplasmGroupCvs);
                 callSets.add(callSet);
             }
 
@@ -154,13 +157,16 @@ public class CallSetServiceImpl implements CallSetService {
             callSet.getVariantSetIds().add(Integer.parseInt(datasetIdsIter.next()));
         }
 
-        if(dnaRun.getDnaSample().getProperties().size() > 0) {
+        if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {
 
             Map<String, String> additionalInfo = CvMapper.mapCvIdToCvTerms(
                     dnaSampleGroupCvs,
                     dnaRun.getDnaSample().getProperties());
 
-            if(dnaRun.getDnaSample().getGermplasm().getProperties().size() > 0) {
+            if(!JsonNodeUtils.isEmpty(
+                dnaRun.getDnaSample()
+                    .getGermplasm().getProperties())
+            ) {
                 additionalInfo =CvMapper.mapCvIdToCvTerms(
                         germplasmGroupCvs,
                         dnaRun.getDnaSample().getGermplasm().getProperties(),
