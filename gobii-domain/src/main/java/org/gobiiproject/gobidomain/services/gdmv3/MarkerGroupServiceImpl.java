@@ -1,8 +1,12 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.MarkerGroup;
@@ -51,5 +55,21 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
 
     }
+
+    @Transactional
+	@Override
+	public PagedResult<MarkerGroupDTO> getMarkerGroups(Integer page, Integer pageSize) {
+        Integer offset = page * pageSize;
+        List<MarkerGroup> markerGroups = markerGroupDao.getMarkerGroups(offset, pageSize);
+        List<MarkerGroupDTO> markerGroupDTOs = new ArrayList<>();
+
+        markerGroups.forEach(markerGroup -> {
+            MarkerGroupDTO markerGroupDTO = new MarkerGroupDTO();
+            ModelMapper.mapEntityToDto(markerGroup, markerGroupDTO);
+            markerGroupDTOs.add(markerGroupDTO);
+        });
+
+		return PagedResult.createFrom(page, markerGroupDTOs);
+	}
     
 }

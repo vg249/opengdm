@@ -1793,4 +1793,23 @@ public class GOBIIControllerV3Test {
 
         verify(markerGroupService, times(1)).createMarkerGroup(any(MarkerGroupDTO.class), eq("test-user"));
     }
+
+    @Test
+    public void testListMarkerGroups() throws Exception {
+
+        when( markerGroupService.getMarkerGroups(0, 1000)).thenReturn(
+            new PagedResult<MarkerGroupDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/markergroups")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify( markerGroupService, times(1)).getMarkerGroups(0, 1000);
+    }
 }
