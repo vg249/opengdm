@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiimodel.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import javax.swing.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,5 +27,9 @@ public class JsonNodeUtils {
 
         return list;
 
+    }
+
+    public static boolean isEmpty(JsonNode jsonNode) {
+        return jsonNode != null && jsonNode.size() > 0;
     }
 }
