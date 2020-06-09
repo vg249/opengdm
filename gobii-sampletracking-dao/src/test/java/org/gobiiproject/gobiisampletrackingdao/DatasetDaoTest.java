@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.xml.crypto.Data;
 import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;

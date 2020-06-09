@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.entity.pgsql.CvPropertiesType;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
@@ -28,26 +29,60 @@ public class MockSetup {
 
     String[] testDatasetIds = {"1", "2", "3"};
 
-    public void createMockGermplasmProps(int numProps) {
 
-        mockGermplasmProps = new ArrayList<>();
+    public CvGroup createMockCvGroup(GobiiCvGroupType gobiiCvGroupType,
+                                     CvGroupTerm cvGroupTerm) {
 
-        CvGroup germplasPropGroup = new CvGroup();
+        CvGroup cvGroup = new CvGroup();
+        cvGroup.setCvGroupId(random.nextInt(100));
+        cvGroup
+            .setCvGroupName(cvGroupTerm.getCvGroupName());
+        cvGroup
+            .setCvGroupType(
+                gobiiCvGroupType.getGroupTypeId());
 
-        germplasPropGroup.setCvGroupId(random.nextInt());
-        germplasPropGroup
-            .setCvGroupName(RandomStringUtils.random(5, true,true));
-        germplasPropGroup.setCvGroupType(
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM.getGroupTypeId());
+        return cvGroup;
+    }
+
+    public List<Cv> createMockProps(int numProps, CvGroupTerm cvGroupTerm) {
+
+        List<Cv> props = new ArrayList<>();
+
+        List<CvGroup> cvGroups = new ArrayList<>();
+
+        cvGroups.add(createMockCvGroup(
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM,
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP));
+
+        cvGroups.add(createMockCvGroup(
+            GobiiCvGroupType.GROUP_TYPE_USER,
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP));
 
         for(int i = 0; i < numProps; i ++) {
-            Cv germplasmProp = new Cv();
-            germplasmProp.setCvId(random.nextInt());
-            germplasmProp.setCvGroup(germplasPropGroup);
-            germplasmProp.setTerm(
+            Cv cv = new Cv();
+            cv.setCvId(random.nextInt(1000));
+            cv.setCvGroup(
+                cvGroups.get(random.nextInt(cvGroups.size())));
+            cv.setTerm(
                 RandomStringUtils.random(4,true,true));
-            mockGermplasmProps.add(germplasmProp);
+            props.add(cv);
         }
+
+        return props;
+
+    }
+
+    public void createMockGermplasmProps(int numProps) {
+
+        mockGermplasmProps = createMockProps(
+            numProps, CvGroupTerm.CVGROUP_GERMPLASM_PROP);
+
+    }
+
+    public void createMockDnaSampleProps(int numProps) {
+        mockDnaSampleProps = createMockProps(
+            numProps,
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP);
     }
 
     public void createMockExperiments(int numExperiments) {
@@ -95,14 +130,28 @@ public class MockSetup {
             createMockGermplsms(Math.round(numDnaSamples / 2));
         }
 
+        if(CollectionUtils.isEmpty((mockDnaSampleProps))) {
+            createMockDnaSampleProps(5);
+        }
+
         for(int i = 0; i < numDnaSamples; i++) {
             DnaSample dnaSample = new DnaSample();
-            ObjectNode properties = JsonNodeFactory.instance.objectNode();
             dnaSample.setDnaSampleId(i+1);
             dnaSample.setDnaSampleName(RandomStringUtils.random(7, true, true));
             dnaSample.setDnaSampleNum(RandomStringUtils.random(4, false, true));
             dnaSample.setDnaSampleUuid(UUID.randomUUID().toString());
             dnaSample.setProjectId(i);
+            ObjectNode properties = JsonNodeFactory.instance.objectNode();
+            properties.put(
+                mockDnaSampleProps.get(
+                    random.nextInt(mockDnaSampleProps.size())
+                ).getCvId().toString(),
+                RandomStringUtils.random(5, true, true));
+            properties.put(
+                mockDnaSampleProps.get(
+                    random.nextInt(mockDnaSampleProps.size())
+                ).getCvId().toString(),
+                RandomStringUtils.random(5, true, true));
             dnaSample.setProperties(properties);
             dnaSample.setGermplasm(mockGermplasms.get(
                 random.nextInt(mockGermplasms.size())));

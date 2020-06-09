@@ -1,10 +1,12 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
 import org.junit.Before;
@@ -15,11 +17,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -67,12 +70,12 @@ public class CallSetServiceImplTest {
 
 
         when (cvDao.getCvListByCvGroup(
-            CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null)).thenReturn(
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null)).thenReturn(
                 new ArrayList<>()
         );
 
         when (cvDao.getCvListByCvGroup(
-            CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null))
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null))
             .thenReturn(mockSetup.mockGermplasmProps);
 
 
@@ -89,12 +92,113 @@ public class CallSetServiceImplTest {
             callSetsPageResult.getCurrentPageNum());
 
         for(int i = 0; i < testPageSize; i++) {
-            assertEquals("CallSetId : DnaRunId mismatch",
+            assertEquals("CallSetId : DnaRunId mapping failed",
                 mockSetup.mockDnaRuns.get(i).getDnaRunId(),
                 callSetsPageResult.getResult().get(i).getCallSetDbId());
-            assertEquals("CallSetName : DnaRunName mismacth",
+            assertEquals("CallSetName : DnaRunName mapping failed",
                 mockSetup.mockDnaRuns.get(i).getDnaRunName(),
                 callSetsPageResult.getResult().get(i).getCallSetName());
+
+            assertEquals("StudyDbId : ExperimentId mapping failed",
+                mockSetup.mockDnaRuns.get(i).getExperiment().getExperimentId(),
+                callSetsPageResult.getResult().get(i).getStudyDbId());
+
+            assertEquals("SampleDbId : DnaSampleId mapping failed",
+                mockSetup.mockDnaRuns.get(i).getDnaSample().getDnaSampleId(),
+                callSetsPageResult.getResult().get(i).getSampleDbId());
+
+            assertEquals("SampleName : DnaSampleName mapping failed",
+                mockSetup.mockDnaRuns.get(i).getDnaSample().getDnaSampleName(),
+                callSetsPageResult.getResult().get(i).getSampleName());
+
+            if(!CollectionUtils.isEmpty(
+                callSetsPageResult.getResult().get(i).getVariantSetIds())) {
+
+                assertTrue("VariantSetId : DatasetIds mapping failed",
+                    !JsonNodeUtils.isEmpty(
+                        mockSetup.mockDnaRuns.get(i).getDatasetDnaRunIdx()));
+
+                assertEquals("VariantSetId : DatasetIds mapping failed",
+                    mockSetup.mockDnaRuns.get(i).getDatasetDnaRunIdx().size(),
+                    callSetsPageResult.getResult().get(i)
+                        .getVariantSetIds().size()
+                );
+
+                for (Integer variantSetId :
+                    callSetsPageResult.getResult().get(i).getVariantSetIds()) {
+
+                    assertTrue("VariantSetId : DatasetIds mapping failed",
+                        mockSetup.mockDnaRuns
+                            .get(i).getDatasetDnaRunIdx()
+                            .has(variantSetId.toString()));
+
+                }
+            }
+
+            if(!MapUtils.isEmpty(
+                callSetsPageResult.getResult().get(i).getAdditionalInfo())) {
+
+                assertTrue("AdditionalInfo : DnaSample.Properties " +
+                        "mapping failed",
+                    !(
+                        JsonNodeUtils.isEmpty(
+                            mockSetup.mockDnaRuns.get(i)
+                            .getDnaSample().getProperties()) ||
+                        JsonNodeUtils.isEmpty(
+                            mockSetup.mockDnaRuns.get(i)
+                                .getDnaSample().getGermplasm().getProperties())
+                    ));
+
+                for(String infoKey :
+                    callSetsPageResult.getResult()
+                        .get(i).getAdditionalInfo().keySet()) {
+
+
+                    Optional<Cv> cvDnaSampleProps = mockSetup.mockDnaSampleProps
+                        .stream()
+                        .parallel()
+                        .filter(cv -> cv.getTerm() == infoKey)
+                        .findFirst();
+
+                    Optional<Cv> cvGermplasmProps = mockSetup.mockGermplasmProps
+                        .stream()
+                        .parallel()
+                        .filter(cv -> cv.getTerm() == infoKey)
+                        .findFirst();
+
+                    if(cvDnaSampleProps.isPresent()) {
+                        assertTrue("AdditionalInfo : DnaSample.Properties " +
+                                "mapping failed",
+                            mockSetup.mockDnaRuns
+                                .get(i).getDnaSample()
+                                .getProperties().get(
+                                cvDnaSampleProps.get().getCvId().toString())
+                                .asText()
+                                == callSetsPageResult.getResult()
+                                .get(i).getAdditionalInfo().get(infoKey)
+                        );
+                    }
+                    else if(cvGermplasmProps.isPresent()) {
+                        assertTrue("AdditionalInfo : Germplasm.Properties " +
+                                "mapping failed",
+                            mockSetup.mockDnaRuns
+                                .get(i).getDnaSample().getGermplasm()
+                                .getProperties().get(
+                                cvGermplasmProps.get().getCvId().toString())
+                                .asText()
+                                == callSetsPageResult.getResult()
+                                .get(i).getAdditionalInfo().get(infoKey)
+                        );
+                    }
+                    else {
+                        fail("AdditionalInfo : Germplasm.Properties " +
+                            "mapping failed");
+                    }
+
+                }
+            }
+
+
         }
 
 

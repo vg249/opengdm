@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -73,11 +72,11 @@ public class CallSetServiceImpl implements CallSetService {
                 callSetsFilter.getGermplasmName());
 
             List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
                     null);
 
             List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
+                    CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
                     null);
 
             for (DnaRun dnaRun : dnaRuns) {
@@ -121,11 +120,11 @@ public class CallSetServiceImpl implements CallSetService {
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
             List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
                     null);
 
             List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
                     null);
 
             CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);

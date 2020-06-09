@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -65,7 +65,7 @@ public class SamplesServiceImpl implements SamplesService {
                     germplasmDbId, observationUnitDbId);
 
             List<Cv> cvList = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
             for (DnaSample dnaSample : dnaSamples) {
 

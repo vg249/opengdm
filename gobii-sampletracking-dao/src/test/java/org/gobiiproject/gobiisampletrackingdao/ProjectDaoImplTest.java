@@ -8,7 +8,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -59,7 +59,7 @@ public class ProjectDaoImplTest {
         project.setProperties(prMap);
 
          //set new status
-         List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+         List<Cv> cvList = cvDao.getCvs("modified", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         Cv cv = null;
         if (!cvList.isEmpty()) {
@@ -94,7 +94,7 @@ public class ProjectDaoImplTest {
     @Test
     @Transactional
     public void testCreateProject() throws Exception {
-        List<Cv> cvList = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+        List<Cv> cvList = cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
         assert cvList.size() > 0;
 

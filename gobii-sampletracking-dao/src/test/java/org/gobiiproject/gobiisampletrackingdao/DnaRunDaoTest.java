@@ -4,10 +4,7 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.util.*;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

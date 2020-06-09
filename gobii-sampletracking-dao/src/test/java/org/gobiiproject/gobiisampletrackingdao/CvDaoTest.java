@@ -4,7 +4,7 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.junit.Test;
@@ -28,11 +28,11 @@ public class CvDaoTest {
     @Test
     public void getCvListByCvGroupTest() {
 
-        String testCvGroupName = CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName();
+        String testCvGroupName = CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName();
         GobiiCvGroupType testCvType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
 
         List<Cv> cvList = cvDao.getCvListByCvGroup(
-                CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(),
+                CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);
@@ -59,7 +59,7 @@ public class CvDaoTest {
     public void getCvsByCvTermAndCvGroup() {
 
         List<Cv> cvList = cvDao.getCvs( "new",
-                CvGroup.CVGROUP_STATUS.getCvGroupName(),
+                CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         assertTrue(cvList.size() > 0);

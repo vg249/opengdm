@@ -30,6 +30,6 @@ public class JsonNodeUtils {
     }
 
     public static boolean isEmpty(JsonNode jsonNode) {
-        return jsonNode != null && jsonNode.size() > 0;
+        return jsonNode == null || jsonNode.size() == 0;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Objects;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -37,13 +37,13 @@ public class PropertiesServiceImpl implements PropertiesService {
 
 
     @Override
-    public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroup cvGroup) throws Exception {
+    public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroupTerm cvGroupTerm) throws Exception {
         PagedResult<CvPropertyDTO> pagedResult;
 
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
-            List<Cv> cvs = cvDao.getCvs(null, cvGroup.getCvGroupName(), null, page, pageSize);
+            List<Cv> cvs = cvDao.getCvs(null, cvGroupTerm.getCvGroupName(), null, page, pageSize);
             List<CvPropertyDTO> converted = CvMapper.convert(cvs);
             pagedResult = new PagedResult<>();
             pagedResult.setResult(converted);
