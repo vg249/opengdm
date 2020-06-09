@@ -1,7 +1,11 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.util.List;
+
+import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+
 
 public interface MarkerGroupService {
 
@@ -14,5 +18,7 @@ public interface MarkerGroupService {
 	MarkerGroupDTO updateMarkerGroup(Integer markerGroupId, MarkerGroupDTO request, String updatedBy) throws Exception;
 
 	void deleteMarkerGroup(Integer markerGroupId) throws Exception;
+
+    PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception;
     
 }

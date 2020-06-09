@@ -205,4 +205,16 @@ public class MarkerDaoTest {
 
     }
 
+    @Test
+    public void testGetMarkersByPlatformMarkerName() {
+        List<List<String>> markerTuples = new ArrayList<>();
+
+        List<String> tuple1 = new ArrayList<>();
+        tuple1.add("KASP");  tuple1.add("Test_sample");
+
+        markerTuples.add(tuple1);
+
+        List<Marker> markers = markerDao.getMarkersByPlatformMarkerNameTuples(markerTuples);
+    }
+
 }

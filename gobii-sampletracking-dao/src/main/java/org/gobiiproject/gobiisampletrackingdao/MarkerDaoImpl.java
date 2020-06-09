@@ -1,15 +1,14 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,15 +17,24 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
+import javax.transaction.Transactional;
+
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Marker;
+import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
+import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional
 public class MarkerDaoImpl implements MarkerDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MarkerDaoImpl.class);
@@ -291,6 +299,52 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     public List<Marker> getMarkersByMarkerNames(Set<String> markerNames) {
         return this.getMarkers(null, markerNames, null, null, null);
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public List<Marker> getMarkersByPlatformMarkerNameTuples(List<List<String>> markerTuples) {
+        try {
+            Session session = em.unwrap(Session.class);
+            //TODO: find a way to to solve this, article in StackOverflow says the only way to do tuple where in
+            //is via Native Query since not all dbs support the syntax (but Postgres does) and there is no way to do this
+            //in JPA
+            List<String> tupleList = new ArrayList<>();
+            for(List<String> item: markerTuples) {
+                tupleList.add(String.format("('%s', '%s')", item.get(0).replace("'", "\\'"), item.get(1).replace("'", "\\'")));
+            };
+            String values = String.join(",", tupleList);
+            List<Object[]> objects = session.createNativeQuery(
+                "SELECT {marker.*}, {platform.*}  FROM marker LEFT JOIN platform ON marker.platform_id = platform.platform_id " + 
+                " WHERE (platform.name, marker.name) IN (" + values + ")"
+            )
+            .addEntity("marker", Marker.class)
+            .addJoin("platform", "marker.platform")
+            .list();
+            List<Marker> markers  = new ArrayList<>();
+            for (Object[] tuple: objects) {
+                Marker marker = (Marker) tuple[0];
+                //Platform platform = (Platform) tuple[1];
+                //marker.setPlatform(platform);
+                markers.add(marker);
+            }
+
+
+            //EntityGraph<?> graph = this.em.getEntityGraph("graph.marker");
+            //q.setHint("javax.persistence.fetchgraph", graph);
+            //q.setParameter("tuplelist", tupleList.toString());
+           
+
+
+            return markers;
+
+        } catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
     }
 
 }

@@ -5,11 +5,18 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.MarkerGroup;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -17,6 +24,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,6 +39,9 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
     @Autowired
     private ContactDao contactDao;
+
+    @Autowired
+    private MarkerDao markerDao;
 
     @Transactional
     @Override
@@ -131,6 +142,57 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 	public void deleteMarkerGroup(Integer markerGroupId) throws Exception {
         MarkerGroup markerGroup = this.loadMarkerGroup(markerGroupId);
         markerGroupDao.deleteMarkerGroup(markerGroup);
+	}
+
+    @Transactional
+	@Override
+	public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
+        //TODO: size check markers input
+        
+        MarkerGroup markerGroup = this.loadMarkerGroup(markerGroupId);
+
+        //get platform_name, marker name combo from list
+        List<List<String>> markerTuples = new java.util.ArrayList<>();
+        markers.forEach( markerDTO -> {
+            List<String> tuple = new ArrayList<>();
+            tuple.add(markerDTO.getPlatformName());
+            tuple.add(markerDTO.getMarkerName());
+            markerTuples.add(tuple);
+        });
+
+        List<Marker> existingMarkers = markerDao.getMarkersByPlatformMarkerNameTuples(markerTuples);
+
+        if (existingMarkers.size() != markerTuples.size()) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                "Specified markers not found");
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode currentNode = (ObjectNode) markerGroup.getMarkers();
+        if (currentNode == null)  {
+            currentNode = objectMapper.createObjectNode();
+        }
+        Integer counter = 0;
+        List<MarkerDTO> markerDTOs = new ArrayList<>();
+        for (Marker marker: existingMarkers) {
+            ArrayNode arrayNode = currentNode.putArray(marker.getMarkerId().toString());
+            String[] favorableAlleles = markers.get(counter).getFavorableAlleles();
+            for (String allele: favorableAlleles) {
+                arrayNode.add(allele);
+            }
+            counter++;
+
+            //map to DTO
+            MarkerDTO markerDTO = new MarkerDTO();
+            ModelMapper.mapEntityToDto(marker, markerDTO);
+            //set the favorableAllele
+            markerDTO.setFavorableAlleles(favorableAlleles);
+            markerDTOs.add(markerDTO);
+        }
+
+        markerGroup.setMarkers(currentNode);
+        markerGroup = markerGroupDao.updateMarkerGroup(markerGroup);
+
+		return PagedResult.createFrom(0, markerDTOs);
 	}
     
 }

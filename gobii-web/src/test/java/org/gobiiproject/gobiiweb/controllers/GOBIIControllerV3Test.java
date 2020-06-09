@@ -9,6 +9,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -1861,5 +1862,27 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         verify(markerGroupService, times(1)).deleteMarkerGroup(123);
+    }
+
+    @Test
+    public void testAssignMarkersToMarkerGroup() throws Exception {
+        String requestJson = "[{\"markerName\": \"foo marker\", \"platformName\": \"foo platform\", \"favorableAlleles\": [\"A\"]},{\"markerName\": \"bar marker\",\"platformName\": \"bar platform\", \"favorableAlleles\": [\"G\"]}]";
+        when (projectService.getDefaultProjectEditor()).thenReturn("test-user");
+        when (markerGroupService.mapMarkers(eq(123), anyListOf(MarkerDTO.class), eq("test-user"))).thenReturn(new PagedResult<MarkerDTO>());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/markergroups/123/markerscollection")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(markerGroupService, times(1)).mapMarkers(eq(123), anyListOf(MarkerDTO.class), eq("test-user"));
+
+
+
+
     }
 }

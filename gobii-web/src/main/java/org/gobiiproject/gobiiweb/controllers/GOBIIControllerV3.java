@@ -43,6 +43,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
@@ -1178,6 +1179,19 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/markergroups/{markerGroupId}/markerscollection")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> mapMarkers(
+        @PathVariable Integer markerGroupId,
+        @RequestBody final List<MarkerDTO> markers,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String editedBy = this.getCurrentUser();
+        PagedResult<MarkerDTO> results = markerGroupService.mapMarkers(markerGroupId, markers, editedBy);
+        BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
 
     public ProjectService getProjectService() {
         return projectService;
