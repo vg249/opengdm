@@ -12,5 +12,7 @@ public interface MarkerGroupService {
 	MarkerGroupDTO getMarkerGroup(Integer markerGroupId) throws Exception;
 
 	MarkerGroupDTO updateMarkerGroup(Integer markerGroupId, MarkerGroupDTO request, String updatedBy) throws Exception;
+
+	void deleteMarkerGroup(Integer markerGroupId) throws Exception;
     
 }

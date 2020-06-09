@@ -1168,6 +1168,15 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @DeleteMapping("/markergroups/{markerGroupId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteMarkerGroup(
+        @PathVariable Integer markerGroupId
+    ) throws Exception {
+        markerGroupService.deleteMarkerGroup(markerGroupId);
+        return ResponseEntity.noContent().build();
+    }
 
 
     public ProjectService getProjectService() {

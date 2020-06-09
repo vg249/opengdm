@@ -1847,4 +1847,19 @@ public class GOBIIControllerV3Test {
         verify(markerGroupService, times(1)).updateMarkerGroup(eq(123), any(MarkerGroupDTO.class), eq("test-user"));
 
     }
+
+    @Test
+    public void testDeleteMarkerGroup() throws Exception {
+        doNothing().when(markerGroupService).deleteMarkerGroup(123);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/markergroups/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(markerGroupService, times(1)).deleteMarkerGroup(123);
+    }
 }

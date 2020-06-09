@@ -125,5 +125,12 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         }
         return markerGroup;
     }
+
+    @Transactional
+	@Override
+	public void deleteMarkerGroup(Integer markerGroupId) throws Exception {
+        MarkerGroup markerGroup = this.loadMarkerGroup(markerGroupId);
+        markerGroupDao.deleteMarkerGroup(markerGroup);
+	}
     
 }

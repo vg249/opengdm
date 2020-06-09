@@ -13,5 +13,7 @@ public interface MarkerGroupDao {
 	MarkerGroup getMarkerGroup(Integer markerGroupId);
 
 	MarkerGroup updateMarkerGroup(MarkerGroup markerGroup);
+
+	void deleteMarkerGroup(MarkerGroup markerGroup) throws Exception;
     
 }

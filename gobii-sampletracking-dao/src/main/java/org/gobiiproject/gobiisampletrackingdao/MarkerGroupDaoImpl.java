@@ -69,5 +69,12 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
         em.refresh(markerGroup);
 		return markerGroup;
 	}
+
+
+	@Override
+	public void deleteMarkerGroup(MarkerGroup markerGroup) throws Exception {
+        em.remove(markerGroup);
+        em.flush();
+	}
     
 }
