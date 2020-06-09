@@ -9,6 +9,8 @@ public interface MarkerGroupService {
 
 	PagedResult<MarkerGroupDTO> getMarkerGroups(Integer page, Integer pageSize);
 
-	MarkerGroupDTO getMarkerGroup(Integer markerGroupId);
+	MarkerGroupDTO getMarkerGroup(Integer markerGroupId) throws Exception;
+
+	MarkerGroupDTO updateMarkerGroup(Integer markerGroupId, MarkerGroupDTO request, String updatedBy) throws Exception;
     
 }

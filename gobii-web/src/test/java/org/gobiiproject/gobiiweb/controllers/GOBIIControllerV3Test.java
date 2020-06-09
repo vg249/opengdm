@@ -1827,4 +1827,24 @@ public class GOBIIControllerV3Test {
 
         verify(markerGroupService, times(1)).getMarkerGroup(123);
     }
+
+    @Test
+    public void testEditMarkerGroup()  throws Exception {
+        String requestJson = "{\"markerGroupName\": \"test-marker-group-updated\", \"germplasmGroup\": \"test-germplasm-group\"}";
+        when( projectService.getDefaultProjectEditor()).thenReturn("test-user");
+        when( markerGroupService.updateMarkerGroup(eq(123), any(MarkerGroupDTO.class), eq("test-user"))).thenReturn(new MarkerGroupDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/markergroups/123")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(markerGroupService, times(1)).updateMarkerGroup(eq(123), any(MarkerGroupDTO.class), eq("test-user"));
+
+    }
 }

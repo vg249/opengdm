@@ -11,5 +11,7 @@ public interface MarkerGroupDao {
 	List<MarkerGroup> getMarkerGroups(Integer offset, Integer pageSize);
 
 	MarkerGroup getMarkerGroup(Integer markerGroupId);
+
+	MarkerGroup updateMarkerGroup(MarkerGroup markerGroup);
     
 }

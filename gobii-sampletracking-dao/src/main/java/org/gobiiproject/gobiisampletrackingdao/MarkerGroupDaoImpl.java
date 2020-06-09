@@ -60,5 +60,14 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
 	public MarkerGroup getMarkerGroup(Integer markerGroupId) {
 		return em.find(MarkerGroup.class, markerGroupId);
 	}
+
+
+	@Override
+	public MarkerGroup updateMarkerGroup(MarkerGroup markerGroup) {
+        em.merge(markerGroup);
+        em.flush();
+        em.refresh(markerGroup);
+		return markerGroup;
+	}
     
 }

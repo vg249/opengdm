@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.entity.MarkerGroup;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerGroupDao;
@@ -77,15 +78,52 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
     @Transactional
 	@Override
-	public MarkerGroupDTO getMarkerGroup(Integer markerGroupId) {
+	public MarkerGroupDTO getMarkerGroup(Integer markerGroupId) throws Exception {
+        MarkerGroup markerGroup = this.loadMarkerGroup(markerGroupId);
+        MarkerGroupDTO markerGroupDTO = new MarkerGroupDTO();
+        ModelMapper.mapEntityToDto(markerGroup, markerGroupDTO);
+        return markerGroupDTO;
+	}
+
+    @Transactional
+	@Override
+	public MarkerGroupDTO updateMarkerGroup(Integer markerGroupId, MarkerGroupDTO request, String updatedBy) throws Exception {
+        MarkerGroup markerGroup = this.loadMarkerGroup(markerGroupId);
+        boolean modified = false;
+        if (!LineUtils.isNullOrEmpty(request.getMarkerGroupName())) {
+            markerGroup.setName(request.getMarkerGroupName());
+            modified = true;
+        }
+        if (!LineUtils.isNullOrEmpty(request.getGermplasmGroup())) {
+            markerGroup.setGermplasmGroup(request.getGermplasmGroup());
+            modified = true;
+        }
+
+        if (modified) {
+            Contact editor = contactDao.getContactByUsername(updatedBy);
+            if (editor != null)
+                markerGroup.setModifiedBy(editor.getContactId());
+            markerGroup.setModifiedDate(new java.util.Date());
+
+            //status
+            Cv modifiedStat = cvDao.getModifiedStatus();
+            markerGroup.setStatus(modifiedStat);
+
+            markerGroup = markerGroupDao.updateMarkerGroup(markerGroup);
+        }
+
+        MarkerGroupDTO markerGroupDTO = new MarkerGroupDTO();
+        ModelMapper.mapEntityToDto(markerGroup, markerGroupDTO);
+		return markerGroupDTO;
+    }
+    
+    private MarkerGroup loadMarkerGroup(Integer markerGroupId) throws Exception {
         MarkerGroup markerGroup = markerGroupDao.getMarkerGroup(markerGroupId);
         if (markerGroup == null) {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                 "Not found");
         }
-        MarkerGroupDTO markerGroupDTO = new MarkerGroupDTO();
-        ModelMapper.mapEntityToDto(markerGroup, markerGroupDTO);
-        return markerGroupDTO;
-	}
+        return markerGroup;
+    }
     
 }

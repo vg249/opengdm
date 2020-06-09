@@ -1154,6 +1154,20 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @PatchMapping("/markergroups/{markerGroupId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> updateMarkerGroup(
+        @PathVariable Integer markerGroupId,
+        @RequestBody final MarkerGroupDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+        MarkerGroupDTO markerGroupDTO = markerGroupService.updateMarkerGroup(markerGroupId, request, updatedBy);
+        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
 
     public ProjectService getProjectService() {
