@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -147,7 +148,12 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
     @Transactional
 	@Override
 	public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
-        //TODO: size check markers input
+        Objects.requireNonNull(markers, "No markers to process");
+        //check data size
+        if (markers.size() > 1000) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                "Maximum number of allowed markers in list for a single request is 1000");
+        }
         
         MarkerGroup markerGroup = this.loadMarkerGroup(markerGroupId);
 
