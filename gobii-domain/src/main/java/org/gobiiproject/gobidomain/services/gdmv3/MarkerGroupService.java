@@ -20,5 +20,7 @@ public interface MarkerGroupService {
 	void deleteMarkerGroup(Integer markerGroupId) throws Exception;
 
     PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception;
+
+	PagedResult<MarkerDTO> getMarkerGroupMarkers(Integer markerGroupId, Integer page, Integer pageSize) throws Exception;
     
 }

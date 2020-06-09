@@ -1880,9 +1880,18 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(markerGroupService, times(1)).mapMarkers(eq(123), anyListOf(MarkerDTO.class), eq("test-user"));
+    }
 
-
-
-
+    @Test
+    public void testListMarkersInMarkerGroups() throws Exception {
+        when (markerGroupService.getMarkerGroupMarkers(123, 0, 1000)).thenReturn(new PagedResult<>());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/markergroups/123/markerscollection")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+        verify(markerGroupService, times(1)).getMarkerGroupMarkers(123, 0,1000);
     }
 }

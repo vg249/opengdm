@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,7 +15,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.transaction.Transactional;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
@@ -25,12 +22,10 @@ import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Marker;
-import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.hibernate.Session;
-import org.hibernate.query.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,6 +215,7 @@ public class MarkerDaoImpl implements MarkerDao {
             // Set Root entity and selected entities
             Root<Marker> root = criteria.from(Marker.class);
             criteria.select(root);
+            root.fetch("platform");
 
             if(!CollectionUtils.isEmpty(markerIds)) {
                 predicates.add(root.get("markerId").in(markerIds));

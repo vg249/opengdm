@@ -22,7 +22,6 @@ import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 public class PlatformServiceImpl implements PlatformService {
 

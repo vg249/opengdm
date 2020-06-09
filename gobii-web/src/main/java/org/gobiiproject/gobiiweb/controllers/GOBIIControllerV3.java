@@ -1193,6 +1193,18 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @GetMapping("/markergroups/{markerGroupId}/markerscollection")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> getMarkerGroupMarkers(
+        @PathVariable Integer markerGroupId,
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<MarkerDTO> results = markerGroupService.getMarkerGroupMarkers(markerGroupId, page, pageSize);
+        BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }
