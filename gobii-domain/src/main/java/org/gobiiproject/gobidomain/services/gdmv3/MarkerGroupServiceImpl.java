@@ -2,10 +2,14 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
@@ -34,9 +38,10 @@ import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 public class MarkerGroupServiceImpl implements MarkerGroupService {
 
-
+    
     @Autowired
     private CvDao cvDao;
 
@@ -173,36 +178,39 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         List<Marker> existingMarkers = markerDao.getMarkersByPlatformMarkerNameTuples(markerTuples);
 
-        if (existingMarkers.size() != markerTuples.size()) {
 
-            //check the markers one by one
-            //create copy of existingMarkers
-            List<MarkerStatus> statusList = new ArrayList<>();
-            outer:
-            for (MarkerDTO markerDTO: markers) {
-                Marker foundMarker = null;
-                inner:
-                for (Marker marker: existingMarkers) {
-                    if (marker.getMarkerName().equals(markerDTO.getMarkerName())) {
-                        foundMarker = marker;
-                        statusList.add(new MarkerStatus(true));
-                        break inner;
-                    }
-                }
-                if (foundMarker != null) {
-                    existingMarkers.remove(foundMarker);
-                } else {
-                    statusList.add(
-                        new MarkerStatus(
-                            false,
-                            String.format("Bad Request. Marker: %s, %s is invalid", markerDTO.getPlatformName(), markerDTO.getMarkerName())
-                        )
-                    );
-                }
-              
-            }
+        //check the markers one by one
+        //create copy of existingMarkers
+        List<MarkerStatus> statusList = new ArrayList<>();
+        //convert to map
+        Map<String, Boolean> lookup = new HashMap<>();
+        existingMarkers.forEach(marker -> {
+            lookup.put( marker.getMarkerName(), true);
+        });
+        boolean errorsFound = false;
+        for (MarkerDTO markerDTO: markers) {
+            if (lookup.get(markerDTO.getMarkerName()) != null) {
+                //check alleles
+                MarkerStatus markerStatus = this.checkAlleles(markerDTO.getFavorableAlleles(), markerDTO.getMarkerName());
+                statusList.add(markerStatus);
+                if (markerStatus.getError() != null) errorsFound = true;
+            } else {
+                statusList.add(
+                    new MarkerStatus(
+                        false,
+                        String.format("Bad Request. Marker: %s, %s is invalid", markerDTO.getPlatformName(), markerDTO.getMarkerName())
+                    )
+                );
+                errorsFound = true;
+            }   
+        }
+
+        if (errorsFound) {
             throw new InvalidMarkersException(statusList);
         }
+
+        statusList = null; //delete this moving since no errors;
+            
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode currentNode = (ObjectNode) markerGroup.getMarkers();
         if (currentNode == null)  {
@@ -268,6 +276,31 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         
 
 		return PagedResult.createFrom(page, markerDTOs);
-	}
+    }
+    
+    private static final String PATTERN_STRING = "^(A|C|G|T|\\-|\\+|0|1|2|0[0-9]{3}|1000)$";
+    private static final Pattern ALLELE_PATTERN = Pattern.compile(PATTERN_STRING);
+   
+    private MarkerStatus checkAlleles(String[] alleles, String markerName) {
+        List<String> invalidAlleles = new ArrayList<>();
+        for (String allele: alleles) {
+            Matcher matcher = ALLELE_PATTERN.matcher(allele);
+            if (!matcher.matches()) invalidAlleles.add(allele); 
+        }
+
+        if (invalidAlleles.size() > 0) {
+            return new MarkerStatus(
+                false,
+                String.format(
+                    "Bad Request. Invalid allele value(s) for %s: %s",
+                    markerName,
+                    String.join(", ", invalidAlleles)
+                )
+            );
+        }
+
+
+        return new MarkerStatus(true);
+    }
     
 }
