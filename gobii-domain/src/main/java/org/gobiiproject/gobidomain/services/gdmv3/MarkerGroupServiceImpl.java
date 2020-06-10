@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
@@ -172,8 +174,34 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         List<Marker> existingMarkers = markerDao.getMarkersByPlatformMarkerNameTuples(markerTuples);
 
         if (existingMarkers.size() != markerTuples.size()) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                "Specified markers not found");
+
+            //check the markers one by one
+            //create copy of existingMarkers
+            List<MarkerStatus> statusList = new ArrayList<>();
+            outer:
+            for (MarkerDTO markerDTO: markers) {
+                Marker foundMarker = null;
+                inner:
+                for (Marker marker: existingMarkers) {
+                    if (marker.getMarkerName().equals(markerDTO.getMarkerName())) {
+                        foundMarker = marker;
+                        statusList.add(new MarkerStatus(true));
+                        break inner;
+                    }
+                }
+                if (foundMarker != null) {
+                    existingMarkers.remove(foundMarker);
+                } else {
+                    statusList.add(
+                        new MarkerStatus(
+                            false,
+                            String.format("Bad Request. Marker Name: %s does not exist", markerDTO.getMarkerName())
+                        )
+                    );
+                }
+              
+            }
+            throw new InvalidMarkersException(statusList);
         }
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode currentNode = (ObjectNode) markerGroup.getMarkers();
