@@ -185,11 +185,11 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         //convert to map
         Map<String, Boolean> lookup = new HashMap<>();
         existingMarkers.forEach(marker -> {
-            lookup.put( marker.getMarkerName(), true);
+            lookup.put( marker.getPlatform().getPlatformName() + marker.getMarkerName(), true);
         });
         boolean errorsFound = false;
         for (MarkerDTO markerDTO: markers) {
-            if (lookup.get(markerDTO.getMarkerName()) != null) {
+            if (lookup.get(markerDTO.getPlatformName() + markerDTO.getMarkerName()) != null) {
                 //check alleles
                 MarkerStatus markerStatus = this.checkAlleles(markerDTO.getFavorableAlleles(), markerDTO.getMarkerName());
                 statusList.add(markerStatus);
