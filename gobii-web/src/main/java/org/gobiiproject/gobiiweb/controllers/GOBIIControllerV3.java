@@ -1193,7 +1193,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
-    @GetMapping("/markergroups/{markerGroupId}/markerscollection")
+    @GetMapping("/markergroups/{markerGroupId}/markers")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> getMarkerGroupMarkers(
         @PathVariable Integer markerGroupId,
