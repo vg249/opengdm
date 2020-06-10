@@ -1887,7 +1887,7 @@ public class GOBIIControllerV3Test {
         when (markerGroupService.getMarkerGroupMarkers(123, 0, 1000)).thenReturn(new PagedResult<>());
         mockMvc.perform(
             MockMvcRequestBuilders
-            .get("/gobii-dev/gobii/v3/markergroups/123/markerscollection")
+            .get("/gobii-dev/gobii/v3/markergroups/123/markers")
             .contextPath("/gobii-dev")
         )
         .andDo(print())
