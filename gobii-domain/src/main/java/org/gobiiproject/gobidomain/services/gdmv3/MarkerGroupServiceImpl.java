@@ -195,7 +195,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     statusList.add(
                         new MarkerStatus(
                             false,
-                            String.format("Bad Request. Marker Name: %s does not exist", markerDTO.getMarkerName())
+                            String.format("Bad Request. Marker: %s, %s is invalid", markerDTO.getPlatformName(), markerDTO.getMarkerName())
                         )
                     );
                 }
