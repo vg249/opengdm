@@ -49,6 +49,27 @@ public class ReferenceDaoImpl implements ReferenceDao {
         }
     }
 
+    @Override
+    public Reference createReference(Reference reference) throws Exception {
+        em.persist(reference);
+        em.flush();
+        em.refresh(reference);
+        return reference;
+    }
+
+    @Override
+    public Reference updateReference(Reference reference) throws Exception {
+        em.merge(reference);
+        em.flush();
+        return reference;
+    }
+
+    @Override
+    public void deleteReference(Reference reference) {
+        em.remove(reference);
+        em.flush();
+    }
+
     
 
 }

@@ -664,22 +664,6 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
-    /**
-     * Get References
-     * @return
-     */
-    @GetMapping("/references")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<ReferenceDTO>> getReferences(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        Integer pageSizeToUse = this.getPageSize(pageSize);
-        PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
-        BrApiMasterListPayload<ReferenceDTO> payload = this.getMasterListPayload(pagedResult);
-        return ResponseEntity.ok(payload);  
-    }
-
     //-------- Mapsets ------------
     /**
      * Get Mapsets list
@@ -1047,6 +1031,87 @@ public class GOBIIControllerV3  {
         BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(results);
         return ResponseEntity.ok(payload);
     }
+
+    // -- References
+    /**
+     * Get References
+     * @return
+     */
+    @GetMapping("/references")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ReferenceDTO>> getReferences(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = this.getPageSize(pageSize);
+        PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
+        BrApiMasterListPayload<ReferenceDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);  
+    }
+
+    /**
+     * Create reference
+     * @return
+     */
+    @PostMapping("/references")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> createReference(
+        @RequestBody @Validated(ReferenceDTO.Create.class) final ReferenceDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String createdBy = this.getCurrentUser();
+        ReferenceDTO referenceDTO = referenceService.createReference(request, createdBy);
+        BrApiMasterPayload<ReferenceDTO> payload =  this.getMasterPayload(referenceDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Get Reference by Id
+     * @return
+     */
+    @GetMapping("/references/{referenceId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> getReference(
+        @PathVariable Integer referenceId
+    ) throws Exception {
+        ReferenceDTO referenceDTO = referenceService.getReference(referenceId);
+        BrApiMasterPayload<ReferenceDTO> payload = this.getMasterPayload(referenceDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Update
+     */
+    @PatchMapping("/references/{referenceId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> updateReference(
+        @PathVariable Integer referenceId,
+        @RequestBody @Validated(ReferenceDTO.Update.class) final ReferenceDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+        ReferenceDTO referenceDTO = referenceService.updateReference(referenceId, request, updatedBy);
+        BrApiMasterPayload<ReferenceDTO> payload = this.getMasterPayload(referenceDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete
+     * @return
+     */
+    @DeleteMapping("/references/{referenceId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteReference(
+        @PathVariable Integer referenceId
+    ) throws Exception {
+        referenceService.deleteReference(referenceId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
     public ProjectService getProjectService() {
         return projectService;
