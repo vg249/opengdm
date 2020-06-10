@@ -191,7 +191,10 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         for (MarkerDTO markerDTO: markers) {
             if (lookup.get(markerDTO.getPlatformName() + markerDTO.getMarkerName()) != null) {
                 //check alleles
-                MarkerStatus markerStatus = this.checkAlleles(markerDTO.getFavorableAlleles(), markerDTO.getMarkerName());
+                MarkerStatus markerStatus = this.checkAlleles(
+                    markerDTO.getFavorableAlleles(),
+                    markerDTO.getPlatformName(),
+                    markerDTO.getMarkerName());
                 statusList.add(markerStatus);
                 if (markerStatus.getError() != null) errorsFound = true;
             } else {
@@ -281,7 +284,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
     private static final String PATTERN_STRING = "^(A|C|G|T|\\-|\\+|0|1|2|0[0-9]{3}|1000)$";
     private static final Pattern ALLELE_PATTERN = Pattern.compile(PATTERN_STRING);
    
-    private MarkerStatus checkAlleles(String[] alleles, String markerName) {
+    private MarkerStatus checkAlleles(String[] alleles, String platformName, String markerName) {
         List<String> invalidAlleles = new ArrayList<>();
         for (String allele: alleles) {
             Matcher matcher = ALLELE_PATTERN.matcher(allele);
@@ -292,7 +295,8 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
             return new MarkerStatus(
                 false,
                 String.format(
-                    "Bad Request. Invalid allele value(s) for %s: %s",
+                    "Bad Request. Invalid allele value(s) for %s, %s: %s",
+                    platformName,
                     markerName,
                     String.join(", ", invalidAlleles)
                 )

@@ -101,7 +101,7 @@ public class MarkerGroupServiceImplTest {
         
         MarkerStatus status = statusList.get(0);
         log.info(status.getError());
-        assertTrue( status.getError().equals("Bad Request. Invalid allele value(s) for test1: B, D, E"));
+        assertTrue( status.getError().equals("Bad Request. Invalid allele value(s) for KASP, test1: B, D, E"));
 
     }
 
@@ -155,7 +155,7 @@ public class MarkerGroupServiceImplTest {
         
         MarkerStatus status = statusList.get(0);
         log.info(status.getError());
-        assertTrue( status.getError().equals("Bad Request. Invalid allele value(s) for test1: Z, 100, _, 2000"));
+        assertTrue( status.getError().equals("Bad Request. Invalid allele value(s) for KASP, test1: Z, 100, _, 2000"));
 
     }
 
