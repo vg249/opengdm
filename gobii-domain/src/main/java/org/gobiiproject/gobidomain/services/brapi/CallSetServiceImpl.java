@@ -96,22 +96,16 @@ public class CallSetServiceImpl implements CallSetService {
 
             LOGGER.error(e.getMessage(), e);
 
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage());
         }
     }
 
-    public PagedResult<CallSetDTO> getCallSets(Integer pageSize,
-                                               String pageToken,
-                                               Integer variantSetDbId,
-                                               CallSetDTO callSetsFilter) {
 
-        PagedResult<CallSetDTO> callSets = new PagedResult<>();
-
-        return callSets;
-    }
-
-
-    public CallSetDTO getCallSetById(Integer callSetDbId) throws GobiiException {
+    public CallSetDTO getCallSetById(Integer callSetDbId)
+        throws GobiiException {
 
         Objects.requireNonNull(callSetDbId);
 
@@ -127,7 +121,8 @@ public class CallSetServiceImpl implements CallSetService {
                     CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
                     null);
 
-            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
+            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(
+                dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
 
             return callSet;
         }
@@ -135,7 +130,10 @@ public class CallSetServiceImpl implements CallSetService {
 
             LOGGER.error(e.getMessage(), e);
 
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage());
 
         }
     }
@@ -150,10 +148,13 @@ public class CallSetServiceImpl implements CallSetService {
 
         ModelMapper.mapEntityToDto(dnaRun, callSet);
 
-        Iterator<String> datasetIdsIter = dnaRun.getDatasetDnaRunIdx().fieldNames();
+        Iterator<String> datasetIdsIter =
+            dnaRun.getDatasetDnaRunIdx().fieldNames();
 
         while (datasetIdsIter.hasNext()) {
-            callSet.getVariantSetIds().add(Integer.parseInt(datasetIdsIter.next()));
+            callSet
+                .getVariantSetIds()
+                .add(Integer.parseInt(datasetIdsIter.next()));
         }
 
         if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {

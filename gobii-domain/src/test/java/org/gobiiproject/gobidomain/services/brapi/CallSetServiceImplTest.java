@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
@@ -92,51 +93,13 @@ public class CallSetServiceImplTest {
             callSetsPageResult.getCurrentPageNum());
 
         for(int i = 0; i < testPageSize; i++) {
-            assertEquals("CallSetId : DnaRunId mapping failed",
-                mockSetup.mockDnaRuns.get(i).getDnaRunId(),
-                callSetsPageResult.getResult().get(i).getCallSetDbId());
-            assertEquals("CallSetName : DnaRunName mapping failed",
-                mockSetup.mockDnaRuns.get(i).getDnaRunName(),
-                callSetsPageResult.getResult().get(i).getCallSetName());
 
-            assertEquals("StudyDbId : ExperimentId mapping failed",
-                mockSetup.mockDnaRuns.get(i).getExperiment().getExperimentId(),
-                callSetsPageResult.getResult().get(i).getStudyDbId());
-
-            assertEquals("SampleDbId : DnaSampleId mapping failed",
-                mockSetup.mockDnaRuns.get(i).getDnaSample().getDnaSampleId(),
-                callSetsPageResult.getResult().get(i).getSampleDbId());
-
-            assertEquals("SampleName : DnaSampleName mapping failed",
-                mockSetup.mockDnaRuns.get(i).getDnaSample().getDnaSampleName(),
-                callSetsPageResult.getResult().get(i).getSampleName());
-
-            if(!CollectionUtils.isEmpty(
-                callSetsPageResult.getResult().get(i).getVariantSetIds())) {
-
-                assertTrue("VariantSetId : DatasetIds mapping failed",
-                    !JsonNodeUtils.isEmpty(
-                        mockSetup.mockDnaRuns.get(i).getDatasetDnaRunIdx()));
-
-                assertEquals("VariantSetId : DatasetIds mapping failed",
-                    mockSetup.mockDnaRuns.get(i).getDatasetDnaRunIdx().size(),
-                    callSetsPageResult.getResult().get(i)
-                        .getVariantSetIds().size()
-                );
-
-                for (Integer variantSetId :
-                    callSetsPageResult.getResult().get(i).getVariantSetIds()) {
-
-                    assertTrue("VariantSetId : DatasetIds mapping failed",
-                        mockSetup.mockDnaRuns
-                            .get(i).getDatasetDnaRunIdx()
-                            .has(variantSetId.toString()));
-
-                }
-            }
+            testMainFieldMapping(callSetsPageResult.getResult().get(i),
+                mockSetup.mockDnaRuns.get(i));
 
             if(!MapUtils.isEmpty(
-                callSetsPageResult.getResult().get(i).getAdditionalInfo())) {
+                callSetsPageResult
+                .getResult().get(i).getAdditionalInfo())) {
 
                 assertTrue("AdditionalInfo : DnaSample.Properties " +
                         "mapping failed",
@@ -197,13 +160,60 @@ public class CallSetServiceImplTest {
 
                 }
             }
-
-
         }
 
 
 
     }
 
+
+    private void testMainFieldMapping(CallSetDTO callSet, DnaRun dnaRun) {
+        assertEquals("CallSetId : DnaRunId mapping failed",
+            dnaRun.getDnaRunId(),
+            callSet.getCallSetDbId());
+        assertEquals("CallSetName : DnaRunName mapping failed",
+            dnaRun.getDnaRunName(),
+            callSet.getCallSetName());
+
+        assertEquals("StudyDbId : ExperimentId mapping failed",
+            dnaRun.getExperiment().getExperimentId(),
+            callSet.getStudyDbId());
+
+        assertEquals("SampleDbId : DnaSampleId mapping failed",
+            dnaRun.getDnaSample().getDnaSampleId(),
+            callSet.getSampleDbId());
+
+        assertEquals("SampleName : DnaSampleName mapping failed",
+            dnaRun.getDnaSample().getDnaSampleName(),
+            callSet.getSampleName());
+
+        if(!CollectionUtils.isEmpty(
+            callSet.getVariantSetIds())) {
+
+            assertTrue("VariantSetId : DatasetIds mapping failed",
+                !JsonNodeUtils.isEmpty(
+                    dnaRun.getDatasetDnaRunIdx()));
+
+            assertEquals("VariantSetId : DatasetIds mapping failed",
+                dnaRun.getDatasetDnaRunIdx().size(),
+                callSet
+                    .getVariantSetIds().size()
+            );
+
+            for (Integer variantSetId :
+                callSet.getVariantSetIds()) {
+
+                assertTrue("VariantSetId : DatasetIds mapping failed",
+                    dnaRun.getDatasetDnaRunIdx()
+                        .has(variantSetId.toString()));
+
+            }
+        }
+
+    }
+
+    private void testAdditionalInfoFieldMapping() {
+
+    }
 
 }

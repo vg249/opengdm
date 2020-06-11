@@ -10,11 +10,6 @@ public interface CallSetService {
                                         Integer variantSetDbId,
                                         CallSetDTO callSetsFilter);
 
-    PagedResult<CallSetDTO> getCallSets(Integer pageSize,
-                                        String pageToken,
-                                        Integer variantSetDbId,
-                                        CallSetDTO callSetsFilter);
-
     CallSetDTO getCallSetById(Integer callSetDbId);
 
 }

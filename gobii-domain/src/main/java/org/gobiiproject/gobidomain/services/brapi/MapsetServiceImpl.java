@@ -37,8 +37,10 @@ public class MapsetServiceImpl implements MapsetService {
      * @throws GobiiDomainException
      */
     @Override
-    public PagedResult<MapsetDTO> getMapSets(Integer pageSize, Integer pageNum,
-                                             Integer studyDbId) throws GobiiDomainException {
+    public PagedResult<MapsetDTO> getMapSets(
+        Integer pageSize, Integer pageNum,
+        Integer studyDbId) throws GobiiDomainException
+    {
 
         PagedResult<MapsetDTO> pagedResult = new PagedResult<>();
 
@@ -51,7 +53,9 @@ public class MapsetServiceImpl implements MapsetService {
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(pageSize, rowOffset, null, studyDbId);
+            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(
+                pageSize, rowOffset,
+                null, studyDbId);
 
             for (Mapset mapset : mapsets) {
 

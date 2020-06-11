@@ -27,34 +27,14 @@ public class MapsetServiceImplTest {
     @Mock
     private MapsetDaoImpl mapsetDao;
 
+    MockSetup mockSetup;
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        mockSetup = new MockSetup();
     }
 
-    Random random = new Random();
-
-    ObjectMapper mapper = new ObjectMapper();
-
-    @SuppressWarnings("unused")
-    private List<Mapset> getMockMapsets(Integer listSize) {
-
-        List<Mapset> returnVal = new ArrayList<>();
-
-
-        for(int i = 0; i < listSize; i++) {
-
-            Mapset mapset = new Mapset();
-
-            mapset.setMarkerCount(100);
-
-            returnVal.add(mapset);
-
-        }
-
-        return returnVal;
-   }
 
 
     @Test
