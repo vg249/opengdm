@@ -1,10 +1,14 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import java.util.List;
+
 import javax.persistence.PersistenceException;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import org.apache.maven.wagon.ResourceDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
@@ -190,6 +194,10 @@ public class GlobalControllerExceptionHandler {
     }
 
 
+    @ExceptionHandler(InvalidMarkersException.class)
+    public ResponseEntity<List<MarkerStatus>> InvalidMarkersExceptionHandler(InvalidMarkersException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getStatusList());
+    }
     
 
 

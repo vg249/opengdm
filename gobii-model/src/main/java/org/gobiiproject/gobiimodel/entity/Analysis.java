@@ -1,8 +1,5 @@
 package org.gobiiproject.gobiimodel.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.hibernate.annotations.Type;
-
 import java.util.Date;
 import java.util.Map;
 
@@ -18,6 +15,7 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

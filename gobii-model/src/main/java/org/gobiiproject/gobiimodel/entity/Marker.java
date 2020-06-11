@@ -16,6 +16,10 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "marker")
+@NamedEntityGraph(name = "graph.marker",
+    attributeNodes = 
+        @NamedAttributeNode("platform")
+)
 public class Marker {
 
     @Id

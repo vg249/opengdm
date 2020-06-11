@@ -9,6 +9,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -34,6 +35,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
@@ -41,17 +43,8 @@ import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.*;
+
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -107,6 +100,9 @@ public class GOBIIControllerV3Test {
 
     @Mock
     private MapsetService mapsetService;
+
+    @Mock
+    private MarkerGroupService markerGroupService;
 
     @Mock
     private OrganizationService organizationService;
@@ -1777,7 +1773,125 @@ public class GOBIIControllerV3Test {
         ;
 
         verify(referenceService, times(1)).deleteReference(123);
+    }
 
-    
+    @Test
+    public void testCreateMarkerSet() throws Exception {
+        String requestJson = "{\"markerGroupName\": \"test-marker-group\", \"germplasmGroup\": \"test-germplasm-group\"}";
+
+        when( projectService.getDefaultProjectEditor() ).thenReturn("test-user");
+        when( markerGroupService.createMarkerGroup( any(MarkerGroupDTO.class), eq("test-user"))).thenReturn(new MarkerGroupDTO());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/markergroups")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        ;
+
+        verify(markerGroupService, times(1)).createMarkerGroup(any(MarkerGroupDTO.class), eq("test-user"));
+    }
+
+    @Test
+    public void testListMarkerGroups() throws Exception {
+
+        when( markerGroupService.getMarkerGroups(0, 1000)).thenReturn(
+            new PagedResult<MarkerGroupDTO>()
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/markergroups")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify( markerGroupService, times(1)).getMarkerGroups(0, 1000);
+    }
+
+    @Test
+    public void testGetMarkerGroupById() throws Exception {
+        when( markerGroupService.getMarkerGroup(123)).thenReturn(new MarkerGroupDTO());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/markergroups/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+
+        verify(markerGroupService, times(1)).getMarkerGroup(123);
+    }
+
+    @Test
+    public void testEditMarkerGroup()  throws Exception {
+        String requestJson = "{\"markerGroupName\": \"test-marker-group-updated\", \"germplasmGroup\": \"test-germplasm-group\"}";
+        when( projectService.getDefaultProjectEditor()).thenReturn("test-user");
+        when( markerGroupService.updateMarkerGroup(eq(123), any(MarkerGroupDTO.class), eq("test-user"))).thenReturn(new MarkerGroupDTO());
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .patch("/gobii-dev/gobii/v3/markergroups/123")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        ;
+        verify(markerGroupService, times(1)).updateMarkerGroup(eq(123), any(MarkerGroupDTO.class), eq("test-user"));
+
+    }
+
+    @Test
+    public void testDeleteMarkerGroup() throws Exception {
+        doNothing().when(markerGroupService).deleteMarkerGroup(123);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .delete("/gobii-dev/gobii/v3/markergroups/123")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        verify(markerGroupService, times(1)).deleteMarkerGroup(123);
+    }
+
+    @Test
+    public void testAssignMarkersToMarkerGroup() throws Exception {
+        String requestJson = "[{\"markerName\": \"foo marker\", \"platformName\": \"foo platform\", \"favorableAlleles\": [\"A\"]},{\"markerName\": \"bar marker\",\"platformName\": \"bar platform\", \"favorableAlleles\": [\"G\"]}]";
+        when (projectService.getDefaultProjectEditor()).thenReturn("test-user");
+        when (markerGroupService.mapMarkers(eq(123), anyListOf(MarkerDTO.class), eq("test-user"))).thenReturn(new PagedResult<MarkerDTO>());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .post("/gobii-dev/gobii/v3/markergroups/123/markerscollection")
+            .content(requestJson)
+            .contentType(MediaType.APPLICATION_JSON)
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(markerGroupService, times(1)).mapMarkers(eq(123), anyListOf(MarkerDTO.class), eq("test-user"));
+    }
+
+    @Test
+    public void testListMarkersInMarkerGroups() throws Exception {
+        when (markerGroupService.getMarkerGroupMarkers(123, 0, 1000)).thenReturn(new PagedResult<>());
+        mockMvc.perform(
+            MockMvcRequestBuilders
+            .get("/gobii-dev/gobii/v3/markergroups/123/markers")
+            .contextPath("/gobii-dev")
+        )
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+        verify(markerGroupService, times(1)).getMarkerGroupMarkers(123, 0,1000);
     }
 }

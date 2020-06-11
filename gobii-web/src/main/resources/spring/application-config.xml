@@ -363,6 +363,10 @@
           class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
 
+    <!-- **** Marker Group Service/DAO V3-->
+    <bean id="markerGroupService" class="org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupServiceImpl"/>
+    <bean id="markerGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerGroupDaoImpl"/>
+
     <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
         <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->
 
