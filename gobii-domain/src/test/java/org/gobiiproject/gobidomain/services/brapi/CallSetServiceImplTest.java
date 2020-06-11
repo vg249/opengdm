@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -55,7 +56,7 @@ public class CallSetServiceImplTest {
     }
 
     @Test
-    public void getCallsets() throws Exception {
+    public void getCallsetsTest() throws Exception {
 
         mockSetup.createMockDnaRuns(pageSize);
 
@@ -104,6 +105,34 @@ public class CallSetServiceImplTest {
         }
     }
 
+    @Test
+    public void getCallsetByIdTest() throws Exception {
+
+        mockSetup.createMockDnaRuns(pageSize);
+
+        when (
+            dnaRunDao.getDnaRunById(any(Integer.TYPE))
+        ).thenReturn(mockSetup.mockDnaRuns.get(0));
+
+
+        when (cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null)
+        ).thenReturn(mockSetup.mockDnaSampleProps);
+
+        when (cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null))
+            .thenReturn(mockSetup.mockGermplasmProps);
+
+        CallSetDTO  callSet = callSetBrapiService.getCallSetById(any(Integer.TYPE));
+
+        testMainFieldMapping(callSet, mockSetup.mockDnaRuns.get(0));
+            if(!MapUtils.isEmpty(callSet.getAdditionalInfo())) {
+                testAdditionalInfoFieldMapping(
+                    callSet.getAdditionalInfo(),
+                    mockSetup.mockDnaRuns.get(0)
+                );
+            }
+    }
 
     private void testMainFieldMapping(CallSetDTO callSet, DnaRun dnaRun) {
         assertEquals("CallSetId : DnaRunId mapping failed",
