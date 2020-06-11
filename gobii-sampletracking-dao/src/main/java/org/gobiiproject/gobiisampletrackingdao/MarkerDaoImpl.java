@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,8 +7,6 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,15 +15,23 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MarkerDaoImpl implements MarkerDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MarkerDaoImpl.class);
@@ -212,6 +217,7 @@ public class MarkerDaoImpl implements MarkerDao {
             // Set Root entity and selected entities
             Root<Marker> root = criteria.from(Marker.class);
             criteria.select(root);
+            root.fetch("platform");
 
             if(!CollectionUtils.isEmpty(markerIds)) {
                 predicates.add(root.get("markerId").in(markerIds));
@@ -291,6 +297,44 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     public List<Marker> getMarkersByMarkerNames(Set<String> markerNames) {
         return this.getMarkers(null, markerNames, null, null, null);
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public List<Marker> getMarkersByPlatformMarkerNameTuples(List<List<String>> markerTuples) {
+        List<Marker> markers = new ArrayList<>();
+        List<Predicate> predicates = new ArrayList<>();
+  
+        try {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Marker> criteriaQuery = criteriaBuilder.createQuery(Marker.class);
+  
+            Root<Marker> root = criteriaQuery.from(Marker.class);
+            
+            root.fetch("platform", JoinType.LEFT);
+
+            for (List<String> markerTuple: markerTuples) {
+                predicates.add(
+                    criteriaBuilder.and(
+                        criteriaBuilder.equal(root.get("platform").get("platformName"), markerTuple.get(0)),
+                        criteriaBuilder.equal(root.get("markerName"), markerTuple.get(1))
+                    )
+                );
+            }
+
+            Predicate combinedPredicates = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+            criteriaQuery.select(root);
+            criteriaQuery.where(combinedPredicates);
+  
+            markers = em.createQuery(criteriaQuery).getResultList();
+        } catch (Exception e) {
+          log.error(e.getMessage(), e);
+  
+          throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                  e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+  
+        }
+        return markers;
     }
 
 }

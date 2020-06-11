@@ -1,9 +1,7 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
-import org.gobiiproject.gobiimodel.dto.request.AnalysisTypeRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface AnalysisService {
@@ -21,7 +19,5 @@ public interface AnalysisService {
 	AnalysisDTO getAnalysis(Integer id) throws Exception;
 
 	void deleteAnalysis(Integer id) throws Exception;
-
 	
-
 }
