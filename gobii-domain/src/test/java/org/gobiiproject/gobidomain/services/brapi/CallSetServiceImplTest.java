@@ -17,9 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -71,9 +69,8 @@ public class CallSetServiceImplTest {
 
 
         when (cvDao.getCvListByCvGroup(
-            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null)).thenReturn(
-                new ArrayList<>()
-        );
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null)
+        ).thenReturn(mockSetup.mockDnaSampleProps);
 
         when (cvDao.getCvListByCvGroup(
             CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null))
@@ -100,70 +97,11 @@ public class CallSetServiceImplTest {
             if(!MapUtils.isEmpty(
                 callSetsPageResult
                 .getResult().get(i).getAdditionalInfo())) {
-
-                assertTrue("AdditionalInfo : DnaSample.Properties " +
-                        "mapping failed",
-                    !(
-                        JsonNodeUtils.isEmpty(
-                            mockSetup.mockDnaRuns.get(i)
-                            .getDnaSample().getProperties()) ||
-                        JsonNodeUtils.isEmpty(
-                            mockSetup.mockDnaRuns.get(i)
-                                .getDnaSample().getGermplasm().getProperties())
-                    ));
-
-                for(String infoKey :
-                    callSetsPageResult.getResult()
-                        .get(i).getAdditionalInfo().keySet()) {
-
-
-                    Optional<Cv> cvDnaSampleProps = mockSetup.mockDnaSampleProps
-                        .stream()
-                        .parallel()
-                        .filter(cv -> cv.getTerm() == infoKey)
-                        .findFirst();
-
-                    Optional<Cv> cvGermplasmProps = mockSetup.mockGermplasmProps
-                        .stream()
-                        .parallel()
-                        .filter(cv -> cv.getTerm() == infoKey)
-                        .findFirst();
-
-                    if(cvDnaSampleProps.isPresent()) {
-                        assertTrue("AdditionalInfo : DnaSample.Properties " +
-                                "mapping failed",
-                            mockSetup.mockDnaRuns
-                                .get(i).getDnaSample()
-                                .getProperties().get(
-                                cvDnaSampleProps.get().getCvId().toString())
-                                .asText()
-                                == callSetsPageResult.getResult()
-                                .get(i).getAdditionalInfo().get(infoKey)
-                        );
-                    }
-                    else if(cvGermplasmProps.isPresent()) {
-                        assertTrue("AdditionalInfo : Germplasm.Properties " +
-                                "mapping failed",
-                            mockSetup.mockDnaRuns
-                                .get(i).getDnaSample().getGermplasm()
-                                .getProperties().get(
-                                cvGermplasmProps.get().getCvId().toString())
-                                .asText()
-                                == callSetsPageResult.getResult()
-                                .get(i).getAdditionalInfo().get(infoKey)
-                        );
-                    }
-                    else {
-                        fail("AdditionalInfo : Germplasm.Properties " +
-                            "mapping failed");
-                    }
-
-                }
+                testAdditionalInfoFieldMapping(
+                    callSetsPageResult.getResult().get(i).getAdditionalInfo(),
+                    mockSetup.mockDnaRuns.get(i));
             }
         }
-
-
-
     }
 
 
@@ -209,10 +147,62 @@ public class CallSetServiceImplTest {
 
             }
         }
-
     }
 
-    private void testAdditionalInfoFieldMapping() {
+    private void testAdditionalInfoFieldMapping(
+        Map<String, String> additionalInfo, DnaRun dnaRun
+    ) {
+
+        assertTrue("AdditionalInfo : DnaSample.Properties " +
+                "mapping failed",
+            !(
+                JsonNodeUtils.isEmpty(
+                    dnaRun.getDnaSample().getProperties()) ||
+                    JsonNodeUtils.isEmpty(
+                        dnaRun.getDnaSample().getGermplasm().getProperties())
+            ));
+
+        for(String infoKey :
+            additionalInfo.keySet()) {
+
+            Optional<Cv> cvDnaSampleProps = mockSetup.mockDnaSampleProps
+                .stream()
+                .parallel()
+                .filter(cv -> cv.getTerm() == infoKey)
+                .findFirst();
+
+            Optional<Cv> cvGermplasmProps = mockSetup.mockGermplasmProps
+                .stream()
+                .parallel()
+                .filter(cv -> cv.getTerm() == infoKey)
+                .findFirst();
+
+            if(cvDnaSampleProps.isPresent()) {
+                assertTrue("AdditionalInfo : DnaSample.Properties " +
+                        "mapping failed",
+                    dnaRun.getDnaSample()
+                        .getProperties().get(
+                        cvDnaSampleProps.get().getCvId().toString())
+                        .asText()
+                        == additionalInfo.get(infoKey)
+                );
+            }
+            else if(cvGermplasmProps.isPresent()) {
+                assertTrue("AdditionalInfo : Germplasm.Properties " +
+                        "mapping failed",
+                    dnaRun.getDnaSample().getGermplasm()
+                        .getProperties().get(
+                        cvGermplasmProps.get().getCvId().toString())
+                        .asText()
+                        == additionalInfo.get(infoKey)
+                );
+            }
+            else {
+                fail("AdditionalInfo : Germplasm.Properties " +
+                    "mapping failed");
+            }
+
+        }
 
     }
 
