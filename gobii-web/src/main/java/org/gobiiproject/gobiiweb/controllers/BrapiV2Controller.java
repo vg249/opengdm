@@ -979,42 +979,29 @@ public class BrapiV2Controller {
         }
     )
     @ApiResponses(value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = VariantSetResponse.class
-                    ),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required = true, paramType = "header", dataType = "string"),
+        @ApiResponse(code = 200, message = "", response = VariantSetResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(
-            value="/variantsets/{variantSetDbId:[\\d]+}",
-            method=RequestMethod.GET,
-            produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
-            @ApiParam(value = "ID of the VariantSet to be extracted",
-                    required = true)
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required = true, paramType = "header", dataType = "string"),
+    })
+    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}", method=RequestMethod.GET,
+        produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
+        @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId)
     {
         try {
 
             VariantSetDTO variantSetDTO =
                     variantSetsService.getVariantSetById(variantSetDbId);
-
             BrApiMasterPayload<VariantSetDTO> payload =
                     new BrApiMasterPayload<>(variantSetDTO);
-
             return ResponseEntity.ok(payload);
 
         }
@@ -1023,9 +1010,8 @@ public class BrapiV2Controller {
         }
         catch (Exception e) {
             throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Entity does not exist"
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Entity does not exist"
             );
         }
     }
@@ -1041,70 +1027,53 @@ public class BrapiV2Controller {
      * @return Brapi response with list of CallSets
      */
     @ApiOperation(
-            value = "List Variants in VariantSet",
-            notes = "Lists all the Variants in VariantSet with variantSetDbId",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="List Variants in VariantSet")
-                    })
-            }
+        value = "List Variants in VariantSet",
+        notes = "Lists all the Variants in VariantSet with variantSetDbId",
+        tags = {"VariantSets"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Variants in VariantSet")
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = VariantListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required = true, paramType = "header", dataType = "string")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = VariantListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants",
-            method=RequestMethod.GET, produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterListPayload<VariantDTO>>
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required = true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET,
+        produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>>
     getVariantsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet of the " +
-                    "Variants to be extracted", required = true)
+        @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "Value is $metadata.pagination.nextPageToken " +
-                    "form previous page.")
-            @RequestParam(value = "pageToken", required = false)
-                    String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+        @ApiParam(value = "Page Token to fetch a page. Value is " +
+            "$metadata.pagination.nextPageToken form previous page.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @ApiParam(value = "Get Variant with given variantDbId.")
-            @RequestParam(value = "variantDbId", required = false)
-                    Integer variantDbId
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Get Variant with given variantDbId.")
+            @RequestParam(value = "variantDbId", required = false) Integer variantDbId
     ){
         try {
-            VariantSetDTO variantSet =
-                    variantSetsService.getVariantSetById(variantSetDbId);
-            return getVariants(pageSize, pageToken,
-                    variantDbId, variantSet.getVariantSetDbId());
+            VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
+            return getVariants(pageSize, pageToken, variantDbId, variantSet.getVariantSetDbId());
         }
         catch (GobiiException gE) {
             throw gE;
         }
         catch (Exception e) {
             throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Entity does not exist"
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Entity does not exist"
             );
         }
     }
