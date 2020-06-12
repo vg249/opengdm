@@ -224,7 +224,7 @@ public class CallSetServiceImplTest {
                 );
             }
             else {
-                fail("AdditionalInfo : Germplasm.Properties " +
+                fail("AdditionalInfo : Properties " +
                     "mapping failed");
             }
 

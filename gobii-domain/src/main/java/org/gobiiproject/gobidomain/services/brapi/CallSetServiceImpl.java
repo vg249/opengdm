@@ -36,10 +36,9 @@ public class CallSetServiceImpl implements CallSetService {
     @Autowired
     private CvDao cvDao;
 
-    public PagedResult<CallSetDTO> getCallSets(
-        Integer pageSize, Integer pageNum,
-        Integer variantSetDbId,
-        CallSetDTO callSetsFilter) throws GobiiException {
+    public PagedResult<CallSetDTO> getCallSets(Integer pageSize, Integer pageNum,
+                                               Integer variantSetDbId, CallSetDTO callSetsFilter)
+        throws GobiiException {
 
         PagedResult<CallSetDTO> pagedResult = new PagedResult<>();
 
@@ -47,12 +46,9 @@ public class CallSetServiceImpl implements CallSetService {
 
         try {
 
-            Objects.requireNonNull(
-                pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
             Objects.requireNonNull(pageNum, "pageNum : Required non null");
-            Objects.requireNonNull(
-                callSetsFilter, "callSetsFilter : Required non null");
-
+            Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
 
             Integer rowOffset = pageNum * pageSize;
 
@@ -60,28 +56,22 @@ public class CallSetServiceImpl implements CallSetService {
             ModelMapper.mapDtoToEntity(callSetsFilter, dnaRunFilter);
 
             List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
-                pageSize,
-                rowOffset,
-                callSetsFilter.getCallSetDbId(),
-                callSetsFilter.getCallSetName(),
-                variantSetDbId,
-                callSetsFilter.getStudyDbId(),
-                callSetsFilter.getSampleDbId(),
-                callSetsFilter.getSampleName(),
-                callSetsFilter.getGermplasmDbId(),
-                callSetsFilter.getGermplasmName());
+                pageSize, rowOffset,
+                callSetsFilter.getCallSetDbId(), callSetsFilter.getCallSetName(),
+                variantSetDbId, callSetsFilter.getStudyDbId(),
+                callSetsFilter.getSampleDbId(), callSetsFilter.getSampleName(),
+                callSetsFilter.getGermplasmDbId(), callSetsFilter.getGermplasmName());
 
             List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
-                    null);
+                CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
             List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
-                    null);
+                CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null);
 
             for (DnaRun dnaRun : dnaRuns) {
-                CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(dnaRun,
-                    dnaSampleGroupCvs, germplasmGroupCvs);
+                CallSetDTO callSet =
+                    this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs,
+                        germplasmGroupCvs);
                 callSets.add(callSet);
             }
 
@@ -89,17 +79,13 @@ public class CallSetServiceImpl implements CallSetService {
             pagedResult.setCurrentPageSize(callSets.size());
             pagedResult.setCurrentPageNum(pageNum);
 
-
             return pagedResult;
         }
         catch (Exception e) {
 
             LOGGER.error(e.getMessage(), e);
-
             throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                e.getMessage());
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
         }
     }
 
@@ -118,8 +104,7 @@ public class CallSetServiceImpl implements CallSetService {
                     null);
 
             List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
-                    null);
+                CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
             CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(
                 dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
@@ -129,27 +114,21 @@ public class CallSetServiceImpl implements CallSetService {
         catch (Exception e) {
 
             LOGGER.error(e.getMessage(), e);
-
             throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                e.getMessage());
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
 
         }
     }
 
 
-    private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun,
-                                                   List<Cv> dnaSampleGroupCvs,
+    private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun, List<Cv> dnaSampleGroupCvs,
                                                    List<Cv> germplasmGroupCvs) {
-
 
         CallSetDTO callSet = new CallSetDTO();
 
         ModelMapper.mapEntityToDto(dnaRun, callSet);
 
-        Iterator<String> datasetIdsIter =
-            dnaRun.getDatasetDnaRunIdx().fieldNames();
+        Iterator<String> datasetIdsIter = dnaRun.getDatasetDnaRunIdx().fieldNames();
 
         while (datasetIdsIter.hasNext()) {
             callSet
@@ -160,23 +139,18 @@ public class CallSetServiceImpl implements CallSetService {
         if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {
 
             Map<String, String> additionalInfo = CvMapper.mapCvIdToCvTerms(
-                    dnaSampleGroupCvs,
-                    dnaRun.getDnaSample().getProperties());
+                dnaSampleGroupCvs, dnaRun.getDnaSample().getProperties());
 
-            if(!JsonNodeUtils.isEmpty(
-                dnaRun.getDnaSample()
-                    .getGermplasm().getProperties())
-            ) {
-                additionalInfo =CvMapper.mapCvIdToCvTerms(
-                        germplasmGroupCvs,
-                        dnaRun.getDnaSample().getGermplasm().getProperties(),
+            if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getGermplasm().getProperties())) {
+                additionalInfo =
+                    CvMapper.mapCvIdToCvTerms(
+                        germplasmGroupCvs, dnaRun.getDnaSample().getGermplasm().getProperties(),
                         additionalInfo);
             }
 
             callSet.setAdditionalInfo(additionalInfo);
 
         }
-
         return callSet;
     }
 
