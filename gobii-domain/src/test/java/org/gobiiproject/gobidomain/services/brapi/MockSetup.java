@@ -26,6 +26,9 @@ public class MockSetup {
     public List<Cv> mockGermplasmProps;
     public List<Cv> mockDnaSampleProps;
     public List<Cv> moockDnaRunsProps;
+    public List<Mapset> mockMapSets;
+    public List<Cv> mockMapSetTypes;
+
 
     String[] testDatasetIds = {"1", "2", "3"};
 
@@ -73,10 +76,14 @@ public class MockSetup {
     }
 
     public void createMockGermplasmProps(int numProps) {
-
         mockGermplasmProps = createMockProps(
             numProps, CvGroupTerm.CVGROUP_GERMPLASM_PROP);
+    }
 
+    public void createMockMapSetTypes(int numTypes) {
+        mockMapSetTypes = createMockProps(
+            numTypes,
+            CvGroupTerm.CVGROUP_MAPSET_TYPE);
     }
 
     public void createMockDnaSampleProps(int numProps) {
@@ -89,7 +96,7 @@ public class MockSetup {
         mockExperiments = new ArrayList<>();
         for(int i = 0; i < numExperiments; i++) {
             Experiment experiment = new Experiment();
-            experiment.setExperimentId(random.nextInt());
+            experiment.setExperimentId(i+1);
             experiment.setExperimentName(
                 RandomStringUtils.random(7, true, true));
             mockExperiments.add(experiment);
@@ -103,7 +110,7 @@ public class MockSetup {
         }
         for(int i = 0; i < numGermplasms; i++) {
             Germplasm germplasm = new Germplasm();
-            germplasm.setGermplasmId(i);
+            germplasm.setGermplasmId(i+1);
             germplasm.setGermplasmName(RandomStringUtils.random(7, true, true));
             germplasm.setExternalCode(UUID.randomUUID().toString());
             ObjectNode properties = JsonNodeFactory.instance.objectNode();
@@ -174,6 +181,7 @@ public class MockSetup {
         for(Integer i = 0; i < numDnaRuns; i++) {
             DnaRun dnaRun = new DnaRun();
 
+            dnaRun.setDnaRunId(i+1);
             dnaRun.setDnaRunName(RandomStringUtils.random(7, true, true));
 
             ObjectNode datasetDnarunIndex =
@@ -193,6 +201,30 @@ public class MockSetup {
             mockDnaRuns.add(dnaRun);
 
         }
-
     }
+
+    public void createMockMapSets(int numMapSets) {
+
+        mockMapSets = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(mockMapSetTypes)) {
+            createMockMapSetTypes(3);
+        }
+
+        for(Integer i = 0; i < numMapSets; i++) {
+
+            Mapset mapset = new Mapset();
+            mapset.setMapsetId(i+1);
+            mapset.setMapsetName(RandomStringUtils.random(7, true, true));
+            mapset.setMapSetCode(RandomStringUtils.random(7, true, true));
+            mapset.setMapSetDescription(
+                RandomStringUtils.random(7, true, true));
+            mapset.setType(
+                mockMapSetTypes.get(
+                    random.nextInt(mockMapSetTypes.size())));
+            mockMapSets.add(mapset);
+
+        }
+    }
+
 }

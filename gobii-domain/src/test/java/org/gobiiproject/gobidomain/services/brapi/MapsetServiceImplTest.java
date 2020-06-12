@@ -38,17 +38,15 @@ public class MapsetServiceImplTest {
 
 
     @Test
-    public void testMainFieldsMapping() throws Exception {
+    public void getMapsTest() throws Exception {
 
-        //final Integer pageSize = 1000;
 
     }
 
 
     @Test
-    public void testAdditionalInfoMapping() throws Exception {
+    public void getMapById() throws Exception {
 
-        //final Integer pageSize = 1000;
 
     }
 

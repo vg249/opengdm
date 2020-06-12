@@ -1,3 +1,7 @@
+/**
+ * Created by VCalaminos on 7/18/2019.
+ * Update by Vishnu G
+ */
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -17,21 +21,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by VCalaminos on 7/18/2019.
- */
 @WebAppConfiguration
 public class CallSetServiceImplTest {
-
-    final int testPageSize = 10;
 
     @InjectMocks
     private CallSetServiceImpl callSetBrapiService;
@@ -42,12 +39,10 @@ public class CallSetServiceImplTest {
     @Mock
     private CvDaoImpl cvDao;
 
-    Random random = new Random();
-
     MockSetup mockSetup;
 
-    final Integer pageSize = 10;
-    final Integer pageNum = 0;
+    Integer pageSize = 10;
+    Integer pageNum = 0;
 
     @Before
     public void init() {
@@ -58,6 +53,8 @@ public class CallSetServiceImplTest {
     @Test
     public void getCallsetsTest() throws Exception {
 
+        Integer testPageSize = pageSize - 1;
+
         mockSetup.createMockDnaRuns(pageSize);
 
         when (
@@ -66,7 +63,7 @@ public class CallSetServiceImplTest {
                 any(Integer.TYPE), any(Integer.TYPE),
                 any(Integer.TYPE), any(String.class),
                 any(Integer.TYPE), any(String.class))
-        ).thenReturn(mockSetup.mockDnaRuns);
+        ).thenReturn(mockSetup.mockDnaRuns.subList(0, testPageSize));
 
 
         when (cvDao.getCvListByCvGroup(
@@ -83,7 +80,7 @@ public class CallSetServiceImplTest {
                 pageSize, 0, null, new CallSetDTO());
 
         assertEquals("Page Size mismatch",
-            pageSize,
+            testPageSize,
             callSetsPageResult.getCurrentPageSize());
 
         assertEquals("Wrong page number",
