@@ -68,28 +68,19 @@ public class BrapiV2Controller {
     private MarkerPositionsService markerPositionsService;
 
     private class CallSetResponse extends BrApiMasterPayload<CallSetDTO>{}
-    private class CallSetListResponse
-            extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
-    private class StudiesListResponse
-            extends BrApiMasterPayload<BrApiResult<StudiesDTO>>{}
-    private class SamplesListResponse
-            extends BrApiMasterPayload<BrApiResult<SamplesDTO>>{}
-    private class GenotypeCallsResponse
-            extends BrApiMasterPayload<GenotypeCallsDTO>{}
+    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
+    private class StudiesListResponse extends BrApiMasterPayload<BrApiResult<StudiesDTO>>{}
+    private class SamplesListResponse extends BrApiMasterPayload<BrApiResult<SamplesDTO>>{}
+    private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
     private class GenotypeCallsListResponse
-            extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
+        extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
     private class VariantResponse extends BrApiMasterPayload<VariantDTO>{}
-    private class VariantListResponse
-            extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
+    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
     private class VariantSetResponse extends BrApiMasterPayload<VariantSetDTO>{}
-    private class VariantSetListResponse
-            extends BrApiMasterPayload<BrApiResult<VariantSetDTO>>{}
-    private class MapsListResponse
-            extends BrApiMasterListPayload<BrApiResult<MapsetDTO>>{}
-    private class MapsResponse
-            extends BrApiMasterPayload<MapsetDTO>{}
-    private class SearchResultResponse
-            extends BrApiMasterPayload<SearchResultDTO>{}
+    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<VariantSetDTO>>{}
+    private class MapsListResponse extends BrApiMasterListPayload<BrApiResult<MapsetDTO>>{}
+    private class MapsResponse extends BrApiMasterPayload<MapsetDTO>{}
+    private class SearchResultResponse extends BrApiMasterPayload<SearchResultDTO>{}
 
 
     /**
@@ -99,114 +90,80 @@ public class BrapiV2Controller {
      * @return Json object with list of brapi calls in GDM
      * @throws Exception
      */
-    @RequestMapping(value = "/serverinfo",
-            method = RequestMethod.GET,
-            produces = "application/json")
+    @RequestMapping(value = "/serverinfo", method = RequestMethod.GET,
+        produces = "application/json")
     @ApiOperation(
-            value = "Get ServerInfo",
-            notes = "List of all calls",
-            tags = {"ServerInfo"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="ServerInfo"),
-                    })
-            }
+        value = "Get ServerInfo", notes = "List of all calls",
+        tags = {"ServerInfo"}, extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="ServerInfo"),
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = BrapiResponseMapCalls.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload> getServerInfo(
-            HttpServletRequest request) {
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = BrapiResponseMapCalls.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ResponseBody public ResponseEntity<BrApiMasterPayload> getServerInfo(
+        HttpServletRequest request) {
 
         try {
 
-            BrapiResponseMapCalls brapiResponseServerInfos =
-                    new BrapiResponseMapCalls(request);
+            BrapiResponseMapCalls brapiResponseServerInfos = new BrapiResponseMapCalls(request);
 
             BrApiServerInfoPayload serverInfoPayload =
-                    new BrApiServerInfoPayload(
-                            brapiResponseServerInfos.getBrapi2ServerInfos());
-
+                new BrApiServerInfoPayload(brapiResponseServerInfos.getBrapi2ServerInfos());
 
             return ResponseEntity.ok(serverInfoPayload);
 
         }
         catch (Exception e) {
             throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage());
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error" + e.getMessage());
         }
-
     }
 
     //---------------------------------------------------------------------------------
 
     @ApiOperation(
-            value = "List Studies",
-            notes = "Lists Studies in GDM system",
-            tags = {"Studies"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(
-                                    name="summary",
-                                    value="List Studies")
-                    })
-            }
-    )
+        value = "List Studies", notes = "Lists Studies in GDM system",
+        tags = {"Studies"}, extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Studies")
+            })
+        })
     @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = StudiesListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
+        value = {
+            @ApiResponse(code = 200, message = "", response = StudiesListResponse.class),
+            @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+            @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+            @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+        })
     @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/studies",
-            method=RequestMethod.GET,
-            produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterListPayload<StudiesDTO>> getStudies(
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+    @RequestMapping(value="/studies", method=RequestMethod.GET, produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<StudiesDTO>> getStudies(
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @ApiParam(value = "Used to request a specific page " +
-                    "of data to be returned. The page indexing starts at " +
-                    "0 (the first page is 'page'= 0). Default is 0")
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Used to request a specific page of data to be returned. " +
+            "The page indexing starts at 0 (the first page is 'page'= 0). Default is 0")
             @RequestParam(value  = "page", required = false,
-                    defaultValue = BrapiDefaults.pageNum) Integer page,
-            @ApiParam(value = "Filter by Project Id")
-            @RequestParam(value = "projectId", required = false)
-                    Integer projectId
+                defaultValue = BrapiDefaults.pageNum) Integer page,
+        @ApiParam(value = "Filter by Project Id")
+            @RequestParam(value = "projectId", required = false) Integer projectId
     ) {
         try {
 
-            PagedResult<StudiesDTO> studies = studiesService.getStudies(
-                    pageSize, page,
-                    projectId);
+            PagedResult<StudiesDTO> studies = studiesService.getStudies(pageSize, page, projectId);
 
             BrApiMasterListPayload<StudiesDTO> payload =
-                    new BrApiMasterListPayload<>(
-                            studies.getResult(), studies.getCurrentPageSize(),
-                            studies.getCurrentPageNum());
+                new BrApiMasterListPayload<>(
+                    studies.getResult(), studies.getCurrentPageSize(), studies.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -215,10 +172,8 @@ public class BrapiV2Controller {
             throw gE;
         }
         catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage());
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error" + e.getMessage());
         }
     }
 
@@ -234,65 +189,45 @@ public class BrapiV2Controller {
      * @param callSetsFilter - CallsetBrapiDTO model to map the filters
      * @return Brapi response with list of dna runs/call sets
      */
-    @ApiOperation(
-            value = "List CallSets",
-            notes = "Lists CallSets in GDM System.",
-            tags = {"CallSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(
-                                    name="summary",
-                                    value="List CallSets")
-                    })
-            }
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = CallSetListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
+    @ApiOperation(value = "List CallSets", notes = "Lists CallSets in GDM System.",
+        tags = {"CallSets"}, extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List CallSets")
+            })
+        })
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = CallSetListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(value="/callsets", method=RequestMethod.GET,
-            produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSets(
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/callsets", method=RequestMethod.GET, produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSets(
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            @ApiParam(value = "Used to request a specific page of " +
-                    "data to be returned. " +
-                    "The page indexing starts at 0 " +
-                    "(the first page is 'page'= 0). Default is 0")
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Used to request a specific page of data to be returned. " +
+                "The page indexing starts at 0 (the first page is 'page'= 0). Default is 0")
             @RequestParam(value  = "page", required = false,
-                    defaultValue = BrapiDefaults.pageNum) Integer page,
-            @RequestParam(value = "variantSetDbId",
-                    required = false) Integer variantSetDbId,
-            CallSetDTO callSetsFilter
+                defaultValue = BrapiDefaults.pageNum) Integer page,
+        @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId,
+        CallSetDTO callSetsFilter
     ) {
         try {
 
-            PagedResult<CallSetDTO> callSets = callSetService.getCallSets(
-                    pageSize, page,
+            PagedResult<CallSetDTO> callSets =
+                callSetService.getCallSets(pageSize, page,
                     variantSetDbId, callSetsFilter);
 
             BrApiMasterListPayload<CallSetDTO> payload =
-                    new BrApiMasterListPayload<>(
-                            callSets.getResult(), callSets.getCurrentPageSize(),
-                            callSets.getCurrentPageNum());
+                new BrApiMasterListPayload<>(
+                    callSets.getResult(), callSets.getCurrentPageSize(),
+                    callSets.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -301,10 +236,8 @@ public class BrapiV2Controller {
             throw gE;
         }
         catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage());
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error" + e.getMessage());
         }
     }
 
@@ -318,54 +251,37 @@ public class BrapiV2Controller {
      * Response body contains the requested callset information
      */
     @ApiOperation(
-            value = "Get CallSet by callSetDbId",
-            notes = "Retrieves the CallSet with given callSetDbId",
-            tags = {"CallSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="Get CallSet By Id")
-                    })
-            }
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 200,
-                            message = "",
-                            response = CallSetResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-
-            }
-    )
+        value = "Get CallSet by callSetDbId",
+        notes = "Retrieves the CallSet with given callSetDbId",
+        tags = {"CallSets"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="Get CallSet By Id")
+            })
+        })
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = CallSetResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
     @ApiImplicitParams({
-            @ApiImplicitParam(name="Authorization",
-                    value="Authentication Token",
-                    required = true,
-                    paramType = "header",
-                    dataType = "string"),
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token", required = true,
+            paramType = "header", dataType = "string"),
     })
     @RequestMapping(
-            value="/callsets/{callSetDbId:[\\d]+}",
-            method=RequestMethod.GET,
-            produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterPayload<CallSetDTO>> getCallSetsByCallSetDbId(
-            @ApiParam(value = "ID of the Callset to be extracted",
-                    required = true)
+        value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET,
+        produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<CallSetDTO>> getCallSetsByCallSetDbId(
+        @ApiParam(value = "ID of the Callset to be extracted", required = true)
             @PathVariable("callSetDbId") Integer callSetDbId
     ) {
         try {
 
             CallSetDTO callSet = callSetService.getCallSetById(callSetDbId);
 
-            BrApiMasterPayload<CallSetDTO> payload =
-                    new BrApiMasterPayload<>(callSet);
+            BrApiMasterPayload<CallSetDTO> payload = new BrApiMasterPayload<>(callSet);
 
             return ResponseEntity.ok(payload);
 
@@ -377,10 +293,8 @@ public class BrapiV2Controller {
 
             LOGGER.error(e.getMessage(), e);
 
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal server error");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal server error");
         }
 
     }
@@ -401,72 +315,52 @@ public class BrapiV2Controller {
      * of genotypes calls for given dnarun id.
      */
     @ApiOperation(
-            value = "List Genotypes by CallSet",
-            notes = "List of all the genotype calls in a " +
-                    "CallSet with callSetDbId",
-            tags = {"CallSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="List Genotypes by CallSet")
-                    })
-            }
+        value = "List Genotypes by CallSet", notes = "List of all the genotype calls in a " +
+                "CallSet with callSetDbId",
+        tags = {"CallSets"}, extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Genotypes by CallSet")
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 200,
-                            message = "",
-                            response = GenotypeCallsResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header", dataType = "string")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(value="/callsets/{callSetDbId}/calls",
-            method=RequestMethod.GET)
-    public @ResponseBody
-    ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>>
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>>
     getCallsByCallset(
-            @ApiParam(value = "Id for dna run to be fetched")
+        @ApiParam(value = "Id for dna run to be fetched")
             @PathVariable(value="callSetDbId") Integer callSetDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "Value is $metadata.pagination.nextPageToken " +
-                    "form previous page.")
-            @RequestParam(value = "pageToken", required = false)
-                    String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+        @ApiParam(value = "Page Token to fetch a page. " +
+                "Value is $metadata.pagination.nextPageToken form previous page.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize)
-            throws GobiiException {
-
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize) throws GobiiException {
 
         try {
 
 
             PagedResult<GenotypeCallsDTO> genotypeCallsList =
-                    genotypeCallsService.getGenotypeCallsByCallSetId(
-                            callSetDbId, pageSize, pageToken);
+                genotypeCallsService.getGenotypeCallsByCallSetId(callSetDbId, pageSize, pageToken);
 
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
-                    new BrApiMasterPayload<>(genotypeCallsList.getResult());
+                new BrApiMasterPayload<>(genotypeCallsList.getResult());
 
             if(genotypeCallsList.getNextPageToken() != null) {
                 payload
-                        .getMetadata()
-                        .getPagination()
-                        .setNextPageToken(genotypeCallsList.getNextPageToken());
+                    .getMetadata()
+                    .getPagination()
+                    .setNextPageToken(genotypeCallsList.getNextPageToken());
             }
-
 
             return ResponseEntity.ok(payload);
         }
@@ -502,51 +396,39 @@ public class BrapiV2Controller {
                     })
             }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = VariantListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = VariantListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(value="/variants",
-            method=RequestMethod.GET,
-            produces = "application/json")
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/variants", method=RequestMethod.GET, produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariants(
         @ApiParam(value = "Size of the page")
-        @RequestParam(value = "pageSize", required = false,
-            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+            @RequestParam(value = "pageSize", required = false,
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
         @ApiParam(value = "Page Token to fetch a page. " +
             "Value is $metadata.pagination.nextPageToken form previous page.")
-        @RequestParam(value = "pageToken", required = false) String pageToken,
+            @RequestParam(value = "pageToken", required = false) String pageToken,
         @ApiParam(value = "ID of the variant to be extracted")
-        @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
+            @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
         @ApiParam(value = "ID of the variantSet to be extracted")
-        @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
+            @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
     ) {
         try {
 
             PagedResult<VariantDTO> pagedResult =
-                    variantService.getVariants(
-                            pageSize, pageToken,
-                            variantDbId, variantSetDbId);
+                variantService.getVariants(pageSize, pageToken, variantDbId, variantSetDbId);
 
             BrApiMasterListPayload<VariantDTO>  payload =
-                    new BrApiMasterListPayload<>(
-                            pagedResult.getResult(),
-                            pagedResult.getCurrentPageSize(),
-                            pagedResult.getNextPageToken());
+                new BrApiMasterListPayload<>(
+                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
 
             return ResponseEntity.ok(payload);
 
@@ -599,7 +481,7 @@ public class BrapiV2Controller {
     )
     public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantDTO>> getVariantsByVariantDbId(
         @ApiParam(value = "ID of the Variant to be extracted", required = true)
-        @PathVariable("variantDbId") Integer variantDbId
+            @PathVariable("variantDbId") Integer variantDbId
     ) {
         try {
             VariantDTO variantDTO = variantService.getVariantByVariantDbId(variantDbId);
@@ -1088,142 +970,100 @@ public class BrapiV2Controller {
      * @return Brapi response with list of CallSets
      */
     @ApiOperation(
-            value = "List CallSets in VariantSet",
-            notes = "Lists CallSets in VariantSet",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(
-                                    name="summary",
-                                    value="List CallSets in VariantSet")
-                    })
-            }
+        value = "List CallSets in VariantSet", notes = "Lists CallSets in VariantSet",
+        tags = {"VariantSets"}, extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List CallSets in VariantSet")
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "",
-                            response = CallSetListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = CallSetListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required = true, paramType = "header", dataType = "string")
+                name="Authorization", value="Authentication Token",
+                required = true, paramType = "header", dataType = "string"
+            )
     })
-    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets",
-            method=RequestMethod.GET)
-    public
-    @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
+    @RequestMapping(value="/variantsets/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
     getCallSetsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet", required = true)
+        @ApiParam(value = "ID of the VariantSet", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page number",
-                    defaultValue = BrapiDefaults.pageNum)
+        @ApiParam(value = "Page number", defaultValue = BrapiDefaults.pageNum)
             @RequestParam(value = "page", required = false,
-                    defaultValue = BrapiDefaults.pageNum) Integer page,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+                defaultValue = BrapiDefaults.pageNum) Integer page,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            CallSetDTO callSetsFilter
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        CallSetDTO callSetsFilter
     ) {
-
         try {
-
-            VariantSetDTO variantSet =
-                    variantSetsService.getVariantSetById(variantSetDbId);
-            return getCallSets(pageSize, page,
-                    variantSet.getVariantSetDbId(), callSetsFilter);
+            VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
+            return getCallSets(pageSize, page, variantSet.getVariantSetDbId(), callSetsFilter);
         }
         catch (GobiiException gE) {
             throw gE;
         }
         catch (Exception e) {
-
             LOGGER.error(e.getMessage(), e);
             throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage()
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error" + e.getMessage()
             );
         }
     }
 
     @ApiOperation(
-            value = "List Genotypes in VariantSet",
-            notes = "List of all the genotype calls in a given VariantSet",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="List Genotypes in VariantSet")
-                    })
-            }
+        value = "List Genotypes in VariantSet",
+        notes = "List of all the genotype calls in a given VariantSet",
+        tags = {"VariantSets"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Genotypes in VariantSet")
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 200,
-                            message = "",
-                            response = GenotypeCallsListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(
-            value="/variantsets/{variantSetDbId}/calls",
-            method=RequestMethod.GET,
-            produces = "application/json")
-    public @ResponseBody
-    ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value="/variantsets/{variantSetDbId}/calls", method=RequestMethod.GET,
+        produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
     getCallsByVariantSetDbId(
-            @ApiParam(value = "ID of the VariantSet", required = true)
+        @ApiParam(value = "ID of the VariantSet", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "Value is $metadata.pagination.nextPageToken " +
-                    "form previous page.")
-            @RequestParam(value = "pageToken", required = false)
-                    String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+        @ApiParam(value = "Page Token to fetch a page. " +
+            "Value is $metadata.pagination.nextPageToken form previous page.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize
-    ){
-
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize) {
         try {
 
             PagedResult<GenotypeCallsDTO> pagedResult =
-                    genotypeCallsService.getGenotypeCallsByVariantSetDbId(
-                            variantSetDbId, pageSize, pageToken);
+                genotypeCallsService
+                    .getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
 
 
             BrApiMasterListPayload<GenotypeCallsDTO> payload =
-                    new BrApiMasterListPayload<>(
-                            pagedResult.getResult(),
-                            pagedResult.getCurrentPageSize(),
-                            pagedResult.getNextPageToken());
-
+                new BrApiMasterListPayload<>(
+                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
 
             return ResponseEntity.ok(payload);
 
@@ -1232,56 +1072,38 @@ public class BrapiV2Controller {
             throw gE;
         }
         catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error" + e.getMessage()
-            );
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error" + e.getMessage());
         }
     }
 
 
 
     @ApiOperation(
-            value = "Search Genotypes",
-            notes = "Creates a search query for genotypes search",
-            tags = {"Genotype Calls"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(
-                                    name="summary", value="Search Genotypes")
-                    })
-            }
+        value = "Search Genotypes", notes = "Creates a search query for genotypes search",
+        tags = {"Genotype Calls"}, extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="Search Genotypes")
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 201, message = "",
-                            response = SearchResultResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-            }
-    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "", response = SearchResultResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
     @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
     })
     @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
-            consumes = "application/json", produces = "application/json")
-    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>>
-    searchGenotypeCalls(
-            @Valid @RequestBody
-                    GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
-            HttpServletRequest request
-    ) {
+        consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchGenotypeCalls(
+        @Valid @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
+        HttpServletRequest request) {
 
         try {
 
@@ -1290,20 +1112,18 @@ public class BrapiV2Controller {
             if (genotypeCallsSearchQuery != null) {
 
                 SearchResultDTO searchResultDTO =
-                        searchService.createSearchQueryResource(cropType,
-                        genotypeCallsSearchQuery);
+                    searchService.createSearchQueryResource(cropType, genotypeCallsSearchQuery);
 
                 BrApiMasterPayload<SearchResultDTO> payload =
-                        new BrApiMasterPayload<>(searchResultDTO);
+                    new BrApiMasterPayload<>(searchResultDTO);
 
                 return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
 
             }
             else {
                 throw new GobiiException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.BAD_REQUEST,
-                        "Missing Request body"
+                    GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing Request body"
                 );
             }
 
@@ -1313,67 +1133,46 @@ public class BrapiV2Controller {
         }
         catch (Exception e) {
             throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Internal Server Error " + e.getMessage()
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
             );
-
         }
     }
 
     @ApiOperation(
-            value = "List Genotypes for SearchQuery",
-            notes = "List of all the genotype calls for given search query",
-            tags = {"Genotype Calls"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="List Genotypes for SearchQuery")
-                    })
-            }
+        value = "List Genotypes for SearchQuery",
+        notes = "List of all the genotype calls for given search query",
+        tags = {"Genotype Calls"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Genotypes for SearchQuery")
+            })
+        }
     )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 200,
-                            message = "",
-                            response = GenotypeCallsListResponse.class),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-
-            }
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header",
-                    dataType = "string")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
     })
-    @RequestMapping(value = "/search/calls/{searchResultDbId}",
-            method = RequestMethod.GET,
-            produces = "application/json")
-    public
-    ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
-    getGenotypeCallsBySearchQuery(
-            @ApiParam(value = "Search Query Id for which genotypes " +
-                    "need to be fetched.")
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/calls/{searchResultDbId}", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>> getGenotypeCallsBySearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
             @PathVariable String searchResultDbId,
-            @ApiParam(value = "Page Token to fetch a page. " +
-                    "Value is $metadata.pagination.nextPageToken " +
-                    "form previous page.")
-            @RequestParam(value = "pageToken", required = false)
-                    String pageToken,
-            @ApiParam(value = "Size of the page to be fetched. " +
-                    "Default is 1000.")
+        @ApiParam(value = "Page Token to fetch a page. " +
+            "Value is $metadata.pagination.nextPageToken form previous page.")
+            @RequestParam(value = "pageToken", required = false) String pageToken,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
-                    defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-            HttpServletRequest request
+                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        HttpServletRequest request
     ) {
 
         try {
@@ -1381,18 +1180,17 @@ public class BrapiV2Controller {
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
             GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
-                    searchService.getGenotypesSearchQuery(
-                            searchResultDbId, cropType);
+                searchService.getGenotypesSearchQuery(searchResultDbId, cropType);
 
             PagedResult<GenotypeCallsDTO> pagedResult =
-                    genotypeCallsService.getGenotypeCallsByExtractQuery(
-                            genotypeCallsSearchQueryDTO, pageSize, pageToken);
+                genotypeCallsService
+                    .getGenotypeCallsByExtractQuery(
+                        genotypeCallsSearchQueryDTO, pageSize, pageToken);
 
             BrApiMasterListPayload<GenotypeCallsDTO> payload =
-                    new BrApiMasterListPayload<>(
-                            pagedResult.getResult(),
-                            pagedResult.getCurrentPageSize(),
-                            pagedResult.getNextPageToken());
+                new BrApiMasterListPayload<>(
+                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
 
 
             return ResponseEntity.ok(payload);
@@ -1402,52 +1200,42 @@ public class BrapiV2Controller {
             throw ge;
         }
         catch (Exception e) {
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Internal Server Error " + e.getMessage()
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
             );
 
         }
     }
 
     @ApiOperation(
-            value = "Download Genotypes in VariantSet",
-            notes = "Download of all the genotype calls in a given Variantset",
-            tags = {"VariantSets"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary",
-                                    value="Download Genotypes in VariantSet")
-                    })
-            }
+        value = "Download Genotypes in VariantSet",
+        notes = "Download of all the genotype calls in a given VariantSet",
+        tags = {"VariantSets"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="Download Genotypes in VariantSet")
+            })
+        }
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name="Authorization", value="Authentication Token",
-                    required=true, paramType = "header", dataType = "string")
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
     })
     @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            code = 200, message = ""),
-                    @ApiResponse(code = 400, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 401, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 404, message = "",
-                            response = ErrorPayload.class),
-                    @ApiResponse(code = 500, message = "",
-                            response = ErrorPayload.class)
-
-            }
+        value = {
+            @ApiResponse(code = 200, message = ""),
+            @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+            @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+            @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+            @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+        }
     )
     @RequestMapping(
-            value="/variantsets/{variantSetDbId:[\\d]+}/calls/download",
-            method=RequestMethod.GET,
-            produces = "text/csv")
+        value="/variantsets/{variantSetDbId:[\\d]+}/calls/download", method=RequestMethod.GET,
+        produces = "text/csv")
     public ResponseEntity<ResponseBodyEmitter> handleRbe(
-            @ApiParam(value = "Id of the variantset to download")
+        @ApiParam(value = "Id of the variantset to download")
             @PathVariable("variantSetDbId") Integer variantSetDbId
     ) {
 
@@ -1463,18 +1251,17 @@ public class BrapiV2Controller {
 
                int pageNum = 0;
 
-               String genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                       variantSetDbId, pageNum);
+               String genotypesResult =
+                   genotypeCallsService.getGenotypeCallsAsString(variantSetDbId, pageNum);
 
-               while(genotypesResult != null &&
-                       genotypesResult.length() != 0) {
+               while(genotypesResult != null && genotypesResult.length() != 0) {
 
                    emitter.send(genotypesResult, MediaType.TEXT_PLAIN);
 
                    pageNum++;
 
-                   genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
-                               variantSetDbId, pageNum);
+                   genotypesResult =
+                       genotypeCallsService.getGenotypeCallsAsString(variantSetDbId, pageNum);
 
                }
 
@@ -1491,10 +1278,12 @@ public class BrapiV2Controller {
 
         });
 
-        return ResponseEntity.ok().header(
-                "Content-Disposition", "attachment; filename=" + variantSetDbId.toString() + ".csv"
-        ).contentType(MediaType.parseMediaType("text/csv")
-        ).body(emitter);
+        return ResponseEntity
+            .ok()
+            .header(
+                "Content-Disposition", "attachment; filename=" + variantSetDbId.toString() + ".csv")
+            .contentType(MediaType.parseMediaType("text/csv"))
+            .body(emitter);
     }
 
 }
