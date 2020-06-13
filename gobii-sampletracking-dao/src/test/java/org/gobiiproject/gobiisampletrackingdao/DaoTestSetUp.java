@@ -255,7 +255,8 @@ public class DaoTestSetUp {
             Mapset mapset = new Mapset();
             mapset.setType(mapsetTypes.get(random.nextInt(mapsetTypes.size())));
             mapset.setMapsetName(RandomStringUtils.random(7, true, true));
-            mapset.setMapSetCode(RandomStringUtils.random(7, true, true));
+            mapset.setMapsetDescription(RandomStringUtils.random(10, true, true));
+            mapset.setMapsetCode(RandomStringUtils.random(7, true, true));
             mapset.setStatus(newStatus);
             em.persist(mapset);
             createdMapsets.add(mapset);

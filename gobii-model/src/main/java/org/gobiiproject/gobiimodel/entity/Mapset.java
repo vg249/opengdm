@@ -30,10 +30,10 @@ public class Mapset extends BaseEntity {
     private String mapsetName;
 
     @Column(name = "code")
-    private String mapSetCode;
+    private String mapsetCode;
 
     @Column(name="description")
-    private String mapSetDescription;
+    private String mapsetDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id")
@@ -73,20 +73,20 @@ public class Mapset extends BaseEntity {
         this.mapsetName = mapsetName;
     }
 
-    public String getMapSetCode() {
-        return mapSetCode;
+    public String getMapsetCode() {
+        return mapsetCode;
     }
 
-    public void setMapSetCode(String mapSetCode) {
-        this.mapSetCode = mapSetCode;
+    public void setMapsetCode(String mapsetCode) {
+        this.mapsetCode = mapsetCode;
     }
 
-    public String getMapSetDescription() {
-        return mapSetDescription;
+    public String getMapsetDescription() {
+        return mapsetDescription;
     }
 
-    public void setMapSetDescription(String mapSetDescription) {
-        this.mapSetDescription = mapSetDescription;
+    public void setMapsetDescription(String mapsetDescription) {
+        this.mapsetDescription = mapsetDescription;
     }
 
     public Reference getReference() {
