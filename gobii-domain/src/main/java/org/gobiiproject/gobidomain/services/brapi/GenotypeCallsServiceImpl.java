@@ -110,8 +110,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             // Parse list of datasetIds the dnarun belongs to
             List<String> dnaRunDatasetIds =
-                    this.getDatasetIdsFromDatasetJsonIndex(
-                            dnaRun.getDatasetDnaRunIdx());
+                this.getDatasetIdsFromDatasetJsonIndex(dnaRun.getDatasetDnaRunIdx());
 
             // Sort dataset ids
             Collections.sort(dnaRunDatasetIds);
@@ -119,13 +118,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             Integer datasetIdCursorStart = 0;
 
             if(startDatasetId != null) {
-                datasetIdCursorStart = dnaRunDatasetIds.indexOf(startDatasetId);
+                datasetIdCursorStart = dnaRunDatasetIds.indexOf(startDatasetId.toString());
             }
 
             // Read Genotypes for makers in dataset until page is filled
             for(int datasetIdCursor = datasetIdCursorStart;
-                datasetIdCursor < dnaRunDatasetIds.size();
-                datasetIdCursor++) {
+                datasetIdCursor < dnaRunDatasetIds.size(); datasetIdCursor++) {
 
                 markerHdf5IndexMap = new HashMap<>();
 
@@ -133,20 +131,16 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 String datasetId = dnaRunDatasetIds.get(datasetIdCursor);
 
-                dnarunHdf5IndexMap.put(datasetId,
-                        new ArrayList<>());
+                dnarunHdf5IndexMap.put(datasetId, new ArrayList<>());
 
-                dnarunHdf5IndexMap.get(
-                        datasetId).add(
-                                dnaRun.getDatasetDnaRunIdx().get(
-                                        datasetId).textValue());
+                dnarunHdf5IndexMap
+                    .get(datasetId)
+                    .add(dnaRun.getDatasetDnaRunIdx().get(datasetId).textValue());
 
 
-                List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(
-                        genotypesToBeRead,
-                        markerIdCursor,
-                        null,
-                        Integer.parseInt(datasetId));
+                List<Marker> markers =
+                    markerDao.getMarkersByMarkerIdCursor(
+                        genotypesToBeRead, markerIdCursor, null, Integer.parseInt(datasetId));
 
                 GenotypeCallsDTO genotypeCall;
 
@@ -163,17 +157,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     genotypeCall.setVariantSetDbId(Integer.parseInt(datasetId));
 
                     if(!markerHdf5IndexMap.containsKey(datasetId)) {
-
-                        markerHdf5IndexMap.put(
-                                datasetId,
-                                new ArrayList<>());
+                        markerHdf5IndexMap.put(datasetId, new ArrayList<>());
                     }
 
-                    markerHdf5IndexMap.get(
-                            datasetId).add(
-                                    marker.getDatasetMarkerIdx().get(
-                                            datasetId).textValue());
-
+                    markerHdf5IndexMap
+                        .get(datasetId)
+                        .add(marker.getDatasetMarkerIdx().get(datasetId).textValue());
 
                     genotypeCalls.add(genotypeCall);
 
@@ -181,15 +170,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
                 Hdf5InterfaceResultDTO extractResult =
-                        extractGenotypes(
-                                markerHdf5IndexMap,
-                                dnarunHdf5IndexMap);
+                    extractGenotypes(markerHdf5IndexMap, dnarunHdf5IndexMap);
 
-                readGenotypesFromFile(genotypeCalls,
-                    extractResult.getGenotypeFile());
+                readGenotypesFromFile(genotypeCalls, extractResult.getGenotypeFile());
 
-                FileUtils.deleteDirectory(
-                    new File(extractResult.getOutputFolder()));
+                FileUtils.deleteDirectory(new File(extractResult.getOutputFolder()));
 
                 if(markers.size() >= genotypesToBeRead) {
                     break;
@@ -205,15 +190,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 Map<String ,Integer> nextPageCursorMap = new HashMap<>();
 
-                nextPageCursorMap.put("datasetId",
-                        genotypeCalls
-                                .get(genotypeCalls.size() - 1)
-                                .getVariantSetDbId());
+                nextPageCursorMap.put(
+                    "datasetId", genotypeCalls.get(genotypeCalls.size() - 1).getVariantSetDbId());
 
-                nextPageCursorMap.put("markerId",
-                        genotypeCalls
-                                .get(genotypeCalls.size() - 1)
-                                .getVariantDbId());
+                nextPageCursorMap.put(
+                    "markerId", genotypeCalls.get(genotypeCalls.size() - 1).getVariantDbId());
 
 
                 nextPageToken = PageToken.encode(nextPageCursorMap);
@@ -236,9 +217,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             LOGGER.error(e.getMessage(), e);
 
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error. Please check the error log");
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error. Please check the error log");
 
         }
 
