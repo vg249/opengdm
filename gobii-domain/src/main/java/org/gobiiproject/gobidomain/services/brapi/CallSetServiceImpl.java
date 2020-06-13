@@ -99,15 +99,14 @@ public class CallSetServiceImpl implements CallSetService {
 
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
-            List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
-                    CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
-                    null);
+            List<Cv> dnaSampleGroupCvs =
+                cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
-            List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+            List<Cv> germplasmGroupCvs =
+                cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
-            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(
-                dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
+            CallSetDTO callSet =
+                this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
 
             return callSet;
         }
@@ -142,8 +141,7 @@ public class CallSetServiceImpl implements CallSetService {
                 dnaSampleGroupCvs, dnaRun.getDnaSample().getProperties());
 
             if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getGermplasm().getProperties())) {
-                additionalInfo =
-                    CvMapper.mapCvIdToCvTerms(
+                additionalInfo = CvMapper.mapCvIdToCvTerms(
                         germplasmGroupCvs, dnaRun.getDnaSample().getGermplasm().getProperties(),
                         additionalInfo);
             }
