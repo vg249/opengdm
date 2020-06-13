@@ -53,7 +53,7 @@ public class CallSetServiceImplTest {
     @Test
     public void getCallsetsTest() throws Exception {
 
-        Integer testPageSize = pageSize - 1;
+        Integer testPageSize = pageSize - 2;
 
         mockSetup.createMockDnaRuns(pageSize);
 
