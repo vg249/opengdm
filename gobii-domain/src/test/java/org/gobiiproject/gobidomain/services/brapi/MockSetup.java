@@ -216,9 +216,11 @@ public class MockSetup {
             Mapset mapset = new Mapset();
             mapset.setMapsetId(i+1);
             mapset.setMapsetName(RandomStringUtils.random(7, true, true));
-            mapset.setMapSetCode(RandomStringUtils.random(7, true, true));
-            mapset.setMapSetDescription(
-                RandomStringUtils.random(7, true, true));
+            mapset.setMapsetCode(RandomStringUtils.random(7, true, true));
+            mapset.setMapsetDescription(RandomStringUtils.random(7, true, true));
+            mapset.setMarkerCount(random.nextInt(901)+100);
+            mapset.setLinkageGroupCount(random.nextInt(12));
+
             mapset.setType(
                 mockMapSetTypes.get(
                     random.nextInt(mockMapSetTypes.size())));
