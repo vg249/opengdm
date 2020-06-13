@@ -71,7 +71,7 @@ public class MapsetServiceImpl implements MapsetService {
 
             pagedResult.setCurrentPageNum(pageNum);
 
-            pagedResult.setCurrentPageSize(pageSize);
+            pagedResult.setCurrentPageSize(mapsetDTOS.size());
 
             return pagedResult;
 
