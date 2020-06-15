@@ -87,6 +87,10 @@ public class AnalysisServiceImplTest {
             )
         ).thenReturn(new Cv());
 
+        when(
+            cvDao.getNewStatus()
+        ).thenReturn(new Cv());
+
         CvTypeDTO analysisTypeRequest = new CvTypeDTO();
         analysisTypeRequest.setTypeName("test-name");
         analysisTypeRequest.setTypeDescription("test-description");
