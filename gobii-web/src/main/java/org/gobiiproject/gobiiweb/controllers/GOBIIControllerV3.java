@@ -23,6 +23,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
+import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
@@ -42,6 +43,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -50,6 +52,7 @@ import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
@@ -113,6 +116,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private CvService cvService;
+
+    @Autowired
+    private PlatformService platformService;
 
     /**
      * Authentication Endpoint
@@ -658,22 +664,6 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
-    /**
-     * Get References
-     * @return
-     */
-    @GetMapping("/references")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<ReferenceDTO>> getReferences(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        Integer pageSizeToUse = this.getPageSize(pageSize);
-        PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
-        BrApiMasterListPayload<ReferenceDTO> payload = this.getMasterListPayload(pagedResult);
-        return ResponseEntity.ok(payload);  
-    }
-
     //-------- Mapsets ------------
     /**
      * Get Mapsets list
@@ -958,6 +948,170 @@ public class GOBIIControllerV3  {
         cvService.deleteCv(cvId);
         return ResponseEntity.noContent().build();
     } 
+
+    // --- Platforms
+    @PostMapping("/platforms")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<PlatformDTO>> addPlatform(
+        @RequestBody @Validated(PlatformDTO.Create.class) final PlatformDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String user = this.getCurrentUser();
+
+        PlatformDTO platformDTO = platformService.createPlatform(request, user);
+        BrApiMasterPayload<PlatformDTO> payload = this.getMasterPayload(platformDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    @GetMapping("/platforms")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<PlatformDTO>> getPlatforms(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) Integer platformTypeId
+    ) throws Exception {
+        PagedResult<PlatformDTO> results = platformService.getPlatforms(page, pageSize, platformTypeId);
+        BrApiMasterListPayload<PlatformDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
+    @GetMapping("/platforms/{platformId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<PlatformDTO>> getPlatform(
+        @PathVariable Integer platformId
+    ) throws Exception {
+        PlatformDTO platformDTO = platformService.getPlatform(platformId);
+        BrApiMasterPayload<PlatformDTO> payload = this.getMasterPayload(platformDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    @PatchMapping("/platforms/{platformId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<PlatformDTO>> updatePlatform(
+        @PathVariable Integer platformId,
+        @RequestBody @Validated(PlatformDTO.Update.class) final PlatformDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+
+        PlatformDTO platformDTO = platformService.updatePlatform(platformId, request, updatedBy);
+        BrApiMasterPayload<PlatformDTO> payload = this.getMasterPayload(platformDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    @DeleteMapping("/platforms/{platformId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deletePlatform(
+        @PathVariable Integer platformId
+    ) throws Exception {
+        platformService.deletePlatform(platformId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/platforms/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createPlatformType(
+        @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO request 
+    ) throws Exception {
+        CvTypeDTO cvTypeDTO = platformService.createPlatformType(request);
+        BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(cvTypeDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    @GetMapping("/platforms/types")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getPlatformTypes(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvTypeDTO> results = platformService.getPlatformTypes(page, pageSize);
+        BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
+    // -- References
+    /**
+     * Get References
+     * @return
+     */
+    @GetMapping("/references")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ReferenceDTO>> getReferences(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = this.getPageSize(pageSize);
+        PagedResult<ReferenceDTO> pagedResult = referenceService.getReferences(page, pageSizeToUse);
+        BrApiMasterListPayload<ReferenceDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);  
+    }
+
+    /**
+     * Create reference
+     * @return
+     */
+    @PostMapping("/references")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> createReference(
+        @RequestBody @Validated(ReferenceDTO.Create.class) final ReferenceDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String createdBy = this.getCurrentUser();
+        ReferenceDTO referenceDTO = referenceService.createReference(request, createdBy);
+        BrApiMasterPayload<ReferenceDTO> payload =  this.getMasterPayload(referenceDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Get Reference by Id
+     * @return
+     */
+    @GetMapping("/references/{referenceId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> getReference(
+        @PathVariable Integer referenceId
+    ) throws Exception {
+        ReferenceDTO referenceDTO = referenceService.getReference(referenceId);
+        BrApiMasterPayload<ReferenceDTO> payload = this.getMasterPayload(referenceDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Update
+     */
+    @PatchMapping("/references/{referenceId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> updateReference(
+        @PathVariable Integer referenceId,
+        @RequestBody @Validated(ReferenceDTO.Update.class) final ReferenceDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+        ReferenceDTO referenceDTO = referenceService.updateReference(referenceId, request, updatedBy);
+        BrApiMasterPayload<ReferenceDTO> payload = this.getMasterPayload(referenceDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete
+     * @return
+     */
+    @DeleteMapping("/references/{referenceId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteReference(
+        @PathVariable Integer referenceId
+    ) throws Exception {
+        referenceService.deleteReference(referenceId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
     public ProjectService getProjectService() {
         return projectService;

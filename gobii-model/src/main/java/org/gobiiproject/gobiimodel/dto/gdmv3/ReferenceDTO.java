@@ -7,6 +7,10 @@
  */
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -24,7 +28,11 @@ import lombok.EqualsAndHashCode;
 @JsonIgnoreProperties(ignoreUnknown = false, value={
     "id", "allowedProcessTypes", "entityNameType"
 })
+//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReferenceDTO extends DTOBaseAuditable {
+
+    public static interface Create{}
+    public static interface Update{}
 
     public ReferenceDTO() {
         super(GobiiEntityNameType.REFERENCE);
@@ -42,15 +50,21 @@ public class ReferenceDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "referenceId", entity = Reference.class )
     @JsonSerialize(using = ToStringSerializer.class)
+    @Null(groups={ReferenceDTO.Create.class, ReferenceDTO.Update.class})
     private Integer referenceId;
 
     @GobiiEntityMap(paramName = "referenceName", entity = Reference.class)
+    @NotBlank(groups={ReferenceDTO.Create.class})
     private String referenceName;
 
     @GobiiEntityMap(paramName = "version", entity = Reference.class)
-    private String referenceVersion;
+    private String version;
 
-    @GobiiEntityMap(paramName = "link", entity = Reference.class) 
+    @GobiiEntityMap(paramName = "link", entity = Reference.class)
+    @JsonIgnore
+    @Null(groups={ReferenceDTO.Create.class, ReferenceDTO.Update.class})
     private String referenceLink;
+
+	
 
 }

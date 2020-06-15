@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
-import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import javax.validation.constraints.NotBlank;
