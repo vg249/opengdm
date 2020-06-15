@@ -7,13 +7,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.entity.pgsql.CvPropertiesType;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class MockSetup {
 
@@ -33,8 +29,10 @@ public class MockSetup {
     String[] testDatasetIds = {"1", "2", "3"};
 
 
-    public CvGroup createMockCvGroup(GobiiCvGroupType gobiiCvGroupType,
-                                     CvGroupTerm cvGroupTerm) {
+
+
+
+    public CvGroup createMockCvGroup(GobiiCvGroupType gobiiCvGroupType, CvGroupTerm cvGroupTerm) {
 
         CvGroup cvGroup = new CvGroup();
         cvGroup.setCvGroupId(random.nextInt(100));
@@ -53,21 +51,17 @@ public class MockSetup {
 
         List<CvGroup> cvGroups = new ArrayList<>();
 
-        cvGroups.add(createMockCvGroup(
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM,
+        cvGroups.add(createMockCvGroup(GobiiCvGroupType.GROUP_TYPE_SYSTEM,
             CvGroupTerm.CVGROUP_GERMPLASM_PROP));
 
-        cvGroups.add(createMockCvGroup(
-            GobiiCvGroupType.GROUP_TYPE_USER,
+        cvGroups.add(createMockCvGroup(GobiiCvGroupType.GROUP_TYPE_USER,
             CvGroupTerm.CVGROUP_GERMPLASM_PROP));
 
         for(int i = 0; i < numProps; i ++) {
             Cv cv = new Cv();
             cv.setCvId(random.nextInt(1000));
-            cv.setCvGroup(
-                cvGroups.get(random.nextInt(cvGroups.size())));
-            cv.setTerm(
-                RandomStringUtils.random(4,true,true));
+            cv.setCvGroup(cvGroups.get(random.nextInt(cvGroups.size())));
+            cv.setTerm(RandomStringUtils.random(4,true,true));
             props.add(cv);
         }
 
@@ -76,20 +70,15 @@ public class MockSetup {
     }
 
     public void createMockGermplasmProps(int numProps) {
-        mockGermplasmProps = createMockProps(
-            numProps, CvGroupTerm.CVGROUP_GERMPLASM_PROP);
+        mockGermplasmProps = createMockProps(numProps, CvGroupTerm.CVGROUP_GERMPLASM_PROP);
     }
 
     public void createMockMapSetTypes(int numTypes) {
-        mockMapSetTypes = createMockProps(
-            numTypes,
-            CvGroupTerm.CVGROUP_MAPSET_TYPE);
+        mockMapSetTypes = createMockProps(numTypes, CvGroupTerm.CVGROUP_MAPSET_TYPE);
     }
 
     public void createMockDnaSampleProps(int numProps) {
-        mockDnaSampleProps = createMockProps(
-            numProps,
-            CvGroupTerm.CVGROUP_DNASAMPLE_PROP);
+        mockDnaSampleProps = createMockProps(numProps, CvGroupTerm.CVGROUP_DNASAMPLE_PROP);
     }
 
     public void createMockExperiments(int numExperiments) {
@@ -97,8 +86,7 @@ public class MockSetup {
         for(int i = 0; i < numExperiments; i++) {
             Experiment experiment = new Experiment();
             experiment.setExperimentId(i+1);
-            experiment.setExperimentName(
-                RandomStringUtils.random(7, true, true));
+            experiment.setExperimentName(RandomStringUtils.random(7, true, true));
             mockExperiments.add(experiment);
         }
     }
@@ -115,14 +103,14 @@ public class MockSetup {
             germplasm.setExternalCode(UUID.randomUUID().toString());
             ObjectNode properties = JsonNodeFactory.instance.objectNode();
             properties.put(
-                mockGermplasmProps.get(
-                    random.nextInt(mockGermplasmProps.size())
-                ).getCvId().toString(),
+                mockGermplasmProps
+                    .get(random.nextInt(mockGermplasmProps.size()))
+                    .getCvId().toString(),
                 RandomStringUtils.random(5, true, true));
             properties.put(
-                mockGermplasmProps.get(
-                    random.nextInt(mockGermplasmProps.size())
-                ).getCvId().toString(),
+                mockGermplasmProps
+                    .get(random.nextInt(mockGermplasmProps.size()))
+                    .getCvId().toString(),
                 RandomStringUtils.random(5, true, true));
             germplasm.setProperties(properties);
             mockGermplasms.add(germplasm);
@@ -142,26 +130,31 @@ public class MockSetup {
         }
 
         for(int i = 0; i < numDnaSamples; i++) {
+
             DnaSample dnaSample = new DnaSample();
+
             dnaSample.setDnaSampleId(i+1);
             dnaSample.setDnaSampleName(RandomStringUtils.random(7, true, true));
             dnaSample.setDnaSampleNum(RandomStringUtils.random(4, false, true));
             dnaSample.setDnaSampleUuid(UUID.randomUUID().toString());
             dnaSample.setProjectId(i);
+
             ObjectNode properties = JsonNodeFactory.instance.objectNode();
+
             properties.put(
-                mockDnaSampleProps.get(
-                    random.nextInt(mockDnaSampleProps.size())
-                ).getCvId().toString(),
+                mockDnaSampleProps
+                    .get(random.nextInt(mockDnaSampleProps.size()))
+                    .getCvId().toString(),
                 RandomStringUtils.random(5, true, true));
             properties.put(
-                mockDnaSampleProps.get(
-                    random.nextInt(mockDnaSampleProps.size())
-                ).getCvId().toString(),
+                mockDnaSampleProps
+                    .get(random.nextInt(mockDnaSampleProps.size()))
+                    .getCvId().toString(),
                 RandomStringUtils.random(5, true, true));
+
             dnaSample.setProperties(properties);
-            dnaSample.setGermplasm(mockGermplasms.get(
-                random.nextInt(mockGermplasms.size())));
+            dnaSample.setGermplasm(mockGermplasms.get(random.nextInt(mockGermplasms.size())));
+
             mockDnaSamples.add(dnaSample);
         }
 
@@ -178,25 +171,26 @@ public class MockSetup {
             createMockExperiments(Math.round(numDnaRuns / 2));
         }
 
+        Map<String, Integer> maxHdf5Index = new HashMap<>();
+
         for(Integer i = 0; i < numDnaRuns; i++) {
+
             DnaRun dnaRun = new DnaRun();
 
             dnaRun.setDnaRunId(i+1);
             dnaRun.setDnaRunName(RandomStringUtils.random(7, true, true));
 
-            ObjectNode datasetDnarunIndex =
-                JsonNodeFactory.instance.objectNode();
+            ObjectNode datasetDnarunIndex = JsonNodeFactory.instance.objectNode();
+            String testDatasetId = testDatasetIds[random.nextInt(testDatasetIds.length)];
+            Integer hdf5Index = maxHdf5Index.getOrDefault(testDatasetId, 0);
+            datasetDnarunIndex.put(testDatasetId, hdf5Index.toString());
 
-            datasetDnarunIndex.put(
-                testDatasetIds[random.nextInt(testDatasetIds.length)],
-                i.toString());
+            hdf5Index++;
+            maxHdf5Index.put(testDatasetId, hdf5Index);
+
             dnaRun.setDatasetDnaRunIdx(datasetDnarunIndex);
-
-            dnaRun.setDnaSample(mockDnaSamples
-                .get(random.nextInt(mockDnaSamples.size())));
-
-            dnaRun.setExperiment(mockExperiments
-                .get(random.nextInt(mockExperiments.size())));
+            dnaRun.setDnaSample(mockDnaSamples.get(random.nextInt(mockDnaSamples.size())));
+            dnaRun.setExperiment(mockExperiments.get(random.nextInt(mockExperiments.size())));
 
             mockDnaRuns.add(dnaRun);
 

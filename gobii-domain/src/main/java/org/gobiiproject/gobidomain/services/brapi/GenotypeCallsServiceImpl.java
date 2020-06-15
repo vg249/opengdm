@@ -70,9 +70,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      *
      */
     @Override
-    public PagedResult<GenotypeCallsDTO>
-    getGenotypeCallsByCallSetId(Integer callSetDbId, Integer pageSize,
-                                String pageToken) {
+    public PagedResult<GenotypeCallsDTO> getGenotypeCallsByCallSetId(
+        Integer callSetDbId, Integer pageSize, String pageToken) {
 
         PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
 
@@ -95,7 +94,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             if(pageTokenParts != null ) {
                 startDatasetId = pageTokenParts.getOrDefault("datasetID", null);
-
                 markerIdCursor = pageTokenParts.getOrDefault("markerId", null);
             }
 
@@ -1365,16 +1363,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * Extracts genotypes from the hdf5.
      *
      */
-    private Hdf5InterfaceResultDTO
-    extractGenotypes(Map<String, List<String>> markerHdf5IndexMap,
-                     Map<String, List<String>> sampleHdf5IndexMap)
-            throws Exception {
+    private Hdf5InterfaceResultDTO extractGenotypes(Map<String, List<String>> markerHdf5IndexMap,
+                                                    Map<String, List<String>> sampleHdf5IndexMap
+    ) throws Exception {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        Hdf5InterfaceResultDTO extractResult = hdf5Interface.getHDF5Genotypes(
-                true,
-                markerHdf5IndexMap,
+        Hdf5InterfaceResultDTO extractResult =
+            hdf5Interface.getHDF5Genotypes(true, markerHdf5IndexMap,
                 sampleHdf5IndexMap, tempFolder);
 
         return extractResult;
@@ -1382,15 +1378,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
 
-    private void readGenotypesFromFile (List<GenotypeCallsDTO> returnVal,
-                                              String extractListPath) {
+    private void readGenotypesFromFile (List<GenotypeCallsDTO> returnVal, String extractListPath) {
 
         try {
 
             File genotypCallsFile = new File(extractListPath);
-
             FileInputStream fstream = new FileInputStream(genotypCallsFile);
-
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
             int i = 0;
@@ -1400,17 +1393,13 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             StringBuilder genotype = new StringBuilder();
 
             while ((chrEach = br.read()) != -1) {
-
                 char genotypesChar = (char) chrEach;
-
                 if (genotypesChar == '\t' || genotypesChar == '\n') {
-
                     returnVal.get(i).setGenotype(new HashMap<>());
                     String[] genotypeValues = new String[]{genotype.toString()};
                     returnVal.get(i).getGenotype().put("values", genotypeValues);
                     i++;
                     genotype.setLength(0);
-
                 } else {
                     genotype.append(genotypesChar);
                 }
@@ -1419,11 +1408,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             fstream.close();
         }
         catch (Exception e) {
-
             LOGGER.error( "Gobii Extraction service failed to read from result file",e);
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Genotypes Extraction failed. System Error.");
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Genotypes Extraction failed. System Error.");
         }
 
 
@@ -1432,14 +1419,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
     private Integer readGenotypesFromFile (
-            List<GenotypeCallsDTO> returnVal,
-            String genotypeMatrixFilePath,
-            Integer pageSize,
-            Integer datasetId,
-            Integer columnOffset,
-            List<Marker> markers,
-            List<DnaRun> dnaruns,
-            List<Integer> dnarunOrder)  throws Exception {
+        List<GenotypeCallsDTO> returnVal, String genotypeMatrixFilePath,
+        Integer pageSize, Integer datasetId,
+        Integer columnOffset, List<Marker> markers,
+        List<DnaRun> dnaruns, List<Integer> dnarunOrder)  throws Exception {
 
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
@@ -1516,13 +1499,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         return j;
     }
 
-    private String readGenotypesFromFile (
-            String genotypeMatrixFilePath,
-            List<Marker> markerMetadataList,
-            List<DnaRun> dnarunMetadataList,
-            String header
-    )  throws Exception {
-
+    private String
+    readGenotypesFromFile(String genotypeMatrixFilePath, List<Marker> markerMetadataList,
+                          List<DnaRun> dnarunMetadataList, String header)  throws Exception {
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
 
@@ -1545,10 +1524,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         genotypes.append(',');
 
         while ((chrEach = br.read()) != -1) {
-
-
             char genotypesChar = (char) chrEach;
-
             if(genotypesChar == '\t') {
                 genotypes.append(',');
             }
@@ -1563,7 +1539,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             else {
                 genotypes.append(genotypesChar);
             }
-
         }
 
         br.close();
