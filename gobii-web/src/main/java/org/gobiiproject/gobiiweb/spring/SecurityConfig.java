@@ -35,7 +35,6 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 
 @KeycloakConfiguration
-@Slf4j
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 {
     /**
@@ -57,15 +56,13 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         //RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
-    @Override
+    @Override  
     protected void configure(HttpSecurity http) throws Exception
     {
         super.configure(http);
         http
                 .authorizeRequests()
-                .antMatchers("/**").hasRole("USER")
-                //.antMatchers("/admin*").hasRole("ADMIN")
-                .anyRequest().permitAll();
+                .antMatchers("/*/gobii/*").hasRole("USER");
     }
 }
 
