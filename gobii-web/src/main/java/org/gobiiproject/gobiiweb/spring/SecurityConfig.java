@@ -61,8 +61,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     {
         super.configure(http);
         http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/*/gobii/*").hasRole("USER");
+                .antMatchers("/gobii-dev/**").hasRole("USER");
     }
 }
 
