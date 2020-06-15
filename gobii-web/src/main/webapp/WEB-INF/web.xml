@@ -91,7 +91,7 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-    <filter>
+    <!-- <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
         <async-supported>true</async-supported>
@@ -99,10 +99,10 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <servlet-name>mvc-dispatcher</servlet-name>
-        <!--<url-pattern>/*</url-pattern>-->
+        <!- -<url-pattern>/*</url-pattern>- ->
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
+    </filter-mapping> -->
 
     <error-page>
         <location>/error</location>

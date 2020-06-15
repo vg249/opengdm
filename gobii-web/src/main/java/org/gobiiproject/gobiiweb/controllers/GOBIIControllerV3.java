@@ -64,6 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -174,7 +175,9 @@ public class GOBIIControllerV3  {
      * @param pageSize number of items in response list.
      * @return
      */
+
     @GetMapping("/projects")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @ResponseBody 
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,

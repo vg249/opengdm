@@ -157,7 +157,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
     @Transactional
 	@Override
-	public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
+    public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
         Objects.requireNonNull(markers, "No markers to process");
         //check data size
         if (markers.size() > 1000) {

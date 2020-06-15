@@ -27,7 +27,7 @@
         implementions of interfaces as system needs evolve -->
     <context:annotation-config/>
     <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
-    <context:component-scan base-package="org.gobiiproject.gobidomain.security"/>
+    <!-- <context:component-scan base-package="org.gobiiproject.gobidomain.security"/> -->
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
