@@ -122,8 +122,7 @@ public class VariantSetsServiceImplTest {
         ).thenReturn(datasetsMock);
 
         PagedResult<VariantSetDTO> pagedResult = variansetService.getVariantSets(
-                pageSize,0, null, null,
-                null, null);
+                pageSize,0, 1, "", 1, "");
 
 
         List<VariantSetDTO> variantSets = pagedResult.getResult();
@@ -146,10 +145,6 @@ public class VariantSetsServiceImplTest {
             assertEquals("studyDbId check failed",
                     ((Dataset)datasetsMock.get(assertIndex)[0]).getExperiment().getExperimentId(),
                     variantSets.get(assertIndex).getStudyDbId());
-
-            assertEquals("referenceDbId check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getCallingAnalysis().getReference().getReferenceId(),
-                    variantSets.get(assertIndex).getReferenceSetDbId());
 
             assertEquals("created check failed",
                     ((Dataset)datasetsMock.get(assertIndex)[0]).getCreatedDate(),
