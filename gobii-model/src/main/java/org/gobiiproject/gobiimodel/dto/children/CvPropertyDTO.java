@@ -65,8 +65,9 @@ public class CvPropertyDTO {
 
     @JsonProperty("propertyType")
     public String getPropertyType() {
+        if (this.propertyGroupType == null) return null;
         if (this.propertyGroupType == 1) return PROPERTY_TYPE_SYSTEM;
-        else if (this.propertyGroupType == 2) return PROPERTY_TYPE_CUSTOM;
+        if (this.propertyGroupType == 2) return PROPERTY_TYPE_CUSTOM;
         return null;
     }
 

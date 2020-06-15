@@ -943,6 +943,7 @@ public class GOBIIControllerV3  {
         CvPropertyDTO cvPropertyDTO = cvService.addCvProperty(request);
         BrApiMasterPayload<CvPropertyDTO> payload = this.getMasterPayload(cvPropertyDTO);
         return ResponseEntity.created(null).body(payload);
+
     }
 
     @DeleteMapping("/cvs/{cvId}")

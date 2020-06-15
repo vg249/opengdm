@@ -1515,7 +1515,8 @@ public class GOBIIControllerV3Test {
     @Test
     public void testAddCvProps() throws Exception {
         String requestJson = "{\"propertyName\": \"test-prop\", \"propertyDescription\": \"test-desc\"}";
-
+        CvPropertyDTO mockDTO = new CvPropertyDTO();
+        mockDTO.setPropertyGroupType(1);
         when(cvService.addCvProperty(any(CvPropertyDTO.class))).thenReturn(new CvPropertyDTO());
 
         mockMvc.perform(
