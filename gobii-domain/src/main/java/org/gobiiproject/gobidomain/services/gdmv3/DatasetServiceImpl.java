@@ -15,7 +15,6 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;

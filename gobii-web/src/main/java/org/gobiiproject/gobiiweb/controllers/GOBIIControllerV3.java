@@ -22,6 +22,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
 import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
 import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
+import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
 import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
 import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
@@ -42,6 +43,8 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
@@ -110,6 +113,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private MapsetService mapsetService;
+
+    @Autowired
+    private MarkerGroupService markerGroupService;
 
     @Autowired
     private OrganizationService organizationService;
@@ -1111,7 +1117,93 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    //---- Marker Group
 
+    @PostMapping("/markergroups")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> createMarkerGroup(
+        @RequestBody @Validated(MarkerGroupDTO.Create.class) final MarkerGroupDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String creator = this.getCurrentUser();
+        MarkerGroupDTO markerGroupDTO = markerGroupService.createMarkerGroup(request, creator);
+        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    @GetMapping("/markergroups")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MarkerGroupDTO>> getMarkerGroups(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        Integer pageSizeToUse = this.getPageSize(pageSize);
+        PagedResult<MarkerGroupDTO> results = markerGroupService.getMarkerGroups(page, pageSizeToUse);
+        BrApiMasterListPayload<MarkerGroupDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+
+    }
+
+    @GetMapping("/markergroups/{markerGroupId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> getMarkerGroupById(
+        @PathVariable Integer markerGroupId
+    ) throws Exception {
+        MarkerGroupDTO markerGroupDTO = markerGroupService.getMarkerGroup(markerGroupId);
+        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    @PatchMapping("/markergroups/{markerGroupId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> updateMarkerGroup(
+        @PathVariable Integer markerGroupId,
+        @RequestBody final MarkerGroupDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String updatedBy = this.getCurrentUser();
+        MarkerGroupDTO markerGroupDTO = markerGroupService.updateMarkerGroup(markerGroupId, request, updatedBy);
+        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    @DeleteMapping("/markergroups/{markerGroupId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteMarkerGroup(
+        @PathVariable Integer markerGroupId
+    ) throws Exception {
+        markerGroupService.deleteMarkerGroup(markerGroupId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/markergroups/{markerGroupId}/markerscollection")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> mapMarkers(
+        @PathVariable Integer markerGroupId,
+        @RequestBody final List<MarkerDTO> markers,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        String editedBy = this.getCurrentUser();
+        PagedResult<MarkerDTO> results = markerGroupService.mapMarkers(markerGroupId, markers, editedBy);
+        BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
+    @GetMapping("/markergroups/{markerGroupId}/markers")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> getMarkerGroupMarkers(
+        @PathVariable Integer markerGroupId,
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<MarkerDTO> results = markerGroupService.getMarkerGroupMarkers(markerGroupId, page, pageSize);
+        BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
 
     public ProjectService getProjectService() {
         return projectService;

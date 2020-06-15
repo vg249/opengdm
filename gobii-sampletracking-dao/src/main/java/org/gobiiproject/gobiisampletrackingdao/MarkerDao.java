@@ -31,4 +31,6 @@ public interface MarkerDao {
 
     List<Marker> getMarkersByMarkerNames(Set<String> markerNames);
 
+	List<Marker> getMarkersByPlatformMarkerNameTuples(List<List<String>> markerTuples);
+
 }
