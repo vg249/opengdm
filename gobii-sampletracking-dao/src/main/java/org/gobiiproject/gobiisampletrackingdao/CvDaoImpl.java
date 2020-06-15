@@ -7,9 +7,12 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -36,34 +39,11 @@ public class CvDaoImpl implements CvDao {
     protected EntityManager em;
 
     @Override
-    public Cv getCvByCvId(Integer cvId) throws GobiiException {
+    public Cv getCvByCvId(Integer cvId) throws Exception {
 
         Objects.requireNonNull(cvId, "Cv Id should not be null");
 
-        try {
-
-            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-
-            CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
-
-            Root<Cv> cv = criteriaQuery.from(Cv.class);
-            criteriaQuery.select(cv);
-
-            // Join<Object, Object> cvGroup = (Join<Object, Object>)
-            cv.fetch("cvGroup");
-
-            criteriaQuery.where(criteriaBuilder.equal(cv.get("cvId"), cvId));
-
-            Cv result = em.createQuery(criteriaQuery).getSingleResult();
-
-            return result;
-        } catch (Exception e) {
-
-            log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
-
-        }
+        return em.find(Cv.class, cvId, this.getCvHints());
 
     }
 
@@ -195,5 +175,31 @@ public class CvDaoImpl implements CvDao {
             cv = cvList.get(0);
         }
         return cv;
+    }
+
+    @Override
+    public CvGroup getCvGroupById(Integer id) {
+        return em.find(CvGroup.class, id);
+    }
+
+    @Override
+    public Cv updateCv(Cv cv) {
+        em.merge(cv);
+        em.flush();
+        em.refresh(cv, this.getCvHints());
+        return cv;
+    }
+
+    private Map<String, Object> getCvHints() {
+        EntityGraph<?> graph = this.em.getEntityGraph("graph.cv");
+        Map<String, Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", graph);
+        return hints;
+    }
+
+    @Override
+    public void deleteCv(Cv cv) throws Exception {
+        em.remove(cv);
+        em.flush();
     }
 }

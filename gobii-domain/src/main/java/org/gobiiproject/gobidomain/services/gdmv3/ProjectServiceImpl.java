@@ -61,8 +61,6 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
         log.debug("Getting projects list offset %d size %d", page, pageSize);
-        PagedResult<GobiiProjectDTO> pagedResult;
-
         // get Cvs
         List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
@@ -83,11 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
                 projectDTOs.add(projectDTO);
             });
 
-            pagedResult = new PagedResult<>();
-            pagedResult.setResult(projectDTOs);
-            pagedResult.setCurrentPageNum(page);
-            pagedResult.setCurrentPageSize(projectDTOs.size());
-            return pagedResult;
+            return PagedResult.createFrom(page, projectDTOs);
         } catch (GobiiException gE) {
             throw gE;
         } catch (Exception e) {

@@ -55,11 +55,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             analysisDTOs.add(analysisDTO);
         });
 
-        PagedResult<AnalysisDTO> result = new PagedResult<>();
-        result.setCurrentPageNum(page);
-        result.setCurrentPageSize(analyses.size());
-        result.setResult(analysisDTOs);
-        return result;
+        return PagedResult.createFrom(page, analysisDTOs);
     }
 
     @Transactional
@@ -154,12 +150,8 @@ public class AnalysisServiceImpl implements AnalysisService {
             ModelMapper.mapEntityToDto(cv, analysisTypeDTO);
             analysisTypeDTOs.add(analysisTypeDTO);
         });
-        PagedResult<CvTypeDTO> result = new PagedResult<>();
-        result.setCurrentPageNum(page);
-        result.setCurrentPageSize(analysisTypeDTOs.size());
-        result.setResult(analysisTypeDTOs);
 
-        return result;
+        return PagedResult.createFrom(page, analysisTypeDTOs);
     }
 
     @Transactional

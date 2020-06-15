@@ -13,6 +13,14 @@ import java.util.List;
  */
 public class PagedResult<T> {
 
+    public static <S> PagedResult<S> createFrom(Integer page, List<S> results) {
+        PagedResult<S> result = new PagedResult<>();
+        result.setCurrentPageNum(page);
+        result.setCurrentPageSize(results.size());
+        result.setResult(results);
+        return result;
+    }
+    
     private List<T> result = new ArrayList<>();
     private String nextPageToken;
     private Integer currentPageNum;
