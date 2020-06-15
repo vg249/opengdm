@@ -8,9 +8,9 @@ import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -126,11 +126,6 @@ public class DataSetServiceImpl implements DataSetService {
 
         try {
             returnVal = dtoMapDataSet.get(dataSetId);
-
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -138,6 +133,10 @@ public class DataSetServiceImpl implements DataSetService {
                                 + dataSetId
                                 + ") does not match an existing dataSet ");
             }
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
 
         } catch (Exception e) {
 

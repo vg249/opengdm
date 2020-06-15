@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -20,6 +21,7 @@ public class Germplasm extends BaseEntity {
     @Id
     @Column(name="germplasm_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Access(AccessType.PROPERTY)
     private Integer germplasmId;
 
     @Column(name="name")
@@ -38,7 +40,7 @@ public class Germplasm extends BaseEntity {
     private String code;
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode properties;
 
     public Integer getGermplasmId() {
@@ -105,7 +107,7 @@ public class Germplasm extends BaseEntity {
         this.status = status;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
 

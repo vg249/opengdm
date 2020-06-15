@@ -9,6 +9,11 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
  */
 public class GobiiDomainException extends GobiiException {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5508543101388167841L;
+
     public GobiiDomainException(Exception e) {
         super(e);
     }

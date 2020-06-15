@@ -1,8 +1,9 @@
 package org.gobiiproject.gobidomain.services;
 
 import java.util.List;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ReferenceDTO;
 
 /**
  * Created by Angel on 5/4/2016.

@@ -15,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /** This object wraps {@link User} and makes it {@link UserDetails} so that Spring Security can use it. */
+@SuppressWarnings("serial")
 public class UserContext implements UserDetails {
 
 	private User user;

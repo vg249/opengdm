@@ -21,11 +21,11 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 /**
  * Created by Phil on 9/25/2016.
  */
-
+@SuppressWarnings("unused")
 public class PayloadWriter<T extends DTOBase> {
 
     private final Class<T> dtoType;
-    private HttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest; //TODO: what is this for?
     private HttpServletResponse httpServletResponse;
     private String gobiiWebVersion;
 
@@ -91,6 +91,8 @@ public class PayloadWriter<T extends DTOBase> {
                                 break;
                             case DELETE:
                                 link.getMethods().add(RestMethodType.DELETE);
+                            default:
+                                break;
                         }
                     }
                     payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);

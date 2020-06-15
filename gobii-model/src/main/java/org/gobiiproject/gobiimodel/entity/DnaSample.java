@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -20,6 +21,7 @@ public class DnaSample extends BaseEntity {
     @Id
     @Column(name="dnasample_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Access(AccessType.PROPERTY)
     private Integer dnaSampleId;
 
     @Column(name="name")
@@ -47,13 +49,17 @@ public class DnaSample extends BaseEntity {
     @Column(name="project_id")
     private Integer projectId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "germplasm_id")
     private Germplasm germplasm = new Germplasm();
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode properties;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
     public Integer getDnaSampleId() {
         return dnaSampleId;
@@ -150,9 +156,5 @@ public class DnaSample extends BaseEntity {
     public void setStatus(Cv status) {
         this.status = status;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
 
 }

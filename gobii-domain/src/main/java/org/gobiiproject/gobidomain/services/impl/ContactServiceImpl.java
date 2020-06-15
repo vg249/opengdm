@@ -5,7 +5,7 @@ import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapContact;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -131,10 +131,6 @@ public class ContactServiceImpl implements ContactService {
 
         try {
             returnVal = dtoMapContact.get(contactId);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
-
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -142,6 +138,9 @@ public class ContactServiceImpl implements ContactService {
                                 + contactId
                                 + ") does not match an existing contact ");
             }
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         } catch (Exception e) {
 

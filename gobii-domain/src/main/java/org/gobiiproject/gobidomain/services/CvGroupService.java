@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services;
 
 import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
 /**

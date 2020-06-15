@@ -6,16 +6,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
-import org.gobiiproject.gobiimodel.types.DataSetType;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**

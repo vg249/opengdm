@@ -8,7 +8,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

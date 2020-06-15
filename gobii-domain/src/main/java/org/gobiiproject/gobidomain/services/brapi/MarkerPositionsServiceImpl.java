@@ -1,0 +1,91 @@
+package org.gobiiproject.gobidomain.services.brapi;
+
+import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.MarkerPositions;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
+import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiisampletrackingdao.MarkerLinkageGroupDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Transactional
+public class MarkerPositionsServiceImpl implements MarkerPositionsService {
+
+    Logger LOGGER = LoggerFactory.getLogger(MarkerPositionsServiceImpl.class);
+
+    @Autowired
+    private MarkerLinkageGroupDao markerLinkageGroupDao;
+
+    @Override
+    @Transactional
+    public PagedResult<MarkerPositions> getMarkerPositions(
+        Integer pageSize, Integer pageNum,
+        MarkerPositions markerPositionsFilter, BigDecimal minPosition,
+        BigDecimal maxPosition, Integer variantSetDbId) throws GobiiException {
+
+        PagedResult<MarkerPositions> returnVal = new PagedResult<>();
+
+        List<MarkerPositions> markerPositionsList = new ArrayList<>();
+
+        try {
+
+            Objects.requireNonNull(pageSize);
+            Objects.requireNonNull(pageNum);
+
+            Integer rowOffset = pageNum*pageSize;
+
+            List<MarkerLinkageGroup> markerLinkageGroups =
+                markerLinkageGroupDao.getMarkerLinkageGroups(
+                    pageSize, rowOffset,
+                    markerPositionsFilter.getMapDbId(),
+                    markerPositionsFilter.getMapName(),
+                    null,
+                    markerPositionsFilter.getLinkageGroupName(),
+                    markerPositionsFilter.getVariantDbId(),
+                    null,
+                    minPosition,
+                    maxPosition,
+                    variantSetDbId);
+
+            MarkerPositions markerPositions;
+
+            for(MarkerLinkageGroup markerLinkageGroup : markerLinkageGroups) {
+
+                markerPositions = new MarkerPositions();
+
+                ModelMapper.mapEntityToDto(markerLinkageGroup, markerPositions);
+
+                markerPositionsList.add(markerPositions);
+
+            }
+
+            returnVal.setCurrentPageSize(pageSize);
+            returnVal.setCurrentPageNum(pageNum);
+            returnVal.setResult(markerPositionsList);
+
+            return  returnVal;
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error. Please check the error log");
+
+        }
+    }
+}

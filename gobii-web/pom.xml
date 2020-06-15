@@ -116,18 +116,36 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring MVC -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring and Transactions -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--Spring ORM support-->
@@ -176,12 +194,18 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <dependency>
+        <!-- <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-        </dependency>
+        </dependency> -->
         <!--Hibernate-->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
@@ -194,16 +218,27 @@
         </dependency>
 
         <!-- Test Artifacts -->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.2.3.RELEASE</version>
+            <version>5.2.4.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.13</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <!-- End Test Artifacts -->
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -251,7 +286,13 @@
         <!-- Jackson JSON Processor -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
         </dependency>
 
         <!-- Jackson JSON Mapper -->
@@ -289,11 +330,45 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
             <version>2.0.0</version>
+            <exclusions>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+        </exclusions>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
             <version>2.0.0</version>
+            <exclusions>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+        </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId> 
+            <artifactId>mockito-core</artifactId>
+            <version>2.21.0</version> 
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -334,7 +409,36 @@
             <version>5.3.6.Final</version>
         </dependency>
 
+        <!-- validator -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.2.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator-annotation-processor</artifactId>
+            <version>6.0.2.Final</version>
+        </dependency>
+         <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>2.2.6</version>
+        </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
@@ -629,40 +733,7 @@
                             <springmvc>true</springmvc>
                             <locations>
                                 <location>
-                                    org.gobiiproject.gobiiweb.controllers.SampleTrackingController
-                                </location>
-                            </locations>
-                            <outputFormats>json,yaml</outputFormats>
-                            <schemes><schema>http</schema></schemes>
-                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
-                            <basePath>/gobii-dev</basePath>
-                            <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
-                            <info>
-                                <title>GDM Sample Tracking</title>
-                                <version>1.0</version>
-                                <license>
-                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-                                    <name>Apache 2.0</name>
-                                </license>
-                            </info>
-                            <securityDefinitions>
-                                <securityDefinition>
-                                    <name>basicAuth</name>
-                                    <type>basic</type>
-                                </securityDefinition>
-                                <securityDefinition>
-                                    <name>X-Auth-Token</name>
-                                    <type>apiKey</type>
-                                    <in>header</in>
-                                </securityDefinition>
-                            </securityDefinitions>
-                            <swaggerDirectory>${doc-location-generated}/swagger/sampletracking</swaggerDirectory>
-                        </apiSource>
-                        <apiSource>
-                            <springmvc>true</springmvc>
-                            <locations>
-                                <location>
-                                    org.gobiiproject.gobiiweb.controllers.BRAPIIControllerV2
+                                    org.gobiiproject.gobiiweb.controllers.BrapiV2Controller
                                 </location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>

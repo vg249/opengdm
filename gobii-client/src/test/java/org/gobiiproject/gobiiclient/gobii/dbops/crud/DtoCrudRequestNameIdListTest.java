@@ -1,36 +1,45 @@
 package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
-import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
-import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
+import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.NameIdDTOComparator;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.*;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.junit.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Created by VCalaminos on 1/15/2018.
@@ -39,7 +48,7 @@ import java.util.*;
 @Ignore
 public class DtoCrudRequestNameIdListTest {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DtoCrudRequestNameIdListTest.class);
+    //private static Logger LOGGER = LoggerFactory.getLogger(DtoCrudRequestNameIdListTest.class);
 
 
     @BeforeClass
@@ -446,8 +455,9 @@ public class DtoCrudRequestNameIdListTest {
                 .makePopulatedReferenceDTO(GobiiProcessType.CREATE, 1);
         newReferenceDto3.setName(UUID.randomUUID().toString());
 
-        ReferenceDTO notExistingReferenceDto = TestDtoFactory
-                .makePopulatedReferenceDTO(GobiiProcessType.CREATE, 1);
+        //ReferenceDTO notExistingReferenceDto =  
+            TestDtoFactory
+                .makePopulatedReferenceDTO(GobiiProcessType.CREATE, 1); //TODO: this should be an assertion?
 
         // create reference 1
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference1 = new PayloadEnvelope<>(newReferenceDto1, GobiiProcessType.CREATE);

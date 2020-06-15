@@ -16,6 +16,10 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "marker")
+@NamedEntityGraph(name = "graph.marker",
+    attributeNodes = 
+        @NamedAttributeNode("platform")
+)
 public class Marker {
 
     @Id
@@ -23,7 +27,7 @@ public class Marker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer markerId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id")
     private Platform platform = new Platform();
 
@@ -43,11 +47,11 @@ public class Marker {
     @Column(name="sequence")
     private String sequence;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id")
     private Reference reference = new Reference();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "strand_id", referencedColumnName = "cv_id")
     private Cv strand = new Cv();
 
@@ -67,11 +71,9 @@ public class Marker {
     @Convert(converter = JsonbConverter.class)
     private JsonNode properties;
 
-    @Transient
-    private Integer markerStart;
-
-    @Transient
-    private Integer markerStop;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", referencedColumnName = "cv_id")
+    private Cv status = new Cv();
 
     public Integer getMarkerId() {
         return markerId;
@@ -184,26 +186,5 @@ public class Marker {
     public void setStatus(Cv status) {
         this.status = status;
     }
-
-    public Integer getMarkerStart() {
-        return markerStart;
-    }
-
-    public void setMarkerStart(Integer markerStart) {
-        this.markerStart = markerStart;
-    }
-
-    public Integer getMarkerStop() {
-        return markerStop;
-    }
-
-    public void setMarkerStop(Integer markerStop) {
-        this.markerStop = markerStop;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
-
 
 }

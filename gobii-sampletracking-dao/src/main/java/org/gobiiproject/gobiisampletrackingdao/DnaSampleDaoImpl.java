@@ -1,21 +1,23 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Data access object Implementation for dnaSample Entity in the database.
@@ -30,71 +32,85 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
     @PersistenceContext
     protected EntityManager em;
 
-    // Use default pageSize when the pageSize is null.
-    // To avoid load all the result tuples in case search result is huge.
-    private final Integer defaultPageSize = 1000;
-
     /**
      * Gets list of dnaSample entities that match the given filter parameters.
      * @param pageSize size of the page to be fetched.
      * @param rowOffset Row Limit Offset.
      * @param projectId to filter dnaSamples belonging to given project id
-     *                   Foreign key with ManyToOne relation(Many DnaSample to one germplasm).
-     * @param dnaSampleId to filter dnaSamples by dnaSampleId. this filter should fetch only one value as it is primary key.
+     *                   Foreign key with ManyToOne
+     *                   relation(Many DnaSample to one germplasm).
+     * @param dnaSampleId to filter dnaSamples by dnaSampleId. this filter
+     *                    should fetch only one value as it is primary key.
      * @param germplasmId to filter dnaSamples by germplasmId.
-     *                   Foreign key with ManyToOne relation to Germplasm Entity(Many DnaSample to one germplasm).
-     * @param germplasmExternalCode to filter dnasamples by germplasm external code.
+     *                   Foreign key with ManyToOne relation to
+     *                    Germplasm Entity(Many DnaSample to one germplasm).
+     * @param germplasmExternalCode to filter dnasamples by
+     *                              germplasm external code.
      *
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
-    public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset,
-                                         Integer projectId, Integer dnaSampleId,
-                                         Integer germplasmId, String germplasmExternalCode) throws GobiiException {
-
-
-        if(pageSize == null) {
-            pageSize = defaultPageSize;
-        }
-
-        if(rowOffset == null) {
-            rowOffset = 0;
-        }
+    @SuppressWarnings({"unchecked"})
+    public List<DnaSample> getDnaSamples(
+        Integer pageSize, Integer rowOffset,
+        Integer projectId, Integer dnaSampleId,
+        Integer germplasmId, String germplasmExternalCode
+    ) throws GobiiException {
 
         List<DnaSample> dnaSamples;
 
+        List<Predicate> predicates = new ArrayList<>();
+
         try {
 
+            Objects.requireNonNull("pageSize: Required not null");
+            Objects.requireNonNull("rowOffset: Required not null");
 
-            Session session = em.unwrap(Session.class);
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            Criteria dnaSampleCriteria = session.createCriteria(DnaSample.class);
+            CriteriaQuery<DnaSample> criteriaQuery =
+                criteriaBuilder.createQuery(DnaSample.class);
 
-            Criteria germplasmCriteria = dnaSampleCriteria.createCriteria("germplasm");
+            Root<DnaSample> dnaSampleRoot = criteriaQuery.from(DnaSample.class);
+            criteriaQuery.select(dnaSampleRoot);
+
+            Join<Object, Object> germaplsmJoin =
+                (Join<Object, Object>) dnaSampleRoot.fetch("germplasm");
 
             if(dnaSampleId != null) {
-                dnaSampleCriteria.add(Restrictions.eq("dnaSampleId", dnaSampleId));
+                predicates.add(
+                    criteriaBuilder.equal(
+                        dnaSampleRoot.get("dnaSampleId"), dnaSampleId));
             }
 
             if(projectId != null) {
-                dnaSampleCriteria.add(Restrictions.eq("projectId", projectId));
+                predicates.add(
+                    criteriaBuilder.equal(
+                        dnaSampleRoot.get("projectId"), dnaSampleId));
             }
 
             if(germplasmId != null) {
-                germplasmCriteria.add(Restrictions.eq("germplasmId", germplasmId));
+                predicates.add(
+                    criteriaBuilder.equal(
+                        germaplsmJoin.get("germplasmId"), germplasmId));
             }
 
 
             if(germplasmExternalCode != null) {
-                germplasmCriteria.add(Restrictions.eq("externalCode", germplasmExternalCode));
+                predicates.add(
+                    criteriaBuilder.equal(
+                        germaplsmJoin.get("externalCode"),
+                        germplasmExternalCode));
             }
 
-            dnaSampleCriteria
-                    .setMaxResults(pageSize)
-                    .setFirstResult(rowOffset);
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
 
-            dnaSamples = dnaSampleCriteria.list();
+            dnaSamples = em.createQuery(criteriaQuery)
+                .setMaxResults(pageSize)
+                .setFirstResult(rowOffset)
+                .getResultList();
+
+            return dnaSamples;
 
         }
         catch(Exception e) {
@@ -103,11 +119,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+                    e.getMessage() +
+                        " Cause Message: " + e.getCause().getMessage());
         }
-
-        return dnaSamples;
-
     }
 
     /**
@@ -118,7 +132,6 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
     public List<DnaSample> getDnaSamples(Integer pageSize, Integer rowOffset) {
 
         return getDnaSamples(pageSize, rowOffset,
@@ -133,20 +146,22 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return dnaSample entity for given dnaSampleId or null
      */
     @Override
-    @Transactional
-    public DnaSample getDnaSampleByDnaSampleId(Integer dnaSampleId) throws GobiiException {
+    public DnaSample getDnaSampleByDnaSampleId(Integer dnaSampleId)
+        throws GobiiException {
 
-        List<DnaSample> dnaSamples = getDnaSamples(null, null,
+        List<DnaSample> dnaSamples = getDnaSamples(2, 0,
                 null, dnaSampleId,
                 null, null);
 
         if(dnaSamples.size() > 1) {
 
-            LOGGER.error("dnaSampleId has multiple entities association violating unique key constraint");
+            LOGGER.error("dnaSampleId has multiple entities " +
+                "association violating unique key constraint");
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNIQUE_KEY_VIOLATION,
-                    "dnaSampleId has multiple entities association violating unique key constraint");
+                    "dnaSampleId has multiple " +
+                        "entities association violating unique key constraint");
         }
         else if(dnaSamples.size() == 1) {
             return dnaSamples.get(0);
@@ -165,13 +180,13 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
-    public List<DnaSample> getDnaSamplesByProjectId(Integer projectId, Integer pageSize, Integer rowOffset) {
-
+    public List<DnaSample>
+    getDnaSamplesByProjectId(
+        Integer projectId, Integer pageSize, Integer rowOffset
+    ) {
         return getDnaSamples(pageSize, rowOffset,
                 projectId, null,
                 null, null);
-
     }
 
     /**
@@ -182,8 +197,9 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
-    public List<DnaSample> getDnaSamplesByGermplasmId(Integer germplasmId, Integer pageSize, Integer rowOffset) {
+    public List<DnaSample> getDnaSamplesByGermplasmId(
+        Integer germplasmId, Integer pageSize, Integer rowOffset
+    ) {
 
         return getDnaSamples(pageSize, rowOffset,
                 null, null,
@@ -199,10 +215,11 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
      * @return List of dnaSample entity
      */
     @Override
-    @Transactional
-    public List<DnaSample> getDnaSamplesByGermplasmExternalCode(String germplasmExternalCode,
-                                                                Integer pageSize,
-                                                                Integer rowOffset) {
+    public List<DnaSample>
+    getDnaSamplesByGermplasmExternalCode(
+        String germplasmExternalCode,
+        Integer pageSize, Integer rowOffset
+    ) {
         return getDnaSamples(pageSize, rowOffset,
                 null, null,
                 null, germplasmExternalCode);

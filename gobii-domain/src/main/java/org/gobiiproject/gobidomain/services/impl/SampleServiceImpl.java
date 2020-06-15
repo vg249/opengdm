@@ -4,7 +4,7 @@ import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.SampleService;
 import org.gobiiproject.gobiidtomapping.DtoMapSample;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;

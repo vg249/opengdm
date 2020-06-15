@@ -5,26 +5,18 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
-import io.swagger.annotations.ResponseHeader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.tika.Tika;
 import org.gobiiproject.gobidomain.GobiiDomainException;
@@ -62,27 +54,27 @@ import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.rest.RestProfileDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
@@ -111,8 +103,26 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
+import io.swagger.annotations.ResponseHeader;
 
 
 /**
@@ -293,9 +303,7 @@ public class GOBIIControllerV1 {
             String dtoHeaderAuthString = objectMapper.writeValueAsString(dtoHeaderAuth);
             returnVal = dtoHeaderAuthString;
 
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            String tmp = msg;
+        } catch (Exception e) {  //TODO: what is this?
             try {
                 throw (e);
             } catch (Exception e1) {
@@ -1213,8 +1221,7 @@ public class GOBIIControllerV1 {
 
         try {
 
-            PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
-
+            //PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
             CvDTO cvDTODeleted = cvService.deleteCv(cvId);
 
             PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -1883,7 +1890,8 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = 
+            CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = dataSetService.getJobDetailsByDatasetId(Integer.parseInt(datasetId));
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -2250,7 +2258,8 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = 
+            CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -2411,7 +2420,8 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = 
+            CropRequestAnalyzer.getGobiiCropType(request);
             JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
@@ -3051,7 +3061,8 @@ public class GOBIIControllerV1 {
                             RestResourceId.GOBII_NAMES)
                             .addUriParam("entity", entity));
 
-            String cropType = returnVal.getHeader().getCropType();
+            //String cropType = 
+            returnVal.getHeader().getCropType();
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5474,7 +5485,7 @@ public class GOBIIControllerV1 {
         //for example, if we wanted to put files into the extractor/output directory, we would need
         //to use the jobid. But we don't suppor that use case yet.
 
-        Enumeration<String> headers = request.getHeaders("Content-Disposition");
+        //Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
         if (!file.isEmpty()) {
             try {
@@ -5627,7 +5638,7 @@ public class GOBIIControllerV1 {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String name = file.getName();
+        //String name = file.getName();
 
         String fileMimeType = null;
 
@@ -5635,7 +5646,7 @@ public class GOBIIControllerV1 {
         //for example, if we wanted to put files into the extractor/output directory, we would need
         //to use the jobid. But we don't suppor that use case yet.
 
-        Enumeration<String> headers = request.getHeaders("Content-Disposition");
+        //Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
         if (!file.isEmpty()) {
             try {
