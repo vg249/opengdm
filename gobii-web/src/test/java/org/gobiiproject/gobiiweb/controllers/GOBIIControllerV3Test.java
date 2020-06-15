@@ -1260,7 +1260,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void createMapsetTypeTest() throws Exception {
-        String requestJson = "{\"mapsetTypeName\": \"test-name\", \"mapsetTypeDescription\": \"test-desc\"}";
+        String requestJson = "{\"typeName\": \"test-name\", \"typeDescription\": \"test-desc\"}";
         when(
             mapsetService.createMapsetType("test-name", "test-desc", "user")
         ).thenReturn(
