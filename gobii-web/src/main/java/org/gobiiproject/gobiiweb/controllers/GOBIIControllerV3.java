@@ -177,7 +177,6 @@ public class GOBIIControllerV3  {
      */
 
     @GetMapping("/projects")
-    @PreAuthorize("hasAnyAuthority('USER')")
     @ResponseBody 
     public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,

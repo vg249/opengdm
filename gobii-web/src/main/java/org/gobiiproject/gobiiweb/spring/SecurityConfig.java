@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiweb.spring;
 
 //import org.gobiiproject.gobidomain.security.TokenManager;
 //import org.gobiiproject.gobidomain.security.impl.TokenManagerSingle;
-// import org.gobiiproject.gobidomain.services.AuthenticationService;
+import org.gobiiproject.gobidomain.services.AuthenticationService;
 // import org.gobiiproject.gobidomain.services.ContactService;
 // import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 // import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
@@ -43,7 +43,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(keycloakAuthenticationProvider());
-        System.out.println("Keycloak authentication provider configured");
     }
 
     /**
@@ -56,15 +55,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         //RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
-    @Override  
-    protected void configure(HttpSecurity http) throws Exception
-    {
-        super.configure(http);
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/gobii-dev/**").hasRole("USER");
-    }
+    
+
 }
 
 // /**

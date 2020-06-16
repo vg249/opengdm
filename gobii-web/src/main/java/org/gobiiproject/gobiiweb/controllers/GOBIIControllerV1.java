@@ -286,6 +286,7 @@ public class GOBIIControllerV1 {
     })
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
+    @Deprecated //due to Keycloak
     public String authenticate(@RequestBody(required = false) String noContentExpected,
                                HttpServletRequest request,
                                HttpServletResponse response) {

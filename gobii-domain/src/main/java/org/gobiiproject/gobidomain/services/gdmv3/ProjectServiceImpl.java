@@ -8,6 +8,7 @@
  */
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -132,6 +133,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public String getDefaultProjectEditor() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if (principal instanceof Principal) {
+            return ((Principal) principal).getName();
+        }
+
         if (auth != null)
             return auth.getName();
         return null;
