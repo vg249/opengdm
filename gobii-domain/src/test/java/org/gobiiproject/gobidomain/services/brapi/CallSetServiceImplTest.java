@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.io.File;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -43,6 +44,8 @@ public class CallSetServiceImplTest {
 
     Integer pageSize = 10;
     Integer pageNum = 0;
+
+    File tempFile;
 
     @Before
     public void init() {

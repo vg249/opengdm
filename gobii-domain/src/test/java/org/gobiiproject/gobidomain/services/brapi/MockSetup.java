@@ -24,13 +24,14 @@ public class MockSetup {
     public List<Cv> moockDnaRunsProps;
     public List<Mapset> mockMapSets;
     public List<Cv> mockMapSetTypes;
+    public List<Platform> mockPlatforms;
+    public List<Marker> mockMarkers;
+    public List<Dataset> mockDatasets;
 
 
     String[] testDatasetIds = {"1", "2", "3"};
 
-
-
-
+    String[] genotypes = {"G", "C", "A", "T"};
 
     public CvGroup createMockCvGroup(GobiiCvGroupType gobiiCvGroupType, CvGroupTerm cvGroupTerm) {
 
@@ -184,11 +185,10 @@ public class MockSetup {
             String testDatasetId = testDatasetIds[random.nextInt(testDatasetIds.length)];
             Integer hdf5Index = maxHdf5Index.getOrDefault(testDatasetId, 0);
             datasetDnarunIndex.put(testDatasetId, hdf5Index.toString());
-
             hdf5Index++;
             maxHdf5Index.put(testDatasetId, hdf5Index);
-
             dnaRun.setDatasetDnaRunIdx(datasetDnarunIndex);
+
             dnaRun.setDnaSample(mockDnaSamples.get(random.nextInt(mockDnaSamples.size())));
             dnaRun.setExperiment(mockExperiments.get(random.nextInt(mockExperiments.size())));
 
@@ -221,6 +221,65 @@ public class MockSetup {
             mockMapSets.add(mapset);
 
         }
+    }
+
+    public void createMockPlatform(int numPlatforms) {
+        mockPlatforms = new ArrayList<>();
+
+        for(Integer i = 0; i < numPlatforms; i++) {
+
+            Platform platform = new Platform();
+            platform.setPlatformId(i+1);
+            platform.setPlatformName(RandomStringUtils.random(7, true, true));
+            platform.setDescription(RandomStringUtils.random(7, true, true));
+
+            mockPlatforms.add(platform);
+        }
+
+    }
+
+    public void createMockMarkers(int numMarkers) {
+
+        mockMarkers = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(mockPlatforms)) {
+            createMockPlatform(Math.round(numMarkers/2));
+        }
+
+        Map<String, Integer> maxHdf5Index = new HashMap<>();
+
+        for(Integer i = 0; i < numMarkers; i++) {
+            Marker marker = new Marker();
+
+            marker.setMarkerId(i+1);
+            marker.setMarkerName(RandomStringUtils.random(7, true, true));
+            marker.setPlatform(mockPlatforms.get(random.nextInt(mockPlatforms.size())));
+            marker.setRef(genotypes[random.nextInt(genotypes.length)]);
+
+            //Set alts
+            int altsSize = random.nextInt(4);
+            String[] alts = new String[altsSize];
+
+            for(int j = 0; i < altsSize; i++) {
+                alts[j] =  genotypes[random.nextInt(genotypes.length)];
+            }
+            marker.setAlts(alts);
+
+            ObjectNode datasetMarkerIndex = JsonNodeFactory.instance.objectNode();
+            String testDatasetId = testDatasetIds[random.nextInt(testDatasetIds.length)];
+            Integer hdf5Index = maxHdf5Index.getOrDefault(testDatasetId, 0);
+            datasetMarkerIndex.put(testDatasetId, hdf5Index.toString());
+            hdf5Index++;
+            maxHdf5Index.put(testDatasetId, hdf5Index);
+            marker.setDatasetMarkerIdx(datasetMarkerIndex);
+        }
+
+    }
+
+
+    public void createMockDatasets() {
+
+
     }
 
 }
