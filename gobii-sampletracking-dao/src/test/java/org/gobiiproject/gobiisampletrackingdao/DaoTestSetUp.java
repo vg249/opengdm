@@ -153,12 +153,9 @@ public class DaoTestSetUp {
 
             Experiment experiment = new Experiment();
 
-            experiment.setExperimentName(
-                RandomStringUtils.random(7, true, true));
-            experiment.setExperimentCode(
-                RandomStringUtils.random(7, true, true));
-            experiment.setProject(createdProjects.get(
-                random.nextInt(createdProjects.size())));
+            experiment.setExperimentName(RandomStringUtils.random(7, true, true));
+            experiment.setExperimentCode(RandomStringUtils.random(7, true, true));
+            experiment.setProject(createdProjects.get(random.nextInt(createdProjects.size())));
             experiment.setStatus(newStatus);
 
             VendorProtocol vendorProtocol = new VendorProtocol();
@@ -169,10 +166,8 @@ public class DaoTestSetUp {
 
             em.persist(vendor);
 
-            vendorProtocol
-                .setProtocol(
-                    createdProtocols
-                        .get(random.nextInt(createdProtocols.size())));
+            vendorProtocol.setProtocol(
+                createdProtocols.get(random.nextInt(createdProtocols.size())));
 
             vendorProtocol.setVendor(vendor);
             em.persist(vendorProtocol);

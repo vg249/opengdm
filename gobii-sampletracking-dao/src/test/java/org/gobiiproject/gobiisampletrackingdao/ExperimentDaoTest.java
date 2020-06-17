@@ -22,20 +22,20 @@ import javax.transaction.Transactional;
 @Transactional
 public class ExperimentDaoTest {
 
+    @PersistenceContext
+    protected EntityManager em;
+
     @Autowired
     private ExperimentDao experimentDao;
 
     @Autowired
     private CvDao cvDao;
 
-    @PersistenceContext
-    protected EntityManager em;
-
     Random random = new Random();
 
     final int testPageSize = 10;
 
-    private DaoTestSetUp daoTestSetUp;
+    DaoTestSetUp daoTestSetUp;
 
     @Before
     public void createTestData() {
@@ -48,12 +48,10 @@ public class ExperimentDaoTest {
     public void getExperimentsTest() {
 
 
-        List<Experiment> experiments = experimentDao.getExperiments(
-                testPageSize, 0, null);
+        List<Experiment> experiments = experimentDao.getExperiments(testPageSize, 0, null);
 
         assertTrue("getExperiments by pageSize failed.",
-                experiments.size() > 0
-                        && experiments.size() == testPageSize);
+                experiments.size() > 0 && experiments.size() == testPageSize);
 
     }
 
@@ -73,7 +71,7 @@ public class ExperimentDaoTest {
         int numOfExperimentsInProject = 0;
 
         for(Experiment experiment : daoTestSetUp.getCreatedExperiments()) {
-            if(experiment.getProject().getPiContactId() == testProjectId) {
+            if(experiment.getProject().getProjectId() == testProjectId) {
                 numOfExperimentsInProject++;
             }
         }
@@ -83,7 +81,7 @@ public class ExperimentDaoTest {
 
         for(Experiment experiment : experimentsByProjectId) {
             assertTrue("Filter Experiments by projectId failed",
-                numOfExperimentsInProject == experimentsByProjectId.size());
+                experiment.getProject().getProjectId().equals(testProjectId));
         }
     }
 }

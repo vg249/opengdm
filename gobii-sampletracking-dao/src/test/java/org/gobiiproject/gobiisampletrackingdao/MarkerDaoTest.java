@@ -4,7 +4,6 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.util.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.junit.Before;
@@ -20,8 +19,6 @@ import javax.transaction.Transactional;
 
 /**
  * Test cases for MarkerDaoImpl
- * TODO: The dataset test are written with knowledge of undelying data in
- *   api.gobii.org. Need to refactor in future with Test databases and setup data
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
