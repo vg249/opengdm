@@ -9,6 +9,7 @@ import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
@@ -41,6 +42,7 @@ public class DaoTestSetUp {
     private List<Protocol> createdProtocols = new ArrayList<>();
     private List<Platform> createdPlatforms = new ArrayList<>();
     private List<Marker> createdMarkers = new ArrayList<>();
+    private List<MarkerLinkageGroup> createdMarkerLinkageGroups = new ArrayList<>();
 
     public void createTestContacts(int numOfContacts) {
         for(int i = 0; i < numOfContacts; i++) {
@@ -206,7 +208,6 @@ public class DaoTestSetUp {
 
     public void createTestDatasets(int numOfDatasets) {
 
-
         List<Cv> datasetTypes = cvDao.getCvListByCvGroup(
             CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);
@@ -268,20 +269,15 @@ public class DaoTestSetUp {
 
             LinkageGroup linkageGroup = new LinkageGroup();
 
-            linkageGroup
-                .setLinkageGroupName(RandomStringUtils.random(7, true, true));
+            linkageGroup.setLinkageGroupName(RandomStringUtils.random(7, true, true));
 
             linkageGroup.setLinkageGrpupStart(
-                NumberUtils
-                    .toScaledBigDecimal(random.nextFloat()+10, 3, null));
+                NumberUtils.toScaledBigDecimal(random.nextFloat()+10, 3, null));
 
             linkageGroup.setLinkageGroupStop(
-                NumberUtils
-                    .toScaledBigDecimal(random.nextFloat()+20, 3, null));
+                NumberUtils.toScaledBigDecimal(random.nextFloat()+20, 3, null));
 
-            linkageGroup.setMapset(
-                createdMapsets
-                    .get(random.nextInt(createdMapsets.size())));
+            linkageGroup.setMapset(createdMapsets.get(random.nextInt(createdMapsets.size())));
 
             em.persist(linkageGroup);
             createdLinkageGroups.add(linkageGroup);
@@ -353,7 +349,7 @@ public class DaoTestSetUp {
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
         if(createdPlatforms.size() == 0) {
-            createTestPlatforms( (int) Math.ceil((double) numOfMarkers/2));
+            createTestPlatforms((int) Math.ceil((double) numOfMarkers/2));
         }
 
         if(createdDatasets.size() == 0) {
@@ -380,8 +376,33 @@ public class DaoTestSetUp {
 
             createdMarkers.add(marker);
         }
+    }
 
+    public void createTestMarkerLinkageGroups(int numMarkerLinkageGroups) {
 
+        if(createdMarkers.size() == 0) {
+            createTestMarkers(numMarkerLinkageGroups);
+        }
+
+        if(createdLinkageGroups.size() == 0) {
+           createTestLinkageGroups((int) Math.ceil((double) numMarkerLinkageGroups/2));
+        }
+
+        for(int i = 0; i < numMarkerLinkageGroups; i++) {
+            MarkerLinkageGroup markerLinkageGroup = new MarkerLinkageGroup();
+            markerLinkageGroup.setLinkageGroup(
+                createdLinkageGroups.get(random.nextInt(createdLinkageGroups.size())));
+            markerLinkageGroup.setMarker(createdMarkers.get(i));
+
+            BigDecimal position = NumberUtils.toScaledBigDecimal(random.nextFloat()+1000, 3, null);
+
+            markerLinkageGroup.setStart(position);
+            markerLinkageGroup.setStart(position);
+
+            em.persist(markerLinkageGroup);
+
+            createdMarkerLinkageGroups.add(markerLinkageGroup);
+        }
     }
 
     public List<DnaRun> getCreatedDnaRuns() {
@@ -390,6 +411,14 @@ public class DaoTestSetUp {
 
     public void setCreatedDnaRuns(List<DnaRun> createdDnaRuns) {
         this.createdDnaRuns = createdDnaRuns;
+    }
+
+    public List<MarkerLinkageGroup> getCreatedMarkerLinkageGroups() {
+        return createdMarkerLinkageGroups;
+    }
+
+    public void setCreatedMarkerLinkageGroups(List<MarkerLinkageGroup> createdMarkerLinkageGroups) {
+        this.createdMarkerLinkageGroups = createdMarkerLinkageGroups;
     }
 
     public List<Germplasm> getCreatedGermplasms() {
