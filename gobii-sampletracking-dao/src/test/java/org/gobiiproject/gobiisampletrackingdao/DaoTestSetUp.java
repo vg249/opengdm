@@ -392,7 +392,7 @@ public class DaoTestSetUp {
             BigDecimal position = NumberUtils.toScaledBigDecimal(random.nextFloat()+1000, 3, null);
 
             markerLinkageGroup.setStart(position);
-            markerLinkageGroup.setStart(position);
+            markerLinkageGroup.setStop(position);
 
             em.persist(markerLinkageGroup);
 
