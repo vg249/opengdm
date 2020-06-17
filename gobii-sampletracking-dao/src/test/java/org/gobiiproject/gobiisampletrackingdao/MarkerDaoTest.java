@@ -78,8 +78,6 @@ public class MarkerDaoTest {
 
         List<Marker> markers = markerDao.getMarkersByDatasetId(testDatasetId, testPageSize, 0);
 
-        assertTrue("Empty marker list",markers.size() > 0);
-
         assertTrue("marker result list size not equal to the page size",
             markers.size() <= testPageSize);
 
