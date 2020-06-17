@@ -29,8 +29,6 @@ public class MarkerLinkageGroupDaoTest {
 
         Integer pageSize = 100;
 
-        //Selected with developer knowledge on test database.
-        //TODO: Write initialize script
         Integer testMapsetId = 2;
 
         List<MarkerLinkageGroup> markerLinkageGroups = markerLinkageGroupDao.getMarkerLinkageGroups(

@@ -4,7 +4,10 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.util.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Marker;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 /**
  * Test cases for MarkerDaoImpl
@@ -21,6 +25,7 @@ import javax.persistence.PersistenceContext;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@Transactional
 public class MarkerDaoTest {
 
     @PersistenceContext
@@ -32,67 +37,54 @@ public class MarkerDaoTest {
     @Autowired
     private CvDao cvDao;
 
+    DaoTestSetUp daoTestSetUp;
+
+    final int testPageSize = 10;
+
     Random random = new Random();
 
-    private DaoTestSetUp daoTestSetUp;
-
+    @Before
     public void createTestData() {
         daoTestSetUp = new DaoTestSetUp(em, cvDao);
+        daoTestSetUp.createTestMarkers(testPageSize);
+        em.flush();
     }
 
     @Test
     public void testGetMarkers() {
 
-        Integer pageSize = 200;
-
         Integer rowOffset = 0;
 
-        List<Marker> markers = markerDao.getMarkers(
-                pageSize, rowOffset,
-                null, null);
+        List<Marker> markers = markerDao.getMarkers(testPageSize, rowOffset, null, null);
 
         assertTrue("Empty marker list",markers.size() > 0);
 
         if(markers.size() > 0) {
 
-            pageSize = markers.size() - 1;
+            int pageSize = markers.size() - 1;
 
-            List<Marker> markersPaged = markerDao.getMarkers(
-                    pageSize, rowOffset,
-                    null, null);
-
+            List<Marker> markersPaged = markerDao.getMarkers(pageSize, rowOffset, null, null);
 
             assertTrue("marker result list size not equal to the page size",
-                    markersPaged.size() == pageSize);
+                markersPaged.size() == pageSize);
         }
     }
 
     @Test
     public void testGetMarkersByDatasetId() {
 
-        Integer pageSize = 200;
+        Integer testDatasetId = daoTestSetUp.getCreatedDatasets()
+            .get(random.nextInt(daoTestSetUp.getCreatedDatasets().size())).getDatasetId();
 
-        Integer rowOffset = 0;
-
-        Integer datasetId  = 17;
-
-
-        List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId,
-                pageSize, rowOffset);
+        List<Marker> markers = markerDao.getMarkersByDatasetId(testDatasetId, testPageSize, 0);
 
         assertTrue("Empty marker list",markers.size() > 0);
 
+        assertTrue("marker result list size not equal to the page size",
+            markers.size() <= testPageSize);
 
         for(Marker marker : markers) {
-
-            assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
-
-        }
-
-        for(Marker marker : markers) {
-
-            assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
-
+            assertTrue(marker.getDatasetMarkerIdx().has(testDatasetId.toString()));
         }
 
 
@@ -101,78 +93,76 @@ public class MarkerDaoTest {
     @Test
     public void testGetMarkersByMarkerIdCursor() {
 
-        Integer pageSize = 200;
 
         Integer rowOffset = 0;
 
-        Integer datasetId  = 17;
+        Integer testDatasetId = daoTestSetUp.getCreatedDatasets()
+            .get(random.nextInt(daoTestSetUp.getCreatedDatasets().size())).getDatasetId();
 
-        List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId,
-                pageSize, rowOffset);
+        List<Marker> markers =
+            markerDao.getMarkersByDatasetId(testDatasetId, testPageSize, rowOffset);
 
-        assertTrue("Empty marker list",markers.size() > 0);
+        assertTrue("Get Markers by datasetId failed",markers.size() <= testPageSize);
 
         Integer markerIdCursor = markers.get(random.nextInt(markers.size())).getMarkerId();
 
         List<Marker> markersByMarkerIdCursor = markerDao.getMarkersByMarkerIdCursor(
-                pageSize,
-                markerIdCursor,
-                null,
-                datasetId);
+            testPageSize, markerIdCursor, null, testDatasetId);
 
 
         for(Marker marker : markersByMarkerIdCursor) {
 
-            assertTrue(marker.getMarkerId() > markerIdCursor);
+            assertTrue("Get Markers By MarkerId cursor failed",
+                marker.getMarkerId() > markerIdCursor);
 
-            assertTrue(marker.getDatasetMarkerIdx().has(datasetId.toString()));
+            assertTrue("Filter by Dataset Id for Get Markers by MarkerId cursor failed",
+                marker.getDatasetMarkerIdx().has(testDatasetId.toString()));
 
         }
 
 
     }
-
 
     @Test
     public void testGetMarkersByMarkerIds() {
 
+        Set<Integer> markerIds = new HashSet<>();
 
-        // TODO: Hardcoded list from api.gobii.ord:gobii-dev marker table
-        //  Need to replace this with a standard setupcalss functionality in future.
-        Set<Integer> markerIds = new HashSet<>(Arrays.asList(
-                6, 7, 8, 9, 10,
-                11, 12, 13, 14,
-                15
-        ));
+        for(Marker mockMarker :
+            daoTestSetUp.getCreatedMarkers()
+                .subList(0, (int) Math.ceil((double) testPageSize/2))) {
+            markerIds.add(mockMarker.getMarkerId());
+        }
 
         List<Marker> markers = markerDao.getMarkersByMarkerIds(markerIds);
 
-        assertTrue(markers.size() <= markerIds.size());
+        assertTrue("Get Markers by MarkerIds failed", markers.size() <= markerIds.size());
 
         for(Marker marker : markers) {
-            assertTrue(markerIds.contains(marker.getMarkerId()));
+            assertTrue("Get Markers by MarkerIds failed",
+                markerIds.contains(marker.getMarkerId()));
         }
-
     }
-
 
     @Test
     public void testGetMarkersByMarkerNames() {
 
+        Set<String> markerNames = new HashSet<>();
 
-        Set<String> markerNames = new HashSet<>(Arrays.asList(
-                "BS00062676", "kw004_Sbm1", "TaMoc-7A_2433",
-                "Tsn1", "TaCKX-D1", "TaCwi-4A_1523",
-                "TaCwi-A1a/b", "snp3BS-8", "TaGASR-A1", "TaGS-D1",
-                "TaGW2-HAP-A/G", "TaSus2-2B_SNP", "TaTGW6-A1_1050",
-                "snpOS0312", "Xsnp3BS-2"));
+        for(Marker mockMarker :
+            daoTestSetUp.getCreatedMarkers()
+                .subList(0, (int) Math.ceil((double) testPageSize/2))) {
+            markerNames.add(mockMarker.getMarkerName());
+        }
 
         List<Marker> markers = markerDao.getMarkersByMarkerNames(markerNames);
 
-        assertTrue(markers.size() <= markerNames.size());
+        assertTrue("Get Markers by MarkerIds failed",
+            markers.size() <= markerNames.size());
 
         for(Marker marker : markers) {
-            assertTrue(markerNames.contains(marker.getMarkerName()));
+            assertTrue("Get Markers by MarkerIds failed",
+                markerNames.contains(marker.getMarkerName()));
         }
 
     }
@@ -181,26 +171,55 @@ public class MarkerDaoTest {
     public void testGetMarkersByMarkerNamesAndDatasetIds() {
 
 
-        Set<String> markerNames = new HashSet<>(Arrays.asList(
-                "BS00062676", "kw004_Sbm1", "TaMoc-7A_2433",
-                "Tsn1", "TaCKX-D1", "TaCwi-4A_1523",
-                "TaCwi-A1a/b", "snp3BS-8", "TaGASR-A1", "TaGS-D1",
-                "TaGW2-HAP-A/G", "TaSus2-2B_SNP", "TaTGW6-A1_1050",
-                "snpOS0312", "Xsnp3BS-2"));
+        Set<String> datasetIds = new HashSet<>();
 
-        String[] datasetIdsList = {"2", "5"};
-        Set<String> datasetIds = new HashSet<>(Arrays.asList(datasetIdsList));
+        Set<String> markerNames = new HashSet<>();
+
+        int i = 0;
+
+        for(Dataset mockDataset : daoTestSetUp.getCreatedDatasets()) {
+            if(i%2 == 0) {
+                datasetIds.add(mockDataset.getDatasetId().toString());
+            }
+            i++;
+        }
+
+        int numFilteredMarkers = 0;
+
+        for(Marker mockMarker :
+            daoTestSetUp.getCreatedMarkers()
+                .subList(0, (int) Math.ceil((double) testPageSize/2))) {
+
+            markerNames.add(mockMarker.getMarkerName());
+
+            for(String datasetId : datasetIds) {
+                if(mockMarker.getDatasetMarkerIdx().has(datasetId)) {
+                    numFilteredMarkers++;
+                    break;
+                }
+            }
+
+        }
 
         List<Marker> markers = markerDao.getMarkers(
                 null, markerNames,
                 datasetIds, null, null);
 
-        assertTrue(markers.size() <= markerNames.size());
+        assertTrue("Get Markers by names and dataset ids failes",
+            markers.size() <= numFilteredMarkers);
 
         for(Marker marker : markers) {
+
             assertTrue(markerNames.contains(marker.getMarkerName()));
-            assertTrue(marker.getDatasetMarkerIdx().has(datasetIdsList[0]) ||
-                    marker.getDatasetMarkerIdx().has(datasetIdsList[1]));
+            boolean hasDatsetId = false;
+            for(String datasetId : datasetIds) {
+                if(marker.getDatasetMarkerIdx().has(datasetId)) {
+                    hasDatsetId = true;
+                    break;
+                }
+            }
+            assertTrue("Get Markers by names and dataset ids failes", hasDatsetId);
+
         }
 
     }
@@ -210,11 +229,15 @@ public class MarkerDaoTest {
         List<List<String>> markerTuples = new ArrayList<>();
 
         List<String> tuple1 = new ArrayList<>();
-        tuple1.add("KASP");  tuple1.add("Test_sample");
+        tuple1.add(daoTestSetUp.getCreatedMarkers().get(0).getPlatform().getPlatformName());
+        tuple1.add(daoTestSetUp.getCreatedMarkers().get(0).getMarkerName());
 
         markerTuples.add(tuple1);
 
         List<Marker> markers = markerDao.getMarkersByPlatformMarkerNameTuples(markerTuples);
+
+        assertTrue("Get Markers by marker name and platform name failed",
+            markers.size() == 1);
     }
 
 }
