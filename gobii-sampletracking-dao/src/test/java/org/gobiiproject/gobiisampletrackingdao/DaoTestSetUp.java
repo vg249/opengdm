@@ -39,6 +39,7 @@ public class DaoTestSetUp {
     private List<Mapset> createdMapsets = new ArrayList<>();
     private List<LinkageGroup> createdLinkageGroups = new ArrayList<>();
     private List<Protocol> createdProtocols = new ArrayList<>();
+    private List<Platform> createdPlatforms = new ArrayList<>();
     private List<Marker> createdMarkers = new ArrayList<>();
 
     public void createTestContacts(int numOfContacts) {
@@ -60,7 +61,7 @@ public class DaoTestSetUp {
             CvGroup.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         if(createdContacts.size() == 0) {
-            createTestContacts(Math.round(numOfProjects/2));
+            createTestContacts((int)(int) Math.ceil((double) numOfProjects/2));
         }
         for(int i = 0; i < numOfProjects; i++) {
             //Add Project
@@ -97,10 +98,10 @@ public class DaoTestSetUp {
             CvGroup.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         if(createdGermplasms.size() == 0) {
-            createTestGermplasms(Math.round(numOfDnaSamples/2));
+            createTestGermplasms( (int) Math.ceil((double) numOfDnaSamples/2));
         }
         if(createdProjects.size() == 0) {
-            createTestProjects(Math.round(numOfDnaSamples/2));
+            createTestProjects( (int) Math.ceil((double) numOfDnaSamples/2));
         }
         for(int i = 0; i < numOfDnaSamples; i++) {
             DnaSample dnaSample = new DnaSample();
@@ -134,13 +135,11 @@ public class DaoTestSetUp {
 
     public void createTestExperiments(int numOfExperiments) {
 
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroup.CVGROUP_STATUS.getCvGroupName(),
+        Cv newStatus = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
         if(createdProjects.size() == 0) {
-            createTestProjects(Math.round(numOfExperiments/2));
+            createTestProjects( (int) Math.ceil((double) numOfExperiments/2));
         }
 
         if(createdProtocols.size() == 0) {
@@ -207,19 +206,16 @@ public class DaoTestSetUp {
 
     public void createTestDatasets(int numOfDatasets) {
 
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroup.CVGROUP_STATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+
         List<Cv> datasetTypes = cvDao.getCvListByCvGroup(
             CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         if(createdExperiments.size() == 0) {
-            createTestExperiments(Math.round(numOfDatasets/2));
+            createTestExperiments( (int) Math.ceil((double) numOfDatasets/2));
         }
         if(createdAnalyses.size() == 0) {
-            createTestAnalyses(Math.round(numOfDatasets/2));
+            createTestAnalyses( (int) Math.ceil((double) numOfDatasets/2));
         }
 
         for(int i = 0; i < numOfDatasets; i++) {
@@ -265,7 +261,7 @@ public class DaoTestSetUp {
     public void createTestLinkageGroups(int numOfLinkageGroups) {
 
         if(createdMapsets.size() == 0) {
-            createTestMapsets(Math.round(testPageSize/2));
+            createTestMapsets( (int) Math.ceil((double) testPageSize/2));
         }
 
         for(int i = 0; i < numOfLinkageGroups; i++) {
@@ -295,13 +291,13 @@ public class DaoTestSetUp {
     public void createTestDnaRuns(int numOfDnaRuns) {
 
         if(createdDnaSamples.size() == 0) {
-            createTestDnaSamples(Math.round(numOfDnaRuns/2));
+            createTestDnaSamples( (int) Math.ceil((double) numOfDnaRuns/2));
         }
         if(createdExperiments.size() == 0) {
-            createTestExperiments(Math.round(numOfDnaRuns/2));
+            createTestExperiments( (int) Math.ceil((double) numOfDnaRuns/2));
         }
         if(createdDatasets.size() == 0) {
-            createTestDatasets(Math.round(numOfDnaRuns/2));
+            createTestDatasets( (int) Math.ceil((double) numOfDnaRuns/2));
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -331,7 +327,60 @@ public class DaoTestSetUp {
 
     }
 
+    public void createTestPlatforms(int numPlatforms) {
+
+        Cv newStatus = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+
+        for(int i = 0; i < numPlatforms; i++) {
+
+            Platform platform = new Platform();
+            platform.setPlatformName(RandomStringUtils.random(4, true, true));
+            platform.setDescription(RandomStringUtils.random(7, true, true));
+            platform.setPlatformCode(RandomStringUtils.random(5, true, true));
+            platform.setStatus(newStatus);
+
+            em.persist(platform);
+
+            createdPlatforms.add(platform);
+        }
+
+    }
+
     public void createTestMarkers(int numOfMarkers) {
+
+        Cv newStatus = cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+
+        if(createdPlatforms.size() == 0) {
+            createTestPlatforms( (int) Math.ceil((double) numOfMarkers/2));
+        }
+
+        if(createdDatasets.size() == 0) {
+            createTestDatasets( (int) Math.ceil((double) numOfMarkers/2));
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        for(int i = 0; i < numOfMarkers; i++) {
+            Marker marker = new Marker();
+
+            marker.setMarkerName(RandomStringUtils.random(5, true, true));
+            marker.setPlatform(createdPlatforms.get(random.nextInt(createdPlatforms.size())));
+            marker.setStatus(newStatus);
+
+            ObjectNode markerDaatsetIdx =  objectMapper.createObjectNode();
+            Integer datasetId =
+                createdDatasets
+                    .get(random.nextInt(createdDatasets.size())).getDatasetId();
+            Integer hdf5Index = random.nextInt(1000);
+            markerDaatsetIdx.put(datasetId.toString(), hdf5Index.toString());
+            marker.setDatasetMarkerIdx(markerDaatsetIdx);
+            em.persist(marker);
+
+            createdMarkers.add(marker);
+        }
+
 
     }
 
@@ -413,5 +462,29 @@ public class DaoTestSetUp {
 
     public void setCreatedLinkageGroups(List<LinkageGroup> createdLinkageGroups) {
         this.createdLinkageGroups = createdLinkageGroups;
+    }
+
+    public List<Protocol> getCreatedProtocols() {
+        return createdProtocols;
+    }
+
+    public void setCreatedProtocols(List<Protocol> createdProtocols) {
+        this.createdProtocols = createdProtocols;
+    }
+
+    public List<Platform> getCreatedPlatforms() {
+        return createdPlatforms;
+    }
+
+    public void setCreatedPlatforms(List<Platform> createdPlatforms) {
+        this.createdPlatforms = createdPlatforms;
+    }
+
+    public List<Marker> getCreatedMarkers() {
+        return createdMarkers;
+    }
+
+    public void setCreatedMarkers(List<Marker> createdMarkers) {
+        this.createdMarkers = createdMarkers;
     }
 }

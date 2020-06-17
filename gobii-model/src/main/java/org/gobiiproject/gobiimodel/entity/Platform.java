@@ -17,6 +17,7 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.hibernate.annotations.Type;
 
 import lombok.Data;
@@ -50,12 +51,12 @@ public class Platform extends BaseEntity{
     @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
     private Cv type;
 
-    @Column(name="props")
-    @Type(type = "CvPropertiesType")
-    private java.util.Map<String, String> properties;
+    @Column(name="props", columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    private JsonNode properties;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    private Cv status;
 
 }
