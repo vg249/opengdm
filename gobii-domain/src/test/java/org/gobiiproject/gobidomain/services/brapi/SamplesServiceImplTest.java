@@ -28,9 +28,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by VCalaminos on 7/18/2019.
- */
 @WebAppConfiguration
 public class SamplesServiceImplTest {
 

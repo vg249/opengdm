@@ -153,7 +153,6 @@ public class ExperimentServiceImplTest {
         
     }
 
-    @Test
     public void testUpdateExperiment() throws Exception {
         assert experimentDao != null;
 
