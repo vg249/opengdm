@@ -137,13 +137,12 @@ public class CallSetServiceImpl implements CallSetService {
 
         if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {
 
-            Map<String, String> additionalInfo = CvMapper.mapCvIdToCvTerms(
-                dnaSampleGroupCvs, dnaRun.getDnaSample().getProperties());
+            Map<String, String> additionalInfo =
+                CvMapper.mapCvIdToCvTerms(dnaSampleGroupCvs, dnaRun.getDnaSample().getProperties());
 
             if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getGermplasm().getProperties())) {
-                additionalInfo = CvMapper.mapCvIdToCvTerms(
-                        germplasmGroupCvs, dnaRun.getDnaSample().getGermplasm().getProperties(),
-                        additionalInfo);
+                additionalInfo = CvMapper.mapCvIdToCvTerms(germplasmGroupCvs,
+                    dnaRun.getDnaSample().getGermplasm().getProperties(), additionalInfo);
             }
 
             callSet.setAdditionalInfo(additionalInfo);
