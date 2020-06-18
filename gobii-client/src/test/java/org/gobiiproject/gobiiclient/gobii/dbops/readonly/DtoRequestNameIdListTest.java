@@ -10,19 +10,13 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestMapsetTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProjectTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestReferenceTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestVendorProtocolTest;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ProtocolDTO;
@@ -235,7 +229,6 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetProjectNamesByContactId() throws Exception {
 
-
         testNameRetrieval(GobiiEntityNameType.PROJECT, GobiiFilterType.NAMES_BY_TYPEID, "1");
     }
 
@@ -243,7 +236,8 @@ public class DtoRequestNameIdListTest {
     public void testGetExperimentNamesByProjectId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.EXPERIMENT, GobiiFilterType.NAMES_BY_TYPEID, "1");
+        Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT));
+        testNameRetrieval(GobiiEntityNameType.EXPERIMENT, GobiiFilterType.NAMES_BY_TYPEID, projectId.toString());
 
     }
 
@@ -420,7 +414,8 @@ public class DtoRequestNameIdListTest {
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.NAMES_BY_TYPEID, "1");
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
+        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.NAMES_BY_TYPEID, experimentId.toString());
 
     }
 
