@@ -91,28 +91,18 @@ public class MarkerDaoTest {
 
         Integer rowOffset = 0;
 
-        Integer testDatasetId = daoTestSetUp.getCreatedDatasets()
-            .get(random.nextInt(daoTestSetUp.getCreatedDatasets().size())).getDatasetId();
+        List<Marker> markers = markerDao.getMarkers(testPageSize, rowOffset, null, null);
 
-        List<Marker> markers =
-            markerDao.getMarkersByDatasetId(testDatasetId, testPageSize, rowOffset);
-
-        assertTrue("Get Markers by datasetId failed",markers.size() <= testPageSize);
+        assertTrue("Empty markers list", markers.size() > 0 && markers.size() <= testPageSize);
 
         Integer markerIdCursor = markers.get(random.nextInt(markers.size())).getMarkerId();
 
-        List<Marker> markersByMarkerIdCursor = markerDao.getMarkersByMarkerIdCursor(
-            testPageSize, markerIdCursor, null, testDatasetId);
-
+        List<Marker> markersByMarkerIdCursor =
+            markerDao.getMarkersByMarkerIdCursor(testPageSize, markerIdCursor, null, null);
 
         for(Marker marker : markersByMarkerIdCursor) {
-
             assertTrue("Get Markers By MarkerId cursor failed",
                 marker.getMarkerId() > markerIdCursor);
-
-            assertTrue("Filter by Dataset Id for Get Markers by MarkerId cursor failed",
-                marker.getDatasetMarkerIdx().has(testDatasetId.toString()));
-
         }
 
 
