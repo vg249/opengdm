@@ -480,6 +480,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     int prevPageExcess = 0;
 
                     if(dnaRuns.size() == 0) {
+                        cursors.pageOffset += 1;
                         cursors.columnOffset = 0;
                     }
                     else {
