@@ -74,7 +74,7 @@ public class GlobalPkValues {
         if (pkMap.containsKey(gobiiEntityNameType)
                 && pkMap.get(gobiiEntityNameType).size() > 0) {
             returnVal = pkMap.get(gobiiEntityNameType)
-                .get(pkMap.get(gobiiEntityNameType).size() - 1); // get arbitrary value for now
+                .get(0); // get arbitrary value for now
         }
 
         return returnVal;
