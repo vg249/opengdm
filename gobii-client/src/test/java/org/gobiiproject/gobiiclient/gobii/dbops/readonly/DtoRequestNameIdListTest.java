@@ -389,17 +389,13 @@ public class DtoRequestNameIdListTest {
 
     @Test
     public void testGetRoles() throws Exception {
-
-
         testNameRetrieval(GobiiEntityNameType.ROLE, GobiiFilterType.NONE, null);
     } // testGetMarkers()
 
 
     @Test
     public void testGetManifestNames() throws Exception {
-
         testNameRetrieval(GobiiEntityNameType.MANIFEST, GobiiFilterType.NONE, null);
-
     }
 
     @Test
