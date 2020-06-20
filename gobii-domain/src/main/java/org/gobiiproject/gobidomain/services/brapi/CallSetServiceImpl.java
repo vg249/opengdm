@@ -62,18 +62,7 @@ public class CallSetServiceImpl implements CallSetService {
                 callSetsFilter.getSampleDbId(), callSetsFilter.getSampleName(),
                 callSetsFilter.getGermplasmDbId(), callSetsFilter.getGermplasmName());
 
-            List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
-                CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
-
-            List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
-                CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null);
-
-            for (DnaRun dnaRun : dnaRuns) {
-                CallSetDTO callSet =
-                    this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs,
-                        germplasmGroupCvs);
-                callSets.add(callSet);
-            }
+            callSets = mapDnaRunsToCallSetDtos(dnaRuns);
 
             pagedResult.setResult(callSets);
             pagedResult.setCurrentPageSize(callSets.size());
@@ -119,6 +108,26 @@ public class CallSetServiceImpl implements CallSetService {
         }
     }
 
+
+    public List<CallSetDTO> mapDnaRunsToCallSetDtos(List<DnaRun> dnaRuns) {
+
+        List<CallSetDTO> callSets = new ArrayList<>();
+
+        List<Cv> dnaSampleGroupCvs = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+
+        List<Cv> germplasmGroupCvs = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null);
+
+        for (DnaRun dnaRun : dnaRuns) {
+            CallSetDTO callSet =
+                this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs,
+                    germplasmGroupCvs);
+            callSets.add(callSet);
+        }
+
+        return callSets;
+    }
 
     private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun, List<Cv> dnaSampleGroupCvs,
                                                    List<Cv> germplasmGroupCvs) {

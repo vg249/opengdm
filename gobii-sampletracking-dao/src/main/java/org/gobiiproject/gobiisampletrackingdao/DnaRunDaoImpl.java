@@ -368,6 +368,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             //Set Root entity and selected entities
             Root<DnaRun> root = criteria.from(DnaRun.class);
+            Join<Object, Object> dnaSampleJoin;
+            Join<Object, Object> germplasmJoin;
 
             if(fetchAssociations) {
                 root.fetch("experiment");
@@ -378,7 +380,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 !CollectionUtils.isEmpty(dnaSampleUuids) ||
                 !CollectionUtils.isEmpty(germplasmExternalCodes)) {
 
-                Join<Object, Object> dnaSampleJoin;
 
                 if(fetchAssociations) {
                      dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
@@ -400,7 +401,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 }
 
                 if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
-                    Join<Object, Object> germplasmJoin;
                     if(fetchAssociations) {
                         germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
                     } else {
@@ -408,8 +408,13 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     }
                     predicates.add(germplasmJoin.get("externalCode").in(germplasmExternalCodes));
                 }
+            }
+            else {
+                if(fetchAssociations) {
+                    dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
+                    germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
 
-
+                }
             }
 
             criteria.select(root);

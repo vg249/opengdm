@@ -1208,6 +1208,72 @@ public class BrapiV2Controller {
     }
 
     @ApiOperation(
+        value = "List CallSets for Genotypes SearchQuery",
+        notes = "List of all the callsets for given genotypes search query",
+        tags = {"Genotype Calls"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List CallSets for Genotypes SearchQuery")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/calls/{searchResultDbId}/callsets", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
+    getCallSetsForGenotypesSearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
+        @PathVariable String searchResultDbId,
+        @ApiParam(value = "Page Token to fetch a page. " +
+            "Value is $metadata.pagination.nextPageToken form previous page.")
+        @RequestParam(value = "pageToken", required = false) String pageToken,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @RequestParam(value = "pageSize", required = false,
+            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        HttpServletRequest request
+    ) {
+
+        try {
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
+                searchService.getGenotypesSearchQuery(searchResultDbId, cropType);
+
+            PagedResult<CallSetDTO> pagedResult =
+                genotypeCallsService.getCallSetsByGenotypesExtractQuery(
+                    genotypeCallsSearchQueryDTO, pageSize, pageToken);
+
+            BrApiMasterListPayload<CallSetDTO> payload =
+                new BrApiMasterListPayload<>(
+                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
+            );
+
+        }
+    }
+
+
+    @ApiOperation(
         value = "Download Genotypes in VariantSet",
         notes = "Download of all the genotype calls in a given VariantSet",
         tags = {"VariantSets"},
