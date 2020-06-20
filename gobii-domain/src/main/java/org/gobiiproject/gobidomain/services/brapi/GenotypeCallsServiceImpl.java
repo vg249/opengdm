@@ -24,7 +24,6 @@ import org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.FileSystemUtils;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -97,7 +96,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 pageSize = Integer.parseInt(BrapiDefaults.pageSize);
             }
 
-            Integer genotypesToBeRead = pageSize;
+            int genotypesToBeRead = pageSize;
 
             //Get DNA run
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
@@ -109,7 +108,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             // Sort dataset ids
             Collections.sort(dnaRunDatasetIds);
 
-            Integer datasetIdCursorStart = 0;
+            int datasetIdCursorStart = 0;
 
             if(cursors.startDatasetId != null) {
                 datasetIdCursorStart = dnaRunDatasetIds.indexOf(cursors.startDatasetId.toString());
@@ -185,18 +184,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 Map<String ,Integer> nextPageCursorMap = new HashMap<>();
 
-                nextPageCursorMap
-                    .put("datasetId",
-                        genotypeCalls
-                            .get(genotypeCalls.size() - 1)
-                            .getVariantSetDbId());
+                nextPageCursorMap.put(
+                    "datasetId", genotypeCalls.get(genotypeCalls.size() - 1).getVariantSetDbId());
 
-                nextPageCursorMap
-                    .put("markerId",
-                        genotypeCalls
-                            .get(genotypeCalls.size() - 1)
-                            .getVariantDbId());
-
+                nextPageCursorMap.put(
+                    "markerId", genotypeCalls.get(genotypeCalls.size() - 1).getVariantDbId());
 
                 String nextPageToken = PageToken.encode(nextPageCursorMap);
 
@@ -284,7 +276,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 pageSize = Integer.parseInt(BrapiDefaults.pageSize);
             }
 
-            Integer genotypesToBeRead = pageSize;
+            int genotypesToBeRead = pageSize;
 
             Marker marker = markerDao.getMarkerById(markerId);
 
@@ -753,7 +745,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         List<DnaRun> dnaRuns;
 
-        Map<String, SortedMap<Integer, Integer>> dnarunHdf5OrderMap = new HashMap<>();
+        Map<String, SortedMap<Integer, Integer>> dnarunHdf5OrderMap;
 
         GenotypesRunTimeCursors cursors = new GenotypesRunTimeCursors();
 
@@ -802,13 +794,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 remainingPageSize = pageSize - genotypeCalls.size();
 
-                if (!CollectionUtils.isEmpty(genotypesSearchQuery.getCallSetDbIds()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getCallSetNames()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getSampleDbIds()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getSampleNames()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getSamplePUIs()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getGermplasmPUIs())
-                ) {
+                if (!genotypesSearchQuery.isCallSetsQueriesEmpty()) {
 
                     dnaRuns = dnaRunDao.getDnaRuns(
                         genotypesSearchQuery.getCallSetDbIds(),
@@ -830,8 +816,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         cursors.dnarunsByDatasetId, cursors.dnaRunOrderIndexMap);
                 }
 
-                if (!CollectionUtils.isEmpty(genotypesSearchQuery.getVariantDbIds()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantNames())) {
+                if (!genotypesSearchQuery.isVariantsQueriesEmpty()) {
 
                     markers = markerDao.getMarkers(genotypesSearchQuery.getVariantDbIds(),
                         genotypesSearchQuery.getVariantNames(),
@@ -1111,8 +1096,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 remainingPageSize = pageSize - callSets.size();
 
-                if (!CollectionUtils.isEmpty(genotypesSearchQuery.getVariantDbIds()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantNames())) {
+                if (genotypesSearchQuery.isVariantsQueriesEmpty()) {
 
                     markers = markerDao.getMarkers(genotypesSearchQuery.getVariantDbIds(),
                         genotypesSearchQuery.getVariantNames(),
@@ -1132,12 +1116,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 }
 
-                if (!CollectionUtils.isEmpty(genotypesSearchQuery.getCallSetDbIds()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getCallSetNames()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getSampleDbIds()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getSampleNames()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getSamplePUIs()) ||
-                    !CollectionUtils.isEmpty(genotypesSearchQuery.getGermplasmPUIs()) ||
+                if (!genotypesSearchQuery.isCallSetsQueriesEmpty() ||
                     !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())
                 ) {
 

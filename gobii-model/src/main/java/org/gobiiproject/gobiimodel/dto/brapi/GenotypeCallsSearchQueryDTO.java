@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
 import javax.validation.constraints.Size;
@@ -126,5 +127,20 @@ public class GenotypeCallsSearchQueryDTO {
 
     public void setSamplePUIs(Set<String> samplePUIs) {
         this.samplePUIs = samplePUIs;
+    }
+
+    public boolean isCallSetsQueriesEmpty() {
+        return CollectionUtils.isEmpty(this.getCallSetDbIds()) &&
+            CollectionUtils.isEmpty(this.getCallSetNames()) &&
+            CollectionUtils.isEmpty(this.getSampleDbIds()) &&
+            CollectionUtils.isEmpty(this.getSampleNames()) &&
+            CollectionUtils.isEmpty(this.getSamplePUIs()) &&
+            CollectionUtils.isEmpty(this.getGermplasmPUIs());
+
+    }
+
+    public boolean isVariantsQueriesEmpty() {
+        return CollectionUtils.isEmpty(this.getVariantDbIds()) &&
+            CollectionUtils.isEmpty(this.getVariantNames());
     }
 }
