@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
@@ -129,6 +131,7 @@ public class GenotypeCallsSearchQueryDTO {
         this.samplePUIs = samplePUIs;
     }
 
+    @JsonIgnore
     public boolean isCallSetsQueriesEmpty() {
         return CollectionUtils.isEmpty(this.getCallSetDbIds()) &&
             CollectionUtils.isEmpty(this.getCallSetNames()) &&
@@ -139,6 +142,7 @@ public class GenotypeCallsSearchQueryDTO {
 
     }
 
+    @JsonIgnore
     public boolean isVariantsQueriesEmpty() {
         return CollectionUtils.isEmpty(this.getVariantDbIds()) &&
             CollectionUtils.isEmpty(this.getVariantNames());

@@ -53,28 +53,7 @@ public class VariantServiceImpl implements VariantService {
                     pageSize, markerIdCursor,
                     variantDbId, variantSetDbId);
 
-            for(Marker marker : markers) {
-
-                VariantDTO variantDTO = new VariantDTO();
-
-                ModelMapper.mapEntityToDto(marker, variantDTO);
-
-                if(marker.getDatasetMarkerIdx() != null) {
-
-                    List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
-                            marker.getDatasetMarkerIdx().fieldNames());
-
-                    variantDTO.setVariantSetDbId(variantSetDbIds);
-
-                }
-
-                if(marker.getMarkerName() != null) {
-                    variantDTO.setVariantNames(new ArrayList<>());
-                    variantDTO.getVariantNames().add(marker.getMarkerName());
-                }
-
-                variants.add(variantDTO);
-            }
+            variants = mapMarkersToVariant(markers);
 
             returnVal.setResult(variants);
 
@@ -105,9 +84,37 @@ public class VariantServiceImpl implements VariantService {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
+    }
 
+    @Override
+    public List<VariantDTO> mapMarkersToVariant(List<Marker> markers) {
 
+        List<VariantDTO> variants = new ArrayList<>();
 
+        for(Marker marker : markers) {
+
+            VariantDTO variantDTO = new VariantDTO();
+
+            ModelMapper.mapEntityToDto(marker, variantDTO);
+
+            if(marker.getDatasetMarkerIdx() != null) {
+
+                List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
+                    marker.getDatasetMarkerIdx().fieldNames());
+
+                variantDTO.setVariantSetDbId(variantSetDbIds);
+
+            }
+
+            if(marker.getMarkerName() != null) {
+                variantDTO.setVariantNames(new ArrayList<>());
+                variantDTO.getVariantNames().add(marker.getMarkerName());
+            }
+
+            variants.add(variantDTO);
+        }
+
+        return variants;
     }
 
     @Override

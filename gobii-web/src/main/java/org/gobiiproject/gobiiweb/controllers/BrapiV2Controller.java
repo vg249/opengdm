@@ -1099,8 +1099,8 @@ public class BrapiV2Controller {
             name="Authorization", value="Authentication Token",
             required=true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
-        consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = {"/search/calls", "/search/callsets", "/search/variants"},
+        method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchGenotypeCalls(
         @Valid @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
         HttpServletRequest request) {
@@ -1172,8 +1172,7 @@ public class BrapiV2Controller {
         @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
             @RequestParam(value = "pageSize", required = false,
                 defaultValue = BrapiDefaults.pageSize) Integer pageSize,
-        HttpServletRequest request
-    ) {
+        HttpServletRequest request) {
 
         try {
 
@@ -1192,7 +1191,6 @@ public class BrapiV2Controller {
                     pagedResult.getResult(), pagedResult.getCurrentPageSize(),
                     pagedResult.getNextPageToken());
 
-
             return ResponseEntity.ok(payload);
 
         }
@@ -1204,6 +1202,69 @@ public class BrapiV2Controller {
                 "Internal Server Error " + e.getMessage()
             );
 
+        }
+    }
+
+    @ApiOperation(
+        value = "List Variants for Genotypes SearchQuery",
+        notes = "List of all the variants for given genotypes search query",
+        tags = {"Genotype Calls"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Variants for Genotypes SearchQuery")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/calls/{searchResultDbId}/variants", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<VariantDTO>>
+    getVariantsForGenotypesSearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
+        @PathVariable String searchResultDbId,
+        @ApiParam(value = "Page Token to fetch a page. " +
+            "Value is $metadata.pagination.nextPageToken form previous page.")
+        @RequestParam(value = "pageToken", required = false) String pageToken,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @RequestParam(value = "pageSize", required = false,
+            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        HttpServletRequest request
+    ) {
+
+        try {
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
+                searchService.getGenotypesSearchQuery(searchResultDbId, cropType);
+
+            PagedResult<VariantDTO> pagedResult =
+                genotypeCallsService.getVariantsByGenotypesExtractQuery(
+                    genotypeCallsSearchQueryDTO, pageSize, pageToken);
+
+            BrApiMasterListPayload<VariantDTO> payload =
+                new BrApiMasterListPayload<>(pagedResult.getResult(),
+                    pagedResult.getCurrentPageSize(), pagedResult.getNextPageToken());
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
+            );
         }
     }
 
@@ -1271,7 +1332,6 @@ public class BrapiV2Controller {
 
         }
     }
-
 
     @ApiOperation(
         value = "Download Genotypes in VariantSet",
