@@ -1099,8 +1099,8 @@ public class BrapiV2Controller {
             name="Authorization", value="Authentication Token",
             required=true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value = {"/search/calls", "/search/callsets", "/search/variants"},
-        method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = "/search/calls", method = RequestMethod.POST,
+        consumes = "application/json", produces = "application/json")
     public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchGenotypeCalls(
         @Valid @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
         HttpServletRequest request) {
@@ -1138,6 +1138,67 @@ public class BrapiV2Controller {
             );
         }
     }
+
+    @ApiOperation(
+        value = "Search Samples", notes = "Creates a search query for samples",
+        tags = {"Samples"}, extensions = {
+        @Extension(properties = {
+            @ExtensionProperty(name="summary", value="Search Samples")
+        })
+    }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "", response = SearchResultResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/samples", method = RequestMethod.POST,
+        consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchGenotypeCalls(
+        @Valid @RequestBody SamplesSearchQueryDTO samplesSearchQuery,
+        HttpServletRequest request) {
+
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            if (samplesSearchQuery != null) {
+
+                SearchResultDTO searchResultDTO =
+                    searchService.createSearchQueryResource(cropType, samplesSearchQuery);
+
+                BrApiMasterPayload<SearchResultDTO> payload =
+                    new BrApiMasterPayload<>(searchResultDTO);
+
+                return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
+
+            }
+            else {
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing Request body"
+                );
+            }
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
+            );
+        }
+    }
+
 
     @ApiOperation(
         value = "List Genotypes for SearchQuery",
@@ -1179,7 +1240,8 @@ public class BrapiV2Controller {
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
             GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
-                searchService.getGenotypesSearchQuery(searchResultDbId, cropType);
+                (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
+                    searchResultDbId, cropType, GenotypeCallsSearchQueryDTO.class);
 
             PagedResult<GenotypeCallsDTO> pagedResult =
                 genotypeCallsService
@@ -1204,6 +1266,68 @@ public class BrapiV2Controller {
 
         }
     }
+
+    @ApiOperation(
+        value = "List Samples for SearchQuery",
+        notes = "List of all the samples for given search query",
+        tags = {"Samples"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Samples for SearchQuery")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/samples/{searchResultDbId}", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<SamplesDTO>> getSamplesBySearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
+        @PathVariable String searchResultDbId,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @RequestParam(value = "pageSize", required = false,
+            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Page number", defaultValue = BrapiDefaults.pageNum)
+        @RequestParam(value = "page", required = false,
+            defaultValue = BrapiDefaults.pageNum) Integer page,
+        HttpServletRequest request) {
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            SamplesSearchQueryDTO samplesSearchQuery = (SamplesSearchQueryDTO)
+                searchService.getSearchQuery(searchResultDbId, cropType,
+                    SamplesSearchQueryDTO.class);
+
+            PagedResult<SamplesDTO> pagedResult = samplesBrapiService
+                    .getSamplesBySamplesSearchQuery(samplesSearchQuery, pageSize, page);
+
+            BrApiMasterListPayload<SamplesDTO> payload = new BrApiMasterListPayload<>(
+                pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                pagedResult.getNextPageToken());
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage());
+        }
+    }
+
 
     @ApiOperation(
         value = "List Variants for Genotypes SearchQuery",
@@ -1245,8 +1369,9 @@ public class BrapiV2Controller {
         try {
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
-                searchService.getGenotypesSearchQuery(searchResultDbId, cropType);
+            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO = (GenotypeCallsSearchQueryDTO)
+                searchService.getSearchQuery(searchResultDbId, cropType,
+                    GenotypeCallsSearchQueryDTO.class);
 
             PagedResult<VariantDTO> pagedResult =
                 genotypeCallsService.getVariantsByGenotypesExtractQuery(
@@ -1304,21 +1429,21 @@ public class BrapiV2Controller {
             defaultValue = BrapiDefaults.pageSize) Integer pageSize,
         HttpServletRequest request
     ) {
-
         try {
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
 
-            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
-                searchService.getGenotypesSearchQuery(searchResultDbId, cropType);
+            GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO = (GenotypeCallsSearchQueryDTO)
+                searchService.getSearchQuery(searchResultDbId, cropType,
+                    GenotypeCallsSearchQueryDTO.class);
 
             PagedResult<CallSetDTO> pagedResult =
-                genotypeCallsService.getCallSetsByGenotypesExtractQuery(
-                    genotypeCallsSearchQueryDTO, pageSize, pageToken);
+                genotypeCallsService
+                    .getCallSetsByGenotypesExtractQuery(
+                        genotypeCallsSearchQueryDTO, pageSize, pageToken);
 
-            BrApiMasterListPayload<CallSetDTO> payload =
-                new BrApiMasterListPayload<>(
-                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
-                    pagedResult.getNextPageToken());
+            BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
+                pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                pagedResult.getNextPageToken());
 
             return ResponseEntity.ok(payload);
         }

@@ -76,14 +76,11 @@ public class DaoTestSetUp {
     }
 
     public void createTestGermplasms(int numOfGermplasms) {
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
+        Cv newStatus = cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         for(int i = 0; i < numOfGermplasms; i++) {
             Germplasm germplasm = new Germplasm();
-            germplasm.setGermplasmName(
-                RandomStringUtils.random(7, true, true));
+            germplasm.setGermplasmName(RandomStringUtils.random(7, true, true));
             germplasm.setExternalCode(RandomStringUtils.random(7, true, true));
             germplasm.setStatus(newStatus);
             em.persist(germplasm);
@@ -104,18 +101,11 @@ public class DaoTestSetUp {
         }
         for(int i = 0; i < numOfDnaSamples; i++) {
             DnaSample dnaSample = new DnaSample();
-            dnaSample.setDnaSampleName(
-                RandomStringUtils.random(7, true, true));
-            dnaSample.setProjectId(
-                createdProjects
-                    .get(random.nextInt(createdProjects.size()))
-                    .getProjectId());
-            dnaSample.setGermplasm(
-                createdGermplasms
-                    .get(random.nextInt(createdGermplasms.size())));
+            dnaSample.setDnaSampleName(RandomStringUtils.random(7, true, true));
+            dnaSample.setProject(createdProjects.get(random.nextInt(createdProjects.size())));
+            dnaSample.setGermplasm(createdGermplasms.get(random.nextInt(createdGermplasms.size())));
             dnaSample.setStatus(newStatus);
-            dnaSample.setDnaSampleUuid(
-                RandomStringUtils.random(10, true, true));
+            dnaSample.setDnaSampleUuid(RandomStringUtils.random(10, true, true));
             em.persist(dnaSample);
             createdDnaSamples.add(dnaSample);
         }
@@ -207,10 +197,6 @@ public class DaoTestSetUp {
 
     public void createTestDatasets(int numOfDatasets) {
 
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         List<Cv> datasetTypes = cvDao.getCvListByCvGroup(
             CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);

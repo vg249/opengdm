@@ -3,16 +3,22 @@ package org.gobiiproject.gobiisampletrackingdao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -68,8 +74,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<DnaSample> criteriaQuery =
-                criteriaBuilder.createQuery(DnaSample.class);
+            CriteriaQuery<DnaSample> criteriaQuery = criteriaBuilder.createQuery(DnaSample.class);
 
             Root<DnaSample> dnaSampleRoot = criteriaQuery.from(DnaSample.class);
             criteriaQuery.select(dnaSampleRoot);
@@ -77,29 +82,27 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
             Join<Object, Object> germaplsmJoin =
                 (Join<Object, Object>) dnaSampleRoot.fetch("germplasm");
 
+            Join<Object, Object> projectJoin =
+                (Join<Object, Object>) dnaSampleRoot.fetch("project");
+
             if(dnaSampleId != null) {
-                predicates.add(
-                    criteriaBuilder.equal(
-                        dnaSampleRoot.get("dnaSampleId"), dnaSampleId));
+                predicates
+                    .add(criteriaBuilder.equal(dnaSampleRoot.get("dnaSampleId"), dnaSampleId));
             }
 
             if(projectId != null) {
-                predicates.add(
-                    criteriaBuilder.equal(
-                        dnaSampleRoot.get("projectId"), dnaSampleId));
+                predicates.add(criteriaBuilder.equal(projectJoin.get("projectId"), projectId));
             }
 
             if(germplasmId != null) {
-                predicates.add(
-                    criteriaBuilder.equal(
-                        germaplsmJoin.get("germplasmId"), germplasmId));
+                predicates
+                    .add(criteriaBuilder.equal(germaplsmJoin.get("germplasmId"), germplasmId));
             }
 
 
             if(germplasmExternalCode != null) {
-                predicates.add(
-                    criteriaBuilder.equal(
-                        germaplsmJoin.get("externalCode"),
+                predicates
+                    .add(criteriaBuilder.equal(germaplsmJoin.get("externalCode"),
                         germplasmExternalCode));
             }
 
@@ -223,6 +226,86 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
         return getDnaSamples(pageSize, rowOffset,
                 null, null,
                 null, germplasmExternalCode);
+
+    }
+
+    @Override
+    public List<DnaSample> getDnaSamples(
+        Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
+        Set<String> dnaSampleUuids, Set<Integer> germplasmIds,
+        Set<String> germplasmNames, Set<String> germplasmExternalCodes,
+        Set<Integer> projectIds, Integer pageSize, Integer rowOffset) {
+
+        List<DnaSample> dnasamples;
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        try {
+
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(rowOffset, "rowOffset : Required non null");
+
+            CriteriaBuilder cb  = em.getCriteriaBuilder();
+
+            CriteriaQuery<DnaSample> criteria = cb.createQuery(DnaSample.class);
+
+            //Set Root entity and selected entities
+            Root<DnaSample> root = criteria.from(DnaSample.class);
+
+            Join<Object, Object> germplasmJoin = (Join<Object, Object>) root.fetch("germplasm");;
+
+            Join<Object, Object> projectJoin = (Join<Object, Object>) root.fetch("project");;
+
+            criteria.select(root);
+
+            if(!CollectionUtils.isEmpty(dnaSampleNames)) {
+                predicates.add(root.get("dnaSampleName").in(dnaSampleNames));
+            }
+
+            if(!CollectionUtils.isEmpty(dnaSampleIds)) {
+                predicates.add(root.get("dnaSampleId").in(dnaSampleIds));
+            }
+
+            if(!CollectionUtils.isEmpty(dnaSampleUuids)) {
+                predicates.add(root.get("dnaSampleUuid").in(dnaSampleUuids));
+            }
+
+            if(!CollectionUtils.isEmpty(germplasmIds)) {
+                predicates.add(germplasmJoin.get("germplasmId").in(germplasmIds));
+            }
+
+            if(!CollectionUtils.isEmpty(germplasmNames)) {
+                predicates.add(germplasmJoin.get("germplasmName").in(germplasmNames));
+            }
+
+            if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
+                predicates.add(germplasmJoin.get("externalCode").in(germplasmExternalCodes));
+            }
+
+            if(!CollectionUtils.isEmpty(projectIds)) {
+                predicates.add(projectJoin.get("projectId").in(projectIds));
+            }
+
+            criteria.where(predicates.toArray(new Predicate[]{}));
+
+            Query query =  em.createQuery(criteria);
+
+            query
+                .setMaxResults(pageSize)
+                .setFirstResult(rowOffset);
+
+            dnasamples = query.getResultList();
+
+            return dnasamples;
+
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
 
     }
 

@@ -17,6 +17,7 @@ public class MockSetup {
 
     public List<Germplasm> mockGermplasms;
     public List<DnaSample> mockDnaSamples;
+    public List<Project> mockProjects;
     public List<Experiment> mockExperiments;
     public List<DnaRun> mockDnaRuns;
     public List<Cv> mockGermplasmProps;
@@ -92,6 +93,16 @@ public class MockSetup {
         }
     }
 
+    public void createMockProjects(int numProjects) {
+        mockProjects = new ArrayList<>();
+        for(int i = 0; i < numProjects; i++) {
+            Project project= new Project();
+            project.setProjectId(i+1);
+            project.setProjectName(RandomStringUtils.random(7, true, true));
+            mockProjects.add(project);
+        }
+    }
+
     public void createMockGermplsms(int numGermplasms) {
         mockGermplasms = new ArrayList<>();
         if(CollectionUtils.isEmpty(mockGermplasmProps)) {
@@ -126,6 +137,10 @@ public class MockSetup {
             createMockGermplsms(Math.round(numDnaSamples / 2));
         }
 
+        if(CollectionUtils.isEmpty(mockProjects)) {
+            createMockProjects(Math.round(numDnaSamples / 2));
+        }
+
         if(CollectionUtils.isEmpty((mockDnaSampleProps))) {
             createMockDnaSampleProps(5);
         }
@@ -138,7 +153,7 @@ public class MockSetup {
             dnaSample.setDnaSampleName(RandomStringUtils.random(7, true, true));
             dnaSample.setDnaSampleNum(RandomStringUtils.random(4, false, true));
             dnaSample.setDnaSampleUuid(UUID.randomUUID().toString());
-            dnaSample.setProjectId(i);
+            dnaSample.setProject(mockProjects.get(random.nextInt(mockProjects.size())));
 
             ObjectNode properties = JsonNodeFactory.instance.objectNode();
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.SearchResultDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -24,8 +25,8 @@ public class SearchServiceImpl implements SearchService {
     protected ConfigSettingsService configSettingsService;
 
     @Override
-    public SearchResultDTO createSearchQueryResource(String cropType,
-                                                     GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO) {
+    public SearchResultDTO createSearchQueryResource(
+        String cropType, Object queryObject) {
 
         if (cropType == null) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR,
@@ -47,7 +48,7 @@ public class SearchServiceImpl implements SearchService {
 
             extractQueryFile.getParentFile().mkdirs();
 
-            objectMapper.writeValue(extractQueryFile, genotypeCallsSearchQueryDTO);
+            objectMapper.writeValue(extractQueryFile, queryObject);
 
             searchResultDTO.setSearchResultDbId(resourceId);
 
@@ -69,10 +70,12 @@ public class SearchServiceImpl implements SearchService {
                 "searchQuery.json").toString();
     }
 
-    @Override
-    public GenotypeCallsSearchQueryDTO getGenotypesSearchQuery(String resourceId, String cropType) {
 
-        GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery;
+    @Override
+    public Object getSearchQuery(String resourceId, String cropType, Class searchQueryType) {
+
+        Object samplesSearchQuery;
+
         try {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -81,14 +84,14 @@ public class SearchServiceImpl implements SearchService {
 
             File extractQueryFile = new File(extractQueryPath);
 
-            genotypeCallsSearchQuery = mapper.readValue(extractQueryFile, GenotypeCallsSearchQueryDTO.class);
+            samplesSearchQuery =
+                searchQueryType.cast(mapper.readValue(extractQueryFile, searchQueryType));
 
-            return genotypeCallsSearchQuery;
+            return samplesSearchQuery;
 
         } catch (Exception e) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Internal Server Error");
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error");
 
         }
     }
