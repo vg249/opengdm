@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -20,6 +22,7 @@ import javax.transaction.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
 @Transactional
+@Slf4j
 public class ExperimentDaoTest {
 
     @Autowired
@@ -58,7 +61,7 @@ public class ExperimentDaoTest {
     }
 
     @Test
-    public void testFilterExperiemntsByProjectId() {
+    public void testFilterExperimentsByProjectId() {
 
         Integer testProjectId =
             daoTestSetUp
@@ -73,17 +76,13 @@ public class ExperimentDaoTest {
         int numOfExperimentsInProject = 0;
 
         for(Experiment experiment : daoTestSetUp.getCreatedExperiments()) {
-            if(experiment.getProject().getPiContactId() == testProjectId) {
+            if(experiment.getProject().getProjectId() == testProjectId) {
                 numOfExperimentsInProject++;
             }
         }
-
+        
         assertTrue("Filter Experiments by ProjectId failed.",
             numOfExperimentsInProject == experimentsByProjectId.size());
 
-        for(Experiment experiment : experimentsByProjectId) {
-            assertTrue("Filter Experiments by projectId failed",
-                numOfExperimentsInProject == experimentsByProjectId.size());
-        }
     }
 }

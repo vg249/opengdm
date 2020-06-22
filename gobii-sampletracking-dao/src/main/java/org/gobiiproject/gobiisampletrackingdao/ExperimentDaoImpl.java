@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -53,12 +54,12 @@ public class ExperimentDaoImpl implements ExperimentDao {
                     (Join<Object, Object>) experimentRoot
                             .fetch("project");
 
-            project.fetch("contact").fetch("organization");
+            project.fetch("contact").fetch("organization", JoinType.LEFT);
 
             Join<Object, Object>  vendorProtocol =
                     (Join<Object, Object>) experimentRoot
                             .fetch("vendorProtocol");
-            vendorProtocol.fetch("protocol").fetch("platform");
+            vendorProtocol.fetch("protocol", JoinType.LEFT).fetch("platform", JoinType.LEFT);
 
             criteriaQuery.select(experimentRoot);
 
