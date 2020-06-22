@@ -2,8 +2,12 @@ package org.gobiiproject.gobiimodel.entity;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
 import org.gobiiproject.gobiimodel.entity.JpaConverters.StringArrayConverter;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 
@@ -20,6 +24,12 @@ import javax.persistence.*;
     attributeNodes = 
         @NamedAttributeNode("platform")
 )
+@TypeDefs({
+    @TypeDef(
+        name = "string-array",
+        typeClass = StringArrayType.class
+    )
+})
 public class Marker {
 
     @Id
@@ -40,8 +50,8 @@ public class Marker {
     @Column(name="ref")
     private String ref;
 
-    @Column(name="alts")
-    @Convert(converter = StringArrayConverter.class)
+    @Column(name="alts", columnDefinition = "text[]")
+    @Type(type = "string-array")
     private String[] alts;
 
     @Column(name="sequence")
@@ -49,31 +59,31 @@ public class Marker {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reference_id")
-    private Reference reference = new Reference();
+    private Reference reference;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "strand_id", referencedColumnName = "cv_id")
-    private Cv strand = new Cv();
+    private Cv strand;
 
     @Column(name="primers", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode primers;
 
     @Column(name="probsets", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode probsets;
 
     @Column(name="dataset_marker_idx", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode datasetMarkerIdx;
 
     @Column(name="props", columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
+    @Type(type = "jsonb")
     private JsonNode properties;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    private Cv status;
 
     public Integer getMarkerId() {
         return markerId;

@@ -28,9 +28,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by VCalaminos on 7/18/2019.
- */
 @WebAppConfiguration
 public class SamplesServiceImplTest {
 
@@ -115,7 +112,6 @@ public class SamplesServiceImplTest {
 
             JsonNode jsonbObject = JsonNodeFactory.instance.objectNode();
 
-
             for(int i = 0; i < numberOfDnaSampleProperties; i++) {
 
                 Integer cvId = random.nextInt(cvList.size());
@@ -146,9 +142,8 @@ public class SamplesServiceImplTest {
 
 
         PagedResult<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
-                0, pageSize,
-                null, null,
-                null);
+                pageSize, 0,
+                1, 1,"");
 
         assertEquals("Size mismatch", samplesMock.size(), samplesBrapi.getResult().size());
 
@@ -208,14 +203,14 @@ public class SamplesServiceImplTest {
 
         when (
                 cvDao.getCvListByCvGroup(
-                        any(String.class), any(GobiiCvGroupType.class))
+                        any(String.class), isNull(GobiiCvGroupType.class))
         ).thenReturn(cvsMock);
 
 
         PagedResult<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
                 0, pageSize,
-                null, null,
-                null);
+                1, 1,
+                "");
 
         assertEquals(samplesMock.size(), samplesBrapi.getResult().size());
 
@@ -225,7 +220,7 @@ public class SamplesServiceImplTest {
 
 
             if (samplesMock.get(assertIndex).getProperties().size() > 0) {
-                assertEquals("AdditionalInfor object size is not equal to persistance object",
+                assertEquals("AdditionalInfo object size is not equal to persistence object",
                         samplesMock.get(assertIndex).getProperties().size(),
                         samplesBrapi.getResult().get(assertIndex).getAdditionalInfo().size());
 

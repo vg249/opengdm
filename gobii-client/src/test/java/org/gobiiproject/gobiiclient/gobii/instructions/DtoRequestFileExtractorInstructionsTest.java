@@ -1,14 +1,19 @@
 package org.gobiiproject.gobiiclient.gobii.instructions;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiclient.gobii.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.dto.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
@@ -22,6 +27,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +66,67 @@ public class DtoRequestFileExtractorInstructionsTest {
         String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
         extractorInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
+        // ****** Setup dataset
+        RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPE_NAME.toString()));
+        namesUri.setParamValue("filterValue", "analysis_type");
+
+        GobiiEnvelopeRestResource<NameIdDTO,NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
+        PayloadEnvelope<NameIdDTO> resultEnvelopeAnalysis = gobiiEnvelopeRestResourceForAnalysisTerms
+            .get(NameIdDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeAnalysis.getHeader()));
+        List<NameIdDTO> analysisTypes = resultEnvelopeAnalysis.getPayload().getData();
+
+        List<NameIdDTO> analysisProperTerms = new ArrayList<>(analysisTypes);
+        EntityParamValues entityParamValues = TestDtoFactory
+            .makeConstrainedEntityParams(analysisProperTerms, 1);
+
+        // ******** make analyses we'll need for the new data set
+        AnalysisDTO analysisDTORequest = TestDtoFactory
+            .makePopulatedAnalysisDTO(GobiiProcessType.CREATE, 1, entityParamValues);
+
+        PayloadEnvelope<AnalysisDTO> payloadEnvelopeAnalysis = new PayloadEnvelope<>(analysisDTORequest, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<AnalysisDTO,AnalysisDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+            .getUriFactory()
+            .resourceColl(RestResourceId.GOBII_ANALYSIS));
+        PayloadEnvelope<AnalysisDTO> analysisDTOResponseEnvelope = gobiiEnvelopeRestResource.post(AnalysisDTO.class,
+            payloadEnvelopeAnalysis);
+        AnalysisDTO callingAnalysisDTO = analysisDTOResponseEnvelope.getPayload().getData().get(0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponseEnvelope.getHeader()));
+
+        List<AnalysisDTO> analyses = new ArrayList<>();
+        analyses.add(TestDtoFactory
+            .makePopulatedAnalysisDTO(GobiiProcessType.CREATE,
+                2,
+                entityParamValues));
+        analyses.add(TestDtoFactory
+            .makePopulatedAnalysisDTO(GobiiProcessType.CREATE,
+                3,
+                entityParamValues));
+        analyses.add(TestDtoFactory
+            .makePopulatedAnalysisDTO(GobiiProcessType.CREATE,
+                4,
+                entityParamValues));
+
+        List<Integer> analysisIds = new ArrayList<>();
+        for (AnalysisDTO currentAnalysis : analyses) {
+
+            payloadEnvelopeAnalysis = new PayloadEnvelope<>(currentAnalysis, GobiiProcessType.CREATE);
+            gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(RestResourceId.GOBII_ANALYSIS));
+            analysisDTOResponseEnvelope = gobiiEnvelopeRestResource.post(AnalysisDTO.class,
+                payloadEnvelopeAnalysis);
+            AnalysisDTO createdAnalysis = analysisDTOResponseEnvelope.getPayload().getData().get(0);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponseEnvelope.getHeader()));
+
+            analysisIds.add(createdAnalysis.getAnalysisId());
+        }
+
+
+
 
         // ************** INSTRUCTION ONE
         GobiiExtractorInstruction gobiiExtractorInstructionOne = new GobiiExtractorInstruction();
@@ -66,25 +134,57 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiExtractorInstructionOne.setGobiiCropType(cropTypeFromContext);
 
         // ************** DATA SET EXTRACT ONE
+        DataSetDTO dataSetDTORequest = TestDtoFactory
+            .makePopulatedDataSetDTO(1,
+                callingAnalysisDTO.getAnalysisId(),
+                analysisIds);
+
+        RestUri projectsCollUri = GobiiClientContext.getInstance(null, false)
+            .getUriFactory()
+            .resourceColl(RestResourceId.GOBII_DATASETS);
+        GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceForDataSetPost = new GobiiEnvelopeRestResource<>(projectsCollUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeDataset = gobiiEnvelopeRestResourceForDataSetPost
+            .post(DataSetDTO.class, new PayloadEnvelope<>(dataSetDTORequest, GobiiProcessType.CREATE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataset.getHeader()));
+        DataSetDTO dataSetDTOResponse = resultEnvelopeDataset.getPayload().getData().get(0);
+
+
         GobiiDataSetExtract gobiiDataSetExtractOne = new GobiiDataSetExtract();
         gobiiDataSetExtractOne.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         GobiiFileType DataSetExtractOneFileType = GobiiFileType.HAPMAP;
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
-        String dataSetExtractOneName = "1my_foo_Dataset1";
-        gobiiDataSetExtractOne.setDataSet(new PropNameId(1,dataSetExtractOneName));
+        String dataSetExtractOneName = dataSetDTOResponse.getDatasetName();
+        gobiiDataSetExtractOne.setDataSet(new PropNameId(dataSetDTOResponse.getId(),dataSetDTOResponse.getDatasetName()));
         gobiiDataSetExtractOne.setAccolate(true);
 
 
         // ************** DATA SET EXTRACT two
+
+        DataSetDTO dataSetDTORequest2 = TestDtoFactory
+            .makePopulatedDataSetDTO(2,
+                callingAnalysisDTO.getAnalysisId(),
+                analysisIds);
+
+
+        gobiiEnvelopeRestResourceForDataSetPost = new GobiiEnvelopeRestResource<>(projectsCollUri);
+        resultEnvelopeDataset = gobiiEnvelopeRestResourceForDataSetPost
+            .post(DataSetDTO.class, new PayloadEnvelope<>(dataSetDTORequest, GobiiProcessType.CREATE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataset.getHeader()));
+        DataSetDTO dataSetDTOResponse2 = resultEnvelopeDataset.getPayload().getData().get(0);
+
+
+
         GobiiDataSetExtract gobiiDataSetExtractTwo = new GobiiDataSetExtract();
         gobiiDataSetExtractTwo.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         GobiiFileType DataSetExtractFileTypeTwo = GobiiFileType.FLAPJACK;
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
-        String DataSetExtractNameTwo = "1my_foo_Dataset2";
+        String DataSetExtractNameTwo = dataSetDTOResponse2.getDatasetName();
         gobiiDataSetExtractTwo.setAccolate(true);
         //gobiiDataSetExtractTwo.getMarkerList().add("m1");
         //gobiiDataSetExtractTwo.getSampleList().add("s1");
-        gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,DataSetExtractNameTwo));
+        gobiiDataSetExtractTwo.setDataSet(new PropNameId(dataSetDTOResponse2.getId(),dataSetDTOResponse2.getDatasetName()));
 
 
         gobiiExtractorInstructionOne.getDataSetExtracts().add(gobiiDataSetExtractOne);
@@ -108,14 +208,14 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractOne.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtractOne.setAccolate(true);
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
-        gobiiDataSetExtractOne.setDataSet(new PropNameId(1,"my_foo_2Dataset"));
+        gobiiDataSetExtractOne.setDataSet(new PropNameId(dataSetDTOResponse.getId(),dataSetDTOResponse.getDatasetName()));
 
         // column two
         gobiiDataSetExtractTwo = new GobiiDataSetExtract();
         gobiiDataSetExtractTwo.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtractTwo.setAccolate(true);
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
-        gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,"my_foo_2Dataset2"));
+        gobiiDataSetExtractTwo.setDataSet(new PropNameId(dataSetDTOResponse2.getId(),dataSetDTOResponse2.getDatasetName()));
 
 
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractOne);

@@ -36,23 +36,17 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
         try {
 
-            Objects.requireNonNull(pageSize,
-                    "pageSize : Required non null");
-            Objects.requireNonNull(pageSize,
-                    "rowOffset : Required non null");
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageSize, "rowOffset : Required non null");
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<Experiment> criteriaQuery =
-                    criteriaBuilder.createQuery(Experiment.class);
+            CriteriaQuery<Experiment> criteriaQuery = criteriaBuilder.createQuery(Experiment.class);
 
-            Root<Experiment> experimentRoot =
-                    criteriaQuery
-                            .from(Experiment.class);
+            Root<Experiment> experimentRoot = criteriaQuery.from(Experiment.class);
+            criteriaQuery.select(experimentRoot);
 
-            Join<Object, Object> project =
-                    (Join<Object, Object>) experimentRoot
-                            .fetch("project");
+            Join<Object, Object> project = (Join<Object, Object>) experimentRoot.fetch("project");
 
             project.fetch("contact");
 
@@ -61,29 +55,23 @@ public class ExperimentDaoImpl implements ExperimentDao {
                             .fetch("vendorProtocol");
             vendorProtocol.fetch("protocol", JoinType.LEFT).fetch("platform", JoinType.LEFT);
 
-            criteriaQuery.select(experimentRoot);
 
             if(projectId != null) {
-                criteriaQuery.where(
-                        criteriaBuilder.equal(
-                                project.get("projectId"), projectId));
+                criteriaQuery.where(criteriaBuilder.equal(project.get("projectId"), projectId));
             }
 
-            experiments = em
-                    .createQuery(criteriaQuery)
-                    .setFirstResult(rowOffset)
-                    .setMaxResults(pageSize)
-                    .getResultList();
+            experiments = em.createQuery(criteriaQuery)
+                .setFirstResult(rowOffset)
+                .setMaxResults(pageSize)
+                .getResultList();
 
             return experiments;
 
         } catch (Exception e) {
+
             e.printStackTrace();
             log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                 e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }

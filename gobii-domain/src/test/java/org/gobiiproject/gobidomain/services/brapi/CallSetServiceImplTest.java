@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by VCalaminos on 7/18/2019.
- */
 @WebAppConfiguration
 public class CallSetServiceImplTest {
 

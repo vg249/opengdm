@@ -361,7 +361,7 @@ class ValidationUtil {
      */
     static boolean readFileIntoMemory(String fileName, List<String[]> collectList, List<Failure> failureList) throws MaximumErrorsValidationException {
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            collectList.addAll(stream.map(line -> line.split("\t")).collect(Collectors.toList()));
+            collectList.addAll(stream.map(line -> line.split("\t",-1)).collect(Collectors.toList()));
             if (collectList.size() == 0) {
                 createFailure(FailureTypes.EMPTY_FILE, new ArrayList<>(), fileName, failureList);
                 return false;

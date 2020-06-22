@@ -92,12 +92,10 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
             }
 
             if(minPosition != null) {
-                predicates.add(
-                    cb.ge(markerLinkageGroup.get("start"), minPosition));
+                predicates.add(cb.ge(markerLinkageGroup.get("start"), minPosition));
             }
             if(maxPosition != null) {
-                predicates.add(
-                    cb.le(markerLinkageGroup.get("stop"), maxPosition));
+                predicates.add(cb.le(markerLinkageGroup.get("stop"), maxPosition));
             }
 
             if(datasetId != null) {

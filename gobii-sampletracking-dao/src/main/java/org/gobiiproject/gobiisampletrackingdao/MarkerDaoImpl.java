@@ -40,8 +40,8 @@ public class MarkerDaoImpl implements MarkerDao {
     protected EntityManager em;
 
     @Override
-    public List<Marker> getMarkers(Integer pageSize, Integer rowOffset, Integer markerId, Integer datasetId)
-            throws GobiiException {
+    public List<Marker> getMarkers(Integer pageSize, Integer rowOffset,
+                                   Integer markerId, Integer datasetId) throws GobiiException {
 
         List<Marker> markers;
 
