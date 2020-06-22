@@ -1201,6 +1201,65 @@ public class BrapiV2Controller {
 
 
     @ApiOperation(
+        value = "Search Variants", notes = "Creates a search query for variants",
+        tags = {"Variants"}, extensions = {
+        @Extension(properties = {
+            @ExtensionProperty(name="summary", value="Search Variants")
+        })
+    }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "", response = SearchResultResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/variants", method = RequestMethod.POST,
+        consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchVariants(
+        @Valid @RequestBody VariantsSearchQueryDTO variantsSearchQuery,
+        HttpServletRequest request) {
+
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            if (variantsSearchQuery != null) {
+
+                SearchResultDTO searchResultDTO =
+                    searchService.createSearchQueryResource(cropType, variantsSearchQuery);
+
+                BrApiMasterPayload<SearchResultDTO> payload =
+                    new BrApiMasterPayload<>(searchResultDTO);
+
+                return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
+
+            }
+            else {
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing Request body"
+                );
+            }
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
+            );
+        }
+    }
+
+    @ApiOperation(
         value = "Search CallSets", notes = "Creates a search query for callsets",
         tags = {"CallSets"}, extensions = {
         @Extension(properties = {
@@ -1449,6 +1508,67 @@ public class BrapiV2Controller {
     }
 
     @ApiOperation(
+        value = "List Variants for SearchQuery",
+        notes = "List of all the variants for given search query",
+        tags = {"Variants"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Variants for SearchQuery")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/variants/{searchResultDbId}", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<VariantDTO>> getVariantsBySearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
+        @PathVariable String searchResultDbId,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @RequestParam(value = "pageSize", required = false,
+            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Page Token to fetch a page. " +
+            "Value is $metadata.pagination.nextPageToken form previous page.")
+        @RequestParam(value = "pageToken", required = false) String pageToken,
+        HttpServletRequest request) {
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            VariantsSearchQueryDTO variantsSearchQuery = (VariantsSearchQueryDTO)
+                searchService.getSearchQuery(searchResultDbId, cropType,
+                    VariantsSearchQueryDTO.class);
+
+            PagedResult<VariantDTO> pagedResult = variantService
+                .getVariantsByVariantSearchQuery(variantsSearchQuery, pageSize, pageToken);
+
+            BrApiMasterListPayload<VariantDTO> payload = new BrApiMasterListPayload<>(
+                pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                pagedResult.getNextPageToken());
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage());
+        }
+    }
+
+    @ApiOperation(
         value = "List Variants for Genotypes SearchQuery",
         notes = "List of all the variants for given genotypes search query",
         tags = {"Genotype Calls"},
@@ -1493,7 +1613,7 @@ public class BrapiV2Controller {
                     GenotypeCallsSearchQueryDTO.class);
 
             PagedResult<VariantDTO> pagedResult =
-                genotypeCallsService.getVariantsByGenotypesExtractQuery(
+                variantService.getVariantsByGenotypesExtractQuery(
                     genotypeCallsSearchQueryDTO, pageSize, pageToken);
 
             BrApiMasterListPayload<VariantDTO> payload =
@@ -1555,10 +1675,8 @@ public class BrapiV2Controller {
                 searchService.getSearchQuery(searchResultDbId, cropType,
                     GenotypeCallsSearchQueryDTO.class);
 
-            PagedResult<CallSetDTO> pagedResult =
-                genotypeCallsService
-                    .getCallSetsByGenotypesExtractQuery(
-                        genotypeCallsSearchQueryDTO, pageSize, pageToken);
+            PagedResult<CallSetDTO> pagedResult = callSetService.getCallSetsByGenotypesExtractQuery(
+                genotypeCallsSearchQueryDTO, pageSize, pageToken);
 
             BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
                 pagedResult.getResult(), pagedResult.getCurrentPageSize(),

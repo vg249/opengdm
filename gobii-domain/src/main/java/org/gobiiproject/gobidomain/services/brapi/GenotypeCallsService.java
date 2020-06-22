@@ -29,15 +29,7 @@ public interface GenotypeCallsService {
         Integer pageSize,
         String pageToken) throws GobiiDomainException;
 
-    PagedResult<CallSetDTO> getCallSetsByGenotypesExtractQuery(
-        GenotypeCallsSearchQueryDTO genotypesSearchQuery,
-        Integer pageSize,
-        String pageToken) throws GobiiDomainException;
 
-    PagedResult<VariantDTO> getVariantsByGenotypesExtractQuery(
-        GenotypeCallsSearchQueryDTO genotypesSearchQuery,
-        Integer pageSize,
-        String pageToken) throws GobiiDomainException;
 
     String getGenotypeCallsAsString(Integer datasetId, Integer pageNum);
 

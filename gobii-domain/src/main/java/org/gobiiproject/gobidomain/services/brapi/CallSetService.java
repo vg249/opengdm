@@ -1,7 +1,9 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 
@@ -19,6 +21,10 @@ public interface CallSetService {
     PagedResult<CallSetDTO> getCallSetsBySearchQuery(CallSetsSearchQueryDTO callSetsSearchQuery,
                                                      Integer pageSize, Integer pageNum);
 
-    List<CallSetDTO> mapDnaRunsToCallSetDtos(List<DnaRun> dnaRuns);
+    PagedResult<CallSetDTO> getCallSetsByGenotypesExtractQuery(
+        GenotypeCallsSearchQueryDTO genotypesSearchQuery,
+        Integer pageSize,
+        String pageToken) throws GobiiDomainException;
+
 
 }

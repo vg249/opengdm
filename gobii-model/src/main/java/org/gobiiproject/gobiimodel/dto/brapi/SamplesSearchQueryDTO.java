@@ -26,9 +26,6 @@ public class SamplesSearchQueryDTO {
     @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
     private Set<String> samplePUIs = new HashSet<>();
 
-    @Size(max = 1000, message = "Only 1000 variantDbIds allowed per query")
-    private Set<Integer> variantDbIds = new HashSet<>();
-
     @Size(max = 1000, message = "Only 1000 germplasmDbIds allowed per query")
     private Set<Integer> germplasmDbIds = new HashSet<>();
 
@@ -75,14 +72,6 @@ public class SamplesSearchQueryDTO {
 
     public void setSamplePUIs(Set<String> samplePUIs) {
         this.samplePUIs = samplePUIs;
-    }
-
-    public Set<Integer> getVariantDbIds() {
-        return variantDbIds;
-    }
-
-    public void setVariantDbIds(Set<Integer> variantDbIds) {
-        this.variantDbIds = variantDbIds;
     }
 
     public Set<Integer> getGermplasmDbIds() {

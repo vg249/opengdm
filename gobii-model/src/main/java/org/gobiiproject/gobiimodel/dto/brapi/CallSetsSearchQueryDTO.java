@@ -30,17 +30,8 @@ public class CallSetsSearchQueryDTO {
     @Size(max = 1000, message = "Only 1000 sampleDbIds allowed per query")
     private Set<String> samplePUIs = new HashSet<>();
 
-    @Size(max = 1000, message = "Only 1000 variantDbIds allowed per query")
-    private Set<Integer> variantDbIds = new HashSet<>();
-
-    @Size(max = 1000, message = "Only 1000 variantNames allowed per query")
-    private Set<String> variantNames = new HashSet<>();
-
     @Size(max = 1000, message = "Only 1000 variantSetDbIds allowed per query")
     private Set<String> variantSetDbIds = new HashSet<>();
-
-    @Size(max = 1000, message = "Only 1000 variantSetNames allowed per query")
-    private Set<String> variantSetNames = new HashSet<>();
 
     @Size(max = 1000, message = "Only 1000 germplasmPUIs allowed per query")
     private Set<String> germplasmPUIs = new HashSet<>();
@@ -65,38 +56,6 @@ public class CallSetsSearchQueryDTO {
 
     public void setCallSetNames(Set<String> callSetNames) {
         this.callSetNames = callSetNames;
-    }
-
-    public Set<Integer> getVariantDbIds() {
-        return variantDbIds;
-    }
-
-    public void setVariantDbIds(Set<Integer> variantDbIds) {
-        this.variantDbIds = variantDbIds;
-    }
-
-    public Set<String> getVariantNames() {
-        return variantNames;
-    }
-
-    public void setVariantNames(Set<String> variantNames) {
-        this.variantNames = variantNames;
-    }
-
-    public Set<String> getVariantSetDbIds() {
-        return variantSetDbIds;
-    }
-
-    public void setVariantSetDbIds(Set<String> variantSetDbIds) {
-        this.variantSetDbIds = variantSetDbIds;
-    }
-
-    public Set<String> getVariantSetNames() {
-        return variantSetNames;
-    }
-
-    public void setVariantSetNames(Set<String> variantSetNames) {
-        this.variantSetNames = variantSetNames;
     }
 
     public Set<String> getGermplasmPUIs() {
@@ -135,6 +94,14 @@ public class CallSetsSearchQueryDTO {
         return germplasmDbIds;
     }
 
+    public Set<String> getVariantSetDbIds() {
+        return variantSetDbIds;
+    }
+
+    public void setVariantSetDbIds(Set<String> variantSetDbIds) {
+        this.variantSetDbIds = variantSetDbIds;
+    }
+
     public void setGermplasmDbIds(Set<Integer> germplasmDbIds) {
         this.germplasmDbIds = germplasmDbIds;
     }
@@ -149,18 +116,13 @@ public class CallSetsSearchQueryDTO {
 
     @JsonIgnore
     public boolean isCallSetsQueriesEmpty() {
-        return CollectionUtils.isEmpty(this.getCallSetDbIds()) &&
-            CollectionUtils.isEmpty(this.getCallSetNames()) &&
-            CollectionUtils.isEmpty(this.getSampleDbIds()) &&
-            CollectionUtils.isEmpty(this.getSampleNames()) &&
-            CollectionUtils.isEmpty(this.getSamplePUIs()) &&
-            CollectionUtils.isEmpty(this.getGermplasmPUIs());
+        return CollectionUtils.isEmpty(getCallSetDbIds()) &&
+            CollectionUtils.isEmpty(getCallSetNames()) &&
+            CollectionUtils.isEmpty(getSampleDbIds()) &&
+            CollectionUtils.isEmpty(getSampleNames()) &&
+            CollectionUtils.isEmpty(getSamplePUIs()) &&
+            CollectionUtils.isEmpty(getGermplasmPUIs());
 
     }
 
-    @JsonIgnore
-    public boolean isVariantsQueriesEmpty() {
-        return CollectionUtils.isEmpty(this.getVariantDbIds()) &&
-            CollectionUtils.isEmpty(this.getVariantNames());
-    }
 }

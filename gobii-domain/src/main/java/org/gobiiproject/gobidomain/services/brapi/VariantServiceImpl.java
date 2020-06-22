@@ -1,19 +1,21 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.VariantsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.system.GenotypesRunTimeCursors;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
+import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,9 @@ public class VariantServiceImpl implements VariantService {
 
     @Autowired
     protected MarkerDao markerDao;
+
+    @Autowired
+    private DnaRunDao dnaRunDao = null;
 
     @Override
     public PagedResult<VariantDTO> getVariants(Integer pageSize, String pageToken,
@@ -86,8 +91,7 @@ public class VariantServiceImpl implements VariantService {
         }
     }
 
-    @Override
-    public List<VariantDTO> mapMarkersToVariant(List<Marker> markers) {
+    private List<VariantDTO> mapMarkersToVariant(List<Marker> markers) {
 
         List<VariantDTO> variants = new ArrayList<>();
 
@@ -152,7 +156,171 @@ public class VariantServiceImpl implements VariantService {
 
     }
 
+    @Override
+    public PagedResult<VariantDTO> getVariantsByVariantSearchQuery(
+        VariantsSearchQueryDTO variantsSearchQuery, Integer pageSize, String pageToken) {
 
+        PagedResult<VariantDTO> returnVal = new PagedResult<>();
+
+        List<VariantDTO> variants = new ArrayList<>();
+
+        Integer markerIdCursor = 0;
+
+        Map<String, Integer> nextPageCursorMap = new HashMap<>();
+
+        try {
+
+            if(pageToken != null) {
+                Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
+                markerIdCursor = pageTokenParts.getOrDefault("markerIdCursor", 0);
+            }
+
+
+            List<Marker> markers = markerDao.getMarkers(
+                variantsSearchQuery.getVariantDbIds(), variantsSearchQuery.getVariantNames(),
+                variantsSearchQuery.getVariantSetDbIds(), pageSize, markerIdCursor);
+
+            variants.addAll(mapMarkersToVariant(markers));
+
+            if(variants.size() == pageSize) {
+                nextPageCursorMap = new HashMap<>();
+                nextPageCursorMap.put("markerIdCursor", markerIdCursor);
+                String nextPageToken = PageToken.encode(nextPageCursorMap);
+                returnVal.setNextPageToken(nextPageToken);
+            }
+
+            returnVal.setResult(variants);
+            returnVal.setCurrentPageSize(variants.size());
+            return returnVal;
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+    }
+
+    @Override
+    public PagedResult<VariantDTO> getVariantsByGenotypesExtractQuery(
+        GenotypeCallsSearchQueryDTO genotypesSearchQuery,
+        Integer pageSize, String pageToken) throws GobiiDomainException {
+
+        final int dnaRunBinSize = 1000;
+
+        PagedResult<VariantDTO> returnVal = new PagedResult<>();
+
+        List<VariantDTO> variants = new ArrayList<>();
+
+        GenotypesRunTimeCursors cursors = new GenotypesRunTimeCursors();
+
+        List<DnaRun> dnaRuns = new ArrayList<>();
+
+        List<Marker> markers = new ArrayList<>();
+
+        Map<String, Integer> nextPageCursorMap = new HashMap<>();
+
+        try {
+
+            if(pageToken != null) {
+                Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
+
+                cursors.markerIdCursor = pageTokenParts.getOrDefault("markerIdCursor", 0);
+                cursors.dnaRunBinCursor = pageTokenParts.getOrDefault("dnaRunBinCursor", 0);
+            }
+
+            int remainingPageSize = 0;
+
+            while(variants.size() < pageSize) {
+
+                cursors.markerDatasetIds = new HashSet<>();
+                cursors.dnaRunDatasetIds = new HashSet<>();
+
+                remainingPageSize = pageSize - variants.size();
+
+                if (!genotypesSearchQuery.isCallSetsQueriesEmpty()) {
+
+                    dnaRuns = dnaRunDao.getDnaRuns(
+                        genotypesSearchQuery.getCallSetDbIds(),
+                        genotypesSearchQuery.getCallSetNames(),
+                        genotypesSearchQuery.getSampleDbIds(),
+                        genotypesSearchQuery.getSampleNames(),
+                        genotypesSearchQuery.getSamplePUIs(),
+                        genotypesSearchQuery.getGermplasmPUIs(),
+                        genotypesSearchQuery.getGermplasmDbIds(),
+                        genotypesSearchQuery.getGermplasmNames(),
+                        cursors.dnaRunDatasetIds,
+                        dnaRunBinSize, cursors.dnaRunBinCursor, null, false);
+
+                    if(dnaRuns.size() == 0) {
+                        break;
+                    }
+
+                    for(DnaRun dnaRun : dnaRuns) {
+                        cursors.dnaRunDatasetIds.addAll(
+                            JsonNodeUtils.getKeysFromJsonObject(dnaRun.getDatasetDnaRunIdx()));
+                    }
+
+                }
+
+                if(!CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
+                    cursors.markerDatasetIds
+                        .addAll(new HashSet<>(genotypesSearchQuery.getVariantSetDbIds()));
+                    cursors.markerDatasetIds.retainAll(cursors.dnaRunDatasetIds);
+                }
+                else {
+                    cursors.markerDatasetIds.addAll(cursors.dnaRunDatasetIds);
+                }
+
+                markers = markerDao.getMarkers(genotypesSearchQuery.getVariantDbIds(),
+                    genotypesSearchQuery.getVariantNames(),
+                    cursors.markerDatasetIds,
+                    remainingPageSize, cursors.markerIdCursor);
+
+                if(markers.size() > 0) {
+                    cursors.markerIdCursor = markers.get(markers.size() - 1).getMarkerId();
+                }
+
+                variants.addAll(mapMarkersToVariant(markers));
+
+                if(variants.size() < pageSize && dnaRuns.size() > 0) {
+                    cursors.dnaRunBinCursor = dnaRuns.get(dnaRuns.size() - 1).getDnaRunId();
+                    cursors.markerIdCursor = 0;
+                }
+                else if(variants.size() < pageSize && dnaRuns.size() == 0) {
+                    break;
+                }
+                else if(variants.size() == pageSize) {
+                    nextPageCursorMap = new HashMap<>();
+                    nextPageCursorMap.put("markerIdCursor", cursors.markerIdCursor);
+                    nextPageCursorMap.put("dnaRunBinCursor", cursors.dnaRunBinCursor);
+                    break;
+                }
+            }
+            if(nextPageCursorMap.size() > 0) {
+                String nextPageToken = PageToken.encode(nextPageCursorMap);
+                returnVal.setNextPageToken(nextPageToken);
+            }
+            returnVal.setResult(variants);
+            returnVal.setCurrentPageSize(variants.size());
+            return returnVal;
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+    }
 
 
 }
