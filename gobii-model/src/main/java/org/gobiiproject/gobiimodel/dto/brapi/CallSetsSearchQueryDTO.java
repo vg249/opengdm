@@ -1,22 +1,19 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
 import javax.validation.constraints.Size;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @CheckAtLeastOneNotNullOrEmpty(
         fieldNames = {
-            "callSetDbIds", "callSetNames", "variantDbIds", "variantNames",
-            "sampleDbIds", "sampleNames", "samplePUIs", "variantSetDbIds",
-            "germplasmPUIs"
+            "callSetDbIds", "callSetNames", "sampleDbIds", "sampleNames",
+            "samplePUIs", "variantSetDbIds", "germplasmPUIs"
         })
-public class GenotypeCallsSearchQueryDTO {
+public class CallSetsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetIds allowed per query")
     private Set<Integer> callSetDbIds = new HashSet<>();
@@ -152,10 +149,12 @@ public class GenotypeCallsSearchQueryDTO {
 
     @JsonIgnore
     public boolean isCallSetsQueriesEmpty() {
-        return CollectionUtils.isEmpty(callSetDbIds) && CollectionUtils.isEmpty(callSetNames) &&
-            CollectionUtils.isEmpty(sampleDbIds) && CollectionUtils.isEmpty(sampleNames) &&
-            CollectionUtils.isEmpty(samplePUIs) && CollectionUtils.isEmpty(germplasmPUIs) &&
-            CollectionUtils.isEmpty(germplasmDbIds) && CollectionUtils.isEmpty(germplasmNames);
+        return CollectionUtils.isEmpty(this.getCallSetDbIds()) &&
+            CollectionUtils.isEmpty(this.getCallSetNames()) &&
+            CollectionUtils.isEmpty(this.getSampleDbIds()) &&
+            CollectionUtils.isEmpty(this.getSampleNames()) &&
+            CollectionUtils.isEmpty(this.getSamplePUIs()) &&
+            CollectionUtils.isEmpty(this.getGermplasmPUIs());
 
     }
 

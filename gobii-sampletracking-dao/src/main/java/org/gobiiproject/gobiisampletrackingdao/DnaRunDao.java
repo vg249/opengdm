@@ -18,8 +18,9 @@ public interface DnaRunDao {
             Set<Integer> dnaRunIds, Set<String> dnaRunNames,
             Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
             Set<String> dnaSampleUuids, Set<String> germplasmExternalCodes,
+            Set<Integer> germplasmIds, Set<String> germplasmNames,
             Set<String> datasetIds, Integer pageSize,
-            Integer dnaRunIdCursor, boolean fetchAssociations);
+            Integer dnaRunIdCursor, Integer rowOffset, boolean fetchAssociations);
 
     List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
                             Integer dnaRunId, String dnaRunName,

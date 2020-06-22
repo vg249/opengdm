@@ -1161,7 +1161,7 @@ public class BrapiV2Controller {
     })
     @RequestMapping(value = "/search/samples", method = RequestMethod.POST,
         consumes = "application/json", produces = "application/json")
-    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchGenotypeCalls(
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchSamples(
         @Valid @RequestBody SamplesSearchQueryDTO samplesSearchQuery,
         HttpServletRequest request) {
 
@@ -1199,6 +1199,65 @@ public class BrapiV2Controller {
         }
     }
 
+
+    @ApiOperation(
+        value = "Search CallSets", notes = "Creates a search query for callsets",
+        tags = {"CallSets"}, extensions = {
+        @Extension(properties = {
+            @ExtensionProperty(name="summary", value="Search CallSets")
+        })
+    }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "", response = SearchResultResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/callsets", method = RequestMethod.POST,
+        consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchCallSets(
+        @Valid @RequestBody CallSetsSearchQueryDTO callSetsSearchQuery,
+        HttpServletRequest request) {
+
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            if (callSetsSearchQuery != null) {
+
+                SearchResultDTO searchResultDTO =
+                    searchService.createSearchQueryResource(cropType, callSetsSearchQuery);
+
+                BrApiMasterPayload<SearchResultDTO> payload =
+                    new BrApiMasterPayload<>(searchResultDTO);
+
+                return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
+
+            }
+            else {
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing Request body"
+                );
+            }
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
+            );
+        }
+    }
 
     @ApiOperation(
         value = "List Genotypes for SearchQuery",
@@ -1314,7 +1373,7 @@ public class BrapiV2Controller {
 
             BrApiMasterListPayload<SamplesDTO> payload = new BrApiMasterListPayload<>(
                 pagedResult.getResult(), pagedResult.getCurrentPageSize(),
-                pagedResult.getNextPageToken());
+                pagedResult.getCurrentPageNum());
 
             return ResponseEntity.ok(payload);
 
@@ -1328,6 +1387,66 @@ public class BrapiV2Controller {
         }
     }
 
+    @ApiOperation(
+        value = "List CallSets for SearchQuery",
+        notes = "List of all the callsets for given search query",
+        tags = {"CallSets"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List CallSets for SearchQuery")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/callsets/{searchResultDbId}", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<CallSetDTO>> getCallSetsBySearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
+        @PathVariable String searchResultDbId,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @RequestParam(value = "pageSize", required = false,
+            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Page number", defaultValue = BrapiDefaults.pageNum)
+        @RequestParam(value = "page", required = false,
+            defaultValue = BrapiDefaults.pageNum) Integer page,
+        HttpServletRequest request) {
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            CallSetsSearchQueryDTO callSetsSearchQuery = (CallSetsSearchQueryDTO)
+                searchService.getSearchQuery(searchResultDbId, cropType,
+                    CallSetsSearchQueryDTO.class);
+
+            PagedResult<CallSetDTO> pagedResult = callSetService
+                .getCallSetsBySearchQuery(callSetsSearchQuery, pageSize, page);
+
+            BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
+                pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                pagedResult.getCurrentPageNum());
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage());
+        }
+    }
 
     @ApiOperation(
         value = "List Variants for Genotypes SearchQuery",

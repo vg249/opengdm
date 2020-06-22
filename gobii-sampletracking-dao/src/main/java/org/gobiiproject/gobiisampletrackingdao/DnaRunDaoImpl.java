@@ -346,12 +346,13 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     @Override
-    public List<DnaRun>
-    getDnaRuns(Set<Integer> dnaRunIds, Set<String> dnaRunNames,
-               Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
-               Set<String> dnaSampleUuids, Set<String> germplasmExternalCodes,
-               Set<String> datasetIds, Integer pageSize,
-               Integer dnaRunIdCursor, boolean fetchAssociations) {
+    public List<DnaRun> getDnaRuns(Set<Integer> dnaRunIds, Set<String> dnaRunNames,
+                                   Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
+                                   Set<String> dnaSampleUuids, Set<String> germplasmExternalCodes,
+                                   Set<Integer> germplasmIds, Set<String> germplasmNames,
+                                   Set<String> datasetIds, Integer pageSize,
+                                   Integer dnaRunIdCursor, Integer rowOffset,
+                                   boolean fetchAssociations) {
 
         List<DnaRun> dnaruns;
 
@@ -360,6 +361,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
         String[] datasetIdsArray = new String[]{};
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
 
             CriteriaBuilder cb  = em.getCriteriaBuilder();
 
@@ -400,19 +403,31 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     predicates.add(dnaSampleJoin.get("dnaSampleUuid").in(dnaSampleUuids));
                 }
 
-                if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
+                if(!CollectionUtils.isEmpty(germplasmExternalCodes) ||
+                    !CollectionUtils.isEmpty(germplasmIds) ||
+                    !CollectionUtils.isEmpty(germplasmNames)) {
+
                     if(fetchAssociations) {
                         germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
                     } else {
                         germplasmJoin = dnaSampleJoin.join("germplasm");
                     }
-                    predicates.add(germplasmJoin.get("externalCode").in(germplasmExternalCodes));
+                    if(!CollectionUtils.isEmpty(germplasmExternalCodes)) {
+                        predicates.add(
+                            germplasmJoin.get("externalCode").in(germplasmExternalCodes));
+                    }
+                    if(!CollectionUtils.isEmpty(germplasmIds)) {
+                        predicates.add(germplasmJoin.get("germplasmId").in(germplasmIds));
+                    }
+                    if(!CollectionUtils.isEmpty(germplasmNames)) {
+                        predicates.add(germplasmJoin.get("germplasmName").in(germplasmNames));
+                    }
                 }
             }
             else {
                 if(fetchAssociations) {
                     dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
-                    germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                    dnaSampleJoin.fetch("germplasm");
 
                 }
             }
@@ -433,14 +448,10 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 datasetIdsArray = datasetIds.toArray(new String[0]);
 
                 ParameterExpression<String[]> datasetIdsExp =
-                        cb.parameter(String[].class, "datasetIds");
+                    cb.parameter(String[].class, "datasetIds");
 
                 Expression<Boolean> datasetIdExists = cb.function(
-                        "JSONB_EXISTS_ANY",
-                        Boolean.class,
-                        root.get("datasetDnaRunIdx"),
-                        datasetIdsExp
-                );
+                    "JSONB_EXISTS_ANY", Boolean.class, root.get("datasetDnaRunIdx"), datasetIdsExp);
 
                 predicates.add(cb.isTrue(datasetIdExists));
 
@@ -452,8 +463,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     "Either dnaRunIds or dnaRunNames are required";
                 LOGGER.error(errorMsg);
                 throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    errorMsg);
+                    GobiiValidationStatusType.UNKNOWN, errorMsg);
             }
 
             if(!IntegerUtils.isNullOrZero(dnaRunIdCursor)) {
@@ -468,13 +478,14 @@ public class DnaRunDaoImpl implements DnaRunDao {
             Query query =  em.createQuery(criteria);
 
             if(!CollectionUtils.isEmpty(datasetIds)) {
-
                 query.unwrap(org.hibernate.query.Query.class)
                     .setParameter("datasetIds", datasetIdsArray, StringArrayType.INSTANCE);
             }
 
-            if(!IntegerUtils.isNullOrZero(pageSize)) {
-                query.setMaxResults(pageSize);
+            query.setMaxResults(pageSize);
+
+            if(!IntegerUtils.isNullOrZero(rowOffset)) {
+                query.setFirstResult(rowOffset);
             }
 
             dnaruns = query.getResultList();
@@ -503,9 +514,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
     public List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds) {
 
         return this.getDnaRuns(
-                dnaRunIds, null, null,
-                null, null, null,
-                null, null, null, false);
+                dnaRunIds, null, null, null,
+                null, null, null, null,
+                null, null, null, null, false);
     }
 
 
@@ -516,9 +527,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
      */
     @Override
     public List<DnaRun> getDnaRunsByDanRunNames(Set<String> dnaRunNames) {
-        return this.getDnaRuns(null, dnaRunNames, null,
-                null, null, null,
-                null, null, null, false);
+        return this.getDnaRuns(null, dnaRunNames, null, null,
+                null, null, null, null,
+                null, null, null, null, false);
     }
 
 }

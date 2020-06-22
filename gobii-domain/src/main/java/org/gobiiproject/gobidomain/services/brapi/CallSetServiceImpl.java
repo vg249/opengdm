@@ -1,17 +1,20 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.system.GenotypesRunTimeCursors;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -82,9 +85,10 @@ public class CallSetServiceImpl implements CallSetService {
     public CallSetDTO getCallSetById(Integer callSetDbId)
         throws GobiiException {
 
-        Objects.requireNonNull(callSetDbId);
 
         try {
+
+            Objects.requireNonNull(callSetDbId);
 
             DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
@@ -105,6 +109,54 @@ public class CallSetServiceImpl implements CallSetService {
             throw new GobiiException(
                 GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
 
+        }
+    }
+
+    @Override
+    public PagedResult<CallSetDTO> getCallSetsBySearchQuery(
+        CallSetsSearchQueryDTO callSetsSearchQuery, Integer pageSize, Integer pageNum) {
+
+        PagedResult<CallSetDTO> returnVal = new PagedResult<>();
+
+        List<CallSetDTO> callSets = new ArrayList<>();
+
+        Integer rowOffset = 0;
+
+        if(pageNum != null && pageSize != null) {
+            rowOffset = pageNum*pageSize;
+        }
+
+        try {
+
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+
+            List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
+                callSetsSearchQuery.getCallSetDbIds(), callSetsSearchQuery.getCallSetNames(),
+                callSetsSearchQuery.getSampleDbIds(), callSetsSearchQuery.getSampleNames(),
+                callSetsSearchQuery.getSamplePUIs(), callSetsSearchQuery.getGermplasmPUIs(),
+                callSetsSearchQuery.getGermplasmDbIds(), callSetsSearchQuery.getGermplasmNames(),
+                callSetsSearchQuery.getVariantSetDbIds(), pageSize,
+                null, rowOffset, true);
+
+            callSets = mapDnaRunsToCallSetDtos(dnaRuns);
+
+            returnVal.setResult(callSets);
+            returnVal.setCurrentPageSize(callSets.size());
+            returnVal.setCurrentPageNum(pageNum);
+            return returnVal;
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
         }
     }
 
