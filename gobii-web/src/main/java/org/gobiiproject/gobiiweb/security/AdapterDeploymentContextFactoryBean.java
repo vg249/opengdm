@@ -45,13 +45,14 @@ public class AdapterDeploymentContextFactoryBean implements FactoryBean<AdapterD
         AdapterConfig adapterConfig = new AdapterConfig();
         //minimum working attributes
         adapterConfig.setAuthServerUrl(keycloakConfig.getAuthServerUrl());
+        
         adapterConfig.setRealm(keycloakConfig.getRealm());
 
         adapterConfig.setResource(keycloakConfig.getResource());
         adapterConfig.setSslRequired(keycloakConfig.getSslRequired());
         adapterConfig.setBearerOnly(keycloakConfig.isBearerOnly());
         adapterConfig.setPrincipalAttribute(keycloakConfig.getPrincipalAttribute());
-
+        
         //TODO:  do a bean attribute copy
 
         KeycloakDeployment deployment =   KeycloakDeploymentBuilder.build(adapterConfig);

@@ -16,10 +16,13 @@
         <security:authentication-provider ref="keycloakAuthenticationProvider" />
     </security:authentication-manager>
 
-    <bean id="adapterDeploymentContext" class="org.gobiiproject.gobiiweb.security.AdapterDeploymentContextFactoryBean"/>
+    <bean id="adapterDeploymentContext" class="org.gobiiproject.gobiiweb.security.AdapterDeploymentContextFactoryBean">
+         <!--constructor-arg value="WEB-INF/keycloak.json"/-->
+    </bean>
     <!--bean id="adapterDeploymentContext" class="org.keycloak.adapters.springsecurity.AdapterDeploymentContextFactoryBean" >
-        <constructor-arg value="WEB-INF/keycloak.json"/>
+       
     </bean-->
+    <bean id="authenticationFailureHandler" class="org.gobiiproject.gobiiweb.security.CustomKeycloakAuthFailureHandler" />
 
     <bean id="keycloakAuthenticationEntryPoint" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint">
         <constructor-arg name="adapterDeploymentContext" ref="adapterDeploymentContext"/>
@@ -28,6 +31,7 @@
     <bean id="keycloakPreAuthActionsFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter" />
     <bean id="keycloakAuthenticationProcessingFilter" class="org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter">
         <constructor-arg name="authenticationManager" ref="authenticationManager" />
+        <property name="authenticationFailureHandler" ref="authenticationFailureHandler"/> 
     </bean>
 
     <bean id="keycloakLogoutHandler" class="org.keycloak.adapters.springsecurity.authentication.KeycloakLogoutHandler">
