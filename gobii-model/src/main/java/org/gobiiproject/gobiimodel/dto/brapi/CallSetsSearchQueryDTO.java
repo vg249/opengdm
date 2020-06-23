@@ -11,7 +11,8 @@ import java.util.Set;
 @CheckAtLeastOneNotNullOrEmpty(
         fieldNames = {
             "callSetDbIds", "callSetNames", "sampleDbIds", "sampleNames",
-            "samplePUIs", "variantSetDbIds", "germplasmPUIs"
+            "samplePUIs", "variantSetDbIds", "germplasmPUIs", "germplasmDbIds",
+            "germplasmNames"
         })
 public class CallSetsSearchQueryDTO {
 

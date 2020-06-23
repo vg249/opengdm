@@ -14,7 +14,7 @@ import java.util.Set;
         fieldNames = {
             "callSetDbIds", "callSetNames", "variantDbIds", "variantNames",
             "sampleDbIds", "sampleNames", "samplePUIs", "variantSetDbIds",
-            "germplasmPUIs"
+            "germplasmPUIs", "germplasmDbIds", "germplasmNames"
         })
 public class GenotypeCallsSearchQueryDTO {
 
