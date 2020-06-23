@@ -132,7 +132,7 @@ public class PlatformServiceImpl implements PlatformService {
         Cv platformType = cvDao.getCvByCvId(platformTypeId);
         if (platformType == null || // no platform found
                 !platformType.getCvGroup().getCvGroupName().equals(
-                    org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName()) 
+                    org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName())
         ) {
             throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                     "Invalid platform type");
@@ -168,7 +168,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         //set group
         CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId()
         );
         platformType.setCvGroup(cvGroup);
@@ -186,7 +186,7 @@ public class PlatformServiceImpl implements PlatformService {
     public PagedResult<CvTypeDTO> getPlatformTypes(Integer page, Integer pageSize) {
         List<Cv> platformTypes = cvDao.getCvs(
             null,
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
              null,
              page,
              pageSize

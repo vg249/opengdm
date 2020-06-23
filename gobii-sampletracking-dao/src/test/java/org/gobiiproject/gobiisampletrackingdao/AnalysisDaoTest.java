@@ -13,7 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -85,7 +85,7 @@ public class AnalysisDaoTest {
         analysis.setAnalysisName(RandomStringUtils.random(10, true, true));
         analysis.setAlgorithm(RandomStringUtils.random(10, true, true));
         analysis.setDescription(RandomStringUtils.random(20, true, true));
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null);
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null);
         analysis.setType(cvs.get(r.nextInt(cvs.size())));
         analysis.setStatus(cvDao.getNewStatus());
         analysis = analysisDao.createAnalysis(analysis);

@@ -43,7 +43,7 @@ public class CvServiceImpl implements CvService {
                             "Invalid property Id");
                 }
                 if (!propCv.getCvGroup().getCvGroupName()
-                        .equals(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName())) {
+                        .equals(org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName())) {
                     throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                             "Invalid cv property");
 
@@ -124,7 +124,7 @@ public class CvServiceImpl implements CvService {
                 // check if id does exist and correct group
                 Cv propertyCv = cvDao.getCvByCvId(cvPropertyDTO.getPropertyId());
                 if (propertyCv == null || !propertyCv.getCvGroup().getCvGroupName()
-                        .equals(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName())) {
+                        .equals(org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName())) {
                     throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                             "Invalid cv property");
                 }
@@ -167,7 +167,7 @@ public class CvServiceImpl implements CvService {
 
     private List<CvPropertyDTO> convertToListDTO(Map<String, String> propertiesMap) {
         List<Cv> cvs = cvDao
-                .getCvListByCvGroup(org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(), null);
+                .getCvListByCvGroup(org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), null);
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, propertiesMap);
         return propDTOs;
     }
@@ -201,7 +201,7 @@ public class CvServiceImpl implements CvService {
         Cv newStatus = cvDao.getNewStatus();
         Cv modStatus = cvDao.getModifiedStatus();
         List<Cv> cvProps = cvDao.getCvListByCvGroup(
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(),
             null
         );
         cvs.forEach(cv -> {
@@ -244,7 +244,7 @@ public class CvServiceImpl implements CvService {
     public PagedResult<CvPropertyDTO> getCvProperties(Integer page, Integer pageSize) {
         List<Cv> cvProps = cvDao.getCvs(
             null,
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(),
             null,
             page,
             pageSize
@@ -270,7 +270,7 @@ public class CvServiceImpl implements CvService {
 
         //set the group
         CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_CV_PROP.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId()
         );
 

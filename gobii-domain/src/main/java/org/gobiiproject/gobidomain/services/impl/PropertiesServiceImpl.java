@@ -37,12 +37,8 @@ public class PropertiesServiceImpl implements PropertiesService {
 
 
     @Override
-<<<<<<< HEAD
-    public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroup cvGroup) throws Exception {
-=======
     public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroupTerm cvGroupTerm) throws Exception {
         PagedResult<CvPropertyDTO> pagedResult;
->>>>>>> release/2.2.brapi.update
 
         try {
             Objects.requireNonNull(pageSize);

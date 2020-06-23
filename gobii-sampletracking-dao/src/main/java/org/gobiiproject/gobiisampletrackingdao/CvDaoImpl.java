@@ -169,7 +169,7 @@ public class CvDaoImpl implements CvDao {
     private Cv getStatusCv(String status) {
         List<Cv> cvList = this.getCvs(
             status,
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_STATUS.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM
         );
         Cv cv = null;

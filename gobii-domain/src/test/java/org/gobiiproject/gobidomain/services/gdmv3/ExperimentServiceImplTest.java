@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
@@ -100,7 +100,7 @@ public class ExperimentServiceImplTest {
         dummyCvList.add(dummyCv);
 
         when(
-            cvDao.getCvs("new", CvGroup.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM)
+            cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(), GobiiCvGroupType.GROUP_TYPE_SYSTEM)
         ).thenReturn(
             dummyCvList
         );
