@@ -9,6 +9,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
+import javax.xml.crypto.Data;
 import java.util.*;
 
 public class MockSetup {
@@ -137,6 +138,12 @@ public class MockSetup {
             Analysis analysis = new Analysis();
             analysis.setAnalysisId(i);
             analysis.setAnalysisName(RandomStringUtils.random(7, true, true));
+
+            Reference reference = new Reference();
+            Integer refId = random.nextInt(4);
+            reference.setReferenceId(refId);
+            reference.setReferenceName(refId.toString());
+            analysis.setReference(reference);
             mockAnalysis.add(analysis);
         }
     }
@@ -161,9 +168,25 @@ public class MockSetup {
             analyses[0] = mockAnalysis.get(random.nextInt(mockAnalysis.size())).getAnalysisId();
             dataset.setAnalyses(analyses);
             dataset.setDatasetId(i);
-            d
             mockDatasets.add(dataset);
         }
+    }
+
+    public List<Object[]> createMockDatasetAnalysisTuples(int numDatasets) {
+        createMockDatasets(numDatasets);
+        List<Object[]> tuples = new ArrayList<>();
+        for(Dataset dataset : mockDatasets) {
+
+            for(Analysis analysis : mockAnalysis) {
+                if(analysis.getAnalysisId() == dataset.getAnalyses()[0]) {
+                    Object[] tuple = {dataset, analysis,
+                        random.nextInt(100), random.nextInt(1000)};
+                    tuples.add(tuple);
+                    break;
+                }
+            }
+        }
+        return tuples;
     }
 
     public void createMockDnaSamples(int numDnaSamples) {
