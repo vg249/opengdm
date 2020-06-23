@@ -516,7 +516,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
         return this.getDnaRuns(
                 dnaRunIds, null, null, null,
                 null, null, null, null,
-                null, null, null, null, false);
+                null, dnaRunIds.size(), null, null, false);
     }
 
 
@@ -529,7 +529,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
     public List<DnaRun> getDnaRunsByDanRunNames(Set<String> dnaRunNames) {
         return this.getDnaRuns(null, dnaRunNames, null, null,
                 null, null, null, null,
-                null, null, null, null, false);
+                null, dnaRunNames.size(), null, null, false);
     }
 
 }

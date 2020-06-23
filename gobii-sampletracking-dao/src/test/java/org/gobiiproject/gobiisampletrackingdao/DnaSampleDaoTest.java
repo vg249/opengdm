@@ -154,7 +154,7 @@ public class DnaSampleDaoTest {
     public void testGetDnaSamplesByProjectIds() {
 
         List<DnaSample> dnaSamplesMockSubList = daoTestSetUp.getCreatedDnaSamples()
-            .subList(0, random.nextInt(daoTestSetUp.getCreatedDnaSamples().size()));
+            .subList(0, random.nextInt(daoTestSetUp.getCreatedDnaSamples().size() - 4) + 3);
 
         Set<Integer> projectIds = dnaSamplesMockSubList
             .stream()
@@ -204,13 +204,12 @@ public class DnaSampleDaoTest {
         long expectedDnaSamplesSize =
             daoTestSetUp.getCreatedDnaSamples()
                 .stream()
-                .filter(dnaSample -> projectIds.contains(dnaSample.getProject().getProjectId()))
-                .filter(dnaSample ->
+                .filter(dnaSample -> projectIds.contains(dnaSample.getProject().getProjectId()) &&
                     germplasmNames.contains(dnaSample.getGermplasm().getGermplasmName()))
                 .count();
 
         List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(null, null, null,
-            null, null, germplasmNames, projectIds, testPageSize, 0);
+            null,germplasmNames, null, projectIds, testPageSize, 0);
 
         assertTrue("Get dna samples filter by project ids and germplasm names failed. " +
                 "Count mismatch.",
