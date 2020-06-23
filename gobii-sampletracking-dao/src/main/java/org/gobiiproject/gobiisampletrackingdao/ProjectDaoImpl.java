@@ -20,7 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -96,7 +96,7 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Override
     public List<Cv> getCvProperties(Integer page, Integer pageSize) {
-        return cvDao.getCvs(null, CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
+        return cvDao.getCvs(null, CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null, page, pageSize);
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.cvnames.DatasetType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
@@ -42,7 +42,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
     private PropNameId getDatatypeIdForName(DatasetType datasetType) {
 
 
-        List<CvDTO> datasetCvs = cvService.getCvsByGroupName(CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName());
+        List<CvDTO> datasetCvs = cvService.getCvsByGroupName(CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName());
 
         AtomicInteger datasetTypeId = new AtomicInteger(0);
         datasetCvs

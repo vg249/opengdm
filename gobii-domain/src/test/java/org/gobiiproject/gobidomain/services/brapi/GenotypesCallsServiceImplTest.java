@@ -2,8 +2,10 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.services.brapi.GenotypeCallsServiceImpl;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
+import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 public class GenotypesCallsServiceImplTest {
 
@@ -14,7 +16,19 @@ public class GenotypesCallsServiceImplTest {
     @Mock
     private DnaRunDaoImpl dnaRunDao;
 
+    private MockSetup mockSetup;
 
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        mockSetup  = new MockSetup();
+    }
+
+    public void getGenotypeCallsByCallSetIdTest() {
+
+
+
+    }
 
 
 }

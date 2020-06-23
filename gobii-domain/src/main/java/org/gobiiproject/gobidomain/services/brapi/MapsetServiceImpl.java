@@ -37,21 +37,25 @@ public class MapsetServiceImpl implements MapsetService {
      * @throws GobiiDomainException
      */
     @Override
-    public PagedResult<MapsetDTO> getMapSets(Integer pageSize, Integer pageNum,
-                                             Integer studyDbId) throws GobiiDomainException {
+    public PagedResult<MapsetDTO> getMapSets(
+        Integer pageSize, Integer pageNum,
+        Integer studyDbId) throws GobiiDomainException
+    {
 
         PagedResult<MapsetDTO> pagedResult = new PagedResult<>();
 
         try {
 
-            Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(pageNum);
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
 
             List<MapsetDTO> mapsetDTOS = new ArrayList<>();
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(pageSize, rowOffset, null, studyDbId);
+            List<Mapset> mapsets = mapsetDao.getMapsetsWithCounts(
+                pageSize, rowOffset,
+                null, studyDbId);
 
             for (Mapset mapset : mapsets) {
 
@@ -67,7 +71,7 @@ public class MapsetServiceImpl implements MapsetService {
 
             pagedResult.setCurrentPageNum(pageNum);
 
-            pagedResult.setCurrentPageSize(pageSize);
+            pagedResult.setCurrentPageSize(mapsetDTOS.size());
 
             return pagedResult;
 
@@ -88,16 +92,19 @@ public class MapsetServiceImpl implements MapsetService {
 
         try {
 
+            Objects.requireNonNull(mapDbId, "mapDbId : Required non null");
+
             Mapset mapset = mapsetDao.getMapsetWithCountsById(mapDbId);
 
             ModelMapper.mapEntityToDto(mapset, mapsetDTO);
 
             return mapsetDTO;
         }
+        catch (GobiiException gE) {
+            throw gE;
+        }
         catch(Exception e) {
-            throw new GobiiException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal server error");
+            throw new GobiiDomainException(e);
         }
     }
 }

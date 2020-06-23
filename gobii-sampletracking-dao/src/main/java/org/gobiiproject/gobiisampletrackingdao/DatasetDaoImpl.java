@@ -215,10 +215,11 @@ public class DatasetDaoImpl implements DatasetDao {
                 "LEFT JOIN cv typeCv ON(job.type_id = typeCv.cv_id) " +
                 "LEFT JOIN cv statusCv ON(job.status = statusCv.cv_id) ";
 
-        Objects.requireNonNull(pageSize, "pageSize: Required non null");
-        Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize: Required non null");
+            Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
 
             Session session = em.unwrap(Session.class);
 

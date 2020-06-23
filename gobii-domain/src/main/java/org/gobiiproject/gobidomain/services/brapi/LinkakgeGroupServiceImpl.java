@@ -28,7 +28,6 @@ public class LinkakgeGroupServiceImpl implements LinkageGroupService {
 
         List<LinkageGroupDTO> returnVal = new ArrayList<>();
 
-        //TODO: to be implemented
 
         try {
 

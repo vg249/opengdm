@@ -19,7 +19,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         // get Cvs
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
@@ -122,7 +122,7 @@ public class ProjectServiceImpl implements ProjectService {
         ModelMapper.mapEntityToDto(project, projectDTO);
 
         //transform Cv
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         projectDTO.setProperties(propDTOs);
         return projectDTO;
@@ -173,7 +173,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         //set new status
-        List<Cv> cvList = cvDao.getCvs("modified", CvGroup.CVGROUP_STATUS.getCvGroupName(),
+        List<Cv> cvList = cvDao.getCvs("modified", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
                 GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
         Cv cv = null;
@@ -189,7 +189,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     @Override
     public PagedResult<CvPropertyDTO> getProjectProperties(Integer page, Integer pageSize) throws Exception {
-        return propertiesService.getProperties(page, pageSize, CvGroup.CVGROUP_PROJECT_PROP);
+        return propertiesService.getProperties(page, pageSize, CvGroupTerm.CVGROUP_PROJECT_PROP);
     }
 
     @Transactional
@@ -206,7 +206,7 @@ public class ProjectServiceImpl implements ProjectService {
         GobiiProjectDTO projectDTO = new GobiiProjectDTO();
         ModelMapper.mapEntityToDto(project, projectDTO);
         if (cvs == null) {
-            cvs = cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+            cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         }
 
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());

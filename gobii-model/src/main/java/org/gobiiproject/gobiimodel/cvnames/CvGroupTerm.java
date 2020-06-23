@@ -5,7 +5,7 @@ package org.gobiiproject.gobiimodel.cvnames;
  */
 
 
-public enum CvGroup {
+public enum CvGroupTerm {
 
     CVGROUP_JOBTYPE("job_type"),
     CVGROUP_PAYLOADTYPE("payload_type"),
@@ -29,7 +29,7 @@ public enum CvGroup {
 
     private String cvGroupName;
 
-    CvGroup(String cvGroupName) {
+    CvGroupTerm(String cvGroupName) {
         this.cvGroupName = cvGroupName;
     }
 

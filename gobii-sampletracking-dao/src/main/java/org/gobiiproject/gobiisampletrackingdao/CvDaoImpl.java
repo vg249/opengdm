@@ -48,7 +48,9 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) throws GobiiException {
+    public List<Cv> getCvListByCvGroup(
+        String cvGroupName,
+        GobiiCvGroupType cvType) throws GobiiException {
 
 
         try {

@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Objects;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.SamplesSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
@@ -41,12 +44,12 @@ public class SamplesServiceImpl implements SamplesService {
      */
     @Override
     public PagedResult<SamplesDTO> getSamples(Integer pageSize, Integer pageNum,
-                                            Integer sampleDbId, Integer germplasmDbId,
-                                            String observationUnitDbId) {
+                                              Integer sampleDbId, Integer germplasmDbId,
+                                              String observationUnitDbId) {
 
         PagedResult<SamplesDTO> returnVal = new PagedResult<>();
 
-        List<SamplesDTO> samplesDTOs = new ArrayList<>();
+        List<SamplesDTO> samplesDTOs;
 
         try {
 
@@ -60,35 +63,11 @@ public class SamplesServiceImpl implements SamplesService {
             }
 
             List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(
-                    pageSize, rowOffset,
-                    null, sampleDbId,
-                    germplasmDbId, observationUnitDbId);
+                pageSize, rowOffset,
+                null, sampleDbId,
+                germplasmDbId, observationUnitDbId);
 
-            List<Cv> cvList = cvDao.getCvListByCvGroup(
-                    CvGroup.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
-
-            for (DnaSample dnaSample : dnaSamples) {
-
-                if (dnaSample != null) {
-
-                    SamplesDTO samplesDTO = new SamplesDTO();
-
-                    ModelMapper.mapEntityToDto(dnaSample, samplesDTO);
-
-                    if (dnaSample.getProperties() != null && dnaSample.getProperties().size() > 0) {
-
-                        samplesDTO.setAdditionalInfo(CvMapper.mapCvIdToCvTerms(
-                                cvList, dnaSample.getProperties()));
-
-                        if (samplesDTO.getAdditionalInfo().containsKey("sample_type")) {
-                            samplesDTO.setTissueType(samplesDTO.getAdditionalInfo().get("sample_type"));
-                            samplesDTO.getAdditionalInfo().remove("sample_type");
-                        }
-                    }
-
-                    samplesDTOs.add(samplesDTO);
-                }
-            }
+            samplesDTOs = mapDnaSampleEntityToSampleDTO(dnaSamples);
 
             returnVal.setCurrentPageSize(samplesDTOs.size());
             returnVal.setCurrentPageNum(pageNum);
@@ -102,5 +81,78 @@ public class SamplesServiceImpl implements SamplesService {
         }
     }
 
+    @Override
+    public PagedResult<SamplesDTO> getSamplesBySamplesSearchQuery(
+        SamplesSearchQueryDTO samplesSearchQuery, Integer pageSize, Integer pageNum) {
+
+        PagedResult<SamplesDTO> returnVal = new PagedResult<>();
+
+        List<SamplesDTO> samplesDTOs;
+
+        try {
+
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+
+            Integer rowOffset = 0;
+
+            if(pageNum != null && pageSize != null) {
+                rowOffset = pageNum*pageSize;
+            }
+
+            List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(
+                samplesSearchQuery.getSampleDbIds(), samplesSearchQuery.getSampleNames(),
+                samplesSearchQuery.getSamplePUIs(), samplesSearchQuery.getGermplasmDbIds(),
+                samplesSearchQuery.getGermplasmNames(), samplesSearchQuery.getGermplasmPUIs(),
+                samplesSearchQuery.getSampleGroupDbIds(), pageSize, rowOffset);
+
+            samplesDTOs = mapDnaSampleEntityToSampleDTO(dnaSamples);
+
+            returnVal.setCurrentPageSize(samplesDTOs.size());
+            returnVal.setCurrentPageNum(pageNum);
+            returnVal.setResult(samplesDTOs);
+
+            return returnVal;
+        }
+        catch(Exception e) {
+            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                e.getMessage());
+        }
+
+    }
+
+
+    private List<SamplesDTO> mapDnaSampleEntityToSampleDTO(List<DnaSample> dnaSamples) {
+
+        List<SamplesDTO> samplesDTOs = new ArrayList<>();
+
+        List<Cv> cvList = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+        for (DnaSample dnaSample : dnaSamples) {
+
+            if (dnaSample != null) {
+
+                SamplesDTO samplesDTO = new SamplesDTO();
+
+                ModelMapper.mapEntityToDto(dnaSample, samplesDTO);
+
+                if (dnaSample.getProperties() != null && dnaSample.getProperties().size() > 0) {
+
+                    samplesDTO.setAdditionalInfo(CvMapper.mapCvIdToCvTerms(
+                        cvList, dnaSample.getProperties()));
+
+                    if (samplesDTO.getAdditionalInfo().containsKey("sample_type")) {
+                        samplesDTO.setTissueType(
+                            samplesDTO.getAdditionalInfo().get("sample_type"));
+                        samplesDTO.getAdditionalInfo().remove("sample_type");
+                    }
+                }
+
+                samplesDTOs.add(samplesDTO);
+            }
+        }
+
+        return samplesDTOs;
+    }
 
 }

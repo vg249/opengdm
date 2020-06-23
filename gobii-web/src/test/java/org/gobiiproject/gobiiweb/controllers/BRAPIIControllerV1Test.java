@@ -273,7 +273,7 @@ public class BRAPIIControllerV1Test {
 
             sample.setGermplasmDbId(random.nextInt(10));
 
-            sample.setObservationUnitDbId(UUID.randomUUID().toString());
+            sample.setGermplasmPUI(UUID.randomUUID().toString());
 
             sample.setPlateName(RandomStringUtils.random(5, true, true));
 
@@ -341,7 +341,7 @@ public class BRAPIIControllerV1Test {
                 .andExpect(jsonPath("$.result.data[0].germplasmDbId")
                         .value(mockSamples.get(0).getGermplasmDbId().toString()))
                 .andExpect(jsonPath("$.result.data[0].observationUnitDbId")
-                        .value(mockSamples.get(0).getObservationUnitDbId()))
+                        .value(mockSamples.get(0).getGermplasmPUI()))
                 .andExpect(jsonPath("$.result.data[0].plateName")
                         .value(mockSamples.get(0).getPlateName()))
                 .andExpect(jsonPath("$.result.data[0].row")

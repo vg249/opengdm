@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -16,7 +17,6 @@ import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl;
 import org.junit.Before;
@@ -25,8 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import javax.xml.crypto.Data;
 
 @WebAppConfiguration
 public class VariantSetsServiceImplTest {
@@ -40,141 +38,75 @@ public class VariantSetsServiceImplTest {
     @Mock
     private CvDaoImpl cvDao;
 
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
+    MockSetup mockSetup;
+
+    Integer pageSize = 10;
+    Integer pageNum = 0;
 
     Random random = new Random();
 
-    ObjectMapper mapper = new ObjectMapper();
 
-
-    @SuppressWarnings("unused")
-    private Analysis createMockAnalysis(Integer analysisId) {
-
-        Analysis analysis = new Analysis();
-
-        analysis.setAnalysisId(analysisId);
-        analysis.setAnalysisName("test-analysis-"+analysisId.toString());
-        analysis.getType().setTerm("calling");
-
-        return analysis;
-
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        mockSetup  = new MockSetup();
     }
 
 
-    private List<Object[]> getMockDatasets(Integer listSize) {
-
-        List<Object[]> returnVal = new ArrayList<>();
-
-
-        for(int i = 0; i < listSize; i++) {
-
-            Dataset dataset = new Dataset();
-
-            dataset.setDatasetId(i+1);
-
-            dataset.setDatasetName(RandomStringUtils.random(7, true, true));
-
-            Experiment experiment = new Experiment();
-            experiment.setExperimentId(i);
-            dataset.setExperiment(experiment);
-
-
-            //Only one analysis added in mock, so, just check the mapping for that one is correct
-            Analysis analysis = new Analysis();
-
-            analysis.setDescription(RandomStringUtils.random(7, true, true));
-            analysis.setAnalysisName(RandomStringUtils.random(7, true, true));
-            analysis.setAnalysisId(i);
-
-            dataset.setCallingAnalysis(analysis);
-
-
-            Integer[] analyses = {i};
-
-            dataset.setAnalyses(analyses);
-
-            dataset.setCreatedDate(new Date(random.nextLong()));
-            dataset.setModifiedDate(new Date(random.nextLong()));
-
-            Object[] tuple = {dataset, analysis, random.nextInt(1000), random.nextInt(1000)};
-            returnVal.add(tuple);
-        }
-
-
-        return returnVal;
-   }
 
     @Test
-    public void testMainFieldsMapping() throws Exception {
+    public void testMainFieldsMapping() {
 
-        final Integer pageSize = 1000;
 
-        List<Object[]> datasetsMock = getMockDatasets(pageSize);
+        List<Object[]> tuples = mockSetup.createMockDatasetAnalysisTuples(pageSize);
 
         when (
-                datasetDao.getDatasetsWithAnalysesAndCounts(
-                        any(Integer.TYPE), any(Integer.TYPE),
-                        any(Integer.TYPE), any(String.class),
-                        any(Integer.TYPE),any(String.class))
-        ).thenReturn(datasetsMock);
+            datasetDao.getDatasetsWithAnalysesAndCounts(
+                pageSize, pageNum,
+                null, null,
+                null, null)
+        ).thenReturn(tuples);
 
         PagedResult<VariantSetDTO> pagedResult = variansetService.getVariantSets(
-                pageSize,0, 1, "", 1, "");
+            pageSize, pageNum, null, null, null, null);
 
 
         List<VariantSetDTO> variantSets = pagedResult.getResult();
 
 
-        assertEquals("Size mismatch", datasetsMock.size(), variantSets.size());
+        assertEquals("Size mismatch", tuples.size(), variantSets.size());
 
         for(int i = 0; i < 10; i++) {
 
-            Integer assertIndex = new Random().nextInt(1000);
-
             assertEquals("variansetName check failed",
-                ((Dataset)datasetsMock.get(assertIndex)[0]).getDatasetName(),
-                    variantSets.get(assertIndex).getVariantSetName());
+                ((Dataset)tuples.get(i)[0]).getDatasetName(),
+                    variantSets.get(i).getVariantSetName());
 
             assertEquals("variansetid check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getDatasetId(),
-                    variantSets.get(assertIndex).getVariantSetDbId());
+                    ((Dataset)tuples.get(i)[0]).getDatasetId(),
+                    variantSets.get(i).getVariantSetDbId());
 
             assertEquals("studyDbId check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getExperiment().getExperimentId(),
-                    variantSets.get(assertIndex).getStudyDbId());
+                    ((Dataset)tuples.get(i)[0]).getExperiment().getExperimentId(),
+                    variantSets.get(i).getStudyDbId());
+
+            assertEquals("referenceDbId check failed",
+                    ((Dataset)tuples.get(i)[0]).getCallingAnalysis().getReference().getReferenceId(),
+                    variantSets.get(i).getReferenceSetDbId());
 
             assertEquals("created check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getCreatedDate(),
-                    variantSets.get(assertIndex).getCreated());
+                    ((Dataset)tuples.get(i)[0]).getCreatedDate(),
+                    variantSets.get(i).getCreated());
 
             assertEquals("updated check failed",
-                    ((Dataset)datasetsMock.get(assertIndex)[0]).getModifiedDate(),
-                    variantSets.get(assertIndex).getUpdated());
+                    ((Dataset)tuples.get(i)[0]).getModifiedDate(),
+                    variantSets.get(i).getUpdated());
 
 
             //Only one analysis added in mock, so, just check the mapping for that one is correct
-            //assertTrue("Analysis got mapped to the Variantset Analysis",
-            //        variantSets.get(assertIndex).getAnalyses().iterator().hasNext());
+            assertTrue("Analysis got mapped to the Variantset Analysis",
+                    variantSets.get(i).getAnalyses().iterator().hasNext());
 
-            //Analysis analysis = ((Dataset)datasetsMock.get(assertIndex)[0]).getMappedAnalyses().iterator().next();
-
-            //AnalysisDTO analysisDTO = variantSets.get(assertIndex).getAnalyses().iterator().next();
-
-            //assertEquals("check analysisDbId is mapped",
-            //        analysis.getAnalysisId(),
-            //        analysisDTO.getAnalysisDbId());
-
-
-            //assertEquals("check analysisName is mapped",
-            //        analysis.getAnalysisName(),
-            //        analysisDTO.getAnalysisName());
-
-            //assertEquals("check analysis description is mapped",
-            //        analysis.getDescription(),
-            //        analysisDTO.getDescription());
 
 
 
