@@ -8,7 +8,11 @@ import java.util.Objects;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Experiment;
@@ -44,11 +48,11 @@ public class ExperimentDaoImpl implements ExperimentDao {
 
             Join<Object, Object> project = (Join<Object, Object>) experimentRoot.fetch("project");
 
-            project.fetch("contact").fetch("organization", JoinType.LEFT);
+            project.fetch("contact", JoinType.LEFT).fetch("organization", JoinType.LEFT);
 
             Join<Object, Object>  vendorProtocol =
-                (Join<Object, Object>) experimentRoot.fetch("vendorProtocol", JoinType.LEFT);
-
+                    (Join<Object, Object>) experimentRoot
+                            .fetch("vendorProtocol");
             vendorProtocol.fetch("protocol", JoinType.LEFT).fetch("platform", JoinType.LEFT);
 
 

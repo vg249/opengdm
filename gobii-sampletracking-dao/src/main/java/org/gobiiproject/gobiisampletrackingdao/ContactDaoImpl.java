@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -63,7 +64,7 @@ public class ContactDaoImpl implements ContactDao {
             CriteriaQuery<Contact> criteriaQuery = criteriaBuilder.createQuery(Contact.class);
 
             Root<Contact> contactRoot = criteriaQuery.from(Contact.class);
-            contactRoot.fetch("organization");
+            contactRoot.fetch("organization", JoinType.LEFT);
             criteriaQuery.select(contactRoot);
             if (orgId > 0) {
                 criteriaQuery.where(
