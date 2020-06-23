@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,7 @@ public class CustomKeycloakAuthFailureHandler implements AuthenticationFailureHa
                 response.addCookie(KeycloakCookieBasedRedirect.createCookieFromRedirectUrl(null));
             }
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
             out.println(UNAUTHORIZED_PAYLOAD);
         } else {
