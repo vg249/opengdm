@@ -122,7 +122,7 @@ class ConfigValues {
 
     }};
 
-    @ElementMap(required = true)
+    @Element(required = true)
     private KeycloakConfig keycloakConfig = new KeycloakConfig();
 
     private String currentGobiiCropType;
