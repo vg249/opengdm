@@ -13,13 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@ContextConfiguration(locations = { "classpath:/spring/test-config.xml" })
 @Transactional
+@Slf4j
 public class ExperimentDaoTest {
 
     @PersistenceContext
@@ -47,41 +50,34 @@ public class ExperimentDaoTest {
     @Test
     public void getExperimentsTest() {
 
-
         List<Experiment> experiments = experimentDao.getExperiments(testPageSize, 0, null);
 
-        assertTrue("getExperiments by pageSize failed.",
-                experiments.size() > 0 && experiments.size() == testPageSize);
+        assertTrue("getExperiments by pageSize failed.", experiments.size() > 0 && experiments.size() == testPageSize);
 
     }
 
     @Test
-    public void testFilterExperiemntsByProjectId() {
+    public void testFilterExperimentsByProjectId() {
 
-        Integer testProjectId =
-            daoTestSetUp
-                .getCreatedProjects()
-                .get(random.nextInt(daoTestSetUp.getCreatedProjects().size()))
-                .getProjectId();
+        Integer testProjectId = daoTestSetUp.getCreatedProjects()
+                .get(random.nextInt(daoTestSetUp.getCreatedProjects().size())).getProjectId();
 
-        List<Experiment> experimentsByProjectId =
-            experimentDao
-                .getExperiments(testPageSize, 0, testProjectId);
+        List<Experiment> experimentsByProjectId = experimentDao.getExperiments(testPageSize, 0, testProjectId);
 
         int numOfExperimentsInProject = 0;
 
-        for(Experiment experiment : daoTestSetUp.getCreatedExperiments()) {
-            if(experiment.getProject().getProjectId() == testProjectId) {
+        for (Experiment experiment : daoTestSetUp.getCreatedExperiments()) {
+            if (experiment.getProject().getProjectId() == testProjectId) {
                 numOfExperimentsInProject++;
             }
         }
 
         assertTrue("Filter Experiments by ProjectId failed.",
-            numOfExperimentsInProject == experimentsByProjectId.size());
+                numOfExperimentsInProject == experimentsByProjectId.size());
 
-        for(Experiment experiment : experimentsByProjectId) {
+        for (Experiment experiment : experimentsByProjectId) {
             assertTrue("Filter Experiments by projectId failed",
-                experiment.getProject().getProjectId().equals(testProjectId));
+                    experiment.getProject().getProjectId().equals(testProjectId));
         }
     }
 }
