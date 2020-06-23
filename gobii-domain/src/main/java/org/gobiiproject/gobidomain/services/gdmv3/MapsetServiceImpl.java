@@ -7,10 +7,9 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -69,7 +68,7 @@ public class MapsetServiceImpl implements MapsetService {
         Mapset createdMapset = new Mapset();
         createdMapset.setMapsetName(mapset.getMapsetName());
         if (mapset.getMapsetDescription() != null)
-            createdMapset.setMapSetDescription(mapset.getMapsetDescription());
+            createdMapset.setMapsetDescription(mapset.getMapsetDescription());
         createdMapset.setType(type);
         createdMapset.setReference(reference);
         // audit items
@@ -80,7 +79,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         // other required colums
         createdMapset
-                .setMapSetCode(String.format("%s_%s", type.getTerm(), createdMapset.getMapsetName()).replace(' ', '_'));
+                .setMapsetCode(String.format("%s_%s", type.getTerm(), createdMapset.getMapsetName()).replace(' ', '_'));
 
         // status
         Cv status = cvDao.getNewStatus();
@@ -120,7 +119,7 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         if (patchData.getMapsetDescription() != null) {
-            mapset.setMapSetDescription(patchData.getMapsetDescription()); // TODO: refactor MapSetDescription
+            mapset.setMapsetDescription(patchData.getMapsetDescription()); // TODO: refactor MapSetDescription
         }
 
         if (patchData.getMapsetTypeId() != null) {
@@ -170,7 +169,7 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         // check type is correct type
-        if (!type.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName())) {
+        if (!type.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName())) {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Invalid type");
         }
         return type;
@@ -193,7 +192,7 @@ public class MapsetServiceImpl implements MapsetService {
     public CvTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user) {
         
         org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(),
+            CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
         if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
@@ -222,7 +221,7 @@ public class MapsetServiceImpl implements MapsetService {
     @Transactional
     @Override
     public PagedResult<CvTypeDTO> getMapsetTypes(Integer page, Integer pageSize) {
-        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_MAPSET_TYPE.getCvGroupName(), null, page, pageSize);
+        List<Cv> cvs = cvDao.getCvs(null, CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(), null, page, pageSize);
         List<CvTypeDTO> mapsetTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {

@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -53,7 +53,7 @@ public class GobiiProjectServiceImplTest {
 
         //Mock Cvs
         List<Cv> mockCvList = new java.util.ArrayList<>();
-        when(cvDao.getCvListByCvGroup(CvGroup.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
+        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
         .thenReturn(
             mockCvList
         );

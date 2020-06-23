@@ -20,7 +20,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.NameIdDTOComparator;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
@@ -378,7 +378,7 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testGetCvTermsForGermplasmSpeciesAndNameList() throws Exception {
 
-        String cvGroupName = CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
+        String cvGroupName = CvGroupTerm.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
         Integer cvGroupId = getCvGroupIdByGroupName(cvGroupName);
 
         List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
@@ -401,7 +401,7 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testGetCvTermsForGermplasmTypeAndNameList() throws Exception {
 
-        String cvGroupName = CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName();
+        String cvGroupName = CvGroupTerm.CVGROUP_GERMPLASM_TYPE.getCvGroupName();
         Integer cvGroupId = getCvGroupIdByGroupName(cvGroupName);
 
         List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
@@ -422,8 +422,8 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testGetCvTermsForMarkerStrandAndNameList() throws Exception {
 
-        String cvGroupName = CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName();
-        Integer cvGroupId = getCvGroupIdByGroupName(CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
+        String cvGroupName = CvGroupTerm.CVGROUP_MARKER_STRAND.getCvGroupName();
+        Integer cvGroupId = getCvGroupIdByGroupName(CvGroupTerm.CVGROUP_MARKER_STRAND.getCvGroupName());
 
         List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
 
@@ -538,7 +538,7 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testWithDuplicateNames() throws Exception {
 
-        String cvGroupName = CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
+        String cvGroupName = CvGroupTerm.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
         Integer cvGroupId = getCvGroupIdByGroupName(cvGroupName);
 
         List<CvDTO> cvDTOList = createCvTerms(cvGroupId, true);

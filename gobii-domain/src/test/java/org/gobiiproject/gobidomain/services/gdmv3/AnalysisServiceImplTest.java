@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -76,7 +76,7 @@ public class AnalysisServiceImplTest {
         assert cvDao != null;
 
         when(
-            cvDao.getCvGroupByNameAndType( CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), 2)
+            cvDao.getCvGroupByNameAndType( CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), 2)
         ).thenReturn(
             new org.gobiiproject.gobiimodel.entity.CvGroup()
         );
@@ -98,7 +98,7 @@ public class AnalysisServiceImplTest {
         assert analysisType != null;
         verify(
             cvDao, times(1)
-        ).getCvGroupByNameAndType(CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), 2);
+        ).getCvGroupByNameAndType(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), 2);
         verify(
             cvDao, times(1)
         ).createCv(any(Cv.class));

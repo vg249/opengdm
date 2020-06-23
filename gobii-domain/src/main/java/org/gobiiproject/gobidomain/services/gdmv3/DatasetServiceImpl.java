@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
@@ -145,7 +145,7 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check if the cv is a dataset type
-		if (datasetType.getCvGroup().getCvGroupName() != CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName()) {
+		if (datasetType.getCvGroup().getCvGroupName() != CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName()) {
 			throw new GobiiDaoException(
 				GobiiStatusLevel.ERROR,
 				GobiiValidationStatusType.BAD_REQUEST,
@@ -395,7 +395,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Transactional
 	@Override
     public PagedResult<CvTypeDTO> getDatasetTypes(Integer page, Integer pageSize) {
-        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(), null, page, pageSize);
+        List<Cv> cvs = cvDao.getCvs(null, CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName(), null, page, pageSize);
         List<CvTypeDTO> cvTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
@@ -411,7 +411,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Override
 	public CvTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
         org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            CvGroup.CVGROUP_DATASET_TYPE.getCvGroupName(),
+            CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
         if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");

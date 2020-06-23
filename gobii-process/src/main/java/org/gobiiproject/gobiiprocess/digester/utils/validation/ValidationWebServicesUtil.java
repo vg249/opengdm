@@ -19,7 +19,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
@@ -311,13 +311,13 @@ public class ValidationWebServicesUtil {
             if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
                 switch (filterValue) {
                     case "species_name":
-                        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+                        namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
                         break;
                     case "type_name":
-                        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
+                        namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
                         break;
                     case "strand_name":
-                        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
+                        namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_MARKER_STRAND.getCvGroupName());
                         break;
                     default:
                         ValidationUtil.createFailure(FailureTypes.UNDEFINED_CV, new ArrayList<>(), filterValue, failureList);

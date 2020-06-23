@@ -22,12 +22,10 @@ import org.apache.commons.beanutils.PropertyUtils;
  *              least-one-field-is-not-null"
  *
  */
-@Target( { TYPE})
+@Target( {TYPE})
 @Retention(RUNTIME)
-@Constraint(
-        validatedBy =
-                CheckAtLeastOneNotNullOrEmpty
-                .CheckAtLeastOneNotNullOrEmptyValidator.class)
+@Constraint(validatedBy =
+    CheckAtLeastOneNotNullOrEmpty.CheckAtLeastOneNotNullOrEmptyValidator.class)
 @Documented
 public @interface CheckAtLeastOneNotNullOrEmpty {
 
@@ -39,9 +37,8 @@ public @interface CheckAtLeastOneNotNullOrEmpty {
 
     String[] fieldNames();
 
-    class CheckAtLeastOneNotNullOrEmptyValidator
-            implements
-            ConstraintValidator<CheckAtLeastOneNotNullOrEmpty, Object> {
+    class CheckAtLeastOneNotNullOrEmptyValidator implements
+        ConstraintValidator<CheckAtLeastOneNotNullOrEmpty, Object> {
 
         private String[] fieldNames;
 
@@ -50,30 +47,21 @@ public @interface CheckAtLeastOneNotNullOrEmpty {
         }
 
         @SuppressWarnings("unchecked")
-        public boolean isValid(Object object,
-                               ConstraintValidatorContext constraintContext) {
+        public boolean isValid(Object object, ConstraintValidatorContext constraintContext) {
 
 
             if (object == null)
                 return true;
 
             try {
-
                 for (String fieldName:fieldNames) {
+                    Object property = PropertyUtils.getProperty(object, fieldName);
 
-                    Object property =
-                            PropertyUtils.getProperty(object, fieldName);
-
-                    if (property != null
-                            && property instanceof Set<?>
-                            && ((Set<Object>) property).size() > 0) {
-                        return true;
-                    }
-                    else if(property != null && !(property instanceof Set<?>)) {
+                    if ((property instanceof Set<?> && ((Set<Object>) property).size() > 0) ||
+                        (property != null && !(property instanceof Set<?>))) {
                         return true;
                     }
                 }
-
                 return false;
 
             } catch (Exception e) {

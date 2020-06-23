@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by VCalaminos on 2/1/2017.
  */
-public class DtoCrudRequestCvGroupTest implements DtoCrudRequestTest {
+public class DtoCrudRequestCvGroupTermTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

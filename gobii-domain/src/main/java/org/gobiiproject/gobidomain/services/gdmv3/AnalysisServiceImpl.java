@@ -6,7 +6,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -67,7 +67,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                     "Unknown analysis type");
         }
 
-        if (!analysisType.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName())) {
+        if (!analysisType.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName())) {
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                     "Invalid analysis type id");
         }
@@ -113,7 +113,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public CvTypeDTO createAnalysisType(CvTypeDTO analysisTypeRequest, String creatorId) throws Exception {
         
         org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
+            CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
         if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
@@ -140,7 +140,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public PagedResult<CvTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
-        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
+        List<Cv> cvs = cvDao.getCvs(null, CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
         List<CvTypeDTO> analysisTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {

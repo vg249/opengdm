@@ -118,7 +118,7 @@ public class ProjectDaoImplTest {
         Project toBeCreated = createProject("test-project", "", null);
 
         Project project = v3ProjectDao.createProject(toBeCreated);
-       
+
         assertTrue(project.getProjectId() != null && project.getProjectId() > 0); //assigned id
 
     }

@@ -59,10 +59,11 @@ public class VariantSetsServiceImpl implements VariantSetsService {
         HashMap<Integer, AnalysisDTO>
                 analysisDtoMapByAnalysisId = new HashMap<>();
 
-        Objects.requireNonNull(pageSize, "pageSize: Required non null");
-        Objects.requireNonNull(pageNum, "pageNum: Required non null");
 
         try {
+
+            Objects.requireNonNull(pageSize, "pageSize: Required non null");
+            Objects.requireNonNull(pageNum, "pageNum: Required non null");
 
             Integer rowOffset = pageNum*pageSize;
 

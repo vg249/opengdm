@@ -46,8 +46,9 @@ public class DnaSample extends BaseEntity {
     @Column(name="well_col")
     private String wellCol;
 
-    @Column(name="project_id")
-    private Integer projectId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="project_id")
+    private Project project;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "germplasm_id")
@@ -117,12 +118,12 @@ public class DnaSample extends BaseEntity {
         this.wellCol = wellCol;
     }
 
-    public Integer getProjectId() {
-        return projectId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public Germplasm getGermplasm() {
