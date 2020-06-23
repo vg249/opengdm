@@ -16,9 +16,7 @@
         <security:authentication-provider ref="keycloakAuthenticationProvider" />
     </security:authentication-manager>
 
-    <bean id="adapterDeploymentContext" class="org.keycloak.adapters.springsecurity.AdapterDeploymentContextFactoryBean">
-        <constructor-arg value="/WEB-INF/keycloak.json" />
-    </bean>
+    <bean id="adapterDeploymentContext" class="org.gobiiproject.gobiiweb.security.AdapterDeploymentContextFactoryBean" />
 
     <bean id="keycloakAuthenticationEntryPoint" class="org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint">
         <constructor-arg name="adapterDeploymentContext" ref="adapterDeploymentContext"/>
