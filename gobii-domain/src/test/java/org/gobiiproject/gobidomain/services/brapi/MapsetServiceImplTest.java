@@ -58,8 +58,8 @@ public class MapsetServiceImplTest {
         Integer testPageSize = pageSize - 2;
 
         when(
-            mapsetDao.getMapsetsWithCounts(any(Integer.TYPE), any(Integer.TYPE),
-                any(Integer.TYPE), any(Integer.TYPE))
+            mapsetDao.getMapsetsWithCounts(pageSize, 0,
+                null, null)
         ).thenReturn(mockSetup.mockMapSets.subList(0, testPageSize));
 
         PagedResult<MapsetDTO>  mapsPageResult = mapsetBrapiService.getMapSets(pageSize, 0, null);

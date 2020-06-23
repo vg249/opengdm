@@ -67,11 +67,8 @@ public class CallSetServiceImplTest {
         mockSetup.createMockDnaRuns(pageSize);
 
         when (
-            dnaRunDao.getDnaRuns(any(Integer.TYPE), any(Integer.TYPE),
-                any(Integer.TYPE), any(String.class),
-                any(Integer.TYPE), any(Integer.TYPE),
-                any(Integer.TYPE), any(String.class),
-                any(Integer.TYPE), any(String.class))
+            dnaRunDao.getDnaRuns(pageSize, pageNum,
+                null, null, null, null, null, null, null, null)
         ).thenReturn(mockSetup.mockDnaRuns.subList(0, testPageSize));
 
 

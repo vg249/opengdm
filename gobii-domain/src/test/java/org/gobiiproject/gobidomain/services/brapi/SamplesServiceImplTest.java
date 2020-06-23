@@ -52,9 +52,9 @@ public class SamplesServiceImplTest {
         mockSetup.createMockDnaSamples(pageSize);
 
         when (
-                dnaSampleDao.getDnaSamples(any(Integer.TYPE), any(Integer.TYPE),
-                        isNull(Integer.TYPE), any(Integer.TYPE),
-                        any(Integer.TYPE), any(String.class))
+                dnaSampleDao.getDnaSamples(pageSize, 0,
+                        null, null,
+                        null, null)
         ).thenReturn(mockSetup.mockDnaSamples);
 
         when (
@@ -64,7 +64,7 @@ public class SamplesServiceImplTest {
 
 
         PagedResult<SamplesDTO> samplesBrapi = samplesBrapiService.getSamples(
-            0, pageSize, null, null, null);
+            pageSize,0, null, null, null);
 
         assertEquals("Size mismatch", mockSetup.mockDnaSamples.size(),
             samplesBrapi.getResult().size());

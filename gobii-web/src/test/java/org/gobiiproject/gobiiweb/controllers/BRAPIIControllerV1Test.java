@@ -340,8 +340,6 @@ public class BRAPIIControllerV1Test {
                         .value(mockSamples.get(0).getColumn()))
                 .andExpect(jsonPath("$.result.data[0].germplasmDbId")
                         .value(mockSamples.get(0).getGermplasmDbId().toString()))
-                .andExpect(jsonPath("$.result.data[0].observationUnitDbId")
-                        .value(mockSamples.get(0).getGermplasmPUI()))
                 .andExpect(jsonPath("$.result.data[0].plateName")
                         .value(mockSamples.get(0).getPlateName()))
                 .andExpect(jsonPath("$.result.data[0].row")
