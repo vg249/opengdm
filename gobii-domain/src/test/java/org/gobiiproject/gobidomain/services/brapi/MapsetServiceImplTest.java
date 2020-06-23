@@ -6,9 +6,12 @@ import java.util.Random;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Mapset;
+import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +22,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.print.attribute.standard.PageRanges;
 
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
-/**
- * Created by VCalaminos on 7/18/2019.
- */
 @WebAppConfiguration
 public class MapsetServiceImplTest {
 
@@ -63,17 +64,29 @@ public class MapsetServiceImplTest {
 
         PagedResult<MapsetDTO>  mapsPageResult = mapsetBrapiService.getMapSets(pageSize, 0, null);
 
-        assertEquals("Page size Test failed", testPageSize,
-            mapsPageResult.getCurrentPageSize());
+        assertEquals("Page size Test failed", testPageSize, mapsPageResult.getCurrentPageSize());
 
         assertEquals("Page number Test failed", pageNum, mapsPageResult.getCurrentPageNum());
 
         for(int i = 0; i < testPageSize; i++) {
-
             testMainFieldMapping(mapsPageResult.getResult().get(i), mockSetup.mockMapSets.get(i));
-
-
         }
+
+        GobiiDomainException ge = assertThrows(GobiiDomainException.class, () ->
+            mapsetBrapiService.getMapSets(null, 0, null));
+
+        assertEquals("PageSize exception not thrown", ge.getCause().getLocalizedMessage(),
+            "pageSize : Required non null");
+
+        when(
+            mapsetDao.getMapsetsWithCounts(any(Integer.TYPE), any(Integer.TYPE),
+                any(Integer.TYPE), any(Integer.TYPE))
+        ).thenThrow(new GobiiDaoException(""));
+
+        assertThrows(GobiiException.class, () ->
+            mapsetBrapiService.getMapSets(any(Integer.TYPE), 0, null));
+
+
 
     }
 
@@ -92,6 +105,18 @@ public class MapsetServiceImplTest {
             mockSetup.mockMapSets.get(0).getMapsetId());
 
         testMainFieldMapping(mapsetDTO, mockSetup.mockMapSets.get(0));
+
+        GobiiDomainException ge = assertThrows(GobiiDomainException.class, () ->
+            mapsetBrapiService.getMapSetById(null));
+
+        assertEquals("MapDbId null exception not thrown", ge.getCause().getLocalizedMessage(),
+            "mapDbId : Required non null");
+        when(
+            mapsetDao.getMapsetWithCountsById(any(Integer.TYPE))
+        ).thenThrow(new GobiiDomainException(""));
+
+        assertThrows(GobiiException.class, () ->
+            mapsetBrapiService.getMapSetById(any(Integer.TYPE)));
     }
 
     private void testMainFieldMapping(MapsetDTO mapsetDTO, Mapset mapset) {

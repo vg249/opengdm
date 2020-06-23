@@ -46,8 +46,8 @@ public class MapsetServiceImpl implements MapsetService {
 
         try {
 
-            Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(pageNum);
+            Objects.requireNonNull(pageSize, "pageSize : Required non null");
+            Objects.requireNonNull(pageNum, "pageNum : Required non null");
 
             List<MapsetDTO> mapsetDTOS = new ArrayList<>();
 
@@ -92,16 +92,19 @@ public class MapsetServiceImpl implements MapsetService {
 
         try {
 
+            Objects.requireNonNull(mapDbId, "mapDbId : Required non null");
+
             Mapset mapset = mapsetDao.getMapsetWithCountsById(mapDbId);
 
             ModelMapper.mapEntityToDto(mapset, mapsetDTO);
 
             return mapsetDTO;
         }
+        catch (GobiiException gE) {
+            throw gE;
+        }
         catch(Exception e) {
-            throw new GobiiException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal server error");
+            throw new GobiiDomainException(e);
         }
     }
 }

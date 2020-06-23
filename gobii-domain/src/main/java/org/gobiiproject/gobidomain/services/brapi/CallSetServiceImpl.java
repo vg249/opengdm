@@ -86,8 +86,7 @@ public class CallSetServiceImpl implements CallSetService {
     }
 
 
-    public CallSetDTO getCallSetById(Integer callSetDbId)
-        throws GobiiException {
+    public CallSetDTO getCallSetById(Integer callSetDbId) throws GobiiException {
 
 
         try {
@@ -100,10 +99,10 @@ public class CallSetServiceImpl implements CallSetService {
                 cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
 
             List<Cv> germplasmGroupCvs =
-                cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+                cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null);
 
-            CallSetDTO callSet =
-                this.mapDnaRunEntityToCallSetDto(dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
+            CallSetDTO callSet = this.mapDnaRunEntityToCallSetDto(
+                dnaRun, dnaSampleGroupCvs, germplasmGroupCvs);
 
             return callSet;
         }
@@ -122,7 +121,7 @@ public class CallSetServiceImpl implements CallSetService {
 
         PagedResult<CallSetDTO> returnVal = new PagedResult<>();
 
-        List<CallSetDTO> callSets = new ArrayList<>();
+        List<CallSetDTO> callSets;
 
         Integer rowOffset = 0;
 
@@ -178,7 +177,7 @@ public class CallSetServiceImpl implements CallSetService {
 
         GenotypesRunTimeCursors cursors = new GenotypesRunTimeCursors();
 
-        List<DnaRun> dnaRuns = new ArrayList<>();
+        List<DnaRun> dnaRuns;
 
         List<Marker> markers = new ArrayList<>();
 

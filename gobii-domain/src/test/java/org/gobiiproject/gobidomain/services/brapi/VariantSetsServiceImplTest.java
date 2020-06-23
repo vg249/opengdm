@@ -37,93 +37,38 @@ public class VariantSetsServiceImplTest {
     @Mock
     private CvDaoImpl cvDao;
 
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
+    MockSetup mockSetup;
+
+    Integer pageSize = 10;
+    Integer pageNum = 0;
 
     Random random = new Random();
 
-    ObjectMapper mapper = new ObjectMapper();
 
-
-    @SuppressWarnings("unused")
-    private Analysis createMockAnalysis(Integer analysisId) {
-
-        Analysis analysis = new Analysis();
-
-        analysis.setAnalysisId(analysisId);
-        analysis.setAnalysisName("test-analysis-"+analysisId.toString());
-        analysis.getType().setTerm("calling");
-
-        return analysis;
-
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        mockSetup  = new MockSetup();
+        mockSetup.createMockDatasets(pageSize);
     }
 
 
-    private List<Dataset> getMockDatasets(Integer listSize) {
-
-        List<Dataset> returnVal = new ArrayList<>();
-
-
-        for(int i = 0; i < listSize; i++) {
-
-            Dataset dataset = new Dataset();
-
-            dataset.setDatasetId(i+1);
-
-            dataset.setDatasetName(RandomStringUtils.random(7, true, true));
-
-            dataset.getExperiment().setExperimentId(i);
-
-            dataset.getCallingAnalysis().getReference().setReferenceId(i);
-
-            dataset.getCallingAnalysis().getType().setCvId(i*10);
-
-            dataset.getCallingAnalysis().getType().setTerm(
-                    RandomStringUtils.random(7, true, true));
-
-            //Only one analysis added in mock, so, just check the mapping for that one is correct
-            Analysis analysis = new Analysis();
-
-            analysis.setDescription(RandomStringUtils.random(7, true, true));
-            analysis.setAnalysisName(RandomStringUtils.random(7, true, true));
-            analysis.setAnalysisId(i);
-
-            dataset.setCallingAnalysis(analysis);
-
-
-            Integer[] analyses = {i};
-
-            dataset.setAnalyses(analyses);
-
-            dataset.setCreatedDate(new Date(random.nextLong()));
-            dataset.setModifiedDate(new Date(random.nextLong()));
-
-            returnVal.add(dataset);
-        }
-
-
-        return returnVal;
-   }
 
     @Test
-    public void testMainFieldsMapping() throws Exception {
+    public void testMainFieldsMapping() {
 
         final Integer pageSize = 1000;
 
-        List<Dataset> datasetsMock = getMockDatasets(pageSize);
 
         when (
-                datasetDao.getDatasets(
-                        any(Integer.TYPE), any(Integer.TYPE),
-                        any(Integer.TYPE), any(String.class),
-                        any(Integer.TYPE), any(String.class))
-        ).thenReturn(datasetsMock);
+            datasetDao.getDatasets(
+                pageSize, 0,
+                any(Integer.TYPE), any(String.class),
+                any(Integer.TYPE), any(String.class))
+        ).thenReturn(mockSetup.mockDatasets);
 
         PagedResult<VariantSetDTO> pagedResult = variansetService.getVariantSets(
-                0, pageSize, null, null,
-                null, null);
+            pageSize, 0, null, null, null, null);
 
 
         List<VariantSetDTO> variantSets = pagedResult.getResult();

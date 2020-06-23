@@ -28,9 +28,10 @@ public class MockSetup {
     public List<Platform> mockPlatforms;
     public List<Marker> mockMarkers;
     public List<Dataset> mockDatasets;
+    public List<Analysis> mockAnalysis;
 
 
-    String[] testDatasetIds = {"1", "2", "3"};
+    String[] testDatasetIds = {"1", "2", "3", "4", "5"};
 
     String[] genotypes = {"G", "C", "A", "T"};
 
@@ -126,6 +127,42 @@ public class MockSetup {
                 RandomStringUtils.random(5, true, true));
             germplasm.setProperties(properties);
             mockGermplasms.add(germplasm);
+        }
+    }
+
+    public void createMockAnalysis(int numAnalysis) {
+        mockAnalysis = new ArrayList<>();
+
+        for(int i = 0; i < numAnalysis; i++) {
+            Analysis analysis = new Analysis();
+            analysis.setAnalysisId(i);
+            analysis.setAnalysisName(RandomStringUtils.random(7, true, true));
+            mockAnalysis.add(analysis);
+        }
+    }
+
+    public void createMockDatasets(int numDatasets) {
+        mockDatasets = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(mockExperiments)) {
+            createMockExperiments(Math.round(numDatasets / 2));
+        }
+
+        if(CollectionUtils.isEmpty(mockAnalysis)) {
+            createMockAnalysis(Math.round(numDatasets / 2));
+        }
+
+        for(int i = 0; i < numDatasets; i++) {
+            Dataset dataset = new Dataset();
+            dataset.setDatasetName(RandomStringUtils.random(7, true, true));
+            dataset.setExperiment(mockExperiments.get(random.nextInt(mockExperiments.size())));
+            dataset.setCallingAnalysis(mockAnalysis.get(random.nextInt(mockAnalysis.size())));
+            Integer[] analyses = new Integer[1];
+            analyses[0] = mockAnalysis.get(random.nextInt(mockAnalysis.size())).getAnalysisId();
+            dataset.setAnalyses(analyses);
+            dataset.setDatasetId(i);
+            d
+            mockDatasets.add(dataset);
         }
     }
 
@@ -275,7 +312,7 @@ public class MockSetup {
             int altsSize = random.nextInt(4);
             String[] alts = new String[altsSize];
 
-            for(int j = 0; i < altsSize; i++) {
+            for(int j = 0; j < altsSize; j++) {
                 alts[j] =  genotypes[random.nextInt(genotypes.length)];
             }
             marker.setAlts(alts);
@@ -287,6 +324,8 @@ public class MockSetup {
             hdf5Index++;
             maxHdf5Index.put(testDatasetId, hdf5Index);
             marker.setDatasetMarkerIdx(datasetMarkerIndex);
+
+            mockMarkers.add(marker);
         }
 
     }

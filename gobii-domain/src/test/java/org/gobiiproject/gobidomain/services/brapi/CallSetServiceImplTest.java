@@ -1,19 +1,20 @@
-/**
- * Created by VCalaminos on 7/18/2019.
- * Update by Vishnu G
- */
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
+import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.CvDaoImpl;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
+import org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -23,9 +24,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @WebAppConfiguration
@@ -38,6 +41,9 @@ public class CallSetServiceImplTest {
     private DnaRunDaoImpl dnaRunDao;
 
     @Mock
+    private MarkerDaoImpl markerDao;
+
+    @Mock
     private CvDaoImpl cvDao;
 
     MockSetup mockSetup;
@@ -45,7 +51,7 @@ public class CallSetServiceImplTest {
     Integer pageSize = 10;
     Integer pageNum = 0;
 
-    File tempFile;
+    Random random = new Random();
 
     @Before
     public void init() {
@@ -96,8 +102,7 @@ public class CallSetServiceImplTest {
                 mockSetup.mockDnaRuns.get(i));
 
             if(!MapUtils.isEmpty(
-                callSetsPageResult
-                .getResult().get(i).getAdditionalInfo())) {
+                callSetsPageResult.getResult().get(i).getAdditionalInfo())) {
                 testAdditionalInfoFieldMapping(
                     callSetsPageResult.getResult().get(i).getAdditionalInfo(),
                     mockSetup.mockDnaRuns.get(i));
@@ -106,7 +111,143 @@ public class CallSetServiceImplTest {
     }
 
     @Test
-    public void getCallsetByIdTest() throws Exception {
+    public void getCallSetsByGenotypesSearchQueryTest() {
+
+        mockSetup.createMockDnaRuns(pageSize);
+        mockSetup.createMockMarkers(pageSize);
+
+        GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO = new GenotypeCallsSearchQueryDTO();
+
+        List<DnaRun> testDnaRunsSubList = mockSetup.mockDnaRuns
+            .subList(0, random.nextInt(pageSize - 4) + 3);
+
+        List<Marker> testMarkerSubList = mockSetup.mockMarkers
+            .subList(0, random.nextInt(pageSize - 4) + 3);
+
+        Set<String> testCallSetNames = testDnaRunsSubList
+            .stream()
+            .map(DnaRun::getDnaRunName)
+            .collect(Collectors.toSet());
+
+        Set<String> testMarkerNames = testMarkerSubList
+            .stream()
+            .map(Marker::getMarkerName)
+            .collect(Collectors.toSet());
+
+        genotypeCallsSearchQueryDTO.setCallSetNames(testCallSetNames);
+        genotypeCallsSearchQueryDTO.setVariantNames(testMarkerNames);
+
+        Set<String> testDnaRunDatasetIds = new HashSet<>();
+        Set<String> testMarkerDatasetIds = new HashSet<>();
+
+        testDnaRunsSubList.forEach(dnaRun -> {
+            try {
+                testDnaRunDatasetIds
+                    .addAll(JsonNodeUtils.getKeysFromJsonObject(dnaRun.getDatasetDnaRunIdx()));
+            }
+            catch (Exception e) {
+                fail("Failed to extract dataset ids");
+            }
+        });
+
+        testMarkerSubList.forEach(marker -> {
+            try {
+                testMarkerDatasetIds
+                    .addAll(JsonNodeUtils.getKeysFromJsonObject(marker.getDatasetMarkerIdx()));
+            }
+            catch (Exception e) {
+                fail("Failed to extract dataset ids");
+            }
+        });
+
+        List<DnaRun> expectedDnaRuns = testDnaRunsSubList.stream().filter(dnaRun -> {
+            boolean  isExpected = false;
+            try {
+                for(String datasetId :
+                    JsonNodeUtils.getKeysFromJsonObject(dnaRun.getDatasetDnaRunIdx())) {
+                    if (testMarkerDatasetIds.contains(datasetId)) {
+                        isExpected = true;
+                    }
+                }
+            }
+            catch (Exception e) {
+                    fail("Failed to extract dataset ids");
+            }
+            return isExpected;
+        }).collect(Collectors.toList());
+
+        Map<String, Integer> pageCursorMap = new HashMap<>();
+        pageCursorMap.put("markerBinCursor", 0);
+        pageCursorMap.put("dnaRunIdCursor", 0);
+        String pageToken = PageToken.encode(pageCursorMap);
+
+        String nextPageToken = null;
+
+        if(expectedDnaRuns.size() > 0) {
+            pageCursorMap.put("markerBinCursor", 0);
+            pageCursorMap.put("dnaRunIdCursor",
+                expectedDnaRuns.get(expectedDnaRuns.size() - 1).getDnaRunId());
+            nextPageToken = PageToken.encode(pageCursorMap);
+        }
+
+
+        when(markerDao.getMarkers(genotypeCallsSearchQueryDTO.getVariantDbIds(),
+            genotypeCallsSearchQueryDTO.getVariantNames(),
+            genotypeCallsSearchQueryDTO.getVariantSetDbIds(), 1000, 0))
+            .thenReturn(testMarkerSubList);
+
+        when (
+            dnaRunDao.getDnaRuns(
+               genotypeCallsSearchQueryDTO.getCallSetDbIds(),
+                genotypeCallsSearchQueryDTO.getCallSetNames(),
+                genotypeCallsSearchQueryDTO.getSampleDbIds(),
+                genotypeCallsSearchQueryDTO.getSampleNames(),
+                genotypeCallsSearchQueryDTO.getSamplePUIs(),
+                genotypeCallsSearchQueryDTO.getGermplasmPUIs(),
+                genotypeCallsSearchQueryDTO.getGermplasmDbIds(),
+                genotypeCallsSearchQueryDTO.getGermplasmNames(),
+               testMarkerDatasetIds, expectedDnaRuns.size(), 0, null, true)
+        ).thenReturn(expectedDnaRuns);
+
+
+        when (cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null)
+        ).thenReturn(mockSetup.mockDnaSampleProps);
+
+        when (cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(), null))
+            .thenReturn(mockSetup.mockGermplasmProps);
+
+        PagedResult<CallSetDTO> callSetsPagedResult =
+            callSetBrapiService
+                .getCallSetsByGenotypesExtractQuery(
+                    genotypeCallsSearchQueryDTO, expectedDnaRuns.size(), pageToken);
+
+        assertEquals("Page Size mismatch",
+            (Integer) expectedDnaRuns.size(),
+            callSetsPagedResult.getCurrentPageSize());
+
+        assertEquals("Page Token mismatch",
+            nextPageToken,
+            callSetsPagedResult.getNextPageToken());
+
+        for(int i = 0; i < expectedDnaRuns.size(); i++) {
+
+            testMainFieldMapping(callSetsPagedResult.getResult().get(i),
+                expectedDnaRuns.get(i));
+
+            if(!MapUtils.isEmpty(
+                callSetsPagedResult.getResult().get(i).getAdditionalInfo())) {
+                testAdditionalInfoFieldMapping(
+                    callSetsPagedResult.getResult().get(i).getAdditionalInfo(),
+                    expectedDnaRuns.get(i));
+            }
+        }
+
+    }
+
+    @Test
+    public void getCallsetByIdTest()  {
 
         mockSetup.createMockDnaRuns(pageSize);
 
@@ -206,24 +347,27 @@ public class CallSetServiceImplTest {
                 .filter(cv -> cv.getTerm() == infoKey)
                 .findFirst();
 
-            if(cvDnaSampleProps.isPresent()) {
+            if(cvDnaSampleProps.isPresent() && dnaRun.getDnaSample().getProperties().size() > 0) {
                 assertTrue("AdditionalInfo : DnaSample.Properties " +
                         "mapping failed",
                     dnaRun.getDnaSample()
                         .getProperties().get(
                         cvDnaSampleProps.get().getCvId().toString())
-                        .asText()
-                        == additionalInfo.get(infoKey)
+                        .asText() ==
+                        additionalInfo.get(infoKey)
                 );
             }
-            else if(cvGermplasmProps.isPresent()) {
+            else if(cvGermplasmProps.isPresent() &&
+                dnaRun.getDnaSample().getGermplasm().getProperties().size() > 0
+            ) {
                 assertTrue("AdditionalInfo : Germplasm.Properties " +
                         "mapping failed",
                     dnaRun.getDnaSample().getGermplasm()
                         .getProperties().get(
                         cvGermplasmProps.get().getCvId().toString())
                         .asText()
-                        == additionalInfo.get(infoKey)
+                        ==
+                        additionalInfo.get(infoKey)
                 );
             }
             else {
