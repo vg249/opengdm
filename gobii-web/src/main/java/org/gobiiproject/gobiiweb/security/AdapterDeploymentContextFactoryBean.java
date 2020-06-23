@@ -8,6 +8,7 @@ import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
 import org.keycloak.representations.adapters.config.AdapterConfig;
+
 public class AdapterDeploymentContextFactoryBean implements FactoryBean<AdapterDeploymentContext>, InitializingBean {
 
 
@@ -50,9 +51,12 @@ public class AdapterDeploymentContextFactoryBean implements FactoryBean<AdapterD
         adapterConfig.setSslRequired(keycloakConfig.getSslRequired());
         adapterConfig.setBearerOnly(keycloakConfig.isBearerOnly());
         adapterConfig.setPrincipalAttribute(keycloakConfig.getPrincipalAttribute());
+
         //TODO:  do a bean attribute copy
 
-        return  KeycloakDeploymentBuilder.build(adapterConfig);
+        KeycloakDeployment deployment =   KeycloakDeploymentBuilder.build(adapterConfig);
+
+        return deployment;
         
     }
 
