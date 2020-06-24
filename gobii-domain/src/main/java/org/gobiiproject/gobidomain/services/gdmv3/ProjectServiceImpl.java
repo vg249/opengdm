@@ -8,6 +8,7 @@
  */
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -109,7 +110,13 @@ public class ProjectServiceImpl implements ProjectService {
         project.setStatus(cv);
 
         //Project properties
-        java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(request.getProperties());
+        List<CvPropertyDTO> nullFiltered = new ArrayList<>();
+        request.getProperties().forEach(cvItem -> {
+            if (cvItem.getPropertyValue() != null) {
+                nullFiltered.add(cvItem);
+            }
+        });
+        java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(nullFiltered);
         project.setProperties(props);
         // audit items
         Contact creator = contactDao.getContactByUsername(createdBy);
