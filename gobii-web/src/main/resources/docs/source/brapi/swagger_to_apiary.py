@@ -16,7 +16,7 @@ except ImportError:
 
 tags_order = ["ServerInfo", "Authentication", "Studies", "Genome Maps",
               "Samples", "CallSets", "Variants",
-              "VariantSets", "Search Genotypes", "NoTag"]
+              "VariantSets", "Genotype Calls", "NoTag"]
 swagger_json_path = None
 doc_md_path = None
 
