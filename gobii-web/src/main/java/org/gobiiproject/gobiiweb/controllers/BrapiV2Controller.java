@@ -1050,9 +1050,9 @@ public class BrapiV2Controller {
         @ApiParam(value = "Page Token to fetch a page. " +
             "Value is $metadata.pagination.nextPageToken form previous page.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
-        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @ApiParam(value = "Size of the page to be fetched. Default is 100000.")
             @RequestParam(value = "pageSize", required = false,
-                defaultValue = BrapiDefaults.pageSize) Integer pageSize) {
+                defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize) {
         try {
 
             PagedResult<GenotypeCallsDTO> pagedResult =
@@ -1348,9 +1348,9 @@ public class BrapiV2Controller {
         @ApiParam(value = "Page Token to fetch a page. " +
             "Value is $metadata.pagination.nextPageToken form previous page.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
-        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @ApiParam(value = "Size of the page to be fetched. Default is 100000.")
             @RequestParam(value = "pageSize", required = false,
-                defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+                defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize,
         HttpServletRequest request) {
 
         try {
