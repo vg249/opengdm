@@ -381,7 +381,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
             if(!CollectionUtils.isEmpty(dnaSampleIds) ||
                 !CollectionUtils.isEmpty(dnaSampleNames) ||
                 !CollectionUtils.isEmpty(dnaSampleUuids) ||
-                !CollectionUtils.isEmpty(germplasmExternalCodes)) {
+                !CollectionUtils.isEmpty(germplasmExternalCodes) ||
+                !CollectionUtils.isEmpty(germplasmIds) ||
+                !CollectionUtils.isEmpty(germplasmNames)) {
 
 
                 if(fetchAssociations) {
