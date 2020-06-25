@@ -103,6 +103,7 @@ public class FlapjackTransformer {
 
 
 		rm(tempFile);
+		rm(tempFile2);
 		//Note, this file has no line ending.
 		
 		//Sample list is all samples, no response
