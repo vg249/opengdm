@@ -82,6 +82,7 @@ public class FlapjackTransformer {
 		//TODO: run slash adder on genotype file
 		boolean status = true;
 		String tempFile = tempDir + "tmp";
+		String tempFile2 = tempDir + "tmp2";
 		String markerList = tempDir + "genotype.markerList";
 		String inverseMarkerList = tempDir + "genotype.markerIList";
 		
@@ -95,10 +96,10 @@ public class FlapjackTransformer {
 		rm(tempFile);
 		//Adds one line, then rotates 90 degrees, so each marker is a tab
 		status = invokeTryExec("cat "+tempDir+"blank.file "+markerList, tempFile,errorFile, status);
-		status = invokeTryExec("tr '\\n' '\\t'",inverseMarkerList,errorFile, tempFile, status);//Input redirection wheeee
+		status = invokeTryExec("tr '\\n' '\\t'",tempFile2,errorFile, tempFile, status);//Input redirection wheeee
 
 		//GSD-131 - there will be a trailing newline to the above pre-transformed file, so we need to remove the trailing tab. Sed -i for inline
-		HelperFunctions.tryExec("sed -i 's/\t$//' "+ inverseMarkerList); 
+		status = invokeTryExec("sed 's/\t$//'", inverseMarkerList,errorFile,tempFile2,status);
 
 
 		rm(tempFile);
@@ -131,9 +132,9 @@ public class FlapjackTransformer {
 	 * @param status
 	 * @return
 	 */
-	private static boolean invokeTryExec(String execString, String inverseMarkerList, String errorFile, String tempFile, boolean status) {
+	private static boolean invokeTryExec(String execString, String outputFile, String errorFile, String inputFile, boolean status) {
 		// If return val
-		if (HelperFunctions.tryExec(execString, inverseMarkerList, errorFile, tempFile) == true) {
+		if (HelperFunctions.tryExec(execString, outputFile, errorFile, inputFile) == true) {
 			return status;
 		} else {
 			return false;
