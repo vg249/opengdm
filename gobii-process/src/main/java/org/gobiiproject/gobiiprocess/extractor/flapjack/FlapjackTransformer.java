@@ -99,7 +99,7 @@ public class FlapjackTransformer {
 		status = invokeTryExec("tr '\\n' '\\t'",tempFile2,errorFile, tempFile, status);//Input redirection wheeee
 
 		//GSD-131 - there will be a trailing newline to the above pre-transformed file, so we need to remove the trailing tab. Sed -i for inline
-		status = invokeTryExec("sed \"s/\t$//\"", inverseMarkerList,errorFile,tempFile2,status);
+		status = invokeTryExec("sed s/\\t$//", inverseMarkerList,errorFile,tempFile2,status);
 
 
 		rm(tempFile);
