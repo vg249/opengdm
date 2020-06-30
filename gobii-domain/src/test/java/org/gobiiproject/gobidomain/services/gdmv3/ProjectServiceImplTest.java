@@ -12,12 +12,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -169,4 +171,99 @@ public class ProjectServiceImplTest {
     }
    
 
+    @Test
+    public void testPatchProjectOk() throws Exception {
+        Project mockProject = new Project();
+        mockProject.setProjectId(123);
+        mockProject.setProjectName("test-project");
+        mockProject.setProjectDescription("test-description");
+        
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(333);
+        mockContact.setUsername("test-user");
+
+        mockProject.setContact(mockContact);
+
+        Contact mockNewContact  = new Contact();
+        mockNewContact.setContactId(222);
+        mockNewContact.setUsername("new-user");
+
+        Contact mockEditor = new Contact();
+        mockEditor.setContactId(444);
+        mockEditor.setUsername("test-editor");
+
+        Cv mockModifiedStatus = new Cv();
+        mockModifiedStatus.setCvId(12);
+        mockModifiedStatus.setTerm("modified");
+  
+
+        GobiiProjectPatchDTO request = new GobiiProjectPatchDTO();
+        request.setPiContactId("222");
+        request.setProjectName("new-project-name");
+        request.setProjectDescription("new-project-description");
+
+        when(projectDao.getProject(123)).thenReturn(mockProject);
+        when(contactDao.getContact(222)).thenReturn(mockNewContact);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
+        when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
+
+        ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
+
+        v3ProjectServiceImpl.patchProject(123, request, "test-editor");
+        verify(projectDao).patchProject(arg.capture());
+
+        Project param = arg.getValue();
+        assertTrue(param.getProjectName().equals("new-project-name"));
+        assertTrue(param.getProjectDescription().equals("new-project-description"));
+        assertTrue(param.getContact().getContactId() == 222);
+
+    }
+
+    @Test
+    public void testUpdateProperties() throws Exception {
+        Project mockProject = new Project();
+        mockProject.setProjectId(123);
+        mockProject.setProjectName("test-project");
+        mockProject.setProjectDescription("test-description");
+        mockProject.setProperties(new HashMap<String, String>());
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(333);
+        mockContact.setUsername("test-user");
+
+        mockProject.setContact(mockContact);
+
+        
+        GobiiProjectPatchDTO request = new GobiiProjectPatchDTO();
+        List<CvPropertyDTO> testProps = new ArrayList<>();
+        CvPropertyDTO mockProp = new CvPropertyDTO();
+        mockProp.setPropertyId(444);
+        mockProp.setPropertyValue("test-value");
+        testProps.add(mockProp);
+        request.setProperties(testProps);
+
+        Contact mockEditor = new Contact();
+        mockEditor.setContactId(444);
+        mockEditor.setUsername("test-editor");
+
+        Cv mockModifiedStatus = new Cv();
+        mockModifiedStatus.setCvId(12);
+        mockModifiedStatus.setTerm("modified");
+
+        when(projectDao.getProject(123)).thenReturn(mockProject);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
+        when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
+
+        ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
+
+        v3ProjectServiceImpl.patchProject(123, request, "test-editor");
+        verify(projectDao).patchProject(arg.capture());
+
+        Project param = arg.getValue();
+        assertTrue(param.getProperties().size() == 1);
+
+
+        
+    }
 }

@@ -169,7 +169,6 @@ public class ProjectServiceImpl implements ProjectService {
         
         //audit items first
         Contact editor = contactDao.getContactByUsername(editedBy);
-        project.setModifiedBy(null);
         if (editor != null)
             project.setModifiedBy(editor.getContactId());
         project.setModifiedDate(new java.util.Date());
@@ -180,13 +179,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         //set new status
-        List<Cv> cvList = cvDao.getCvs("modified", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
+        Cv cv = cvDao.getModifiedStatus();
         project.setStatus(cv);
 
         projectDao.patchProject(project);
