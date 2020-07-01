@@ -202,6 +202,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 "Associated resources found. Cannot complete the action unless they are deleted."
             );
         }
+
         analysisDao.deleteAnalysis(analysis);
     }
 

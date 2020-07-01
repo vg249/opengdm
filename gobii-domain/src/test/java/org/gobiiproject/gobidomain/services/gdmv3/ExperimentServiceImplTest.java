@@ -6,16 +6,21 @@
 
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
@@ -30,6 +35,7 @@ import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -133,26 +139,25 @@ public class ExperimentServiceImplTest {
             contactDao.getContactByUsername("test-user")
         ).thenReturn(dummyContact);
 
-        Experiment experiment = new Experiment();
-        experiment.setExperimentName("test-experiment");
-        experiment.setProject(dummyProject);
-        experiment.setVendorProtocol(dummyVp);
         
         when(
             experimentDao.createExperiment(Mockito.any(Experiment.class))
         ).thenReturn(
-            experiment
+            new Experiment()
         );
-
-        ExperimentDTO target = experimentServiceImpl.createExperiment(request, "test-user");
-        assert target.getExperimentName() == experiment.getExperimentName();
+        ArgumentCaptor<Experiment> arg = ArgumentCaptor.forClass(Experiment.class);
+        experimentServiceImpl.createExperiment(request, "test-user");
+        verify(experimentDao).createExperiment(arg.capture());
         verify(projectDao, times(1)).getProject(7);
         verify(experimentDao, times(1)).getVendorProtocol(4);
         verify(experimentDao, times(1)).createExperiment( Mockito.any(Experiment.class));
         verify(contactDao, times(1)).getContactByUsername("test-user");
         
+        assertTrue(arg.getValue().getExperimentName().equals("test-experiment"));
+        assertTrue(arg.getValue().getProject().getProjectId() == 7);
     }
 
+    @Test
     public void testUpdateExperiment() throws Exception {
         assert experimentDao != null;
 
@@ -207,25 +212,56 @@ public class ExperimentServiceImplTest {
             contactDao.getContactByUsername("test-user")
         ).thenReturn(dummyContact);
 
-        Experiment experiment = new Experiment();
-        experiment.setExperimentName("test-experiment");
-        experiment.setProject(dummyProject);
-        experiment.setVendorProtocol(dummyVp);
+       
         
         when(
             experimentDao.updateExperiment(Mockito.any(Experiment.class))
         ).thenReturn(
-            experiment
+            new Experiment() //does not matter that it's empty as we are testing for the
+                             //param instead,
         );
-
-        ExperimentDTO target = experimentServiceImpl.updateExperiment(123, request, "test-user");
-        assert target.getExperimentName() == experiment.getExperimentName();
+        ArgumentCaptor<Experiment> arg = ArgumentCaptor.forClass(Experiment.class);
+        experimentServiceImpl.updateExperiment(123, request, "test-user");
+        
+        verify(experimentDao).updateExperiment(arg.capture());
         verify(projectDao, times(1)).getProject(7);
-        verify(experimentDao, times(1)).getExperiment(123);
+        verify(experimentDao, times(2)).getExperiment(123);
         verify(experimentDao, times(1)).getVendorProtocol(4);
         verify(experimentDao, times(1)).updateExperiment( Mockito.any(Experiment.class));
         verify(contactDao, times(1)).getContactByUsername("test-user");
+
+        assertTrue(arg.getValue().getExperimentName().equals("test-experiment"));
+        assertTrue(arg.getValue().getProject().getProjectId() == 7);
     }
 
+
+    @Test
+    public void testGetExperimentsOk() throws Exception {
+        List<Experiment> mockList = new ArrayList<>();
+        mockList.add(new Experiment());
+
+        when(experimentDao.getExperiments(1000, 0, null)).thenReturn(mockList);
+
+        PagedResult<ExperimentDTO> result = experimentServiceImpl.getExperiments(0, 1000, null);
+        assertTrue(result.getCurrentPageNum() == 0);
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
+    }
+
+    @Test
+    public void testDeleteExperimentOk() throws Exception {
+        when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
+        experimentServiceImpl.deleteExperiment(123);
+
+        verify(experimentDao, times(1)).deleteExperiment(any(Experiment.class));
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void testDeleteExperimentNotOk1() throws Exception {
+        when(experimentDao.getExperiment(123)).thenReturn(null);
+        experimentServiceImpl.deleteExperiment(123);
+
+        verify(experimentDao, times(0)).deleteExperiment(any(Experiment.class));
+    }
 
 }
