@@ -23,6 +23,7 @@ import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 public class AnalysisServiceImplTest {
     @Mock
     private AnalysisDao analysisDao;
+
+    @Mock
+    private DatasetDao datasetDao;
 
     @Mock
     private CvDao cvDao;
@@ -268,7 +272,7 @@ public class AnalysisServiceImplTest {
         Cv mockNewStatus = new Cv();
         when(cvDao.getNewStatus()).thenReturn(mockNewStatus);
         when(analysisDao.updateAnalysis(any(Analysis.class))).thenReturn(new Analysis());
-        
+
         ArgumentCaptor<Analysis> arg = ArgumentCaptor.forClass(Analysis.class);
         analysisServiceImpl.updateAnalysis(123, request, "test-editor");
 
@@ -277,9 +281,50 @@ public class AnalysisServiceImplTest {
         assertTrue(arg.getValue().getAnalysisName().equals("test-analysis-new"));
         assertTrue(arg.getValue().getReference().getReferenceId() == 678);
         assertTrue(arg.getValue().getType().getCvId() == 345);
-        assertTrue(arg.getValue().getDescription().equals("new-description"));
-        
-
-        
+        assertTrue(arg.getValue().getDescription().equals("new-description"));   
     }
+
+    @Test
+    public void testDeleteOk() throws Exception {
+        when(analysisDao.getAnalysis(123)).thenReturn(new Analysis());
+        when(datasetDao.getDatasetCountByAnalysisId(123)).thenReturn(0);
+        when(datasetDao.getDatasetCountWithAnalysesContaining(123)).thenReturn(0);
+        analysisServiceImpl.deleteAnalysis(123);
+        
+        verify(analysisDao, times(1)).deleteAnalysis(any(Analysis.class));
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void testDeleteNotOk1() throws Exception {
+        when(analysisDao.getAnalysis(123)).thenReturn(null);
+        analysisServiceImpl.deleteAnalysis(123);
+        
+        verify(analysisDao, times(0)).deleteAnalysis(any(Analysis.class));
+    }
+
+
+    @Test(expected = GobiiDaoException.class)
+    public void testDeleteNotOk2() throws Exception {
+        when(analysisDao.getAnalysis(123)).thenReturn(new Analysis());
+        when(datasetDao.getDatasetCountByAnalysisId(123)).thenReturn(0);
+        when(datasetDao.getDatasetCountWithAnalysesContaining(123)).thenReturn(10);
+        analysisServiceImpl.deleteAnalysis(123);
+        
+        verify(analysisDao, times(0)).deleteAnalysis(any(Analysis.class));
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void testDeleteNotOk3() throws Exception {
+        when(analysisDao.getAnalysis(123)).thenReturn(new Analysis());
+        when(datasetDao.getDatasetCountByAnalysisId(123)).thenReturn(10);
+        when(datasetDao.getDatasetCountWithAnalysesContaining(123)).thenReturn(0);
+        analysisServiceImpl.deleteAnalysis(123);
+        
+        verify(analysisDao, times(0)).deleteAnalysis(any(Analysis.class));
+    }
+
+
+    
+    
+
 }
