@@ -8,6 +8,8 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -173,10 +175,7 @@ public class ProjectServiceImplTest {
 
     @Test
     public void testPatchProjectOk() throws Exception {
-        Project mockProject = new Project();
-        mockProject.setProjectId(123);
-        mockProject.setProjectName("test-project");
-        mockProject.setProjectDescription("test-description");
+        Project mockProject = getMockProject();
         
 
         Contact mockContact = new Contact();
@@ -222,12 +221,7 @@ public class ProjectServiceImplTest {
 
     @Test
     public void testUpdateProperties() throws Exception {
-        Project mockProject = new Project();
-        mockProject.setProjectId(123);
-        mockProject.setProjectName("test-project");
-        mockProject.setProjectDescription("test-description");
-        mockProject.setProperties(new HashMap<String, String>());
-
+        Project mockProject = getMockProject();
         Contact mockContact = new Contact();
         mockContact.setContactId(333);
         mockContact.setUsername("test-user");
@@ -262,8 +256,28 @@ public class ProjectServiceImplTest {
 
         Project param = arg.getValue();
         assertTrue(param.getProperties().size() == 1);
+    }
 
+    @Test
+    public void testDeleteProject() throws Exception {
+        Project mockProject  = getMockProject();
 
+        when(projectDao.getProject(123)).thenReturn(mockProject);
+        ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
+        v3ProjectServiceImpl.deleteProject(123);
         
+        verify(projectDao).deleteProject(arg.capture());
+        assertTrue(arg.getValue().getProjectId() == 123);
+        verify(projectDao, times(1)).deleteProject(any(Project.class));
+    }
+
+
+    private Project getMockProject() {
+        Project mockProject = new Project();
+        mockProject.setProjectId(123);
+        mockProject.setProjectName("test-project");
+        mockProject.setProjectDescription("test-description");
+        mockProject.setProperties(new HashMap<String, String>());
+        return mockProject;
     }
 }
