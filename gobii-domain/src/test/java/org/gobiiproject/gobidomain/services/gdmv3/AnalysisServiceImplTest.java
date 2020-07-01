@@ -241,5 +241,45 @@ public class AnalysisServiceImplTest {
         assertTrue(result.getResult().size() == 1);
     }
 
-  
+    @Test
+    public void testUpdateAnalysisOk() throws Exception {
+        AnalysisDTO request = new AnalysisDTO();
+        request.setAnalysisTypeId(345);
+        request.setAnalysisName("test-analysis-new");
+        request.setDescription("new-description");
+        request.setReferenceId(678);
+
+        Reference mockReference = new Reference();
+        mockReference.setReferenceId(678);
+        when(referenceDao.getReference(678)).thenReturn(mockReference);
+
+        Cv mockCv = new Cv();
+        mockCv.setCvId(345);
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName()); //incorrect 
+        mockCv.setCvGroup(mockGroup);
+        when (cvDao.getCvByCvId(345)).thenReturn(mockCv);
+
+        Analysis mockAnalysis = new Analysis();
+        mockAnalysis.setAnalysisId(123);
+        mockAnalysis.setAnalysisName("test-name");
+        when (analysisDao.getAnalysis(123)).thenReturn(mockAnalysis);
+     
+        Cv mockNewStatus = new Cv();
+        when(cvDao.getNewStatus()).thenReturn(mockNewStatus);
+        when(analysisDao.updateAnalysis(any(Analysis.class))).thenReturn(new Analysis());
+        
+        ArgumentCaptor<Analysis> arg = ArgumentCaptor.forClass(Analysis.class);
+        analysisServiceImpl.updateAnalysis(123, request, "test-editor");
+
+        verify(analysisDao).updateAnalysis(arg.capture());
+
+        assertTrue(arg.getValue().getAnalysisName().equals("test-analysis-new"));
+        assertTrue(arg.getValue().getReference().getReferenceId() == 678);
+        assertTrue(arg.getValue().getType().getCvId() == 345);
+        assertTrue(arg.getValue().getDescription().equals("new-description"));
+        
+
+        
+    }
 }
