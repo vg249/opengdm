@@ -95,12 +95,12 @@ public class AnalysisServiceImpl implements AnalysisService {
             analysis.setCreatedBy(creator.getContactId());
         analysis.setCreatedDate(new java.util.Date());
 
-        try {
-            analysis = analysisDao.createAnalysis(analysis);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        // try {
+        analysis = analysisDao.createAnalysis(analysis);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        //     throw e;
+        // }
 
         AnalysisDTO analysisDTO = new AnalysisDTO();
 
@@ -154,15 +154,8 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Transactional
     @Override
-    public AnalysisDTO updateAnalysis(Integer id, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
-        Analysis analysis = analysisDao.getAnalysis(id);
-        if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Analysis not found"
-            );
-        }
+    public AnalysisDTO updateAnalysis(Integer analysisId, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
+        Analysis analysis = this.loadAnalysis(analysisId);
 
         if (analysisDTO.getReferenceId() != null) {
             //check if the reference exists
@@ -195,16 +188,10 @@ public class AnalysisServiceImpl implements AnalysisService {
         return updatedAnalysisDTO;
     }
 
+    @Transactional
     @Override
     public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {  
-        Analysis analysis = analysisDao.getAnalysis(analysisId);
-        if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Analysis not found"
-            );
-        }
+        Analysis analysis = this.loadAnalysis(analysisId);
         AnalysisDTO analysisDTO = new AnalysisDTO();
         ModelMapper.mapEntityToDto(analysis, analysisDTO);
         return analysisDTO;
@@ -214,14 +201,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public void deleteAnalysis(Integer analysisId) throws Exception {
         //Check if analysis exists
-        Analysis analysis = analysisDao.getAnalysis(analysisId);
-        if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Analysis not found"
-            );
-        }
+        Analysis analysis = this.loadAnalysis(analysisId);
 
         //check for data sets calling analysis or analyses column
         if (
@@ -239,4 +219,16 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         analysisDao.deleteAnalysis(analysis);
     }
-}
+
+    private Analysis loadAnalysis(Integer analysisId) throws GobiiDaoException {
+        Analysis analysis = analysisDao.getAnalysis(analysisId);
+        if (analysis == null) {
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Analysis not found"
+            );
+        }
+        return analysis;
+    }
+ }

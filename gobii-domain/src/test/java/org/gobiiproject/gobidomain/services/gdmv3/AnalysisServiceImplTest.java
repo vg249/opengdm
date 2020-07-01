@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
@@ -18,6 +19,7 @@ import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.CvGroup;
+import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -118,6 +120,7 @@ public class AnalysisServiceImplTest {
         AnalysisDTO request = new AnalysisDTO();
         request.setAnalysisTypeId(456);
         request.setAnalysisName("test-analysis");
+        request.setReferenceId(678);
 
 
         Cv analysisType = new Cv();
@@ -139,6 +142,11 @@ public class AnalysisServiceImplTest {
             mockContact
         );
 
+        //mock reference
+        Reference mockReference = new Reference();
+        mockReference.setReferenceId(678);
+        when(referenceDao.getReference(678)).thenReturn(mockReference);
+
         when(analysisDao.createAnalysis(any(Analysis.class))).thenReturn(
             new Analysis()
         ); 
@@ -151,7 +159,87 @@ public class AnalysisServiceImplTest {
         assertTrue(arg.getValue().getAnalysisName().equals("test-analysis"));
     }
 
+    @Test(expected = GobiiDaoException.class)
+    public void testCreateAnalysisTypeNotFound() throws Exception {
+        AnalysisDTO request = new AnalysisDTO();
+        request.setAnalysisTypeId(345);
+        request.setAnalysisName("test-analysis");
+        request.setReferenceId(678);
+        when (cvDao.getCvByCvId(345)).thenReturn(null);
+
+        analysisServiceImpl.createAnalysis(request, "test-editor");
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void testCreateAnalysisInvalidCvType() throws Exception {
+        AnalysisDTO request = new AnalysisDTO();
+        request.setAnalysisTypeId(345);
+        request.setAnalysisName("test-analysis");
+        request.setReferenceId(678);
+
+        Cv mockCv = new Cv();
+        mockCv.setCvId(345);
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName()); //incorrect 
+        mockCv.setCvGroup(mockGroup);
+        when (cvDao.getCvByCvId(345)).thenReturn(mockCv);
+
+        analysisServiceImpl.createAnalysis(request, "test-editor");
+        verify(cvDao, times(1)).getCvByCvId(345);
+
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void testCreateAnalysisInvalidReference() throws Exception {
+        AnalysisDTO request = new AnalysisDTO();
+        request.setAnalysisTypeId(345);
+        request.setAnalysisName("test-analysis");
+        request.setReferenceId(678);
+
+        Cv mockCv = new Cv();
+        mockCv.setCvId(345);
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName()); //incorrect 
+        mockCv.setCvGroup(mockGroup);
+        when (cvDao.getCvByCvId(345)).thenReturn(mockCv);
+
+        when (referenceDao.getReference(678)).thenReturn(null);
+
+        analysisServiceImpl.createAnalysis(request, "test-editor");
+        verify(cvDao, times(1)).getCvByCvId(345);
+
+    }
+
     
+    @Test
+    public void testGetAnalysesOk() throws Exception {
+        List<Analysis> mockList = new ArrayList<>();
+
+        Analysis mockAnalysis = new Analysis();
+        mockList.add(mockAnalysis);
+
+        when(analysisDao.getAnalyses(0, 1000)).thenReturn(mockList);
+
+        PagedResult<AnalysisDTO> result = analysisServiceImpl.getAnalyses(0, 1000);
+
+        assertTrue(result.getCurrentPageNum() == 0 );
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
+    }
+
+    @Test
+    public void testGetAnalysisTypesOk() throws Exception {
+        List<Cv> mockList = new ArrayList<>();
+        mockList.add(new Cv());
+
+        when (cvDao.getCvs(null, CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, 0, 1000)).thenReturn(mockList);
+
+        PagedResult<CvTypeDTO> result = analysisServiceImpl.getAnalysisTypes(0, 1000);
+
+        assertTrue(result.getCurrentPageNum() == 0 );
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
+    }
 
   
 }
