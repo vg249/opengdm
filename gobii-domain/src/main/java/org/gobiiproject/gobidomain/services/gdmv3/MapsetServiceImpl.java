@@ -174,29 +174,31 @@ public class MapsetServiceImpl implements MapsetService {
     @Transactional
     @Override
     public CvTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user) {
-        
-        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(),
-            2 //TODO:  this is custom type
+
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(), 2 // TODO:
+                                                                                                            // this is
+                                                                                                            // custom
+                                                                                                            // type
         );
-        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Mapset Type");
+        if (cvGroup == null)
+            throw new GobiiDaoException("Missing CvGroup for Mapset Type");
 
         Cv cv = new Cv();
         cv.setCvGroup(cvGroup);
-		cv.setTerm(mapsetTypeName);
-		
-		if (mapsetTypeDescription != null)
-        	cv.setDefinition(mapsetTypeDescription);
+        cv.setTerm(mapsetTypeName);
 
-        //get the new row status
+        if (mapsetTypeDescription != null)
+            cv.setDefinition(mapsetTypeDescription);
+
+        // get the new row status
         // Get the Cv for status, new row
         Cv status = cvDao.getNewStatus();
         cv.setStatus(status.getCvId());
 
-        //set rank
+        // set rank
         cv.setRank(0);
         cv = cvDao.createCv(cv);
-        
+
         CvTypeDTO mapsetDTO = new CvTypeDTO();
         ModelMapper.mapEntityToDto(cv, mapsetDTO);
         return mapsetDTO;
@@ -223,7 +225,6 @@ public class MapsetServiceImpl implements MapsetService {
             throw new EntityDoesNotExistException.Mapset();
         }
         return mapset;
-    }    
-    
-    
+    }
+
 }

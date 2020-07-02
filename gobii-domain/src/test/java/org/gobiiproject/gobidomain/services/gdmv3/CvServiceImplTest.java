@@ -2,16 +2,21 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -61,15 +66,94 @@ public class CvServiceImplTest {
             new ArrayList<Cv>()
         );
 
-        CvDTO result = cvServiceImpl.createCv(cvDTORequest);
+        when(
+            cvDao.createCv(any(Cv.class))
+        ).thenReturn(new Cv());
 
-        assertTrue("Result cv name incorrect", result.getCvName().equals("test-name"));
-        assertTrue("Result cv description incorrect", result.getCvDescription().equals("test-desc"));
-        assertTrue("Result cv status incorrect", result.getCvStatus().equals("new"));
-        assertTrue("Result cvGroup name incorrect", result.getCvGroupName().equals("test-group"));
-        assertTrue("Result cvGroup Type incorrect", result.getCvGroupType().equals(CvDTO.PROPERTY_TYPE_CUSTOM));
-        assertTrue("Result cvGroup Id incorrect", result.getCvGroupId() == 12);
+        ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
+        
+    
+        CvDTO dto = cvServiceImpl.createCv(cvDTORequest);
+
+        verify(cvDao).createCv(arg.capture());
+
+        Cv result = arg.getValue();
+
+        assertTrue("Result cv name incorrect", result.getTerm().equals("test-name"));
+        assertTrue("Result cv description incorrect", result.getDefinition().equals("test-desc"));
+        assertTrue("Result cv status incorrect", result.getStatus() == 57);
+        assertTrue("Result cvGroup name incorrect", result.getCvGroup().getCvGroupName().equals("test-group"));
+        assertTrue("Result cvGroup Type incorrect", result.getCvGroup().getCvGroupType() == 2);
+        assertTrue("Result cvGroup Id incorrect", result.getCvGroup().getCvGroupId() == 12);
         assertTrue("Result properties not empty", result.getProperties() == null || result.getProperties().size() == 0);
+    }
+
+    @Test
+    public void testCreateWithProperties() throws Exception {
+        CvDTO cvDTORequest = new CvDTO();
+        cvDTORequest.setCvName("test-name");
+        cvDTORequest.setCvDescription("test-desc");
+        cvDTORequest.setCvGroupId(12);
+
+        List<CvPropertyDTO> properties = new ArrayList<>();
+        CvPropertyDTO mockProp = new CvPropertyDTO();
+        mockProp.setPropertyId(888);
+        mockProp.setPropertyValue("SomeValue");
+        properties.add(mockProp);
+        cvDTORequest.setProperties(properties);
+
+        CvGroup mockCvGroup = new CvGroup();
+        mockCvGroup.setCvGroupId(12);
+        mockCvGroup.setCvGroupType(2);
+        mockCvGroup.setCvGroupName("test-group");
+
+        Cv mockPropCv = new Cv();
+        mockPropCv.setCvId(888);
+        CvGroup mockPropCvGroup = new CvGroup();
+        mockPropCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName());
+        mockPropCv.setCvGroup(mockPropCvGroup);
+
+        when(cvDao.getCvByCvId(888)).thenReturn(mockPropCv);
+
+        when(
+            cvDao.getCvGroupById(12)
+        ).thenReturn(mockCvGroup);
+
+        Cv mockNewStatus = new Cv();
+        mockNewStatus.setTerm("new");
+        mockNewStatus.setCvId(57);
+
+        when(
+            cvDao.getNewStatus()
+        ).thenReturn(mockNewStatus);
+
+
+        when(
+            cvDao.getCvListByCvGroup("cv_prop", null)
+        ).thenReturn(
+            new ArrayList<Cv>()
+        );
+
+        when(
+            cvDao.createCv(any(Cv.class))
+        ).thenReturn(new Cv());
+
+        ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
+        
+    
+        CvDTO dto = cvServiceImpl.createCv(cvDTORequest);
+
+        verify(cvDao).createCv(arg.capture());
+
+        Cv result = arg.getValue();
+        
+        assertTrue("Result cv name incorrect", result.getTerm().equals("test-name"));
+        assertTrue("Result cv description incorrect", result.getDefinition().equals("test-desc"));
+        assertTrue("Result cv status incorrect", result.getStatus() == 57);
+        assertTrue("Result cvGroup name incorrect", result.getCvGroup().getCvGroupName().equals("test-group"));
+        assertTrue("Result cvGroup Type incorrect", result.getCvGroup().getCvGroupType() == 2);
+        assertTrue("Result cvGroup Id incorrect", result.getCvGroup().getCvGroupId() == 12);
+        assertTrue("Result properties size incorrect", result.getProperties() != null  && result.getProperties().size() == 1);
     }
 
     @Test
@@ -109,9 +193,15 @@ public class CvServiceImplTest {
             mockModStatus
         );
 
+        ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
+
         CvDTO updatedCvDTO = cvServiceImpl.updateCv(123, cvDTORequest);
 
-        assertTrue("test update failed", updatedCvDTO.getCvName() == "test-name"); //TODO: integ test better
+        verify(cvDao).updateCv(arg.capture());
+
+        Cv cvToUpdate = arg.getValue();
+
+        assertTrue("test update failed", cvToUpdate.getTerm().equals("test-name")); //TODO: integ test better
     
     }
 

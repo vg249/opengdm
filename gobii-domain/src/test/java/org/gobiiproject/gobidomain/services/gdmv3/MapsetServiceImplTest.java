@@ -33,7 +33,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @WebAppConfiguration
 public class MapsetServiceImplTest {
-    
+
     @Mock
     private MapsetDao mapsetDao;
 
@@ -61,10 +61,10 @@ public class MapsetServiceImplTest {
         when(mapsetDao.getMapsets(1000, 0, null)).thenReturn(mockList);
 
         PagedResult<MapsetDTO> results = mapsetServiceImpl.getMapsets(0, 1000, null);
-        assertTrue( results.getCurrentPageNum() == 0);
-        assertTrue( results.getCurrentPageSize() == 1);
-        assertTrue( results.getResult().size() == 1);
-        
+        assertTrue(results.getCurrentPageNum() == 0);
+        assertTrue(results.getCurrentPageSize() == 1);
+        assertTrue(results.getResult().size() == 1);
+
     }
 
     @Test
@@ -102,12 +102,12 @@ public class MapsetServiceImplTest {
 
         verify(mapsetDao).createMapset(arg.capture());
 
-        assertTrue( arg.getValue().getMapsetName().equals("test-mapset"));
-        assertTrue( arg.getValue().getMapsetDescription().equals("test-desc"));
+        assertTrue(arg.getValue().getMapsetName().equals("test-mapset"));
+        assertTrue(arg.getValue().getMapsetDescription().equals("test-desc"));
 
-        assertTrue( arg.getValue().getMapsetCode().equals("test-term_test-mapset"));
-        assertTrue( arg.getValue().getType().getCvId() == 789);
-        assertTrue( arg.getValue().getReference().getReferenceId() == 456);
+        assertTrue(arg.getValue().getMapsetCode().equals("test-term_test-mapset"));
+        assertTrue(arg.getValue().getType().getCvId() == 789);
+        assertTrue(arg.getValue().getReference().getReferenceId() == 456);
     }
 
     @Test
@@ -128,15 +128,13 @@ public class MapsetServiceImplTest {
         verify(mapsetDao, times(1)).getMapset(111);
     }
 
-
-
     @Test
     public void testUpdateMapsetOk() throws Exception {
 
         Mapset mockMapset = new Mapset();
         mockMapset.setMapsetId(111);
         mockMapset.setMapsetName("test-old-mapset");
-    
+
         when(mapsetDao.getMapset(111)).thenReturn(mockMapset);
 
         Cv mockType = new Cv();
@@ -172,13 +170,12 @@ public class MapsetServiceImplTest {
 
         verify(mapsetDao).updateMapset(arg.capture());
 
-        assertTrue( arg.getValue().getMapsetName().equals("test-mapset"));
-        assertTrue( arg.getValue().getMapsetDescription().equals("test-desc"));
+        assertTrue(arg.getValue().getMapsetName().equals("test-mapset"));
+        assertTrue(arg.getValue().getMapsetDescription().equals("test-desc"));
 
-        assertTrue( arg.getValue().getType().getCvId() == 789);
-        assertTrue( arg.getValue().getReference().getReferenceId() == 456);
+        assertTrue(arg.getValue().getType().getCvId() == 789);
+        assertTrue(arg.getValue().getReference().getReferenceId() == 456);
     }
-
 
     @Test(expected = GobiiException.class)
     public void testUpdateMapsetUnknownType() throws Exception {
@@ -186,14 +183,14 @@ public class MapsetServiceImplTest {
         Mapset mockMapset = new Mapset();
         mockMapset.setMapsetId(111);
         mockMapset.setMapsetName("test-old-mapset");
-    
+
         when(mapsetDao.getMapset(111)).thenReturn(mockMapset);
 
         when(cvDao.getCvByCvId(789)).thenReturn(null);
 
         mapsetServiceImpl.updateMapset(111, request, "test-editor");
         verify(cvDao, times(1)).getCvByCvId(789);
-    
+
         verify(mapsetDao, times(0)).updateMapset(any(Mapset.class));
     }
 
@@ -203,7 +200,7 @@ public class MapsetServiceImplTest {
         Mapset mockMapset = new Mapset();
         mockMapset.setMapsetId(111);
         mockMapset.setMapsetName("test-old-mapset");
-    
+
         when(mapsetDao.getMapset(111)).thenReturn(mockMapset);
 
         Cv mockType = new Cv();
@@ -216,7 +213,7 @@ public class MapsetServiceImplTest {
 
         mapsetServiceImpl.updateMapset(111, request, "test-editor");
         verify(cvDao, times(1)).getCvByCvId(789);
-    
+
         verify(mapsetDao, times(0)).updateMapset(any(Mapset.class));
 
     }
@@ -224,19 +221,19 @@ public class MapsetServiceImplTest {
     @Test(expected = GobiiException.class)
     public void testUpdateMapsetUnknownReference() throws Exception {
         MapsetDTO request = getMockRequest();
-        request.setMapsetTypeId(null); 
+        request.setMapsetTypeId(null);
 
         Mapset mockMapset = new Mapset();
         mockMapset.setMapsetId(111);
         mockMapset.setMapsetName("test-old-mapset");
-    
+
         when(mapsetDao.getMapset(111)).thenReturn(mockMapset);
 
         when(referenceDao.getReference(456)).thenReturn(null);
 
         mapsetServiceImpl.updateMapset(111, request, "test-editor");
         verify(referenceDao, times(1)).getReference(456);
-    
+
         verify(mapsetDao, times(0)).updateMapset(any(Mapset.class));
     }
 
@@ -245,14 +242,13 @@ public class MapsetServiceImplTest {
         Mapset mockMapset = new Mapset();
         mockMapset.setMapsetId(111);
         mockMapset.setMapsetName("test-old-mapset");
-    
+
         when(mapsetDao.getMapset(111)).thenReturn(mockMapset);
 
         mapsetServiceImpl.deleteMapset(111);
 
         verify(mapsetDao, times(1)).deleteMapset(any(Mapset.class));
     }
-
 
     @Test
     public void testCreateMapsetTypeOk() throws Exception {
@@ -269,16 +265,15 @@ public class MapsetServiceImplTest {
         ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
 
         mapsetServiceImpl.createMapsetType("mapsetTypeName", "mapsetTypeDescription", "user");
-        
+
         verify(cvDao, times(1)).createCv(any(Cv.class));
         verify(cvDao).createCv(arg.capture());
 
-        assertTrue( arg.getValue().getTerm().equals("mapsetTypeName"));
-        assertTrue( arg.getValue().getDefinition().equals("mapsetTypeDescription"));
-        assertTrue( arg.getValue().getCvGroup().getCvGroupName().equals(cvGroupName));
+        assertTrue(arg.getValue().getTerm().equals("mapsetTypeName"));
+        assertTrue(arg.getValue().getDefinition().equals("mapsetTypeDescription"));
+        assertTrue(arg.getValue().getCvGroup().getCvGroupName().equals(cvGroupName));
 
     }
-
 
     @Test
     public void testGetMapsetTypes() throws Exception {
@@ -287,14 +282,12 @@ public class MapsetServiceImplTest {
         Cv mockType = new Cv();
         mockCvs.add(mockType);
 
-        when(cvDao.getCvs(null, cvGroupName, null, 0, 1000 )).thenReturn(mockCvs);
+        when(cvDao.getCvs(null, cvGroupName, null, 0, 1000)).thenReturn(mockCvs);
 
         PagedResult<CvTypeDTO> results = mapsetServiceImpl.getMapsetTypes(0, 1000);
-        assertTrue( results.getCurrentPageNum() == 0);
-        assertTrue( results.getCurrentPageSize() == 1);
-        assertTrue( results.getResult().size() == 1);
-
-
+        assertTrue(results.getCurrentPageNum() == 0);
+        assertTrue(results.getCurrentPageSize() == 1);
+        assertTrue(results.getResult().size() == 1);
 
     }
 
@@ -307,5 +300,4 @@ public class MapsetServiceImplTest {
         return request;
     }
 
-    
 }
