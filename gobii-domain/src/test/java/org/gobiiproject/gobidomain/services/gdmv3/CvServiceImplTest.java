@@ -2,17 +2,22 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.CvGroup;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -173,17 +178,15 @@ public class CvServiceImplTest {
 
         mockCv.setCvGroup(mockCvGroup);
 
-        Cv mockCv2 = new Cv();
-        mockCv2.setCvId(123);
-        mockCv2.setTerm("test-name");
-        mockCv2.setDefinition("before-test-definition");
-        mockCv2.setCvGroup(mockCvGroup);
+        // Cv mockCv2 = new Cv();
+        // mockCv2.setCvId(123);
+        // mockCv2.setTerm("test-name");
+        // mockCv2.setDefinition("before-test-definition");
+        // mockCv2.setCvGroup(mockCvGroup);
         
-
         when(cvDao.getCvByCvId(123)).thenReturn(mockCv);
 
-
-        when(cvDao.updateCv(any(Cv.class))).thenReturn(mockCv2);
+        when(cvDao.updateCv(any(Cv.class))).thenReturn(new Cv());
 
         Cv mockModStatus = new Cv();
         mockModStatus.setTerm("modified");
@@ -195,14 +198,145 @@ public class CvServiceImplTest {
 
         ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
 
-        CvDTO updatedCvDTO = cvServiceImpl.updateCv(123, cvDTORequest);
+        cvServiceImpl.updateCv(123, cvDTORequest);
 
         verify(cvDao).updateCv(arg.capture());
 
         Cv cvToUpdate = arg.getValue();
 
         assertTrue("test update failed", cvToUpdate.getTerm().equals("test-name")); //TODO: integ test better
-    
     }
 
+    @Test
+    public void testUpdateWithProperties() throws Exception {
+
+        Cv mockCv = new Cv();
+        mockCv.setCvId(123);
+        mockCv.setTerm("before-test");
+        mockCv.setDefinition("before-test-definition");
+
+        CvGroup mockCvGroup = new CvGroup();
+        mockCvGroup.setCvGroupId(24);
+        mockCvGroup.setCvGroupName("test-group");
+        mockCvGroup.setCvGroupType(1);
+
+        mockCv.setCvGroup(mockCvGroup);
+
+        //setup existing properties
+        Map<String, String> props = new HashMap<>();
+        props.put("10", "value1");
+        props.put("11", "value2");
+        mockCv.setProperties(props);
+        
+        when(cvDao.getCvByCvId(123)).thenReturn(mockCv);
+
+        CvDTO cvDTORequest = new CvDTO();
+        cvDTORequest.setCvDescription("new description");
+        cvDTORequest.setCvGroupId(25);
+
+        CvGroup mockPropCvGroup = new CvGroup();
+        mockPropCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName());
+
+        List<CvPropertyDTO> properties = new ArrayList<>();
+        CvPropertyDTO mockProp1 = new CvPropertyDTO();
+        mockProp1.setPropertyId(10);
+        mockProp1.setPropertyValue("NewValue");
+        properties.add(mockProp1);
+
+        CvPropertyDTO mockProp2 = new CvPropertyDTO();
+        mockProp2.setPropertyId(11);
+        mockProp2.setPropertyValue(null);
+        properties.add(mockProp2);
+
+
+        CvPropertyDTO mockProp3 = new CvPropertyDTO();
+        mockProp3.setPropertyId(12);
+        mockProp3.setPropertyValue("new-prop");
+        properties.add(mockProp3);
+
+        cvDTORequest.setProperties(properties);
+ 
+        Cv mockCv10 = new Cv();
+        mockCv10.setCvGroup(mockPropCvGroup);
+        when(cvDao.getCvByCvId(10)).thenReturn(mockCv10);
+
+        Cv mockCv11 = new Cv();
+        mockCv11.setCvGroup(mockPropCvGroup);
+        when(cvDao.getCvByCvId(11)).thenReturn(mockCv11);
+
+        Cv mockCv12 = new Cv();
+        mockCv12.setCvGroup(mockPropCvGroup);
+        when(cvDao.getCvByCvId(12)).thenReturn(mockCv12);
+
+        CvGroup mockNewGroup = new CvGroup();
+        mockNewGroup.setCvGroupId(25);
+        mockNewGroup.setCvGroupType(2);
+        mockNewGroup.setCvGroupName("test-group-name");
+
+        when(cvDao.getCvGroupById(25)).thenReturn(mockNewGroup);
+
+
+       
+
+        Cv mockModStatus = new Cv();
+        mockModStatus.setTerm("modified");
+        mockModStatus.setCvId(58);
+
+        when(
+            cvDao.getModifiedStatus()
+        ).thenReturn(mockModStatus);
+
+
+        when(
+            cvDao.updateCv(any(Cv.class))
+        ).thenReturn(new Cv());
+
+        ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
+        
+        cvServiceImpl.updateCv(123, cvDTORequest);
+
+        verify(cvDao).updateCv(arg.capture());
+
+        Cv result = arg.getValue();
+        
+        assertTrue("Result cv name incorrect", result.getTerm().equals("before-test"));
+        assertTrue("Result cv description incorrect", result.getDefinition().equals("new description"));
+        assertTrue("Result cv status incorrect", result.getStatus() == 58);
+        assertTrue("Result cvGroup name incorrect", result.getCvGroup().getCvGroupName().equals("test-group-name"));
+        assertTrue("Result cvGroup Type incorrect", result.getCvGroup().getCvGroupType() == 2);
+        assertTrue("Result cvGroup Id incorrect", result.getCvGroup().getCvGroupId() == 25);
+        assertTrue("Result properties size incorrect", result.getProperties() != null  && result.getProperties().size() == 2);
+    }
+
+    @Test
+    public void testGetCvs() throws Exception {
+        List<Cv> mockList = new ArrayList<>();
+        mockList.add(new Cv());
+
+        when(cvDao.getCvs(null, null, null, 0, 1000)).thenReturn(mockList);
+        when(cvDao.getNewStatus()).thenReturn(new Cv());
+        when(cvDao.getModifiedStatus()).thenReturn(new Cv());
+        PagedResult<CvDTO> result = cvServiceImpl.getCvs(0, 1000, null, null);
+        verify(cvDao, times(1)).getCvs(null, null, null, 0, 1000);
+
+        assertTrue(result.getCurrentPageNum() == 0);
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
+    }
+
+    @Test
+    public void testGetSystemDefinedCvs() throws Exception {
+        List<Cv> mockList = new ArrayList<>();
+        mockList.add(new Cv());
+
+        when(cvDao.getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_SYSTEM, 0, 1000)).thenReturn(mockList);
+        when(cvDao.getNewStatus()).thenReturn(new Cv());
+        when(cvDao.getModifiedStatus()).thenReturn(new Cv());
+        PagedResult<CvDTO> result = cvServiceImpl.getCvs(0, 1000, null, "system_defined");
+        verify(cvDao, times(1)).getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_SYSTEM, 0, 1000);
+
+        assertTrue(result.getCurrentPageNum() == 0);
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
+    }
 }
