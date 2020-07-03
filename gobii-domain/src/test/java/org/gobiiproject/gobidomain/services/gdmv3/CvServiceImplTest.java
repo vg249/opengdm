@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
@@ -373,5 +374,58 @@ public class CvServiceImplTest {
         assertTrue(result.getCurrentPageNum() == 0);
         assertTrue(result.getCurrentPageSize() == 1);
         assertTrue(result.getResult().size() == 1);
+    }
+
+    @Test
+    public void testAddCvPropertyOk() throws Exception {
+        CvPropertyDTO request = new CvPropertyDTO();
+        request.setPropertyName("test-prop");
+        request.setPropertyDescription("test-desc");
+
+        CvGroup mockCvGroup = new CvGroup();
+        mockCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName());
+        mockCvGroup.setCvGroupType(2);
+
+        when(cvDao.getCvGroupByNameAndType(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), 2)).thenReturn(mockCvGroup);
+        when(cvDao.getNewStatus()).thenReturn(new Cv());
+
+        ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
+        cvServiceImpl.addCvProperty(request);
+        verify(cvDao).createCv(arg.capture());
+
+        assertTrue( arg.getValue().getTerm().equals("test-prop"));
+        assertTrue( arg.getValue().getDefinition().equals("test-desc"));
+        assertTrue( arg.getValue().getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName()));
+        assertTrue( arg.getValue().getCvGroup().getCvGroupType() == 2);
+
+    }
+
+    @Test
+    public void testDeleteOk() throws Exception{
+        Cv mockCv = new Cv();
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupType(2); //user defined
+        mockCv.setCvGroup(mockGroup);
+
+        when(cvDao.getCvByCvId(123)).thenReturn(mockCv);
+
+        cvServiceImpl.deleteCv(123);
+
+        verify(cvDao, times(1)).deleteCv(any(Cv.class));
+
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testDeleteNotOk() throws Exception {
+        Cv mockCv = new Cv();
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupType(1); //system defined
+        mockCv.setCvGroup(mockGroup);
+
+        when(cvDao.getCvByCvId(123)).thenReturn(mockCv);
+
+        cvServiceImpl.deleteCv(123);
+
+        verify(cvDao, times(0)).deleteCv(any(Cv.class));
     }
 }
