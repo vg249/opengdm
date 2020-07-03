@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.CvGroup;
@@ -427,5 +428,19 @@ public class CvServiceImplTest {
         cvServiceImpl.deleteCv(123);
 
         verify(cvDao, times(0)).deleteCv(any(Cv.class));
+    }
+
+    @Test
+    public void testGetCvGroupsOk() throws Exception {
+        List<CvGroup> mockList = new ArrayList<>();
+        mockList.add(new CvGroup());
+
+        when(cvDao.getCvGroups( 1000, 0)).thenReturn(mockList);
+        PagedResult<CvGroupDTO> result = cvServiceImpl.getCvGroups(0, 1000);
+        verify(cvDao, times(1)).getCvGroups(1000, 0);
+
+        assertTrue(result.getCurrentPageNum() == 0);
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
     }
 }

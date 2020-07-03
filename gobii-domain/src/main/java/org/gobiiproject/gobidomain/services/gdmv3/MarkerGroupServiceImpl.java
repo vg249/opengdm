@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -142,8 +143,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
     private MarkerGroup loadMarkerGroup(Integer markerGroupId) throws Exception {
         MarkerGroup markerGroup = markerGroupDao.getMarkerGroup(markerGroupId);
         if (markerGroup == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Not found");
+            throw new EntityDoesNotExistException("marker group");
         }
         return markerGroup;
     }
