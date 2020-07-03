@@ -338,5 +338,40 @@ public class CvServiceImplTest {
         assertTrue(result.getCurrentPageNum() == 0);
         assertTrue(result.getCurrentPageSize() == 1);
         assertTrue(result.getResult().size() == 1);
+
+        when(cvDao.getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_USER, 0, 1000)).thenReturn(mockList);
+        result = cvServiceImpl.getCvs(0, 1000, null, "user_defined");
+        verify(cvDao, times(1)).getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_USER, 0, 1000);
+    }
+
+    @Test
+    public void testGetCvOk() throws Exception {
+
+        Cv mockCv = new Cv();
+        mockCv.setTerm("test");
+        mockCv.setCvGroup(new CvGroup());
+        mockCv.setStatus(58);
+
+        when(cvDao.getCvByCvId(123)).thenReturn(mockCv);
+        when(cvDao.getCvByCvId(58)).thenReturn(new Cv()); //this one for the status cv
+
+        cvServiceImpl.getCv(123);
+
+        verify(cvDao, times(1)).getCvByCvId(123);
+        verify(cvDao, times(1)).getCvByCvId(58);
+    }
+
+    @Test
+    public void testGetCvProperties() throws Exception {
+        List<Cv> mockList = new ArrayList<>();
+        mockList.add(new Cv());
+
+        when(cvDao.getCvs(null,  CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), null, 0, 1000)).thenReturn(mockList);
+        PagedResult<CvPropertyDTO> result = cvServiceImpl.getCvProperties(0, 1000);
+        verify(cvDao, times(1)).getCvs(null,  CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), null, 0, 1000);
+
+        assertTrue(result.getCurrentPageNum() == 0);
+        assertTrue(result.getCurrentPageSize() == 1);
+        assertTrue(result.getResult().size() == 1);
     }
 }
