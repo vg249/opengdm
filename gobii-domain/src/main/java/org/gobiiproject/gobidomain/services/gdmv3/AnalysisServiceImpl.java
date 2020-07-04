@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.DeleteException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
@@ -196,11 +200,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             datasetDao.getDatasetCountByAnalysisId(analysisId) > 0 ||
             datasetDao.getDatasetCountWithAnalysesContaining(analysisId) > 0
         ) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-                "Associated resources found. Cannot complete the action unless they are deleted."
-            );
+            throw new DeleteException();
         }
 
         analysisDao.deleteAnalysis(analysis);
@@ -209,11 +209,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     private Analysis loadAnalysis(Integer analysisId) throws GobiiDaoException {
         Analysis analysis = analysisDao.getAnalysis(analysisId);
         if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Analysis not found"
-            );
+            throw new EntityDoesNotExistException("Analysis");
         }
         return analysis;
     }
@@ -222,13 +218,11 @@ public class AnalysisServiceImpl implements AnalysisService {
         // Get analysis type
         Cv analysisType = cvDao.getCvByCvId(cvId);
         if (analysisType == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown analysis type");
+            throw new UnknownEntityException.Analysis();
         }
 
         if (!analysisType.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName())) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid analysis type id");
+            throw new InvalidException("Analysis Type Id");
         }
 
         return analysisType;
@@ -237,11 +231,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     private Reference loadReference(Integer referenceId) throws Exception {
         Reference reference = referenceDao.getReference(referenceId);
         if (reference == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Unknown reference"
-            );
+            throw new UnknownEntityException.Reference();
         }
         return reference;
     }

@@ -32,5 +32,9 @@ public class UnknownEntityException extends GobiiException {
     public static class MapsetType extends UnknownEntityException {
         public MapsetType() { super("Mapset type"); }
     }
+
+    public static class Analysis extends UnknownEntityException {
+        public Analysis() { super("Analysis"); }
+    }
     
 }
