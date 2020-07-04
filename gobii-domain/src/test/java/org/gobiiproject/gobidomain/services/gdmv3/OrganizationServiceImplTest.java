@@ -1,6 +1,8 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,14 +10,18 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -58,5 +64,86 @@ public class OrganizationServiceImplTest {
         when(organizationDao.getOrganization(200)).thenReturn(new Organization());
         organizationServiceImpl.getOrganization(200);
         verify(organizationDao, times(1)).getOrganization(200);
+    }
+
+    @Test
+    public void testCreateOrganizationOk() throws Exception {
+        OrganizationDTO request = new OrganizationDTO();
+        request.setOrganizationName("test-org");
+        request.setOrganizationAddress("test-address");
+        request.setOrganizationWebsite("http://test-website.com");
+
+        when(cvDao.getNewStatus()).thenReturn(new Cv());
+
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(new Contact());
+
+        when(organizationDao.createOrganization(any(Organization.class))).thenReturn(new Organization());
+        ArgumentCaptor<Organization> arg = ArgumentCaptor.forClass(Organization.class);
+        
+        organizationServiceImpl.createOrganization(request, "test-editor");
+
+        verify(organizationDao).createOrganization(arg.capture());
+
+        assertTrue(arg.getValue().getName().equals("test-org"));
+        assertTrue(arg.getValue().getAddress().equals("test-address"));
+        assertTrue(arg.getValue().getWebsite().equals("http://test-website.com"));
+
+    }
+
+    @Test
+    public void testUpdateOrganizationOk() throws Exception {
+        Organization mockOrg = new Organization();
+        mockOrg.setOrganizationId(12);
+        mockOrg.setName("old-name");
+        mockOrg.setAddress("old-addr");
+        mockOrg.setWebsite("old-website");
+        
+        when(organizationDao.getOrganization(12)).thenReturn(mockOrg);
+
+        OrganizationDTO request = new OrganizationDTO();
+        request.setOrganizationName("test-org");
+        request.setOrganizationAddress("test-address");
+        request.setOrganizationWebsite("http://test-website.com");
+
+        when(cvDao.getModifiedStatus()).thenReturn(new Cv());
+
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(new Contact());
+
+        when(organizationDao.updateOrganization(any(Organization.class))).thenReturn(new Organization());
+        ArgumentCaptor<Organization> arg = ArgumentCaptor.forClass(Organization.class);
+        
+        organizationServiceImpl.updateOrganization(12, request, "test-editor");
+
+        verify(organizationDao).updateOrganization(arg.capture());
+
+        assertTrue(arg.getValue().getName().equals("test-org"));
+        assertTrue(arg.getValue().getAddress().equals("test-address"));
+        assertTrue(arg.getValue().getWebsite().equals("http://test-website.com"));
+    }
+
+
+    @Test(expected = GobiiException.class)
+    public void testUpdateOrganizationNotFound() throws Exception {
+        when(organizationDao.getOrganization(12)).thenReturn(null);
+
+        OrganizationDTO request = new OrganizationDTO();
+        request.setOrganizationName("test-org");
+        request.setOrganizationAddress("test-address");
+        request.setOrganizationWebsite("http://test-website.com");
+
+        organizationServiceImpl.updateOrganization(12, request, "test-editor");
+
+        verify(organizationDao, times(0)).updateOrganization(any(Organization.class));
+        
+    }
+
+    @Test
+    public void testDeleteOrganizationOk() throws Exception {
+        when(organizationDao.getOrganization(123)).thenReturn(new Organization());
+        doNothing().when(organizationDao).deleteOrganization(any(Organization.class));
+
+        organizationServiceImpl.deleteOrganization(123);
+
+        verify(organizationDao, times(1)).deleteOrganization(any(Organization.class));
     }
 }

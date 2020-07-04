@@ -5,16 +5,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
@@ -90,8 +87,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     public OrganizationDTO updateOrganization(Integer organizationId, OrganizationDTO request, String updatedBy) throws Exception {
         Organization organization = this.loadOrganization(organizationId);
         if (request.getOrganizationName() != null) {
-            //name cannot be empty
-            if (LineUtils.isNullOrEmpty(request.getOrganizationName())) throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Organization Name cannot be empty");
             organization.setName(request.getOrganizationName());
         }
 
@@ -126,8 +121,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     private Organization loadOrganization(Integer organizationId) throws Exception {
         Organization organization = organizationDao.getOrganization(organizationId);
         if (organization == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Not found");
+            throw new EntityDoesNotExistException("organization");
         }
         return organization;
     }
