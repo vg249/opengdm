@@ -28,8 +28,6 @@ import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
@@ -40,6 +38,9 @@ import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class DatasetServiceImpl implements DatasetService {
 
 	@Autowired
@@ -197,6 +198,7 @@ public class DatasetServiceImpl implements DatasetService {
 
 	private List<AnalysisDTO> getAnalysisDTOs(List<Analysis> analyses) {
 		List<AnalysisDTO> analysisDTOs = new ArrayList<>();
+		if (analyses == null) return analysisDTOs;
 		analyses.forEach(analysis -> {
 			AnalysisDTO analysisDTO = new AnalysisDTO();
 			ModelMapper.mapEntityToDto(analysis, analysisDTO);
@@ -218,6 +220,7 @@ public class DatasetServiceImpl implements DatasetService {
 					Optional.ofNullable(dataset.getAnalyses()).orElse(new Integer[]{})
 				)
 			);
+		
 		if (analysisIds.size() > 0) {
 			//convert
 			List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
