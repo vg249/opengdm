@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -72,8 +73,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         //audit
         Contact creator = contactDao.getContactByUsername(createdBy);
-        if (creator != null)
-            organization.setCreatedBy(creator.getContactId());
+        organization.setCreatedBy(Optional.ofNullable(creator).map( c -> c.getContactId()).orElse(null));
         organization.setCreatedDate(new java.util.Date());
         organization = organizationDao.createOrganization(organization);
 
@@ -100,8 +100,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         //audit items
         //audit
         Contact creator = contactDao.getContactByUsername(updatedBy);
-        if (creator != null)
-            organization.setModifiedBy(creator.getContactId());
+        organization.setModifiedBy(Optional.ofNullable(creator).map( value -> value.getContactId()).orElse(null));
         organization.setModifiedDate(new java.util.Date());
 
         organization = organizationDao.updateOrganization(organization);

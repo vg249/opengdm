@@ -75,7 +75,10 @@ public class OrganizationServiceImplTest {
 
         when(cvDao.getNewStatus()).thenReturn(new Cv());
 
-        when(contactDao.getContactByUsername("test-editor")).thenReturn(new Contact());
+        Contact mockContact = new Contact();
+        mockContact.setContactId(333);
+
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockContact);
 
         when(organizationDao.createOrganization(any(Organization.class))).thenReturn(new Organization());
         ArgumentCaptor<Organization> arg = ArgumentCaptor.forClass(Organization.class);
@@ -87,6 +90,7 @@ public class OrganizationServiceImplTest {
         assertTrue(arg.getValue().getName().equals("test-org"));
         assertTrue(arg.getValue().getAddress().equals("test-address"));
         assertTrue(arg.getValue().getWebsite().equals("http://test-website.com"));
+        assertTrue(arg.getValue().getCreatedBy() == 333 );
 
     }
 
@@ -119,6 +123,34 @@ public class OrganizationServiceImplTest {
         assertTrue(arg.getValue().getName().equals("test-org"));
         assertTrue(arg.getValue().getAddress().equals("test-address"));
         assertTrue(arg.getValue().getWebsite().equals("http://test-website.com"));
+    }
+
+    @Test
+    public void testUpdateOrganizationOkSomeFieldsNull() throws Exception {
+        Organization mockOrg = new Organization();
+        mockOrg.setOrganizationId(12);
+        mockOrg.setName("old-name");
+        mockOrg.setAddress("old-addr");
+        mockOrg.setWebsite("old-website");
+        
+        when(organizationDao.getOrganization(12)).thenReturn(mockOrg);
+
+        OrganizationDTO request = new OrganizationDTO();
+
+        when(cvDao.getModifiedStatus()).thenReturn(new Cv());
+
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(new Contact());
+
+        when(organizationDao.updateOrganization(any(Organization.class))).thenReturn(new Organization());
+        ArgumentCaptor<Organization> arg = ArgumentCaptor.forClass(Organization.class);
+        
+        organizationServiceImpl.updateOrganization(12, request, "test-editor");
+
+        verify(organizationDao).updateOrganization(arg.capture());
+
+        assertTrue(arg.getValue().getName().equals("old-name"));
+        assertTrue(arg.getValue().getAddress().equals("old-addr"));
+        assertTrue(arg.getValue().getWebsite().equals("old-website"));
     }
 
 

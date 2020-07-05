@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
@@ -80,6 +81,39 @@ public class PlatformServiceImplTest {
         
     }
 
+    @Test(expected = GobiiException.class)
+    public void testCreatePlatformInvalidPlatformType1() throws Exception {
+        Cv mockCv = new Cv();
+        mockCv.setCvId(111);
+
+        CvGroup mockCvGroup = new CvGroup();
+        mockCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName()); //the wrong time
+        mockCv.setCvGroup(mockCvGroup);
+        when(cvDao.getCvByCvId(111)).thenReturn(mockCv);
+        
+        PlatformDTO request = new PlatformDTO();
+        request.setPlatformName("test-platform");
+        request.setPlatformTypeId(111);
+
+        
+        platformServiceImpl.createPlatform(request, "test-editor");
+        verify(platformDao, times(0)).createPlatform(any(Platform.class));
+        
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testCreatePlatformInvalidPlatformType2() throws Exception {
+        when(cvDao.getCvByCvId(111)).thenReturn(null);
+        
+        PlatformDTO request = new PlatformDTO();
+        request.setPlatformName("test-platform");
+        request.setPlatformTypeId(111);
+  
+        platformServiceImpl.createPlatform(request, "test-editor");
+        verify(platformDao, times(0)).createPlatform(any(Platform.class));
+        
+    }
+
     @Test
     public void testGetPlatformsOk() throws Exception {
         List<Platform> mockList = new ArrayList<>();
@@ -144,6 +178,43 @@ public class PlatformServiceImplTest {
         assertTrue( arg.getValue().getPlatformName().equals("modified-name"));
         assertTrue( arg.getValue().getType().getCvId() == 112);
     }
+
+    @Test
+    public void testUpdatePlatformNoUpdatesOk() throws Exception {
+        Platform mockPlatform = new Platform();
+        mockPlatform.setPlatformName("platform-name");
+
+        Cv mockCv = new Cv();
+        mockCv.setCvId(111);
+
+        CvGroup mockCvGroup = new CvGroup();
+        mockCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName());
+        mockCv.setCvGroup(mockCvGroup);
+        mockPlatform.setType(mockCv);
+
+        when(cvDao.getCvByCvId(111)).thenReturn(mockCv);
+        when(platformDao.getPlatform(100)).thenReturn(mockPlatform);
+
+
+        PlatformDTO request = new PlatformDTO();
+
+
+        platformServiceImpl.updatePlatform(100, request, "test-editor");
+
+        verify(platformDao, times(0)).updatePlatform(any(Platform.class));
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testUpdatePlatformNotFound() throws Exception {
+
+        when(platformDao.getPlatform(100)).thenReturn(null);
+
+
+        PlatformDTO request = new PlatformDTO();
+        platformServiceImpl.updatePlatform(100, request, "test-editor");
+
+        verify(platformDao, times(0)).updatePlatform(any(Platform.class));
+    }  
 
     @Test
     public void tesetDeleteOk() throws Exception {

@@ -31,7 +31,6 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;

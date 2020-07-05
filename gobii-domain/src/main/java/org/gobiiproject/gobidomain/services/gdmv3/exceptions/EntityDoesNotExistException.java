@@ -28,4 +28,8 @@ public class EntityDoesNotExistException extends GobiiException {
     public static class Mapset extends EntityDoesNotExistException {
         public Mapset() { super("Mapset"); }
     }
+
+    public static class Dataset extends EntityDoesNotExistException {
+        public Dataset() { super("Dataset"); }
+    }
 }

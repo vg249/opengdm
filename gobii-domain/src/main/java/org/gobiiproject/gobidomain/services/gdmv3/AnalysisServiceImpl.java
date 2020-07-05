@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -17,6 +18,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
@@ -82,19 +84,12 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         // audit items
         Contact creator = contactDao.getContactByUsername(user);
-        if (creator != null)
-            analysis.setCreatedBy(creator.getContactId());
+        analysis.setCreatedBy(Optional.ofNullable(creator).map( v -> creator.getContactId()).orElse(null));
         analysis.setCreatedDate(new java.util.Date());
 
-        // try {
         analysis = analysisDao.createAnalysis(analysis);
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        //     throw e;
-        // }
 
         AnalysisDTO analysisDTO = new AnalysisDTO();
-
         ModelMapper.mapEntityToDto(analysis, analysisDTO);
         return analysisDTO;
     }
@@ -103,7 +98,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public CvTypeDTO createAnalysisType(CvTypeDTO analysisTypeRequest, String creatorId) throws Exception {
         
-        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
@@ -164,8 +159,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         // audit items
         Contact updater = contactDao.getContactByUsername(updatedBy);
-        if (updater != null)
-            analysis.setModifiedBy(updater.getContactId());
+        analysis.setModifiedBy(Optional.ofNullable(updater).map(v -> updater.getContactId()).orElse(null));
         analysis.setModifiedDate(new java.util.Date());
 
         Cv cv = cvDao.getModifiedStatus();

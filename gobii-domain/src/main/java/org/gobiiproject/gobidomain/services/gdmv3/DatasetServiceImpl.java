@@ -9,6 +9,10 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.DeleteException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
@@ -67,11 +71,7 @@ public class DatasetServiceImpl implements DatasetService {
 		if (
 			experiment == null
 		) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-				GobiiValidationStatusType.BAD_REQUEST,
-				"Unknown experiment"
-			);
+			throw new UnknownEntityException("Experiment");
 		}
 
 		//check if the calling analysis id exists
@@ -79,11 +79,7 @@ public class DatasetServiceImpl implements DatasetService {
 		if (
 			callingAnalysis == null
 		) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-				GobiiValidationStatusType.BAD_REQUEST,
-				"Unknown calling analysis id"
-			);
+			throw new UnknownEntityException("Calling Analysis Id");
 		}
 
 		//check analysis ids
@@ -137,20 +133,12 @@ public class DatasetServiceImpl implements DatasetService {
 		Cv datasetType = cvDao.getCvByCvId(id);
 		
 		if (datasetType == null ) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-				GobiiValidationStatusType.BAD_REQUEST,
-				"Unknown dataset type id"
-			);
+			throw new UnknownEntityException("Dataset Type Id");
 		}
 
 		//check if the cv is a dataset type
 		if (datasetType.getCvGroup().getCvGroupName() != CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName()) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-				GobiiValidationStatusType.BAD_REQUEST,
-				"Invalid dataset type id"
-			);
+			throw new InvalidException("Dataset Type Id");
 		}
 
 		return datasetType;
@@ -165,26 +153,22 @@ public class DatasetServiceImpl implements DatasetService {
 
 		List<DatasetDTO> datasetDTOs = new java.util.ArrayList<>();
 
-		datasets.forEach(dataset -> {
+		for (int i = 0; i < datasets.size(); i++) {
+		
 			DatasetDTO datasetDTO = new DatasetDTO();
-			ModelMapper.mapEntityToDto(dataset, datasetDTO);
+			ModelMapper.mapEntityToDto(datasets.get(i), datasetDTO);
 			
 			//convert
-			List<AnalysisDTO> analysesDTOs = null;
-			try {
-				 analysesDTOs = this.getAnalysisDTOs(
-					this.checkAndGetAnalysesFromIds(
-						dataset.getAnalyses()
-					)
-				);
-			} catch (Exception exc) {
-				//pass
-			}
+			List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
+				this.checkAndGetAnalysesFromIds(
+					datasets.get(i).getAnalyses()
+				)
+			);
+		
 
 			datasetDTO.setAnalyses(analysesDTOs);
 			datasetDTOs.add(datasetDTO);
-
-		});
+		}
 
 		return PagedResult.createFrom(page, datasetDTOs);
 	}
@@ -205,11 +189,7 @@ public class DatasetServiceImpl implements DatasetService {
 		) {
 			analyses = analysisDao.getAnalysesByAnalysisIds(analysisIds);
 			if (analyses.size() != analysisIds.size()) {
-				throw new GobiiDaoException(
-					GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.BAD_REQUEST,
-					"Unknown analysis id"
-				);
+				throw new UnknownEntityException("Analysis Id");
 			}
 		}
 		return analyses;
@@ -228,14 +208,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Transactional
 	@Override
 	public DatasetDTO getDataset(Integer datasetId) throws Exception {
-		Dataset dataset = datasetDao.getDataset(datasetId);
-		if (dataset == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Dataset not found"
-            );
-        }
+		Dataset dataset = this.loadDataset(datasetId);
 		DatasetDTO datasetDTO = new DatasetDTO();
 
 		ModelMapper.mapEntityToDto(dataset, datasetDTO);
@@ -263,14 +236,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Override
 	public DatasetDTO updateDataset(Integer datasetId, DatasetRequestDTO request, String user) throws Exception {
 		//check if  datasetId exists
-		Dataset targetDataset = datasetDao.getDataset(datasetId);
-		if (targetDataset == null) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-				GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-				"Dataset not found"
-			);
-		}
+		Dataset targetDataset = this.loadDataset(datasetId);
 
 		boolean modified = false;
 		//check if datasetName change
@@ -284,11 +250,7 @@ public class DatasetServiceImpl implements DatasetService {
 			//check if experiment exists
 			Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
 			if (experiment == null) {
-				throw new GobiiDaoException(
-					GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.BAD_REQUEST,
-					"Invalid experiment"
-				);
+				throw new InvalidException("Experiment");
 			}
 
 			targetDataset.setExperiment(experiment);
@@ -299,11 +261,7 @@ public class DatasetServiceImpl implements DatasetService {
 		if (request.getCallingAnalysisId() != null &&  request.getCallingAnalysisId() > 0) {
 			Analysis analysis = analysisDao.getAnalysis(request.getCallingAnalysisId());
 			if (analysis == null) {
-				throw new GobiiDaoException(
-					GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.BAD_REQUEST,
-					"Invalid calling analysis"
-				);
+				throw new InvalidException("Calling Analysis");
 			}
 			targetDataset.setCallingAnalysis(analysis);
 			modified = true;
@@ -360,33 +318,18 @@ public class DatasetServiceImpl implements DatasetService {
 	@Transactional
 	@Override
 	public void deleteDataset(Integer datasetId) throws Exception {
-		Dataset dataset = datasetDao.getDataset(datasetId);
-		if (dataset == null) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-				GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-				"Dataset not found"
-			);
-		}
+		Dataset dataset = this.loadDataset(datasetId);
 		//check run counts
 		//check marker 
 		List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, 1, 0);
 		if (markers != null && markers.size() > 0) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-					"Associated resources found. Cannot complete the action unless they are deleted."
-				);
+			throw new DeleteException();
 		}
 
 		//check dnarun
 		List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, 1, 0);
 		if (dnaRuns != null && dnaRuns.size() > 0) {
-			throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-					"Associated resources found. Cannot complete the action unless they are deleted."
-				);
+			throw new DeleteException();
 		}
 		datasetDao.deleteDataset(dataset);
 	}
@@ -436,6 +379,14 @@ public class DatasetServiceImpl implements DatasetService {
         ModelMapper.mapEntityToDto(cv, datasetDTO);
         return datasetDTO;
 
-    }
+	}
+	
+	private Dataset loadDataset(Integer datasetId) throws EntityDoesNotExistException {
+		Dataset dataset = datasetDao.getDataset(datasetId);
+		if (dataset == null) {
+			throw new EntityDoesNotExistException.Dataset();
+		}
+		return dataset;
+	}
 
 }

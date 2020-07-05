@@ -1,8 +1,9 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
@@ -163,7 +164,47 @@ public class AnalysisServiceImplTest {
         assertTrue(arg.getValue().getAnalysisName().equals("test-analysis"));
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test
+    public void testCreateAnalysisNoReferenceOk()  throws Exception {
+        AnalysisDTO request = new AnalysisDTO();
+        request.setAnalysisTypeId(456);
+        request.setAnalysisName("test-analysis");
+
+
+        Cv analysisType = new Cv();
+        analysisType.setCvId(456);
+        analysisType.setTerm("test-analysis-type");
+        
+        CvGroup group = new CvGroup();
+        group.setCvGroupId(321);
+        group.setCvGroupName(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName());
+
+        analysisType.setCvGroup(group);
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(788);
+        mockContact.setUsername("test-editor");
+
+        when(cvDao.getCvByCvId(456)).thenReturn(analysisType);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(
+            mockContact
+        );
+
+
+        when(analysisDao.createAnalysis(any(Analysis.class))).thenReturn(
+            new Analysis()
+        ); 
+
+        ArgumentCaptor<Analysis> arg = ArgumentCaptor.forClass(Analysis.class);
+        analysisServiceImpl.createAnalysis(request, "test-editor");
+
+        verify(analysisDao).createAnalysis(arg.capture());
+        log.info(arg.getValue().getAnalysisName());
+        assertTrue(arg.getValue().getAnalysisName().equals("test-analysis"));
+        assertNull(arg.getValue().getReference());
+    }
+
+    @Test(expected = GobiiException.class)
     public void testCreateAnalysisTypeNotFound() throws Exception {
         AnalysisDTO request = new AnalysisDTO();
         request.setAnalysisTypeId(345);
@@ -174,7 +215,7 @@ public class AnalysisServiceImplTest {
         analysisServiceImpl.createAnalysis(request, "test-editor");
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testCreateAnalysisInvalidCvType() throws Exception {
         AnalysisDTO request = new AnalysisDTO();
         request.setAnalysisTypeId(345);
@@ -193,7 +234,7 @@ public class AnalysisServiceImplTest {
 
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testCreateAnalysisInvalidReference() throws Exception {
         AnalysisDTO request = new AnalysisDTO();
         request.setAnalysisTypeId(345);
@@ -268,6 +309,10 @@ public class AnalysisServiceImplTest {
         mockAnalysis.setAnalysisId(123);
         mockAnalysis.setAnalysisName("test-name");
         when (analysisDao.getAnalysis(123)).thenReturn(mockAnalysis);
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(112);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockContact);
      
         Cv mockNewStatus = new Cv();
         when(cvDao.getNewStatus()).thenReturn(mockNewStatus);
@@ -285,6 +330,35 @@ public class AnalysisServiceImplTest {
     }
 
     @Test
+    public void testUpdateAnalysisOkReferenceAndTypeNull() throws Exception {
+        AnalysisDTO request = new AnalysisDTO();
+        request.setAnalysisName("test-analysis-new");
+        request.setDescription("new-description");
+
+        Analysis mockAnalysis = new Analysis();
+        mockAnalysis.setAnalysisId(123);
+        mockAnalysis.setAnalysisName("test-name");
+        when (analysisDao.getAnalysis(123)).thenReturn(mockAnalysis);
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(112);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockContact);
+     
+        Cv mockNewStatus = new Cv();
+        when(cvDao.getNewStatus()).thenReturn(mockNewStatus);
+        when(analysisDao.updateAnalysis(any(Analysis.class))).thenReturn(new Analysis());
+
+        ArgumentCaptor<Analysis> arg = ArgumentCaptor.forClass(Analysis.class);
+        analysisServiceImpl.updateAnalysis(123, request, "test-editor");
+
+        verify(analysisDao).updateAnalysis(arg.capture());
+
+        assertTrue(arg.getValue().getAnalysisName().equals("test-analysis-new"));
+        assertNull(arg.getValue().getReference()); //since no reference
+        assertTrue(arg.getValue().getDescription().equals("new-description"));   
+    }
+
+    @Test
     public void testDeleteOk() throws Exception {
         when(analysisDao.getAnalysis(123)).thenReturn(new Analysis());
         when(datasetDao.getDatasetCountByAnalysisId(123)).thenReturn(0);
@@ -294,7 +368,7 @@ public class AnalysisServiceImplTest {
         verify(analysisDao, times(1)).deleteAnalysis(any(Analysis.class));
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testDeleteNotOk1() throws Exception {
         when(analysisDao.getAnalysis(123)).thenReturn(null);
         analysisServiceImpl.deleteAnalysis(123);
@@ -303,7 +377,7 @@ public class AnalysisServiceImplTest {
     }
 
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testDeleteNotOk2() throws Exception {
         when(analysisDao.getAnalysis(123)).thenReturn(new Analysis());
         when(datasetDao.getDatasetCountByAnalysisId(123)).thenReturn(0);
@@ -313,7 +387,7 @@ public class AnalysisServiceImplTest {
         verify(analysisDao, times(0)).deleteAnalysis(any(Analysis.class));
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testDeleteNotOk3() throws Exception {
         when(analysisDao.getAnalysis(123)).thenReturn(new Analysis());
         when(datasetDao.getDatasetCountByAnalysisId(123)).thenReturn(10);
@@ -321,6 +395,15 @@ public class AnalysisServiceImplTest {
         analysisServiceImpl.deleteAnalysis(123);
         
         verify(analysisDao, times(0)).deleteAnalysis(any(Analysis.class));
+    }
+
+
+    @Test(expected = GobiiException.class)
+    public void testCreateAnalysisTypeWithExc() throws Exception {
+        when(cvDao.getCvGroupByNameAndType(any(String.class), eq(2))).thenReturn(null);
+        CvTypeDTO request = new CvTypeDTO();
+        analysisServiceImpl.createAnalysisType(request, "any");
+        verify(cvDao, times(0)).createCv(any(Cv.class));
     }
 
 

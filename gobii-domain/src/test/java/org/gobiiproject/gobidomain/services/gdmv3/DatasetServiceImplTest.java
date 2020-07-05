@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
@@ -72,7 +73,7 @@ public class DatasetServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testCreateDatasetNullExperiment() throws Exception {
         //Mock request
         DatasetRequestDTO request = new DatasetRequestDTO();
@@ -161,7 +162,7 @@ public class DatasetServiceImplTest {
 
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testCreateAnalysisCallingAnalysisNotFound() throws Exception {
         //Mock request
         DatasetRequestDTO request = new DatasetRequestDTO();
@@ -325,7 +326,7 @@ public class DatasetServiceImplTest {
     }
 
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testUpdateDatasetNotFound() throws Exception {
         when(datasetDao.getDataset(123)).thenReturn(null);
 
@@ -443,7 +444,7 @@ public class DatasetServiceImplTest {
         verify(datasetDao, times(1)).deleteDataset(any(Dataset.class));     
     }
 
-    @Test(expected = GobiiDaoException.class) 
+    @Test(expected = GobiiException.class) 
     public void testDeleteWithMarkersPresent() throws Exception {
         Dataset mockDataset = new Dataset();
         mockDataset.setDatasetName("test-name");
@@ -462,7 +463,7 @@ public class DatasetServiceImplTest {
     }
 
 
-    @Test(expected = GobiiDaoException.class) 
+    @Test(expected = GobiiException.class) 
     public void testDeleteWithRunsPresent() throws Exception {
         Dataset mockDataset = new Dataset();
         mockDataset.setDatasetName("test-name");
