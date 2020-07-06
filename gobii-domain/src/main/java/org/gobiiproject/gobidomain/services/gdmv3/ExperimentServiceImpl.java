@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -29,8 +28,6 @@ import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -101,14 +98,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         //set status
         // Get the Cv for status, new row
-        List<Cv> cvList = cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
-
+        Cv cv = cvDao.getNewStatus();
         experiment.setStatus(cv);
 
         //audit elements
@@ -120,19 +110,23 @@ public class ExperimentServiceImpl implements ExperimentService {
         ExperimentDTO experimentDTO = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, experimentDTO);
         
-        //TODO: debug this, why is the mapper failing at mapping subobject
-        if ((experimentDTO.getPlatformId() == null || experimentDTO.getPlatformName() == null) && 
-             experiment.getVendorProtocol() != null && 
-             experiment.getVendorProtocol().getProtocol() != null && 
-             experiment.getVendorProtocol().getProtocol().getPlatform() != null
-           ) {
-            Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
+        // //TODO: debug this, why is the mapper failing at mapping subobject
+        // if ((experimentDTO.getPlatformId() == null || experimentDTO.getPlatformName() == null) && 
+        //      experiment.getVendorProtocol() != null && 
+        //      experiment.getVendorProtocol().getProtocol() != null && 
+        //      experiment.getVendorProtocol().getProtocol().getPlatform() != null
+        //    ) {
+        //     Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
 
-            experimentDTO.setPlatformId(platform.getPlatformId());
-            experimentDTO.setPlatformName(platform.getPlatformName());
-        }
-
-
+        //     experimentDTO.setPlatformId(platform.getPlatformId());
+        //     experimentDTO.setPlatformName(platform.getPlatformName());
+        // }
+        Platform platform  = Optional.ofNullable(experiment.getVendorProtocol())
+                                     .map(v -> v.getProtocol())
+                                     .map(p -> p.getPlatform())
+                                     .orElse(null);
+        experimentDTO.setPlatformId(Optional.ofNullable(platform).map(p -> p.getPlatformId()).orElse(null));
+        experimentDTO.setPlatformName(Optional.ofNullable(platform).map(p -> p.getPlatformName()).orElse(null));
         return experimentDTO;
     }
 
@@ -155,6 +149,8 @@ public class ExperimentServiceImpl implements ExperimentService {
             target.setVendorProtocol(vp);
         }
 
+        Cv cv = cvDao.getModifiedStatus();
+        target.setStatus(cv);
         // get contact info
         Contact contact = contactDao.getContactByUsername(updatedBy);
         target.setModifiedBy(contact.getContactId());

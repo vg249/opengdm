@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExperimentPatchRequest {
     @JsonSerialize(using=ToStringSerializer.class)
-    private Integer projectId = null;
+    private Integer projectId;
 
-    private String experimentName = null;
+    private String experimentName;
 
     @JsonSerialize(using=ToStringSerializer.class)
-    private Integer vendorProtocolId = null;
+    private Integer vendorProtocolId;
 }
