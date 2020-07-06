@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
@@ -256,7 +257,7 @@ public class ExperimentServiceImplTest {
         verify(experimentDao, times(1)).deleteExperiment(any(Experiment.class));
     }
 
-    @Test(expected = GobiiDaoException.class)
+    @Test(expected = GobiiException.class)
     public void testDeleteExperimentNotOk1() throws Exception {
         when(experimentDao.getExperiment(123)).thenReturn(null);
         experimentServiceImpl.deleteExperiment(123);

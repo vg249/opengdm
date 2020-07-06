@@ -18,11 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -59,7 +60,7 @@ public class ProjectServiceImplTest {
     }
 
     @Test
-    public void testSimple() {
+    public void testSimple() throws Exception {
 
         assert projectDao != null ;
 
@@ -79,21 +80,34 @@ public class ProjectServiceImplTest {
             daoReturn
         );
 
-        PagedResult<GobiiProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000, null);
+        PagedResult<ProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000, null);
         assert payload.getResult().size() == 1 ;
         assert payload.getCurrentPageNum() == 0;
         assert payload.getCurrentPageSize() == 1;
+
+        verify(cvDao, times(1)).getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
     }
 
+    @Test(expected = GobiiException.class )
+    public void testGetProjectsException() throws Exception {
+        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null)).thenThrow(new GobiiException("test-exc"));
+        v3ProjectServiceImpl.getProjects(0,  1000, null);
+    }
 
+    @Test(expected = GobiiDomainException.class)
+    public void testGetProjectsNotOk2() throws Exception {
+        v3ProjectServiceImpl.getProjects(null,  null, null);
+    }
+
+    
     @Test
     public void testCreateWithNullProperties() throws Exception {
         //Setup test GobiiProject
-        GobiiProjectRequestDTO request = new GobiiProjectRequestDTO();
+        ProjectDTO request = new ProjectDTO();
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId("111");
+        request.setPiContactId(111);
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO nullValued = new CvPropertyDTO();
@@ -131,11 +145,11 @@ public class ProjectServiceImplTest {
     @Test
     public void testCreateWithNonNullProperties() throws Exception {
         //Setup test GobiiProject
-        GobiiProjectRequestDTO request = new GobiiProjectRequestDTO();
+        ProjectDTO request = new ProjectDTO();
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId("111");
+        request.setPiContactId(111);
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO valued = new CvPropertyDTO();
@@ -171,6 +185,19 @@ public class ProjectServiceImplTest {
         assertTrue(arg.getValue().getProperties().size() == 1);
 
     }
+
+    @Test(expected = UnknownEntityException.class)
+    public void testCreateContactNotFound() throws Exception {
+        when(contactDao.getContact(13)).thenThrow(new UnknownEntityException.Contact());
+
+        ProjectDTO request = new ProjectDTO();
+        String projectName = RandomStringUtils.random(10);
+        request.setProjectName(projectName);
+        request.setProjectDescription(RandomStringUtils.random(20));
+        request.setPiContactId(111);
+
+        v3ProjectServiceImpl.createProject(request, "test-user");
+    }
    
 
     @Test
@@ -197,8 +224,8 @@ public class ProjectServiceImplTest {
         mockModifiedStatus.setTerm("modified");
   
 
-        GobiiProjectPatchDTO request = new GobiiProjectPatchDTO();
-        request.setPiContactId("222");
+        ProjectDTO request = new ProjectDTO();
+        request.setPiContactId(222);
         request.setProjectName("new-project-name");
         request.setProjectDescription("new-project-description");
 
@@ -206,7 +233,7 @@ public class ProjectServiceImplTest {
         when(contactDao.getContact(222)).thenReturn(mockNewContact);
         when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
         when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
-
+        when(projectDao.patchProject(any(Project.class))).thenReturn(new Project());
         ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
 
         v3ProjectServiceImpl.patchProject(123, request, "test-editor");
@@ -229,7 +256,7 @@ public class ProjectServiceImplTest {
         mockProject.setContact(mockContact);
 
         
-        GobiiProjectPatchDTO request = new GobiiProjectPatchDTO();
+        ProjectDTO request = new ProjectDTO();
         List<CvPropertyDTO> testProps = new ArrayList<>();
         CvPropertyDTO mockProp = new CvPropertyDTO();
         mockProp.setPropertyId(444);
@@ -248,6 +275,7 @@ public class ProjectServiceImplTest {
         when(projectDao.getProject(123)).thenReturn(mockProject);
         when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
         when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
+        when(projectDao.patchProject(any(Project.class))).thenReturn(new Project());
 
         ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
 

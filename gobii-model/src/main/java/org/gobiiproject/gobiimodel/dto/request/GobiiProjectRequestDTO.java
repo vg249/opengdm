@@ -26,6 +26,7 @@ import javax.validation.constraints.Pattern;
 
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 
+@Deprecated
 public class GobiiProjectRequestDTO {
        
     @NotEmpty

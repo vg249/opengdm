@@ -399,7 +399,7 @@ public class DatasetServiceImpl implements DatasetService {
 		return Optional.ofNullable(ids).map( v -> v.length).orElse(0) > 0;
 	}
 
-	private boolean checkConnectedListExists(List list) {
+	private boolean checkConnectedListExists(List<?> list) {
 		return Optional.ofNullable(list).map( v -> v.size()).orElse(0) > 0;
  	}
 

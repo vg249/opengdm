@@ -18,21 +18,19 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PropertiesService;
-import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
@@ -59,18 +57,18 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
+    public PagedResult<ProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws Exception {
+        //TODO:  Retire GobiiProjectDTO class
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         // get Cvs
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
-            List<GobiiProjectDTO> projectDTOs = new java.util.ArrayList<>();
-
+            List<ProjectDTO> projectDTOs = new java.util.ArrayList<>();
+            List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
             List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
-                GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+                ProjectDTO projectDTO = new ProjectDTO();
                 ModelMapper.mapEntityToDto(project, projectDTO);
 
                 List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs,
@@ -92,11 +90,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception {
+    public ProjectDTO createProject(ProjectDTO request, String createdBy) throws Exception {
         // check if contact exists
-        Contact contact = contactDao.getContact(Integer.parseInt(request.getPiContactId()));
-        if (contact == null)
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
+        Contact contact = this.loadContact(request.getPiContactId());
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
@@ -119,12 +115,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProperties(props);
         // audit items
         Contact creator = contactDao.getContactByUsername(createdBy);
-        if (creator != null)
-            project.setCreatedBy(creator.getContactId());
+        project.setCreatedBy(Optional.ofNullable(creator).map(v->v.getContactId()).orElse(null));
         project.setCreatedDate(new java.util.Date());
         projectDao.createProject(project);
 
-        GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+        ProjectDTO projectDTO = new ProjectDTO();
         ModelMapper.mapEntityToDto(project, projectDTO);
 
         //transform Cv
@@ -145,31 +140,26 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy)
+    public ProjectDTO patchProject(Integer projectId, ProjectDTO request, String editedBy)
             throws Exception {
-        Project project = projectDao.getProject(projectId);
-        if (project == null) {
-            throw new NullPointerException("Project not found.");
-        }
+        Project project = this.loadProject(projectId);
 
-        String projContactId = project.getPiContactId().toString();
-        
+        Integer projContactId = project.getPiContactId();
         //convert
-        if (request.keyInPayload("piContactId") && !projContactId.equals(request.getPiContactId())) {   
+        if (request.getPiContactId() != null && projContactId != request.getPiContactId()) {   
             this.updateAttributes(project, "piContactId", request.getPiContactId());
         }
-        if (request.keyInPayload("projectName")) {
+        if (request.getProjectName() != null) {
             this.updateAttributes(project, "projectName", request.getProjectName());
         }
-        if (request.keyInPayload("projectDescription")) {
+        if (request.getProjectDescription() != null) {
             this.updateAttributes(project, "projectDescription", request.getProjectDescription());
         }
        
         
         //audit items first
         Contact editor = contactDao.getContactByUsername(editedBy);
-        if (editor != null)
-            project.setModifiedBy(editor.getContactId());
+        project.setModifiedBy(Optional.ofNullable(editor).map(v->v.getContactId()).orElse(null));
         project.setModifiedDate(new java.util.Date());
         
         Optional<List<CvPropertyDTO>> propList = Optional.ofNullable(request.getProperties());
@@ -181,8 +171,8 @@ public class ProjectServiceImpl implements ProjectService {
         Cv cv = cvDao.getModifiedStatus();
         project.setStatus(cv);
 
-        projectDao.patchProject(project);
-        return getProject(project.getProjectId());
+        project = projectDao.patchProject(project);
+        return createProjectDTO(project, null);
     }
 
     @Transactional
@@ -193,16 +183,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public GobiiProjectDTO getProject(Integer projectId) throws Exception {
-        Project project = projectDao.getProject(projectId);
-        if (project == null) return null;
-
-        GobiiProjectDTO projectDTO = this.createProjectDTO(project, null);
+    public ProjectDTO getProject(Integer projectId) throws Exception {
+        Project project = this.loadProject(projectId);
+        ProjectDTO projectDTO = this.createProjectDTO(project, null);
         return projectDTO;
     }
 
-    private GobiiProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
-        GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+    private ProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
+        ProjectDTO projectDTO = new ProjectDTO();
         ModelMapper.mapEntityToDto(project, projectDTO);
         if (cvs == null) {
             cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
@@ -224,17 +212,17 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProperties(currentProperties);
     }
 
-    private void updateAttributes(Project project, String key, String value)
+    private void updateAttributes(Project project, String key, Object value)
             throws NumberFormatException, Exception {
         switch(key) {
             case "piContactId":
-                this.updateContact(project, value);
+                this.updateContact(project, (Integer) value);
                 break;
             case "projectName":
-                this.updateProjectName(project, value);
+                this.updateProjectName(project, (String) value);
                 break;
             case "projectDescription":
-                this.updateProjectDescription(project, value);
+                this.updateProjectDescription(project, (String) value);
                 break;
         }
     }
@@ -244,28 +232,30 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private void updateProjectName(Project project, String value) throws Exception {
-        if (value == null || value.trim() == "") throw new Exception("projectName is required");
+        if (LineUtils.isNullOrEmpty(value)) throw new Exception("projectName is required");
         project.setProjectName(value);
     }
 
-    private void updateContact(Project project, String value) throws NumberFormatException, Exception {
-        if (project.getContact() != null && project.getPiContactId().toString().equals(value)) return;
-        Contact contact = contactDao.getContact(Integer.parseInt(value));
-        
-        if (contact != null) {
-            project.setContact(contact);
-        } else {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
-        }
+    private void updateContact(Project project, Integer value) throws NumberFormatException, Exception {
+        Contact contact = contactDao.getContact(value);
+        project.setContact( Optional.ofNullable(contact)
+                                    .orElseThrow(()-> new UnknownEntityException.Contact()) );
     }
 
     @Transactional
     @Override
     public void deleteProject(Integer projectId) throws Exception {
-        Project project = projectDao.getProject(projectId);
-        //TODO: replace the NullPointerException with a Gobii specific error.
-        if (project == null) throw new NullPointerException("Project does not exist");
-
+        Project project = this.loadProject(projectId);
         projectDao.deleteProject(project);
+    }
+
+    private Project loadProject(Integer projectId) throws Exception {
+        return Optional.ofNullable(projectDao.getProject(projectId))
+                       .orElseThrow(() -> new EntityDoesNotExistException.Project());
+    }
+
+    private Contact loadContact(Integer contactId) throws Exception {
+        return Optional.ofNullable(contactDao.getContact(contactId))
+                       .orElseThrow(() -> new UnknownEntityException.Contact());
     }
 }

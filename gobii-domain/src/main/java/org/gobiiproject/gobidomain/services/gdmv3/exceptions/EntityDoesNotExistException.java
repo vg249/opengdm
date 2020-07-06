@@ -32,4 +32,12 @@ public class EntityDoesNotExistException extends GobiiException {
     public static class Dataset extends EntityDoesNotExistException {
         public Dataset() { super("Dataset"); }
     }
+
+    public static class Project extends EntityDoesNotExistException {
+        public Project() { super("Project"); }
+    }
+
+	public static class Experiment extends EntityDoesNotExistException {
+        public Experiment() { super("Experiment"); }
+	}
 }

@@ -9,9 +9,12 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
@@ -170,39 +173,20 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     private Experiment loadExperiment(Integer experimentId) throws Exception {
-        Experiment experiment = experimentDao.getExperiment(experimentId);
-        if (experiment == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Unknown experiment"
-            ); //TODO: Replace this with a more canonical exception
-        }
-        return experiment;
+        return Optional.ofNullable( experimentDao.getExperiment(experimentId))
+                       .orElseThrow(() -> new EntityDoesNotExistException.Experiment());
+
     }
 
     private Project loadProject(Integer projectId) throws Exception {
-        Project project = projectDao.getProject(projectId);
-        if (project == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Unknown project"
-            );
-        }
-        return project;
+        return Optional.ofNullable(projectDao.getProject(projectId))
+                       .orElseThrow(() -> new UnknownEntityException.Project());
     }
 
     private VendorProtocol loadVendorProtocol(Integer vendorProtocolId) throws Exception {
-        VendorProtocol vp = experimentDao.getVendorProtocol(vendorProtocolId);
-        if (vp == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Unknown vendor protocol"
-            );
-        }
-        return vp;
+        return Optional.ofNullable(experimentDao.getVendorProtocol(vendorProtocolId))
+                       .orElseThrow(() -> new UnknownEntityException.VendorProtocol());
+        
     }
     
 }

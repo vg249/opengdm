@@ -36,5 +36,17 @@ public class UnknownEntityException extends GobiiException {
     public static class Analysis extends UnknownEntityException {
         public Analysis() { super("Analysis"); }
     }
+
+	public static class Contact extends UnknownEntityException {
+        public Contact() { super("Contact"); }
+	}
+
+	public static class Project extends UnknownEntityException {
+        public Project() { super("Project"); }
+	}
+
+	public static class VendorProtocol extends UnknownEntityException {
+        public VendorProtocol() { super("Vendor Protocol"); }
+	}
     
 }

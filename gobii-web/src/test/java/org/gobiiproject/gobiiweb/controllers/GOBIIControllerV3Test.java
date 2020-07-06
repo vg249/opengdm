@@ -29,26 +29,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
-import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
-import org.gobiiproject.gobidomain.services.gdmv3.CvService;
-import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
-import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
-import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
-import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
-import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
-import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
-import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
+import org.gobiiproject.gobidomain.services.gdmv3.*;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.*;
-
 import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
 import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -131,8 +117,8 @@ public class GOBIIControllerV3Test {
 
     }
 
-    private GobiiProjectDTO createMockProjectDTO() {
-        GobiiProjectDTO dto = new GobiiProjectDTO();
+    private ProjectDTO createMockProjectDTO() {
+        ProjectDTO dto = new ProjectDTO();
         dto.setId(1);
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
@@ -163,10 +149,10 @@ public class GOBIIControllerV3Test {
     @Test
     public void simpleListTest() throws Exception {
         assert projectService != null;
-        List<GobiiProjectDTO> mockList = new ArrayList<GobiiProjectDTO>();
-        GobiiProjectDTO mockItem = createMockProjectDTO();
+        List<ProjectDTO> mockList = new ArrayList<ProjectDTO>();
+        ProjectDTO mockItem = createMockProjectDTO();
         mockList.add(mockItem);
-        PagedResult<GobiiProjectDTO> mockPayload = new PagedResult<>();
+        PagedResult<ProjectDTO> mockPayload = new PagedResult<>();
         mockPayload.setResult(mockList);
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
@@ -196,10 +182,10 @@ public class GOBIIControllerV3Test {
     @Test
     public void listWithQueryTest() throws Exception {
         assert projectService != null;
-        List<GobiiProjectDTO> mockList = new ArrayList<GobiiProjectDTO>();
-        GobiiProjectDTO mockItem = createMockProjectDTO();
+        List<ProjectDTO> mockList = new ArrayList<ProjectDTO>();
+        ProjectDTO mockItem = createMockProjectDTO();
         mockList.add(mockItem);
-        PagedResult<GobiiProjectDTO> mockPayload = new PagedResult<>();
+        PagedResult<ProjectDTO> mockPayload = new PagedResult<>();
         mockPayload.setResult(mockList);
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
@@ -228,8 +214,8 @@ public class GOBIIControllerV3Test {
     
     @Test
     public void testCreateSimple() throws Exception {
-        GobiiProjectRequestDTO mockRequest = new GobiiProjectRequestDTO();
-        mockRequest.setPiContactId("1"); //need to mock contact here
+        ProjectDTO mockRequest = new ProjectDTO();
+        mockRequest.setPiContactId(1); //need to mock contact here
         mockRequest.setProjectName("Test project");
         mockRequest.setProjectDescription("Test description");
         //this test does not include properties
@@ -238,12 +224,12 @@ public class GOBIIControllerV3Test {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(mockRequest);
 
-        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        ProjectDTO mockGobiiProject = new ProjectDTO();
         //let's leave it empty since it's a mock anyways
         doReturn("gadm").when(projectService).getDefaultProjectEditor();
         
 		when(
-            projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm"))
+            projectService.createProject( any(ProjectDTO.class), eq("gadm"))
         ).thenReturn(
             mockGobiiProject
         );
@@ -267,11 +253,11 @@ public class GOBIIControllerV3Test {
         String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
             "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
 
-        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        ProjectDTO mockGobiiProject = new ProjectDTO();
         //let's leave it empty since it's a mock anyways
         doReturn("gadm").when(projectService).getDefaultProjectEditor();
         when(
-            projectService.createProject( any(GobiiProjectRequestDTO.class), eq("gadm") )
+            projectService.createProject( any(ProjectDTO.class), eq("gadm") )
         ).thenReturn(
             mockGobiiProject
         );
@@ -317,11 +303,11 @@ public class GOBIIControllerV3Test {
         String requestJson = "{\"piContactId\" : \"4\",\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
             "\"properties\" : [ {\"propertyId\" : \"4\",  \"propertyValue\" : \"test-value\"} ]}";
 
-        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO();
+        ProjectDTO mockGobiiProject = new ProjectDTO();
         //let's leave it empty since it's a mock anyways
         doReturn("gadm").when(projectService).getDefaultProjectEditor();
         when(
-            projectService.patchProject( eq(84), any(GobiiProjectPatchDTO.class), eq("gadm") )
+            projectService.patchProject( eq(84), any(ProjectDTO.class), eq("gadm") )
         ).thenReturn(
             mockGobiiProject
         );
@@ -376,7 +362,7 @@ public class GOBIIControllerV3Test {
     @Test
     public void testGetProject() throws Exception {
 
-        GobiiProjectDTO mockGobiiProject = new GobiiProjectDTO(); //let's leave it empty since it's a mock anyways
+        ProjectDTO mockGobiiProject = new ProjectDTO(); //let's leave it empty since it's a mock anyways
         when(
             projectService.getProject( eq(123) )
         ).thenReturn(

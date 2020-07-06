@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 
  import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 
+@Deprecated
 public class GobiiProjectPatchDTO {
     
     private java.util.List<String> _isKeyInInput = new java.util.ArrayList<>();
