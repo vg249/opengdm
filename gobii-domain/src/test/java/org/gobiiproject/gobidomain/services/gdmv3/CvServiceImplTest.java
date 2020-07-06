@@ -163,17 +163,16 @@ public class CvServiceImplTest {
         Cv mockPropCv = new Cv();
         mockPropCv.setCvId(888);
         CvGroup mockPropCvGroup = new CvGroup();
-        mockPropCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName()); //the wrong type
+        mockPropCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName()); // the wrong type
         mockPropCv.setCvGroup(mockPropCvGroup);
 
         when(cvDao.getCvByCvId(888)).thenReturn(mockPropCv);
 
         when(cvDao.getCvGroupById(12)).thenReturn(mockCvGroup);
 
-
         cvServiceImpl.createCv(cvDTORequest);
         verify(cvDao, times(0)).createCv(any(Cv.class));
-       
+
     }
 
     @Test
@@ -261,13 +260,13 @@ public class CvServiceImplTest {
         mockProp2.setPropertyValue(null);
         properties.add(mockProp2);
 
-        //not yet in Cv 
+        // not yet in Cv
         CvPropertyDTO mockProp3 = new CvPropertyDTO();
         mockProp3.setPropertyId(12);
         mockProp3.setPropertyValue("new-prop");
         properties.add(mockProp3);
 
-        //not yet in Cv but has null value (to be iggnored)
+        // not yet in Cv but has null value (to be iggnored)
         CvPropertyDTO mockProp4 = new CvPropertyDTO();
         mockProp4.setPropertyId(13);
         mockProp4.setPropertyValue(null);
@@ -325,6 +324,29 @@ public class CvServiceImplTest {
                 result.getProperties() != null && result.getProperties().size() == 2);
     }
 
+    @Test
+    public void testUpdateSimpleNoUpdatesMadeOk() throws Exception {
+        CvDTO cvDTORequest = new CvDTO();
+
+        Cv mockCv = new Cv();
+        mockCv.setCvId(123);
+        mockCv.setTerm("before-test");
+        mockCv.setDefinition("before-test-definition");
+
+        CvGroup mockCvGroup = new CvGroup();
+        mockCvGroup.setCvGroupId(12);
+        mockCvGroup.setCvGroupName("test-group");
+        mockCvGroup.setCvGroupType(1);
+
+        mockCv.setCvGroup(mockCvGroup);
+        when(cvDao.getCvByCvId(123)).thenReturn(mockCv);
+
+        cvServiceImpl.updateCv(123, cvDTORequest);
+
+        verify(cvDao, times(0)).updateCv(any(Cv.class));
+
+    }
+
     @Test(expected = InvalidException.class)
     public void testUpdateWithPropertiesInvalidGroup() throws Exception {
 
@@ -345,7 +367,7 @@ public class CvServiceImplTest {
         CvDTO cvDTORequest = new CvDTO();
 
         CvGroup mockPropCvGroup = new CvGroup();
-        mockPropCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName()); //incorrect
+        mockPropCvGroup.setCvGroupName(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName()); // incorrect
 
         List<CvPropertyDTO> properties = new ArrayList<>();
         CvPropertyDTO mockProp1 = new CvPropertyDTO();
@@ -353,14 +375,12 @@ public class CvServiceImplTest {
         mockProp1.setPropertyValue("NewValue");
         properties.add(mockProp1);
 
-       
         cvDTORequest.setProperties(properties);
 
         Cv mockCv10 = new Cv();
         mockCv10.setCvGroup(mockPropCvGroup);
         when(cvDao.getCvByCvId(10)).thenReturn(mockCv10);
 
-      
         cvServiceImpl.updateCv(123, cvDTORequest);
 
         verify(cvDao, times(0)).updateCv(any(Cv.class));
@@ -412,7 +432,7 @@ public class CvServiceImplTest {
         assertTrue(result.getCurrentPageSize() == 1);
         assertTrue(result.getResult().size() == 1);
 
-        //check other user type inputs
+        // check other user type inputs
         result = cvServiceImpl.getCvs(0, 1000, null, "1");
         verify(cvDao, times(2)).getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_SYSTEM, 0, 1000);
 
@@ -420,7 +440,6 @@ public class CvServiceImplTest {
         result = cvServiceImpl.getCvs(0, 1000, null, "user_defined");
         verify(cvDao, times(1)).getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_USER, 0, 1000);
 
-        
         result = cvServiceImpl.getCvs(0, 1000, null, "2");
         verify(cvDao, times(2)).getCvs(null, null, GobiiCvGroupType.GROUP_TYPE_USER, 0, 1000);
 
@@ -548,11 +567,11 @@ public class CvServiceImplTest {
 
         CvGroup mockGroup = new CvGroup();
         mockGroup.setCvGroupId(123);
-        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName());//the wrong group
+        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName());// the wrong group
 
         when(cvDao.getCvGroupById(123)).thenReturn(mockGroup);
 
-        cvServiceImpl.updateCv(100,  request);
+        cvServiceImpl.updateCv(100, request);
         verify(cvDao, times(0)).updateCv(any(Cv.class));
     }
 

@@ -134,12 +134,13 @@ public class CvServiceImpl implements CvService {
             updated = true;
         }
 
+        Cv updatedCv = cv;
         if (updated) {
             Cv modifiedCv = cvDao.getModifiedStatus();
             cv.setStatus(modifiedCv.getCvId());
+            updatedCv =  cvDao.updateCv(cv);
         }
 
-        Cv updatedCv = cvDao.updateCv(cv);
         CvDTO updatedCvDTO = new CvDTO();
 
         ModelMapper.mapEntityToDto(updatedCv, updatedCvDTO);

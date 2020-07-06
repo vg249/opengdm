@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,8 +71,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         //audit items
         Contact creator = contactDao.getContactByUsername(createdBy);
-		if (creator != null)
-			markerGroup.setCreatedBy(creator.getContactId());
+        markerGroup.setCreatedBy(Optional.ofNullable(creator).map(v -> v.getContactId()).orElse(null));
         markerGroup.setCreatedDate(new java.util.Date());
         
         markerGroup = markerGroupDao.createMarkerGroup(markerGroup);
@@ -124,8 +124,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         if (modified) {
             Contact editor = contactDao.getContactByUsername(updatedBy);
-            if (editor != null)
-                markerGroup.setModifiedBy(editor.getContactId());
+            markerGroup.setModifiedBy(Optional.ofNullable(editor).map(v -> v.getContactId()).orElse(null));
             markerGroup.setModifiedDate(new java.util.Date());
 
             //status
@@ -215,10 +214,10 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         statusList = null; //delete this moving since no errors;
             
         ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode currentNode = (ObjectNode) markerGroup.getMarkers();
-        if (currentNode == null)  {
-            currentNode = objectMapper.createObjectNode();
-        }
+        ObjectNode currentNode = Optional.ofNullable((ObjectNode) markerGroup.getMarkers())
+                                         .map(v -> v)
+                                         .orElse(objectMapper.createObjectNode());
+
         Integer counter = 0;
         List<MarkerDTO> markerDTOs = new ArrayList<>();
         for (Marker marker: existingMarkers) {

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
@@ -265,6 +271,137 @@ public class MarkerGroupServiceImplTest {
 
         verify(markerGroupDao, times(1)).getMarkerGroup(123);
         verify(markerGroupDao, times(1)).deleteMarkerGroup(any(MarkerGroup.class));
+    }
+
+    @Test
+    public void testGetMarkerGroupMarkersOk() throws Exception {
+        MarkerGroup mockMarkerGroup = new MarkerGroup();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode markerNode = objectMapper.createObjectNode();
+        
+        ArrayNode alleles = markerNode.putArray("4");
+        alleles.add("A");
+        mockMarkerGroup.setMarkers(markerNode);
+
+        when(markerGroupDao.getMarkerGroup(123)).thenReturn(mockMarkerGroup);
+
+        Marker mockMarker = new Marker();
+        mockMarker.setMarkerId(4);
+
+        List<Marker> mockList = new ArrayList<>();
+        mockList.add(mockMarker);
+
+        when(markerDao.getMarkersByMarkerIds(anySet())).thenReturn(mockList);
+
+        PagedResult<MarkerDTO> result = markerGroupServiceImpl.getMarkerGroupMarkers(123, 0, 1000);
+        assertTrue(result.getCurrentPageNum() == 0);
+        assertTrue(result.getCurrentPageSize() == 1);
+    }
+
+    @Test
+    public void testUpdateMarkerGroupOk() throws Exception {
+        MarkerGroupDTO request = new MarkerGroupDTO();
+        request.setMarkerGroupName("new-name");
+        request.setGermplasmGroup("new-group");
+
+        MarkerGroup mockGroup = new MarkerGroup();
+        mockGroup.setName("old-name");
+        mockGroup.setGermplasmGroup("old-group");
+
+        when(markerGroupDao.getMarkerGroup(123)).thenReturn(mockGroup);
+
+        when(markerGroupDao.updateMarkerGroup(any(MarkerGroup.class))).thenReturn(new MarkerGroup());
+        when(cvDao.getModifiedStatus()).thenReturn(new Cv());
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(new Contact());
+        ArgumentCaptor<MarkerGroup> arg = ArgumentCaptor.forClass(MarkerGroup.class);
+
+        markerGroupServiceImpl.updateMarkerGroup(123, request, "test-editor");
+        verify(markerGroupDao).updateMarkerGroup(arg.capture());
+
+        assertTrue(arg.getValue().getName().equals("new-name"));
+        assertTrue(arg.getValue().getGermplasmGroup().equals("new-group"));
+    }
+
+    @Test
+    public void testUpdateMarkerGroupNoUpdatesOk() throws Exception {
+        MarkerGroupDTO request = new MarkerGroupDTO();
+
+
+        MarkerGroup mockGroup = new MarkerGroup();
+        mockGroup.setName("old-name");
+        mockGroup.setGermplasmGroup("old-group");
+
+        when(markerGroupDao.getMarkerGroup(123)).thenReturn(mockGroup);
+
+        when(markerGroupDao.updateMarkerGroup(any(MarkerGroup.class))).thenReturn(new MarkerGroup());
+       
+        markerGroupServiceImpl.updateMarkerGroup(123, request, "test-editor");
+        verify(markerGroupDao, times(0)).updateMarkerGroup(any(MarkerGroup.class));
+
+       
+    }
+
+    @Test
+    public void testMapMarkersOkAlleles() throws Exception {
+
+        MarkerDTO markerDTO = new MarkerDTO();
+        markerDTO.setMarkerName("test1");
+        markerDTO.setPlatformName("KASP");
+        markerDTO.setFavorableAlleles(new String[] { "G", "C", "A" });
+
+        List<MarkerDTO> inputMarkers = new ArrayList<>();
+        inputMarkers.add(markerDTO);
+        ObjectMapper mapper = new ObjectMapper();
+        MarkerGroup mockMarkerGroup = new MarkerGroup();
+        mockMarkerGroup.setMarkerGroupId(123);
+        mockMarkerGroup.setName("test-marker-group");
+        mockMarkerGroup.setGermplasmGroup("test-germplasm-group");
+        mockMarkerGroup.setMarkers(mapper.createObjectNode());
+
+        when(markerGroupDao.getMarkerGroup(123)).thenReturn(mockMarkerGroup);
+
+        List<Marker> mockMarkers = new ArrayList<>();
+        Marker mockMarker = new Marker();
+        mockMarker.setMarkerId(4);
+        mockMarker.setMarkerName("test1");
+
+        Platform mockPlatform = new Platform();
+        mockPlatform.setPlatformId(1);
+        mockPlatform.setPlatformName("KASP");
+        mockMarker.setPlatform(mockPlatform);
+
+        mockMarkers.add(mockMarker);
+
+        when(markerDao.getMarkersByPlatformMarkerNameTuples(anyList())).thenReturn(mockMarkers);
+        when(cvDao.getModifiedStatus()).thenReturn(new Cv());
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(new Contact());
+        ArgumentCaptor<MarkerGroup> arg = ArgumentCaptor.forClass(MarkerGroup.class);
+
+        when(markerGroupDao.updateMarkerGroup(any(MarkerGroup.class))).thenReturn(new MarkerGroup());
+
+        markerGroupServiceImpl.mapMarkers(123, inputMarkers, "test-editor");
+        verify(markerGroupDao).updateMarkerGroup(arg.capture());
+       
+        assertTrue( arg.getValue().getMarkers() != null);
+        assertTrue( arg.getValue().getMarkers().get("4") != null);
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testMapMarkersTooManyMarkers() throws Exception {
+
+        MarkerDTO markerDTO = new MarkerDTO();
+        markerDTO.setMarkerName("test1");
+        markerDTO.setPlatformName("KASP");
+        markerDTO.setFavorableAlleles(new String[] { "G", "C", "A" });
+
+        List<MarkerDTO> inputMarkers = new ArrayList<>();
+        for (int i=0; i < 1001; i++) inputMarkers.add(markerDTO);
+
+        markerGroupServiceImpl.mapMarkers(123, inputMarkers, "test-editor");
+
+
+      
     }
 
 }
