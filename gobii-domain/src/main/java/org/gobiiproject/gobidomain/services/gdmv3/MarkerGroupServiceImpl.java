@@ -215,7 +215,6 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
             
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode currentNode = Optional.ofNullable((ObjectNode) markerGroup.getMarkers())
-                                         .map(v -> v)
                                          .orElse(objectMapper.createObjectNode());
 
         Integer counter = 0;

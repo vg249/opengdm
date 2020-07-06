@@ -392,7 +392,7 @@ public class DatasetServiceImpl implements DatasetService {
 	}
 
 	private boolean checkIdItemsExists(Integer id) {
-		return Optional.ofNullable(id).map(v -> v).orElse(0) > 0;
+		return Optional.ofNullable(id).orElse(0) > 0;
 	}
 
 	private boolean checkAnalysisIdsExist(Integer[] ids) {
