@@ -30,12 +30,10 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +56,6 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     @Override
     public PagedResult<ProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws Exception {
-        //TODO:  Retire GobiiProjectDTO class
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         // get Cvs
         try {
@@ -68,15 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
             List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
             List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
-                ProjectDTO projectDTO = new ProjectDTO();
-                ModelMapper.mapEntityToDto(project, projectDTO);
-
-                List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs,
-                        project.getProperties());
-
-                projectDTO.setProperties(propDTOs);
-
-                projectDTOs.add(projectDTO);
+                projectDTOs.add( createProjectDTO(project, cvs) );
             });
 
             return PagedResult.createFrom(page, projectDTOs);
@@ -132,10 +121,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public String getDefaultProjectEditor() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null)
-            return auth.getName();
-        return null;
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                       .map(auth -> auth.getName())
+                       .orElse(null);
     }
 
     @Transactional
@@ -144,16 +132,15 @@ public class ProjectServiceImpl implements ProjectService {
             throws Exception {
         Project project = this.loadProject(projectId);
 
-        Integer projContactId = project.getPiContactId();
         //convert
-        if (request.getPiContactId() != null && projContactId != request.getPiContactId()) {   
-            this.updateAttributes(project, "piContactId", request.getPiContactId());
+        if (request.getPiContactId() != null) {   
+            this.updateContact(project, request.getPiContactId());
         }
         if (request.getProjectName() != null) {
-            this.updateAttributes(project, "projectName", request.getProjectName());
+            this.updateProjectName(project, request.getProjectName());
         }
         if (request.getProjectDescription() != null) {
-            this.updateAttributes(project, "projectDescription", request.getProjectDescription());
+            this.updateProjectDescription(project, request.getProjectDescription());
         }
        
         
@@ -162,9 +149,10 @@ public class ProjectServiceImpl implements ProjectService {
         project.setModifiedBy(Optional.ofNullable(editor).map(v->v.getContactId()).orElse(null));
         project.setModifiedDate(new java.util.Date());
         
-        Optional<List<CvPropertyDTO>> propList = Optional.ofNullable(request.getProperties());
-        if (propList.isPresent()) {
-            this.updateProperties(project, propList.get());
+        List<CvPropertyDTO> propList = request.getProperties();
+        //update props if request props is not empty list
+        if (Optional.ofNullable(propList).map(v -> v.size()).orElse(0) > 0 ) {
+            this.updateProperties(project, propList);
         }
 
         //set new status
@@ -212,27 +200,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProperties(currentProperties);
     }
 
-    private void updateAttributes(Project project, String key, Object value)
-            throws NumberFormatException, Exception {
-        switch(key) {
-            case "piContactId":
-                this.updateContact(project, (Integer) value);
-                break;
-            case "projectName":
-                this.updateProjectName(project, (String) value);
-                break;
-            case "projectDescription":
-                this.updateProjectDescription(project, (String) value);
-                break;
-        }
-    }
-
     private void updateProjectDescription(Project project, String value) {
         project.setProjectDescription(value);
     }
 
     private void updateProjectName(Project project, String value) throws Exception {
-        if (LineUtils.isNullOrEmpty(value)) throw new Exception("projectName is required");
         project.setProjectName(value);
     }
 

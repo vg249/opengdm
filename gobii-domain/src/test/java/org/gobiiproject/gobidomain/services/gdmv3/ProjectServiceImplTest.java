@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.PropertiesService;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
@@ -36,7 +37,11 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @WebAppConfiguration
@@ -51,6 +56,9 @@ public class ProjectServiceImplTest {
     @Mock
     private ContactDao contactDao;
 
+    @Mock
+    private PropertiesService propertiesService;
+
     @InjectMocks
     private ProjectServiceImpl v3ProjectServiceImpl;
 
@@ -62,47 +70,41 @@ public class ProjectServiceImplTest {
     @Test
     public void testSimple() throws Exception {
 
-        assert projectDao != null ;
+        assert projectDao != null;
 
-        //Mock Cvs
+        // Mock Cvs
         List<Cv> mockCvList = new java.util.ArrayList<>();
-        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
-        .thenReturn(
-            mockCvList
-        );
+        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null)).thenReturn(mockCvList);
 
         List<Project> daoReturn = new java.util.ArrayList<>();
         Project mockEntity = new Project();
         mockEntity.setProjectName("PName");
         daoReturn.add(mockEntity);
-        when(projectDao.getProjects(0,1000, null))
-        .thenReturn(
-            daoReturn
-        );
+        when(projectDao.getProjects(0, 1000, null)).thenReturn(daoReturn);
 
-        PagedResult<ProjectDTO> payload = v3ProjectServiceImpl.getProjects(0,  1000, null);
-        assert payload.getResult().size() == 1 ;
+        PagedResult<ProjectDTO> payload = v3ProjectServiceImpl.getProjects(0, 1000, null);
+        assert payload.getResult().size() == 1;
         assert payload.getCurrentPageNum() == 0;
         assert payload.getCurrentPageSize() == 1;
 
         verify(cvDao, times(1)).getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
     }
 
-    @Test(expected = GobiiException.class )
+    @Test(expected = GobiiException.class)
     public void testGetProjectsException() throws Exception {
-        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null)).thenThrow(new GobiiException("test-exc"));
-        v3ProjectServiceImpl.getProjects(0,  1000, null);
+        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
+                .thenThrow(new GobiiException("test-exc"));
+        v3ProjectServiceImpl.getProjects(0, 1000, null);
     }
 
     @Test(expected = GobiiDomainException.class)
     public void testGetProjectsNotOk2() throws Exception {
-        v3ProjectServiceImpl.getProjects(null,  null, null);
+        v3ProjectServiceImpl.getProjects(null, null, null);
     }
 
-    
     @Test
     public void testCreateWithNullProperties() throws Exception {
-        //Setup test GobiiProject
+        // Setup test GobiiProject
         ProjectDTO request = new ProjectDTO();
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
@@ -115,14 +117,11 @@ public class ProjectServiceImplTest {
         nullValued.setPropertyValue(null);
         props.add(nullValued);
         request.setProperties(props);
-        
-        
+
         Contact mockContact = new Contact();
         mockContact.setContactId(111);
 
-        when(contactDao.getContact(111)).thenReturn(
-            mockContact
-        );
+        when(contactDao.getContact(111)).thenReturn(mockContact);
 
         Cv mockNewStat = new Cv();
 
@@ -131,7 +130,7 @@ public class ProjectServiceImplTest {
         Contact mockCreator = new Contact();
         mockCreator.setContactId(123);
 
-        when (contactDao.getContactByUsername("test-user")).thenReturn(mockCreator);
+        when(contactDao.getContactByUsername("test-user")).thenReturn(mockCreator);
 
         ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
 
@@ -144,7 +143,7 @@ public class ProjectServiceImplTest {
 
     @Test
     public void testCreateWithNonNullProperties() throws Exception {
-        //Setup test GobiiProject
+        // Setup test GobiiProject
         ProjectDTO request = new ProjectDTO();
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
@@ -157,14 +156,11 @@ public class ProjectServiceImplTest {
         valued.setPropertyValue("test");
         props.add(valued);
         request.setProperties(props);
-        
-        
+
         Contact mockContact = new Contact();
         mockContact.setContactId(111);
 
-        when(contactDao.getContact(111)).thenReturn(
-            mockContact
-        );
+        when(contactDao.getContact(111)).thenReturn(mockContact);
 
         Cv mockNewStat = new Cv();
 
@@ -173,10 +169,10 @@ public class ProjectServiceImplTest {
         Contact mockCreator = new Contact();
         mockCreator.setContactId(123);
 
-        when (contactDao.getContactByUsername("test-user")).thenReturn(mockCreator);
-        when (cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null)).thenReturn(
-            new ArrayList<Cv>()
-        ); //this is just to avoid errors since we are only interested in the createProject args
+        when(contactDao.getContactByUsername("test-user")).thenReturn(mockCreator);
+        when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
+                .thenReturn(new ArrayList<Cv>()); // this is just to avoid errors since we are only interested in the
+                                                  // createProject args
         ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
 
         v3ProjectServiceImpl.createProject(request, "test-user");
@@ -198,12 +194,10 @@ public class ProjectServiceImplTest {
 
         v3ProjectServiceImpl.createProject(request, "test-user");
     }
-   
 
     @Test
     public void testPatchProjectOk() throws Exception {
         Project mockProject = getMockProject();
-        
 
         Contact mockContact = new Contact();
         mockContact.setContactId(333);
@@ -211,7 +205,7 @@ public class ProjectServiceImplTest {
 
         mockProject.setContact(mockContact);
 
-        Contact mockNewContact  = new Contact();
+        Contact mockNewContact = new Contact();
         mockNewContact.setContactId(222);
         mockNewContact.setUsername("new-user");
 
@@ -222,7 +216,6 @@ public class ProjectServiceImplTest {
         Cv mockModifiedStatus = new Cv();
         mockModifiedStatus.setCvId(12);
         mockModifiedStatus.setTerm("modified");
-  
 
         ProjectDTO request = new ProjectDTO();
         request.setPiContactId(222);
@@ -255,7 +248,6 @@ public class ProjectServiceImplTest {
 
         mockProject.setContact(mockContact);
 
-        
         ProjectDTO request = new ProjectDTO();
         List<CvPropertyDTO> testProps = new ArrayList<>();
         CvPropertyDTO mockProp = new CvPropertyDTO();
@@ -288,17 +280,150 @@ public class ProjectServiceImplTest {
 
     @Test
     public void testDeleteProject() throws Exception {
-        Project mockProject  = getMockProject();
+        Project mockProject = getMockProject();
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
         ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
         v3ProjectServiceImpl.deleteProject(123);
-        
+
         verify(projectDao).deleteProject(arg.capture());
         assertTrue(arg.getValue().getProjectId() == 123);
         verify(projectDao, times(1)).deleteProject(any(Project.class));
     }
 
+    @Test
+    public void testGetEditor() {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        when(authentication.getName()).thenReturn("test-editor");
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        assertTrue(v3ProjectServiceImpl.getDefaultProjectEditor() == "test-editor");
+
+    }
+
+    @Test
+    public void testGetProjectPropertiesOk() throws Exception {
+        when(propertiesService.getProperties(0, 1000, CvGroupTerm.CVGROUP_PROJECT_PROP))
+                .thenReturn(new PagedResult<CvPropertyDTO>());
+        v3ProjectServiceImpl.getProjectProperties(0, 1000);
+
+        verify(propertiesService, times(1)).getProperties(0, 1000, CvGroupTerm.CVGROUP_PROJECT_PROP);
+    }
+
+    @Test
+    public void testGetProjectOk() throws Exception {
+        when(projectDao.getProject(123)).thenReturn(new Project());
+        v3ProjectServiceImpl.getProject(123);
+        verify(projectDao, times(1)).getProject(123);
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testUpdateProjectNotFound() throws Exception {
+        when(projectDao.getProject(123)).thenReturn(null);
+        ProjectDTO request = new ProjectDTO();
+        v3ProjectServiceImpl.patchProject(123, request, "test-editor");
+        verify(projectDao, times(0)).patchProject(any(Project.class));
+    }
+
+    @Test
+    public void testPatchProjectSameContactOk() throws Exception {
+        Project mockProject = getMockProject();
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(333);
+        mockContact.setUsername("test-user");
+
+        mockProject.setContact(mockContact);
+
+        Contact mockEditor = new Contact();
+        mockEditor.setContactId(444);
+        mockEditor.setUsername("test-editor");
+
+        Cv mockModifiedStatus = new Cv();
+        mockModifiedStatus.setCvId(12);
+        mockModifiedStatus.setTerm("modified");
+
+        ProjectDTO request = new ProjectDTO();
+        request.setPiContactId(333);
+
+        when(projectDao.getProject(123)).thenReturn(mockProject);
+        when(contactDao.getContact(333)).thenReturn(mockContact);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
+        when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
+        when(projectDao.patchProject(any(Project.class))).thenReturn(new Project());
+        ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
+
+        v3ProjectServiceImpl.patchProject(123, request, "test-editor");
+        verify(projectDao).patchProject(arg.capture());
+
+        Project param = arg.getValue();
+        // assert no changes made
+        assertTrue(param.getProjectName().equals("test-project"));
+        assertTrue(param.getProjectDescription().equals("test-description"));
+        assertTrue(param.getContact().getContactId() == 333);
+        
+
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testPatchProjectUpdateContactNotFound() throws Exception {
+        Project mockProject = getMockProject();
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(333);
+        mockContact.setUsername("test-user");
+
+        mockProject.setContact(mockContact);
+
+        ProjectDTO request = new ProjectDTO();
+        request.setPiContactId(555);
+
+        when(projectDao.getProject(123)).thenReturn(mockProject);
+        when(contactDao.getContact(555)).thenReturn(null);
+
+        v3ProjectServiceImpl.patchProject(123, request, "test-editor");
+        verify(projectDao, times(0)).patchProject(any(Project.class));
+
+    }
+
+    @Test
+    public void testPatchProjectEmptyUpdateOk() throws Exception {
+        Project mockProject = getMockProject();
+
+        Contact mockContact = new Contact();
+        mockContact.setContactId(333);
+        mockContact.setUsername("test-user");
+
+        mockProject.setContact(mockContact);
+
+        Contact mockEditor = new Contact();
+        mockEditor.setContactId(444);
+        mockEditor.setUsername("test-editor");
+
+        Cv mockModifiedStatus = new Cv();
+        mockModifiedStatus.setCvId(12);
+        mockModifiedStatus.setTerm("modified");
+
+        ProjectDTO request = new ProjectDTO();
+
+        when(projectDao.getProject(123)).thenReturn(mockProject);
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
+        when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
+        when(projectDao.patchProject(any(Project.class))).thenReturn(new Project());
+        ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
+
+        v3ProjectServiceImpl.patchProject(123, request, "test-editor");
+        verify(projectDao).patchProject(arg.capture());
+
+        Project param = arg.getValue();
+        // assert no changes made
+        assertTrue(param.getProjectName().equals("test-project"));
+        assertTrue(param.getProjectDescription().equals("test-description"));
+        assertTrue(param.getContact().getContactId() == 333);
+
+    }
 
     private Project getMockProject() {
         Project mockProject = new Project();
