@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -74,8 +75,7 @@ public class MapsetServiceImpl implements MapsetService {
         createdMapset.setReference(reference);
         // audit items
         Contact creator = contactDao.getContactByUsername(createdBy);
-        if (creator != null)
-            createdMapset.setCreatedBy(creator.getContactId());
+        createdMapset.setCreatedBy(Optional.ofNullable(creator).map(v -> v.getContactId()).orElse(null));
         createdMapset.setCreatedDate(new java.util.Date());
 
         // other required colums
@@ -127,8 +127,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         // audit items
         Contact creator = contactDao.getContactByUsername(editedBy);
-        if (creator != null)
-            mapset.setModifiedBy(creator.getContactId());
+        mapset.setModifiedBy(Optional.ofNullable(creator).map( v -> v.getContactId()).orElse(null));
         mapset.setModifiedDate(new java.util.Date());
 
         // updated status

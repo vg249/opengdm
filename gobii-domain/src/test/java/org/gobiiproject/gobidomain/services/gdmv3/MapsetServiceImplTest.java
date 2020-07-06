@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
@@ -111,6 +113,44 @@ public class MapsetServiceImplTest {
     }
 
     @Test
+    public void testCreateMapsetNoReferenceNoDescriptionOk() throws Exception {
+        Cv mockType = new Cv();
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName());
+        mockType.setTerm("test-term");
+        mockType.setCvGroup(mockGroup);
+        mockType.setCvId(789);
+
+        when(cvDao.getCvByCvId(789)).thenReturn(mockType);
+
+        MapsetDTO request = getMockRequest();
+        request.setReferenceId(null);
+        request.setMapsetDescription(null);
+
+        Contact mockContact = new Contact();
+        mockContact.setUsername("test-editor");
+
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockContact);
+
+        Cv mockNewStat = new Cv();
+        when(cvDao.getNewStatus()).thenReturn(mockNewStat);
+
+        ArgumentCaptor<Mapset> arg = ArgumentCaptor.forClass(Mapset.class);
+        when(mapsetDao.createMapset(any(Mapset.class))).thenReturn(new Mapset());
+
+        mapsetServiceImpl.createMapset(request, "test-editor");
+        verify(cvDao, times(1)).getCvByCvId(789);
+        verify(mapsetDao).createMapset(arg.capture());
+
+        assertTrue(arg.getValue().getMapsetName().equals("test-mapset"));
+        assertNull(arg.getValue().getMapsetDescription());
+
+        assertTrue(arg.getValue().getMapsetCode().equals("test-term_test-mapset"));
+        assertTrue(arg.getValue().getType().getCvId() == 789);
+        assertNull(arg.getValue().getReference());
+    }
+
+    @Test
     public void testGetMapsetOk() throws Exception {
         when(mapsetDao.getMapset(111)).thenReturn(new Mapset());
 
@@ -175,6 +215,53 @@ public class MapsetServiceImplTest {
 
         assertTrue(arg.getValue().getType().getCvId() == 789);
         assertTrue(arg.getValue().getReference().getReferenceId() == 456);
+    }
+
+    @Test
+    public void testUpdateMapsetNoNameNoDescNoRefOk() throws Exception {
+
+        Mapset mockMapset = new Mapset();
+        mockMapset.setMapsetId(111);
+        mockMapset.setMapsetName("test-old-mapset");
+        mockMapset.setMapsetDescription("old-desc");
+
+        when(mapsetDao.getMapset(111)).thenReturn(mockMapset);
+
+        Cv mockType = new Cv();
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupName(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName());
+        mockType.setTerm("test-term");
+        mockType.setCvGroup(mockGroup);
+        mockType.setCvId(789);
+
+        when(cvDao.getCvByCvId(789)).thenReturn(mockType);
+
+
+        MapsetDTO request = getMockRequest();
+        request.setMapsetName(null);
+        request.setMapsetDescription(null);
+        request.setReferenceId(null);
+
+        Contact mockContact = new Contact();
+        mockContact.setUsername("test-editor");
+
+        when(contactDao.getContactByUsername("test-editor")).thenReturn(mockContact);
+
+        Cv mockNewStat = new Cv();
+        when(cvDao.getModifiedStatus()).thenReturn(mockNewStat);
+
+        ArgumentCaptor<Mapset> arg = ArgumentCaptor.forClass(Mapset.class);
+        when(mapsetDao.updateMapset(any(Mapset.class))).thenReturn(new Mapset());
+
+        mapsetServiceImpl.updateMapset(111, request, "test-editor");
+        verify(cvDao, times(1)).getCvByCvId(789);
+        verify(mapsetDao).updateMapset(arg.capture());
+
+        assertTrue(arg.getValue().getMapsetName().equals("test-old-mapset"));
+        assertTrue(arg.getValue().getMapsetDescription().equals("old-desc"));
+
+        assertTrue(arg.getValue().getType().getCvId() == 789);
+        assertNull(arg.getValue().getReference());
     }
 
     @Test(expected = GobiiException.class)
@@ -273,6 +360,40 @@ public class MapsetServiceImplTest {
         assertTrue(arg.getValue().getDefinition().equals("mapsetTypeDescription"));
         assertTrue(arg.getValue().getCvGroup().getCvGroupName().equals(cvGroupName));
 
+    }
+
+    @Test
+    public void testCreateMapsetTypeNoDescOk() throws Exception {
+        String cvGroupName = CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName();
+        CvGroup mockGroup = new CvGroup();
+        mockGroup.setCvGroupName(cvGroupName);
+        mockGroup.setCvGroupId(123);
+        mockGroup.setCvGroupType(2);
+
+        when(cvDao.getCvGroupByNameAndType(cvGroupName, 2)).thenReturn(mockGroup);
+
+        when(cvDao.getNewStatus()).thenReturn(new Cv());
+        when(cvDao.createCv(any(Cv.class))).thenReturn(new Cv());
+        ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
+
+        mapsetServiceImpl.createMapsetType("mapsetTypeName", null, "user");
+
+        verify(cvDao, times(1)).createCv(any(Cv.class));
+        verify(cvDao).createCv(arg.capture());
+
+        assertTrue(arg.getValue().getTerm().equals("mapsetTypeName"));
+        assertNull(arg.getValue().getDefinition());
+        assertTrue(arg.getValue().getCvGroup().getCvGroupName().equals(cvGroupName));
+
+    }
+
+    @Test(expected =  GobiiDaoException.class)
+    public void testCreateMapsetTypeMissingCorrectCvGroupType() throws Exception {
+        when(cvDao.getCvGroupByNameAndType(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(), 2)).thenReturn(null);
+
+        mapsetServiceImpl.createMapsetType("test-mapset-type", "desc", "user");
+
+        verify(cvDao, times(1)).getCvGroupByNameAndType(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(), 2);
     }
 
     @Test

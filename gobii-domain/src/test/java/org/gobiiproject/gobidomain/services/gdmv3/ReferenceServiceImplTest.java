@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.PersistenceException;
+
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -91,6 +95,13 @@ public class ReferenceServiceImplTest {
         assertTrue(dto.getVersion().equals("test-version"));
     }
 
+    @Test(expected = GobiiException.class)
+    public void testGetReferenceNotFound() throws Exception {
+        when(referenceDao.getReference(123)).thenReturn(null);
+        referenceServiceImpl.getReference(123);
+        verify(referenceDao, times(1)).getReference(123);
+    }
+
 
     @Test
     public void testUpdateReferenceOk() throws Exception {
@@ -156,6 +167,15 @@ public class ReferenceServiceImplTest {
         when(referenceDao.getReference(123)).thenReturn(mockRef);
         referenceServiceImpl.deleteReference(123);
 
+        verify(referenceDao, times(1)).deleteReference(any(Reference.class));
+    }
+
+    @Test(expected = GobiiException.class)
+    public void testDeleteNotOk() throws Exception {
+        when(referenceDao.getReference(123)).thenReturn(new Reference());
+        doThrow(new PersistenceException()).when(referenceDao).deleteReference(any(Reference.class));
+        
+        referenceServiceImpl.deleteReference(123);
         verify(referenceDao, times(1)).deleteReference(any(Reference.class));
 
     }

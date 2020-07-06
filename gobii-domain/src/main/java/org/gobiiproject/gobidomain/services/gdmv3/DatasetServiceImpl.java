@@ -23,6 +23,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Experiment;
@@ -108,8 +109,7 @@ public class DatasetServiceImpl implements DatasetService {
 
 		// audit items
 		Contact creator = contactDao.getContactByUsername(user);
-		if (creator != null)
-			dataset.setCreatedBy(creator.getContactId());
+		dataset.setCreatedBy(Optional.ofNullable(creator).map(v -> v.getContactId()).orElse(null));
 		dataset.setCreatedDate(new java.util.Date());
 
 		Dataset savedDataset = datasetDao.saveDataset(dataset);
@@ -249,7 +249,7 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check if experiment change
-		if (request.getExperimentId() != null && request.getExperimentId() > 0) {
+		if (checkIdItemsExists(request.getExperimentId())) {
 			//check if experiment exists
 			Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
 			if (experiment == null) {
@@ -261,7 +261,7 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check if callingAnalysisId
-		if (request.getCallingAnalysisId() != null &&  request.getCallingAnalysisId() > 0) {
+		if (checkIdItemsExists(request.getCallingAnalysisId())) {
 			Analysis analysis = analysisDao.getAnalysis(request.getCallingAnalysisId());
 			if (analysis == null) {
 				throw new InvalidException("Calling Analysis");
@@ -271,14 +271,14 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check for datasetTypeId
-		if (request.getDatasetTypeId() != null && request.getDatasetTypeId() > 0) {
+		if (checkIdItemsExists(request.getDatasetTypeId())) {
 			Cv cv = this.getDatasetCv(request.getDatasetTypeId());
 			targetDataset.setType(cv);
 			modified = true;
 		}
 
 		//check for analysisIds
-		if (request.getAnalysisIds() != null && request.getAnalysisIds().length > 0) {
+		if (checkAnalysisIdsExist(request.getAnalysisIds())) {
 			this.checkAndGetAnalysesFromIds(request.getAnalysisIds());
 			targetDataset.setAnalyses(request.getAnalysisIds());
 			modified = true;
@@ -294,8 +294,7 @@ public class DatasetServiceImpl implements DatasetService {
 
 			// audit items
 			Contact creator = contactDao.getContactByUsername(user);
-			if (creator != null)
-				targetDataset.setModifiedBy(creator.getContactId());
+			targetDataset.setModifiedBy(Optional.ofNullable(creator).map(v->v.getContactId()).orElse(null));
 			targetDataset.setModifiedDate(new java.util.Date());
 
 			updatedDataset = datasetDao.updateDataset(targetDataset);
@@ -305,7 +304,7 @@ public class DatasetServiceImpl implements DatasetService {
 		ModelMapper.mapEntityToDto(updatedDataset, datasetDTO);
 
 		//set the analysis
-		if (targetDataset.getAnalyses() != null && targetDataset.getAnalyses().length > 0) {
+		if (checkAnalysisIdsExist(targetDataset.getAnalyses())) {
 			datasetDTO.setAnalyses(
 				this.getAnalysisDTOs(
 					this.checkAndGetAnalysesFromIds(
@@ -325,13 +324,13 @@ public class DatasetServiceImpl implements DatasetService {
 		//check run counts
 		//check marker 
 		List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, 1, 0);
-		if (markers != null && markers.size() > 0) {
+		if (checkConnectedListExists(markers)) {
 			throw new DeleteException();
 		}
 
 		//check dnarun
 		List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, 1, 0);
-		if (dnaRuns != null && dnaRuns.size() > 0) {
+		if (checkConnectedListExists(dnaRuns)) {
 			throw new DeleteException();
 		}
 		datasetDao.deleteDataset(dataset);
@@ -356,7 +355,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Transactional
 	@Override
 	public CvTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
-        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
@@ -391,5 +390,17 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 		return dataset;
 	}
+
+	private boolean checkIdItemsExists(Integer id) {
+		return Optional.ofNullable(id).map(v -> v).orElse(0) > 0;
+	}
+
+	private boolean checkAnalysisIdsExist(Integer[] ids) {
+		return Optional.ofNullable(ids).map( v -> v.length).orElse(0) > 0;
+	}
+
+	private boolean checkConnectedListExists(List list) {
+		return Optional.ofNullable(list).map( v -> v.size()).orElse(0) > 0;
+ 	}
 
 }

@@ -7,20 +7,19 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.DeleteException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
-import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.gobiiproject.gobiisampletrackingdao.ReferenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,7 +59,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         //not in spec : filePath and link
         //audit
         Contact contact = contactDao.getContactByUsername(createdBy);
-        if (contact != null) reference.setCreatedBy(contact.getContactId());
+        reference.setCreatedBy(Optional.ofNullable(contact).map(v -> v.getContactId()).orElse(null));
         reference.setCreatedDate(new Date());
         
         Reference createdReference = referenceDao.createReference(reference);
@@ -83,11 +82,7 @@ public class ReferenceServiceImpl implements ReferenceService {
     private Reference loadReference(Integer referenceId) throws Exception {
         Reference reference = referenceDao.getReference(referenceId);
         if (reference == null) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Reference not found"
-            );
+            throw new EntityDoesNotExistException("Reference");
         }
         return reference;
 
@@ -111,7 +106,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         if (updated) {
             Contact contact = contactDao.getContactByUsername(updatedBy);
-            if (contact != null) reference.setModifiedBy(contact.getContactId());
+            reference.setModifiedBy(Optional.ofNullable(contact).map(v -> v.getContactId()).orElse(null));
             reference.setModifiedDate(new Date());
 
             reference = referenceDao.updateReference(reference);
@@ -132,11 +127,7 @@ public class ReferenceServiceImpl implements ReferenceService {
             referenceDao.deleteReference(reference);
         } catch (Exception e) {
             //most likely a PersistenceException
-            throw new GobiiDaoException(
-				GobiiStatusLevel.ERROR,
-					GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-					"Associated resources found. Cannot complete the action unless they are deleted."
-				);
+            throw new DeleteException();
         }
     }
     

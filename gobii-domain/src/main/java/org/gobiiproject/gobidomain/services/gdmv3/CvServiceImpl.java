@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -36,13 +37,12 @@ public class CvServiceImpl implements CvService {
     public CvDTO createCv(CvDTO request) throws Exception {
         Cv cv = new Cv();
         // check the properties first if the propertyId exists and it is a property
-        if (request.getProperties() != null && request.getProperties().size() > 0) {
+        if (this.checkPropertiesExist(request.getProperties())) {
             Map<String, String> propsMap = new HashMap<>();
             for (int i = 0; i < request.getProperties().size(); i++) {
                 CvPropertyDTO cvPropDTO = request.getProperties().get(i);
                 Cv propCv = cvDao.getCvByCvId(cvPropDTO.getPropertyId());
-                if (propCv == null || !propCv.getCvGroup().getCvGroupName()
-                        .equals(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName())) {
+                if (this.checkInvalidPropCv(propCv)) {
                     throw new InvalidException(String.format("cv property (Id %d)", cvPropDTO.getPropertyId()));
                 }
                 propsMap.put(cvPropDTO.getPropertyId().toString(), cvPropDTO.getPropertyValue());
@@ -103,7 +103,7 @@ public class CvServiceImpl implements CvService {
         }
 
         // check if change of properties
-        if (request.getProperties() != null && request.getProperties().size() > 0) {
+        if (this.checkPropertiesExist(request.getProperties())) {
             Map<String, String> properties = new HashMap<>();
             if (cv.getProperties() != null)
                 properties = cv.getProperties();
@@ -112,8 +112,7 @@ public class CvServiceImpl implements CvService {
                 CvPropertyDTO cvPropertyDTO = request.getProperties().get(i);
                 // check if id does exist and correct group
                 Cv propertyCv = cvDao.getCvByCvId(cvPropertyDTO.getPropertyId());
-                if (propertyCv == null || !propertyCv.getCvGroup().getCvGroupName()
-                        .equals(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName())) {
+                if (this.checkInvalidPropCv(propertyCv)) {
                     throw new InvalidException("cv group");
                 }
                 // check which operation is being done
@@ -171,13 +170,7 @@ public class CvServiceImpl implements CvService {
             throws Exception {
         GobiiCvGroupType groupType = null;
         if (!LineUtils.isNullOrEmpty(cvGroupType)) {
-            if (cvGroupType.toLowerCase().equals("system_defined") || cvGroupType.equals("1")) {
-                groupType = GobiiCvGroupType.GROUP_TYPE_SYSTEM;
-            } else if (cvGroupType.toLowerCase().equals("user_defined") || cvGroupType.equals("2")) {
-                groupType = GobiiCvGroupType.GROUP_TYPE_USER;
-            } else {
-                groupType = GobiiCvGroupType.GROUP_TYPE_UNKNOWN;
-            }
+            groupType = this.getCvGroupType(cvGroupType.toLowerCase());   
         }
 
         List<Cv> cvs = cvDao.getCvs(null, cvGroupName, groupType, page, pageSize);
@@ -304,10 +297,33 @@ public class CvServiceImpl implements CvService {
 
     private CvGroup loadCvGroup(Integer cvGroupId) throws InvalidException {
         CvGroup cvGroup = cvDao.getCvGroupById(cvGroupId);
-        if (cvGroup == null || !cvGroup.getCvGroupType().equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())) {
+        if (!Optional.ofNullable(cvGroup)
+                     .map(v -> v.getCvGroupType())
+                     .orElse(0)
+                     .equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())
+        ) {
             throw new InvalidException("cv group");
         }
         return cvGroup;
+    }
+
+    private boolean checkPropertiesExist(List<CvPropertyDTO> props) {
+        return Optional.ofNullable(props).map(v -> v.size()).orElse(0) > 0;
+    }
+
+    private boolean checkInvalidPropCv(Cv cv) {
+        return !Optional.ofNullable(cv)
+                        .map(v -> 
+                            Optional.ofNullable(v.getCvGroup()).map(x -> x.getCvGroupName() ).orElse("")
+                        )
+                        .orElse("")
+                        .equals(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName());
+    }
+
+    private GobiiCvGroupType getCvGroupType(String cvGroupType) {
+        if (cvGroupType.equals("system_defined") || cvGroupType.equals("1")) return GobiiCvGroupType.GROUP_TYPE_SYSTEM;
+        if (cvGroupType.equals("user_defined") || cvGroupType.equals("2")) return GobiiCvGroupType.GROUP_TYPE_USER;
+        return GobiiCvGroupType.GROUP_TYPE_UNKNOWN;
     }
     
 }
