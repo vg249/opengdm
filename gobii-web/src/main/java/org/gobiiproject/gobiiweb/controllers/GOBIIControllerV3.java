@@ -356,7 +356,7 @@ public class GOBIIControllerV3  {
     @PostMapping("/experiments")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> createProject(
-            @RequestBody @Valid final ExperimentRequest experiment,
+            @RequestBody @Validated(ExperimentDTO.Create.class) final ExperimentDTO experiment,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -380,7 +380,7 @@ public class GOBIIControllerV3  {
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> updateExperiment(
         @PathVariable Integer experimentId,
-        @RequestBody @Valid final ExperimentPatchRequest request,
+        @RequestBody @Validated(ExperimentDTO.Update.class) final ExperimentDTO request,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);

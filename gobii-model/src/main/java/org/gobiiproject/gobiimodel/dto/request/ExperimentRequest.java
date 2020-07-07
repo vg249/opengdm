@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@Deprecated
 public class ExperimentRequest {
 
     @Positive

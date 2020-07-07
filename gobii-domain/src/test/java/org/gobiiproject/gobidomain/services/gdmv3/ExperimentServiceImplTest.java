@@ -9,7 +9,6 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,12 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -90,7 +86,7 @@ public class ExperimentServiceImplTest {
     public void testCreateExperiment() throws Exception {
         assert experimentDao != null;
 
-        ExperimentRequest request = new ExperimentRequest();
+        ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
         request.setProjectId(7);
         request.setVendorProtocolId(4);
@@ -174,7 +170,7 @@ public class ExperimentServiceImplTest {
             experimentDao.getExperiment(123)
         ).thenReturn(dummyExperiment);
 
-        ExperimentPatchRequest request = new ExperimentPatchRequest();
+        ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
         request.setProjectId(7);
         request.setVendorProtocolId(4);
@@ -251,7 +247,7 @@ public class ExperimentServiceImplTest {
             experimentDao.getExperiment(123)
         ).thenReturn(dummyExperiment);
 
-        ExperimentPatchRequest request = new ExperimentPatchRequest();
+        ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
         request.setProjectId(7);
 
@@ -298,7 +294,7 @@ public class ExperimentServiceImplTest {
 
     @Test(expected = UnknownEntityException.class)
     public void testUpdateExperimentUnknownProject() throws Exception {
-        ExperimentPatchRequest request = new ExperimentPatchRequest();
+        ExperimentDTO request = new ExperimentDTO();
         request.setProjectId(7);
         when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
         when(projectDao.getProject(7)).thenReturn(null);
@@ -310,7 +306,7 @@ public class ExperimentServiceImplTest {
 
     @Test(expected = UnknownEntityException.class)
     public void testUpdateExperimentUnknownVendorProtocol() throws Exception {
-        ExperimentPatchRequest request = new ExperimentPatchRequest();
+        ExperimentDTO request = new ExperimentDTO();
         request.setVendorProtocolId(4);
         when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
         when(experimentDao.getVendorProtocol(4)).thenReturn(null);

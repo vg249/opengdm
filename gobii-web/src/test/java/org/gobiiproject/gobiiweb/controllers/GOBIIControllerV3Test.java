@@ -279,7 +279,7 @@ public class GOBIIControllerV3Test {
     }
 
     @Test
-    public void testCreateWithPropertiesValidationError() throws Exception {
+    public void testProjectCreateWithPropertiesValidationError() throws Exception {
         String requestJson = "{\"piContactId\" : null,\"projectName\" : null, \"projectDescription\" : \"Test description\"," +
             "\"properties\" : [ {\"propertyId\" : 4, \"propertyName\" : null, \"propertyValue\" : \"test-value\"} ]}";
 
@@ -293,7 +293,7 @@ public class GOBIIControllerV3Test {
         .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be empty")))
+        .andExpect(jsonPath("$.error").value(StringContains.containsString("piContactId must not be null")))
         .andExpect(jsonPath("$.error").value(StringContains.containsString("projectName must not be empty")))
         ;
     }
@@ -580,7 +580,7 @@ public class GOBIIControllerV3Test {
     public void testCreateExperimentsSimple() throws Exception {
         String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
         when(
-            experimentService.createExperiment( any( ExperimentRequest.class), eq("test-user" ))
+            experimentService.createExperiment( any( ExperimentDTO.class), eq("test-user" ))
         ).thenReturn(
             new ExperimentDTO()
         );
@@ -600,14 +600,14 @@ public class GOBIIControllerV3Test {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.metadata").doesNotExist())
         ;
-        verify(experimentService, times(1)).createExperiment( any( ExperimentRequest.class ), eq("test-user"));
+        verify(experimentService, times(1)).createExperiment( any( ExperimentDTO.class ), eq("test-user"));
     }
 
     @Test
     public void testUpdateExperimentSimple() throws Exception {
         String jsonRequest = "{\"projectId\" : \"7\", \"experimentName\" : \"fooExperiment\", \"vendorProtocolId\" : \"4\"}";
         when(
-            experimentService.updateExperiment(eq(123),  any( ExperimentPatchRequest.class), eq("test-user"))
+            experimentService.updateExperiment(eq(123),  any( ExperimentDTO.class), eq("test-user"))
         ).thenReturn(
             new ExperimentDTO()
         );
@@ -626,7 +626,7 @@ public class GOBIIControllerV3Test {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         ;
-        verify(experimentService, times(1)).updateExperiment(eq(123),  any( ExperimentPatchRequest.class ), eq("test-user"));
+        verify(experimentService, times(1)).updateExperiment(eq(123),  any( ExperimentDTO.class ), eq("test-user"));
     }
 
     @Test

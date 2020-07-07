@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@Deprecated
 public class ExperimentPatchRequest {
     @JsonSerialize(using=ToStringSerializer.class)
     private Integer projectId;

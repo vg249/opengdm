@@ -15,10 +15,7 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -27,7 +24,6 @@ import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -75,7 +71,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Transactional
     @Override
-    public ExperimentDTO createExperiment(ExperimentRequest request, String createdBy) throws Exception {
+    public ExperimentDTO createExperiment(ExperimentDTO request, String createdBy) throws Exception {
         Project project =this.loadProject(request.getProjectId());
         VendorProtocol vp = this.loadVendorProtocol(request.getVendorProtocolId());
     
@@ -132,7 +128,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Transactional
     @Override
-    public ExperimentDTO updateExperiment(Integer experimentId, ExperimentPatchRequest request, String updatedBy) throws Exception {
+    public ExperimentDTO updateExperiment(Integer experimentId, ExperimentDTO request, String updatedBy) throws Exception {
         Experiment target = this.loadExperiment(experimentId);
 
         if (request.getProjectId() != null) {
