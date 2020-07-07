@@ -108,7 +108,6 @@ public class MapsetServiceImpl implements MapsetService {
 
         if (patchData.getMapsetName() != null) {
             mapset.setMapsetName(patchData.getMapsetName());
-            // TODO: also update code?
         }
 
         if (patchData.getMapsetDescription() != null) {
