@@ -10,13 +10,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
@@ -85,7 +79,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 dnaSampleJoin= (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
                 germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
                 experimentJoin = (Join<Object, Object>) dnaRunRoot.fetch("experiment");
-                germplasmJoin.fetch("germplasmType");
+                germplasmJoin.fetch("germplasmType", JoinType.LEFT);
             }
             else {
                 if (dnaSampleId != null || dnaSampleName != null
@@ -412,7 +406,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
                     if(fetchAssociations) {
                         germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
-                        germplasmJoin.fetch("germplasmType");
+                        germplasmJoin.fetch("germplasmType", JoinType.LEFT);
                     } else {
                         germplasmJoin = dnaSampleJoin.join("germplasm");
                     }
@@ -431,7 +425,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
             else {
                 if(fetchAssociations) {
                     dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
-                    dnaSampleJoin.fetch("germplasm").fetch("germplasmType");
+                    dnaSampleJoin.fetch("germplasm").fetch("germplasmType", JoinType.LEFT);
 
                 }
             }
