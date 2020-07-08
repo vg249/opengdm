@@ -246,12 +246,8 @@ public class GobiiExtractor {
 		            String mapsetFile = extractDir + "mapset.file";
 		            String markerPosFile = markerFile + ".pos";
 		            String sampleFile = extractDir + "sample.file";
-		            String projectFile = extractDir + "project.file";
-		            String extractSummaryFile = extractDir + "summary.file";
-		            if (inst.isQcCheck()) {//FIXES ERROR - KDC EXPECTS PROJECT SUMMARY IN SUMMARY.FILE
-			            projectFile = extractDir + "summary.file"; //HACK, NEED FIX AND REMOVE LATER FOR CONSISTENCY
-			            extractSummaryFile = extractDir + "project_summary.file";
-		            }
+		            String projectFile = extractDir + "summary.file"; //Required to be named as is for flapjack QC
+			        String extractSummaryFile = extractDir + "project_summary.file"; //briefly called 'summary' in non-QC jobs
 		            String chrLengthFile = markerFile + ".chr";
 		            Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
 		            if (!mdePath.toFile().isFile()) {
