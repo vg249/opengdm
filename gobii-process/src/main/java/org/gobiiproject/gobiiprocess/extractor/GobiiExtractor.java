@@ -564,6 +564,7 @@ public class GobiiExtractor {
 				            case FLAPJACK:
 					            String genoOutFile = extractDir + "Dataset.genotype";
 					            String mapOutFile = extractDir + "Dataset.map";
+					            String markerGroupSummary=extractDir+"marker.file.mg_summary";
 
 					            //Always regenerate requests - may have different parameters
 					            boolean extended = HelperFunctions.checkFileExistence(extendedMarkerFile);
@@ -575,6 +576,10 @@ public class GobiiExtractor {
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
 					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration, true);
 					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration, true);
+					            if(checkFileExistence(markerGroupSummary)){
+					            	Logger.logDebug("GobiiExtractor","Prepending QTL file notation to marker group summary");
+					            	FlapjackTransformer.addFJQTLHeaderLine(markerGroupSummary,tempFolder,errorFile);
+								}
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;

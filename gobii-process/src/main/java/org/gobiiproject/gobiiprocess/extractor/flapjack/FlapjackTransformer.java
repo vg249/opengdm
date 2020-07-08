@@ -1,9 +1,16 @@
 package org.gobiiproject.gobiiprocess.extractor.flapjack;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import org.gobiiproject.gobiimodel.utils.error.Logger;
+
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.*;
 
 /**
  * Generates the output files for Flapjack import.
@@ -38,7 +45,11 @@ public class FlapjackTransformer {
 		if(chrLengthsExists) {
 			status = invokeTryExec("tail -n +2 "+chrLengthFile, tempDir+"map.chrLengths", errorFile, status);
 		}
-		String locations="1,28,31";//extended marker locations of Marker Name (1) Linkage Group Name(28) and MarkerLinkageGroupStart(31)
+		String firstLineOfMarkerFile=getFirstLineOfFile(markerFile);
+		String locations;
+		//locations="1,28,31";//extended marker locations of Marker Name (1) Linkage Group Name(28) and MarkerLinkageGroupStart(31)
+		locations=getSplitList("MarkerName,LinkageGroupName,MarkerLinkageGroupStart".split(","),firstLineOfMarkerFile,"\t");
+
 		if(!extended)locations="1";
 		status = invokeTryExec("cut -f"+locations+" "+markerFile,tempDir+"tmp",errorFile, status);//Marker Name, Linkage Group Name, Marker Linkage Group Start
 		status = invokeTryExec("tail -n +2 "+tempDir+"tmp",tempDir+"map.body",errorFile, status);
@@ -54,6 +65,69 @@ public class FlapjackTransformer {
 		rm(tempDir+"map.body");
 
 		return status;
+	}
+
+	/**
+	 * Adds the qtl header to the qtl file
+	 * @param qtlFilePos qtl file location (file at location is updated)
+	 * @param tempDir place to store temporaries
+	 * @param errorFile place to write errors to
+	 * @return true on success, false on error
+	 */
+	public static boolean addFJQTLHeaderLine(String qtlFilePos, String tempDir, String errorFile){
+		return addLineToFileAsHeader("# fjfile = qtl-gobii",qtlFilePos, tempDir, errorFile);
+	}
+	private static boolean addLineToFileAsHeader(String headerLine, String filePos, String tempDir, String errorFile){
+		String headerLoc=tempDir+"header";
+		String tempLoc=tempDir+"fileTmp";
+		//original to temp
+		mv(filePos,tempLoc);
+		//create header
+		boolean status=invokeTryExec("echo "+headerLine,headerLoc, errorFile, true);
+		//combine into original place (making whole operation 'in-fix')
+		status=invokeTryExec("cat "+headerLoc+" "+tempLoc, filePos, errorFile, status);
+
+		//cleanup
+		rm(headerLoc);
+		rm(tempLoc);
+		return status;
+	}
+
+	private static String getFirstLineOfFile(String filePath){
+	String ret = "";
+		try(BufferedReader br = new BufferedReader(new FileReader(filePath))){
+			ret=br.readLine();
+		} catch (IOException e) {
+			Logger.logError("FlapjackTransformer",e);
+		}
+		return ret;
+	}
+
+	private static String getSplitList(String[] elements, String firstLine, String delimiter) {
+		return getSplitList(Arrays.asList(elements),firstLine,delimiter);
+	}
+	private static String getSplitList(List<String> elements, String firstLine, String delimiter){
+		String splitList=null;
+		String[] tokenizedLine=firstLine.split(delimiter,-1);
+		List<String> tokenizedList=Arrays.asList(tokenizedLine);
+		for(String element: elements){
+			int pos = tokenizedList.indexOf(element);
+			if(pos != -1) {
+				//add this position to the split list
+				if (splitList == null) {
+					splitList = ""+pos;
+				}
+				else{
+					splitList += ","+pos;
+				}
+
+			}
+			else{
+				Logger.logDebug("FlapjackTransformer","Missing column named "+ element + " in output file");
+			}
+		}
+		if(splitList==null)splitList="";
+		return splitList;
 	}
 
 	/**
@@ -127,9 +201,7 @@ public class FlapjackTransformer {
 	/**
 	 * Calls HelperFunctions.tryExec. If return status is false send false. Else sends the @param status back.
 	 * @param execString
-	 * @param inverseMarkerList
 	 * @param errorFile
-	 * @param tempFile
 	 * @param status
 	 * @return
 	 */
