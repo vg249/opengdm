@@ -38,6 +38,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
@@ -55,7 +56,6 @@ import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
 import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
@@ -1203,6 +1203,18 @@ public class GOBIIControllerV3  {
     ) throws Exception {
         PagedResult<MarkerDTO> results = markerGroupService.getMarkerGroupMarkers(markerGroupId, page, pageSize);
         BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
+    //-- cv group
+    @GetMapping("/cvs/groups")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvGroupDTO>> getCvGroups(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvGroupDTO> results = cvService.getCvGroups(page, pageSize);
+        BrApiMasterListPayload<CvGroupDTO> payload = this.getMasterListPayload(results);
         return ResponseEntity.ok(payload);
     }
 

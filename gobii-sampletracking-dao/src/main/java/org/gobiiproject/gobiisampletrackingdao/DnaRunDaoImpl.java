@@ -85,6 +85,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 dnaSampleJoin= (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
                 germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
                 experimentJoin = (Join<Object, Object>) dnaRunRoot.fetch("experiment");
+                germplasmJoin.fetch("germplasmType");
             }
             else {
                 if (dnaSampleId != null || dnaSampleName != null
@@ -411,6 +412,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
                     if(fetchAssociations) {
                         germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                        germplasmJoin.fetch("germplasmType");
                     } else {
                         germplasmJoin = dnaSampleJoin.join("germplasm");
                     }
@@ -429,7 +431,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
             else {
                 if(fetchAssociations) {
                     dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
-                    dnaSampleJoin.fetch("germplasm");
+                    dnaSampleJoin.fetch("germplasm").fetch("germplasmType");
 
                 }
             }
