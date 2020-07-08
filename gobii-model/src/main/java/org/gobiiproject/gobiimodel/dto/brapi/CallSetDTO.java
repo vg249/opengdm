@@ -46,8 +46,13 @@ public class CallSetDTO extends DTOBaseAuditable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer germplasmDbId;
 
-    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmName", entity = DnaRun.class, deep = true)
+    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmName", entity = DnaRun.class,
+        deep = true)
     private String germplasmName;
+
+    @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmType.term", entity = DnaRun.class,
+        deep = true)
+    private String germplasmType;
 
     private Map<String, String> additionalInfo = new HashMap<>();
 
@@ -131,6 +136,14 @@ public class CallSetDTO extends DTOBaseAuditable {
 
     public void setAdditionalInfo(Map<String, String> additionalInfo) {
         this.additionalInfo = additionalInfo;
+    }
+
+    public String getGermplasmType() {
+        return germplasmType;
+    }
+
+    public void setGermplasmType(String germplasmType) {
+        this.germplasmType = germplasmType;
     }
 
     @JsonSerialize(using= UtcDateSerializer.class)
