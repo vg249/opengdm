@@ -47,8 +47,10 @@ public class FlapjackTransformer {
 		}
 		String firstLineOfMarkerFile=getFirstLineOfFile(markerFile);
 		String locations;
-		//locations="1,28,31";//extended marker locations of Marker Name (1) Linkage Group Name(28) and MarkerLinkageGroupStart(31)
-		locations=getSplitList("MarkerName,LinkageGroupName,MarkerLinkageGroupStart".split(","),firstLineOfMarkerFile,"\t");
+		//extended marker locations of Marker Name (1) Linkage Group Name(28) and MarkerLinkageGroupStart(31)
+		String[] markerElements={"marker_name","linkage_group_name","marker_linkage_group_start"};
+
+		locations=getSplitList(markerElements,firstLineOfMarkerFile,"\t");
 
 		if(!extended)locations="1";
 		status = invokeTryExec("cut -f"+locations+" "+markerFile,tempDir+"tmp",errorFile, status);//Marker Name, Linkage Group Name, Marker Linkage Group Start
@@ -103,6 +105,17 @@ public class FlapjackTransformer {
 		return ret;
 	}
 
+	/**
+	 * Convenience method for getSplitList(String[],String,String)
+	 * Also used for testing
+	 * @param elements Comma-separated list of elements
+	 * @param firstLine Line to get a split-command argument on
+	 * @param delimiter delimiter of 'firstLine'
+	 * @return outputList
+	 */
+	static String getSplitList(String elements, String firstLine, String delimiter){
+		return getSplitList(elements.split(","),firstLine,delimiter);
+	}
 	private static String getSplitList(String[] elements, String firstLine, String delimiter) {
 		return getSplitList(Arrays.asList(elements),firstLine,delimiter);
 	}
@@ -113,6 +126,7 @@ public class FlapjackTransformer {
 		for(String element: elements){
 			int pos = tokenizedList.indexOf(element);
 			if(pos != -1) {
+				pos++;//convert 0-index to 1-index
 				//add this position to the split list
 				if (splitList == null) {
 					splitList = ""+pos;
