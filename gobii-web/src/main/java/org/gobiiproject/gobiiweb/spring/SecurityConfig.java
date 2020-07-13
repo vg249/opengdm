@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.spring;
 //import org.gobiiproject.gobidomain.security.TokenManager;
 //import org.gobiiproject.gobidomain.security.impl.TokenManagerSingle;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
+import org.gobiiproject.gobiiweb.filters.CropAuthInterceptor;
 // import org.gobiiproject.gobidomain.services.ContactService;
 // import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 // import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
@@ -13,6 +14,7 @@ import org.gobiiproject.gobidomain.services.AuthenticationService;
 // import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 // import org.springframework.context.annotation.Configuration;
 // import org.springframework.http.HttpMethod;
 // import org.springframework.security.authentication.AuthenticationManager;
@@ -35,8 +37,7 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 
 @KeycloakConfiguration
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
-{
+public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     /**
      * Registers the KeycloakAuthenticationProvider with the authentication manager.
      */
@@ -52,11 +53,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new NullAuthenticatedSessionStrategy();
-        //RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+        // RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
-
-    
-
 }
 
 // /**

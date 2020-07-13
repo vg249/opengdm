@@ -1,22 +1,18 @@
-/**
- * V3ProjectDTO.java
- * 
- * DTO for Project data (Gobii API V3)
- * 
- * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>
- * @since 2020-03-07
- */
-package org.gobiiproject.gobiimodel.dto.auditable;
+package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
-
 import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -29,47 +25,31 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
-/**
- * 
- */
-@JsonIgnoreProperties(ignoreUnknown = false, value={
-    "id", "allowedProcessTypes", "entityNameType", "status"
-})
-@JsonPropertyOrder({
-    "projectId", 
-    "projectName",
-    "projectDescription",
-    "piContactId",
-    "piContactName",
-    "experimentCount",
-    "datasetCount",
-    "markersCount",
-    "dnaRunsCount",
-    "createdBy",
-    "createdDate",
-    "modifiedBy",
-    "modifiedDate",
-    "properties"
-})
-@JsonInclude(JsonInclude.Include.ALWAYS)
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class GobiiProjectDTO extends DTOBaseAuditable {
+@JsonIgnoreProperties({ "id", "allowedProcessTypes", "entityNameType", "status" })
+@JsonInclude(JsonInclude.Include.ALWAYS)
+public class ProjectDTO extends DTOBaseAuditable {
 
-    public GobiiProjectDTO() {
-        super(GobiiEntityNameType.PROJECT);
-    }
+    public interface Create {}
+    public interface Update {}
 
     @Override
     public Integer getId() {
-        return this.projectId;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
     public void setId(Integer id) {
-        this.projectId = id;
+        // TODO Auto-generated method stub
+
     }
+
+    public ProjectDTO() {
+        super(GobiiEntityNameType.PROJECT);
+    }
+
 
     // we are waiting until we a have a view to return
     // properties for that property: we don't know how to represent them yet
@@ -78,12 +58,14 @@ public class GobiiProjectDTO extends DTOBaseAuditable {
     private Integer projectId = 0;
 
     @GobiiEntityMap(paramName="projectName", entity = Project.class)
+    @NotEmpty(groups = {ProjectDTO.Create.class})
     private String projectName;
 
     @GobiiEntityMap(paramName="projectDescription", entity = Project.class)
     private String projectDescription;
 
     @GobiiEntityMap(paramName="contact.contactId", entity = Project.class, deep=true)
+    @NotNull(groups = {ProjectDTO.Create.class})
     private Integer piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
@@ -96,10 +78,14 @@ public class GobiiProjectDTO extends DTOBaseAuditable {
 
     //TODO: when the stats table is done
     private Integer experimentCount;
+
     private Integer datasetCount;
+
     private Integer markersCount;
+
     private Integer dnaRunsCount;
 
+    @Valid
     private List<CvPropertyDTO> properties = new java.util.ArrayList<>();
 
     @JsonProperty("piContactName")
@@ -117,4 +103,5 @@ public class GobiiProjectDTO extends DTOBaseAuditable {
         return null;
     }
 
+   
 }

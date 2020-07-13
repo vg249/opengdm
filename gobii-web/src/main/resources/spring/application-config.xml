@@ -64,7 +64,7 @@
 
     <!-- ******************** ****************************************** -->
     <!-- ******************** explicitly defined beans **************** -->
-
+    
     <!-- **** Security Beans *************************************** -->
     <bean id="UserDao"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.UserDaoImpl"/>

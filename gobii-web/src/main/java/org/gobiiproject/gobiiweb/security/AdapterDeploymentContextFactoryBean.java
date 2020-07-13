@@ -52,7 +52,6 @@ public class AdapterDeploymentContextFactoryBean implements FactoryBean<AdapterD
         adapterConfig.setSslRequired(keycloakConfig.getSslRequired());
         adapterConfig.setBearerOnly(keycloakConfig.isBearerOnly());
         adapterConfig.setPrincipalAttribute(keycloakConfig.getPrincipalAttribute());
-        
         //TODO:  do a bean attribute copy
 
         KeycloakDeployment deployment =   KeycloakDeploymentBuilder.build(adapterConfig);

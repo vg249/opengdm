@@ -2,10 +2,13 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -15,8 +18,6 @@ import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -49,8 +50,7 @@ public class PlatformServiceImpl implements PlatformService {
         platform.setPlatformCode(request.getPlatformName().replace(' ', '_'));
         // Audit
         Contact creator = contactDao.getContactByUsername(createdBy);
-        if (creator != null)
-            platform.setCreatedBy(creator.getContactId());
+        platform.setCreatedBy(Optional.ofNullable(creator).map(v -> creator.getContactId()).orElse(null));
         platform.setCreatedDate(new java.util.Date());
         // status
         Cv newStatus = cvDao.getNewStatus();
@@ -112,8 +112,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         if (updated) {
             Contact creator = contactDao.getContactByUsername(updatedBy);
-            if (creator != null)
-                platform.setModifiedBy(creator.getContactId());
+            platform.setModifiedBy(Optional.ofNullable(creator).map(v -> creator.getContactId()).orElse(null));
             platform.setModifiedDate(new java.util.Date());
             // status
             Cv modStatus = cvDao.getModifiedStatus();
@@ -132,10 +131,9 @@ public class PlatformServiceImpl implements PlatformService {
         Cv platformType = cvDao.getCvByCvId(platformTypeId);
         if (platformType == null || // no platform found
                 !platformType.getCvGroup().getCvGroupName().equals(
-                    org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName()) 
+                    CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName())
         ) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid platform type");
+            throw new InvalidException("platform type");
         }
         return platformType;
     }
@@ -143,11 +141,9 @@ public class PlatformServiceImpl implements PlatformService {
     private Platform loadPlatform(Integer id) throws Exception {
         Platform platform = platformDao.getPlatform(id);
         if (platform == null) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Not found");
+            throw new EntityDoesNotExistException("platform");
         }
         return platform;
-
     }
 
     @Transactional
@@ -168,7 +164,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         //set group
         CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
+            CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId()
         );
         platformType.setCvGroup(cvGroup);
@@ -186,10 +182,10 @@ public class PlatformServiceImpl implements PlatformService {
     public PagedResult<CvTypeDTO> getPlatformTypes(Integer page, Integer pageSize) {
         List<Cv> platformTypes = cvDao.getCvs(
             null,
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
-             null,
-             page,
-             pageSize
+            CvGroupTerm.CVGROUP_PLATFORM_TYPE.getCvGroupName(),
+            null,
+            page,
+            pageSize
         );
 
         List<CvTypeDTO> platformTypeDTOs = new ArrayList<>();

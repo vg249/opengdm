@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+
+import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -11,14 +13,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 
 import lombok.Data;
 
 @Data
 public class CvDTO {
-    
     public final static String PROPERTY_TYPE_SYSTEM = "SYSTEM_DEFINED";
     public final static String PROPERTY_TYPE_CUSTOM = "USER_DEFINED";
 

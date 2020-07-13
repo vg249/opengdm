@@ -96,6 +96,11 @@ public class FlapjackTransformer {
 		//Adds one line, then rotates 90 degrees, so each marker is a tab
 		status = invokeTryExec("cat "+tempDir+"blank.file "+markerList, tempFile,errorFile, status);
 		status = invokeTryExec("tr '\\n' '\\t'",inverseMarkerList,errorFile, tempFile, status);//Input redirection wheeee
+
+		//GSD-131 - there will be a trailing newline to the above pre-transformed file, so we need to remove the trailing tab. Sed -i for inline
+		status = invokeTryExec( "sed -i 's/\\t$//' "+ inverseMarkerList,tempDir+"blank.file",errorFile,status);
+
+
 		rm(tempFile);
 		//Note, this file has no line ending.
 		

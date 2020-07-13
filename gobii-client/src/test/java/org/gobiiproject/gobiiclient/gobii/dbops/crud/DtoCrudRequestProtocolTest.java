@@ -235,12 +235,13 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
             Assert.assertTrue(currentProtocolDto.getProtocolId().equals(protocolDTOFromLink.getProtocolId()));
         }
 
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
 
         //get ProtocolDetails By ExperimentId
         RestUri restUriProtocolsForGetDetailsByExperimentId = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS)
-                .setParamValue("id", "1")
+                .setParamValue("id", experimentId.toString())
                 .appendSegment(RestResourceId.GOBII_PROTOCOL);
 
         GobiiEnvelopeRestResource<ProtocolDTO,ProtocolDTO> restResourceProtocolForGetDetailsByExperimentId = new GobiiEnvelopeRestResource<>(restUriProtocolsForGetDetailsByExperimentId);

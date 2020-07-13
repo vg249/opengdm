@@ -33,11 +33,11 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayl
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
@@ -47,19 +47,16 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
+import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -178,19 +175,19 @@ public class GOBIIControllerV3  {
 
     @GetMapping("/projects")
     @ResponseBody 
-    public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
+    public ResponseEntity<BrApiMasterListPayload<ProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-            @RequestParam(required=false) Integer piContactId) {
+            @RequestParam(required=false) Integer piContactId) throws Exception {
         log.debug("Querying projects List");
         Integer pageSizeToUse = getPageSize(pageSize);
 
-        PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
+        PagedResult<ProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, page),
             pageSizeToUse,
             piContactId
         );
-        BrApiMasterListPayload<GobiiProjectDTO> payload = this.getMasterListPayload(pagedResult);   
+        BrApiMasterListPayload<ProjectDTO> payload = this.getMasterListPayload(pagedResult);   
         return ResponseEntity.ok(payload);
     }
 
@@ -202,8 +199,8 @@ public class GOBIIControllerV3  {
      */
     @PostMapping("/projects")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> createProject(
-            @RequestBody @Valid final GobiiProjectRequestDTO project,
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> createProject(
+            @RequestBody @Validated(ProjectDTO.Create.class) final ProjectDTO project,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -211,8 +208,8 @@ public class GOBIIControllerV3  {
         //Get the current user
         String userName = this.getCurrentUser();
 
-        GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(createdDTO);
+        ProjectDTO createdDTO = projectService.createProject(project, userName);
+        BrApiMasterPayload<ProjectDTO> result = this.getMasterPayload(createdDTO);
         return ResponseEntity.created(null).body(result);
     }
 
@@ -225,14 +222,14 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/projects/{projectId}")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> getProject(
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> getProject(
         @PathVariable Integer projectId
     ) throws Exception {
-        GobiiProjectDTO project = projectService.getProject(projectId);
+        ProjectDTO project = projectService.getProject(projectId);
         if (project == null) {
             throw new NullPointerException("Project does not exist");
         }
-        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(project);
+        BrApiMasterPayload<ProjectDTO> result = this.getMasterPayload(project);
         return ResponseEntity.ok(result);
     }
 
@@ -243,15 +240,15 @@ public class GOBIIControllerV3  {
      */
     @PatchMapping("/projects/{projectId}")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> patchProject(
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> patchProject(
         @PathVariable Integer projectId,
-        @RequestBody @Valid final GobiiProjectPatchDTO project,
+        @RequestBody @Validated(ProjectDTO.Update.class) final ProjectDTO project,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         String userName = this.getCurrentUser();
-        GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> payload = this.getMasterPayload(dto);
+        ProjectDTO dto = projectService.patchProject(projectId, project, userName);
+        BrApiMasterPayload<ProjectDTO> payload = this.getMasterPayload(dto);
         return ResponseEntity.ok(payload);
     }
 
@@ -359,7 +356,7 @@ public class GOBIIControllerV3  {
     @PostMapping("/experiments")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> createProject(
-            @RequestBody @Valid final ExperimentRequest experiment,
+            @RequestBody @Validated(ExperimentDTO.Create.class) final ExperimentDTO experiment,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -383,7 +380,7 @@ public class GOBIIControllerV3  {
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> updateExperiment(
         @PathVariable Integer experimentId,
-        @RequestBody @Valid final ExperimentPatchRequest request,
+        @RequestBody @Validated(ExperimentDTO.Update.class) final ExperimentDTO request,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -945,6 +942,7 @@ public class GOBIIControllerV3  {
         CvPropertyDTO cvPropertyDTO = cvService.addCvProperty(request);
         BrApiMasterPayload<CvPropertyDTO> payload = this.getMasterPayload(cvPropertyDTO);
         return ResponseEntity.created(null).body(payload);
+
     }
 
     @DeleteMapping("/cvs/{cvId}")
@@ -1205,6 +1203,26 @@ public class GOBIIControllerV3  {
         PagedResult<MarkerDTO> results = markerGroupService.getMarkerGroupMarkers(markerGroupId, page, pageSize);
         BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
         return ResponseEntity.ok(payload);
+    }
+
+    //-- cv group
+    @GetMapping("/cvs/groups")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvGroupDTO>> getCvGroups(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvGroupDTO> results = cvService.getCvGroups(page, pageSize);
+        BrApiMasterListPayload<CvGroupDTO> payload = this.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
+    // --test
+    @GetMapping("/test")
+    @CropAuth("pi")
+    @ResponseBody
+    public ResponseEntity<String> testMe() {
+        return ResponseEntity.ok("test");
     }
 
     public ProjectService getProjectService() {

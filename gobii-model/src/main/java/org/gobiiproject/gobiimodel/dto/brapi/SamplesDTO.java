@@ -21,7 +21,7 @@ public class SamplesDTO {
     private Integer germplasmDbId;
 
     @GobiiEntityMap(paramName="germplasm.externalCode", entity = DnaSample.class, deep=true)
-    private String observationUnitDbId;
+    private String germplasmPUI;
 
     /** Sample Type is DNA for all GDM data **/
     private String sampleType = "DNA";
@@ -50,9 +50,12 @@ public class SamplesDTO {
     @GobiiEntityMap(paramName="dnaSampleNum", entity = DnaSample.class)
     private String well;
 
-    @GobiiEntityMap(paramName="projectId", entity = DnaSample.class)
+    @GobiiEntityMap(paramName="project.projectId", entity = DnaSample.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer sampleGroupDbId;
+
+    @GobiiEntityMap(paramName="project.projectName", entity = DnaSample.class, deep = true)
+    private String sampleGroupName;
 
 
     private Map<String, String> additionalInfo;
@@ -158,14 +161,19 @@ public class SamplesDTO {
         this.sampleGroupDbId = sampleGroupDbId;
     }
 
-    public String getObservationUnitDbId() {
-        return observationUnitDbId;
+    public String getSampleGroupName() {
+        return sampleGroupName;
     }
 
-    public void setObservationUnitDbId(String observationUnitDbId) {
-        this.observationUnitDbId = observationUnitDbId;
+    public void setSampleGroupName(String sampleGroupName) {
+        this.sampleGroupName = sampleGroupName;
     }
 
+    public String getGermplasmPUI() {
+        return germplasmPUI;
+    }
 
-
+    public void setGermplasmPUI(String germplasmPUI) {
+        this.germplasmPUI = germplasmPUI;
+    }
 }

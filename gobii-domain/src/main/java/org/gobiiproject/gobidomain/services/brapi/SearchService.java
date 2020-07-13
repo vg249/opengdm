@@ -1,13 +1,10 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.SearchResultDTO;
 
 public interface SearchService {
 
-    SearchResultDTO createSearchQueryResource(String cropType,
-                                              GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery);
+    SearchResultDTO createSearchQueryResource(String cropType, Object queryObject);
 
-    GenotypeCallsSearchQueryDTO getGenotypesSearchQuery(String resourceId,
-                                                        String cropType);
+    Object getSearchQuery(String resourceId, String cropType, Class searchQueryType);
 }

@@ -42,7 +42,7 @@ public class KeycloakConfig {
     private int confidentialPort = 8443;
 
     @Element(required = false)
-    private boolean useResourceRoleMappings = false;
+    private boolean useResourceRoleMappings = true; //default to true here
 
     @Element(required = false)
     private boolean publicClient = false;

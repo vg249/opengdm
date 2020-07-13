@@ -13,7 +13,9 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,12 +80,16 @@ public class AnalysisDaoTest {
 
     @Test
     public void testCreateUpdatedAndDeleteAnalysis() throws Exception {
+        java.util.Random r = new java.util.Random();
         Analysis analysis = new Analysis();
         analysis.setAnalysisName(RandomStringUtils.random(10, true, true));
         analysis.setAlgorithm(RandomStringUtils.random(10, true, true));
         analysis.setDescription(RandomStringUtils.random(20, true, true));
-
+        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null);
+        analysis.setType(cvs.get(r.nextInt(cvs.size())));
+        analysis.setStatus(cvDao.getNewStatus());
         analysis = analysisDao.createAnalysis(analysis);
+        
         assertTrue("Analysis not created", analysis != null && analysis.getAnalysisId() > 0);
 
         assertTrue("Program is already set", LineUtils.isNullOrEmpty(analysis.getProgram()));

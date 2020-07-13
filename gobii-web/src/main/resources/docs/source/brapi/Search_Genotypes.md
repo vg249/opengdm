@@ -2,16 +2,19 @@
 
 Any fields other than the below fields will be ignored by the system.
 
-*Search by only giving variantDbIds/variantNames is yet to be implemented.*
-
 Field | Type | Required/Optioanl
 ------|------|------------
 variantDbIds | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to marker ids.
 variantNames | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to marker Names.
-callSetDbIds | Array(String) | *Optional* Maximum Size allowed = 1000.
-callSetNames | Array(String) | *Optional* Maximum Size allowed = 1000.
-variantSetDbIds | Array(String) | *Optional* Maximum Size allowed = 1000.
+callSetDbIds | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to dnarun ids.
+callSetNames | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to dnarun names.
+variantSetDbIds | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to dataset ids.
+samplePUIs | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to dnasample UUIDs.
+sampleDbIds | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to dnasample ids.
+sampleNames | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to dnasample names. 
 germplasmPUIs | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to germplasm external codes.
+germplasmDbIds | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to germplasm ids.
+germplasmNames | Array(String) | *Optional* Maximum Size allowed = 1000. Corresponds to germplasm names. 
 
 **Request Body Example : DnaRun names and Marker Names**
 

@@ -10,10 +10,10 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface PropertiesService {
     //PagedResult<CvPropertyDTO> getProjectProperties(Integer pageNum, Integer pageSize) throws Exception;
-    PagedResult<CvPropertyDTO> getProperties(Integer pageNum, Integer pageSize, CvGroup cvGroup) throws Exception;
+    PagedResult<CvPropertyDTO> getProperties(Integer pageNum, Integer pageSize, CvGroupTerm cvGroupTerm) throws Exception;
 }

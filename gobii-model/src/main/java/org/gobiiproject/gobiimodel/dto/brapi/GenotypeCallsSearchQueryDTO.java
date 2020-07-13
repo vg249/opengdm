@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
 import javax.validation.constraints.Size;
@@ -9,11 +12,9 @@ import java.util.Set;
 
 @CheckAtLeastOneNotNullOrEmpty(
         fieldNames = {
-                "callSetDbIds", "callSetNames",
-                "variantDbIds", "variantNames",
-                "sampleDbIds", "sampleNames",
-                "samplePUIs", "variantSetDbIds",
-                "germplasmPUIs"
+            "callSetDbIds", "callSetNames", "variantDbIds", "variantNames",
+            "sampleDbIds", "sampleNames", "samplePUIs", "variantSetDbIds",
+            "germplasmPUIs", "germplasmDbIds", "germplasmNames"
         })
 public class GenotypeCallsSearchQueryDTO {
 
@@ -47,6 +48,11 @@ public class GenotypeCallsSearchQueryDTO {
     @Size(max = 1000, message = "Only 1000 germplasmPUIs allowed per query")
     private Set<String> germplasmPUIs = new HashSet<>();
 
+    @Size(max = 1000, message = "Only 1000 germplasmDbIds allowed per query")
+    private Set<Integer> germplasmDbIds = new HashSet<>();
+
+    @Size(max = 1000, message = "Only 1000 germplasmNames allowed per query")
+    private Set<String> germplasmNames = new HashSet<>();
 
     public Set<Integer> getCallSetDbIds() {
         return callSetDbIds;
@@ -126,5 +132,36 @@ public class GenotypeCallsSearchQueryDTO {
 
     public void setSamplePUIs(Set<String> samplePUIs) {
         this.samplePUIs = samplePUIs;
+    }
+
+    public Set<Integer> getGermplasmDbIds() {
+        return germplasmDbIds;
+    }
+
+    public void setGermplasmDbIds(Set<Integer> germplasmDbIds) {
+        this.germplasmDbIds = germplasmDbIds;
+    }
+
+    public Set<String> getGermplasmNames() {
+        return germplasmNames;
+    }
+
+    public void setGermplasmNames(Set<String> germplasmNames) {
+        this.germplasmNames = germplasmNames;
+    }
+
+    @JsonIgnore
+    public boolean isCallSetsQueriesEmpty() {
+        return CollectionUtils.isEmpty(callSetDbIds) && CollectionUtils.isEmpty(callSetNames) &&
+            CollectionUtils.isEmpty(sampleDbIds) && CollectionUtils.isEmpty(sampleNames) &&
+            CollectionUtils.isEmpty(samplePUIs) && CollectionUtils.isEmpty(germplasmPUIs) &&
+            CollectionUtils.isEmpty(germplasmDbIds) && CollectionUtils.isEmpty(germplasmNames);
+
+    }
+
+    @JsonIgnore
+    public boolean isVariantsQueriesEmpty() {
+        return CollectionUtils.isEmpty(this.getVariantDbIds()) &&
+            CollectionUtils.isEmpty(this.getVariantNames());
     }
 }

@@ -19,7 +19,7 @@ public class MapsetDTO {
     @GobiiEntityMap(paramName="mapsetName", entity = Mapset.class)
     private String mapName;
 
-    @GobiiEntityMap(paramName="description", entity = Mapset.class)
+    @GobiiEntityMap(paramName="mapsetDescription", entity = Mapset.class)
     private String comments;
 
     @GobiiEntityMap(paramName="type.term", entity = Mapset.class, deep = true)

@@ -4,13 +4,20 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 
 /**
@@ -19,32 +26,51 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@Transactional
 public class MarkerLinkageGroupDaoTest {
+
+    @PersistenceContext
+    protected EntityManager em;
 
     @Autowired
     private MarkerLinkageGroupDao markerLinkageGroupDao;
 
+    @Autowired
+    private CvDao cvDao;
+
+    DaoTestSetUp daoTestSetUp;
+
+    final int testPageSize = 10;
+
+    Random random = new Random();
+
+    @Before
+    public void createTestData() {
+        daoTestSetUp = new DaoTestSetUp(em, cvDao);
+        daoTestSetUp.createTestMarkerLinkageGroups(testPageSize);
+        em.flush();
+    }
+
     @Test
     public void testGetMarkerLinkageGroupsByMapsetId() {
 
-        Integer pageSize = 100;
 
-        //Selected with developer knowledge on test database.
-        //TODO: Write initialize script
-        Integer testMapsetId = 2;
+        Integer testMapsetId =
+            daoTestSetUp
+                .getCreatedMarkerLinkageGroups()
+                .get(random.nextInt(daoTestSetUp.getCreatedMarkerLinkageGroups().size()))
+                .getLinkageGroup()
+                .getMapset()
+                .getMapsetId();
 
         List<MarkerLinkageGroup> markerLinkageGroups = markerLinkageGroupDao.getMarkerLinkageGroups(
-                pageSize, 0,
-                testMapsetId, null,
-                null, null,
-                null, null,
-                null, null,
-                null);
+            testPageSize, 0, testMapsetId, null,
+            null, null, null, null, null, null, null);
 
 
         assertTrue("Empty MarkerLinkageGroup list",markerLinkageGroups.size() > 0);
         assertTrue("MarkerLinkageGroups size not equal to the page size",
-                markerLinkageGroups.size() <= pageSize);
+                markerLinkageGroups.size() <= testPageSize);
 
         for(MarkerLinkageGroup markerLinkageGroup : markerLinkageGroups) {
             assertTrue("Mapset Filter not working",
@@ -55,27 +81,24 @@ public class MarkerLinkageGroupDaoTest {
     @Test
     public void testGetMarkerLinkageGroupsByMarkerId() {
 
-        Integer pageSize = 100;
-
-        //Selected with developer knowledge on test database.
-        //TODO: Write initialize script
-
-        Integer testMarkerId = 6;
+        Integer testMarkerId =
+            daoTestSetUp
+                .getCreatedMarkerLinkageGroups()
+                .get(random.nextInt(daoTestSetUp.getCreatedMarkerLinkageGroups().size()))
+                .getMarker()
+                .getMarkerId();
 
         List<MarkerLinkageGroup> markerLinkageGroups = markerLinkageGroupDao.getMarkerLinkageGroups(
-                pageSize, 0,
-                null, null,
-                null, null,
-                testMarkerId, null,
-                null, null, null);
+            testPageSize, 0, null, null, null, null,
+            testMarkerId, null, null, null, null);
 
         assertTrue("Empty MarkerLinkageGroup list",markerLinkageGroups.size() > 0);
         assertTrue("MarkerLinkageGroups size not equal to the page size",
-                markerLinkageGroups.size() <= pageSize);
+            markerLinkageGroups.size() <= testPageSize);
 
         for(MarkerLinkageGroup markerLinkageGroup : markerLinkageGroups) {
             assertTrue("Marker Id filter not working",
-                    markerLinkageGroup.getMarker().getMarkerId() == testMarkerId);
+                markerLinkageGroup.getMarker().getMarkerId() == testMarkerId);
         }
 
     }
@@ -83,23 +106,22 @@ public class MarkerLinkageGroupDaoTest {
     @Test
     public void testGetMarkerLinkageGroupsByMinAndMaxPosition() {
 
-        Integer pageSize = 100;
 
-        //Selected with developer knowledge on test database.
-        //TODO: Write initialize script
-        BigDecimal testMinPosition = new BigDecimal( 79);
-        BigDecimal testMaxPosition = new BigDecimal( 100);
+        BigDecimal testMinPosition =
+            daoTestSetUp
+                .getCreatedMarkerLinkageGroups()
+                .get(random.nextInt(daoTestSetUp.getCreatedMarkerLinkageGroups().size()))
+                .getStart();
+
+        BigDecimal testMaxPosition = testMinPosition.add(new BigDecimal("500"));
 
         List<MarkerLinkageGroup> markerLinkageGroups = markerLinkageGroupDao.getMarkerLinkageGroups(
-                pageSize, 0,
-                null, null,
-                null, null,
-                null, null,
-                testMinPosition, testMaxPosition, null);
+            testPageSize, 0, null, null, null, null,
+            null, null, testMinPosition, testMaxPosition, null);
 
         assertTrue("Empty MarkerLinkageGroup list",markerLinkageGroups.size() > 0);
         assertTrue("MarkerLinkageGroups size not equal to the page size",
-                markerLinkageGroups.size() <= pageSize);
+            markerLinkageGroups.size() <= testPageSize);
 
         for(MarkerLinkageGroup markerLinkageGroup : markerLinkageGroups) {
 
@@ -107,9 +129,9 @@ public class MarkerLinkageGroupDaoTest {
             int maxPositionComparision = testMaxPosition.compareTo(markerLinkageGroup.getStop());
 
             assertTrue("Min position filter not working",
-                    minPositionComparision == -1 || minPositionComparision == 0);
+                minPositionComparision == -1 || minPositionComparision == 0);
             assertTrue("Max position filter not working",
-                    maxPositionComparision == 1 || maxPositionComparision == 0);
+                maxPositionComparision == 1 || maxPositionComparision == 0);
 
         }
 

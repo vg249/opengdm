@@ -108,6 +108,7 @@ public class CvMapper {
      */
     public static List<CvPropertyDTO> listCvIdToCvTerms(List<Cv> cvList, Map<String, String> props) {
         List<CvPropertyDTO> dtoList = new java.util.ArrayList<>();
+        if (cvList == null || props == null) return dtoList;
         try {
             for(Cv cv : cvList) {
                 if(props.containsKey(cv.getCvId().toString())) {

@@ -48,7 +48,9 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public List<Cv> getCvListByCvGroup(String cvGroupName, GobiiCvGroupType cvType) throws GobiiException {
+    public List<Cv> getCvListByCvGroup(
+        String cvGroupName,
+        GobiiCvGroupType cvType) throws GobiiException {
 
 
         try {
@@ -167,7 +169,7 @@ public class CvDaoImpl implements CvDao {
     private Cv getStatusCv(String status) {
         List<Cv> cvList = this.getCvs(
             status,
-            org.gobiiproject.gobiimodel.cvnames.CvGroup.CVGROUP_STATUS.getCvGroupName(),
+            org.gobiiproject.gobiimodel.cvnames.CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM
         );
         Cv cv = null;
@@ -201,5 +203,22 @@ public class CvDaoImpl implements CvDao {
     public void deleteCv(Cv cv) throws Exception {
         em.remove(cv);
         em.flush();
+    }
+
+    @Override
+    public List<CvGroup> getCvGroups(Integer pageSize, Integer offset) {
+        try {
+
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<CvGroup> criteriaQuery = criteriaBuilder.createQuery(CvGroup.class);
+            Root<CvGroup> cvGroup = criteriaQuery.from(CvGroup.class);
+            criteriaQuery.select(cvGroup);
+            
+            TypedQuery<CvGroup> q = em.createQuery(criteriaQuery);
+            return q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+
+        } catch (Exception e) {
+            throw new GobiiException(e);
+        }
     }
 }

@@ -2,21 +2,25 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.DeleteException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.AnalysisDao;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -60,26 +64,15 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public AnalysisDTO createAnalysis(AnalysisDTO analysisRequest, String user) throws Exception {
         Analysis analysis = new Analysis();
+        
         // Get analysis type
-        Cv analysisType = cvDao.getCvByCvId(analysisRequest.getAnalysisTypeId());
-        if (analysisType == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown analysis type");
-        }
-
-        if (!analysisType.getCvGroup().getCvGroupName().equals(CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName())) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid analysis type id");
-        }
+        Cv analysisType = this.loadAnalysisType(analysisRequest.getAnalysisTypeId());
         analysis.setType(analysisType);
 
         // TODO check if the reference Id
 
         if (analysisRequest.getReferenceId() != null) {
-            Reference reference = referenceDao.getReference(analysisRequest.getReferenceId());
-            if (reference == null)
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                        "Unknown reference");
+            Reference reference = this.loadReference(analysisRequest.getReferenceId());
             analysis.setReference(reference);
         }
 
@@ -91,19 +84,12 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         // audit items
         Contact creator = contactDao.getContactByUsername(user);
-        if (creator != null)
-            analysis.setCreatedBy(creator.getContactId());
+        analysis.setCreatedBy(Optional.ofNullable(creator).map( v -> creator.getContactId()).orElse(null));
         analysis.setCreatedDate(new java.util.Date());
 
-        try {
-            analysis = analysisDao.createAnalysis(analysis);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        analysis = analysisDao.createAnalysis(analysis);
 
         AnalysisDTO analysisDTO = new AnalysisDTO();
-
         ModelMapper.mapEntityToDto(analysis, analysisDTO);
         return analysisDTO;
     }
@@ -112,8 +98,8 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public CvTypeDTO createAnalysisType(CvTypeDTO analysisTypeRequest, String creatorId) throws Exception {
         
-        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
+            CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
         if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
@@ -140,7 +126,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public PagedResult<CvTypeDTO> getAnalysisTypes(Integer page, Integer pageSize) {
-        List<Cv> cvs = cvDao.getCvs(null, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
+        List<Cv> cvs = cvDao.getCvs(null, CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(), null, page, pageSize);
         List<CvTypeDTO> analysisTypeDTOs = new ArrayList<>();
 
         cvs.forEach(cv -> {
@@ -154,35 +140,26 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Transactional
     @Override
-    public AnalysisDTO updateAnalysis(Integer id, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
-        Analysis analysis = analysisDao.getAnalysis(id);
-        if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Analysis not found"
-            );
-        }
+    public AnalysisDTO updateAnalysis(Integer analysisId, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
+        Analysis analysis = this.loadAnalysis(analysisId);
 
         if (analysisDTO.getReferenceId() != null) {
             //check if the reference exists
-            Reference reference = referenceDao.getReference(analysisDTO.getReferenceId());
-            if (reference == null) {
-                throw new GobiiDaoException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown reference"
-                );
-            }
+            Reference reference = this.loadReference(analysisDTO.getReferenceId());
             analysis.setReference(reference);
+        }
+
+        if (analysisDTO.getAnalysisTypeId() != null) {
+            // Get analysis type
+            Cv analysisType = this.loadAnalysisType(analysisDTO.getAnalysisTypeId());
+            analysis.setType(analysisType);
         }
 
         ModelMapper.mapDtoToEntity(analysisDTO, analysis, true); //ignore the nulls
 
         // audit items
         Contact updater = contactDao.getContactByUsername(updatedBy);
-        if (updater != null)
-            analysis.setModifiedBy(updater.getContactId());
+        analysis.setModifiedBy(Optional.ofNullable(updater).map(v -> updater.getContactId()).orElse(null));
         analysis.setModifiedDate(new java.util.Date());
 
         Cv cv = cvDao.getModifiedStatus();
@@ -195,16 +172,10 @@ public class AnalysisServiceImpl implements AnalysisService {
         return updatedAnalysisDTO;
     }
 
+    @Transactional
     @Override
     public AnalysisDTO getAnalysis(Integer analysisId) throws Exception {  
-        Analysis analysis = analysisDao.getAnalysis(analysisId);
-        if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Analysis not found"
-            );
-        }
+        Analysis analysis = this.loadAnalysis(analysisId);
         AnalysisDTO analysisDTO = new AnalysisDTO();
         ModelMapper.mapEntityToDto(analysis, analysisDTO);
         return analysisDTO;
@@ -214,29 +185,46 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public void deleteAnalysis(Integer analysisId) throws Exception {
         //Check if analysis exists
-        Analysis analysis = analysisDao.getAnalysis(analysisId);
-        if (analysis == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Analysis not found"
-            );
-        }
+        Analysis analysis = this.loadAnalysis(analysisId);
 
         //check for data sets calling analysis or analyses column
         if (
             datasetDao.getDatasetCountByAnalysisId(analysisId) > 0 ||
             datasetDao.getDatasetCountWithAnalysesContaining(analysisId) > 0
         ) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-                "Associated resources found. Cannot complete the action unless they are deleted."
-            );
+            throw new DeleteException();
         }
-
-       
 
         analysisDao.deleteAnalysis(analysis);
     }
-}
+
+    private Analysis loadAnalysis(Integer analysisId) throws GobiiDaoException {
+        Analysis analysis = analysisDao.getAnalysis(analysisId);
+        if (analysis == null) {
+            throw new EntityDoesNotExistException("Analysis");
+        }
+        return analysis;
+    }
+
+    private Cv loadAnalysisType(Integer cvId) throws Exception {
+        // Get analysis type
+        Cv analysisType = cvDao.getCvByCvId(cvId);
+        if (analysisType == null) {
+            throw new UnknownEntityException.Analysis();
+        }
+
+        if (!analysisType.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName())) {
+            throw new InvalidException("Analysis Type Id");
+        }
+
+        return analysisType;
+    }
+
+    private Reference loadReference(Integer referenceId) throws Exception {
+        Reference reference = referenceDao.getReference(referenceId);
+        if (reference == null) {
+            throw new UnknownEntityException.Reference();
+        }
+        return reference;
+    }
+ }
