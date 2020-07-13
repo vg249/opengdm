@@ -19,6 +19,7 @@ import com.google.common.collect.Sets;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
+import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
@@ -35,19 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class CropAuthInterceptor extends HandlerInterceptorAdapter {
-
-    private static String UNAUTHORIZED_PAYLOAD;
-
-    static {
-        ErrorPayload payload = new ErrorPayload();
-        payload.setError("Unauthorized");
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            UNAUTHORIZED_PAYLOAD = mapper.writeValueAsString(payload);
-        } catch (JsonProcessingException jpe) {
-            UNAUTHORIZED_PAYLOAD = "Unauthorized";
-        }
-    }
 
     @Override
     @SuppressWarnings("all")
@@ -97,10 +85,7 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
                     }    
                 }
                 //throw unauthorized
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType(MediaType.APPLICATION_JSON);
-                PrintWriter out = response.getWriter();
-                out.println(UNAUTHORIZED_PAYLOAD);
+                ResponseUtils.sendUnauthorizedResponse(response);
                 return false;
 
             }
