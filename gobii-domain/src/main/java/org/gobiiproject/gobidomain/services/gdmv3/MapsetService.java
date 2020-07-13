@@ -9,7 +9,7 @@ public interface MapsetService {
 
 	MapsetDTO createMapset(MapsetDTO mapset, String user) throws Exception;
 
-	MapsetDTO getMapset(Integer mapsetId);
+	MapsetDTO getMapset(Integer mapsetId) throws Exception;
 
 	MapsetDTO updateMapset(Integer mapsetId, MapsetDTO any, String editedBy) throws Exception;
 

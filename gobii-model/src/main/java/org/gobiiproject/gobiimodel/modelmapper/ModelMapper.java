@@ -54,7 +54,6 @@ public class ModelMapper {
             List<Field> allFields = getAllDeclaredFields(dtoInstance.getClass());
 
             for (Field dtoField : allFields) {
-
                 if (dtoField.isAnnotationPresent(GobiiEntityMap.class)) {
 
                     GobiiEntityMap[] entityMaps = dtoField.getAnnotationsByType(GobiiEntityMap.class);
@@ -156,6 +155,7 @@ public class ModelMapper {
             }
         }
         catch(Exception e) {
+            e.printStackTrace();
             LoggerFactory.getLogger(ModelMapper.class).error(e.getMessage());
 
             throw new GobiiException(

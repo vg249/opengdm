@@ -8,6 +8,9 @@
 
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -27,6 +30,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class ExperimentDTO extends DTOBaseAuditable {
     
+    public interface Create {}
+    public interface Update {}
+
     public ExperimentDTO() {
         super(GobiiEntityNameType.EXPERIMENT);
     }
@@ -50,13 +56,16 @@ public class ExperimentDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "project.projectId",  entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Positive(groups = {ProjectDTO.Create.class})
     private Integer projectId;
 
     @GobiiEntityMap(paramName = "project.projectName", entity = Experiment.class, deep = true)
+    @NotBlank(groups = {ProjectDTO.Create.class})
     private String projectName;
 
     @GobiiEntityMap(paramName = "vendorProtocol.vendorProtocolId", entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Positive(groups = {ProjectDTO.Create.class})
     private Integer vendorProtocolId;
     
     @GobiiEntityMap(paramName = "vendorProtocol.name", entity = Experiment.class, deep = true)
