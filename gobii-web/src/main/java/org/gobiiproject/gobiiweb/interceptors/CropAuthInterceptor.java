@@ -54,7 +54,9 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         //limit the requests to V3?
-        if (!request.getPathInfo().contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) {
+        if (!Optional.ofNullable(request.getPathInfo())
+                     .orElse("")
+                     .contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) {
             super.preHandle(request, response, handler);
         }
         
