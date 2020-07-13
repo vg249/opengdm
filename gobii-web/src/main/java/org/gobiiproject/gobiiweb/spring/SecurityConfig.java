@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiweb.spring;
 //import org.gobiiproject.gobidomain.security.TokenManager;
 //import org.gobiiproject.gobidomain.security.impl.TokenManagerSingle;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
-import org.gobiiproject.gobiiweb.filters.CropAuthInterceptor;
+import org.gobiiproject.gobiiweb.interceptors.CropAuthInterceptor;
 // import org.gobiiproject.gobidomain.services.ContactService;
 // import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 // import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;

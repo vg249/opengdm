@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiweb.spring;
 
-import org.gobiiproject.gobiiweb.filters.CropAuthInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.gobiiproject.gobiiweb.interceptors.CropAuthInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;

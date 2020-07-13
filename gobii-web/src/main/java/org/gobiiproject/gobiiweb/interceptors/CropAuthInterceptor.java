@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiweb.filters;
+package org.gobiiproject.gobiiweb.interceptors;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
