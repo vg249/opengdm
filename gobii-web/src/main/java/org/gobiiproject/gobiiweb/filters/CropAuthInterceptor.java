@@ -88,7 +88,6 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
                 }    
             }
             //throw unauthorized
-            System.out.println("Not authorized");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
