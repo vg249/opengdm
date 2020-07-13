@@ -52,48 +52,50 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
     @SuppressWarnings("all")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        if (handlerMethod.hasMethodAnnotation(CropAuth.class)) {
-            CropAuth annotation = handlerMethod.getMethodAnnotation(CropAuth.class);
+        if (handler instanceof HandlerMethod) {
+            String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            if (handlerMethod.hasMethodAnnotation(CropAuth.class)) {
+                CropAuth annotation = handlerMethod.getMethodAnnotation(CropAuth.class);
 
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-            if (auth.getPrincipal() instanceof KeycloakPrincipal) {
-                KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
-                AccessToken token = kp.getKeycloakSecurityContext().getToken();
-                //Get the major roles
-                //and append
-                Map<String, Object> otherClaims = token.getOtherClaims(); 
+                if (auth.getPrincipal() instanceof KeycloakPrincipal) {
+                    KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
+                    AccessToken token = kp.getKeycloakSecurityContext().getToken();
+                    //Get the major roles
+                    //and append
+                    Map<String, Object> otherClaims = token.getOtherClaims(); 
 
-                //bypass if admin
-                List<String> roles = (List<String>) Optional.ofNullable(otherClaims.get("roles")).orElse(new ArrayList<>());
-                if (roles.contains("ADMIN"))  {
-                    return true;
+                    //bypass if admin
+                    List<String> roles = (List<String>) Optional.ofNullable(otherClaims.get("roles")).orElse(new ArrayList<>());
+                    if (roles.contains("ADMIN"))  {
+                        return true;
+                    }
+
+                    List<String> userGroups = (List<String>) Optional.ofNullable(otherClaims.get("groups")).orElse(new ArrayList<>());
+                    HashSet<String> currentGroups = new HashSet<>();
+                    currentGroups.addAll(userGroups);
+                    
+                    HashSet<String> requiredGroups = new HashSet<>();
+                    Arrays.asList(annotation.value()).forEach(role -> {
+                        requiredGroups.add( String.format("/%s/%s", currentCropType, role.toString().toLowerCase()));
+                    });
+                    
+                    Set<String> validRoles = Sets.intersection(currentGroups, requiredGroups);
+
+                    if (Optional.ofNullable(validRoles).map(v ->  v.size()).orElse(0) > 0) {
+                        return true;
+                    }    
                 }
+                //throw unauthorized
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType(MediaType.APPLICATION_JSON);
+                PrintWriter out = response.getWriter();
+                out.println(UNAUTHORIZED_PAYLOAD);
+                return false;
 
-                List<String> userGroups = (List<String>) Optional.ofNullable(otherClaims.get("groups")).orElse(new ArrayList<>());
-                HashSet<String> currentGroups = new HashSet<>();
-                currentGroups.addAll(userGroups);
-                
-                HashSet<String> requiredGroups = new HashSet<>();
-                Arrays.asList(annotation.value()).forEach(role -> {
-                    requiredGroups.add( String.format("/%s/%s", currentCropType, role.toString().toLowerCase()));
-                });
-                
-                Set<String> validRoles = Sets.intersection(currentGroups, requiredGroups);
-
-                if (Optional.ofNullable(validRoles).map(v ->  v.size()).orElse(0) > 0) {
-                    return true;
-                }    
             }
-            //throw unauthorized
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType(MediaType.APPLICATION_JSON);
-            PrintWriter out = response.getWriter();
-            out.println(UNAUTHORIZED_PAYLOAD);
-            return false;
-
         }
         return super.preHandle(request, response, handler);
     }
