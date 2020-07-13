@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.keycloak.KeycloakPrincipal;
@@ -52,6 +53,11 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
     @SuppressWarnings("all")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        //limit the requests to V3?
+        if (!request.getPathInfo().contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) {
+            super.preHandle(request, response, handler);
+        }
+        
         if (handler instanceof HandlerMethod) {
             String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
             HandlerMethod handlerMethod = (HandlerMethod) handler;
