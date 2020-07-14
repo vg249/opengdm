@@ -49,11 +49,12 @@ public class GDMPermissionEvaluator implements PermissionEvaluator {
 
             //Get user groups
             List<String> groups = (List<String>) otherClaims.get("groups");
-            if (groups.contains(String.format("/%s/PI", currentCropType))) {
+            
+            if (groups.contains(String.format("/%s/pi", currentCropType))) {
                 return false; //TODO: check if PI can only touch his own projects
             }
 
-            if (groups.contains(String.format("/%s/CURATOR", currentCropType))) {
+            if (groups.contains(String.format("/%s/curator", currentCropType))) {
                 return true; //since curator is like an admin for this crop
             }
 
