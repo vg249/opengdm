@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.automation;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,13 +26,13 @@ public class ResponseUtils {
         }
     }
 
-    public static void sendUnauthorizedResponse(HttpServletResponse response) throws IOException {
+    public static void sendUnauthorizedResponse(ServletResponse response) throws IOException {
         //throw unauthorized
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType(MediaType.APPLICATION_JSON.toString());
-        PrintWriter out = response.getWriter();
-        out.println(UNAUTHORIZED_PAYLOAD);
-       
+        HttpServletResponse hsResponse = (HttpServletResponse) response;
+        hsResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        hsResponse.setContentType(MediaType.APPLICATION_JSON.toString());
+        PrintWriter out = hsResponse.getWriter();
+        out.println(UNAUTHORIZED_PAYLOAD);   
     }
     
 }

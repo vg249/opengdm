@@ -1225,6 +1225,13 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok("test");
     }
 
+    @GetMapping("/test2")
+    @PreAuthorize("hasPermission('test2', 'read')")
+    @ResponseBody
+    public ResponseEntity<String> testMe2() {
+        return ResponseEntity.ok("test2");
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }
