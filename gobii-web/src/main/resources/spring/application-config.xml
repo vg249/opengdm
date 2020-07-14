@@ -76,6 +76,8 @@
     <bean id="propertiesService"
           class="org.gobiiproject.gobidomain.services.impl.PropertiesServiceImpl"/>
 
+    <bean id="gdmAuth" class="org.gobiiproject.gobiiweb.security.GDMPermissionEvaluator" />
+
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
     <bean id="spRunnerCallable"

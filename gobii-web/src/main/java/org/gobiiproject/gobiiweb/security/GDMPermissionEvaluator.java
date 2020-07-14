@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiiweb.security;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +29,9 @@ public class GDMPermissionEvaluator implements PermissionEvaluator {
             Object permission) {
         
         //check if the auth principal is a keycloak principal
-        if (Optional.ofNullable(authentication).map(a -> a.getPrincipal()).orElse(null) instanceof KeycloakPrincipal) {
+        if (Optional.ofNullable(authentication)
+                    .map(a -> a.getPrincipal())
+                    .orElse(null) instanceof KeycloakPrincipal) {
             KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) authentication.getPrincipal();
             AccessToken token = kp.getKeycloakSecurityContext().getToken();
             Map<String, Object> otherClaims = token.getOtherClaims();
@@ -39,7 +39,7 @@ public class GDMPermissionEvaluator implements PermissionEvaluator {
 
             //the CropUserFilter would have checked the user access to the crop so just check the group
         
-            String currentCropType = "";
+            String currentCropType = null;
             try {
                 currentCropType = CropRequestAnalyzer.getGobiiCropType().toLowerCase();
             } catch (Exception e) {
@@ -49,17 +49,21 @@ public class GDMPermissionEvaluator implements PermissionEvaluator {
 
             //Get user groups
             List<String> groups = (List<String>) otherClaims.get("groups");
-            
-            if (groups.contains(String.format("/%s/pi", currentCropType))) {
-                return false; //TODO: check if PI can only touch his own projects
-            }
+            final String rootPath = String.format("/%s", currentCropType);
+            groups.removeIf(element -> !element.startsWith(String.format("/%s", rootPath)));
 
             if (groups.contains(String.format("/%s/curator", currentCropType))) {
                 return true; //since curator is like an admin for this crop
             }
 
+            if (groups.contains(String.format("/%s/pi", currentCropType))) {
+                return false; 
+            }
+
             //no need to check for /USER since all endpoints withouth @PreAuthorize are by default
             //accessible by Users
+            System.out.println("Rejected at evaluator");
+            return false; //default permission
         }
         return true;
     }
