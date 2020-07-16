@@ -15,6 +15,17 @@
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="keycloakAuthenticationProvider" />
     </security:authentication-manager>
+    <security:global-method-security
+            secured-annotations="enabled" pre-post-annotations="enabled">
+            <security:expression-handler ref="expressionHandler"/>
+    </security:global-method-security>
+
+    <bean id="expressionHandler"
+      class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <property name="permissionEvaluator" ref="myPermissionEvaluator"/>
+    </bean>
+
+    <bean id="myPermissionEvaluator" class="org.gobiiproject.gobiiweb.security.GDMPermissionEvaluator" />
    
 
     <bean id="customGDMFilter" class="org.gobiiproject.gobiiweb.security.filters.CropUserFilter"/>

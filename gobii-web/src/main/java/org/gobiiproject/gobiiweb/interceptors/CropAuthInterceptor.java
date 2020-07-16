@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.interceptors;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,7 +42,8 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
         if (!Optional.ofNullable(request.getPathInfo())
                      .orElse("")
                      .contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) {
-            super.preHandle(request, response, handler);
+            return super.preHandle(request, response, handler);
+            
         }
         
         if (handler instanceof HandlerMethod) {
@@ -66,6 +68,11 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
                     }
 
                     List<String> userGroups = (List<String>) Optional.ofNullable(otherClaims.get("groups")).orElse(new ArrayList<>());
+                    ListIterator<String> iterator = userGroups.listIterator();
+                    while( iterator.hasNext() ) {
+                        iterator.set(iterator.next().toLowerCase());
+                    }
+                    
                     HashSet<String> currentGroups = new HashSet<>();
                     currentGroups.addAll(userGroups);
                     

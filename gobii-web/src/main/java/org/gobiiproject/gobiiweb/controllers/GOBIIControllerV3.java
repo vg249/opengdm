@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import static org.gobiiproject.gobiimodel.config.Roles.*;
+
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.CvService;
@@ -197,6 +199,7 @@ public class GOBIIControllerV3  {
      * Create new project
      * @since 2020-03-13
      */
+    @CropAuth(CURATOR)
     @PostMapping("/projects")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ProjectDTO>> createProject(
@@ -238,6 +241,7 @@ public class GOBIIControllerV3  {
      * For Patch Project
      * @return
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/projects/{projectId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ProjectDTO>> patchProject(
@@ -258,6 +262,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/projects/{projectId}")
     @ResponseBody
     public ResponseEntity<String> deleteProject(
@@ -353,6 +358,7 @@ public class GOBIIControllerV3  {
      * Create new project
      * @since 2020-03-13
      */
+    @CropAuth(CURATOR)
     @PostMapping("/experiments")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> createProject(
@@ -376,6 +382,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/experiments/{experimentId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> updateExperiment(
@@ -398,6 +405,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/experiments/{experimentId}")
     @ResponseBody
     public ResponseEntity<String> deleteExperiment(
@@ -452,6 +460,7 @@ public class GOBIIControllerV3  {
      * 
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/analyses")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> createAnalysis(
@@ -469,6 +478,7 @@ public class GOBIIControllerV3  {
     /**
      * Update Analysis  By Id
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/analyses/{analysisId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> patchAnalysis(
@@ -501,6 +511,7 @@ public class GOBIIControllerV3  {
     /**
      * Get Analysis By Id
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/analyses/{analysisId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -515,6 +526,7 @@ public class GOBIIControllerV3  {
      * Create Analysis Type
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/analyses/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createAnalysisType(
@@ -550,6 +562,7 @@ public class GOBIIControllerV3  {
      * Create Dataset
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/datasets")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<DatasetDTO>> createDataset(
@@ -602,6 +615,7 @@ public class GOBIIControllerV3  {
      * Update dataset by Id
      * @return
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/datasets/{datasetId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<DatasetDTO>> updateDataset(
@@ -619,6 +633,7 @@ public class GOBIIControllerV3  {
      * Delete dataset
      * @return
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/datasets/{datasetId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -652,6 +667,7 @@ public class GOBIIControllerV3  {
      * Create Analysis Type
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/datasets/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createDatasetType(
@@ -692,6 +708,7 @@ public class GOBIIControllerV3  {
      * Create mapset entry
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/mapsets")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MapsetDTO>> createMapset(
@@ -723,6 +740,7 @@ public class GOBIIControllerV3  {
      * Update mapset
      * @return
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/mapsets/{mapsetId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MapsetDTO>> updateMapset(
@@ -741,6 +759,7 @@ public class GOBIIControllerV3  {
     /**
      * Delete mapset
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/mapsets/{mapsetId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -759,6 +778,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @PostMapping("/mapsets/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createMapsetType(
@@ -826,6 +846,7 @@ public class GOBIIControllerV3  {
      * Create Organization
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/organizations")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> createOrganization(
@@ -843,6 +864,7 @@ public class GOBIIControllerV3  {
     /**
      * Patch organization
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/organizations/{organizationId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> updateOrganization(
@@ -860,6 +882,7 @@ public class GOBIIControllerV3  {
     /**
      * Delete organization
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/organizations/{organizationId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -871,7 +894,7 @@ public class GOBIIControllerV3  {
     }
 
     //--- Cv 
-
+    @CropAuth(CURATOR)
     @PostMapping("/cvs")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvDTO>> createCv(
@@ -884,6 +907,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    @CropAuth(CURATOR)
     @PatchMapping("/cvs/{cvId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvDTO>> updateCv(
@@ -932,6 +956,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @PostMapping("/cvs/properties")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvPropertyDTO>> createCvProperty(
@@ -945,6 +970,7 @@ public class GOBIIControllerV3  {
 
     }
 
+    @CropAuth(CURATOR)
     @DeleteMapping("/cvs/{cvId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -956,6 +982,7 @@ public class GOBIIControllerV3  {
     } 
 
     // --- Platforms
+    @CropAuth(CURATOR)
     @PostMapping("/platforms")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<PlatformDTO>> addPlatform(
@@ -992,6 +1019,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @PatchMapping("/platforms/{platformId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<PlatformDTO>> updatePlatform(
@@ -1007,6 +1035,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @DeleteMapping("/platforms/{platformId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -1017,6 +1046,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    @CropAuth(CURATOR)
     @PostMapping("/platforms/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createPlatformType(
@@ -1059,6 +1089,7 @@ public class GOBIIControllerV3  {
      * Create reference
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/references")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> createReference(
@@ -1089,6 +1120,7 @@ public class GOBIIControllerV3  {
     /**
      * Update
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/references/{referenceId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> updateReference(
@@ -1107,6 +1139,7 @@ public class GOBIIControllerV3  {
      * Delete
      * @return
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/references/{referenceId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -1118,7 +1151,7 @@ public class GOBIIControllerV3  {
     }
 
     //---- Marker Group
-
+    @CropAuth(CURATOR)
     @PostMapping("/markergroups")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> createMarkerGroup(
@@ -1155,6 +1188,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @PatchMapping("/markergroups/{markerGroupId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> updateMarkerGroup(
@@ -1169,6 +1203,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @DeleteMapping("/markergroups/{markerGroupId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -1179,6 +1214,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    @CropAuth(CURATOR)
     @PostMapping("/markergroups/{markerGroupId}/markerscollection")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> mapMarkers(
