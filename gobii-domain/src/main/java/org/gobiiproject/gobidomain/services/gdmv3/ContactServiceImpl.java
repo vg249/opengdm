@@ -62,9 +62,9 @@ public class ContactServiceImpl implements ContactService {
             contact.setCode(String.format("contact_keycloak_%s", preferredUsername));
             contact.setCreatedBy(1);
             contact.setCreatedDate(new java.util.Date());
-            contactDao.addContact(contact);     
+            contactDao.addContact(contact);
+            
         }
-
         return getContactDTO(contact);
     }
 

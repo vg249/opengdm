@@ -80,9 +80,8 @@ public class ContactServiceImplTest {
     public void testAddContactAndContactAlreadyExistsOk() throws Exception {
         Contact mockContact = new Contact();
         when(contactDao.getContactByUsername("test")).thenReturn(mockContact);
-
-        verify(contactDao, times(0)).addContact(any(Contact.class));
-      
+        contactServiceImpl.addContact("test", "test1", "testlastname", "test@email");
+        verify(contactDao, times(0)).addContact(any(Contact.class));  
     }
     
 
