@@ -12,5 +12,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 public interface ContactService {
 
     PagedResult<ContactDTO> getContacts(Integer page, Integer pageSize, Integer organizationId) throws Exception;
+
+	ContactDTO addContact(String preferredUsername, String givenName, String familyName, String email) throws Exception;
     
  }

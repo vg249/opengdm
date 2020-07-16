@@ -17,5 +17,8 @@ public interface ContactDao {
     List<Contact> getContacts(Integer page, Integer pageSize, Integer organizationId);
     Contact getContact(Integer contactId) throws Exception;
     Contact getContactByUsername(String username) throws Exception;
+	Contact addContact(Contact contact);
+
+   
 
  }

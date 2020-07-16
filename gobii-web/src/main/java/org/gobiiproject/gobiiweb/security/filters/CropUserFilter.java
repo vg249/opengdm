@@ -13,11 +13,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -27,6 +31,9 @@ import org.springframework.web.filter.GenericFilterBean;
  * The user must have /{cropType} group at least.
  */
 public class CropUserFilter extends GenericFilterBean {
+
+    @Autowired
+    ContactService contactService;
 
     @Override
     @SuppressWarnings("all")
@@ -68,6 +75,18 @@ public class CropUserFilter extends GenericFilterBean {
                             String.format("/%s", currentCropType)
                         )
                     ) {
+                    //Check if the user is in the db, add if not found
+                    try {
+                        contactService.addContact(
+                            token.getPreferredUsername(),
+                            token.getGivenName(),
+                            token.getFamilyName(),
+                            token.getEmail()
+                        );
+
+                    } catch (Exception e) {
+
+                    }
                     chain.doFilter(request, response);
                     return;
                 }

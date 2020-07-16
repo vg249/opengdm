@@ -85,5 +85,13 @@ public class ContactDaoImpl implements ContactDao {
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
+
+    @Override
+    public Contact addContact(Contact contact) {
+        em.persist(contact);
+        em.flush();
+        em.refresh(contact);
+        return contact;
+    }
      
  }

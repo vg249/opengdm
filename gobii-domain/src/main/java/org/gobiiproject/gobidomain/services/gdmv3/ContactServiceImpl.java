@@ -34,8 +34,7 @@ public class ContactServiceImpl implements ContactService {
 
             List<Contact> contacts = contactDao.getContacts(page, pageSize, organizationId);
             contacts.forEach(contact -> {
-                ContactDTO contactDTO = new ContactDTO();
-                ModelMapper.mapEntityToDto(contact, contactDTO);
+                ContactDTO contactDTO = getContactDTO(contact);
                 contactDTOs.add(contactDTO);
             });
 
@@ -46,6 +45,33 @@ public class ContactServiceImpl implements ContactService {
             log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
+    }
+
+    @Transactional
+    @Override
+    public ContactDTO addContact(String preferredUsername, String givenName, String familyName, String email)
+            throws Exception {
+        Contact contact = contactDao.getContactByUsername(preferredUsername);
+        if (contact == null) {
+            //create a new one
+            contact = new Contact();
+            contact.setLastName(familyName);
+            contact.setFirstName(givenName);
+            contact.setEmail(email);
+            contact.setUsername(preferredUsername);
+            contact.setCode(String.format("contact_keycloak_%s", preferredUsername));
+            contact.setCreatedBy(1);
+            contact.setCreatedDate(new java.util.Date());
+            contactDao.addContact(contact);     
+        }
+
+        return getContactDTO(contact);
+    }
+
+    private ContactDTO getContactDTO(Contact contact) {
+        ContactDTO contactDTO=  new ContactDTO();
+        ModelMapper.mapEntityToDto(contact, contactDTO);
+        return contactDTO;
     }
 
 }
