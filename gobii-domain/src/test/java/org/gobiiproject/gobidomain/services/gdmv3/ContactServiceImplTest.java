@@ -67,7 +67,7 @@ public class ContactServiceImplTest {
         when(contactDao.addContact(any(Contact.class))).thenReturn(new Contact());
         ArgumentCaptor<Contact> arg = ArgumentCaptor.forClass(Contact.class);
 
-        contactServiceImpl.addContact("test", "test1", "testlastname", "test@email");
+        contactServiceImpl.addContact("test", "test1", "testlastname", "test@email", null, null);
         verify(contactDao).addContact(arg.capture());
         assertTrue( arg.getValue().getFirstName().equals("test1"));
         assertTrue( arg.getValue().getLastName().equals("testlastname"));
@@ -80,7 +80,7 @@ public class ContactServiceImplTest {
     public void testAddContactAndContactAlreadyExistsOk() throws Exception {
         Contact mockContact = new Contact();
         when(contactDao.getContactByUsername("test")).thenReturn(mockContact);
-        contactServiceImpl.addContact("test", "test1", "testlastname", "test@email");
+        contactServiceImpl.addContact("test", "test1", "testlastname", "test@email", null, null);
         verify(contactDao, times(0)).addContact(any(Contact.class));  
     }
     

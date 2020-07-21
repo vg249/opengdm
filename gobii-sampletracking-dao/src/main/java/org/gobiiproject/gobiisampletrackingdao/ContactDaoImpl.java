@@ -21,7 +21,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
+import org.gobiiproject.gobiimodel.entity.BaseEntity;
 import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
@@ -67,12 +69,7 @@ public class ContactDaoImpl implements ContactDao {
             contactRoot.fetch("organization", JoinType.LEFT);
             criteriaQuery.select(contactRoot);
             if (orgId > 0) {
-                criteriaQuery.where(
-                    criteriaBuilder.equal(
-                        contactRoot.get("organization"),
-                        orgId
-                    )
-                );
+                criteriaQuery.where(criteriaBuilder.equal(contactRoot.get("organization"), orgId));
             }
             criteriaQuery.orderBy(criteriaBuilder.asc(contactRoot.get("contactId")));
 
@@ -93,5 +90,34 @@ public class ContactDaoImpl implements ContactDao {
         em.refresh(contact);
         return contact;
     }
+
+    @Override
+    public void stampCreated(BaseEntity auditable, String userid) throws Exception {
+        Contact creator = this.getContactByUsername(userid);
+        auditable.setCreatedBy(Optional.ofNullable(creator).map(c -> c.getContactId()).orElse(null));
+        auditable.setCreatedDate(new java.util.Date());
+    }
+
+    @Override
+    public void stampModified(BaseEntity auditable, String userid) throws Exception {
+        Contact modifier = this.getContactByUsername(userid);
+        auditable.setModifiedBy(Optional.ofNullable(modifier).map(m -> m.getContactId()).orElse(null));
+        auditable.setModifiedDate(new java.util.Date());
+    }
+
+    @Override
+    public Contact addContact(String username, String lastName, String firstName, String email,
+            Organization organization, String createdBy) throws Exception {
+        Contact contact = new Contact();
+        contact.setUsername(username);
+        contact.setLastName(lastName);
+        contact.setFirstName(firstName);
+        contact.setOrganization(organization);
+        contact.setEmail(email);
+        this.stampCreated(contact, createdBy);
+        return this.addContact(contact);
+    }
+
+    
      
  }

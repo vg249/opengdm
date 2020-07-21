@@ -14,8 +14,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
-import org.gobiiproject.gobiimodel.entity.Contact;
-import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.keycloak.KeycloakPrincipal;
@@ -77,11 +75,15 @@ public class CropUserFilter extends GenericFilterBean {
                     ) {
                     //Check if the user is in the db, add if not found
                     try {
+                        String organization =   Optional.ofNullable(token.getOtherClaims().get("organization")).map(o -> o.toString()).orElse(null);
+                                            
                         contactService.addContact(
                             token.getPreferredUsername(),
                             token.getGivenName(),
                             token.getFamilyName(),
-                            token.getEmail()
+                            token.getEmail(),
+                            organization,
+                            null
                         );
 
                     } catch (Exception e) {
@@ -100,6 +102,8 @@ public class CropUserFilter extends GenericFilterBean {
         chain.doFilter(request, response);
 
     }
+
+
 
     
     

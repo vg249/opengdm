@@ -14,6 +14,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,6 +42,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
 import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.Roles;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
@@ -59,13 +61,19 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.PrepareOnlyThisForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -76,10 +84,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import lombok.extern.slf4j.Slf4j;
 
 @ActiveProfiles("projectsController-test")
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
+@PrepareForTest(CropRequestAnalyzer.class)
 @ContextConfiguration(
     classes = GOBIIControllerV3TestConfiguration.class
   //locations = { "classpath:/spring/application-config.xml" }
@@ -129,6 +140,7 @@ public class GOBIIControllerV3Test {
     public void setup() throws Exception {
         log.info("Setting up Gobii V3 Controller test");
         MockitoAnnotations.initMocks(this);
+
         this.mockMvc = MockMvcBuilders
             .standaloneSetup(gobiiControllerV3)
             .setControllerAdvice(new GlobalControllerExceptionHandler())
@@ -236,7 +248,7 @@ public class GOBIIControllerV3Test {
     @Test
     public void testCreateSimple() throws Exception {
         ProjectDTO mockRequest = new ProjectDTO();
-        mockRequest.setPiContactId(1); //need to mock contact here
+        mockRequest.setPiContactId("1"); //need to mock contact here
         mockRequest.setProjectName("Test project");
         mockRequest.setProjectDescription("Test description");
         //this test does not include properties
@@ -271,7 +283,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testCreateWithProperties() throws Exception {
-        String requestJson = "{\"piContactId\" : 4,\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+        String requestJson = "{\"piContactId\" : \"4\",\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
             "\"properties\" : [ {\"propertyId\" : 4,  \"propertyValue\" : \"test-value\"} ]}";
 
         ProjectDTO mockGobiiProject = new ProjectDTO();
@@ -493,17 +505,27 @@ public class GOBIIControllerV3Test {
     @Test
     public void testGetContacts() throws Exception {
         assert contactService != null;
+        PowerMockito.mockStatic(CropRequestAnalyzer.class);
+        
+        //CropRequestAnalyzer.getGobiiCropType();
+
+        when(CropRequestAnalyzer.getGobiiCropType()).thenReturn("dev");
+
         List<ContactDTO> mockList = new ArrayList<ContactDTO>();
         ContactDTO mockItem = new ContactDTO();
-        mockItem.setPiContactId(111);
+        mockItem.setPiContactId("111");
         mockItem.setPiContactFirstName("test");
         mockList.add(mockItem);
         PagedResult<ContactDTO> mockPayload = new PagedResult<>();
         mockPayload.setResult(mockList);
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
+
+        //use the spy
+        //doReturn("dev").when(gobiiControllerV3).getCropType();
+        
         when(
-            contactService.getContacts(0, 1000, null)
+            contactService.getUsers("dev", Roles.PI, 0, 1000)
         ).thenReturn(
             mockPayload
         );
@@ -521,7 +543,7 @@ public class GOBIIControllerV3Test {
         .andExpect(jsonPath("$.result.data[0].piContactId").value(mockItem.getPiContactId()))
         .andExpect(jsonPath("$.result.data[0].piContactFirstName").value(mockItem.getPiContactFirstName()))
         ;
-        verify(contactService, times(1)).getContacts(0, 1000, null);
+        verify(contactService, times(1)).getUsers("dev",Roles.PI, 0, 1000 );
     }
 
     @Test

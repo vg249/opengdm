@@ -30,7 +30,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // TODO Auto-generated method stub
-        System.out.println("Adding interceptor");
         WebMvcConfigurer.super.addInterceptors(registry);
         registry.addInterceptor(cropAuthInterceptor());
     }

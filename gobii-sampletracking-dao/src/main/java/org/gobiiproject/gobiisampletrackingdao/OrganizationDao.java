@@ -15,5 +15,7 @@ public interface OrganizationDao {
 	public Organization updateOrganization(Organization organization) throws Exception;
 
 	public void deleteOrganization(Organization organization) throws Exception;
+
+	public Organization getOrganizationByName(String name);
     
 }

@@ -56,8 +56,8 @@ public class ContactDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityColumn(columnName = "lastname")
-    public void setLastName(String projectName) {
-        this.lastName = projectName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @GobiiEntityParam(paramName = "firstName")

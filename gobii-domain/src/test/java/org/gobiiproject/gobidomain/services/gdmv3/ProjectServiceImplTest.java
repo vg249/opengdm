@@ -9,6 +9,8 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +26,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityExcept
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -31,6 +34,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,10 +61,18 @@ public class ProjectServiceImplTest {
     private ContactDao contactDao;
 
     @Mock
+    private OrganizationDao organizationDao;
+
+    @Mock
     private PropertiesService propertiesService;
+
+    @Mock
+    private KeycloakService keycloakService;
 
     @InjectMocks
     private ProjectServiceImpl v3ProjectServiceImpl;
+
+    
 
     @Before
     public void init() {
@@ -109,7 +121,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId(111);
+        request.setPiContactId("111");
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO nullValued = new CvPropertyDTO();
@@ -127,10 +139,51 @@ public class ProjectServiceImplTest {
 
         when(cvDao.getNewStatus()).thenReturn(mockNewStat);
 
-        Contact mockCreator = new Contact();
-        mockCreator.setContactId(123);
+        doNothing().when(contactDao).stampCreated(any(Project.class), eq("test-user"));
 
-        when(contactDao.getContactByUsername("test-user")).thenReturn(mockCreator);
+        ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
+
+        v3ProjectServiceImpl.createProject(request, "test-user");
+        verify(projectDao).createProject(arg.capture());
+
+        assertTrue(arg.getValue().getProperties().size() == 0);
+        assertTrue(arg.getValue().getProjectName().equals(projectName));
+    }
+
+
+    @Test
+    public void testCreateWithNullPropertiesKeycloakUser() throws Exception {
+        // Setup test GobiiProject
+        ProjectDTO request = new ProjectDTO();
+        String projectName = RandomStringUtils.random(10);
+        request.setProjectName(projectName);
+        request.setProjectDescription(RandomStringUtils.random(20));
+        request.setPiContactId("some-id-not-a-number");
+
+        List<CvPropertyDTO> props = new ArrayList<>();
+        CvPropertyDTO nullValued = new CvPropertyDTO();
+        nullValued.setPropertyId(10);
+        nullValued.setPropertyValue(null);
+        props.add(nullValued);
+        request.setProperties(props);
+
+        ContactDTO mockKeycloakUser = new ContactDTO();
+        mockKeycloakUser.setPiContactFirstName("test");
+        mockKeycloakUser.setPiContactLastName("test");
+        mockKeycloakUser.setOrganizationName("test-org");
+        mockKeycloakUser.setUsername("test-username");
+        when(keycloakService.getUser("some-id-not-a-number")).thenReturn(mockKeycloakUser);
+
+        when(contactDao.getContactByUsername("test-username")).thenReturn(null);
+
+        when(organizationDao.getOrganizationByName("test-org")).thenReturn(null);
+        
+
+        Cv mockNewStat = new Cv();
+
+        when(cvDao.getNewStatus()).thenReturn(mockNewStat);
+
+        doNothing().when(contactDao).stampCreated(any(Project.class), eq("test-user"));
 
         ArgumentCaptor<Project> arg = ArgumentCaptor.forClass(Project.class);
 
@@ -148,7 +201,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId(111);
+        request.setPiContactId("111");
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO valued = new CvPropertyDTO();
@@ -166,10 +219,8 @@ public class ProjectServiceImplTest {
 
         when(cvDao.getNewStatus()).thenReturn(mockNewStat);
 
-        Contact mockCreator = new Contact();
-        mockCreator.setContactId(123);
+        doNothing().when(contactDao).stampCreated(any(Project.class), eq("test-user"));
 
-        when(contactDao.getContactByUsername("test-user")).thenReturn(mockCreator);
         when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
                 .thenReturn(new ArrayList<Cv>()); // this is just to avoid errors since we are only interested in the
                                                   // createProject args
@@ -190,7 +241,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId(111);
+        request.setPiContactId("111");
 
         v3ProjectServiceImpl.createProject(request, "test-user");
     }
@@ -218,7 +269,7 @@ public class ProjectServiceImplTest {
         mockModifiedStatus.setTerm("modified");
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId(222);
+        request.setPiContactId("222");
         request.setProjectName("new-project-name");
         request.setProjectDescription("new-project-description");
 
@@ -346,7 +397,7 @@ public class ProjectServiceImplTest {
         mockModifiedStatus.setTerm("modified");
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId(333);
+        request.setPiContactId("333");
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
         when(contactDao.getContact(333)).thenReturn(mockContact);
@@ -378,7 +429,7 @@ public class ProjectServiceImplTest {
         mockProject.setContact(mockContact);
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId(555);
+        request.setPiContactId("555");
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
         when(contactDao.getContact(555)).thenReturn(null);

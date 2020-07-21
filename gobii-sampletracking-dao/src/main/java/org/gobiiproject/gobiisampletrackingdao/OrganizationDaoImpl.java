@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -20,14 +21,14 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
     @PersistenceContext
     EntityManager em;
-    
+
     @Override
     public List<Organization> getOrganizations(Integer offset, Integer pageSize) throws Exception {
         List<Organization> orgList = null;
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Organization> criteriaQuery = criteriaBuilder.createQuery(Organization.class);
-            
+
             Root<Organization> organizationRoot = criteriaQuery.from(Organization.class);
             criteriaQuery.select(organizationRoot);
             criteriaQuery.orderBy(criteriaBuilder.asc(organizationRoot.get("organizationId")));
@@ -67,14 +68,35 @@ public class OrganizationDaoImpl implements OrganizationDao {
             em.remove(organization);
             em.flush();
         } catch (javax.persistence.PersistenceException pe) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
-                "Associated resources found. Cannot complete the action unless they are deleted.");
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.FOREIGN_KEY_VIOLATION,
+                    "Associated resources found. Cannot complete the action unless they are deleted.");
         } catch (Exception e) {
             throw e;
         }
 
     }
+
+    @Override
+    public Organization getOrganizationByName(String name) {
+        try {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Organization> criteriaQuery = criteriaBuilder.createQuery(Organization.class);
+
+            Root<Organization> organizationRoot = criteriaQuery.from(Organization.class);
+            criteriaQuery.select(organizationRoot);
+            criteriaQuery.where(
+                    criteriaBuilder.equal(criteriaBuilder.upper(organizationRoot.get("name")), name.toUpperCase()));
+            criteriaQuery.orderBy(criteriaBuilder.asc(organizationRoot.get("organizationId")));
+
+            Organization organization = em.createQuery(criteriaQuery).getSingleResult();
+            return organization;
+        } catch (Exception e) {
+            log.error("Error getting org: %s", e.getMessage());
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+    }
+
+    
     
 }

@@ -35,6 +35,7 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayl
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.Roles;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
@@ -56,6 +57,7 @@ import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.gobiiproject.gobiiweb.security.CropAuth;
@@ -305,11 +307,13 @@ public class GOBIIControllerV3  {
         @RequestParam(required=false) Integer organizationId
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
-        PagedResult<ContactDTO> pagedResult = contactService.getContacts(
-            Math.max(0, page),
-            pageSizeToUse,
-            organizationId
-        );
+        // PagedResult<ContactDTO> pagedResult = contactService.getContacts(
+        //     Math.max(0, page),
+        //     pageSizeToUse,
+        //     organizationId
+        // );
+        String cropType = this.getCropType();
+        PagedResult<ContactDTO> pagedResult = contactService.getUsers(cropType, Roles.PI, page, pageSizeToUse);
         BrApiMasterListPayload<ContactDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
@@ -1283,6 +1287,11 @@ public class GOBIIControllerV3  {
     private Integer getPageSize(Integer pageSize) {
         if (pageSize == null || pageSize <= 0) return 1000;
         return pageSize;
+    }
+
+    //This needs to be public
+    public String getCropType() throws Exception {
+        return CropRequestAnalyzer.getGobiiCropType();
     }
 
     private void checkBindingErrors(BindingResult bindingResult) throws Exception {
