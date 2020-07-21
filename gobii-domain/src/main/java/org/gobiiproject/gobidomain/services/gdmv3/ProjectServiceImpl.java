@@ -111,9 +111,6 @@ public class ProjectServiceImpl implements ProjectService {
         java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(nullFiltered);
         project.setProperties(props);
         // audit items
-        // Contact creator = contactDao.getContactByUsername(createdBy);
-        // project.setCreatedBy(Optional.ofNullable(creator).map(v->v.getContactId()).orElse(null));
-        // project.setCreatedDate(new java.util.Date());
         contactDao.stampCreated(project, createdBy);
         projectDao.createProject(project);
 
@@ -152,11 +149,6 @@ public class ProjectServiceImpl implements ProjectService {
             this.updateProjectDescription(project, request.getProjectDescription());
         }
        
-        
-        //audit items first
-        // Contact editor = contactDao.getContactByUsername(editedBy);
-        // project.setModifiedBy(Optional.ofNullable(editor).map(v->v.getContactId()).orElse(null));
-        // project.setModifiedDate(new java.util.Date());
         contactDao.stampModified(project, editedBy);
         
         List<CvPropertyDTO> propList = request.getProperties();
