@@ -8,7 +8,6 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.BaseEntity;
 
 public interface ContactService {
 

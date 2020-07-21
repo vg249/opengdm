@@ -69,6 +69,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Override
 	public DatasetDTO createDataset(DatasetRequestDTO request, String user) throws Exception {
 		//check if the experiment exists
+		log.debug("Creating new dataset");
 		Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
 		if (
 			experiment == null
