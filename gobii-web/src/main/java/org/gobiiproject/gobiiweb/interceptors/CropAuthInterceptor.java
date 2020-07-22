@@ -38,18 +38,12 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
     @SuppressWarnings("all")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        //limit the requests to V3?
-        if (!Optional.ofNullable(request.getPathInfo())
-                     .orElse("")
-                     .contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) {
-            return super.preHandle(request, response, handler);
-            
-        }
         
         if (handler instanceof HandlerMethod) {
             String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             if (handlerMethod.hasMethodAnnotation(CropAuth.class)) {
+                log.debug("Handler has CropAuth annotation");
                 CropAuth annotation = handlerMethod.getMethodAnnotation(CropAuth.class);
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -64,6 +58,7 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
                     //bypass if admin
                     List<String> roles = (List<String>) Optional.ofNullable(otherClaims.get("roles")).orElse(new ArrayList<>());
                     if (roles.contains("ADMIN"))  {
+                        log.debug("User is ADMIN");
                         return true;
                     }
 

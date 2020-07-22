@@ -112,7 +112,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         contactDTO.setPiContactId(user.getId());
         contactDTO.setUsername(user.getUsername());
         contactDTO.setCreatedDate(new java.util.Date(user.getCreatedTimestamp()));
-
+        contactDTO.setEmail(user.getEmail());
         //check for organization
         Map<String, List<String>> attributes = user.getAttributes();
         String organization = 

@@ -236,38 +236,51 @@ public class ProjectServiceImpl implements ProjectService {
 
         //else this should be a uuid so load or create/return
         ContactDTO keycloakUser = keycloakService.getUser(contactId);
+        log.debug("Getting local user record for username: " + keycloakUser.getUsername());
         Contact contact = contactDao.getContactByUsername(keycloakUser.getUsername());
+        log.debug("Contact: " + contact);
+
         
 
         return Optional
                 .ofNullable(contact)
-                .orElse(
-                    this.createNewContact(keycloakUser)
+                .orElseGet(
+                    () -> this.createNewContact(keycloakUser)
                 );
         
     }
 
-    private Contact createNewContact(ContactDTO user) throws Exception {
+    private Contact createNewContact(ContactDTO user) {
         Organization organization = Optional.ofNullable(organizationDao.getOrganizationByName(user.getOrganizationName()))
-                                    .orElse(this.createOrganization(user.getOrganizationName()));
-
-        Contact contact = new Contact();
-        contact.setUsername(user.getUsername());
-        contact.setEmail(user.getEmail());
-        contact.setFirstName(user.getPiContactFirstName());
-        contact.setLastName(user.getPiContactLastName());
-        contact.setOrganization(organization);
-        contactDao.stampCreated(contact, null);
-        contactDao.addContact(contact);
-        return contact;
+                                    .orElseGet(() -> this.createOrganization(user.getOrganizationName()));
+        try {
+            Contact contact = new Contact();
+            contact.setUsername(user.getUsername());
+            contact.setEmail(user.getEmail());
+            contact.setFirstName(user.getPiContactFirstName());
+            contact.setLastName(user.getPiContactLastName());
+            contact.setCode(String.format("keycloak_user_%s", user.getUsername()));
+            contact.setOrganization(organization);
+            contactDao.stampCreated(contact, null);
+            contactDao.addContact(contact);
+            return contact;
+        } catch (Exception e) {
+            log.error("Error creating new Contact", e);
+            return null;
+        }
         
     }
 
-    private Organization createOrganization(String name) throws Exception {
-        Organization organization = new Organization();
-        organization.setName(name);
-        contactDao.stampCreated(organization, null);
-        return organization;
+    private Organization createOrganization(String name)  {
+        try {
+            Organization organization = new Organization();
+            organization.setName(name);
+            contactDao.stampCreated(organization, null);
+            return organization;
+        } catch (Exception e) {
+            log.error("Error creating new organization", e);
+            return null;
+        }
     }
 
     

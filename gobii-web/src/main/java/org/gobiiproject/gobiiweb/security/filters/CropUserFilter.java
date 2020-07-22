@@ -66,6 +66,7 @@ public class CropUserFilter extends GenericFilterBean {
                 try {
                     this.addToContacts(token);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     log.error("Could not add admin info to contacts table");
                 }
                 chain.doFilter(request, response); //continue on

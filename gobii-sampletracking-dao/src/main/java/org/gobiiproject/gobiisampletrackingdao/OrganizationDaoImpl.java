@@ -3,6 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -78,6 +79,8 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
     @Override
     public Organization getOrganizationByName(String name) {
+        log.debug("Looking up org: " + name);
+        if (name == null) return null;
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Organization> criteriaQuery = criteriaBuilder.createQuery(Organization.class);
@@ -90,7 +93,11 @@ public class OrganizationDaoImpl implements OrganizationDao {
 
             Organization organization = em.createQuery(criteriaQuery).getSingleResult();
             return organization;
+        } catch (NoResultException nre) {
+            return null;
+    
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Error getting org: %s", e.getMessage());
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());

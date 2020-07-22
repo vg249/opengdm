@@ -137,7 +137,7 @@ public class KeycloakConfig {
     @Element(required = false)
     private boolean verifyTokenAudience = false;
 
-    //admin username & password 
+    //admin username & password
     @Element(required = true)
     private String adminUsername;
 

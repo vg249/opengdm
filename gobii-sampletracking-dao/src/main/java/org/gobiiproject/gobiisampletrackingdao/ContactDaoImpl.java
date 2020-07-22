@@ -45,10 +45,17 @@ public class ContactDaoImpl implements ContactDao {
     @Override
     public Contact getContactByUsername(String username) throws Exception {
         try {
-            TypedQuery<Contact> tq = em.createQuery("FROM Contact WHERE username=?1", Contact.class);
-            Contact result = tq.setParameter(1, username).getSingleResult();
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Contact> criteriaQuery = criteriaBuilder.createQuery(Contact.class);
+
+            Root<Contact> contactRoot = criteriaQuery.from(Contact.class);
+            contactRoot.fetch("organization", JoinType.LEFT);
+            criteriaQuery.select(contactRoot);
+            criteriaQuery.where(criteriaBuilder.equal(contactRoot.get("username"), username));
+            Contact result = em.createQuery(criteriaQuery).getSingleResult();
             return result;
         } catch (NoResultException nre) {
+            log.debug("No contact by username " + username);
             return null;
         } catch (Exception e) {
             throw e;
