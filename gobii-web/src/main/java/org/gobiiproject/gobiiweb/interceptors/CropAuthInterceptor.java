@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import lombokß.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
