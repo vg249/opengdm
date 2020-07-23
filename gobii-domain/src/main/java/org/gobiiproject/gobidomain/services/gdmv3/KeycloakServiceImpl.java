@@ -44,7 +44,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
         String rolePath = Optional.ofNullable(role)
                                    .map(r -> String.format("/%s/%s", cropType, role.toLowerCase()))
-                                   .orElse( String.format("/%s", cropType));
+                                   .orElseGet( () -> String.format("/%s", cropType));
         
         if (rolePath.equals(String.format("/%s/user", cropType))) rolePath = String.format("/%s", cropType);
 
@@ -89,7 +89,8 @@ public class KeycloakServiceImpl implements KeycloakService {
         return contactDTOs;       
     }
 
-    private Keycloak getKeycloakAdminClient() {
+    @lombok.Generated //exclude from code coverage 
+    public Keycloak getKeycloakAdminClient() {
         log.debug("KC Admin-CLI Username: " +  keycloakConfig.getAdminUsername() );
         Keycloak keycloak = KeycloakBuilder.builder()
                             .serverUrl(keycloakConfig.getAuthServerUrl())

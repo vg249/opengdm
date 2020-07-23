@@ -75,7 +75,7 @@ public class ContactServiceImpl implements ContactService {
             // organization
             if (orgName != null) {
                 Organization organization = Optional.ofNullable(organizationDao.getOrganizationByName(orgName))
-                        .orElse(this.createOrganization(orgName));
+                        .orElseGet(() -> this.createOrganization(orgName));
                 contact.setOrganization(organization);
             }
 
@@ -85,11 +85,16 @@ public class ContactServiceImpl implements ContactService {
         return getContactDTO(contact);
     }
 
-    private Organization createOrganization(String orgName) throws Exception {
-        Organization org = new Organization();
-        org.setName(orgName);
-        organizationDao.createOrganization(org);
-        return org;
+    private Organization createOrganization(String orgName)  {
+        try {
+            Organization org = new Organization();
+            org.setName(orgName);
+            organizationDao.createOrganization(org);
+            return org;
+        } catch (Exception e) {
+            log.error("Cannot create organization", e);
+            return null;
+        }
 
     }
 
@@ -106,8 +111,6 @@ public class ContactServiceImpl implements ContactService {
             List<ContactDTO> contactDTOs = keycloakService.getKeycloakUsers(cropType, role, page, pageSize);
 
             return PagedResult.createFrom(page, contactDTOs);
-        } catch (GobiiException gE) {
-            throw gE;
         } catch (Exception e) {
             log.error("Gobii service error", e);
             throw new GobiiDomainException(e);

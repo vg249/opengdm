@@ -94,9 +94,7 @@ public class OrganizationDaoImpl implements OrganizationDao {
             return organization;
         } catch (NoResultException nre) {
             return null;
-    
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("Error getting org: %s", e.getMessage());
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());

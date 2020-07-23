@@ -12,6 +12,9 @@
     <groupId>org.gobiiproject</groupId>
     <artifactId>gobii-domain</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <powermock.version>2.0.2</powermock.version>
+    </properties>
 
     <dependencies>
         <!-- gobii dependencies -->
@@ -95,6 +98,18 @@
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency> -->
+         <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
