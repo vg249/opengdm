@@ -250,6 +250,7 @@ public class ProjectServiceImpl implements ProjectService {
         
     }
 
+    @lombok.Generated //ignore catch coverage
     private Contact createNewContact(ContactDTO user) {
         Organization organization = Optional.ofNullable(organizationDao.getOrganizationByName(user.getOrganizationName()))
                                     .orElseGet(() -> this.createOrganization(user.getOrganizationName()));
@@ -271,6 +272,7 @@ public class ProjectServiceImpl implements ProjectService {
         
     }
 
+    @lombok.Generated //ignore catch coverage
     private Organization createOrganization(String name)  {
         try {
             Organization organization = new Organization();

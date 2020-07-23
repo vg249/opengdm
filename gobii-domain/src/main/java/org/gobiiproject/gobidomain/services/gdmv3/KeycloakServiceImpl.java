@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiimodel.config.KeycloakConfig;
+import org.gobiiproject.gobiimodel.config.Roles;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.admin.client.Keycloak;
@@ -43,36 +44,20 @@ public class KeycloakServiceImpl implements KeycloakService {
         Keycloak keycloak = this.getKeycloakAdminClient();
 
         String rolePath = Optional.ofNullable(role)
-                                   .map(r -> String.format("/%s/%s", cropType, role.toLowerCase()))
+                                   .map(r -> (!role.equals(Roles.USER)) ?  String.format("/%s/%s", cropType, role) 
+                                                                        : String.format("/%s", cropType)
+                                    )
                                    .orElseGet( () -> String.format("/%s", cropType));
         
-        if (rolePath.equals(String.format("/%s/user", cropType))) rolePath = String.format("/%s", cropType);
-
         List<GroupRepresentation> groups =
             keycloak.realm(keycloakConfig.getRealm())
                     .groups()
                     .groups(cropType, 0, 1);
 
-        if (groups.size() == 0 ) return new ArrayList<ContactDTO>();
 
-        GroupRepresentation group = groups.get(0);
-        String groupId = null;
-
-        if (group.getPath().equals(rolePath)) {
-            groupId = group.getId();
-        } else {
-            //get subgroups
-            List<GroupRepresentation> subgroup = group.getSubGroups();
-            for (int i = 0; i< subgroup.size(); i++) {
-                if (subgroup.get(i).getPath().equals(rolePath)) {
-                    groupId = subgroup.get(i).getId();
-                }
-            }
-        }
-
+        String groupId = digList(groups, rolePath);
         if (groupId == null) return new ArrayList<ContactDTO>();
-
-
+        
         //get the members
         List<UserRepresentation> usersInRole = 
             keycloak.realm(keycloakConfig.getRealm()).groups().group(groupId).members(page, pageSize);
@@ -82,7 +67,6 @@ public class KeycloakServiceImpl implements KeycloakService {
         usersInRole.forEach(member -> {
             ContactDTO contactDTO = this.getContactDTO(member);
             contactDTOs.add(contactDTO);
-    
         });
         keycloak.close();
 
@@ -105,6 +89,22 @@ public class KeycloakServiceImpl implements KeycloakService {
         return keycloak;
     }
 
+    
+    private String digList(List<GroupRepresentation> groups, String path) {
+        if (groups == null || groups.size() == 0 ) return null;
+        String groupId = null;
+        String pathL = path.toLowerCase();
+        for (int i = 0; i < groups.size(); i++) {
+            GroupRepresentation current = groups.get(i);
+            //found
+            if (current.getPath().toLowerCase().equals(pathL)) return current.getId();
+
+            //check subgroups
+            groupId = digList(current.getSubGroups(), path);
+            if (groupId != null) return groupId;
+        }
+        return groupId;
+    }
     
     private ContactDTO getContactDTO(UserRepresentation user) {
         ContactDTO contactDTO =  new ContactDTO();
