@@ -33,8 +33,9 @@ public class Germplasm extends BaseEntity {
     @Column(name="species_id")
     private Integer germplasmSpecies;
 
-    @Column(name="type_id")
-    private Integer germplasmTypeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id", referencedColumnName = "cv_id")
+    private Cv germplasmType;
 
     @Column(name="code")
     private String code;
@@ -75,12 +76,12 @@ public class Germplasm extends BaseEntity {
         this.germplasmSpecies = germplasmSpecies;
     }
 
-    public Integer getGermplasmTypeId() {
-        return germplasmTypeId;
+    public Cv getGermplasmType() {
+        return germplasmType;
     }
 
-    public void setGermplasmTypeId(Integer germplasmTypeId) {
-        this.germplasmTypeId = germplasmTypeId;
+    public void setGermplasmType(Cv germplasmType) {
+        this.germplasmType = germplasmType;
     }
 
     public String getCode() {
