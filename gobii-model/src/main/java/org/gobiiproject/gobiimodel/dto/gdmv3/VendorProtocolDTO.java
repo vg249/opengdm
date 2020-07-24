@@ -36,6 +36,10 @@ public class VendorProtocolDTO {
     @GobiiEntityMap(paramName = "name", entity = VendorProtocol.class)
     private String vendorProtocolName;
 
+    @GobiiEntityMap(paramName = "vendor.organizationId", entity = VendorProtocol.class, deep = true)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer vendorId;
+
     @GobiiEntityMap(paramName = "vendor.name", entity = VendorProtocol.class, deep = true)
     private String vendorName;
 
