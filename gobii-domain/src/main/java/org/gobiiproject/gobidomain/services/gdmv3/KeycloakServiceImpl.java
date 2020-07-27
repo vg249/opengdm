@@ -42,7 +42,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     public List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception {
         Keycloak keycloak = this.getKeycloakAdminClient();
-
+        
         String rolePath = Optional.ofNullable(role)
                                    .map(r -> (!role.equals(Roles.USER)) ?  String.format("/%s/%s", cropType, role) 
                                                                         : String.format("/%s", cropType)

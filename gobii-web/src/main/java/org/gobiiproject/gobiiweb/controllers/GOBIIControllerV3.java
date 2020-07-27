@@ -304,7 +304,8 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getContacts(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-        @RequestParam(required=false) Integer organizationId
+        //@RequestParam(required=false) Integer organizationId
+        @RequestParam(required=false, defaultValue = "pi") String role
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
         // PagedResult<ContactDTO> pagedResult = contactService.getContacts(
@@ -313,7 +314,7 @@ public class GOBIIControllerV3  {
         //     organizationId
         // );
         String cropType = this.getCropType();
-        PagedResult<ContactDTO> pagedResult = contactService.getUsers(cropType, Roles.PI, page, pageSizeToUse);
+        PagedResult<ContactDTO> pagedResult = contactService.getUsers(cropType, role.toLowerCase(), page, pageSizeToUse);
         BrApiMasterListPayload<ContactDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
