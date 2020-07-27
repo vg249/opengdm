@@ -106,7 +106,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             int datasetIdCursorStart = 0;
 
-            if(cursors.startDatasetId != null) {
+            if(cursors.startDatasetId != null && cursors.startDatasetId > 0) {
                 datasetIdCursorStart = dnaRunDatasetIds.indexOf(cursors.startDatasetId.toString());
             }
 
@@ -134,6 +134,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 GenotypeCallsDTO genotypeCall;
 
+                int indexOffset = genotypeCalls.size();
+
                 // Add Marker and DnaRun Metadata associated with genotype calls.
                 // Extract HdF5 index for each marker and map it by dataset id.
                 for(Marker marker : markers) {
@@ -158,11 +160,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 }
 
-
                 Hdf5InterfaceResultDTO extractResult =
                     extractGenotypes(cursors.markerHdf5IndexMap, cursors.dnarunHdf5IndexMap);
 
-                readGenotypesFromFile(genotypeCalls, extractResult.getGenotypeFile());
+                readGenotypesFromFile(genotypeCalls, extractResult.getGenotypeFile(), indexOffset);
 
                 FileUtils.deleteDirectory(new File(extractResult.getOutputFolder()));
 
@@ -283,6 +284,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     dnaRunDao.getDnaRunsByDnaRunIdCursor(genotypesToBeRead, cursors.dnaRunIdCursor,
                         Integer.parseInt(datasetId));
 
+                int indexOffset = genotypeCalls.size();
+
                 // Add Marker and DnaRun Metadata associated with genotype calls.
                 // Extract HdF5 index for each marker and map it by dataset id.
                 for(DnaRun dnaRun : dnaRuns) {
@@ -310,7 +313,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 if(dnaRuns.size() > 0) {
                     Hdf5InterfaceResultDTO extractResult = extractGenotypes(
                         cursors.markerHdf5IndexMap, cursors.dnarunHdf5IndexMap);
-                    readGenotypesFromFile(genotypeCalls, extractResult.getGenotypeFile());
+                    readGenotypesFromFile(genotypeCalls, extractResult.getGenotypeFile(),
+                        indexOffset);
                     FileUtils.deleteDirectory(new File(extractResult.getOutputFolder()));
                 }
                 else {
@@ -1162,7 +1166,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
 
-    private void readGenotypesFromFile (List<GenotypeCallsDTO> returnVal, String extractListPath) {
+    private void readGenotypesFromFile (List<GenotypeCallsDTO> returnVal, String extractListPath,
+                                        int indexOffset) {
 
         try {
 
@@ -1170,7 +1175,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             FileInputStream fstream = new FileInputStream(genotypCallsFile);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-            int i = 0;
+            int i = indexOffset;
 
             int chrEach;
 
