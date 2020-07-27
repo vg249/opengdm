@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiweb.interceptors;
+package org.gobiiproject.gobiiweb.security.interceptors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +29,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 
+/** This interceptor checks if the user has the correct auth group to access API endpoint
+ *  marked with the @CropAuth annotation
+ */
 @Slf4j
 @Component
 public class CropAuthInterceptor extends HandlerInterceptorAdapter {

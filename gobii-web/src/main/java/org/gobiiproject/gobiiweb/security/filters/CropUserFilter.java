@@ -27,8 +27,10 @@ import org.springframework.web.filter.GenericFilterBean;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This interceptor determines if the user is an ADMIN OR has general permission to access the crop app
- * The user must have /{cropType} group at least.
+ * This filter determines if the user is an ADMIN OR has permission to access the crop endpoint
+ * The user must have /{cropType} group at least OR has and ADMIN role. If the user is permitted 
+ * to access the endpoint, the user will be added to the Contacts table if the user record does not
+ * yet exist in the GDM database.
  */
 @Slf4j
 public class CropUserFilter extends GenericFilterBean {
