@@ -86,7 +86,7 @@ public class CropUserFilter extends GenericFilterBean {
                     try {
                         this.addToContacts(token);
                     } catch (Exception e) {
-
+                        log.error("Could not add user info to contacts table");
                     }
                     chain.doFilter(request, response);
                     return;
