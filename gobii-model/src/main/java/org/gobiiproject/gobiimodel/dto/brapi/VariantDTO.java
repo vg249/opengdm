@@ -29,7 +29,7 @@ public class VariantDTO extends DTOBaseAuditable {
 
     private List<String> variantNames = new ArrayList<>();
 
-    private List<String> variantSetDbId = new ArrayList<>();
+    private List<String> variantSetDbIds = new ArrayList<>();
 
     private String variantType = BrapiVariantTypes.MARKER.toString();
 
@@ -150,12 +150,12 @@ public class VariantDTO extends DTOBaseAuditable {
         this.variantDbId = variantDbId;
     }
 
-    public List<String> getVariantSetDbId() {
-        return variantSetDbId;
+    public List<String> getVariantSetDbIds() {
+        return variantSetDbIds;
     }
 
-    public void setVariantSetDbId(List<String> variantSetDbId) {
-        this.variantSetDbId = variantSetDbId;
+    public void setVariantSetDbIds(List<String> variantSetDbIds) {
+        this.variantSetDbIds = variantSetDbIds;
     }
 
     public String[] getAlternateBases() {

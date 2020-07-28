@@ -58,7 +58,7 @@ public class VariantServiceImpl implements VariantService {
                     pageSize, markerIdCursor,
                     variantDbId, variantSetDbId);
 
-            variants = mapMarkersToVariant(markers);
+            variants = mapMarkersToVariants(markers);
 
             returnVal.setResult(variants);
 
@@ -91,59 +91,51 @@ public class VariantServiceImpl implements VariantService {
         }
     }
 
-    private List<VariantDTO> mapMarkersToVariant(List<Marker> markers) {
+    private List<VariantDTO> mapMarkersToVariants(List<Marker> markers) {
 
         List<VariantDTO> variants = new ArrayList<>();
 
         for(Marker marker : markers) {
 
-            VariantDTO variantDTO = new VariantDTO();
-
-            ModelMapper.mapEntityToDto(marker, variantDTO);
-
-            if(marker.getDatasetMarkerIdx() != null) {
-
-                List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
-                    marker.getDatasetMarkerIdx().fieldNames());
-
-                variantDTO.setVariantSetDbId(variantSetDbIds);
-
-            }
-
-            if(marker.getMarkerName() != null) {
-                variantDTO.setVariantNames(new ArrayList<>());
-                variantDTO.getVariantNames().add(marker.getMarkerName());
-            }
-
-            variants.add(variantDTO);
+            variants.add(mapMakrerToVariant(marker));
         }
 
         return variants;
     }
 
+    private VariantDTO mapMakrerToVariant(Marker marker) {
+
+        VariantDTO variantDTO = new VariantDTO();
+
+        ModelMapper.mapEntityToDto(marker, variantDTO);
+
+        if(marker.getDatasetMarkerIdx() != null) {
+
+            List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
+                marker.getDatasetMarkerIdx().fieldNames());
+
+            variantDTO.setVariantSetDbIds(variantSetDbIds);
+
+        }
+
+        if(marker.getMarkerName() != null) {
+            variantDTO.setVariantNames(new ArrayList<>());
+            variantDTO.getVariantNames().add(marker.getMarkerName());
+        }
+
+        return variantDTO;
+
+    }
+
     @Override
     public VariantDTO getVariantByVariantDbId(Integer variantDbId) {
-
-        VariantDTO returnVal = new VariantDTO();
 
         try {
 
             Objects.requireNonNull(variantDbId, "variantDbId : Required non null");
 
             Marker marker = markerDao.getMarkerById(variantDbId);
-
-            ModelMapper.mapEntityToDto(marker, returnVal);
-
-            if(marker.getDatasetMarkerIdx() != null) {
-
-                List<String> variantSetDbIds = JsonNodeUtils.getListFromIterator(
-                        marker.getDatasetMarkerIdx().fieldNames());
-
-                returnVal.setVariantSetDbId(variantSetDbIds);
-
-            }
-
-            return returnVal;
+            return mapMakrerToVariant(marker);
 
         }
         catch (GobiiException gE) {
@@ -180,7 +172,7 @@ public class VariantServiceImpl implements VariantService {
                 variantsSearchQuery.getVariantDbIds(), variantsSearchQuery.getVariantNames(),
                 variantsSearchQuery.getVariantSetDbIds(), pageSize, markerIdCursor);
 
-            variants.addAll(mapMarkersToVariant(markers));
+            variants.addAll(mapMarkersToVariants(markers));
 
             if(variants.size() == pageSize) {
                 nextPageCursorMap = new HashMap<>();
@@ -285,7 +277,7 @@ public class VariantServiceImpl implements VariantService {
                     cursors.markerIdCursor = markers.get(markers.size() - 1).getMarkerId();
                 }
 
-                variants.addAll(mapMarkersToVariant(markers));
+                variants.addAll(mapMarkersToVariants(markers));
 
                 if(variants.size() < pageSize && dnaRuns.size() > 0) {
                     cursors.dnaRunBinCursor = dnaRuns.get(dnaRuns.size() - 1).getDnaRunId();

@@ -349,18 +349,13 @@ public class BrapiV2Controller {
         try {
 
 
-            PagedResult<GenotypeCallsDTO> genotypeCallsList =
+            PagedResult<GenotypeCallsDTO> pagedResult =
                 genotypeCallsService.getGenotypeCallsByCallSetId(callSetDbId, pageSize, pageToken);
 
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
-                new BrApiMasterPayload<>(genotypeCallsList.getResult());
-
-            if(genotypeCallsList.getNextPageToken() != null) {
-                payload
-                    .getMetadata()
-                    .getPagination()
-                    .setNextPageToken(genotypeCallsList.getNextPageToken());
-            }
+            BrApiMasterListPayload<GenotypeCallsDTO> payload =
+                new BrApiMasterListPayload<>(
+                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
 
             return ResponseEntity.ok(payload);
         }
@@ -546,19 +541,15 @@ public class BrapiV2Controller {
 
         try {
 
-            PagedResult<GenotypeCallsDTO> genotypeCallsList =
+            PagedResult<GenotypeCallsDTO> pagedResult =
                     genotypeCallsService.getGenotypeCallsByVariantDbId(
                             variantDbId, pageSize, pageToken);
 
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
-                    new BrApiMasterPayload<>(genotypeCallsList.getResult());
+            BrApiMasterListPayload<GenotypeCallsDTO> payload =
+                new BrApiMasterListPayload<>(
+                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                    pagedResult.getNextPageToken());
 
-            if(genotypeCallsList.getNextPageToken() != null) {
-                payload
-                    .getMetadata()
-                    .getPagination()
-                    .setNextPageToken(genotypeCallsList.getNextPageToken());
-            }
 
             return ResponseEntity.ok(payload);
         }

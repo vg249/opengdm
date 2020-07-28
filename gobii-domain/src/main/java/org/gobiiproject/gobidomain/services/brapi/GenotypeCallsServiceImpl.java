@@ -193,6 +193,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
+            returnVal.setCurrentPageSize(genotypeCalls.size());
+
             returnVal.setResult(genotypeCalls);
 
             return returnVal;
@@ -264,7 +266,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             Integer datasetIdCursorStart = 0;
 
-            if(cursors.startDatasetId != null) {
+            if(cursors.startDatasetId != null && cursors.startDatasetId > 0) {
                 datasetIdCursorStart = markerDatasetIds.indexOf(cursors.startDatasetId);
             }
 
@@ -340,6 +342,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 returnVal.setNextPageToken(nextPageToken);
 
             }
+            returnVal.setCurrentPageSize(genotypeCalls.size());
 
             returnVal.setResult(genotypeCalls);
 
@@ -1207,11 +1210,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
 
-    private Integer readGenotypesFromFile (
-        List<GenotypeCallsDTO> returnVal, String genotypeMatrixFilePath,
-        Integer pageSize, Integer datasetId,
-        Integer columnOffset, List<Marker> markers,
-        List<DnaRun> dnaruns, List<Integer> dnarunOrder)  throws Exception {
+    private Integer readGenotypesFromFile (List<GenotypeCallsDTO> returnVal,
+                                           String genotypeMatrixFilePath,
+                                           Integer pageSize,
+                                           Integer datasetId,
+                                           Integer columnOffset,
+                                           List<Marker> markers,
+                                           List<DnaRun> dnaruns,
+                                           List<Integer> dnarunOrder)  throws Exception {
 
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
@@ -1288,9 +1294,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         return j;
     }
 
-    private String
-    readGenotypesFromFile(String genotypeMatrixFilePath, List<Marker> markerMetadataList,
-                          List<DnaRun> dnarunMetadataList, String header)  throws Exception {
+    private String readGenotypesFromFile(String genotypeMatrixFilePath,
+                                         List<Marker> markerMetadataList,
+                                         List<DnaRun> dnarunMetadataList,
+                                         String header)  throws Exception {
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
 
