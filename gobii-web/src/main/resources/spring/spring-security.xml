@@ -29,6 +29,7 @@
    
 
     <bean id="customGDMFilter" class="org.gobiiproject.gobiiweb.security.filters.CropUserFilter"/>
+    <bean id="authTokenRewriteFilter" class="org.gobiiproject.gobiiweb.security.filters.AuthBearerConverterFilter" />
 
     <bean id="adapterDeploymentContext" class="org.gobiiproject.gobiiweb.security.AdapterDeploymentContextFactoryBean">
          <!--constructor-arg value="WEB-INF/keycloak.json"/-->
@@ -70,9 +71,11 @@
 
     <security:http auto-config="false" entry-point-ref="keycloakAuthenticationEntryPoint" use-expressions="true">
         <security:csrf disabled="true"/>
+        <security:custom-filter ref="authTokenRewriteFilter" before="FIRST" />
         <security:custom-filter ref="keycloakPreAuthActionsFilter" before="LOGOUT_FILTER" />
         <security:custom-filter ref="keycloakAuthenticationProcessingFilter" before="FORM_LOGIN_FILTER" />
         <security:custom-filter ref="customGDMFilter" after="LAST" />
+        <security:intercept-url pattern="/gobii/v1/auth" access="isAnonymous()" />
         <security:intercept-url pattern="/gobii/v1/**" access="isAuthenticated()" />
         <security:intercept-url pattern="/gobii/v3/**" access="isAuthenticated()" />
         <!-- <security:intercept-url pattern="/admin**" access="ROLE_ADMIN" /> -->

@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     public List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception {
         Keycloak keycloak = this.getKeycloakAdminClient();
-        
+
         String rolePath = Optional.ofNullable(role)
                                    .map(r -> (!role.equals(Roles.USER)) ?  String.format("/%s/%s", cropType, role) 
                                                                         : String.format("/%s", cropType)
@@ -125,4 +126,24 @@ public class KeycloakServiceImpl implements KeycloakService {
         return contactDTO;
 
     }
+
+	@Override
+	public String getToken(String username, String password) throws Exception {
+        // TODO Auto-generated method stub
+        Keycloak keycloak = KeycloakBuilder.builder()
+                            .serverUrl(keycloakConfig.getAuthServerUrl())
+                            .realm(keycloakConfig.getRealm())
+                            .username(username)
+                            .password(password)
+                            .grantType("password")
+                            .clientId(keycloakConfig.getResource())
+                            .resteasyClient(new ResteasyClientBuilder().build())
+                            .build();
+        AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
+        
+        String token = accessTokenResponse.getToken();
+        keycloak.close();
+
+		return token;
+	}
 }

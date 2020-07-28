@@ -45,11 +45,13 @@ import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ProtocolService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
+import org.gobiiproject.gobidomain.services.gdmv3.KeycloakService;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiEntityNameConverter;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -213,6 +215,9 @@ public class GOBIIControllerV1 {
     @Autowired
     private EntityStatsService entityStatsService = null;
 
+    @Autowired
+    private KeycloakService keycloakService;
+
     private Tika tika = new Tika();
 
     @ApiOperation(value="ping",
@@ -286,30 +291,43 @@ public class GOBIIControllerV1 {
     })
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    @Deprecated //due to Keycloak
     public String authenticate(@RequestBody(required = false) String noContentExpected,
                                HttpServletRequest request,
                                HttpServletResponse response) {
 
         String returnVal = null;
         try {
-            returnVal = "Authenticated: " + (new Date()).toString();
+            //returnVal = "Authenticated: " + (new Date()).toString();
+            String username = request.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
+            String password = request.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
+            String token = keycloakService.getToken(username, password);
 
-            PayloadWriter<AuthDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    AuthDTO.class);
+            //     PayloadWriter<AuthDTO> payloadWriter = new PayloadWriter<>(request, response,
+            //             AuthDTO.class);
 
             HeaderAuth dtoHeaderAuth = new HeaderAuth();
-            payloadWriter.setAuthHeader(dtoHeaderAuth, response);
+            //payloadWriter.setAuthHeader(dtoHeaderAuth, response);
+
+            dtoHeaderAuth.setUserName(username);
+            dtoHeaderAuth.setToken(token);
+            dtoHeaderAuth.setGobiiCropType(
+                    CropRequestAnalyzer.getGobiiCropType(request)
+            );
+
+            //manually set the values in the header since this endpoint handler is excluded
+            //from the keycloak interceptor
+            response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, username);
+            response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, token);
+            response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP, dtoHeaderAuth.getGobiiCropType());
+
+
             ObjectMapper objectMapper = new ObjectMapper();
             String dtoHeaderAuthString = objectMapper.writeValueAsString(dtoHeaderAuth);
             returnVal = dtoHeaderAuthString;
 
         } catch (Exception e) {  //TODO: what is this?
-            try {
-                throw (e);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            e.printStackTrace();
+
         }
 
         return (returnVal);
