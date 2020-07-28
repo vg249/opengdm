@@ -69,13 +69,13 @@
         </property>
     </bean>
 
-    <security:http auto-config="false" entry-point-ref="keycloakAuthenticationEntryPoint" use-expressions="true">
+    <security:http auto-config="false" entry-point-ref="keycloakAuthenticationEntryPoint" use-expressions="true" create-session="never">
         <security:csrf disabled="true"/>
         <security:custom-filter ref="authTokenRewriteFilter" before="FIRST" />
         <security:custom-filter ref="keycloakPreAuthActionsFilter" before="LOGOUT_FILTER" />
         <security:custom-filter ref="keycloakAuthenticationProcessingFilter" before="FORM_LOGIN_FILTER" />
         <security:custom-filter ref="customGDMFilter" after="LAST" />
-        <security:intercept-url pattern="/gobii/v1/auth" access="isAnonymous()" />
+        <security:intercept-url pattern="/gobii/v1/auth" access="isAnonymous()"/>
         <security:intercept-url pattern="/gobii/v1/**" access="isAuthenticated()" />
         <security:intercept-url pattern="/gobii/v3/**" access="isAuthenticated()" />
         <!-- <security:intercept-url pattern="/admin**" access="ROLE_ADMIN" /> -->

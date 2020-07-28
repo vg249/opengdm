@@ -140,8 +140,9 @@ public class KeycloakServiceImpl implements KeycloakService {
                             .resteasyClient(new ResteasyClientBuilder().build())
                             .build();
         AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
-        
+       
         String token = accessTokenResponse.getToken();
+        log.info("Got token : " + token );
         keycloak.close();
 
 		return token;
