@@ -9,6 +9,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistE
 import org.gobiiproject.gobiimodel.config.KeycloakConfig;
 import org.gobiiproject.gobiimodel.config.Roles;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.security.TokenInfo;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -128,7 +129,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
 	@Override
-	public String getToken(String username, String password) throws Exception {
+	public TokenInfo getToken(String username, String password) throws Exception {
         // TODO Auto-generated method stub
         Keycloak keycloak = KeycloakBuilder.builder()
                             .serverUrl(keycloakConfig.getAuthServerUrl())
@@ -140,11 +141,15 @@ public class KeycloakServiceImpl implements KeycloakService {
                             .resteasyClient(new ResteasyClientBuilder().build())
                             .build();
         AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
-       
-        String token = accessTokenResponse.getToken();
-        log.info("Got token : " + token );
+        TokenInfo tokenInfo = new TokenInfo();
+        tokenInfo.setAccessToken(accessTokenResponse.getToken());
+        tokenInfo.setUsername(username);
+        tokenInfo.setExpiry(accessTokenResponse.getExpiresIn());
+        //String token = accessTokenResponse.getToken();
+        
+        //log.info("Got token : " + token );
         keycloak.close();
 
-		return token;
+		return tokenInfo;
 	}
 }

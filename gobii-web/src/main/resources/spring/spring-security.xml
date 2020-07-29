@@ -77,6 +77,10 @@
         <security:custom-filter ref="customGDMFilter" after="LAST" />
         <security:intercept-url pattern="/gobii/v1/auth" access="permitAll"/>
         <security:intercept-url pattern="/gobii/v1/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/brapi/v1/token" access="permitAll"/>
+        <security:intercept-url pattern="/brapi/v1/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/brapi/v2/token" access="permitAll"/>
+        <security:intercept-url pattern="/brapi/v2/**" access="isAuthenticated()" />
         <security:intercept-url pattern="/gobii/v3/**" access="isAuthenticated()" />
         <!-- <security:intercept-url pattern="/admin**" access="ROLE_ADMIN" /> -->
         <security:custom-filter ref="logoutFilter" position="LOGOUT_FILTER" />

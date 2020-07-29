@@ -84,6 +84,7 @@ import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
+import org.gobiiproject.gobiimodel.security.TokenInfo;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -300,7 +301,7 @@ public class GOBIIControllerV1 {
             //returnVal = "Authenticated: " + (new Date()).toString();
             String username = request.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
             String password = request.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
-            String token = keycloakService.getToken(username, password);
+            TokenInfo tokenInfo = keycloakService.getToken(username, password);
 
             //     PayloadWriter<AuthDTO> payloadWriter = new PayloadWriter<>(request, response,
             //             AuthDTO.class);
@@ -309,7 +310,7 @@ public class GOBIIControllerV1 {
             //payloadWriter.setAuthHeader(dtoHeaderAuth, response);
 
             dtoHeaderAuth.setUserName(username);
-            dtoHeaderAuth.setToken(token);
+            dtoHeaderAuth.setToken(tokenInfo.getAccessToken());
             dtoHeaderAuth.setGobiiCropType(
                     CropRequestAnalyzer.getGobiiCropType(request)
             );
@@ -317,7 +318,7 @@ public class GOBIIControllerV1 {
             //manually set the values in the header since this endpoint handler is excluded
             //from the keycloak interceptor
             response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, username);
-            response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, token);
+            response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, tokenInfo.getAccessToken());
             response.setHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP, dtoHeaderAuth.getGobiiCropType());
 
 
