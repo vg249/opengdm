@@ -1,27 +1,24 @@
 package org.gobiiproject.gobiiprocess.digester.csv;
 
-import org.aspectj.lang.annotation.AfterReturning;
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
-import org.gobiiproject.gobiimodel.types.DataSetType;
-import org.gobiiproject.gobiimodel.types.GobiiFileType;
-import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
-import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.junit.AfterClass;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.gobiiproject.gobiimodel.dto.children.PropNameId;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.types.DataSetType;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.junit.AfterClass;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Unit test for CSVFileReaderV2Test. Approach: A temporary folder is created
@@ -30,6 +27,7 @@ import java.util.List;
  * after processing. Generated o/p file is verified that it is as expected.
  */
 @Ignore //TODO - fix for non-windows file endings
+@SuppressWarnings("all")
 public class CSVFileReader_CSV_BOTHV2Test {
 
     private static String tempFolderLocation, resourceDestFolderLocation, loaderScriptPath;

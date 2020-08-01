@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
@@ -54,10 +54,10 @@ class ValidationUtil {
 
     static void validateMatrixSizeMarkerColumns(String fileName, List<String> columns, List<String[]> inputFileList, List<Failure> failureList, boolean markerFast) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
-        List<String> headers = Arrays.asList(inputFileList.get(0).clone());
+        //List<String> headers = Arrays.asList(inputFileList.get(0).clone());
         verifyEqualMatrixSizeMarker(failureList,getFileColumns(fileName,columns,failureList),markerFast);
 
-        }
+    }
 
     /**
      * Validates required unique columns are present and are not null or empty.
@@ -361,7 +361,7 @@ class ValidationUtil {
      */
     static boolean readFileIntoMemory(String fileName, List<String[]> collectList, List<Failure> failureList) throws MaximumErrorsValidationException {
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            collectList.addAll(stream.map(line -> line.split("\t")).collect(Collectors.toList()));
+            collectList.addAll(stream.map(line -> line.split("\t",-1)).collect(Collectors.toList()));
             if (collectList.size() == 0) {
                 createFailure(FailureTypes.EMPTY_FILE, new ArrayList<>(), fileName, failureList);
                 return false;

@@ -6,7 +6,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.CvService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -158,18 +158,17 @@ public class CvServiceImpl implements CvService {
 
         CvDTO returnVal;
 
-        returnVal = dtoMapCv.getCvDetails(cvId);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
-
-        if (null == returnVal) {
+		returnVal = dtoMapCv.getCvDetails(cvId);
+		if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                     "The specified cvId ("
                             + cvId
                             + ") does not match an existing cv ");
         }
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 
         return returnVal;
     }

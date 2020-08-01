@@ -1,17 +1,17 @@
 package org.gobiiproject.gobidomain;
 
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PageToken {
 

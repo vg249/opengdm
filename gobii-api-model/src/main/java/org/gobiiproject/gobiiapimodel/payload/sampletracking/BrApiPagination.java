@@ -1,14 +1,20 @@
 package org.gobiiproject.gobiiapimodel.payload.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrApiPagination {
 
+    @ApiModelProperty(hidden = true)
     private Integer totalCount;
+    @ApiModelProperty(example = "1000")
     private Integer pageSize;
+    @ApiModelProperty(hidden = true)
     private Integer totalPages;
+    @ApiModelProperty(example = "0")
     private Integer currentPage;
+    @ApiModelProperty(example = "123!")
     private String nextPageToken;
 
     public Integer getTotalCount() {

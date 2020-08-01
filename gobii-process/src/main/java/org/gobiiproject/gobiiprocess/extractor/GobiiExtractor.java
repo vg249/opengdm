@@ -43,8 +43,8 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
@@ -246,12 +246,8 @@ public class GobiiExtractor {
 		            String mapsetFile = extractDir + "mapset.file";
 		            String markerPosFile = markerFile + ".pos";
 		            String sampleFile = extractDir + "sample.file";
-		            String projectFile = extractDir + "project.file";
-		            String extractSummaryFile = extractDir + "summary.file";
-		            if (inst.isQcCheck()) {//FIXES ERROR - KDC EXPECTS PROJECT SUMMARY IN SUMMARY.FILE
-			            projectFile = extractDir + "summary.file"; //HACK, NEED FIX AND REMOVE LATER FOR CONSISTENCY
-			            extractSummaryFile = extractDir + "project_summary.file";
-		            }
+		            String projectFile = extractDir + "summary.file"; //Required to be named as is for flapjack QC
+			        String extractSummaryFile = extractDir + "project_summary.file"; //briefly called 'summary' in non-QC jobs
 		            String chrLengthFile = markerFile + ".chr";
 		            Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
 		            if (!mdePath.toFile().isFile()) {
@@ -646,7 +642,8 @@ public class GobiiExtractor {
             }
         }
         try {
-	        String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE));
+            //String instructionFilePath = 
+            HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE));
         }
         catch(Exception e){
 	        handleCriticalException(configuration, jobStatus, firstContactEmail, e);
@@ -690,6 +687,7 @@ public class GobiiExtractor {
      *
      * @return list of IDs
      */
+    @SuppressWarnings("rawtypes")
     private static List toIdList(List<PropNameId> propertyList) {
         return subPropertyList(propertyList, PropNameId::getId);
     }
@@ -701,6 +699,7 @@ public class GobiiExtractor {
      * @param func         what to do
      * @return something? usually.
      */
+    @SuppressWarnings("rawtypes")
     private static List subPropertyList(List<PropNameId> propertyList, Function<PropNameId, Object> func) {
         return propertyList.stream().map(func).collect(Collectors.toList());
     }
@@ -1000,6 +999,7 @@ public class GobiiExtractor {
     //Dear next guy - yeah, doing a 'one step unroll' then placing in 'comma - object; comma - object' makes more sense.
     //Just be happy I used a StringBuilder
     //Si, soy tan feliz ahora!
+    @SuppressWarnings("rawtypes")
     private static String commaFormat(List inputList) {
         StringBuilder sb = new StringBuilder();
         for (Object o : inputList) {
@@ -1054,10 +1054,12 @@ public class GobiiExtractor {
                     fileWriter.write((new StringBuilder(scanner.nextLine())).append(System.lineSeparator()).toString());
                 } else {
                     Logger.logError("Extractor", "Genotype file emtpy");
+                    fileWriter.close();
                     return false;
                 }
                 if (!(scanner.hasNextLine())) {
                     Logger.logError("Extractor", "No genotype data");
+                    fileWriter.close();
                     return false;
                 }
                 Pattern pattern = Pattern.compile("^[0-9]{1,8}$");

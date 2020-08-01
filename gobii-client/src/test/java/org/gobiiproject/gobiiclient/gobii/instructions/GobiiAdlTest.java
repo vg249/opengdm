@@ -5,7 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.gobii.instructions;
 
-import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.util.Scanner;
+
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
@@ -18,15 +20,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
+@SuppressWarnings("all")
 @Ignore
 public class GobiiAdlTest {
 

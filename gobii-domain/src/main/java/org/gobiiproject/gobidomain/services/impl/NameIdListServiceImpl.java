@@ -3,19 +3,18 @@ package org.gobiiproject.gobidomain.services.impl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.NameIdListService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapNameIdList;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -24,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class NameIdListServiceImpl implements NameIdListService {
 
 
-    private Logger LOGGER = LoggerFactory.getLogger(NameIdListServiceImpl.class);
+    //private Logger LOGGER = LoggerFactory.getLogger(NameIdListServiceImpl.class);
 
     @Autowired
     DtoMapNameIdList dtoMapNameIdList;

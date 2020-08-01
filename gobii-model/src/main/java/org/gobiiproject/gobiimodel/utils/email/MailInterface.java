@@ -68,12 +68,15 @@ public class MailInterface {
 
 	
 	public void send(MailMessage message ) throws Exception{
-		if(noMail == true){
+		if(noMail){
 			Logger.logWarning("MailInterface","Ignoring all mail");
 			return;
 		}
 
-		if(message.getUser()==null || message.getUser().equals(""))return;
+		if(message.getUser()==null || message.getUser().equals("")) {
+			Logger.logWarning("MailInterface", "User for email was empty. Not sending.");
+			return;
+		}
 		
 		String username = this.getUser();
 		String password = this.getPassword();

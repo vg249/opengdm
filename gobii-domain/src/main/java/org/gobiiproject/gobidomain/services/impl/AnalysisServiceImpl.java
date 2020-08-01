@@ -5,7 +5,7 @@ import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.AnalysisService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapAnalysis;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -116,9 +116,6 @@ public class AnalysisServiceImpl implements AnalysisService {
         AnalysisDTO returnVal;
 
         returnVal = dtoMapAnalysis.get(analysisId);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -127,6 +124,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                             + ") does not match an existing analysis ");
         }
 
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        
         return returnVal;
     }
 

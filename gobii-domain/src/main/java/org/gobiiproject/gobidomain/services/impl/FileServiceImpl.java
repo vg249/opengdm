@@ -1,6 +1,8 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 import java.io.File;
+import java.util.UUID;
+
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.FilesService;
 import org.gobiiproject.gobiidtomapping.instructions.DtoMapExtractorInstructions;
@@ -11,13 +13,9 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 
 /**
@@ -25,7 +23,7 @@ import java.util.UUID;
  */
 public class FileServiceImpl implements FilesService {
 
-    private Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
+    //private Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
 
 
     InstructionFileAccess<Void> instructionFileAccess = new InstructionFileAccess<>(Void.class);

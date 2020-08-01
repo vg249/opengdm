@@ -65,8 +65,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-
-        HttpServletRequest httpRequest = null;
+        //HttpServletRequest httpRequest = null;
         HttpServletResponse httpResponse = null;
 
         try {
@@ -127,7 +126,8 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     String password = null;
 
 
-                    boolean isBrapiRequest = url.toLowerCase().contains(GobiiControllerType.SERVICE_PATH_BRAPI);
+                    boolean isBrapiRequest = url.toLowerCase().contains(GobiiControllerType.SERVICE_PATH_BRAPI)
+                            || url.toLowerCase().contains(GobiiControllerType.SERVICE_PATH_BRAPI_V2);
                     if (!isBrapiRequest) {
                         userName = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
                         password = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
@@ -260,6 +260,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         return returnVal;
     }
 
+    @SuppressWarnings("unused")
     private void checkLogout(HttpServletRequest httpRequest) {
         if (currentLink(httpRequest).equals(logoutLink)) {
             String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);

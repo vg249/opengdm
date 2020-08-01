@@ -30,6 +30,7 @@ import static org.gobiiproject.gobiimodel.utils.email.AuthType.PASSWORD;
  * are global to the configuration. There will be one GobiiCropConfig instance for every crop supported
  * by a given deployment.
  */
+@SuppressWarnings("serial")
 class ConfigValues {
 
     public ConfigValues() {

@@ -43,8 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static ConfigSettings CONFIG_SETTINGS;
 
     public SecurityConfig() {
-        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
-        this.CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
+        String configFileLocation =
+                System.getProperty(CONFIG_FILE_LOCATION_PROP);
+        SecurityConfig.CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
     }
 
     @Override
@@ -57,10 +58,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     // allow requests for static pages
-    // see http://stackoverflow.com/questions/30366405/how-to-disable-spring-security-for-particular-url
+    // see http://stackoverflow.com/questions/
+    // 30366405/how-to-disable-spring-security-for-particular-url
     @Override
     public void configure(WebSecurity web) throws Exception {
-        String configSettingsUrl = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath());
+
+        String configSettingsUrl =
+                RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(
+                        null, GobiiControllerType.GOBII.getControllerPath());
+
         web.ignoring().antMatchers(configSettingsUrl,
                 "/login",
                 "/index.html",
@@ -71,36 +77,56 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         );
 
         if (!CONFIG_SETTINGS.isAuthenticateBrapi()) {
-            String allBrapiUrls = GobiiControllerType.BRAPI.getControllerPath() + "**";
-            String gobiiFIlesUrl = RestResourceId.GOBII_FILES.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath()) + "/**";
-            ;
+
+            String allBrapiUrls =
+                    GobiiControllerType.BRAPI.getControllerPath() + "**";
+
+            String gobiiFIlesUrl =
+                    RestResourceId.GOBII_FILES.getRequestUrl(
+                            null, GobiiControllerType.GOBII.getControllerPath())
+                            + "/**";
+
             web.ignoring().antMatchers(allBrapiUrls, gobiiFIlesUrl);
 
         }
 
         // the calling the calls call does not require authentication
-        String brapiCallsUrl = RestResourceId.BRAPI_CALLS.getRequestUrl(null, GobiiControllerType.BRAPI.getControllerPath());
-        String brapiMapsUrl = RestResourceId.BRAPI_MAPS_CALLS.getRequestUrl(null, GobiiControllerType.BRAPI.getControllerPath()) + "/**";
-        String gobiiFIlesUrl = RestResourceId.GOBII_FILES.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath()) + "/**";
+        String brapiCallsUrl =
+                RestResourceId.BRAPI_CALLS.getRequestUrl(
+                        null,
+                        GobiiControllerType.BRAPI.getControllerPath());
+
+        String brapiServerInfoUrl =
+                RestResourceId.BRAPI_SERVER_INFO.getRequestUrl(
+                        null,
+                        GobiiControllerType.BRAPI_V2.getControllerPath()) +
+                        "/**";
 
         web.ignoring()
                 .antMatchers(brapiCallsUrl)
-                .antMatchers(brapiMapsUrl);
-//                .antMatchers(gobiiFIlesUrl);
+                .antMatchers(brapiServerInfoUrl);
+
         web.ignoring().antMatchers(HttpMethod.OPTIONS);
+
     }
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        // intellij complains about the derivation of BasicAuthenticationFilter.class,
+        // intellij complains about
+        // the derivation of BasicAuthenticationFilter.class,
         // but it is WRONG; this works fine
-        String allGobiimethods = GobiiControllerType.GOBII.getControllerPath() + "/**";
+        String allGobiimethods =
+                GobiiControllerType.GOBII.getControllerPath() + "/**";
+
+
         http.addFilterAfter(this.filterBean(), BasicAuthenticationFilter.class);
+
         http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
                 .antMatchers(allGobiimethods).permitAll()
@@ -119,14 +145,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // In xml configuration you set the base property of context-source, but that does not appear to be an
     // option here.
     @Override
-    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    protected void
+    configure(AuthenticationManagerBuilder authenticationManagerBuilder)
+            throws Exception {
 
-        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+        String configFileLocation =
+                System.getProperty(CONFIG_FILE_LOCATION_PROP);
         ConfigSettings configSettings = new ConfigSettings(configFileLocation);
-        GobiiAuthenticationType gobiiAuthenticationType = configSettings.getGobiiAuthenticationType();
+        GobiiAuthenticationType gobiiAuthenticationType =
+                configSettings.getGobiiAuthenticationType();
         if (gobiiAuthenticationType.equals(GobiiAuthenticationType.TEST)) {
 
-            authenticationManagerBuilder.userDetailsService(this.userDetailService());
+            authenticationManagerBuilder
+                    .userDetailsService(this.userDetailService());
 
         } else {
 
@@ -135,7 +166,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             String managerPassword = configSettings.getLdapBindPassword();
             String url = configSettings.getLdapUrl();
 
-            if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP_CONNECT_WITH_MANAGER)) {
+            if (gobiiAuthenticationType.equals(
+                    GobiiAuthenticationType.LDAP_CONNECT_WITH_MANAGER)) {
 
                 authenticationManagerBuilder
                         .ldapAuthentication()
@@ -145,7 +177,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .managerPassword(managerPassword)
                         .url(url);
 
-            } else if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP)) {
+            } else if (
+                    gobiiAuthenticationType
+                            .equals(GobiiAuthenticationType.LDAP)) {
 
                 authenticationManagerBuilder
                         .ldapAuthentication()
