@@ -12,8 +12,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.keycloak.KeycloakPrincipal;
@@ -49,10 +51,14 @@ public class CropUserFilter extends GenericFilterBean {
                     .map(a -> a.getPrincipal())
                     .orElse(null) instanceof KeycloakPrincipal
             ) {
-
+            
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
+            //Add the response headers
             String currentCropType = null;
             try {
                 currentCropType = CropRequestAnalyzer.getGobiiCropType((HttpServletRequest) request).toLowerCase();
+                httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP, currentCropType);
+                
             } catch (Exception e) {
                 throw new ServletException(e);
             }
@@ -61,7 +67,9 @@ public class CropUserFilter extends GenericFilterBean {
             //Get the major roles
             //and append
             Map<String, Object> otherClaims = token.getOtherClaims(); 
-
+            //TODO:  including these in the response header seems to be a security risk.
+            httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, token.getAccessTokenHash());
+            httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, token.getPreferredUsername());
             //bypass if admin
             List<String> roles = (List<String>) Optional.ofNullable(otherClaims.get("roles")).orElse(new ArrayList<>());
             if (roles.contains("ADMIN"))  {

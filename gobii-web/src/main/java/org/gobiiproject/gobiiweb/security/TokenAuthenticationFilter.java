@@ -43,6 +43,7 @@ import org.springframework.web.filter.GenericFilterBean;
  * is configured to be used by Spring Security (configured filter on FORM_LOGIN_FILTER position),
  * but it doesn't really depend on it at all.
  */
+@Deprecated //due to Keycloak integration
 public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
