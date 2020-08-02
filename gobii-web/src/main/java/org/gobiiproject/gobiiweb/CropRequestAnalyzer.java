@@ -72,13 +72,12 @@ public class CropRequestAnalyzer {
 
                     String candidateSegment = "";
                     if(candidateSegments.length > 1) {
-                        candidateSegment =
-                                candidateSegments[0]
-                                + "-"
-                                + candidateSegments[1];
+                        candidateSegment = "gobii-" + candidateSegments[1];
                     }
 
-                    if (candidateSegment.toLowerCase().equals(contextPathWithoutSlashes.toLowerCase())) {
+                    if (candidateSegment
+                        .toLowerCase()
+                        .equals(contextPathWithoutSlashes.toLowerCase())) {
 
                         returnVal = currentCropConfig.getGobiiCropType();
                     }

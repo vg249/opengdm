@@ -15,7 +15,7 @@ public enum GobiiControllerType {
     public static final String SERVICE_PATH_GOBII = "/{cropType}/gdm/v1/";
     public static final String SERVICE_PATH_BRAPI = "/{cropType}/brapi/v1/";
     public static final String SERVICE_PATH_BRAPI_V2 = "/{cropType}/brapi/v2/";
-    public static final String SERVICE_PATH_GOBII_V3 = "/{cropType}/gobii/v3";
+    public static final String SERVICE_PATH_GOBII_V3 = "/{cropType}/gdm/v3";
     public static final String SERVICE_PATH_SAMPLE_TRACKING = "/sample-tracking/v1/";
 
     private String controllerPath;
