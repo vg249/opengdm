@@ -1,10 +1,9 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -19,14 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import javax.print.attribute.standard.PageRanges;
-
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @WebAppConfiguration
 public class MapsetServiceImplTest {

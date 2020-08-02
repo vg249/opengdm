@@ -1,5 +1,5 @@
 /**
- * GobiiProjectServiceImpl.java
+ * ProjectServiceImpl.java
  * 
  * Project Service for V3 API.
  * 
@@ -8,7 +8,6 @@
  */
 package org.gobiiproject.gobidomain.services.gdmv3;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,15 +23,18 @@ import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityExcept
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,7 +54,13 @@ public class ProjectServiceImpl implements ProjectService {
     private ContactDao contactDao;
 
     @Autowired
+    private OrganizationDao organizationDao;
+
+    @Autowired
     private PropertiesService propertiesService;
+
+    @Autowired
+    private KeycloakService keycloakService;
 
     @Transactional
     @Override
@@ -86,7 +94,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
-        log.debug("Cv " + cv.getTerm());
 
         Project project = new Project();
         project.setContact(contact);
@@ -104,9 +111,7 @@ public class ProjectServiceImpl implements ProjectService {
         java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(nullFiltered);
         project.setProperties(props);
         // audit items
-        Contact creator = contactDao.getContactByUsername(createdBy);
-        project.setCreatedBy(Optional.ofNullable(creator).map(v->v.getContactId()).orElse(null));
-        project.setCreatedDate(new java.util.Date());
+        contactDao.stampCreated(project, createdBy);
         projectDao.createProject(project);
 
         ProjectDTO projectDTO = new ProjectDTO();
@@ -144,11 +149,7 @@ public class ProjectServiceImpl implements ProjectService {
             this.updateProjectDescription(project, request.getProjectDescription());
         }
        
-        
-        //audit items first
-        Contact editor = contactDao.getContactByUsername(editedBy);
-        project.setModifiedBy(Optional.ofNullable(editor).map(v->v.getContactId()).orElse(null));
-        project.setModifiedDate(new java.util.Date());
+        contactDao.stampModified(project, editedBy);
         
         List<CvPropertyDTO> propList = request.getProperties();
         //update props if request props is not empty list
@@ -209,10 +210,9 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProjectName(value);
     }
 
-    private void updateContact(Project project, Integer value) throws NumberFormatException, Exception {
-        Contact contact = contactDao.getContact(value);
-        project.setContact( Optional.ofNullable(contact)
-                                    .orElseThrow(()-> new UnknownEntityException.Contact()) );
+    private void updateContact(Project project, String value) throws NumberFormatException, Exception {
+        Contact contact = this.loadContact(value);
+        project.setContact(contact);
     }
 
     @Transactional
@@ -227,8 +227,63 @@ public class ProjectServiceImpl implements ProjectService {
                        .orElseThrow(() -> new EntityDoesNotExistException.Project());
     }
 
-    private Contact loadContact(Integer contactId) throws Exception {
-        return Optional.ofNullable(contactDao.getContact(contactId))
-                       .orElseThrow(() -> new UnknownEntityException.Contact());
+    private Contact loadContact(String contactId) throws Exception {
+        //if contactId is numeric
+        if (contactId.matches("\\d+")) {
+            return Optional.ofNullable(contactDao.getContact(Integer.parseInt(contactId)))
+                        .orElseThrow(() -> new UnknownEntityException.Contact());
+        }
+
+        //else this should be a uuid so load or create/return
+        ContactDTO keycloakUser = keycloakService.getUser(contactId);
+        log.debug("Getting local user record for username: " + keycloakUser.getUsername());
+        Contact contact = contactDao.getContactByUsername(keycloakUser.getUsername());
+        log.debug("Contact: " + contact);
+
+        
+
+        return Optional
+                .ofNullable(contact)
+                .orElseGet(
+                    () -> this.createNewContact(keycloakUser)
+                );
+        
     }
+
+    @lombok.Generated //ignore catch coverage
+    private Contact createNewContact(ContactDTO user) {
+        Organization organization = Optional.ofNullable(organizationDao.getOrganizationByName(user.getOrganizationName()))
+                                    .orElseGet(() -> this.createOrganization(user.getOrganizationName()));
+        try {
+            Contact contact = new Contact();
+            contact.setUsername(user.getUsername());
+            contact.setEmail(user.getEmail());
+            contact.setFirstName(user.getPiContactFirstName());
+            contact.setLastName(user.getPiContactLastName());
+            contact.setCode(String.format("keycloak_user_%s", user.getUsername()));
+            contact.setOrganization(organization);
+            contactDao.stampCreated(contact, null);
+            contactDao.addContact(contact);
+            return contact;
+        } catch (Exception e) {
+            log.error("Error creating new Contact", e);
+            return null;
+        }
+        
+    }
+
+    @lombok.Generated //ignore catch coverage
+    private Organization createOrganization(String name)  {
+        try {
+            Organization organization = new Organization();
+            organization.setName(name);
+            contactDao.stampCreated(organization, null);
+            return organization;
+        } catch (Exception e) {
+            log.error("Error creating new organization", e);
+            return null;
+        }
+    }
+
+    
 }

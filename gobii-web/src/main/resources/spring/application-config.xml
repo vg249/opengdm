@@ -76,7 +76,8 @@
     <bean id="propertiesService"
           class="org.gobiiproject.gobidomain.services.impl.PropertiesServiceImpl"/>
 
-    
+    <!-- Keycloak Service Bean-->
+    <bean id="keycloakService" class="org.gobiiproject.gobidomain.services.gdmv3.KeycloakServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>

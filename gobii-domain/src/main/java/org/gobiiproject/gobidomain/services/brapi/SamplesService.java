@@ -1,6 +1,5 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;

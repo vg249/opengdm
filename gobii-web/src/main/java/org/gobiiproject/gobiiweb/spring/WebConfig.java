@@ -1,11 +1,10 @@
 package org.gobiiproject.gobiiweb.spring;
 
-import org.gobiiproject.gobiiweb.interceptors.CropAuthInterceptor;
+import org.gobiiproject.gobiiweb.security.interceptors.CropAuthInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -30,7 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // TODO Auto-generated method stub
-        System.out.println("Adding interceptor");
         WebMvcConfigurer.super.addInterceptors(registry);
         registry.addInterceptor(cropAuthInterceptor());
     }

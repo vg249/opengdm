@@ -14,8 +14,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
-import org.gobiiproject.gobiimodel.entity.Contact;
-import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.keycloak.KeycloakPrincipal;
@@ -26,10 +24,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
- * This interceptor determines if the user is an ADMIN OR has general permission to access the crop app
- * The user must have /{cropType} group at least.
+ * This filter determines if the user is an ADMIN OR has permission to access the crop endpoint
+ * The user must have /{cropType} group at least OR has and ADMIN role. If the user is permitted 
+ * to access the endpoint, the user will be added to the Contacts table if the user record does not
+ * yet exist in the GDM database.
  */
+@Slf4j
 public class CropUserFilter extends GenericFilterBean {
 
     @Autowired
@@ -62,6 +65,12 @@ public class CropUserFilter extends GenericFilterBean {
             //bypass if admin
             List<String> roles = (List<String>) Optional.ofNullable(otherClaims.get("roles")).orElse(new ArrayList<>());
             if (roles.contains("ADMIN"))  {
+                try {
+                    this.addToContacts(token);
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                    log.error("Could not add admin info to contacts table");
+                }
                 chain.doFilter(request, response); //continue on
                 return;
             }
@@ -77,15 +86,9 @@ public class CropUserFilter extends GenericFilterBean {
                     ) {
                     //Check if the user is in the db, add if not found
                     try {
-                        contactService.addContact(
-                            token.getPreferredUsername(),
-                            token.getGivenName(),
-                            token.getFamilyName(),
-                            token.getEmail()
-                        );
-
+                        this.addToContacts(token);
                     } catch (Exception e) {
-
+                        log.error("Could not add user info to contacts table");
                     }
                     chain.doFilter(request, response);
                     return;
@@ -101,6 +104,23 @@ public class CropUserFilter extends GenericFilterBean {
 
     }
 
+
+    private void addToContacts(AccessToken token) throws Exception {
+        String organization = Optional
+                              .ofNullable(token.getOtherClaims().get("organization"))
+                              .map(o -> o.toString())
+                              .orElse(null);
+                                            
+        contactService.addContact(
+            token.getPreferredUsername(),
+            token.getGivenName(),
+            token.getFamilyName(),
+            token.getEmail(),
+            organization,
+            null
+        );
+
+    }
     
     
 }

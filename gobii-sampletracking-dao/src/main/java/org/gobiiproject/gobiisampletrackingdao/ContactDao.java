@@ -10,15 +10,20 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.entity.BaseEntity;
 import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Organization;
 
 public interface ContactDao {
 
     List<Contact> getContacts(Integer page, Integer pageSize, Integer organizationId);
     Contact getContact(Integer contactId) throws Exception;
     Contact getContactByUsername(String username) throws Exception;
-	Contact addContact(Contact contact);
+    Contact addContact(Contact contact);
+    Contact addContact(String username, String lastName, String firstName, String email, Organization organization, String createdBy) throws Exception;
 
-   
+    void stampCreated(BaseEntity auditable, String userid) throws Exception;
+
+    void stampModified(BaseEntity auditable, String userid) throws Exception;
 
  }

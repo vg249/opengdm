@@ -57,6 +57,7 @@
     <bean id="experimentDao"
           class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
+    <bean id="keycloakService" class="org.gobiiproject.gobidomain.services.gdmv3.KeycloakServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>

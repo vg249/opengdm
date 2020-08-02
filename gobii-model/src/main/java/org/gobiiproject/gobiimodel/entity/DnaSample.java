@@ -52,7 +52,7 @@ public class DnaSample extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "germplasm_id")
-    private Germplasm germplasm = new Germplasm();
+    private Germplasm germplasm;
 
     @Column(name="props", columnDefinition = "jsonb")
     @Type(type = "jsonb")
@@ -60,7 +60,7 @@ public class DnaSample extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
-    private Cv status = new Cv();
+    private Cv status;
 
     public Integer getDnaSampleId() {
         return dnaSampleId;

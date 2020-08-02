@@ -13,6 +13,10 @@ public interface ContactService {
 
     PagedResult<ContactDTO> getContacts(Integer page, Integer pageSize, Integer organizationId) throws Exception;
 
-	ContactDTO addContact(String preferredUsername, String givenName, String familyName, String email) throws Exception;
+    //this is to differentiate from getContacts, getUsers should get from keycloak
+    PagedResult<ContactDTO> getUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception;
+    
+
+    ContactDTO addContact(String preferredUsername, String givenName, String familyName, String email, String organization, String createdBy) throws Exception;
     
  }

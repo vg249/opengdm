@@ -1,6 +1,7 @@
-package org.gobiiproject.gobiiweb.interceptors;
+package org.gobiiproject.gobiiweb.security.interceptors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Sets;
 
-import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.gobiiproject.gobiiweb.security.CropAuth;
@@ -26,10 +26,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 
+/** This interceptor checks if the user has the correct auth group to access API endpoint
+ *  marked with the @CropAuth annotation
+ */
 @Slf4j
 @Component
 public class CropAuthInterceptor extends HandlerInterceptorAdapter {
@@ -38,18 +40,12 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
     @SuppressWarnings("all")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        //limit the requests to V3?
-        if (!Optional.ofNullable(request.getPathInfo())
-                     .orElse("")
-                     .contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) {
-            return super.preHandle(request, response, handler);
-            
-        }
         
         if (handler instanceof HandlerMethod) {
             String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             if (handlerMethod.hasMethodAnnotation(CropAuth.class)) {
+                log.debug("Handler has CropAuth annotation");
                 CropAuth annotation = handlerMethod.getMethodAnnotation(CropAuth.class);
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -64,6 +60,7 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
                     //bypass if admin
                     List<String> roles = (List<String>) Optional.ofNullable(otherClaims.get("roles")).orElse(new ArrayList<>());
                     if (roles.contains("ADMIN"))  {
+                        log.debug("User is ADMIN");
                         return true;
                     }
 
