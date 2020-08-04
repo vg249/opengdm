@@ -1306,22 +1306,30 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         genotypes.append(markerMetadataList.get(i).getMarkerName());
         genotypes.append(',');
+        StringBuilder genotype = new StringBuilder();
 
         while ((chrEach = br.read()) != -1) {
             char genotypesChar = (char) chrEach;
             if(genotypesChar == '\t') {
+                genotypes.append(genotype);
                 genotypes.append(',');
+                genotype.setLength(0);
             }
             else if(genotypesChar == '\n') {
                 i++;
+                genotypes.append(genotype);
                 genotypes.append('\n');
+                genotype.setLength(0);
                 if(i < markerMetadataList.size()) {
                     genotypes.append(markerMetadataList.get(i).getMarkerName());
                     genotypes.append(',');
                 }
             }
             else {
-                genotypes.append(genotypesChar);
+                genotype.append(genotypesChar);
+                if(genotype.length() == 2) {
+                    genotype.insert(1, '/');
+                }
             }
         }
 
