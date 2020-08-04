@@ -1,27 +1,53 @@
 import {Injectable} from '@angular/core';
 import {Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {AuthenticationService} from "./authentication.service";
+import { KeycloakAuthGuard, KeycloakService } from 'keycloak-angular';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
+// @Injectable()
+// export class AuthGuard implements CanActivate {
 
-    constructor(private router: Router,
-                private authenticationService: AuthenticationService) {
+//     constructor(private router: Router,
+//                 private authenticationService: AuthenticationService) {
+//     }
+
+//     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+
+//         let returnVal: boolean = false;
+
+
+//         returnVal = (this.authenticationService.getToken() != null);
+
+//         // not logged in so redirect to login page with the return url
+//         if (!returnVal) {
+// //            this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});
+//             this.router.navigate(['/login']);
+//         }
+
+//         return returnVal;
+//     }
+// }
+
+@Injectable({
+    providedIn: 'root'
+})
+export class AuthGuard extends KeycloakAuthGuard {
+    constructor(
+        protected readonly router: Router,
+        protected readonly keycloak: KeycloakService
+    ) {
+        super(router, keycloak);
     }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-
-        let returnVal: boolean = false;
-
-
-        returnVal = (this.authenticationService.getToken() != null);
-
-        // not logged in so redirect to login page with the return url
-        if (!returnVal) {
-//            this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});
-            this.router.navigate(['/login']);
+    public async isAccessAllowed(
+        route: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot
+    ) {
+        if (!this.authenticated) {
+            await this.keycloak.login({
+                redirectUri: window.location.origin + state.url
+            });
         }
 
-        return returnVal;
+        return true;
     }
 }

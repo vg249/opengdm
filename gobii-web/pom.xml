@@ -680,6 +680,9 @@
                                         <include>@ngrx/router-store/bundles/router-store.umd.js</include>
                                         <include>@ngrx/store/bundles/store.umd.js</include>
                                         <include>@ngrx/store-devtools/bundles/store-devtools.umd.js</include>
+                                        <!-- ** Keycloak deps -->
+                                        <include>keycloak-angular/**</include>
+                                        <include>keycloak-js/**</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>

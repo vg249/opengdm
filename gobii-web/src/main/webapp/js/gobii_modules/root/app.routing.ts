@@ -4,12 +4,12 @@ import { Routes, RouterModule } from '@angular/router';
 //import { RegisterComponent } from './register/index';
 
 import {ExtractorRoot} from "./app.extractorroot";
-import {LoginComponent} from "../views/login.component";
+//import {LoginComponent} from "../views/login.component";
 import {AuthGuard} from "../services/core/auth.guard";
 
 const appRoutes: Routes = [
     { path: '', component: ExtractorRoot, canActivate: [AuthGuard] },
-    { path: 'login', component: LoginComponent },
+//    { path: 'login', component: LoginComponent },
 //    { path: 'project', component: ExtractorRoot},
 //    { path: 'register', component: RegisterComponent },
 

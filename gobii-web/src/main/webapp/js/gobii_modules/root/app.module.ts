@@ -1,4 +1,4 @@
-import {NgModule} from "@angular/core";
+import {NgModule, APP_INITIALIZER} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {BrowserModule} from "@angular/platform-browser";
@@ -41,6 +41,9 @@ import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 
+import { KeycloakService, KeycloakAngularModule} from 'keycloak-angular';
+import { initializer } from './app.init';
+
 
 @NgModule({
     imports: [BrowserModule,
@@ -67,7 +70,8 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
         EffectsModule.forRoot([TreeEffects,FileItemEffects]),
         StoreDevtoolsModule.instrument({
             maxAge: 25 //  Retains last 25 states
-        })
+        }),
+        KeycloakAngularModule
     ],
     declarations: [
         AppComponent,
@@ -86,7 +90,14 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
         StatusDisplayTreeComponent,
         SearchCriteriaBySamplesComponent,
         DatasetDatatableComponent],
-    providers: [AuthGuard,
+    providers: [
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializer,
+            deps: [ KeycloakService ],
+            multi: true
+        },
+        AuthGuard,
         AuthenticationService,
         DtoRequestService,
         NameIdService,
@@ -96,6 +107,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
         InstructionSubmissionService,
         FilterParamsColl,
         {provide: APP_BASE_HREF, useValue: './'}],
+    
     bootstrap: [AppComponent]
 })
 
