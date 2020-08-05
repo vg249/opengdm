@@ -33,6 +33,9 @@ import javax.transaction.Transactional;
 @Transactional
 public class VariantSetsServiceImpl implements VariantSetsService {
 
+    final String unphasedSep = "/";
+    final String unknownChar = "N";
+
     Logger LOGGER = LoggerFactory.getLogger(VariantSetsServiceImpl.class);
 
     private String fileUrlFormat = "/variantsets/{0, number}/calls/download";
@@ -102,6 +105,10 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                     fileFormat.setFileFormat("text/csv");
 
+                    fileFormat.setSepUnphased(unphasedSep);
+
+                    fileFormat.setUnknownString(unknownChar);
+
                     //Set dataset download url
                     fileFormat.setFileURL(
                             MessageFormat.format(
@@ -130,9 +137,9 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                             variantSetDTO
                                     .getAnalyses()
                                     .add(analysisDtoMapByAnalysisId.get(
-                                            dataset
-                                                    .getCallingAnalysis()
-                                                    .getAnalysisId()));
+                                        dataset
+                                            .getCallingAnalysis()
+                                            .getAnalysisId()));
                         }
                         else {
 

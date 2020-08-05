@@ -36,6 +36,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);
 
+    final String unphasedSep = "/";
+    final String unknownChar = "N";
+
     @Autowired
     private DnaRunDao dnaRunDao = null;
 
@@ -1247,6 +1250,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 genotypeCall.setVariantDbId(markers.get(i).getMarkerId());
                 genotypeCall.setVariantName(markers.get(i).getMarkerName());
                 genotypeCall.setVariantSetDbId(datasetId);
+                genotypeCall.setSepUnphased(unphasedSep);
+                genotypeCall.setUnknownString(unknownChar);
 
                 genotypeCall.setGenotype(new HashMap<>());
                 String[] genotypeValues = new String[] {genotype.toString()};
@@ -1271,7 +1276,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             else {
                 genotype.append(genotypesChar);
                 if(genotype.length() == 2) {
-                    genotype.insert(1, '/');
+                    genotype.insert(1, unphasedSep);
                 }
             }
 
@@ -1328,7 +1333,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             else {
                 genotype.append(genotypesChar);
                 if(genotype.length() == 2) {
-                    genotype.insert(1, '/');
+                    genotype.insert(1, unphasedSep);
                 }
             }
         }
