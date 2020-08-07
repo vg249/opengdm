@@ -24,6 +24,6 @@ public class MarkerDTO {
     @GobiiEntityMap(paramName = "platform.platformName", entity = Marker.class, deep = true)
     private String platformName;
 
-    //TODO:  this one is from marker_group data
+    //from marker_group data
     private String[] favorableAlleles;
 }

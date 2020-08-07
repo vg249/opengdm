@@ -1,5 +1,5 @@
 /**
- * GobiiProjectServiceImpl.java
+ * ProjectServiceImpl.java
  * 
  * Project Service for V3 API.
  * 
@@ -18,27 +18,25 @@ import javax.transaction.Transactional;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PropertiesService;
-import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,30 +54,27 @@ public class ProjectServiceImpl implements ProjectService {
     private ContactDao contactDao;
 
     @Autowired
+    private OrganizationDao organizationDao;
+
+    @Autowired
     private PropertiesService propertiesService;
+
+    @Autowired
+    private KeycloakService keycloakService;
 
     @Transactional
     @Override
-    public PagedResult<GobiiProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws GobiiDtoMappingException {
+    public PagedResult<ProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws Exception {
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         // get Cvs
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
-            List<GobiiProjectDTO> projectDTOs = new java.util.ArrayList<>();
-
+            List<ProjectDTO> projectDTOs = new java.util.ArrayList<>();
+            List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
             List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
-                GobiiProjectDTO projectDTO = new GobiiProjectDTO();
-                ModelMapper.mapEntityToDto(project, projectDTO);
-
-                List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs,
-                        project.getProperties());
-
-                projectDTO.setProperties(propDTOs);
-
-                projectDTOs.add(projectDTO);
+                projectDTOs.add( createProjectDTO(project, cvs) );
             });
 
             return PagedResult.createFrom(page, projectDTOs);
@@ -93,15 +88,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public GobiiProjectDTO createProject(GobiiProjectRequestDTO request, String createdBy) throws Exception {
+    public ProjectDTO createProject(ProjectDTO request, String createdBy) throws Exception {
         // check if contact exists
-        Contact contact = contactDao.getContact(Integer.parseInt(request.getPiContactId()));
-        if (contact == null)
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
+        Contact contact = this.loadContact(request.getPiContactId());
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
-        log.debug("Cv " + cv.getTerm());
 
         Project project = new Project();
         project.setContact(contact);
@@ -119,13 +111,10 @@ public class ProjectServiceImpl implements ProjectService {
         java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(nullFiltered);
         project.setProperties(props);
         // audit items
-        Contact creator = contactDao.getContactByUsername(createdBy);
-        if (creator != null)
-            project.setCreatedBy(creator.getContactId());
-        project.setCreatedDate(new java.util.Date());
+        contactDao.stampCreated(project, createdBy);
         projectDao.createProject(project);
 
-        GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+        ProjectDTO projectDTO = new ProjectDTO();
         ModelMapper.mapEntityToDto(project, projectDTO);
 
         //transform Cv
@@ -138,59 +127,42 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public String getDefaultProjectEditor() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null)
-            return auth.getName();
-        return null;
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                       .map(auth -> auth.getName())
+                       .orElse(null);
     }
 
     @Transactional
     @Override
-    public GobiiProjectDTO patchProject(Integer projectId, GobiiProjectPatchDTO request, String editedBy)
+    public ProjectDTO patchProject(Integer projectId, ProjectDTO request, String editedBy)
             throws Exception {
-        Project project = projectDao.getProject(projectId);
-        if (project == null) {
-            throw new NullPointerException("Project not found.");
-        }
+        Project project = this.loadProject(projectId);
 
-        String projContactId = project.getPiContactId().toString();
-        
         //convert
-        if (request.keyInPayload("piContactId") && !projContactId.equals(request.getPiContactId())) {   
-            this.updateAttributes(project, "piContactId", request.getPiContactId());
+        if (request.getPiContactId() != null) {   
+            this.updateContact(project, request.getPiContactId());
         }
-        if (request.keyInPayload("projectName")) {
-            this.updateAttributes(project, "projectName", request.getProjectName());
+        if (request.getProjectName() != null) {
+            this.updateProjectName(project, request.getProjectName());
         }
-        if (request.keyInPayload("projectDescription")) {
-            this.updateAttributes(project, "projectDescription", request.getProjectDescription());
+        if (request.getProjectDescription() != null) {
+            this.updateProjectDescription(project, request.getProjectDescription());
         }
        
+        contactDao.stampModified(project, editedBy);
         
-        //audit items first
-        Contact editor = contactDao.getContactByUsername(editedBy);
-        project.setModifiedBy(null);
-        if (editor != null)
-            project.setModifiedBy(editor.getContactId());
-        project.setModifiedDate(new java.util.Date());
-        
-        Optional<List<CvPropertyDTO>> propList = Optional.ofNullable(request.getProperties());
-        if (propList.isPresent()) {
-            this.updateProperties(project, propList.get());
+        List<CvPropertyDTO> propList = request.getProperties();
+        //update props if request props is not empty list
+        if (Optional.ofNullable(propList).map(v -> v.size()).orElse(0) > 0 ) {
+            this.updateProperties(project, propList);
         }
 
         //set new status
-        List<Cv> cvList = cvDao.getCvs("modified", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
+        Cv cv = cvDao.getModifiedStatus();
         project.setStatus(cv);
 
-        projectDao.patchProject(project);
-        return getProject(project.getProjectId());
+        project = projectDao.patchProject(project);
+        return createProjectDTO(project, null);
     }
 
     @Transactional
@@ -201,16 +173,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public GobiiProjectDTO getProject(Integer projectId) throws Exception {
-        Project project = projectDao.getProject(projectId);
-        if (project == null) return null;
-
-        GobiiProjectDTO projectDTO = this.createProjectDTO(project, null);
+    public ProjectDTO getProject(Integer projectId) throws Exception {
+        Project project = this.loadProject(projectId);
+        ProjectDTO projectDTO = this.createProjectDTO(project, null);
         return projectDTO;
     }
 
-    private GobiiProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
-        GobiiProjectDTO projectDTO = new GobiiProjectDTO();
+    private ProjectDTO createProjectDTO(Project project, List<Cv> cvs)  {
+        ProjectDTO projectDTO = new ProjectDTO();
         ModelMapper.mapEntityToDto(project, projectDTO);
         if (cvs == null) {
             cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
@@ -232,48 +202,88 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProperties(currentProperties);
     }
 
-    private void updateAttributes(Project project, String key, String value)
-            throws NumberFormatException, Exception {
-        switch(key) {
-            case "piContactId":
-                this.updateContact(project, value);
-                break;
-            case "projectName":
-                this.updateProjectName(project, value);
-                break;
-            case "projectDescription":
-                this.updateProjectDescription(project, value);
-                break;
-        }
-    }
-
     private void updateProjectDescription(Project project, String value) {
         project.setProjectDescription(value);
     }
 
     private void updateProjectName(Project project, String value) throws Exception {
-        if (value == null || value.trim() == "") throw new Exception("projectName is required");
         project.setProjectName(value);
     }
 
     private void updateContact(Project project, String value) throws NumberFormatException, Exception {
-        if (project.getContact() != null && project.getPiContactId().toString().equals(value)) return;
-        Contact contact = contactDao.getContact(Integer.parseInt(value));
-        
-        if (contact != null) {
-            project.setContact(contact);
-        } else {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Contact not found.");
-        }
+        Contact contact = this.loadContact(value);
+        project.setContact(contact);
     }
 
     @Transactional
     @Override
     public void deleteProject(Integer projectId) throws Exception {
-        Project project = projectDao.getProject(projectId);
-        //TODO: replace the NullPointerException with a Gobii specific error.
-        if (project == null) throw new NullPointerException("Project does not exist");
-
+        Project project = this.loadProject(projectId);
         projectDao.deleteProject(project);
     }
+
+    private Project loadProject(Integer projectId) throws Exception {
+        return Optional.ofNullable(projectDao.getProject(projectId))
+                       .orElseThrow(() -> new EntityDoesNotExistException.Project());
+    }
+
+    private Contact loadContact(String contactId) throws Exception {
+        //if contactId is numeric
+        if (contactId.matches("\\d+")) {
+            return Optional.ofNullable(contactDao.getContact(Integer.parseInt(contactId)))
+                        .orElseThrow(() -> new UnknownEntityException.Contact());
+        }
+
+        //else this should be a uuid so load or create/return
+        ContactDTO keycloakUser = keycloakService.getUser(contactId);
+        log.debug("Getting local user record for username: " + keycloakUser.getUsername());
+        Contact contact = contactDao.getContactByUsername(keycloakUser.getUsername());
+        log.debug("Contact: " + contact);
+
+        
+
+        return Optional
+                .ofNullable(contact)
+                .orElseGet(
+                    () -> this.createNewContact(keycloakUser)
+                );
+        
+    }
+
+    @lombok.Generated //ignore catch coverage
+    private Contact createNewContact(ContactDTO user) {
+        Organization organization = Optional.ofNullable(organizationDao.getOrganizationByName(user.getOrganizationName()))
+                                    .orElseGet(() -> this.createOrganization(user.getOrganizationName()));
+        try {
+            Contact contact = new Contact();
+            contact.setUsername(user.getUsername());
+            contact.setEmail(user.getEmail());
+            contact.setFirstName(user.getPiContactFirstName());
+            contact.setLastName(user.getPiContactLastName());
+            contact.setCode(String.format("keycloak_user_%s", user.getUsername()));
+            contact.setOrganization(organization);
+            contactDao.stampCreated(contact, null);
+            contactDao.addContact(contact);
+            return contact;
+        } catch (Exception e) {
+            log.error("Error creating new Contact", e);
+            return null;
+        }
+        
+    }
+
+    @lombok.Generated //ignore catch coverage
+    private Organization createOrganization(String name)  {
+        try {
+            Organization organization = new Organization();
+            organization.setName(name);
+            contactDao.stampCreated(organization, null);
+            return organization;
+        } catch (Exception e) {
+            log.error("Error creating new organization", e);
+            return null;
+        }
+    }
+
+    
 }

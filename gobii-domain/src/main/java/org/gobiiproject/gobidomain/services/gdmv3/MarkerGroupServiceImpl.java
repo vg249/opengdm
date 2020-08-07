@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersException;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -69,8 +71,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         //audit items
         Contact creator = contactDao.getContactByUsername(createdBy);
-		if (creator != null)
-			markerGroup.setCreatedBy(creator.getContactId());
+        markerGroup.setCreatedBy(Optional.ofNullable(creator).map(v -> v.getContactId()).orElse(null));
         markerGroup.setCreatedDate(new java.util.Date());
         
         markerGroup = markerGroupDao.createMarkerGroup(markerGroup);
@@ -123,8 +124,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         if (modified) {
             Contact editor = contactDao.getContactByUsername(updatedBy);
-            if (editor != null)
-                markerGroup.setModifiedBy(editor.getContactId());
+            markerGroup.setModifiedBy(Optional.ofNullable(editor).map(v -> v.getContactId()).orElse(null));
             markerGroup.setModifiedDate(new java.util.Date());
 
             //status
@@ -142,8 +142,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
     private MarkerGroup loadMarkerGroup(Integer markerGroupId) throws Exception {
         MarkerGroup markerGroup = markerGroupDao.getMarkerGroup(markerGroupId);
         if (markerGroup == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Not found");
+            throw new EntityDoesNotExistException("marker group");
         }
         return markerGroup;
     }
@@ -157,7 +156,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
     @Transactional
 	@Override
-	public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
+    public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
         Objects.requireNonNull(markers, "No markers to process");
         //check data size
         if (markers.size() > 1000) {
@@ -215,10 +214,9 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         statusList = null; //delete this moving since no errors;
             
         ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode currentNode = (ObjectNode) markerGroup.getMarkers();
-        if (currentNode == null)  {
-            currentNode = objectMapper.createObjectNode();
-        }
+        ObjectNode currentNode = Optional.ofNullable((ObjectNode) markerGroup.getMarkers())
+                                         .orElse(objectMapper.createObjectNode());
+
         Integer counter = 0;
         List<MarkerDTO> markerDTOs = new ArrayList<>();
         for (Marker marker: existingMarkers) {

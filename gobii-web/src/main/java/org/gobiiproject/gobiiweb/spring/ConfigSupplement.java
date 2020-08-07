@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.KeycloakConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.ServerType;
@@ -104,6 +105,11 @@ public class ConfigSupplement {
         returnVal.setHdf5ProcessingPathByCrop(hdf5ProcessPathsByCrop);
 
         return returnVal;
+    }
+
+    @Bean(name="keycloakConfig")
+    public KeycloakConfig keycloakConfig() {
+        return this.configSettings.getKeycloakConfig();
     }
 
 }

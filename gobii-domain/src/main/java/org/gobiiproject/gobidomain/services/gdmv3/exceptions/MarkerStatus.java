@@ -3,7 +3,6 @@ package org.gobiiproject.gobidomain.services.gdmv3.exceptions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

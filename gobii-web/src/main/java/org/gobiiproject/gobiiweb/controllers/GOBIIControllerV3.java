@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import static org.gobiiproject.gobiimodel.config.Roles.*;
+
 import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobidomain.services.gdmv3.CvService;
@@ -33,7 +35,7 @@ import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayl
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
+import org.gobiiproject.gobiimodel.config.Roles;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
@@ -48,22 +50,22 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
+import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -174,21 +176,22 @@ public class GOBIIControllerV3  {
      * @param pageSize number of items in response list.
      * @return
      */
+
     @GetMapping("/projects")
     @ResponseBody 
-    public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
+    public ResponseEntity<BrApiMasterListPayload<ProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-            @RequestParam(required=false) Integer piContactId) {
+            @RequestParam(required=false) Integer piContactId) throws Exception {
         log.debug("Querying projects List");
         Integer pageSizeToUse = getPageSize(pageSize);
 
-        PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
+        PagedResult<ProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, page),
             pageSizeToUse,
             piContactId
         );
-        BrApiMasterListPayload<GobiiProjectDTO> payload = this.getMasterListPayload(pagedResult);   
+        BrApiMasterListPayload<ProjectDTO> payload = this.getMasterListPayload(pagedResult);   
         return ResponseEntity.ok(payload);
     }
 
@@ -198,10 +201,11 @@ public class GOBIIControllerV3  {
      * Create new project
      * @since 2020-03-13
      */
+    @CropAuth(CURATOR)
     @PostMapping("/projects")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> createProject(
-            @RequestBody @Valid final GobiiProjectRequestDTO project,
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> createProject(
+            @RequestBody @Validated(ProjectDTO.Create.class) final ProjectDTO project,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -209,8 +213,8 @@ public class GOBIIControllerV3  {
         //Get the current user
         String userName = this.getCurrentUser();
 
-        GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(createdDTO);
+        ProjectDTO createdDTO = projectService.createProject(project, userName);
+        BrApiMasterPayload<ProjectDTO> result = this.getMasterPayload(createdDTO);
         return ResponseEntity.created(null).body(result);
     }
 
@@ -223,14 +227,14 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/projects/{projectId}")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> getProject(
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> getProject(
         @PathVariable Integer projectId
     ) throws Exception {
-        GobiiProjectDTO project = projectService.getProject(projectId);
+        ProjectDTO project = projectService.getProject(projectId);
         if (project == null) {
             throw new NullPointerException("Project does not exist");
         }
-        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(project);
+        BrApiMasterPayload<ProjectDTO> result = this.getMasterPayload(project);
         return ResponseEntity.ok(result);
     }
 
@@ -239,17 +243,18 @@ public class GOBIIControllerV3  {
      * For Patch Project
      * @return
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/projects/{projectId}")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> patchProject(
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> patchProject(
         @PathVariable Integer projectId,
-        @RequestBody @Valid final GobiiProjectPatchDTO project,
+        @RequestBody @Validated(ProjectDTO.Update.class) final ProjectDTO project,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         String userName = this.getCurrentUser();
-        GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> payload = this.getMasterPayload(dto);
+        ProjectDTO dto = projectService.patchProject(projectId, project, userName);
+        BrApiMasterPayload<ProjectDTO> payload = this.getMasterPayload(dto);
         return ResponseEntity.ok(payload);
     }
 
@@ -259,6 +264,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/projects/{projectId}")
     @ResponseBody
     public ResponseEntity<String> deleteProject(
@@ -298,14 +304,17 @@ public class GOBIIControllerV3  {
     public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getContacts(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-        @RequestParam(required=false) Integer organizationId
+        //@RequestParam(required=false) Integer organizationId
+        @RequestParam(required=false, defaultValue = "pi") String role
     ) throws Exception {
         Integer pageSizeToUse = getPageSize(pageSize);
-        PagedResult<ContactDTO> pagedResult = contactService.getContacts(
-            Math.max(0, page),
-            pageSizeToUse,
-            organizationId
-        );
+        // PagedResult<ContactDTO> pagedResult = contactService.getContacts(
+        //     Math.max(0, page),
+        //     pageSizeToUse,
+        //     organizationId
+        // );
+        String cropType = this.getCropType();
+        PagedResult<ContactDTO> pagedResult = contactService.getUsers(cropType, role.toLowerCase(), page, pageSizeToUse);
         BrApiMasterListPayload<ContactDTO> payload = this.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
@@ -354,10 +363,11 @@ public class GOBIIControllerV3  {
      * Create new project
      * @since 2020-03-13
      */
+    @CropAuth(CURATOR)
     @PostMapping("/experiments")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> createProject(
-            @RequestBody @Valid final ExperimentRequest experiment,
+            @RequestBody @Validated(ExperimentDTO.Create.class) final ExperimentDTO experiment,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -377,11 +387,12 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/experiments/{experimentId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> updateExperiment(
         @PathVariable Integer experimentId,
-        @RequestBody @Valid final ExperimentPatchRequest request,
+        @RequestBody @Validated(ExperimentDTO.Update.class) final ExperimentDTO request,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -399,6 +410,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/experiments/{experimentId}")
     @ResponseBody
     public ResponseEntity<String> deleteExperiment(
@@ -453,6 +465,7 @@ public class GOBIIControllerV3  {
      * 
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/analyses")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> createAnalysis(
@@ -470,6 +483,7 @@ public class GOBIIControllerV3  {
     /**
      * Update Analysis  By Id
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/analyses/{analysisId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> patchAnalysis(
@@ -502,6 +516,7 @@ public class GOBIIControllerV3  {
     /**
      * Get Analysis By Id
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/analyses/{analysisId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -516,6 +531,7 @@ public class GOBIIControllerV3  {
      * Create Analysis Type
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/analyses/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createAnalysisType(
@@ -551,6 +567,7 @@ public class GOBIIControllerV3  {
      * Create Dataset
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/datasets")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<DatasetDTO>> createDataset(
@@ -603,6 +620,7 @@ public class GOBIIControllerV3  {
      * Update dataset by Id
      * @return
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/datasets/{datasetId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<DatasetDTO>> updateDataset(
@@ -620,6 +638,7 @@ public class GOBIIControllerV3  {
      * Delete dataset
      * @return
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/datasets/{datasetId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -653,6 +672,7 @@ public class GOBIIControllerV3  {
      * Create Analysis Type
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/datasets/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createDatasetType(
@@ -693,6 +713,7 @@ public class GOBIIControllerV3  {
      * Create mapset entry
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/mapsets")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MapsetDTO>> createMapset(
@@ -724,6 +745,7 @@ public class GOBIIControllerV3  {
      * Update mapset
      * @return
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/mapsets/{mapsetId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MapsetDTO>> updateMapset(
@@ -742,6 +764,7 @@ public class GOBIIControllerV3  {
     /**
      * Delete mapset
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/mapsets/{mapsetId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -760,6 +783,7 @@ public class GOBIIControllerV3  {
      * @return
      * @throws Exception
      */
+    @CropAuth(CURATOR)
     @PostMapping("/mapsets/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createMapsetType(
@@ -827,6 +851,7 @@ public class GOBIIControllerV3  {
      * Create Organization
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/organizations")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> createOrganization(
@@ -844,6 +869,7 @@ public class GOBIIControllerV3  {
     /**
      * Patch organization
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/organizations/{organizationId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<OrganizationDTO>> updateOrganization(
@@ -861,6 +887,7 @@ public class GOBIIControllerV3  {
     /**
      * Delete organization
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/organizations/{organizationId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -872,7 +899,7 @@ public class GOBIIControllerV3  {
     }
 
     //--- Cv 
-
+    @CropAuth(CURATOR)
     @PostMapping("/cvs")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvDTO>> createCv(
@@ -885,6 +912,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    @CropAuth(CURATOR)
     @PatchMapping("/cvs/{cvId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvDTO>> updateCv(
@@ -933,6 +961,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @PostMapping("/cvs/properties")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvPropertyDTO>> createCvProperty(
@@ -946,6 +975,7 @@ public class GOBIIControllerV3  {
 
     }
 
+    @CropAuth(CURATOR)
     @DeleteMapping("/cvs/{cvId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -957,6 +987,7 @@ public class GOBIIControllerV3  {
     } 
 
     // --- Platforms
+    @CropAuth(CURATOR)
     @PostMapping("/platforms")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<PlatformDTO>> addPlatform(
@@ -993,6 +1024,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @PatchMapping("/platforms/{platformId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<PlatformDTO>> updatePlatform(
@@ -1008,6 +1040,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @DeleteMapping("/platforms/{platformId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -1018,6 +1051,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    @CropAuth(CURATOR)
     @PostMapping("/platforms/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createPlatformType(
@@ -1060,6 +1094,7 @@ public class GOBIIControllerV3  {
      * Create reference
      * @return
      */
+    @CropAuth(CURATOR)
     @PostMapping("/references")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> createReference(
@@ -1090,6 +1125,7 @@ public class GOBIIControllerV3  {
     /**
      * Update
      */
+    @CropAuth(CURATOR)
     @PatchMapping("/references/{referenceId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ReferenceDTO>> updateReference(
@@ -1108,6 +1144,7 @@ public class GOBIIControllerV3  {
      * Delete
      * @return
      */
+    @CropAuth(CURATOR)
     @DeleteMapping("/references/{referenceId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -1119,7 +1156,7 @@ public class GOBIIControllerV3  {
     }
 
     //---- Marker Group
-
+    @CropAuth(CURATOR)
     @PostMapping("/markergroups")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> createMarkerGroup(
@@ -1156,6 +1193,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @PatchMapping("/markergroups/{markerGroupId}")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> updateMarkerGroup(
@@ -1170,6 +1208,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    @CropAuth(CURATOR)
     @DeleteMapping("/markergroups/{markerGroupId}")
     @ResponseBody
     @SuppressWarnings("rawtypes")
@@ -1180,6 +1219,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    @CropAuth(CURATOR)
     @PostMapping("/markergroups/{markerGroupId}/markerscollection")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> mapMarkers(
@@ -1218,6 +1258,21 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
+    // --test
+    @GetMapping("/test")
+    @CropAuth("pi")
+    @ResponseBody
+    public ResponseEntity<String> testMe() {
+        return ResponseEntity.ok("test");
+    }
+
+    @GetMapping("/test2")
+    @PreAuthorize("hasPermission('test2', 'read')")
+    @ResponseBody
+    public ResponseEntity<String> testMe2() {
+        return ResponseEntity.ok("test2");
+    }
+
     public ProjectService getProjectService() {
         return projectService;
     }
@@ -1233,6 +1288,11 @@ public class GOBIIControllerV3  {
     private Integer getPageSize(Integer pageSize) {
         if (pageSize == null || pageSize <= 0) return 1000;
         return pageSize;
+    }
+
+    //This needs to be public
+    public String getCropType() throws Exception {
+        return CropRequestAnalyzer.getGobiiCropType();
     }
 
     private void checkBindingErrors(BindingResult bindingResult) throws Exception {

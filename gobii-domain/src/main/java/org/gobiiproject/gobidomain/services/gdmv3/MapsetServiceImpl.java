@@ -2,22 +2,24 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidTypeException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.entity.Reference;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
@@ -73,8 +75,7 @@ public class MapsetServiceImpl implements MapsetService {
         createdMapset.setReference(reference);
         // audit items
         Contact creator = contactDao.getContactByUsername(createdBy);
-        if (creator != null)
-            createdMapset.setCreatedBy(creator.getContactId());
+        createdMapset.setCreatedBy(Optional.ofNullable(creator).map(v -> v.getContactId()).orElse(null));
         createdMapset.setCreatedDate(new java.util.Date());
 
         // other required colums
@@ -93,12 +94,8 @@ public class MapsetServiceImpl implements MapsetService {
 
     @Transactional
     @Override
-    public MapsetDTO getMapset(Integer mapsetId) {
-        Mapset mapset = mapsetDao.getMapset(mapsetId);
-        if (mapset == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Not found");
-        }
+    public MapsetDTO getMapset(Integer mapsetId) throws Exception {
+        Mapset mapset = this.loadMapset(mapsetId);
         MapsetDTO mapsetDTO = new MapsetDTO();
         ModelMapper.mapEntityToDto(mapset, mapsetDTO);
         return mapsetDTO;
@@ -107,15 +104,10 @@ public class MapsetServiceImpl implements MapsetService {
     @Transactional
     @Override
     public MapsetDTO updateMapset(Integer mapsetId, MapsetDTO patchData, String editedBy) throws Exception {
-        Mapset mapset = mapsetDao.getMapset(mapsetId);
-        if (mapset == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Not found");
-        }
+        Mapset mapset = this.loadMapset(mapsetId);
 
         if (patchData.getMapsetName() != null) {
             mapset.setMapsetName(patchData.getMapsetName());
-            // TODO: also update code?
         }
 
         if (patchData.getMapsetDescription() != null) {
@@ -133,16 +125,13 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         // audit items
-        // audit items
         Contact creator = contactDao.getContactByUsername(editedBy);
-        if (creator != null)
-            mapset.setModifiedBy(creator.getContactId());
+        mapset.setModifiedBy(Optional.ofNullable(creator).map( v -> v.getContactId()).orElse(null));
         mapset.setModifiedDate(new java.util.Date());
 
         // updated status
-        // status
         Cv status = cvDao.getModifiedStatus();
-        mapset.setStatus(status); // TODO: replace the status with cv type
+        mapset.setStatus(status); // TODO: replace the status with cv type?
 
         mapset = mapsetDao.updateMapset(mapset);
         MapsetDTO updatedMapsetDTO = new MapsetDTO();
@@ -154,8 +143,7 @@ public class MapsetServiceImpl implements MapsetService {
     private Reference getReference(Integer referenceId) throws Exception {
         Reference reference = referenceDao.getReference(referenceId);
         if (reference == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown reference");
+            throw new UnknownEntityException.Reference();
         }
         return reference;
 
@@ -164,13 +152,12 @@ public class MapsetServiceImpl implements MapsetService {
     private Cv getType(Integer cvId) throws Exception {
         Cv type = cvDao.getCvByCvId(cvId);
         if (type == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Mapset type not found");
+            throw new UnknownEntityException.MapsetType();
         }
 
         // check type is correct type
         if (!type.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName())) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Invalid type");
+            throw new InvalidTypeException();
         }
         return type;
     }
@@ -178,41 +165,38 @@ public class MapsetServiceImpl implements MapsetService {
     @Transactional
     @Override
     public void deleteMapset(Integer mapsetId) throws Exception {
-        Mapset mapset = mapsetDao.getMapset(mapsetId);
-        if (mapset == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Not found");
-        }
-
+        Mapset mapset = this.loadMapset(mapsetId);
         mapsetDao.deleteMapset(mapset);
     }
 
     @Transactional
     @Override
     public CvTypeDTO createMapsetType(String mapsetTypeName, String mapsetTypeDescription, String user) {
-        
-        org.gobiiproject.gobiimodel.entity.CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-            CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(),
-            2 //TODO:  this is custom type
+
+        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(CvGroupTerm.CVGROUP_MAPSET_TYPE.getCvGroupName(), 2 // TODO:
+                                                                                                            // this is
+                                                                                                            // custom
+                                                                                                            // type
         );
-        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
+        if (cvGroup == null)
+            throw new GobiiDaoException("Missing CvGroup for Mapset Type");
 
         Cv cv = new Cv();
         cv.setCvGroup(cvGroup);
-		cv.setTerm(mapsetTypeName);
-		
-		if (mapsetTypeDescription != null)
-        	cv.setDefinition(mapsetTypeDescription);
+        cv.setTerm(mapsetTypeName);
 
-        //get the new row status
+        if (mapsetTypeDescription != null)
+            cv.setDefinition(mapsetTypeDescription);
+
+        // get the new row status
         // Get the Cv for status, new row
         Cv status = cvDao.getNewStatus();
         cv.setStatus(status.getCvId());
 
-        //set rank
+        // set rank
         cv.setRank(0);
         cv = cvDao.createCv(cv);
-        
+
         CvTypeDTO mapsetDTO = new CvTypeDTO();
         ModelMapper.mapEntityToDto(cv, mapsetDTO);
         return mapsetDTO;
@@ -232,7 +216,13 @@ public class MapsetServiceImpl implements MapsetService {
 
         return PagedResult.createFrom(page, mapsetTypeDTOs);
     }
-    
-    
-    
+
+    private Mapset loadMapset(Integer mapsetId) throws Exception {
+        Mapset mapset = mapsetDao.getMapset(mapsetId);
+        if (mapset == null) {
+            throw new EntityDoesNotExistException.Mapset();
+        }
+        return mapset;
+    }
+
 }
