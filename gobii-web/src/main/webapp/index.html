@@ -143,18 +143,22 @@
                     defaultExtension: 'js',
                     main:'index.js'
                 },
-                'keycloak-angular': {
-                    defaultExtension: 'js',
-                    main:'bundles/keycloak-angular.umd.js'
-                },
+                '@angular/common/http': {defaultExtension: 'js', main: 'bundles/common-http.umd.js'},
                 'keycloak-js': {
                     defaultExtension: 'js',
                     main:'dist/keycloak.js'
+                },
+                'keycloak-angular': {
+                    defaultExtension: 'js',
+                    main:'bundles/keycloak-angular.umd.js'
                 }
+                
+                
             },
             map: {
                 '@angular/core': 'js/node_modules/@angular/core',
                 '@angular/common': 'js/node_modules/@angular/common',
+                '@angular/common/http' : 'js/node_modules/@angular/common',
                 '@angular/compiler': 'js/node_modules/@angular/compiler',
                 '@angular/router': 'js/node_modules/@angular/router',
                 '@angular/router-deprecated': 'js/node_modules/@angular/router-deprecated',
@@ -177,8 +181,9 @@
                 'deep-freeze-strict': 'js/node_modules/deep-freeze-strict',
                 'ngrx-store-freeze': 'js/node_modules/ngrx-store-freeze',
                 'reselect': 'js/node_modules/reselect',
-                'keycloak-angular': 'js/node_modules/keycloak-angular',
-                'keycloak-js': 'js/node_modules/keycloak-js'
+                'keycloak-js': 'js/node_modules/keycloak-js',
+                'keycloak-angular': 'js/node_modules/keycloak-angular'
+                
             }
         });
         System.import('js/gobii_modules/root/main').then(null, console.error.bind(console));

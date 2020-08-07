@@ -683,6 +683,7 @@
                                         <!-- ** Keycloak deps -->
                                         <include>keycloak-angular/**</include>
                                         <include>keycloak-js/**</include>
+                                        <include>@angular/common/bundles/common-http.umd.js</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
