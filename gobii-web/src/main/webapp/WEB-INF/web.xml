@@ -104,7 +104,6 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-    
 
     <error-page>
         <location>/error</location>

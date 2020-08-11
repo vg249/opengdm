@@ -51,6 +51,12 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "build": "tsc -p ."
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "buildProduction": "ng build --prod",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
   }
 }

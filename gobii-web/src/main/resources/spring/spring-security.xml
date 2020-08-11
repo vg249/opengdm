@@ -70,6 +70,9 @@
     </bean>
 
     <security:http auto-config="false" entry-point-ref="keycloakAuthenticationEntryPoint" use-expressions="true" >
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
         <security:csrf disabled="true"/>
         <security:custom-filter ref="authTokenRewriteFilter" before="FIRST" />
         <security:custom-filter ref="keycloakPreAuthActionsFilter" before="LOGOUT_FILTER" />

@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.keycloak.KeycloakPrincipal;
@@ -44,9 +46,13 @@ public class CropUserFilter extends GenericFilterBean {
     @SuppressWarnings("all")
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-         
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        HttpServletRequest req = (HttpServletRequest) request;
+        if (!this.shouldFilter(req.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
         if (Optional.ofNullable(authentication)
                     .map(a -> a.getPrincipal())
                     .orElse(null) instanceof KeycloakPrincipal
@@ -128,6 +134,11 @@ public class CropUserFilter extends GenericFilterBean {
             null
         );
 
+    }
+
+    private boolean shouldFilter(String path) {
+        if (path.contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) return true;
+        return false;
     }
     
     
