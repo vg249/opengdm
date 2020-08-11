@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from "@angular/core";
-import {TreeNode} from "primeng/components/common/api";
+import {TreeNode} from "primeng/api";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";

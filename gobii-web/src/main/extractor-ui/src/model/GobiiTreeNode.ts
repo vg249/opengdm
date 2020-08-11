@@ -1,4 +1,4 @@
-import {TreeNode} from "primeng/components/common/api";
+import {TreeNode} from "primeng/api";
 import {EntitySubType, EntityType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {Guid} from "./guid";

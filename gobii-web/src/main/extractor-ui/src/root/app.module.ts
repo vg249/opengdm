@@ -15,10 +15,11 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
-import {
-    CheckboxModule, SharedModule, TreeModule, 
-    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, TooltipModule, RadioButtonModule,
-} from 'primeng/primeng';
+// import {
+//     SharedModule, TreeModule, 
+//     AccordionModule, ListboxModule, FieldsetModule, TabViewModule, TooltipModule, RadioButtonModule,
+// } from 'primeng/primeng';
+import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import { PanelModule } from 'primeng/panel';
 
@@ -50,6 +51,14 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
 
 import { KeycloakService, KeycloakAngularModule} from 'keycloak-angular';
 import { initializer } from './app.init';
+import { TreeModule } from 'primeng/tree';
+import { SharedModule } from 'primeng/api';
+import { AccordionModule } from 'primeng/accordion';
+import { ListboxModule } from 'primeng/listbox';
+import { FieldsetModule } from 'primeng/fieldset';
+import { TabViewModule } from 'primeng/tabview';
+import { TooltipModule } from 'primeng/tooltip';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 
 @NgModule({
