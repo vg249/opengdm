@@ -64,12 +64,20 @@ public class CropRequestAnalyzer {
                     String contextPathWithoutSlashes = rawContextPath
                             .replace("/", "");
 
+                    if(requestUrl.startsWith("/")) {
+                        requestUrl = requestUrl.replaceFirst("/", "");
+                    }
 
-                    String candidateSegment = requestUrl
-                            .replace("/", "")
-                            .substring(0, contextPathWithoutSlashes.length());
+                    String[] candidateSegments = requestUrl.split("/");
 
-                    if (candidateSegment.toLowerCase().equals(contextPathWithoutSlashes.toLowerCase())) {
+                    String candidateSegment = "";
+                    if(candidateSegments.length > 1) {
+                        candidateSegment = "gobii-" + candidateSegments[1];
+                    }
+
+                    if (candidateSegment
+                        .toLowerCase()
+                        .equals(contextPathWithoutSlashes.toLowerCase())) {
 
                         returnVal = currentCropConfig.getGobiiCropType();
                     }
