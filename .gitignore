@@ -39,6 +39,8 @@ gobii-web/src/main/webapp/js/gobii_modules/**/*.js
 gobii-web/src/main/webapp/js/gobii_modules/**/*.js.map
 gobii-web/src/main/ts/.baseDir.ts
 gobii-web/node_modules
+gobii-web/src/main/extractor-ui/node_modules
+gobii-web/src/main/extractor-ui/dist
 gobii-web/.tscache
 gobii-web/node_modules
 gobii-web/node
