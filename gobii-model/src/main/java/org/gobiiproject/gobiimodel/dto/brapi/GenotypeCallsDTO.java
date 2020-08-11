@@ -41,6 +41,12 @@ public class GenotypeCallsDTO extends DTOBase{
 
     private String phaseSet;
 
+    private String sepPhased;
+
+    private String sepUnphased;
+
+    private String unknownString;
+
     @Override
     public Integer getId() { return null; }
 
@@ -83,4 +89,27 @@ public class GenotypeCallsDTO extends DTOBase{
 
     public void setPhaseSet(String phaseSet) { this.phaseSet = phaseSet; }
 
+    public String getSepPhased() {
+        return sepPhased;
+    }
+
+    public void setSepPhased(String sepPhased) {
+        this.sepPhased = sepPhased;
+    }
+
+    public String getSepUnphased() {
+        return sepUnphased;
+    }
+
+    public void setSepUnphased(String sepUnphased) {
+        this.sepUnphased = sepUnphased;
+    }
+
+    public String getUnknownString() {
+        return unknownString;
+    }
+
+    public void setUnknownString(String unknownString) {
+        this.unknownString = unknownString;
+    }
 }
