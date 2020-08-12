@@ -250,51 +250,56 @@ export class UploaderComponent implements OnInit {
                 authHeader.name = HeaderNames.headerToken;
 
                 let token: string = "";//TODO: get back to this this._authenticationService.getToken().pipe(
-                    
+                this._authenticationService.getToken().subscribe(
+                    token => {
+                        authHeader.value = token;
+                        fileUploaderOptions.headers.push(authHeader);
+                    }
+                );    
 
-                if (token) {
+                // if (token) {
 
-                    authHeader.value = token;
+                authHeader.value = token;
 
-                    fileUploaderOptions.headers.push(authHeader);
+                fileUploaderOptions.headers.push(authHeader);
 
-                    this.uploader = new FileUploader(fileUploaderOptions);
+                this.uploader = new FileUploader(fileUploaderOptions);
 
-                    this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
+                this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
 
-                        fileItem.file.name = fileName;
+                    fileItem.file.name = fileName;
 
-                    };
+                };
 
 
 
-                    this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+                this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
-                        if (status == 200) {
-                            let listItemType: ExtractorItemType =
-                                this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
-                                    ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
+                    if (status == 200) {
+                        let listItemType: ExtractorItemType =
+                            this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
+                                ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
 
-                            this.fileItemService.loadFileItem(GobiiFileItem
-                                    .build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                                    .setExtractorItemType(listItemType)
-                                    .setItemId(item.file.name)
-                                    .setItemName(item.file.name)
-                                    .setIsEphemeral(true),
-                                true);
+                        this.fileItemService.loadFileItem(GobiiFileItem
+                                .build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                                .setExtractorItemType(listItemType)
+                                .setItemId(item.file.name)
+                                .setItemName(item.file.name)
+                                .setIsEphemeral(true),
+                            true);
 
-                        } else {
+                    } else {
 
-                            this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
-                            this.uploader.clearQueue();
-                            this.clearSelectedFile();
+                        this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
+                        this.uploader.clearQueue();
+                        this.clearSelectedFile();
 
-                        }
+                    }
 
-                    };
-                } else {
-                    this.onUploaderError.emit(new HeaderStatusMessage("Unauthenticated", null, null));
-                }
+                };
+                // } else {
+                //     this.onUploaderError.emit(new HeaderStatusMessage("Unauthenticated", null, null));
+                // }
             });
 
 

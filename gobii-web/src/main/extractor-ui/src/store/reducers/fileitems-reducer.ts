@@ -505,7 +505,7 @@ export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUni
 export const getSelectedSampleType = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
 
     // default
-    let returnVal = GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+    let returnVal = GobiiFileItem.build(GobiiExtractFilterType.BY_SAMPLE, ProcessType.CREATE)
         .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
         .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
         .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]);
@@ -526,7 +526,7 @@ export const getJobId = createSelector(getFileItems, getSelectedUniqueIds, (file
 
     // default
     let returnVal = GobiiFileItem
-        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+        .build(GobiiExtractFilterType.BY_SAMPLE, ProcessType.UPDATE)
         .setExtractorItemType(ExtractorItemType.JOB_ID)
         .setItemId("UNSET")
         .setItemName("UNSET");
