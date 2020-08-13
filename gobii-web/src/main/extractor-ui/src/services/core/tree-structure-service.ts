@@ -50,7 +50,6 @@ export class TreeStructureService {
     // one of these original structural nodes. See the tree nodes reducer for how the
     // container types are actually used
     public getInitialTree(): GobiiTreeNode[] {
-
         let returnVal: GobiiTreeNode[] = [
 
             // BY DATASET

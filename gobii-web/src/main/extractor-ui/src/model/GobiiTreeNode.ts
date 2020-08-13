@@ -18,8 +18,7 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         super();
 
         this.id = Guid.generateUUID();
-
-
+        
         this.parent = parent;
         this.fileItemId = fileItemId;
         this.required = required;
@@ -36,7 +35,7 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
             null,
             null
         );
-
+        
         returnVal.gobiiExtractFilterType = gobiiExtractFilterType;
         returnVal.setItemType(extractoItemType);
 
@@ -48,14 +47,11 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
     public static copy(orig: GobiiTreeNode): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = new GobiiTreeNode(
-            orig.parent,
-            orig.getFileItemId(),
-            orig.getRequired(),
+            null,
+            null,
+            null
         );
-
-        returnVal.gobiiExtractFilterType = orig.getGobiiExtractFilterType();
-        returnVal.setItemType(orig.getItemType());
-
+        Object.assign(returnVal, orig);
         return returnVal;
 
     } //build

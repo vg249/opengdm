@@ -259,7 +259,7 @@ export class UploaderComponent implements OnInit {
 
                 // if (token) {
 
-                authHeader.value = token;
+                //authHeader.value = token;
 
                 fileUploaderOptions.headers.push(authHeader);
 

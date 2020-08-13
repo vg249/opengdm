@@ -4,7 +4,7 @@ import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
-
+import * as util from 'util';
 
 export interface State {
     gobiiExtractFilterType: GobiiExtractFilterType;
@@ -89,20 +89,19 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
 }
 
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
-
     let returnVal: State = state;
 
     switch (action.type) {
 
         case gobiiTreeNodeAction.INIT_TREE: {
             const gobiigobiiTreeItemsPayload = action.payload;
-
+            
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 gobiiTreeNodesActive: state.gobiiTreeNodesActive,
                 gobiiTreeNodes: gobiigobiiTreeItemsPayload
             };
-
+            
             break;
         } // INIT_TREE
 
@@ -241,7 +240,6 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             break;
         }
     }
-
     return returnVal;
 
 }

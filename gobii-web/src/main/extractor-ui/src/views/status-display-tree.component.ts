@@ -20,8 +20,8 @@ import {TypeControl} from "../services/core/type-control";
     template: `
         <p-tree [value]="gobiiTreeNodesFromStore$ | async"
                 selectionMode="checkbox"
-                propagateSelectionUp="false"
-                propagateSelectionDown="false"
+                [propagateSelectionUp]="false"
+                [propagateSelectionDown]="false"
                 [selection]="gobiiSelectedNodesFromStore$ | async"
                 (onNodeUnselect)="nodeUnselect($event)"
                 (onNodeSelect)="nodeSelect($event)"
@@ -30,8 +30,7 @@ import {TypeControl} from "../services/core/type-control";
                 [style]="{'width':'100%'}"
                 styleClass="criteria-tree"
                 [id]="viewIdGeneratorService.makeStandardId(typeControl.CRITERIA_TREE)"></p-tree>
-        <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
-        <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
+        
     `
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
@@ -42,12 +41,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     private onAddMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private onTreeReady: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
-    gobiiTreeNodesFromStore$: any;// Observable<GobiiTreeNode[]>;
-    gobiiSelectedNodesFromStore$: any; //Observable<GobiiTreeNode[]>;
+    gobiiTreeNodesFromStore$: Observable<GobiiTreeNode[]>;
+    gobiiSelectedNodesFromStore$: Observable<GobiiTreeNode[]>;
 
     constructor(private store: Store<fromRoot.State>,
                 public viewIdGeneratorService: ViewIdGeneratorService) {
-
+        //console.log("Tree constructed");
         this.gobiiTreeNodesFromStore$ = store
             .select(fromRoot.getGobiiTreeNodesForExtractFilter);
 
@@ -64,8 +63,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 // *****************************************************************
 // *********************  TREE NODE DATA STRUCTURES AND EVENTS
 
-    demoTreeNodes: TreeNode[] = [];
-    selectedDemoNodes: TreeNode[] = [];
+    // demoTreeNodes: TreeNode[] = [];
+    // selectedDemoNodes: TreeNode[] = [];
 
 
     selectedGobiiNodes: GobiiTreeNode[] = [];
@@ -152,91 +151,91 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    makeDemoTreeNodes() {
+    // makeDemoTreeNodes() {
 
-        this.demoTreeNodes = [
-            {
-                "label": "Documents",
-                "data": "Documents Folder",
-                "expandedIcon": "fa-folder-open",
-                "collapsedIcon": "fa-folder",
-                "children": [{
+    //     this.demoTreeNodes = [
+    //         {
+    //             "label": "Documents",
+    //             "data": "Documents Folder",
+    //             "expandedIcon": "fa-folder-open",
+    //             "collapsedIcon": "fa-folder",
+    //             "children": [{
 
-                    "label": "Work",
-                    "data": "Work Folder",
-                    "expandedIcon": "fa-folder-open",
-                    "collapsedIcon": "fa-folder",
-                    "children": [{
+    //                 "label": "Work",
+    //                 "data": "Work Folder",
+    //                 "expandedIcon": "fa-folder-open",
+    //                 "collapsedIcon": "fa-folder",
+    //                 "children": [{
 
-                        "label": "Expenses.doc",
-                        "icon": "fa-file-word-o",
-                        "data": "Expenses Document"
-                    }, {"label": "Resume.doc", "icon": "fa-file-word-o", "data": "Resume Document"}]
-                },
-                    {
+    //                     "label": "Expenses.doc",
+    //                     "icon": "fa-file-word-o",
+    //                     "data": "Expenses Document"
+    //                 }, {"label": "Resume.doc", "icon": "fa-file-word-o", "data": "Resume Document"}]
+    //             },
+    //                 {
 
-                        "label": "Home",
-                        "data": "Home Folder",
-                        "expandedIcon": "fa-folder-open",
-                        "collapsedIcon": "fa-folder",
-                        "children": [{
+    //                     "label": "Home",
+    //                     "data": "Home Folder",
+    //                     "expandedIcon": "fa-folder-open",
+    //                     "collapsedIcon": "fa-folder",
+    //                     "children": [{
 
-                            "label": "Invoices.txt",
-                            "icon": "fa-file-word-o",
-                            "data": "Invoices for this month"
-                        }]
-                    }]
-            },
-            {
+    //                         "label": "Invoices.txt",
+    //                         "icon": "fa-file-word-o",
+    //                         "data": "Invoices for this month"
+    //                     }]
+    //                 }]
+    //         },
+    //         {
 
-                "label": "Pictures",
-                "data": "Pictures Folder",
-                "expandedIcon": "fa-folder-open",
-                "collapsedIcon": "fa-folder",
-                "children": [
-                    {"label": "barcelona.jpg", "icon": "fa-file-image-o", "data": "Barcelona Photo"},
-                    {"label": "logo.jpg", "icon": "fa-file-image-o", "data": "PrimeFaces Logo"},
-                    {"label": "primeui.png", "icon": "fa-file-image-o", "data": "PrimeUI Logo"}]
-            },
-            {
+    //             "label": "Pictures",
+    //             "data": "Pictures Folder",
+    //             "expandedIcon": "fa-folder-open",
+    //             "collapsedIcon": "fa-folder",
+    //             "children": [
+    //                 {"label": "barcelona.jpg", "icon": "fa-file-image-o", "data": "Barcelona Photo"},
+    //                 {"label": "logo.jpg", "icon": "fa-file-image-o", "data": "PrimeFaces Logo"},
+    //                 {"label": "primeui.png", "icon": "fa-file-image-o", "data": "PrimeUI Logo"}]
+    //         },
+    //         {
 
-                "label": "Movies",
-                "data": "Movies Folder",
-                "expandedIcon": "fa-folder-open",
-                "collapsedIcon": "fa-folder",
-                "children": [{
+    //             "label": "Movies",
+    //             "data": "Movies Folder",
+    //             "expandedIcon": "fa-folder-open",
+    //             "collapsedIcon": "fa-folder",
+    //             "children": [{
 
-                    "label": "Al Pacino",
-                    "data": "Pacino Movies",
-                    "children": [{
+    //                 "label": "Al Pacino",
+    //                 "data": "Pacino Movies",
+    //                 "children": [{
 
-                        "label": "Scarface",
-                        "icon": "fa-file-video-o",
-                        "data": "Scarface Movie"
-                    }, {"label": "Serpico", "icon": "fa-file-video-o", "data": "Serpico Movie"}]
-                },
-                    {
+    //                     "label": "Scarface",
+    //                     "icon": "fa-file-video-o",
+    //                     "data": "Scarface Movie"
+    //                 }, {"label": "Serpico", "icon": "fa-file-video-o", "data": "Serpico Movie"}]
+    //             },
+    //                 {
 
-                        "label": "Robert De Niro",
-                        "data": "De Niro Movies",
-                        "children": [{
+    //                     "label": "Robert De Niro",
+    //                     "data": "De Niro Movies",
+    //                     "children": [{
 
-                            "label": "Goodfellas",
-                            "icon": "fa-file-video-o",
-                            "data": "Goodfellas Movie"
-                        }, {
+    //                         "label": "Goodfellas",
+    //                         "icon": "fa-file-video-o",
+    //                         "data": "Goodfellas Movie"
+    //                     }, {
 
-                            "label": "Untouchables",
-                            "icon": "fa-file-video-o",
-                            "data": "Untouchables Movie"
-                        }]
-                    }]
-            }
-        ];
+    //                         "label": "Untouchables",
+    //                         "icon": "fa-file-video-o",
+    //                         "data": "Untouchables Movie"
+    //                     }]
+    //                 }]
+    //         }
+    //     ];
 
 
-        this.selectedDemoNodes.push(this.demoTreeNodes[1].children[0])
-        this.demoTreeNodes[1].partialSelected = true;
-        this.demoTreeNodes[1].expanded = true;
-    }
+    //     this.selectedDemoNodes.push(this.demoTreeNodes[1].children[0])
+    //     this.demoTreeNodes[1].partialSelected = true;
+    //     this.demoTreeNodes[1].expanded = true;
+    // }
 }

@@ -1,64 +1,60 @@
-import {NgModule, APP_INITIALIZER, NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { APP_BASE_HREF } from "@angular/common";
 //import {HttpModule} from "@angular/http";
-import { HttpClientModule } from  '@angular/common/http';
-import {BrowserModule} from "@angular/platform-browser";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {ExportFormatComponent} from "../views/export-format.component";
-import {StatusDisplayComponent} from "../views/status-display-box.component";
-import {CheckListBoxComponent} from "../views/checklist-box.component";
-import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
-import {FileUploadModule} from "ng2-file-upload";
-import {ExtractorRoot} from "./app.extractorroot";
-import {DtoRequestService} from "../services/core/dto-request.service";
-import {AuthenticationService} from "../services/core/authentication.service";
-import {TextAreaComponent} from "../views/text-area.component";
-import {UploaderComponent} from "../views/uploader.component";
-import {SampleListTypeComponent} from "../views/sample-list-type.component";
-// import {
-//     SharedModule, TreeModule, 
-//     AccordionModule, ListboxModule, FieldsetModule, TabViewModule, TooltipModule, RadioButtonModule,
-// } from 'primeng/primeng';
-import { CheckboxModule } from 'primeng/checkbox';
-import { TableModule } from 'primeng/table';
-import { PanelModule } from 'primeng/panel';
-
-import { OverlayPanelModule} from 'primeng/overlaypanel';
-import { DialogModule } from 'primeng/dialog';
-
-import {ButtonModule} from 'primeng/button';
-import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
-import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
-import {NameIdService} from "../services/core/name-id-service";
-import {AppComponent} from "./app.component";
-//import {LoginComponent} from "../views/login.component";
-import {routing} from "./app.routing";
-import {APP_BASE_HREF} from "@angular/common";
-import {AuthGuard} from "../services/core/auth.guard";
-import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
-import {StoreModule} from '@ngrx/store';
-import {reducers} from '../store/reducers';
-import {StoreDevtoolsModule} from "@ngrx/store-devtools";
-import {EffectsModule} from "@ngrx/effects";
-import {TreeEffects} from "../store/effects/tree-effects";
-import {TreeStructureService} from "../services/core/tree-structure-service";
-import {FileItemEffects} from "../store/effects/file-item-effects";
-import {FileItemService} from "../services/core/file-item-service";
-import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
-import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
-import {FilterParamsColl} from "../services/core/filter-params-coll";
-import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
-
-import { KeycloakService, KeycloakAngularModule} from 'keycloak-angular';
-import { initializer } from './app.init';
-import { TreeModule } from 'primeng/tree';
-import { SharedModule } from 'primeng/api';
+import { HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { EffectsModule } from "@ngrx/effects";
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { FileUploadModule } from "ng2-file-upload";
 import { AccordionModule } from 'primeng/accordion';
-import { ListboxModule } from 'primeng/listbox';
+import { SharedModule } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
 import { FieldsetModule } from 'primeng/fieldset';
+import { ListboxModule } from 'primeng/listbox';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PanelModule } from 'primeng/panel';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { TooltipModule } from 'primeng/tooltip';
-import { RadioButtonModule } from 'primeng/radiobutton';
+import { TreeModule } from 'primeng/tree';
+import { AuthGuard } from "../services/core/auth.guard";
+import { AuthenticationService } from "../services/core/authentication.service";
+import { DtoRequestService } from "../services/core/dto-request.service";
+import { FileItemService } from "../services/core/file-item-service";
+import { FilterParamsColl } from "../services/core/filter-params-coll";
+import { InstructionSubmissionService } from "../services/core/instruction-submission-service";
+import { NameIdService } from "../services/core/name-id-service";
+import { TreeStructureService } from "../services/core/tree-structure-service";
+import { ViewIdGeneratorService } from "../services/core/view-id-generator-service";
+import { FileItemEffects } from "../store/effects/file-item-effects";
+import { TreeEffects } from "../store/effects/tree-effects";
+import { reducers } from '../store/reducers';
+import { CheckListBoxComponent } from "../views/checklist-box.component";
+import { DatasetDatatableComponent } from "../views/dataset-datatable.component";
+import { ExportFormatComponent } from "../views/export-format.component";
+import { NameIdListBoxComponent } from "../views/name-id-list-box.component";
+import { SampleListTypeComponent } from "../views/sample-list-type.component";
+import { SampleMarkerBoxComponent } from "../views/sample-marker-box.component";
+import { StatusDisplayComponent } from "../views/status-display-box.component";
+import { StatusDisplayTreeComponent } from "../views/status-display-tree.component";
+import { TextAreaComponent } from "../views/text-area.component";
+import { UploaderComponent } from "../views/uploader.component";
+import { AppComponent } from "./app.component";
+import { ExtractorRoot } from "./app.extractorroot";
+import { initializer } from './app.init';
+//import {LoginComponent} from "../views/login.component";
+import { routing } from "./app.routing";
+import { SearchCriteriaBySamplesComponent } from "./page-by-samples.component";
+
+
+
 
 
 @NgModule({

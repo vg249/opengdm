@@ -37,7 +37,7 @@ import { KeycloakService } from 'keycloak-angular';
 
 @Component({
     selector: 'extractor-root',
-    styleUrls: ['../assets/extractor-ui.css'],
+    //styleUrls: ['../assets/extractor-ui.css'],
     template: `
         <div class="panel panel-default col-md-6 col-md-offset-0" style="width: 95%">
             <div class="panel-heading">
