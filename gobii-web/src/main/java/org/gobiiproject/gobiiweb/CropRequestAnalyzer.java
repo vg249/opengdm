@@ -72,7 +72,7 @@ public class CropRequestAnalyzer {
 
                     String candidateSegment = "";
                     if(candidateSegments.length > 1) {
-                        candidateSegment = "gobii-" + candidateSegments[1];
+                        candidateSegment = "gobii-" + candidateSegments[2];
                     }
 
                     if (candidateSegment

@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.utils.security;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.gdmv3.CropServiceImpl;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
@@ -14,21 +13,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class KeycloakSecurityContext {
+public class KeycloakTokenInfo {
 
-    static Logger LOGGER = LoggerFactory.getLogger(KeycloakSecurityContext.class);
+    static Logger LOGGER = LoggerFactory.getLogger(KeycloakTokenInfo.class);
 
     public static AccessToken getAccessToken() {
         try {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            
-            KeycloakPrincipal<org.keycloak.KeycloakSecurityContext> kp =
-                (KeycloakPrincipal<org.keycloak.KeycloakSecurityContext>) authentication.getPrincipal();
+            if(authentication.getPrincipal() instanceof KeycloakPrincipal) {
+                KeycloakPrincipal<org.keycloak.KeycloakSecurityContext> kp =
+                    (KeycloakPrincipal<org.keycloak.KeycloakSecurityContext>)
+                        authentication.getPrincipal();
+                AccessToken token = kp.getKeycloakSecurityContext().getToken();
+                return token;
+            }
+            else {
+                throw new GobiiDomainException("Unable to fetch authorization information");
+            }
 
-            AccessToken token = kp.getKeycloakSecurityContext().getToken();
 
-            return token;
         }
         catch (Exception e) {
             LOGGER.error("Unable to fetch authorization information.", e);
@@ -37,14 +41,17 @@ public class KeycloakSecurityContext {
         }
     }
 
-    public static List<String> getUserGroup() {
+    public static List<String> getUserGroups() {
+        try {
+            Map<String, Object> otherClaims = getAccessToken().getOtherClaims();
 
-        Map<String, Object> otherClaims = getAccessToken().getOtherClaims();
-
-        List<String> userGroups = (List<String>) Optional.ofNullable(otherClaims.get("groups"))
-            .orElse(new ArrayList<>());
-
-        return userGroups;
-
+            List<String> userGroups = (List<String>) Optional.ofNullable(otherClaims.get("groups"))
+                .orElse(new ArrayList<>());
+            return userGroups;
+        }
+        catch (Exception e) {
+            LOGGER.error("Unable to fetch authorization information.", e);
+            throw new GobiiDomainException(e);
+        }
     }
 }

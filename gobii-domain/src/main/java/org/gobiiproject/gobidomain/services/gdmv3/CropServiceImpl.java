@@ -1,15 +1,17 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.impl.ConfigSettingsServiceImpl;
+import org.gobiiproject.gobidomain.utils.security.KeycloakTokenInfo;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CropsDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.utils.URLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CropServiceImpl implements CropService {
 
@@ -20,28 +22,51 @@ public class CropServiceImpl implements CropService {
     /**
      * Get all the crops defined in the system.
      * No paging done as there are only very few crops available.
-     * @return List of crop names
+     * @return Paged result of active crop names.
      * @throws GobiiException
      */
     @Override
-    public List<CropsDTO> getCrops() throws GobiiException {
+    public PagedResult<CropsDTO> getCrops() throws GobiiException {
 
         List<CropsDTO> crops = new ArrayList<>();
 
         try {
 
+            List<String> userGroups = KeycloakTokenInfo.getUserGroups();
+
+            //Get all the crop that user authorized ot access
+            Set<String> userAuthorizedCrops =  userGroups.stream().map((group) -> {
+                String[] cropsPaths =  URLUtils.stripStartAndEndPathSeparator(group).split("/");
+                if(cropsPaths.length > 0) {
+                    return cropsPaths[0];
+                }
+                return null;
+            }).collect(Collectors.toSet());
+
+            //remove nulls from userAuthorized crop to avoid nulls getting acccess
+            userAuthorizedCrops.remove(null);
+
+            // get only active crops
             configSettings.getActiveCropConfigs().forEach(cropConfig -> {
                 CropsDTO crop = new CropsDTO();
                 crop.setCropType(cropConfig.getGobiiCropType());
+                if(userAuthorizedCrops.contains(cropConfig.getGobiiCropType())) {
+                    crop.setUserAuthorized(true);
+                }
+                else {
+                    crop.setUserAuthorized(false);
+                }
                 crops.add(crop);
             });
 
+
         }
         catch (Exception e) {
-            LOGGER.error("Gobii Read Setting Error", e);
+            LOGGER.error("Unable to read crop data", e);
             throw new GobiiDomainException(e);
         }
 
-        return crops;
+        return PagedResult.createFrom(0, crops);
+
     }
 }
