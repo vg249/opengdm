@@ -2,7 +2,7 @@ package org.gobiiproject.gobiimodel.utils;
 
 import org.apache.commons.lang.StringUtils;
 
-public class UrlUtils {
+public class URLUtils {
 
     private static final String pathSeparator = "/";
 
