@@ -17,7 +17,7 @@ import {Pagination} from "../../model/payload/pagination";
 import {PayloadFilter} from "../actions/action-payload-filter";
 import {map} from "rxjs/operator/map";
 import {REMOVE_ALL_FROM_EXTRACT} from "../actions/fileitem-action";
-
+import * as util from 'util';
 
 /***
  * By definition, GobiiFileItems are read-only; we only every get them
@@ -44,8 +44,9 @@ function addToExtractItems(state: State, targetFileItem: GobiiFileItem): State {
 
     if (!state.allFileItems.find(fi => fi.getFileItemUniqueId() === targetFileItem.getFileItemUniqueId())) {
 
-        console.log("Item is not in the collection: " + targetFileItem.getItemName() + " of type " + Labels.instance().treeExtractorTypeLabels[gobiiFileItem.getExtractorItemType()]);
+        console.log("Item is not in the collection: " + targetFileItem.getItemName() + " of type " + Labels.instance().treeExtractorTypeLabels[targetFileItem.getExtractorItemType()]);
     }
+
     let fileItems: GobiiFileItem[] = state.allFileItems.map(item => GobiiFileItem.copy(item));
     let gobiiFileItem: GobiiFileItem = GobiiFileItem.copy(targetFileItem);
     gobiiFileItem.setSelected(true);
@@ -59,7 +60,7 @@ function addToExtractItems(state: State, targetFileItem: GobiiFileItem): State {
 
     let returnVal: State = {
         gobiiExtractFilterType: state.gobiiExtractFilterType,
-        allFileItems: state.allFileItems.map(item => GobiiFileItem.copy(item)),
+        allFileItems: fileItems,
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
         filters: state.filters
     };
@@ -79,7 +80,7 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
         newSelectedUniqueIdsState.splice(idx, 1);
     }
 
-    let newFileItemState: GobiiFileItem[] = state.allFileItems.slice();
+    let newFileItemState: GobiiFileItem[] = state.allFileItems.slice().map(node => GobiiFileItem.copy(node));
     if (gobiiFileItem.getIsEphemeral()) {
         newFileItemState = newFileItemState.filter(fi => !fi.getIsEphemeral());
     } else {
@@ -294,7 +295,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         case
         gobiiFileItemAction.REPLACE_BY_ITEM_ID: {
-
+            console.log(util.inspect(state.allFileItems));
+            console.log(util.inspect(action));
             let itemCurrentlyInExtract: GobiiFileItem = state
                 .allFileItems
                 .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract);
@@ -383,7 +385,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             // only those not of the same extract filter type should remain selected
 
-            let newFIleItemState = state.allFileItems.slice();
+            let newFIleItemState = state.allFileItems.slice().map(node => GobiiFileItem.copy(node));
 
             let itemsToDeselect: GobiiFileItem[] =
                 newFIleItemState
@@ -416,7 +418,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             returnVal = {
                 gobiiExtractFilterType: gobiiExtractFilterType,
-                allFileItems: state.allFileItems,
+                allFileItems: state.allFileItems.map(node => GobiiFileItem.copy(node)),
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                 filters: state.filters
             };

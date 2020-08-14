@@ -52,6 +52,11 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
             null
         );
         Object.assign(returnVal, orig);
+
+        if (orig.getChildren() && orig.getChildren().length > 0) {
+            let children: GobiiTreeNode[] = orig.getChildren().map(child => this.copy(child));
+            returnVal.setChildren(children);
+        }
         return returnVal;
 
     } //build

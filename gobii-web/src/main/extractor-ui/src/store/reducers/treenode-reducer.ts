@@ -90,11 +90,11 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
 
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
     let returnVal: State = state;
-
+    console.log(action.type);
     switch (action.type) {
 
         case gobiiTreeNodeAction.INIT_TREE: {
-            const gobiigobiiTreeItemsPayload = action.payload;
+            const gobiigobiiTreeItemsPayload = action.payload.map(node => GobiiTreeNode.copy(node));
             
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
@@ -111,7 +111,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             const gobiiTreeNodePayload: GobiiTreeNode = action.payload;
 
             // copy the existing
-            const newTreeNodes = state.gobiiTreeNodes.slice();
+            const newTreeNodes = state.gobiiTreeNodes.slice().map(node => GobiiTreeNode.copy(node));
             if (placeNodeInTree(gobiiTreeNodePayload, newTreeNodes, state.gobiiExtractFilterType)) {
 
                 returnVal = {
@@ -126,14 +126,15 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
 
         case gobiiTreeNodeAction.ACTIVATE: {
+            console.log(util.inspect(action));
 
             const fileItemUniqueId: string = action.payload;
 
-
+            let newNodes: GobiiTreeNode[] = state.gobiiTreeNodes.map(node => GobiiTreeNode.copy(node));
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 gobiiTreeNodesActive: [...state.gobiiTreeNodesActive, ...[fileItemUniqueId]],
-                gobiiTreeNodes: state.gobiiTreeNodes
+                gobiiTreeNodes: newNodes
             };
 
             break;
@@ -143,7 +144,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
         case gobiiTreeNodeAction.DEACTIVATE: {
 
             const gobiiFileItemUniqueId = action.payload;
-            const newTreeNodes = state.gobiiTreeNodes.slice();
+            const newTreeNodes = state.gobiiTreeNodes.slice().map(node => GobiiTreeNode.copy(node));
 
             const gobiiTreeNodeToDeActivate: GobiiTreeNode = findTreeNodeByFIleItemId(newTreeNodes
                     .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
@@ -177,7 +178,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                    gobiiTreeNodes: state.gobiiTreeNodes
+                    gobiiTreeNodes: state.gobiiTreeNodes.map(node => GobiiTreeNode.copy(node))
                 };
             }
 
@@ -190,7 +191,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             returnVal = {
                 gobiiExtractFilterType: action.payload,
                 gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                gobiiTreeNodes: state.gobiiTreeNodes
+                gobiiTreeNodes: state.gobiiTreeNodes.map(node => GobiiTreeNode.copy(node))
             };
 
             break;
@@ -203,7 +204,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             const gobiiFileItemCompoundId: GobiiFileItemCompoundId = action.payload.gobiiFileItemCompoundId;
             const icon: string = action.payload.icon;
 
-            const newTreeNodesState = state.gobiiTreeNodes.slice();
+            const newTreeNodesState = state.gobiiTreeNodes.slice().map(node => GobiiTreeNode.copy(node));
 
             let treeNodeToMutate: GobiiTreeNode = findTreeNodeByCompoundId(newTreeNodesState,
                 gobiiExtractFilterType,
@@ -234,7 +235,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 gobiiTreeNodesActive: newSelectedNodes,
-                gobiiTreeNodes: state.gobiiTreeNodes
+                gobiiTreeNodes: state.gobiiTreeNodes.map(node => GobiiTreeNode.copy(node))
             };
 
             break;
@@ -303,5 +304,5 @@ export const getAll = createSelector(getGobiiTreeNodes, getGobiiTreeItemIds, (tr
 });
 
 export const getForSelectedFilter = createSelector(getGobiiTreeNodes, getExtractFilterType, (treeItems, extractFilterType) => {
-    return treeItems.filter(ti => ti.getGobiiExtractFilterType() === extractFilterType);
+    return treeItems.filter(ti => ti.getGobiiExtractFilterType() === extractFilterType).map(node => GobiiTreeNode.copy(node));
 });

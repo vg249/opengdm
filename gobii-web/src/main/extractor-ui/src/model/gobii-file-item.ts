@@ -47,6 +47,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._fileItemUniqueId = Guid.generateUUID();
     }
 
+
+
     public static build(gobiiExtractFilterType: GobiiExtractFilterType,
                         processType: ProcessType): GobiiFileItem {
 
@@ -76,26 +78,26 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
     
     public static copy(other: GobiiFileItem) {
         let returnVal: GobiiFileItem = new GobiiFileItem(
-            other.getGobiiExtractFilterType(), 
-            other.getProcessType(), 
-            other.getExtractorItemType(), 
-            other.getEntityType(), 
-            other.getEntitySubType(), 
-            other.getCvFilterType(),
-            other.getCvFilterValue(),
-            other.getItemId(),
-            other.getItemName(),
-            other.getSelected(),
-            other.getRequired(),
-            other.getParentItemId(),
-            other.getRelatedEntities(),
-            other.getEntity(),
-            other.hasEntity(),
-            other.getPageNumber(),
-            other.getIsEphemeral()
+            null,
+            null,
+            ExtractorItemType.UNKNOWN,
+            EntityType.UNKNOWN,
+            EntitySubType.UNKNOWN,
+            CvFilterType.UNKNOWN,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            [],
+            [],
+            false,
+            0,
+            false
             
         );
-
+        Object.assign(returnVal, other);
         return returnVal;
     }
 

@@ -83,7 +83,7 @@ export class DtoRequestService<T> {
             scope$._authenticationService
             .getToken()
             .pipe(
-                tap(token => {console.log(token);}),
+                //tap(token => {console.log(token);}),
                 switchMap( (token: string) =>  {
                     let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                     return this._http

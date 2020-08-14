@@ -400,7 +400,7 @@ export class TreeStructureService {
     }
 
     public makeTreeNodeFromFileItem(gobiiFileItem: GobiiFileItem): GobiiTreeNode {
-
+        console.log(JSON.stringify(gobiiFileItem));
 
         let returnVal: GobiiTreeNode = GobiiTreeNode
             .build(gobiiFileItem.getGobiiExtractFilterType(), gobiiFileItem.getExtractorItemType())
