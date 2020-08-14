@@ -84,10 +84,6 @@ export class CheckListBoxComponent implements OnInit, OnChanges {
        }
     }
 
-    public handleModelChange2(arg) {
-        console.log("Model change");
-        console.log(arg);
-    }
 
     public handleItemSelected(arg) {
 

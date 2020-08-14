@@ -43,7 +43,7 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
             returnVal = true;
 
         } else {
-            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren().map(node => GobiiTreeNode.copy(node)), gobiiExtractFilterType);
+            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren(), gobiiExtractFilterType);
         }
     }
 
@@ -87,6 +87,18 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
     }
 
     return returnVal;
+}
+
+function findTargetNode(treeNodes: GobiiTreeNode[], targetId: string): GobiiTreeNode {
+    for (let i = 0; i < treeNodes.length; i++) {
+        if (treeNodes[i].getId() == targetId) return treeNodes[i];
+        //check children
+        let fromChildren: GobiiTreeNode = findTargetNode(treeNodes[i].getChildren(), targetId);
+        if (fromChildren) return fromChildren;
+    }
+
+    return null;
+
 }
 
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
@@ -144,7 +156,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
         case gobiiTreeNodeAction.DEACTIVATE: {
 
             const gobiiFileItemUniqueId = action.payload;
-            const newTreeNodes = state.gobiiTreeNodes.slice().map(node => GobiiTreeNode.copy(node));
+            const newTreeNodes = state.gobiiTreeNodes.map(node => GobiiTreeNode.copy(node));
 
             const gobiiTreeNodeToDeActivate: GobiiTreeNode = findTreeNodeByFIleItemId(newTreeNodes
                     .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
@@ -162,7 +174,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                     gobiiTreeNodeToDeActivate.resetLabel();
                 } else {
                     let targetId: string = gobiiTreeNodeToDeActivate.parent.getId();
-                    let parent: GobiiTreeNode = newTreeNodes.find(value => value.getId() == targetId);
+                    let parent: GobiiTreeNode = findTargetNode(newTreeNodes, targetId);
                     let children: GobiiTreeNode[] = parent.getChildren();
                     children.splice(children.indexOf(gobiiTreeNodeToDeActivate, 0), 1);
                 }
