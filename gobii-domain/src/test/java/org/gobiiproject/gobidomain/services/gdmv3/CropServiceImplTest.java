@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 
-import org.gobiiproject.gobidomain.utils.security.KeycloakTokenInfo;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CropsDTO;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 @WebAppConfiguration
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({KeycloakTokenInfo.class})
+@PrepareForTest({KeycloakService.class})
 public class CropServiceImplTest {
 
     @InjectMocks
@@ -59,8 +58,8 @@ public class CropServiceImplTest {
         when(configSettings.getActiveCropConfigs()).thenReturn(cropConfigs);
 
         List<String> authorizedUserTypes = new ArrayList<>(Arrays.asList("/test1/pi"));
-        PowerMockito.mockStatic(KeycloakTokenInfo.class);
-        PowerMockito.when(KeycloakTokenInfo.getUserGroups()).thenReturn(authorizedUserTypes);
+        PowerMockito.mockStatic(KeycloakService.class);
+        PowerMockito.when(KeycloakService.getUserGroups()).thenReturn(authorizedUserTypes);
 
 
         PagedResult<CropsDTO> cropsPagedResult = cropService.getCrops();

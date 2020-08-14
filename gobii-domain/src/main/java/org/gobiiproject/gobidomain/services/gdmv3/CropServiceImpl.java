@@ -1,7 +1,6 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.utils.security.KeycloakTokenInfo;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CropsDTO;
@@ -32,7 +31,7 @@ public class CropServiceImpl implements CropService {
 
         try {
 
-            List<String> userGroups = KeycloakTokenInfo.getUserGroups();
+            List<String> userGroups = KeycloakService.getUserGroups();
 
             //Get all the crop that user authorized ot access
             Set<String> userAuthorizedCrops =  userGroups.stream().map((group) -> {
@@ -43,7 +42,7 @@ public class CropServiceImpl implements CropService {
                 return null;
             }).collect(Collectors.toSet());
 
-            //remove nulls from userAuthorized crop to avoid nulls getting acccess
+            //remove nulls from userAuthorized crop to avoid nulls getting access
             userAuthorizedCrops.remove(null);
 
             // get only active crops
@@ -58,8 +57,6 @@ public class CropServiceImpl implements CropService {
                 }
                 crops.add(crop);
             });
-
-
         }
         catch (Exception e) {
             LOGGER.error("Unable to read crop data", e);
