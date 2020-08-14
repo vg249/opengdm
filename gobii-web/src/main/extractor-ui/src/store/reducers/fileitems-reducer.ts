@@ -234,7 +234,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                             || gfi.getExtractorItemType() === ExtractorItemType.LABEL)
                             && gfi.getProcessType() !== ProcessType.DUMMY
                             && gfi.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-                    });
+                    })
+                    .map((item: GobiiFileItem) => GobiiFileItem.copy(item));
 
                 allItemsForFilter.forEach(gfi => {
                     gfi.setSelected(false)
