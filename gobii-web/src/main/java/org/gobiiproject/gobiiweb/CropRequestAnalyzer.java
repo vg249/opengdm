@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiiweb;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.types.ServerType;
@@ -47,48 +49,13 @@ public class CropRequestAnalyzer {
 
                 GobiiCropConfig currentCropConfig = CONFIG_SETTINGS.getActiveCropConfigs().get(idx);
 
-                String rawContextPath = currentCropConfig
-                        .getServer(ServerType.GOBII_WEB)
-                        .getContextPath();
-
-                // double check that context paths are unique
-                if (CONFIG_SETTINGS
-                        .getActiveCropConfigs()
-                        .stream()
-                        .filter(cc -> {
-                            return cc.getServer(ServerType.GOBII_WEB)
-                                    .getContextPath().equals(rawContextPath);
-                        })
-                        .count() < 2) {
-
-                    String contextPathWithoutSlashes = rawContextPath
-                            .replace("/", "");
-
-                    if(requestUrl.startsWith("/")) {
-                        requestUrl = requestUrl.replaceFirst("/", "");
-                    }
-
-                    String[] candidateSegments = requestUrl.split("/");
-
-                    String candidateSegment = "";
-                    if(candidateSegments.length > 1) {
-                        candidateSegment = "gobii-" + candidateSegments[1];
-                    }
-
-                    if (candidateSegment
-                        .toLowerCase()
-                        .equals(contextPathWithoutSlashes.toLowerCase())) {
-
-                        returnVal = currentCropConfig.getGobiiCropType();
-                    }
+                String servicePath =
+                    httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 
 
-                } else {
+                returnVal = currentCropConfig.getGobiiCropType();
 
-                    errorMessage = "The context path is repeated in the configuration; " +
-                            "context paths must be unique: " + rawContextPath;
 
-                }
             } // iterate configurations
 
             // this is the condition if we simply couldn't find a config
