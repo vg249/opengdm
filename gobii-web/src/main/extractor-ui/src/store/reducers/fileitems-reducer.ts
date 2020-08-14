@@ -39,17 +39,18 @@ export const initialState: State = {
     filters: new Map<string, PayloadFilter>()
 };
 
-function addToExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
+function addToExtractItems(state: State, targetFileItem: GobiiFileItem): State {
 
 
-    if (!state.allFileItems.find(fi => fi.getFileItemUniqueId() === gobiiFileItem.getFileItemUniqueId())) {
+    if (!state.allFileItems.find(fi => fi.getFileItemUniqueId() === targetFileItem.getFileItemUniqueId())) {
 
-        console.log("Item is not in the collection: " + gobiiFileItem.getItemName() + " of type " + Labels.instance().treeExtractorTypeLabels[gobiiFileItem.getExtractorItemType()]);
+        console.log("Item is not in the collection: " + targetFileItem.getItemName() + " of type " + Labels.instance().treeExtractorTypeLabels[gobiiFileItem.getExtractorItemType()]);
     }
-
+    let fileItems: GobiiFileItem[] = state.allFileItems.map(item => GobiiFileItem.copy(item));
+    let gobiiFileItem: GobiiFileItem = GobiiFileItem.copy(targetFileItem);
     gobiiFileItem.setSelected(true);
 
-    let newSelectedUniqueIdsState: string[] = state.uniqueIdsOfExtractFileItems.slice();
+    let newSelectedUniqueIdsState: string[] = Object.assign([], state.uniqueIdsOfExtractFileItems.slice());
 
     if (!newSelectedUniqueIdsState.find(id => id === gobiiFileItem.getFileItemUniqueId())) {
         newSelectedUniqueIdsState.push(gobiiFileItem.getFileItemUniqueId());
@@ -58,7 +59,7 @@ function addToExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
 
     let returnVal: State = {
         gobiiExtractFilterType: state.gobiiExtractFilterType,
-        allFileItems: state.allFileItems,
+        allFileItems: state.allFileItems.map(item => GobiiFileItem.copy(item)),
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
         filters: state.filters
     };
