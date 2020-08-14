@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiiapimodel.payload.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 import java.util.List;
 
@@ -32,6 +34,20 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
         this.getMetadata().getPagination().setNextPageToken(nextPageToken);
     }
 
+    public static <T> BrApiMasterListPayload<T> createPayload(PagedResult<T> pagedResult) {
+        if(StringUtils.isNotEmpty(pagedResult.getNextPageToken())) {
+            return new BrApiMasterListPayload<T>(
+                pagedResult.getResult(),
+                pagedResult.getCurrentPageSize(),
+                pagedResult.getNextPageToken());
+        }
+        else {
+            return new BrApiMasterListPayload<T>(
+                pagedResult.getResult(),
+                pagedResult.getCurrentPageSize(),
+                pagedResult.getCurrentPageNum());
+        }
+    }
 
     public BrApiResult<T> getResult() {
         return this.result;

@@ -265,6 +265,8 @@
     <bean id="nameIdListService"
           class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
+    <bean id="cropService" class="org.gobiiproject.gobidomain.services.gdmv3.CropServiceImpl"/>
+
     <!-- **** Loader File Beans *************************************** -->
 
     <bean id="filesService"
