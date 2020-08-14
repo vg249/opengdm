@@ -161,7 +161,9 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                     || containerType === ContainerType.STRUCTURE) {
                     gobiiTreeNodeToDeActivate.resetLabel();
                 } else {
-                    let children: GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
+                    let targetId: string = gobiiTreeNodeToDeActivate.parent.getId();
+                    let parent: GobiiTreeNode = newTreeNodes.find(value => value.getId() == targetId);
+                    let children: GobiiTreeNode[] = parent.getChildren();
                     children.splice(children.indexOf(gobiiTreeNodeToDeActivate, 0), 1);
                 }
 

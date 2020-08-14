@@ -1,4 +1,4 @@
-import {Component, EventEmitter, KeyValueDiffers} from "@angular/core";
+import {Component, EventEmitter, KeyValueDiffers, OnInit, OnChanges, SimpleChanges} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {FilterParams} from "../model/filter-params";
@@ -25,11 +25,13 @@ import {TypeControl} from "../services/core/type-control";
             <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px; padding-right: 2px">
                 <div *ngFor="let gobiiFileItem of gobiiFileItems$ | async"
                      (click)=handleItemSelected($event)>
-                    <input type="checkbox"
-                           (click)=handleItemChecked($event)
-                           [checked]="gobiiFileItem.getSelected()"
-                           value={{gobiiFileItem.getFileItemUniqueId()}}
-                    name="{{gobiiFileItem.getItemName()}}">&nbsp;{{gobiiFileItem.getItemName()}}
+                    <p-checkbox
+                        name="{{gobiiExtractFilterType}}"
+                        value={{gobiiFileItem.getFileItemUniqueId()}}
+                        label="{{gobiiFileItem.getItemName()}}"
+                        (ngModelChange)=handleModelChange($event)
+                        [(ngModel)]="selectedValues"
+                    ></p-checkbox>
                 </div>
             </div>
         </form>` // end template
@@ -37,7 +39,7 @@ import {TypeControl} from "../services/core/type-control";
 })
 
 
-export class CheckListBoxComponent {
+export class CheckListBoxComponent implements OnInit, OnChanges {
 
     differ: any;
 
@@ -50,6 +52,9 @@ export class CheckListBoxComponent {
 
 
     } // ctor
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log(changes);
+    }
 
     public typeControl:any = TypeControl;
 
@@ -64,17 +69,25 @@ export class CheckListBoxComponent {
     public filterParamName: FilterParamNames;
     public gobiiFileItems$: Observable<GobiiFileItem[]>;
 
-    public handleItemChecked(arg) {
+    selectedValues: string[] = [];
 
-        let currentFileItemUniqueId: string = arg.currentTarget.value;
+    public handleModelChange(arg) {
 
-        if (arg.currentTarget.checked) {
-            this.store.dispatch(new fileAction.AddToExtractByItemIdAction(currentFileItemUniqueId));
-        } else {
-            this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(currentFileItemUniqueId));
-        }
+       if (this.selectedValues.length < arg.length) {
+           //something was added
+           let addId = arg.filter( value => !this.selectedValues.includes(value));
+           this.store.dispatch(new fileAction.AddToExtractByItemIdAction(addId[0]));
+       } else {
+           //something was removed
+           let removeId = this.selectedValues.filter( value => !arg.includes(value));
+           this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(removeId[0]));
+       }
+    }
 
-    } // handleItemChecked()
+    public handleModelChange2(arg) {
+        console.log("Model change");
+        console.log(arg);
+    }
 
     public handleItemSelected(arg) {
 

@@ -5,6 +5,7 @@ import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
+import { ThrowStmt } from '@angular/compiler';
 
 
 export enum ContainerType {NONE, STRUCTURE, DATA}
@@ -55,6 +56,7 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         returnVal.setChildren([]);
         if (orig.getChildren() && orig.getChildren().length > 0) {
             let children: GobiiTreeNode[] = orig.getChildren().map(child => this.copy(child));
+            //set the 
             returnVal.setChildren(children);
         }
         return returnVal;

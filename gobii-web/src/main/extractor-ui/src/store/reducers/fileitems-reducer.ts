@@ -286,6 +286,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             let gobiiFileItem: GobiiFileItem = state
                 .allFileItems
                 .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload);
+            
 
             returnVal = addToExtractItems(state, gobiiFileItem);
 
