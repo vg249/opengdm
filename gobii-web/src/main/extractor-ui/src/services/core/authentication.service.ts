@@ -38,7 +38,7 @@ export class AuthenticationService {
 
     public loadUserProfile() {
         from(this._keycloakService.loadUserProfile()).subscribe(
-            profile => { console.log("User Profile loaded");}
+            _ => { console.log("User Profile loaded");}
         );
     }
 

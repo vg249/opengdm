@@ -35,6 +35,7 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
             } else if (currentTreenode.getContainerType() === ContainerType.DATA) {
                 let containerNode: GobiiTreeNode = treeNodes[idx];
                 nodeToPlace.parent = containerNode;
+                
                 containerNode.getChildren().push(nodeToPlace);
                 containerNode.expanded = true;
             }
@@ -42,7 +43,7 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
             returnVal = true;
 
         } else {
-            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren(), gobiiExtractFilterType);
+            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren().map(node => GobiiTreeNode.copy(node)), gobiiExtractFilterType);
         }
     }
 
@@ -90,7 +91,7 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
 
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
     let returnVal: State = state;
-    console.log(action.type);
+
     switch (action.type) {
 
         case gobiiTreeNodeAction.INIT_TREE: {
@@ -108,7 +109,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
         case gobiiTreeNodeAction.PLACE_TREE_NODE: {
 
-            const gobiiTreeNodePayload: GobiiTreeNode = action.payload;
+            const gobiiTreeNodePayload: GobiiTreeNode = GobiiTreeNode.copy(action.payload);
 
             // copy the existing
             const newTreeNodes = state.gobiiTreeNodes.slice().map(node => GobiiTreeNode.copy(node));
@@ -126,7 +127,6 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
 
         case gobiiTreeNodeAction.ACTIVATE: {
-            console.log(util.inspect(action));
 
             const fileItemUniqueId: string = action.payload;
 

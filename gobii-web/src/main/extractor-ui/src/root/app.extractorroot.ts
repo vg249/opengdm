@@ -403,7 +403,6 @@ export class ExtractorRoot implements OnInit {
     private initializeServerConfigs() {
         let scope$ = this;
 
-        console.log("Initializing server config");
         this._dtoRequestServiceServerConfigs.get(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
                 if (serverConfigs && (serverConfigs.length > 0)) {
                 

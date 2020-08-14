@@ -295,8 +295,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         case
         gobiiFileItemAction.REPLACE_BY_ITEM_ID: {
-            console.log(util.inspect(state.allFileItems));
-            console.log(util.inspect(action));
+
             let itemCurrentlyInExtract: GobiiFileItem = state
                 .allFileItems
                 .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract);
