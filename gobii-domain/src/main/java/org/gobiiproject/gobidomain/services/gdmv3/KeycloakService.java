@@ -17,11 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 
 public interface KeycloakService {
-    public ContactDTO getUser(String uuid) throws Exception;
+    ContactDTO getUser(String uuid) throws Exception;
 
-    public List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception;
+    List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception;
 
-	public TokenInfo getToken(String username, String password) throws Exception;
+	TokenInfo getToken(String username, String password) throws Exception;
 
 
     /**
