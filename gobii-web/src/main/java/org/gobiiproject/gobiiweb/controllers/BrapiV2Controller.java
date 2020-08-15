@@ -3,13 +3,14 @@ package org.gobiiproject.gobiiweb.controllers;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.brapi.*;
 import org.gobiiproject.gobidomain.services.brapi.MapsetService;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.*;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.*;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.*;
 import org.gobiiproject.gobiimodel.dto.noaudit.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -335,7 +336,7 @@ public class BrapiV2Controller {
             required=true, paramType = "header", dataType = "string")
     })
     @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>>
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
     getCallsByCallset(
         @ApiParam(value = "Id for dna run to be fetched")
             @PathVariable(value="callSetDbId") Integer callSetDbId,
@@ -349,18 +350,13 @@ public class BrapiV2Controller {
         try {
 
 
-            PagedResult<GenotypeCallsDTO> genotypeCallsList =
+            PagedResultTyped<GenotypeCallsResult> genotypeCalls =
                 genotypeCallsService.getGenotypeCallsByCallSetId(callSetDbId, pageSize, pageToken);
 
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
-                new BrApiMasterPayload<>(genotypeCallsList.getResult());
-
-            if(genotypeCallsList.getNextPageToken() != null) {
-                payload
-                    .getMetadata()
-                    .getPagination()
-                    .setNextPageToken(genotypeCallsList.getNextPageToken());
-            }
+            BrApiMasterPayload<GenotypeCallsResult> payload =
+                new BrApiMasterPayload<>(genotypeCalls.getResult(),
+                    genotypeCalls.getCurrentPageSize(),
+                    genotypeCalls.getNextPageToken());
 
             return ResponseEntity.ok(payload);
         }
@@ -532,7 +528,7 @@ public class BrapiV2Controller {
         )
     })
     @RequestMapping(value="/variants/{variantDbId}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BrApiMasterPayload<List<GenotypeCallsDTO>>>
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
     getCallsByVariant(
         @ApiParam(value = "Id for marker to be fetched")
             @PathVariable(value="variantDbId") Integer variantDbId,
@@ -546,19 +542,14 @@ public class BrapiV2Controller {
 
         try {
 
-            PagedResult<GenotypeCallsDTO> genotypeCallsList =
+            PagedResultTyped<GenotypeCallsResult> genotypeCallsPaged =
                     genotypeCallsService.getGenotypeCallsByVariantDbId(
                             variantDbId, pageSize, pageToken);
 
-            BrApiMasterPayload<List<GenotypeCallsDTO>> payload =
-                    new BrApiMasterPayload<>(genotypeCallsList.getResult());
-
-            if(genotypeCallsList.getNextPageToken() != null) {
-                payload
-                    .getMetadata()
-                    .getPagination()
-                    .setNextPageToken(genotypeCallsList.getNextPageToken());
-            }
+            BrApiMasterPayload<GenotypeCallsResult> payload =
+                    new BrApiMasterPayload<>(genotypeCallsPaged.getResult(),
+                        genotypeCallsPaged.getCurrentPageSize(),
+                        genotypeCallsPaged.getNextPageToken());
 
             return ResponseEntity.ok(payload);
         }
@@ -1043,7 +1034,7 @@ public class BrapiV2Controller {
     })
     @RequestMapping(value="/variantsets/{variantSetDbId}/calls", method=RequestMethod.GET,
         produces = "application/json")
-    public @ResponseBody ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>>
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
     getCallsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
@@ -1055,17 +1046,17 @@ public class BrapiV2Controller {
                 defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize) {
         try {
 
-            PagedResult<GenotypeCallsDTO> pagedResult =
+            PagedResultTyped<GenotypeCallsResult> genotypeCallsPaged =
                 genotypeCallsService
                     .getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
 
-
-            BrApiMasterListPayload<GenotypeCallsDTO> payload =
-                new BrApiMasterListPayload<>(
-                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
-                    pagedResult.getNextPageToken());
+            BrApiMasterPayload<GenotypeCallsResult> payload =
+                new BrApiMasterPayload<>(genotypeCallsPaged.getResult(),
+                    genotypeCallsPaged.getCurrentPageSize(),
+                    genotypeCallsPaged.getNextPageToken());
 
             return ResponseEntity.ok(payload);
+
 
         }
         catch (GobiiException gE) {
@@ -1342,7 +1333,7 @@ public class BrapiV2Controller {
     })
     @RequestMapping(value = "/search/calls/{searchResultDbId}", method = RequestMethod.GET,
         produces = "application/json")
-    public ResponseEntity<BrApiMasterListPayload<GenotypeCallsDTO>> getGenotypeCallsBySearchQuery(
+    public ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>> getGenotypeCallsBySearchQuery(
         @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
             @PathVariable String searchResultDbId,
         @ApiParam(value = "Page Token to fetch a page. " +
@@ -1361,15 +1352,15 @@ public class BrapiV2Controller {
                 (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
                     searchResultDbId, cropType, GenotypeCallsSearchQueryDTO.class);
 
-            PagedResult<GenotypeCallsDTO> pagedResult =
+            PagedResultTyped<GenotypeCallsResult> pagedResult =
                 genotypeCallsService
                     .getGenotypeCallsByExtractQuery(
                         genotypeCallsSearchQueryDTO, pageSize, pageToken);
 
-            BrApiMasterListPayload<GenotypeCallsDTO> payload =
-                new BrApiMasterListPayload<>(
-                    pagedResult.getResult(), pagedResult.getCurrentPageSize(),
-                    pagedResult.getNextPageToken());
+            BrApiMasterPayload<GenotypeCallsResult> payload = new BrApiMasterPayload<>(
+                pagedResult.getResult(),
+                pagedResult.getCurrentPageSize(),
+                pagedResult.getNextPageToken());
 
             return ResponseEntity.ok(payload);
 

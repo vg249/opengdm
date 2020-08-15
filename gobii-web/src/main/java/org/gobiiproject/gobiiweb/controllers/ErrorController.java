@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

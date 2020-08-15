@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.brapi.sampletracking;
+package org.gobiiproject.gobiimodel.dto.brapi.envelope;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

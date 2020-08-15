@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiapimodel.types;
+package org.gobiiproject.gobiimodel.types;
 
 public enum BrApiStatusMessageTypes {
 

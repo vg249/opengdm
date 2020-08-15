@@ -1,7 +1,7 @@
-package org.gobiiproject.gobiimodel.dto.brapi.sampletracking;
+package org.gobiiproject.gobiimodel.dto.brapi.envelope;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.gobiiproject.gobiiapimodel.types.BrApiStatusMessageTypes;
+import org.gobiiproject.gobiimodel.types.BrApiStatusMessageTypes;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrApiStatus {

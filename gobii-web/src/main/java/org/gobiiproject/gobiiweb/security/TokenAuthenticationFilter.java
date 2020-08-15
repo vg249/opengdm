@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
 import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
