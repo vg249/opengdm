@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiapimodel.payload.sampletracking;
+package org.gobiiproject.gobiimodel.dto.brapi.sampletracking;
 
 import java.util.ArrayList;
 import java.util.List;

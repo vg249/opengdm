@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiapimodel.payload.sampletracking;
+package org.gobiiproject.gobiimodel.dto.brapi.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -26,8 +26,15 @@ public class BrApiMasterListPayload<T>  extends BrApiMasterPayload {
 
     public BrApiMasterListPayload(List<T> listData, Integer pageSize,
                                   String nextPageToken) {
-
         this.result.setData(listData);
+        this.getMetadata().getPagination().setPageSize(pageSize);
+        this.getMetadata().getPagination().setNextPageToken(nextPageToken);
+    }
+
+    public BrApiMasterListPayload(BrApiResult<T> result, Integer pageSize,
+                                  String nextPageToken) {
+
+        this.result = result;
         this.getMetadata().getPagination().setPageSize(pageSize);
         this.getMetadata().getPagination().setNextPageToken(nextPageToken);
     }
