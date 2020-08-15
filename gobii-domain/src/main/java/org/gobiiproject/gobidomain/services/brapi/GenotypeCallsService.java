@@ -1,30 +1,28 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.VariantDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 
 public interface GenotypeCallsService {
 
-    PagedResult<GenotypeCallsDTO> getGenotypeCallsByCallSetId(
+    PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByCallSetId(
         Integer callSetDbId,
         Integer pageSize,
         String pageToken) throws GobiiDomainException;
 
-    PagedResult<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
+    PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantDbId(
         Integer markerId,
         Integer pageSize,
         String pageToken) throws GobiiDomainException;
 
-    PagedResult<GenotypeCallsDTO> getGenotypeCallsByVariantSetDbId(
+    PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantSetDbId(
         Integer datasetId,
         Integer pageSize,
         String pageToken) throws GobiiDomainException;
 
-    PagedResult<GenotypeCallsDTO> getGenotypeCallsByExtractQuery(
+    PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByExtractQuery(
         GenotypeCallsSearchQueryDTO genotypesSearchQuery,
         Integer pageSize,
         String pageToken) throws GobiiDomainException;

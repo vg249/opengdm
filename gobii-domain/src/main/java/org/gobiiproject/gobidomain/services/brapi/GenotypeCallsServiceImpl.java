@@ -6,10 +6,11 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsResult;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.GenotypesRunTimeCursors;
 import org.gobiiproject.gobiimodel.dto.system.Hdf5InterfaceResultDTO;
-import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
@@ -37,7 +38,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);
 
     final String unphasedSep = "/";
-    final String unknownChar = "N";
+    final String unknownChar = "N/N";
 
     @Autowired
     private DnaRunDao dnaRunDao = null;
@@ -73,10 +74,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      *
      */
     @Override
-    public PagedResult<GenotypeCallsDTO>
+    public PagedResultTyped<GenotypeCallsResult>
     getGenotypeCallsByCallSetId(Integer callSetDbId, Integer pageSize, String pageToken) {
 
-        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
+        PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
 
         GenotypesRunTimeCursors cursors = new GenotypesRunTimeCursors();
 
@@ -195,7 +196,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
-            returnVal.setResult(genotypeCalls);
+            returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
 
             return returnVal;
 
@@ -229,10 +230,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public PagedResult<GenotypeCallsDTO> getGenotypeCallsByVariantDbId(
+    public PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantDbId(
             Integer markerId, Integer pageSize, String pageToken) {
 
-        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
+        PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
@@ -340,7 +341,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
-            returnVal.setResult(genotypeCalls);
+            returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
 
             return returnVal;
 
@@ -370,10 +371,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public PagedResult<GenotypeCallsDTO>
+    public PagedResultTyped<GenotypeCallsResult>
     getGenotypeCallsByVariantSetDbId(Integer datasetId, Integer pageSize, String pageToken) {
 
-        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
+        PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
 
         //Result
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
@@ -511,7 +512,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 cursors.pageOffset);
 
             if(markers.size() == 0) {
-                returnVal.setResult(genotypeCalls);
+                returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
                 returnVal.setCurrentPageSize(0);
                 return  returnVal;
             }
@@ -568,8 +569,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 markers, dnaRuns, new ArrayList<>(cursors.dnarunHdf5OrderMap.values()));
 
 
-            //result values
-            returnVal.setResult(genotypeCalls);
+            returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
 
             //Set page token only if there are genotypes
             if(genotypeCalls.size() > 0) {
@@ -722,14 +722,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public PagedResult<GenotypeCallsDTO>
+    public PagedResultTyped<GenotypeCallsResult>
     getGenotypeCallsByExtractQuery(GenotypeCallsSearchQueryDTO genotypesSearchQuery,
                                    Integer pageSize, String pageToken) {
 
         final int dnaRunBinSize = 1000;
         final int markerBinSize = 1000;
 
-        PagedResult<GenotypeCallsDTO> returnVal = new PagedResult<>();
+        PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
 
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
 
@@ -1033,7 +1033,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 returnVal.setNextPageToken(nextPageToken);
             }
             returnVal.setCurrentPageSize(genotypeCalls.size());
-            returnVal.setResult(genotypeCalls);
+
+            returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
 
         }
         catch (GobiiException gE) {
@@ -1343,6 +1344,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
         return genotypes.toString();
 
+    }
+
+    private GenotypeCallsResult getGenotypeCallsResult(List<GenotypeCallsDTO> genotypeCalls) {
+        return new GenotypeCallsResult(unphasedSep, null, unknownChar, genotypeCalls);
     }
 }
 
