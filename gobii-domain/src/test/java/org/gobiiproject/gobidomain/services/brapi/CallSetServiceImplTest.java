@@ -293,7 +293,7 @@ public class CallSetServiceImplTest {
             callSet.getSampleName());
 
         if(!CollectionUtils.isEmpty(
-            callSet.getVariantSetIds())) {
+            callSet.getVariantSetDbIds())) {
 
             assertTrue("VariantSetId : DatasetIds mapping failed",
                 !JsonNodeUtils.isEmpty(
@@ -302,15 +302,15 @@ public class CallSetServiceImplTest {
             assertEquals("VariantSetId : DatasetIds mapping failed",
                 dnaRun.getDatasetDnaRunIdx().size(),
                 callSet
-                    .getVariantSetIds().size()
+                    .getVariantSetDbIds().size()
             );
 
-            for (Integer variantSetId :
-                callSet.getVariantSetIds()) {
+            for (String variantSetId :
+                callSet.getVariantSetDbIds()) {
 
                 assertTrue("VariantSetId : DatasetIds mapping failed",
                     dnaRun.getDatasetDnaRunIdx()
-                        .has(variantSetId.toString()));
+                        .has(variantSetId));
 
             }
         }

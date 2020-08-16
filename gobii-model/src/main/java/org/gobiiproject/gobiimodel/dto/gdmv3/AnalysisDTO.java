@@ -30,7 +30,8 @@ import lombok.EqualsAndHashCode;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class AnalysisDTO extends DTOBaseAuditable {
+public class 
+AnalysisDTO extends DTOBaseAuditable {
 
     //validation groups
     public static interface Create {}

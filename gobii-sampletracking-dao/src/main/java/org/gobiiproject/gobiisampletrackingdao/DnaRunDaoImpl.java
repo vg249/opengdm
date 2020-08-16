@@ -420,6 +420,9 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     if(!CollectionUtils.isEmpty(germplasmNames)) {
                         predicates.add(germplasmJoin.get("germplasmName").in(germplasmNames));
                     }
+                } else if(fetchAssociations) {
+                    germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                    germplasmJoin.fetch("germplasmType", JoinType.LEFT);
                 }
             }
             else {

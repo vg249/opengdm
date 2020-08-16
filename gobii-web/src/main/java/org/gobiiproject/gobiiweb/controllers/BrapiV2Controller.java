@@ -349,7 +349,6 @@ public class BrapiV2Controller {
 
         try {
 
-
             PagedResultTyped<GenotypeCallsResult> genotypeCalls =
                 genotypeCallsService.getGenotypeCallsByCallSetId(callSetDbId, pageSize, pageToken);
 

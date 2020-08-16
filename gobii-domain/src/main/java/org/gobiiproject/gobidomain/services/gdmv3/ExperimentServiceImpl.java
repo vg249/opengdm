@@ -9,14 +9,13 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
+import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -25,9 +24,6 @@ import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
@@ -66,10 +62,8 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Transactional
     @Override
-    public ExperimentDTO getExperiment(Integer i) throws Exception {
-        Experiment experiment = experimentDao.getExperiment(i);
-        if (experiment == null)
-            throw new NullPointerException("Experiment does not exist");
+    public ExperimentDTO getExperiment(Integer experimentId) throws Exception {
+        Experiment experiment = this.loadExperiment(experimentId);
         ExperimentDTO experimentDTO = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, experimentDTO);
         return experimentDTO;
@@ -77,19 +71,10 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Transactional
     @Override
-    public ExperimentDTO createExperiment(ExperimentRequest request, String createdBy) throws Exception {
-        Project project = projectDao.getProject(request.getProjectId());
-        if (project == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown project");
-        }
-
-        VendorProtocol vp = experimentDao.getVendorProtocol(request.getVendorProtocolId());
-        if (vp == null) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown vendor protocol");
-        }
-
+    public ExperimentDTO createExperiment(ExperimentDTO request, String createdBy) throws Exception {
+        Project project =this.loadProject(request.getProjectId());
+        VendorProtocol vp = this.loadVendorProtocol(request.getVendorProtocolId());
+    
         // get contact info
         Contact contact = contactDao.getContactByUsername(createdBy);
 
@@ -109,56 +94,45 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         //set status
         // Get the Cv for status, new row
-        List<Cv> cvList = cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-        Cv cv = null;
-        if (!cvList.isEmpty()) {
-            cv = cvList.get(0);
-        }
-
+        Cv cv = cvDao.getNewStatus();
         experiment.setStatus(cv);
 
         //audit elements
         experiment.setCreatedBy(contact.getContactId());
         experiment.setCreatedDate(new java.util.Date());
-
         
         experiment = experimentDao.createExperiment(experiment);
         
         ExperimentDTO experimentDTO = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, experimentDTO);
-        //TODO: debug this, why is the mapper failing at mapping subobject
-        Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
+        
+        // //TODO: debug this, why is the mapper failing at mapping subobject
+        // if ((experimentDTO.getPlatformId() == null || experimentDTO.getPlatformName() == null) && 
+        //      experiment.getVendorProtocol() != null && 
+        //      experiment.getVendorProtocol().getProtocol() != null && 
+        //      experiment.getVendorProtocol().getProtocol().getPlatform() != null
+        //    ) {
+        //     Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
 
-        experimentDTO.setPlatformId(platform.getPlatformId());
-        experimentDTO.setPlatformName(platform.getPlatformName());
-
-
+        //     experimentDTO.setPlatformId(platform.getPlatformId());
+        //     experimentDTO.setPlatformName(platform.getPlatformName());
+        // }
+        Platform platform  = Optional.ofNullable(experiment.getVendorProtocol())
+                                     .map(v -> v.getProtocol())
+                                     .map(p -> p.getPlatform())
+                                     .orElse(null);
+        experimentDTO.setPlatformId(Optional.ofNullable(platform).map(p -> p.getPlatformId()).orElse(null));
+        experimentDTO.setPlatformName(Optional.ofNullable(platform).map(p -> p.getPlatformName()).orElse(null));
         return experimentDTO;
     }
 
     @Transactional
     @Override
-    public ExperimentDTO updateExperiment(Integer experimentId, ExperimentPatchRequest request, String updatedBy) throws Exception {
-        Experiment target = experimentDao.getExperiment(experimentId);
-        if (target == null) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Unknown experiment"
-            );
-        }
+    public ExperimentDTO updateExperiment(Integer experimentId, ExperimentDTO request, String updatedBy) throws Exception {
+        Experiment target = this.loadExperiment(experimentId);
 
         if (request.getProjectId() != null) {
-            Project project = projectDao.getProject(request.getProjectId());
-            if (project == null) {
-                throw new GobiiDaoException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Unknown project"
-                );
-            }
+            Project project = this.loadProject(request.getProjectId());
             target.setProject(project);
         }
 
@@ -167,17 +141,12 @@ public class ExperimentServiceImpl implements ExperimentService {
         }
 
         if (request.getVendorProtocolId() != null ) {
-            VendorProtocol vp = experimentDao.getVendorProtocol(request.getVendorProtocolId());
-            if (vp == null) {
-                throw new GobiiDaoException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                   "Unknown vendor protocol"
-                );
-            }
+            VendorProtocol vp = this.loadVendorProtocol(request.getVendorProtocolId());
             target.setVendorProtocol(vp);
         }
 
+        Cv cv = cvDao.getModifiedStatus();
+        target.setStatus(cv);
         // get contact info
         Contact contact = contactDao.getContactByUsername(updatedBy);
         target.setModifiedBy(contact.getContactId());
@@ -190,13 +159,26 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Transactional
     @Override
     public void deleteExperiment(Integer experimentId) throws Exception {
-        Experiment experiment = experimentDao.getExperiment(experimentId);
-        if (experiment == null) {
-            throw new NullPointerException("Experiment not found");
-        }
-
+        Experiment experiment =  this.loadExperiment(experimentId);
         experimentDao.deleteExperiment(experiment);
 
+    }
+
+    private Experiment loadExperiment(Integer experimentId) throws Exception {
+        return Optional.ofNullable( experimentDao.getExperiment(experimentId))
+                       .orElseThrow(() -> new EntityDoesNotExistException.Experiment());
+
+    }
+
+    private Project loadProject(Integer projectId) throws Exception {
+        return Optional.ofNullable(projectDao.getProject(projectId))
+                       .orElseThrow(() -> new UnknownEntityException.Project());
+    }
+
+    private VendorProtocol loadVendorProtocol(Integer vendorProtocolId) throws Exception {
+        return Optional.ofNullable(experimentDao.getVendorProtocol(vendorProtocolId))
+                       .orElseThrow(() -> new UnknownEntityException.VendorProtocol());
+        
     }
     
 }

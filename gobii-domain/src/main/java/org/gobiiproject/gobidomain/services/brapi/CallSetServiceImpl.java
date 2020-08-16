@@ -312,8 +312,8 @@ public class CallSetServiceImpl implements CallSetService {
 
         while (datasetIdsIter.hasNext()) {
             callSet
-                .getVariantSetIds()
-                .add(Integer.parseInt(datasetIdsIter.next()));
+                .getVariantSetDbIds()
+                .add(datasetIdsIter.next());
         }
 
         if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {

@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
@@ -41,8 +42,10 @@ public class VendorProtocolDaoImpl implements VendorProtocolDao {
 
             Root<VendorProtocol> vendorProtocolRoot =
                     criteriaQuery.from(VendorProtocol.class);
-
+            vendorProtocolRoot.fetch("vendor", JoinType.LEFT);
+            vendorProtocolRoot.fetch("protocol", JoinType.LEFT);
             criteriaQuery.select(vendorProtocolRoot);
+           
             criteriaQuery.orderBy(
                     criteriaBuilder.asc(
                             vendorProtocolRoot.get("vendorProtocolId")));

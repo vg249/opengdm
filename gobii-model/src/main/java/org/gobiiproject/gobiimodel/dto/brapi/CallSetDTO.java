@@ -39,7 +39,7 @@ public class CallSetDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "dnaSample.dnaSampleName", entity = DnaRun.class, deep = true)
     private String sampleName;
 
-    private List<Integer> variantSetIds = new ArrayList<>();
+    private List<String> variantSetDbIds = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmId",
         entity = DnaRun.class, deep = true)
@@ -98,12 +98,12 @@ public class CallSetDTO extends DTOBaseAuditable {
         this.callSetName = callSetName;
     }
 
-    public List<Integer> getVariantSetIds() {
-        return variantSetIds;
+    public List<String> getVariantSetDbIds() {
+        return variantSetDbIds;
     }
 
-    public void setVariantSetIds(List<Integer> variantSetIds) {
-        this.variantSetIds = variantSetIds;
+    public void setVariantSetDbIds(List<String> variantSetDbIds) {
+        this.variantSetDbIds = variantSetDbIds;
     }
 
     public Integer getGermplasmDbId() {

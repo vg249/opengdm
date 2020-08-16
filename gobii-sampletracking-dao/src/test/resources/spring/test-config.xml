@@ -28,6 +28,7 @@
     <bean id="v3ProjectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
     <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
     <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
+    <bean id="vendorProtocolDao" class="org.gobiiproject.gobiisampletrackingdao.VendorProtocolDaoImpl"/>
 
     <bean id="spWorker"
           class="org.gobiiproject.gobiisampletrackingdao.spworkers.SpWorker"/>
