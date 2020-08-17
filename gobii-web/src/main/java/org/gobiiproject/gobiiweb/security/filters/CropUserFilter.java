@@ -138,6 +138,7 @@ public class CropUserFilter extends GenericFilterBean {
 
     private boolean shouldFilter(String path) {
         if (path.contains(GobiiControllerType.SERVICE_PATH_GOBII_V3)) return true;
+        if (path.contains(GobiiControllerType.SERVICE_PATH_GOBII)) return true;
         return false;
     }
     
