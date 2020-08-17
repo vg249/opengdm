@@ -1,0 +1,103 @@
+package org.gobiiproject.gobiisampletrackingdao;
+
+import org.gobiiproject.gobiimodel.entity.Protocol;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Random;
+
+import static org.junit.Assert.assertTrue;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:/spring/test-config.xml"})
+@Transactional
+public class ProtocolDaoImplTest {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @Autowired
+    private ProtocolDao protocolDao;
+
+    @Autowired
+    private CvDao cvDao;
+
+    final int testPageSize = 10;
+
+    Random random = new Random();
+
+    DaoTestSetUp daoTestSetUp;
+
+    @Before
+    public void testCreateData() {
+        daoTestSetUp = new DaoTestSetUp(em, cvDao);
+        daoTestSetUp.createTestProtocols(testPageSize);
+        em.flush();
+    }
+
+    @Test
+    public void getProtocolByIdTest()  {
+
+        Protocol testProtocol =
+            daoTestSetUp
+                .getCreatedProtocols()
+                .get(random.nextInt(daoTestSetUp.getCreatedProtocols().size() - 1));
+
+        Protocol protocol = protocolDao.getProtocolById(testProtocol.getProtocolId());
+
+        assertTrue("Get Protocol by Id failed",
+            protocol.getProtocolId() == testProtocol.getProtocolId());
+
+        assertTrue("Get Protocol by Id failed: protocol name mismatch",
+            protocol.getName() == testProtocol.getName());
+
+        assertTrue("Get Protocol by Id failed: protocol description failed",
+            protocol.getDescription() == testProtocol.getDescription());
+
+    }
+
+    @Test
+    public void getProtocolsTest() {
+
+        int pageSize = 5;
+
+        List<Protocol> protocols = protocolDao.getProtocols(pageSize, 0, null);
+
+        assertTrue("Get Protocols failed: pageSize not correct",
+            protocols.size() <= pageSize && protocols.size() > 0);
+
+        Integer platformId =
+            daoTestSetUp
+                .getCreatedProtocols()
+                .get(random.nextInt(daoTestSetUp.getCreatedProtocols().size() - 1))
+                .getPlatform()
+                .getPlatformId();
+
+        long numOfProtocolsFWithPlatformId =
+            daoTestSetUp
+                .getCreatedProtocols()
+                .stream()
+                .filter(protocol -> protocol.getPlatform().getPlatformId() == platformId)
+                .count();
+
+        List<Protocol> protocolsFiltered = protocolDao.getProtocols(pageSize, 0, platformId);
+
+        assertTrue("Filter by platformId failed",
+            protocolsFiltered.size() == numOfProtocolsFWithPlatformId);
+
+        protocolsFiltered.forEach(protocol -> {
+            assertTrue("Filter by platformId failed",
+                protocol.getPlatform().getPlatformId() == platformId);
+        });
+
+    }
+
+}

@@ -118,9 +118,18 @@ public class DaoTestSetUp {
 
     public void createTestProtocols(int numOfProtocols) {
 
+        if(createdPlatforms.size() == 0) {
+            createTestPlatforms(numOfProtocols);
+        }
+
         for(int i = 0; i < numOfProtocols; i++) {
+
             Protocol protocol = new Protocol();
+
             protocol.setName(RandomStringUtils.random(7, true, true));
+            protocol.setDescription(RandomStringUtils.random(7));
+            protocol.setPlatform(createdPlatforms.get(random.nextInt(createdPlatforms.size())));
+
             em.persist(protocol);
             createdProtocols.add(protocol);
         }
