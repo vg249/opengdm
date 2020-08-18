@@ -120,10 +120,10 @@ public class ProtocolDaoImplTest {
         // Expected to throw exception
         Protocol protocolToCreate2 = new Protocol();
         protocolToCreate.setDescription(RandomStringUtils.random(7, true, true));
-        Protocol protocol2 = protocolDao.createProtocol(protocolToCreate2);
+        protocolDao.createProtocol(protocolToCreate2);
     }
 
-    @Test
+    @Test(expected = GobiiDaoException.class)
     public void patchProtocolTest() {
 
         Protocol testProtocol =
@@ -140,6 +140,29 @@ public class ProtocolDaoImplTest {
 
         assertTrue("Updated protocol failed",
             testProtocol.getName().equals(updatedProtocol.getName()));
+
+        // Expected to throw exception
+        String existingName = testProtocol.getName();
+        testProtocol.setName(null);
+        updatedProtocol = protocolDao.createProtocol(testProtocol);
+
+        assertTrue("Updated protocol failed: name gets updated for null value",
+            updatedProtocol.getName().equals(existingName));
+
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void deleteProtocolTest() {
+
+        Protocol testProtocol =
+            daoTestSetUp
+                .getCreatedProtocols()
+                .get(random.nextInt(daoTestSetUp.getCreatedProtocols().size() - 1));
+
+        protocolDao.deleteProtocol(testProtocol);
+
+        protocolDao.deleteProtocol(testProtocol);
+
     }
 
 

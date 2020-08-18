@@ -103,6 +103,18 @@ public class ProtocolDaoImpl implements ProtocolDao {
 
     @Override
     public void deleteProtocol(Protocol protocol) {
+        try {
+            em.remove(protocol);
+            em.flush();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Entity does not exist or a bad Request");
+        }
+
     }
 
 }
