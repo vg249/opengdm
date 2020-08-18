@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.exception.ConstraintViolationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -64,13 +65,23 @@ public class ProtocolDaoImpl implements ProtocolDao {
             log.error(e.getMessage(), e);
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                 e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-
         }
     }
 
     @Override
     public Protocol createProtocol(Protocol protocolToBeCreated) {
-        return new Protocol();
+        try {
+            em.persist(protocolToBeCreated);
+            em.flush();
+            return protocolToBeCreated;
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Missing required values or Bad Request");
+        }
     }
 
     @Override

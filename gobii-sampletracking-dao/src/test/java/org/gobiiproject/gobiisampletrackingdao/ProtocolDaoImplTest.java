@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,6 +99,28 @@ public class ProtocolDaoImplTest {
                 protocol.getPlatform().getPlatformId() == platformId);
         });
 
+    }
+
+    @Test(expected = GobiiDaoException.class)
+    public void createProtocolTest() {
+
+        Protocol protocolToCreate = new Protocol();
+        protocolToCreate.setName(RandomStringUtils.random(7, true, true));
+        protocolToCreate.setDescription(RandomStringUtils.random(7, true, true));
+        Protocol protocol = protocolDao.createProtocol(protocolToCreate);
+
+        assertTrue("Create Protocol failed", protocol.getProtocolId() != null);
+
+        assertTrue("Create protocol failed: protocolName mismatch",
+            protocol.getName() == protocolToCreate.getName());
+
+        assertTrue("Create protocol failed: protocolDescription mismatch",
+            protocol.getDescription().equals(protocolToCreate.getDescription()));
+
+        // Expected to throw exception
+        Protocol protocolToCreate2 = new Protocol();
+        protocolToCreate.setDescription(RandomStringUtils.random(7, true, true));
+        Protocol protocol2 = protocolDao.createProtocol(protocolToCreate2);
     }
 
 }
