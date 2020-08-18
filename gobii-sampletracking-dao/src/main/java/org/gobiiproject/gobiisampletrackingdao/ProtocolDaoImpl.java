@@ -86,7 +86,19 @@ public class ProtocolDaoImpl implements ProtocolDao {
 
     @Override
     public Protocol patchProtocol(Protocol protcolToBePatched) {
-        return new Protocol();
+        try {
+            em.merge(protcolToBePatched);
+            em.flush();
+            em.refresh(protcolToBePatched);
+            return protcolToBePatched;
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Missing required values or Bad Request");
+        }
     }
 
     @Override

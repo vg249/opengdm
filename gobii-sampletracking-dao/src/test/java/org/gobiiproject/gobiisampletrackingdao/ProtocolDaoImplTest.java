@@ -123,4 +123,24 @@ public class ProtocolDaoImplTest {
         Protocol protocol2 = protocolDao.createProtocol(protocolToCreate2);
     }
 
+    @Test
+    public void patchProtocolTest() {
+
+        Protocol testProtocol =
+            daoTestSetUp
+                .getCreatedProtocols()
+                .get(random.nextInt(daoTestSetUp.getCreatedProtocols().size() - 1));
+
+        testProtocol.setName(RandomStringUtils.random(7, true, true));
+
+        Protocol updatedProtocol = protocolDao.patchProtocol(testProtocol);
+
+        assertTrue("Updated protocol failed",
+            testProtocol.getProtocolId().equals(updatedProtocol.getProtocolId()));
+
+        assertTrue("Updated protocol failed",
+            testProtocol.getName().equals(updatedProtocol.getName()));
+    }
+
+
 }
