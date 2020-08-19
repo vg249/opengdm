@@ -153,11 +153,11 @@ public class MockSetup {
         mockDatasets = new ArrayList<>();
 
         if(CollectionUtils.isEmpty(mockExperiments)) {
-            createMockExperiments(Math.round(numDatasets / 2));
+            createMockExperiments((int) Math.ceil((double)numDatasets / 2));
         }
 
         if(CollectionUtils.isEmpty(mockAnalysis)) {
-            createMockAnalysis(Math.round(numDatasets / 2));
+            createMockAnalysis((int) Math.ceil((double)numDatasets / 2));
         }
 
         for(int i = 0; i < numDatasets; i++) {
@@ -195,11 +195,11 @@ public class MockSetup {
         mockDnaSamples = new ArrayList<>();
 
         if(CollectionUtils.isEmpty(mockGermplasms)) {
-            createMockGermplsms(Math.round(numDnaSamples / 2));
+            createMockGermplsms((int) Math.ceil((double)numDnaSamples / 2));
         }
 
         if(CollectionUtils.isEmpty(mockProjects)) {
-            createMockProjects(Math.round(numDnaSamples / 2));
+            createMockProjects((int) Math.ceil((double)numDnaSamples / 2));
         }
 
         if(CollectionUtils.isEmpty((mockDnaSampleProps))) {
@@ -242,10 +242,10 @@ public class MockSetup {
         mockDnaRuns = new ArrayList<>();
 
         if(CollectionUtils.isEmpty(mockDnaSamples)) {
-            createMockDnaSamples(Math.round(numDnaRuns / 2));
+            createMockDnaSamples((int) Math.ceil((double)numDnaRuns / 2));
         }
         if(CollectionUtils.isEmpty(mockExperiments)) {
-            createMockExperiments(Math.round(numDnaRuns / 2));
+            createMockExperiments((int) Math.ceil((double)numDnaRuns / 2));
         }
 
         Map<String, Integer> maxHdf5Index = new HashMap<>();
@@ -319,7 +319,7 @@ public class MockSetup {
         mockMarkers = new ArrayList<>();
 
         if(CollectionUtils.isEmpty(mockPlatforms)) {
-            createMockPlatform(Math.round(numMarkers/2));
+            createMockPlatform((int) Math.ceil((double)numMarkers/2));
         }
 
         Map<String, Integer> maxHdf5Index = new HashMap<>();
@@ -359,7 +359,7 @@ public class MockSetup {
         mockProtocols = new ArrayList<>();
 
         if(CollectionUtils.isEmpty(mockPlatforms)) {
-            createMockPlatform(Math.round(numProtocols/2));
+            createMockPlatform((int) Math.ceil((double)numProtocols/2));
         }
 
         for(int i = 0; i < numProtocols; i++) {

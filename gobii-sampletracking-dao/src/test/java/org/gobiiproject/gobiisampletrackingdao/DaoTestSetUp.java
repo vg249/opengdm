@@ -65,7 +65,7 @@ public class DaoTestSetUp {
             CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         if(createdContacts.size() == 0) {
-            createTestContacts((int)(int) Math.ceil((double) numOfProjects/2));
+            createTestContacts((int) Math.ceil((double) numOfProjects/2));
         }
         for(int i = 0; i < numOfProjects; i++) {
             //Add Project
