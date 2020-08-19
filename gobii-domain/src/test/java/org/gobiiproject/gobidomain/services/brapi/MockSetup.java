@@ -30,6 +30,7 @@ public class MockSetup {
     public List<Marker> mockMarkers;
     public List<Dataset> mockDatasets;
     public List<Analysis> mockAnalysis;
+    public List<Protocol> mockProtocols;
 
 
     String[] testDatasetIds = {"1", "2", "3", "4", "5"};
@@ -349,6 +350,27 @@ public class MockSetup {
             marker.setDatasetMarkerIdx(datasetMarkerIndex);
 
             mockMarkers.add(marker);
+        }
+
+    }
+
+    public void createMockProtocols(int numProtocols) {
+
+        mockProtocols = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(mockPlatforms)) {
+            createMockPlatform(Math.round(numProtocols/2));
+        }
+
+        for(int i = 0; i < numProtocols; i++) {
+
+            Protocol protocol = new Protocol();
+            protocol.setProtocolId(i+1);
+            protocol.setName(RandomStringUtils.random(7, true, true));
+            protocol.setDescription(RandomStringUtils.random(10, true, true));
+            protocol.setPlatform(mockPlatforms.get(random.nextInt(mockPlatforms.size())));
+
+            mockProtocols.add(protocol);
         }
 
     }
