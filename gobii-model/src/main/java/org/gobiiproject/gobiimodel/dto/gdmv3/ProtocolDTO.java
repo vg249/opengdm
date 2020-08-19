@@ -1,6 +1,11 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
+import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 public class ProtocolDTO extends DTOBaseAuditable {
@@ -9,14 +14,20 @@ public class ProtocolDTO extends DTOBaseAuditable {
         super(GobiiEntityNameType.PROTOCOL);
     }
 
+    @GobiiEntityMap(paramName = "protocolId", entity = Protocol.class, ignoreOnDtoToEntity = true)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Integer protocolId;
 
+    @GobiiEntityMap(paramName = "name", entity = Protocol.class)
     private String protocolName;
 
+    @GobiiEntityMap(paramName = "description", entity = Protocol.class)
     private String protocolDescription;
 
+    @GobiiEntityMap(paramName = "platform.platformId", entity = Protocol.class, deep = true)
     private Integer platformId;
 
+    @GobiiEntityMap(paramName = "status.term", entity = Protocol.class, deep = true)
     private String status;
 
 
