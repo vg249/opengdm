@@ -108,6 +108,33 @@ public class ProtocolServiceImplTest {
         testFieldMappings(protocolDTO, mockSetup.mockProtocols.get(0));
     }
 
+    @Test
+    public void patchProtocolTest() {
+
+        mockSetup.createMockProtocols(1);
+
+        Protocol testProtocol = mockSetup.mockProtocols.get(0);
+
+        Protocol updatedTestProtocol = new Protocol();
+
+        ProtocolDTO protocolDTOToBeUpdated = new ProtocolDTO();
+        ModelMapper.mapEntityToDto(testProtocol, protocolDTOToBeUpdated);
+        protocolDTOToBeUpdated.setProtocolDescription(RandomStringUtils.random(7, true, true));
+        ModelMapper.mapDtoToEntity(protocolDTOToBeUpdated, updatedTestProtocol);
+        protocolDTOToBeUpdated.setProtocolId(null);
+
+        when(protocolDao.getProtocolById(testProtocol.getProtocolId()))
+            .thenReturn(testProtocol);
+
+        when(protocolDao.patchProtocol(any(Protocol.class)))
+            .thenReturn(updatedTestProtocol);
+
+        ProtocolDTO updatedProtocol =
+            protocolService.patchProtocol(testProtocol.getProtocolId(), protocolDTOToBeUpdated);
+
+        testFieldMappings(updatedProtocol, updatedTestProtocol);
+    }
+
     private void testFieldMappings(ProtocolDTO protocolDTO, Protocol testProtocol) {
 
         assertTrue("protocolId mapping failed",

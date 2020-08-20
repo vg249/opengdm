@@ -24,7 +24,13 @@ public class ProtocolDaoImpl implements ProtocolDao {
 
     @Override
     public Protocol getProtocolById(Integer protocolId) {
-        return em.find(Protocol.class, protocolId);
+        Protocol protocol = em.find(Protocol.class, protocolId);
+        if (protocol == null) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Entity does not exists");
+        }
+        return protocol;
     }
 
     @Override

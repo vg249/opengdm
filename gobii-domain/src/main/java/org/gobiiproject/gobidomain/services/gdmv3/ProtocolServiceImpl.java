@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.list.AbstractListDecorator;
+import org.codehaus.janino.Mod;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProtocolDTO;
@@ -89,5 +90,40 @@ public class ProtocolServiceImpl implements ProtocolService {
         }
     }
 
+    @Override
+    public ProtocolDTO patchProtocol(Integer protocolId, ProtocolDTO protocolDTO) {
+        ProtocolDTO protocolDTOUpdtaed = new ProtocolDTO();
+        try {
+
+            Protocol protocolToBeUpdated = protocolDao.getProtocolById(protocolId);
+
+            // Map the values to be updated. Ignore null values.
+            ModelMapper.mapDtoToEntity(protocolDTO, protocolDTOUpdtaed, true);
+
+            Protocol protocolUpdated = protocolDao.patchProtocol(protocolToBeUpdated);
+            ModelMapper.mapEntityToDto(protocolUpdated, protocolDTOUpdtaed);
+            return protocolDTOUpdtaed;
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        } catch (Exception e) {
+            log.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+    }
+
+    @Override
+    public void deleteProtocol(Integer protocolId) {
+        try {
+            Protocol protocol = protocolDao.getProtocolById(protocolId);
+            protocolDao.deleteProtocol(protocol);
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        } catch (Exception e) {
+            log.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+    }
 
 }
