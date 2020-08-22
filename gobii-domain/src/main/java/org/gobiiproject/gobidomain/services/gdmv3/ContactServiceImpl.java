@@ -18,15 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Transactional
 public class ContactServiceImpl implements ContactService {
 
     @Autowired
     private ContactDao contactDao;
     
-    @Transactional
     @Override
-    public PagedResult<ContactDTO> getContacts(Integer page, Integer pageSize, Integer organizationId) throws Exception {
-        
+    public PagedResult<ContactDTO> getContacts(Integer page, Integer pageSize,
+                                               Integer organizationId) throws Exception {
         try {
             Objects.requireNonNull(page);
             Objects.requireNonNull(pageSize);
@@ -38,7 +38,6 @@ public class ContactServiceImpl implements ContactService {
                 ModelMapper.mapEntityToDto(contact, contactDTO);
                 contactDTOs.add(contactDTO);
             });
-
             return PagedResult.createFrom(page, contactDTOs);
         } catch (GobiiException gE) {
             throw gE;
@@ -47,5 +46,6 @@ public class ContactServiceImpl implements ContactService {
             throw new GobiiDomainException(e);
         }
     }
+
 
 }
