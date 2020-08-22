@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
@@ -8,23 +10,36 @@ import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
+@JsonIgnoreProperties(ignoreUnknown = false, value={
+    "id", "allowedProcessTypes", "entityNameType"
+})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProtocolDTO extends DTOBaseAuditable {
 
     public ProtocolDTO() {
         super(GobiiEntityNameType.PROTOCOL);
     }
 
+    public static interface Create{}
+    public static interface Update{}
+
     @GobiiEntityMap(paramName = "protocolId", entity = Protocol.class, ignoreOnDtoToEntity = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer protocolId;
 
     @GobiiEntityMap(paramName = "name", entity = Protocol.class)
+    @NotBlank(groups = ProtocolDTO.Create.class)
     private String protocolName;
 
     @GobiiEntityMap(paramName = "description", entity = Protocol.class)
     private String protocolDescription;
 
     @GobiiEntityMap(paramName = "platform.platformId", entity = Protocol.class, deep = true)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Positive(groups = ProtocolDTO.Create.class)
     private Integer platformId;
 
     @GobiiEntityMap(paramName = "status.term", entity = Protocol.class, deep = true)

@@ -1,26 +1,29 @@
 package org.gobiiproject.gobidomain.services.gdmv3;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.list.AbstractListDecorator;
-import org.codehaus.janino.Mod;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.ProtocolDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Slf4j
+@Transactional
 public class ProtocolServiceImpl implements ProtocolService {
 
     @Autowired
     private ProtocolDao protocolDao;
+
+    @Autowired
+    private ContactDao contactDao;
 
     @Override
     public ProtocolDTO getProtocolById(Integer protocolId) throws GobiiDomainException {
@@ -76,6 +79,18 @@ public class ProtocolServiceImpl implements ProtocolService {
 
             //Map entity values from dto
             ModelMapper.mapDtoToEntity(protocolDTO, protocolToCreate);
+
+
+
+            //Set CreatedBy and CreatedDate
+            String creatorUserName = ContactService.getCurrentUser();
+            Contact creator = contactDao.getContactByUsername(creatorUserName);
+            protocolToCreate.setCreatedBy(
+                Optional.ofNullable(creator)
+                    .map(v -> creator.getContactId())
+                    .orElse(null));
+            protocolToCreate.setCreatedDate(new Date());
+
             Protocol protocol = protocolDao.createProtocol(protocolToCreate);
 
             ModelMapper.mapEntityToDto(protocol, protocolDTOCreated);
@@ -100,8 +115,20 @@ public class ProtocolServiceImpl implements ProtocolService {
             // Map the values to be updated. Ignore null values.
             ModelMapper.mapDtoToEntity(protocolDTO, protocolDTOUpdtaed, true);
 
+            //Set ModifiedBy and ModifiedDate
+            String modifierUserName = ContactService.getCurrentUser();
+            Contact creator = contactDao.getContactByUsername(modifierUserName);
+            protocolToBeUpdated.setModifiedBy(
+                Optional.ofNullable(creator)
+                    .map(v -> creator.getContactId())
+                    .orElse(null));
+            protocolToBeUpdated.setModifiedDate(new Date());
+
             Protocol protocolUpdated = protocolDao.patchProtocol(protocolToBeUpdated);
+
+            //Map Entity back to return DTO.
             ModelMapper.mapEntityToDto(protocolUpdated, protocolDTOUpdtaed);
+
             return protocolDTOUpdtaed;
         }
         catch (GobiiException gE) {

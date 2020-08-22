@@ -44,7 +44,7 @@ public class ProtocolDaoImplTest {
         em.flush();
     }
 
-    @Test
+    @Test(expected = GobiiDaoException.class)
     public void getProtocolByIdTest()  {
 
         Protocol testProtocol =
@@ -62,6 +62,14 @@ public class ProtocolDaoImplTest {
 
         assertTrue("Get Protocol by Id failed: protocol description failed",
             protocol.getDescription() == testProtocol.getDescription());
+
+        // Assuming primary key gets incremented by 1
+        Integer invalidId = daoTestSetUp
+            .getCreatedProtocols()
+            .get(daoTestSetUp.getCreatedProtocols().size() - 1)
+            .getProtocolId() + 10;
+
+        protocolDao.getProtocolById(invalidId);
 
     }
 

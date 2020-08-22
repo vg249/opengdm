@@ -466,6 +466,9 @@
     <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProtocolImpl"/>
     <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
 
+    <!-- **** Protocol Beans V3 *************************************** -->
+    <bean id="protocolDaoV3" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
+    <bean id="protocolServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ProtocolServiceImpl"/>
 
     <!-- **** Job Beans *************************************** -->
     <bean id="JobService" class="org.gobiiproject.gobidomain.services.impl.JobServiceImpl"/>

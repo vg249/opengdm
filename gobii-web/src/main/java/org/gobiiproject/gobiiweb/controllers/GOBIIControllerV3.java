@@ -16,42 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
-import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
-import org.gobiiproject.gobidomain.services.gdmv3.CvService;
-import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
-import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
-import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
-import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
-import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
-import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
-import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
-import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
+import org.gobiiproject.gobidomain.services.gdmv3.*;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.*;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
@@ -115,6 +90,9 @@ public class GOBIIControllerV3  {
 
     @Autowired
     private OrganizationService organizationService;
+
+    @Autowired
+    private ProtocolService protocolService;
 
     @Autowired
     private CvService cvService;
@@ -1114,6 +1092,43 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    // -- Protocols
+
+    /**
+     * Get Protocol
+     * @return
+     */
+    @GetMapping("/protocols")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ProtocolDTO>> getProtocols(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required = false) Integer platformId
+    ) throws Exception {
+        pageSize = this.getPageSize(pageSize);
+        PagedResult<ProtocolDTO> pagedResult = protocolService.getProtocols(
+            pageSize, page, platformId);
+        BrApiMasterListPayload<ProtocolDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Create protocol
+     * @return
+     */
+    @PostMapping("/protocols")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> createProtocol(
+        @RequestBody @Validated(ReferenceDTO.Create.class) final ProtocolDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        ProtocolDTO protocolDTO = protocolService.createProtocol(request);
+        BrApiMasterPayload<ProtocolDTO> payload =  this.getMasterPayload(protocolDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+
     //---- Marker Group
 
     @PostMapping("/markergroups")
@@ -1241,7 +1256,8 @@ public class GOBIIControllerV3  {
                     info.add(objErr.getField() + " " + objErr.getDefaultMessage());
                 }
             );
-            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
+            throw new ValidationException("Bad Request. "
+                + String.join(", ", info.toArray(new String[info.size()])));
         } 
     }
 
