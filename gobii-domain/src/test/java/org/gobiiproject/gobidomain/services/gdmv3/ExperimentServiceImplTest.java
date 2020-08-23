@@ -89,7 +89,8 @@ public class ExperimentServiceImplTest {
         ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
         request.setProjectId(7);
-        request.setVendorProtocolId(4);
+        request.setVendorId(4);
+        request.setProtocolId(8);
 
         Project dummyProject = new Project();
         dummyProject.setProjectId(7);
@@ -173,7 +174,8 @@ public class ExperimentServiceImplTest {
         ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
         request.setProjectId(7);
-        request.setVendorProtocolId(4);
+        request.setVendorId(4);
+        request.setProtocolId(8);
 
         Project dummyProject = new Project();
         dummyProject.setProjectId(7);
@@ -307,7 +309,8 @@ public class ExperimentServiceImplTest {
     @Test(expected = UnknownEntityException.class)
     public void testUpdateExperimentUnknownVendorProtocol() throws Exception {
         ExperimentDTO request = new ExperimentDTO();
-        request.setVendorProtocolId(4);
+        request.setVendorId(4);
+        request.setProtocolId(8);
         when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
         when(experimentDao.getVendorProtocol(4)).thenReturn(null);
 

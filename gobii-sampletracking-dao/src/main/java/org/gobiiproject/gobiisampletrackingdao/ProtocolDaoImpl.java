@@ -8,10 +8,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.exception.ConstraintViolationException;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -149,23 +146,25 @@ public class ProtocolDaoImpl implements ProtocolDao {
     }
 
     private void checkUniqueConstraint(Protocol protocolToBeChecked) {
-        //Check Unique key constraint(protocolName, platformId).
-        //Database table does not have those constraints in place.
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Protocol> criteriaQuery = criteriaBuilder.createQuery(Protocol.class);
-        Root<Protocol> root = criteriaQuery.from(Protocol.class);
-        criteriaQuery.select(root);
-        root.fetch("platform");
-        criteriaQuery.where(criteriaBuilder.and(
-            criteriaBuilder.equal(root.get("platform").get("platformId"),
-                protocolToBeChecked.getPlatform().getPlatformId()),
-            criteriaBuilder.equal(root.get("name"), protocolToBeChecked.getName())));
 
-        List<Protocol> existingProtocols = em.createQuery(criteriaQuery)
-            .setMaxResults(2)
-            .getResultList();
+        try {
+            //Check Unique key constraint(protocolName, platformId).
+            //Database table does not have those constraints in place.
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Protocol> criteriaQuery = criteriaBuilder.createQuery(Protocol.class);
+            Root<Protocol> root = criteriaQuery.from(Protocol.class);
+            criteriaQuery.select(root);
+            root.fetch("platform");
+            criteriaQuery.where(criteriaBuilder.and(
+                criteriaBuilder.equal(root.get("platform").get("platformId"),
+                    protocolToBeChecked.getPlatform().getPlatformId()),
+                criteriaBuilder.equal(root.get("name"), protocolToBeChecked.getName())));
 
-        if(existingProtocols.size() > 1) {
+            em.createQuery(criteriaQuery)
+                .getSingleResult();
+
+        }
+        catch(NonUniqueResultException nuniqE) {
             throw new GobiiDaoException(
                 GobiiStatusLevel.ERROR,
                 GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,

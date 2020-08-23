@@ -54,7 +54,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
                     (Join<Object, Object>) experimentRoot
                             .fetch("vendorProtocol");
             vendorProtocol.fetch("protocol", JoinType.LEFT).fetch("platform", JoinType.LEFT);
-
+            vendorProtocol.fetch("vendor", JoinType.LEFT);
 
             if(projectId != null) {
                 criteriaQuery.where(criteriaBuilder.equal(project.get("projectId"), projectId));

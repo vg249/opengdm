@@ -17,18 +17,10 @@ import org.gobiiproject.gobidomain.services.gdmv3.exceptions.EntityDoesNotExistE
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.Contact;
-import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.Experiment;
-import org.gobiiproject.gobiimodel.entity.Platform;
-import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.entity.VendorProtocol;
+import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiisampletrackingdao.ContactDao;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
-import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
-import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
+import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ExperimentServiceImpl implements ExperimentService {
@@ -38,6 +30,15 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Autowired
     private ProjectDao projectDao;
+
+    @Autowired
+    private VendorProtocolDao vendorProtocolDaoV3;
+
+    @Autowired
+    private OrganizationDao organizationDao;
+
+    @Autowired
+    private ProtocolDao protocolDao;
 
     @Autowired
     private ContactDao contactDao;
@@ -73,8 +74,8 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public ExperimentDTO createExperiment(ExperimentDTO request, String createdBy) throws Exception {
         Project project =this.loadProject(request.getProjectId());
-        VendorProtocol vp = this.loadVendorProtocol(request.getVendorProtocolId());
-    
+
+        VendorProtocol vp = this.loadVendorProtocol(request.getProtocolId(), request.getVendorId());
         // get contact info
         Contact contact = contactDao.getContactByUsername(createdBy);
 
@@ -140,8 +141,15 @@ public class ExperimentServiceImpl implements ExperimentService {
             target.setExperimentName(request.getExperimentName());
         }
 
-        if (request.getVendorProtocolId() != null ) {
-            VendorProtocol vp = this.loadVendorProtocol(request.getVendorProtocolId());
+        if (request.getVendorId() != null || request.getProtocolId() != null) {
+            Integer vendorId = Optional
+                .ofNullable(request.getVendorId())
+                .orElse(target.getVendorProtocol().getVendor().getOrganizationId());
+            Integer protocolId = Optional
+                .ofNullable(request.getProtocolId())
+                .orElse(target.getVendorProtocol().getProtocol().getProtocolId());
+
+            VendorProtocol vp = this.loadVendorProtocol(protocolId, vendorId);
             target.setVendorProtocol(vp);
         }
 
@@ -175,10 +183,22 @@ public class ExperimentServiceImpl implements ExperimentService {
                        .orElseThrow(() -> new UnknownEntityException.Project());
     }
 
-    private VendorProtocol loadVendorProtocol(Integer vendorProtocolId) throws Exception {
-        return Optional.ofNullable(experimentDao.getVendorProtocol(vendorProtocolId))
-                       .orElseThrow(() -> new UnknownEntityException.VendorProtocol());
-        
+    private VendorProtocol loadVendorProtocol(Integer protocolId,
+                                              Integer vendorId) throws Exception {
+
+        //Get respective vendor protocol, create one if not exist
+        VendorProtocol vp = vendorProtocolDaoV3.getVendorProtocol(protocolId, vendorId);
+
+        if (vp == null) {
+            vp = new VendorProtocol();
+            Organization vendor = organizationDao.getOrganization(vendorId);
+            Protocol protocol = protocolDao.getProtocolById(protocolId);
+            vp.setVendor(vendor);
+            vp.setProtocol(protocol);
+            vp = vendorProtocolDaoV3.createVendorProtocol(vp);
+        }
+
+        return vp;
     }
     
 }
