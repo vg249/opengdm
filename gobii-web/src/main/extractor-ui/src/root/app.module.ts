@@ -14,6 +14,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { SharedModule } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
+import {DropdownModule} from 'primeng/dropdown';
 import { DialogModule } from 'primeng/dialog';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ListboxModule } from 'primeng/listbox';
@@ -65,6 +66,7 @@ import { SearchCriteriaBySamplesComponent } from "./page-by-samples.component";
         TreeModule,
         ButtonModule,
         CheckboxModule,
+        DropdownModule,
         SharedModule,
         TableModule,
         PanelModule,

@@ -9,30 +9,24 @@ import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
+import {SelectItem} from 'primeng/api';
+
 
 
 @Component({
     selector: 'name-id-list-box',
     inputs: ['gobiiExtractFilterType','filterParamName'],
     outputs: [],
-    template: `<select class="nameIdListBox" 
-                       (change)="handleFileItemSelected($event)"
-                       id="{{controlId}}">
-        <option *ngFor="let fileItem of fileItems$ | async"
-                [value]="fileItem.getFileItemUniqueId()"
-                [selected]="fileItem.getSelected()"
-                title="{{fileItem.getItemName()}}">
-            {{fileItem.getItemName().length < 34 ? fileItem.getItemName() : fileItem.getItemName().substr(0,30).concat(" . . .")}}
-            
-        </option>
-    </select>
-    ` // end template
+    templateUrl: 'name-id-list-box.component.html'
 
 })
 export class NameIdListBoxComponent  {
 
 
     public fileItems$: Observable<GobiiFileItem[]>;
+
+    public options: SelectItem[] = [];
+    public selectedItem: string;
 
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
@@ -47,7 +41,7 @@ export class NameIdListBoxComponent  {
 
 
     ngOnInit(): any {
-
+        let scope$ = this;
         this.controlId = this.viewIdGeneratorService.makeIdNameIdListBoxId(this.filterParamName);
         this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
 
@@ -55,9 +49,22 @@ export class NameIdListBoxComponent  {
             .fileItems$
             .subscribe(items => {
                     if (this.previousSelectedItemId === null && items && items.length > 0) {
-                        this.previousSelectedItemId = items[0].getFileItemUniqueId()
+                        this.previousSelectedItemId = items[0].getFileItemUniqueId();
+                        if (items.length > 0) {
+                            this.selectedItem = items[0].getFileItemUniqueId();
+                        }
                     }
+                    items.forEach(item => {
+                        let itemLabel = item.getItemName().length < 34 ? item.getItemName() : item.getItemName().substr(0,30).concat(" . . .");
 
+                        scope$.options.push(
+                            {
+                                label: itemLabel,
+                                value: item.getFileItemUniqueId()
+                            }
+                        );
+                    });
+                    
                  },
                 error => {
                     this.store.dispatch(new historyAction.AddStatusMessageAction(error))
@@ -73,8 +80,8 @@ export class NameIdListBoxComponent  {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))
         }
 
-
-        let newFileItemUniqueId: string = arg.currentTarget.value;
+        console.log(arg);
+        let newFileItemUniqueId: string = arg.value;
         let previousFileItemUniqueId: string = this.previousSelectedItemId;
 
         this.store.dispatch(new fileAction.ReplaceByItemIdAction({
