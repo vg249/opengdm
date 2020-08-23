@@ -19,7 +19,6 @@ import {TypeControl} from "../services/core/type-control";
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
     template: `
         <p-tree [value]="gobiiTreeNodesFromStore$ | async"
-                selectionMode="checkbox"
                 [propagateSelectionUp]="false"
                 [propagateSelectionDown]="false"
                 [selection]="gobiiSelectedNodesFromStore$ | async"

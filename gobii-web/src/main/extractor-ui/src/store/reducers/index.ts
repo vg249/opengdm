@@ -135,8 +135,8 @@ export const getProjectsByPI = createSelector(getFileItemsState, fromFileItems.g
 export const getExperimentsByProject = createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject);
 export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
-export const getDatsetEntities = createSelector(getFileItemsState, fromFileItems.getDatasetEntities);
-export const getDatsetEntitiesPaged = createSelector(getFileItemsState, fromFileItems.getDatasetEntitiesPaged);
+export const getDatasetEntities = createSelector(getFileItemsState, fromFileItems.getDatasetEntities);
+export const getDatasetEntitiesPaged = createSelector(getFileItemsState, fromFileItems.getDatasetEntitiesPaged);
 
 export const getPiContactsFilterOptional = createSelector(getFileItemsState, fromFileItems.getPiContactsFilterOptional)
 export const getProjectsFilterOptional = createSelector(getFileItemsState, fromFileItems.getProjectsFilterOptional)

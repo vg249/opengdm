@@ -801,7 +801,6 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
                     && e.getProcessType() === ProcessType.DUMMY))
                 .map(fi => fi);
         }
-        ``
 
     }
 

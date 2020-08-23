@@ -1,3 +1,32 @@
+html {
+    font-size: 0.75rem
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content {
+    padding: 0;
+}
+
+.p-checkbox .p-checkbox-box {
+    width: 15px;
+    height: 15px
+}
+
+.p-radiobutton .p-radiobutton-box {
+    width: 15px;
+    height: 15px
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+    font-size: 10px;
+}
+
+.p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+    width: 0;
+    height: 0;
+    transition-duration: 0.2s;
+    background-color: #ffffff;
+}
+
 .criteria-tree {
     height: 40%;
     width: 2000px;
@@ -5,6 +34,11 @@
     overflow: auto;
     padding: .25em;
     white-space: nowrap;
+}
+
+.ui-treenode-content-selected {
+    color: #fff;
+    background-color: #416172;
 }
 
 div.ui-datatable-scrollable-body {

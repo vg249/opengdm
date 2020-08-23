@@ -40,224 +40,7 @@ import {FileItem} from "ng2-file-upload";
     //     "/node_modules/primeng/resources/primeng.min.css",
     //     "/node_modules/bootswatch/dist/cerulean/bootstrap.min.css"
     // ],
-    template: `
-        <div style="border: 0px; padding-left: 5px">
-            <BR>
-            <p-checkbox binary="true"
-                        [(ngModel)]="filterToExtractReady"
-                        (onChange)="handleFilterToExtractReadyChecked($event)"
-                        [disabled]="disableFilterToExtractReadyCheckbox">
-            </p-checkbox>
-            <label class="the-legend">Extract-Ready&nbsp;</label>
-            <BR>
-            <div class="container-fluid">
-
-
-                <!--<name-id-list-box-->
-                <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
-                <!--[filterParamName]="nameIdFilterParamTypes.CV_JOB_STATUS">-->
-                <!--</name-id-list-box>-->
-
-            </div> <!--status selector row -->
-            <p-dataTable [value]="datasetsFileItems$ | async"
-                         [(selection)]="selectedDatasets"
-                         (onRowSelect)="handleRowSelect($event)"
-                         (onRowUnselect)="handleRowUnSelect($event)"
-                         (onRowClick)="handleOnRowClick($event)"
-                         dataKey="_entity.id"
-                         resizableColumns="true"
-                         scrollable="true"
-                         scrollHeight="700px"
-                         scrollWidth="100%"
-                         columnResizeMode="expand">
-                <p-column field="_entity.id" header="Id" hidden="true"></p-column>
-                <p-column [style]="{'width':'5%','text-align':'center'}">
-                    <ng-template let-col let-fi="rowData" pTemplate="body">
-                        <p-checkbox binary="true"
-                                    [ngModel]="fi.getSelected()"
-                                    (onChange)="handleRowChecked($event, fi)"
-                                    [hidden]="hideNonExtractReadyJobs(fi, {
-                                        'load' : ['completed']
-                                    })"
-                                    [id]="viewIdGeneratorService.makeDatasetRowCheckboxId(fi._entity.datasetName)">
-                        </p-checkbox>
-
-                    </ng-template>
-                </p-column>
-                <p-column [style]="{'width':'5%','text-align':'center'}">
-                    <ng-template let-col="rowData" pTemplate="body">
-                        <button pButton type="button" icon="pi pi-eye" class="ui-button-secondary"
-                                 (click)="selectDataset($event,col,datasetOverlayPanel);"
-                        ></button>
-                    </ng-template>
-                </p-column>
-                <p-column field="_entity.datasetName"
-                          header="Name"
-                          [style]="{'width': '18%'}"
-                          [sortable]="true">
-                    <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.datasetName}}" tooltipPosition="left"
-                              tooltipStyleClass="tableTooltip"> {{fi._entity.datasetName}} </span>
-                    </ng-template>
-                </p-column>
-                <p-column field="_entity.projectName"
-                          header="Project"
-                          [style]="{'width': '18%'}"
-                          [sortable]="true">
-                    <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.projectName}}" tooltipPosition="left"
-                              tooltipStyleClass="tableTooltip"> {{fi._entity.projectName}} </span>
-                    </ng-template>
-                </p-column>
-                <p-column field="_entity.experimentName"
-                          header="Experiment"
-                          [style]="{'width': '18%'}"
-                          [sortable]="true">
-                    <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.experimentName}}" tooltipPosition="left"
-                              tooltipStyleClass="tableTooltip"> {{fi._entity.experimentName}} </span>
-                    </ng-template>
-                </p-column>
-                <p-column field="_entity.piLastName"
-                          header="PI"
-                          [style]="{'width': '18%'}"
-                          [sortable]="true">
-                    <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left"
-                              tooltipStyleClass="tableTooltip"> {{fi._entity.piLastName}}, {{fi._entity.piFirstName}} </span>
-                    </ng-template>
-                </p-column>
-                <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
-                <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
-                <p-column field="_entity.loadedDate"
-                          header="Loaded"
-                          [style]="{'width': '18%'}"
-                          [sortable]="true">
-                    <ng-template let-col let-fi="rowData" pTemplate="body">
-                        {{fi._entity.loadedDate | date:'yyyy-MM-dd' }}
-                    </ng-template>
-                </p-column>
-            </p-dataTable>
-            <p-overlayPanel #datasetOverlayPanel
-                            appendTo="body"
-                            [showCloseIcon]="true" 
-                            (onHide)="handleHideOverlayPanel($event)">
-
-
-                <!-- you have to  -->
-                <legend>Details:
-                    {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datasetName : null}}
-                </legend>
-
-
-                <div class="panel panel-default">
-                    <table class="table table-striped table-hover">
-                        <!--<table class="table table-striped table-hover table-bordered">-->
-                        <tbody>
-                        <tr>
-                            <td><b>Principal Investigator</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName + ", " + selectedDatasetDetailEntity.piFirstName : null}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>Loaded By</b></td>
-                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName : null}}
-                                {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName) ? ", " : null}}
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName : null}}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><b>Loaded Date</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? (selectedDatasetDetailEntity.loadedDate | date:'yyyy-MM-dd') : null}}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><b>Project</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.projectName : null}}
-                            </td>
-                        </tr>
-
-
-                        <tr>
-                            <td><b>Data Type</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datatypeName : null}}
-                            </td>
-                        </tr>
-
-
-                        <tr>
-                            <td><b>Calling Analysis</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.callingAnalysisName : null}}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><b>Total Samples</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalSamples : null}}
-                            </td>
-                        </tr>
-
-
-                        <tr>
-                            <td><b>Total Markers</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalMarkers : null}}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><b>Experiment</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.experimentName : null}}
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <td><b>Platform</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.platformName : null}}
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <td><b>Protocol</b></td>
-                            <td>
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.protocolName : null}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <BR>
-                <div>
-
-                    <p-panel
-                            header="{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.analysesIds.length : null}} Analyses"
-                            (onBeforeToggle)="handleOpenAnalysesTab($event)"
-                            [(toggleable)]="analysisPanelToggle"
-                            [(collapsed)]="analysisPanelCollapsed">
-                        <p *ngFor="let name of datasetAnalysesNames">
-                            {{ name }}
-                        </p>
-                    </p-panel>
-                </div>
-
-            </p-overlayPanel>
-
-            <div *ngIf="doPaging">
-                <button pButton type="button" (click)="onClickForNextPage$.next($event)" label="Test Paging"></button>
-            </div>
-        </div> <!-- enclosing box  -->
-    ` // end template
-
+    templateUrl: 'dataset-datatable.component.html'
 })
 
 export class DatasetDatatableComponent implements OnInit, OnChanges {
@@ -273,9 +56,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 public viewIdGeneratorService:ViewIdGeneratorService) {
 
         if (this.doPaging) {
-            this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntitiesPaged);
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntitiesPaged);
         } else {
-            this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntities);
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntities);
         }
 
         this.onClickForNextPage$
@@ -297,7 +80,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public doPaging = false;
 //    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
     //public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntitiesPaged);
-    public datasetsFileItems$: any//Observable<GobiiFileItem[]>;
+    public datasetsFileItems$: Observable<GobiiFileItem[]>;
     public selectedDatasets: GobiiFileItem[];
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -318,15 +101,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     public handleFilterToExtractReadyChecked(event) {
 
-
         let jobStatusFilterValues:JobTypeFilters;
 
-        if (event === true) {
-            /**
-             * bug/GSD-557
-             * Load only if datasets with associated jobs of type "load" has listed status.
-             * For load jobs, status should be "completed".
-             */
+        if (event.checked === true) {
             jobStatusFilterValues = {
                 "load" : ["completed"]
             };
@@ -373,12 +150,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
      *    expense of repeating the same query. However, it is my judgement that that scenario will happen infrequently enough
      *    that we don't need to worry about this for now.
      * @param event
-     * @param {GobiiFileItem} dataSeItem
+     * @param {GobiiFileItem} dataSetItem
      * @param {OverlayPanel} datasetOverlayPanel
      */
-    selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
-
-        let datasetId: number = dataSeItem.getEntity().id;
+    selectDataset(event, dataSetItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
+        console.log(dataSetItem);
+        let datasetId: number = dataSetItem.getEntity().id;
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
 
@@ -445,12 +222,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     public handleRowSelect(event) {
         let selectedDatasetFileItem: GobiiFileItem = event.data;
-        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event.originalEvent.checked);
+        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), true);
     }
 
     public handleRowUnSelect(event) {
         let selectedDatasetFileItem: GobiiFileItem = event.data;
-        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event.originalEvent.checked);
+        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), false);
     }
 
     public handleOnRowClick(event) {
