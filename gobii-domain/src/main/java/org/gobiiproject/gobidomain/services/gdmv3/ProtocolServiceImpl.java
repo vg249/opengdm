@@ -6,9 +6,12 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
+import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
 import org.gobiiproject.gobiisampletrackingdao.ProtocolDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +19,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 @Slf4j
-@Transactional
+@Transactional(rollbackOn = GobiiDaoException.class)
 public class ProtocolServiceImpl implements ProtocolService {
 
     @Autowired
@@ -24,6 +27,9 @@ public class ProtocolServiceImpl implements ProtocolService {
 
     @Autowired
     private ContactDao contactDao;
+
+    @Autowired
+    private PlatformDao platformDao;
 
     @Override
     public ProtocolDTO getProtocolById(Integer protocolId) throws GobiiDomainException {
@@ -80,8 +86,6 @@ public class ProtocolServiceImpl implements ProtocolService {
             //Map entity values from dto
             ModelMapper.mapDtoToEntity(protocolDTO, protocolToCreate);
 
-
-
             //Set CreatedBy and CreatedDate
             String creatorUserName = ContactService.getCurrentUser();
             Contact creator = contactDao.getContactByUsername(creatorUserName);
@@ -112,8 +116,14 @@ public class ProtocolServiceImpl implements ProtocolService {
 
             Protocol protocolToBeUpdated = protocolDao.getProtocolById(protocolId);
 
+            //Update Platform
+            if(protocolDTO.getPlatformId() != null) {
+                Platform platform = platformDao.getPlatform(protocolDTO.getPlatformId());
+                protocolToBeUpdated.setPlatform(platform);
+            }
+
             // Map the values to be updated. Ignore null values.
-            ModelMapper.mapDtoToEntity(protocolDTO, protocolDTOUpdtaed, true);
+            ModelMapper.mapDtoToEntity(protocolDTO, protocolToBeUpdated, true);
 
             //Set ModifiedBy and ModifiedDate
             String modifierUserName = ContactService.getCurrentUser();

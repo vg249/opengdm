@@ -11,6 +11,8 @@ import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
 
 @JsonIgnoreProperties(ignoreUnknown = false, value={
@@ -28,6 +30,7 @@ public class ProtocolDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "protocolId", entity = Protocol.class, ignoreOnDtoToEntity = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Null(groups={ProtocolDTO.Create.class, ProtocolDTO.Update.class})
     private Integer protocolId;
 
     @GobiiEntityMap(paramName = "name", entity = Protocol.class)
@@ -39,6 +42,7 @@ public class ProtocolDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "platform.platformId", entity = Protocol.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @NotNull(groups = ProtocolDTO.Create.class)
     @Positive(groups = ProtocolDTO.Create.class)
     private Integer platformId;
 

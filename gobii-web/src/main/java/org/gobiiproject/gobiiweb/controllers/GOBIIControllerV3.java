@@ -1119,7 +1119,7 @@ public class GOBIIControllerV3  {
     @PostMapping("/protocols")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> createProtocol(
-        @RequestBody @Validated(ReferenceDTO.Create.class) final ProtocolDTO request,
+        @RequestBody @Validated(ProtocolDTO.Create.class) final ProtocolDTO request,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -1128,6 +1128,49 @@ public class GOBIIControllerV3  {
         return ResponseEntity.created(null).body(payload);
     }
 
+    /**
+     * Get Protocol by Id
+     * @return
+     */
+    @GetMapping("/protocols/{protocolId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> getProtocol(
+        @PathVariable Integer protocolId
+    ) throws Exception {
+        ProtocolDTO protocolDTO = protocolService.getProtocolById(protocolId);
+        BrApiMasterPayload<ProtocolDTO> payload = this.getMasterPayload(protocolDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Update Protocol by Id
+     */
+    @PatchMapping("/protocols/{protocolId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> updateProtocol(
+        @PathVariable Integer protocolId,
+        @RequestBody @Validated(ProtocolDTO.Update.class) final ProtocolDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        ProtocolDTO protocolDTO = protocolService.patchProtocol(protocolId, request);
+        BrApiMasterPayload<ProtocolDTO> payload = this.getMasterPayload(protocolDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete Protocol by Id
+     * @return
+     */
+    @DeleteMapping("/protocols/{protocolId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteProtocol(
+        @PathVariable Integer protocolId
+    ) throws Exception {
+        protocolService.deleteProtocol(protocolId);
+        return ResponseEntity.noContent().build();
+    }
 
     //---- Marker Group
 
