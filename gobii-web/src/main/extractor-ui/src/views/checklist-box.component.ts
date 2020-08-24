@@ -53,7 +53,6 @@ export class CheckListBoxComponent implements OnInit, OnChanges {
 
     } // ctor
     ngOnChanges(changes: SimpleChanges): void {
-        console.log(changes);
     }
 
     public typeControl:any = TypeControl;

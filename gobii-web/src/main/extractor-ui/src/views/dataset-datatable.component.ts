@@ -154,7 +154,6 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
      * @param {OverlayPanel} datasetOverlayPanel
      */
     selectDataset(event, dataSetItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
-        console.log(dataSetItem);
         let datasetId: number = dataSetItem.getEntity().id;
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);

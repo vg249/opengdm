@@ -250,7 +250,6 @@ export class ExtractorRoot implements OnInit {
 
             this.instructionSubmissionService.submitReady(this.gobiiExtractFilterType)
                 .subscribe(submitReady => {
-                    console.log("SubmitReady: " + submitReady);
                     submitReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
                 })
 

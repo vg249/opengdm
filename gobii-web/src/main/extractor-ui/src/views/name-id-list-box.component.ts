@@ -80,7 +80,6 @@ export class NameIdListBoxComponent  {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))
         }
 
-        console.log(arg);
         let newFileItemUniqueId: string = arg.value;
         let previousFileItemUniqueId: string = this.previousSelectedItemId;
 
