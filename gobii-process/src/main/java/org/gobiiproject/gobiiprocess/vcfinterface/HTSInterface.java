@@ -47,9 +47,31 @@ public class HTSInterface {
 
     }
 
-    static List<String> getRowFromVariantContext(VariantContext vc)
     static void writeVariantOnlyFile(File inFile, File outFile) throws Exception{
         writeVariantOnlyFile(inFile,outFile,"/","\t");
+    }
+
+
+    /** 'file' handle for vcf file read stream into HTS interface for legacy validation*/
+    private static CloseableTribbleIterator<VariantContext> ctr;
+    public static void setupVariantOnlyInputLine(File inFile) throws IOException{
+        FeatureCodec<VariantContext, LineIterator> codec = new VCFCodec();
+        Index index = CountRecords.loadIndex(inFile, codec);
+        AbstractFeatureReader<VariantContext, LineIterator> reader = AbstractFeatureReader.getFeatureReader(inFile.getAbsolutePath(),codec, index);
+        ctr = reader.iterator();
+    }
+
+    /**
+     * NOTE: REQUIRES setupVariantOnlyInputLine to be called first
+     * @param variantSeparator
+     * @return
+     */
+    public static List<String> getVariantOnlyInputLine( String variantSeparator){
+        if(ctr==null || (!ctr.hasNext())){
+            return null;//no new line
+        }
+        //Return list of alleles with separator sepcified
+        return ctr.next().getGenotypes().stream().map(x ->formattedAlleleString(x,variantSeparator)).collect(Collectors.toList());
     }
 
    public static void writeVariantOnlyFile(File inFile, File outFile,String variantSeparator, String segmentSeparator) throws IOException, TribbleException {
@@ -155,11 +177,9 @@ class HTSRowReader{
                 else{
                     return null;
                 }
-                break;
             case 'D':{
                 return "";
             }
-            break;
             default:return null;
         }
     }
@@ -182,7 +202,9 @@ class HTSRowReader{
         nonstandardAlleleMap.add(baseString);
     }
 
-    String getEncodedValue(Allele)
+    String getEncodedValue(Allele a){
+        return "";//TODO - fix
+    }
 
 
 }

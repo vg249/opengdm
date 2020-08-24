@@ -23,6 +23,7 @@ import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
+import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
 
 /**
  * CSV-Specific File Loader class, used by
@@ -307,43 +308,73 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;
                 String fileRow;
-                ArrayList<String> inputRowList, outputRowList;
+                List<String> inputRowList;
+                ArrayList<String> outputRowList;
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 if (isVCF) {
-                    try{
-                   // File processedVCF = HTSInterface.writeVariantOnlyFile(file,new File(outputFile.getParent(),"procVCF"),"","\t"));
-                while ((fileRow = bufferedReader.readLine()) != null) {
-                    if (rowNo >= csv_BothColumn.getrCoord()) {
-                        inputRowList = Arrays.stream(fileRow.split(delimiter))
-                                .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
-                        outputRowList = new ArrayList<>();
-                        getRow(inputRowList, csv_BothColumn);
-                        ValidationResult validationResult=matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
-                        if (validationResult.success) {
-                            writeOutputLine(tempFileBufferedWriter, outputRowList);
-                            totalCols=validationResult.numRows;
-                        }
-                        else {
-                            if (matrixValidation.stopProcessing()) {
-                                tempFileBufferedWriter.flush();
-                                tempFileBufferedWriter.close();
-                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
-                                return new RowColPair<Integer>(totalCols,rowNo);
+                    File processedVCF = new File(outputFile.getParent(),"procVCF");
+                    try {
+                          HTSInterface.writeVariantOnlyFile(file,processedVCF,"","\t");
+                        HTSInterface.setupVariantOnlyInputLine(processedVCF);
+                        while ((inputRowList = HTSInterface.getVariantOnlyInputLine("") ) != null) {
+                                outputRowList = new ArrayList<>();
+                                ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, true /*isVCF*/, skipValidation);
+                                if (validationResult.success) {
+                                    writeOutputLine(tempFileBufferedWriter, outputRowList);
+                                    totalCols = validationResult.numRows;
+                                } else {
+                                    if (matrixValidation.stopProcessing()) {
+                                        tempFileBufferedWriter.flush();
+                                        tempFileBufferedWriter.close();
+                                        FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
+                                        return new RowColPair<Integer>(totalCols, rowNo);
+                                    }
+                                }
                             }
+                            rowNo++;
+                            totalRows = rowNo - csv_BothColumn.getrCoord();
+
+                    }
+                    catch(Exception e){
+
+                    }
+                    //clean up if file was created
+                    FileSystemInterface.rmIfExist(processedVCF);
+                }
+                else{
+                        while ((fileRow = bufferedReader.readLine()) != null) {
+                            if (rowNo >= csv_BothColumn.getrCoord()) {
+                                inputRowList = Arrays.stream(fileRow.split(delimiter))
+                                        .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
+                                outputRowList = new ArrayList<>();
+                                getRow(inputRowList, csv_BothColumn);
+                                ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
+                                if (validationResult.success) {
+                                    writeOutputLine(tempFileBufferedWriter, outputRowList);
+                                    totalCols = validationResult.numRows;
+                                } else {
+                                    if (matrixValidation.stopProcessing()) {
+                                        tempFileBufferedWriter.flush();
+                                        tempFileBufferedWriter.close();
+                                        FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
+                                        return new RowColPair<Integer>(totalCols, rowNo);
+                                    }
+                                }
+                            }
+                            rowNo++;
+                            totalRows = rowNo - csv_BothColumn.getrCoord();
                         }
                     }
-                    rowNo++;
-                    totalRows=rowNo-csv_BothColumn.getrCoord();
-                }
             }
+
         }
         if (matrixValidation.getErrorCount() != 0) {
-            tempFileBufferedWriter.flush();
-            tempFileBufferedWriter.close();
-            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
-        }
-        return new RowColPair<Integer>(totalRows,totalCols);
+                tempFileBufferedWriter.flush();
+                tempFileBufferedWriter.close();
+                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
+            }
+            return new RowColPair<Integer>(totalRows,totalCols);
     }
 
     /**
