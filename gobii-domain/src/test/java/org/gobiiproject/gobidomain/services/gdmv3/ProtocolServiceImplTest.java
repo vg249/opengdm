@@ -7,7 +7,9 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl;
+import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
 import org.gobiiproject.gobiisampletrackingdao.ProtocolDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +34,12 @@ public class ProtocolServiceImplTest {
 
     @Mock
     private ProtocolDao protocolDao;
+
+    @Mock
+    private ContactDao contactDao;
+
+    @Mock
+    private PlatformDao platformDao;
 
     MockSetup mockSetup;
 
@@ -85,9 +93,10 @@ public class ProtocolServiceImplTest {
     }
 
     @Test
-    public void createProtocolTest() {
+    public void createProtocolTest() throws Exception {
 
         mockSetup.createMockProtocols(1);
+        mockSetup.createMockContacts(1);
 
         Protocol protocolToCreate = new Protocol();
         protocolToCreate.setName(mockSetup.mockProtocols.get(0).getName());
@@ -96,6 +105,9 @@ public class ProtocolServiceImplTest {
 
         when(protocolDao.createProtocol(any(Protocol.class)))
             .thenReturn(mockSetup.mockProtocols.get(0));
+
+
+        when(contactDao.getContactByUsername(any())).thenReturn(mockSetup.mockContacts.get(0));
 
         ProtocolDTO protocolDTOToCreate = new ProtocolDTO();
         ModelMapper.mapEntityToDto(protocolToCreate, protocolDTOToCreate);
@@ -109,9 +121,10 @@ public class ProtocolServiceImplTest {
     }
 
     @Test
-    public void patchProtocolTest() {
+    public void patchProtocolTest() throws Exception {
 
         mockSetup.createMockProtocols(1);
+        mockSetup.createMockContacts(1);
 
         Protocol testProtocol = mockSetup.mockProtocols.get(0);
 
@@ -122,6 +135,10 @@ public class ProtocolServiceImplTest {
         protocolDTOToBeUpdated.setProtocolDescription(RandomStringUtils.random(7, true, true));
         ModelMapper.mapDtoToEntity(protocolDTOToBeUpdated, updatedTestProtocol);
         protocolDTOToBeUpdated.setProtocolId(null);
+
+        when(contactDao.getContactByUsername(any())).thenReturn(mockSetup.mockContacts.get(0));
+
+        when(platformDao.getPlatform(any())).thenReturn(testProtocol.getPlatform());
 
         when(protocolDao.getProtocolById(testProtocol.getProtocolId()))
             .thenReturn(testProtocol);

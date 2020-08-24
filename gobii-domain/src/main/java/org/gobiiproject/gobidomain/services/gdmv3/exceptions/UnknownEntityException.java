@@ -48,5 +48,13 @@ public class UnknownEntityException extends GobiiException {
 	public static class VendorProtocol extends UnknownEntityException {
         public VendorProtocol() { super("Vendor Protocol"); }
 	}
-    
+
+	public static class Organization extends UnknownEntityException {
+        public Organization() { super("Vendor"); }
+    }
+
+    public static class Protocol extends UnknownEntityException {
+        public Protocol() { super("Vendor"); }
+    }
+
 }

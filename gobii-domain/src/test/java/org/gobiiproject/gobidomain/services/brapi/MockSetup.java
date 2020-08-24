@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
@@ -31,6 +32,7 @@ public class MockSetup {
     public List<Dataset> mockDatasets;
     public List<Analysis> mockAnalysis;
     public List<Protocol> mockProtocols;
+    public List<Contact> mockContacts;
 
 
     String[] testDatasetIds = {"1", "2", "3", "4", "5"};
@@ -93,6 +95,17 @@ public class MockSetup {
             experiment.setExperimentId(i+1);
             experiment.setExperimentName(RandomStringUtils.random(7, true, true));
             mockExperiments.add(experiment);
+        }
+    }
+
+    public void createMockContacts(int numContacts) {
+        mockContacts = new ArrayList<>();
+        for(int i = 0; i < numContacts; i++) {
+            Contact contact = new Contact();
+            contact.setContactId(i+1);
+            contact.setLastName(RandomStringUtils.random(7, true, true));
+            contact.setFirstName(RandomStringUtils.random(7, true, true));
+            mockContacts.add(contact);
         }
     }
 

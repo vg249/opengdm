@@ -193,6 +193,13 @@ public class ExperimentServiceImpl implements ExperimentService {
             vp = new VendorProtocol();
             Organization vendor = organizationDao.getOrganization(vendorId);
             Protocol protocol = protocolDao.getProtocolById(protocolId);
+            if(vendor == null) {
+                throw new UnknownEntityException.Organization();
+            }
+            if(protocol == null) {
+                throw new UnknownEntityException.Protocol();
+            }
+
             vp.setVendor(vendor);
             vp.setProtocol(protocol);
             vp = vendorProtocolDaoV3.createVendorProtocol(vp);

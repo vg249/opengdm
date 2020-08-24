@@ -9,6 +9,7 @@ package org.gobiiproject.gobidomain.services.gdmv3;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,23 +17,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.Contact;
-import org.gobiiproject.gobiimodel.entity.Cv;
-import org.gobiiproject.gobiimodel.entity.Experiment;
-import org.gobiiproject.gobiimodel.entity.Platform;
-import org.gobiiproject.gobiimodel.entity.Project;
-import org.gobiiproject.gobiimodel.entity.Protocol;
-import org.gobiiproject.gobiimodel.entity.VendorProtocol;
+import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiisampletrackingdao.ContactDao;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
-import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
-import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
+import org.gobiiproject.gobiisampletrackingdao.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -56,6 +49,15 @@ public class ExperimentServiceImplTest {
 
     @Mock
     private CvDao cvDao;
+
+    @Mock
+    private VendorProtocolDao vendorProtocolDao;
+
+    @Mock
+    private OrganizationDao organizationDao;
+
+    @Mock
+    private ProtocolDao protocolDao;
 
     @InjectMocks
     private ExperimentServiceImpl experimentServiceImpl;
@@ -116,6 +118,11 @@ public class ExperimentServiceImplTest {
         dummyVp.setName("test-vendor-protocol");
         dummyVp.setVendorProtocolId(4);
 
+        Organization dummyVendor = new Organization();
+        dummyVendor.setOrganizationId(7);
+        dummyVendor.setName(RandomStringUtils.random(7, true, true));
+
+
         Platform platform = new Platform();
         platform.setPlatformId(1);
         platform.setPlatformName("test-platform");
@@ -132,6 +139,10 @@ public class ExperimentServiceImplTest {
         ).thenReturn(
             dummyVp
         );
+
+        when(organizationDao.getOrganization(any())).thenReturn(dummyVendor);
+        when(protocolDao.getProtocolById(any())).thenReturn(dummyProtocol);
+        when(vendorProtocolDao.createVendorProtocol(any())).thenReturn(dummyVp);
 
         Contact dummyContact = new Contact();
         dummyContact.setContactId(1);
@@ -151,7 +162,6 @@ public class ExperimentServiceImplTest {
         experimentServiceImpl.createExperiment(request, "test-user");
         verify(experimentDao).createExperiment(arg.capture());
         verify(projectDao, times(1)).getProject(7);
-        verify(experimentDao, times(1)).getVendorProtocol(4);
         verify(experimentDao, times(1)).createExperiment( Mockito.any(Experiment.class));
         verify(contactDao, times(1)).getContactByUsername("test-user");
         
@@ -167,9 +177,6 @@ public class ExperimentServiceImplTest {
         dummyExperiment.setExperimentId(123);
         
 
-        when(
-            experimentDao.getExperiment(123)
-        ).thenReturn(dummyExperiment);
 
         ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
@@ -187,9 +194,14 @@ public class ExperimentServiceImplTest {
             dummyProject
         );
 
+
         VendorProtocol dummyVp = new VendorProtocol();
         dummyVp.setName("test-vendor-protocol");
         dummyVp.setVendorProtocolId(4);
+
+        Organization dummyVendor = new Organization();
+        dummyVendor.setOrganizationId(7);
+        dummyVendor.setName(RandomStringUtils.random(7, true, true));
 
         Platform platform = new Platform();
         platform.setPlatformId(1);
@@ -201,12 +213,22 @@ public class ExperimentServiceImplTest {
         dummyProtocol.setPlatform(platform);
 
         dummyVp.setProtocol(dummyProtocol);
+        dummyVp.setVendor(dummyVendor);
+
+        dummyExperiment.setVendorProtocol(dummyVp);
 
         when(
             experimentDao.getVendorProtocol(4)
         ).thenReturn(
             dummyVp
         );
+
+        when(organizationDao.getOrganization(any())).thenReturn(dummyVendor);
+        when(protocolDao.getProtocolById(any())).thenReturn(dummyProtocol);
+        when(vendorProtocolDao.createVendorProtocol(any())).thenReturn(dummyVp);
+        when(
+            experimentDao.getExperiment(123)
+        ).thenReturn(dummyExperiment);
 
         Contact dummyContact = new Contact();
         dummyContact.setContactId(1);
@@ -229,7 +251,6 @@ public class ExperimentServiceImplTest {
         verify(experimentDao).updateExperiment(arg.capture());
         verify(projectDao, times(1)).getProject(7);
         verify(experimentDao, times(2)).getExperiment(123);
-        verify(experimentDao, times(1)).getVendorProtocol(4);
         verify(experimentDao, times(1)).updateExperiment( Mockito.any(Experiment.class));
         verify(contactDao, times(1)).getContactByUsername("test-user");
 
@@ -311,8 +332,22 @@ public class ExperimentServiceImplTest {
         ExperimentDTO request = new ExperimentDTO();
         request.setVendorId(4);
         request.setProtocolId(8);
-        when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
-        when(experimentDao.getVendorProtocol(4)).thenReturn(null);
+
+        Experiment target = new Experiment();
+        VendorProtocol targetVendorProtocol = new VendorProtocol();
+        Organization targetVendor = new Organization();
+        Protocol targetProtocol = new Protocol();
+        targetVendor.setOrganizationId(7);
+        targetProtocol.setProtocolId(9);
+        targetVendorProtocol.setProtocol(targetProtocol);
+        targetVendorProtocol.setVendor(targetVendor);
+        target.setVendorProtocol(targetVendorProtocol);
+
+
+        when(experimentDao.getExperiment(123)).thenReturn(target);
+        when(vendorProtocolDao.getVendorProtocol(any(), any())).thenReturn(null);
+        when(organizationDao.getOrganization(any())).thenReturn(null);
+        when(protocolDao.getProtocolById(any())).thenReturn(targetProtocol);
 
         experimentServiceImpl.updateExperiment(123, request, "test-updater");
         verify(experimentDao, times(0)).updateExperiment(any(Experiment.class));
