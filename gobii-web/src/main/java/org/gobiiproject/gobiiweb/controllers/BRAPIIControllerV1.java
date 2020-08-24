@@ -5,7 +5,6 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
-import antlr.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
@@ -49,7 +48,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.*;
+import org.gobiiproject.gobiimodel.dto.noaudit.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,14 +137,15 @@ import java.util.*;
 @EnableAsync
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
 @CrossOrigin
+@SuppressWarnings("unused")
 public class BRAPIIControllerV1 {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class); //u
 
-    private final Integer brapiDefaultPageSize = 1000;
+    private final Integer brapiDefaultPageSize = 1000; //TODO: remove
 
     @Autowired
-    private PingService pingService = null;
+    private PingService pingService = null; //TODO: remove
 
 
     @Autowired
@@ -172,126 +172,59 @@ public class BRAPIIControllerV1 {
      * @return Json object with list of brapi calls in GDM
      * @throws Exception
      */
-    @RequestMapping(value = "/calls",
-            method = RequestMethod.GET,
-            produces = "application/json")
-    @ApiOperation(
-            value = "Get ServerInfo",
-            notes = "List of all calls",
-            tags = {"ServerInfo"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="ServerInfo"),
-                    })
-            }
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successful",
-                            response = BrapiResponseMapCalls.class
-                    )
-            }
-    )
-    @ResponseBody
-    public ResponseEntity getCalls(
-            HttpServletRequest request) throws Exception {
+    //@RequestMapping(value = "/calls",
+    //        method = RequestMethod.GET,
+    //        produces = "application/json")
+    //@ApiOperation(
+    //        value = "Get ServerInfo",
+    //        notes = "List of all calls",
+    //        tags = {"ServerInfo"},
+    //        extensions = {
+    //                @Extension(properties = {
+    //                        @ExtensionProperty(name="summary", value="ServerInfo"),
+    //                })
+    //        }
+    //)
+    //@ApiResponses(
+    //        value = {
+    //                @ApiResponse(code = 200, message = "Successful",
+    //                        response = BrapiResponseMapCalls.class
+    //                )
+    //        }
+    //)
+    //@ResponseBody
+    //public ResponseEntity<BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls>> getCalls(
+    //        HttpServletRequest request) throws Exception {
 
-        BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
-                new BrapiResponseEnvelopeMasterDetail<>();
-        try {
+    //    BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
+    //            new BrapiResponseEnvelopeMasterDetail<>();
+    //    try {
 
-            BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
+    //        BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
 
-            BrapiResponseCalls brapiResponseCalls = brapiResponseMapCalls.getBrapiResponseCalls();
+    //        BrapiResponseCalls brapiResponseCalls = brapiResponseMapCalls.getBrapiResponseCalls();
 
-            brapiResponseEnvelopeMasterDetail.setResult(brapiResponseCalls);
+    //        brapiResponseEnvelopeMasterDetail.setResult(brapiResponseCalls);
 
-        } catch (GobiiException e) {
+    //    } catch (GobiiException e) {
 
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+    //        String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
+    //        brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
 
-        } catch (Exception e) {
+    //    } catch (Exception e) {
 
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+    //        String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
+    //        brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
 
-        }
+    //    }
 
-        return ResponseEntity.ok(brapiResponseEnvelopeMasterDetail);
+    //    return ResponseEntity.ok(brapiResponseEnvelopeMasterDetail);
 
-    }
-
-
-    /**
-     * Endpoint for authenticating users against GDM system
-     * @param loginRequestBody - BrAPI defined login request body
-     * @param response
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/token",
-            method = RequestMethod.POST,
-            produces = "application/json")
-    @ApiOperation(
-            value = "Authentication",
-            notes = "Returns a API Key if authentication is successful",
-            tags = {"Authentication"},
-            extensions = {
-                    @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Authentication"),
-                    })
-            }
-            ,
-            hidden = true
-    )
-    @ResponseBody
-    public String postLogin(@RequestBody String loginRequestBody,
-                            HttpServletResponse response) throws Exception {
-
-        String returnVal;
-
-        BrapiResponseLogin brapiResponseLogin = null;
-
-        try {
-
-            BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(
-                    BrapiRequestLogin.class);
-
-            BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
-
-            BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
-
-            brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
+    //}
 
 
-            brapiResponseLogin.getBrapiMetaData().setPagination(new BrapiPagination(
-                    1,
-                    1,
-                    1,
-                    0
-            ));
-
-        } catch (GobiiException e) {
-
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
-            brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
-
-        } catch (Exception e) {
-
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
-            brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
-        }
-
-        returnVal = objectMapper.writeValueAsString(brapiResponseLogin);
-
-        return returnVal;
-
-    }
 
 
     /**
@@ -964,7 +897,7 @@ public class BRAPIIControllerV1 {
         String returnVal;
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            //String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             if (!LineUtils.isNullOrEmpty(germplasmDbId)) {
 
                 brapiResponseEnvelope.setResult(brapiResponseMapMarkerProfiles.getBrapiResponseMarkerProfilesByGermplasmId(germplasmDbId));

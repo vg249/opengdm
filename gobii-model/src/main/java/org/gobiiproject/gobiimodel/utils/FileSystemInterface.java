@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 public class FileSystemInterface {
@@ -79,7 +79,7 @@ public class FileSystemInterface {
 	 * @param to file location to move to
 	 * @return true if move succeeded
 	 */
-	public static boolean mv(String from, String to) {
+	public static boolean 	mv(String from, String to) {
 			return mv(from,to,false);
 	}
 

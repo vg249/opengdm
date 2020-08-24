@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiapimodel.payload.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BrApiMasterPayload<T> {
@@ -16,6 +15,13 @@ public class BrApiMasterPayload<T> {
         this.result = result;
     }
 
+    public BrApiMasterPayload(T result, Integer pageSize, Integer currentPage) {
+
+        this.result = result;
+        this.getMetadata().getPagination().setPageSize(pageSize);
+        this.getMetadata().getPagination().setCurrentPage(currentPage);
+
+    }
 
     public T getResult() {
         return this.result;

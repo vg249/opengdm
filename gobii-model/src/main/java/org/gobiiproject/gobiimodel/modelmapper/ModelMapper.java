@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.modelmapper;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class ModelMapper {
         }
     }
 
-    private static void mapper(Object entityInstance, Object dtoInstance, boolean dtoToEntity) {
+    private static void mapper(Object entityInstance, Object dtoInstance, boolean dtoToEntity, boolean ignoreNull) {
 
         try {
 
@@ -58,9 +58,10 @@ public class ModelMapper {
                 if (dtoField.isAnnotationPresent(GobiiEntityMap.class)) {
 
                     GobiiEntityMap[] entityMaps = dtoField.getAnnotationsByType(GobiiEntityMap.class);
+                    dtoField.setAccessible(true);
 
                     for (GobiiEntityMap entityMap : entityMaps) {
-
+                        if (dtoToEntity && entityMap.ignoreOnDtoToEntity()) continue;
                         if (entityMap.entity().equals(entityInstance.getClass()) || entityMap.base() == true) {
 
                             String dtoFieldName = dtoField.getName();
@@ -69,28 +70,52 @@ public class ModelMapper {
 
                             String entityFieldName = entityMap.paramName();
 
-                            Field entityField = getDeclaredField(entityFieldName, entityInstance.getClass());
+                            Field entityField = getDeclaredField(
+                                entityFieldName, entityInstance.getClass());
 
                             if(entityMap.deep()) {
                                 //escape regular expression dot
-                                String[] deepParams = entityFieldName.split("\\.");
+                                String[] deepParams =
+                                    entityFieldName.split("\\.");
 
-                                entityField = getDeclaredField(deepParams[0], entityToSetOrGet.getClass());
+                                entityField = getDeclaredField(
+                                    deepParams[0], entityToSetOrGet.getClass());
 
                                 for(int i = 1; i < deepParams.length; i++) {
-
                                     if(entityField == null) {
                                         break;
                                     }
 
                                     entityField.setAccessible(true);
-                                    entityToSetOrGet = entityField.get(entityToSetOrGet);
+                                    Object entityFieldValue = entityField
+                                        .get(entityToSetOrGet);
 
-                                    if(entityToSetOrGet == null) {
-                                        break;
+                                    // Instantiate entity value when
+                                    // dto value is not null
+                                    if(entityFieldValue == null
+                                        && dtoToEntity
+                                        && dtoField.get(dtoInstance) != null) {
+
+                                        Object emptyFieldValue =
+                                            Class.forName(entityField.getType()
+                                                .getName())
+                                                .getConstructor()
+                                                .newInstance();
+
+                                        entityField.set(
+                                            entityToSetOrGet, emptyFieldValue);
+
+                                        entityToSetOrGet = emptyFieldValue;
+                                    }
+                                    else {
+                                        entityToSetOrGet = entityFieldValue;
+                                        if(entityToSetOrGet == null) {
+                                            break;
+                                        }
                                     }
 
-                                    entityField = getDeclaredField(deepParams[i], entityToSetOrGet.getClass());
+                                    entityField = getDeclaredField(deepParams[i],
+                                        entityToSetOrGet.getClass());
 
                                 }
                             }
@@ -100,11 +125,9 @@ public class ModelMapper {
                                 continue;
                             }
 
-                            dtoField.setAccessible(true);
                             entityField.setAccessible(true);
 
                             if(!entityField.getType().equals(dtoField.getType())) {
-
                                 LoggerFactory.getLogger(ModelMapper.class).error(
                                         "Unable to map DTO to Entity: DTO field " + dtoFieldName +
                                                 " of type " + dtoField.getType().toString() +
@@ -118,7 +141,9 @@ public class ModelMapper {
 
                             }
                             if(dtoToEntity) {
-                                entityField.set(entityToSetOrGet, dtoField.get(dtoInstance));
+                                Object value = dtoField.get(dtoInstance);
+                                if (ignoreNull && value == null) continue;
+                                entityField.set(entityToSetOrGet, value);
                             }
                             else {
                                 dtoField.set(dtoInstance, entityField.get(entityToSetOrGet));
@@ -131,7 +156,6 @@ public class ModelMapper {
             }
         }
         catch(Exception e) {
-
             LoggerFactory.getLogger(ModelMapper.class).error(e.getMessage());
 
             throw new GobiiException(
@@ -141,14 +165,19 @@ public class ModelMapper {
         }
     }
 
+    public static void mapDtoToEntity(Object dtoInstance, Object entityInstance, boolean ignoreNull) throws  GobiiException {
+        ModelMapper.mapper(entityInstance, dtoInstance, true, ignoreNull);
+    }
+
     public static void mapDtoToEntity(Object dtoInstance, Object entityInstance) throws  GobiiException {
-        ModelMapper.mapper(entityInstance, dtoInstance, true);
+        ModelMapper.mapper(entityInstance, dtoInstance, true, false);
     }
 
     public static void mapEntityToDto(Object entityInstance, Object dtoInstance) throws GobiiException {
-        ModelMapper.mapper(entityInstance, dtoInstance, false);
+        ModelMapper.mapper(entityInstance, dtoInstance, false, false);
     }
 
+    @SuppressWarnings("all")
     private static void getDtoEntityMap(
             Class dtoClassName,
             Map<String, EntityFieldBean> returnVal,
@@ -233,6 +262,7 @@ public class ModelMapper {
 
     }
 
+    @SuppressWarnings("rawtypes")
     public static Map<String, EntityFieldBean> getDtoEntityMap(Class dtoClassName) {
 
         Map<String, EntityFieldBean> returnVal = new HashMap<>();

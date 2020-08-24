@@ -7,7 +7,6 @@ package org.gobiiproject.gobidomain.services;
 
 import java.util.List;
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 
 /**
  * Created by Angel on 4/19/2016.

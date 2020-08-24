@@ -9,6 +9,7 @@
          id="WebApp_ID" version="3.0">
 
     <display-name>gobii-web</display-name>
+    <absolute-ordering />
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -68,6 +69,7 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
 
 
     <!-- if you don't specify the servlet-name in the filter mappings,

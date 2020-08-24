@@ -28,7 +28,7 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -74,6 +74,7 @@ import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
  *
  * @author jdl232 Josh L.S.
  */
+@SuppressWarnings("unused")
 public class GobiiFileReader {
     private static String rootDir = "../";
     private static String loaderScriptPath;
@@ -155,6 +156,7 @@ public class GobiiFileReader {
             Scanner s = new Scanner(System.in);
             System.out.println("Enter Loader Instruction File Location:");
             instructionFile = s.nextLine();
+            s.close();
         } else {
             instructionFile = args[0];
         }
@@ -800,7 +802,7 @@ public class GobiiFileReader {
                 return;
             }
 
-            String currentCropContextRoot = context.getInstance(null, false).getCurrentCropContextRoot();
+            String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
             GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
 
             RestUri projectsUri = gobiiUriFactory
@@ -844,6 +846,7 @@ public class GobiiFileReader {
         }
     }
 
+    @SuppressWarnings("unused")
     private static String getJDBCConnectionString(GobiiCropConfig config) {
         return HelperFunctions.getJdbcConnectionString(config);
     }
