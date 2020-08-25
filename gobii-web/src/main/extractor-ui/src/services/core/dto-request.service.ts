@@ -12,6 +12,7 @@ import {Status} from "../../model/payload/status";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import { map, flatMap, switchMap, tap } from 'rxjs/operators';
 import { getCvTermsDataType } from 'src/store/reducers/fileitems-reducer';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 @Injectable()
 export class DtoRequestService<T> {
@@ -48,6 +49,7 @@ export class DtoRequestService<T> {
             .pipe(
                 switchMap( (token: string) =>  {
                     let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
+                    headers.keys().forEach(h => { console.log(h + ": " + headers.get(h))});
                     return this._http.post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), {headers: headers}) 
                 })
             )

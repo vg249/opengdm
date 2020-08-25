@@ -1,5 +1,5 @@
 ////<reference path="../../../../../../typings/index.d.ts"/>
-import {Component, OnInit, ChangeDetectorRef} from "@angular/core";
+import {Component, OnInit, ChangeDetectorRef, ViewChild} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
 import {GobiiFileItem} from "../model/gobii-file-item";
@@ -34,12 +34,10 @@ import { KeycloakService } from 'keycloak-angular';
 
 // GOBii Imports
 
-
 @Component({
     selector: 'extractor-root',
-    //styleUrls: ['../assets/extractor-ui.css'],
     templateUrl: 'app.extractorroot.html'
-}) // @Component
+}) 
 
 export class ExtractorRoot implements OnInit {
     title = 'Gobii Web';
@@ -54,12 +52,12 @@ export class ExtractorRoot implements OnInit {
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
     public typeControl:any = TypeControl;
 
-    public selectedExtractFormat$: any = this.store.select(fromRoot.getSelectedFileFormat);
-    //public selectedExtractFormat$:Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
+    //public selectedExtractFormat$: any = this.store.select(fromRoot.getSelectedFileFormat);
+    public selectedExtractFormat$:Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 
 
-    public messages$: any = this.store.select(fromRoot.getStatusMessages);
-    //public message$:Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
+    //public messages$: any = this.store.select(fromRoot.getStatusMessages);
+    public messages$:Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
 
 
     // ************************************************************************
@@ -68,6 +66,12 @@ export class ExtractorRoot implements OnInit {
     public gobiiExtractFilterTypeForExpressions: any = GobiiExtractFilterType;
     public loggedInUser: string = null;
 
+
+    @ViewChild('piSelector') piSelector;
+    @ViewChild('projSelector') projSelector;
+    @ViewChild('expSelector') expSelector;
+    @ViewChild('typeSelector') typeSelector;
+    @ViewChild('platSelector') platSelector;
 
     constructor(private _dtoRequestServiceContact: DtoRequestService<Contact>,
                 private _authenticationService: AuthenticationService,
@@ -375,10 +379,22 @@ export class ExtractorRoot implements OnInit {
     public handleClearTree() {
 
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
-
+        this.clearSelections();
 
     }
 
+    public clearSelections() {
+        [this.piSelector,
+         this.projSelector,
+         this.expSelector,
+         this.typeSelector,
+         this.platSelector
+        ].forEach(
+            selector => {
+                if (selector) selector.clearSelection();
+            }
+        )
+    }
 
     public handleExtractSubmission() {
 

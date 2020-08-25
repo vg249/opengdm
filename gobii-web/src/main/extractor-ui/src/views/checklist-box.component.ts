@@ -90,6 +90,9 @@ export class CheckListBoxComponent implements OnInit, OnChanges {
 
     }
 
+    public clearSelection(): void {
+        this.selectedValues = [];
+    }
 
     public handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
 

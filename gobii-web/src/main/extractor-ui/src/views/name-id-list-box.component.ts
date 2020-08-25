@@ -44,10 +44,12 @@ export class NameIdListBoxComponent  {
         let scope$ = this;
         this.controlId = this.viewIdGeneratorService.makeIdNameIdListBoxId(this.filterParamName);
         this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
-
+        
         this
             .fileItems$
             .subscribe(items => {
+                    scope$.options = [];
+                    console.log("ngInit on nameIdlistbox " + scope$.gobiiExtractFilterType + " " + scope$.filterParamName + " items " + items.length);
                     if (this.previousSelectedItemId === null && items && items.length > 0) {
                         this.previousSelectedItemId = items[0].getFileItemUniqueId();
                         if (items.length > 0) {
@@ -92,6 +94,11 @@ export class NameIdListBoxComponent  {
 
         this.previousSelectedItemId = newFileItemUniqueId;
 
+    }
+
+    public clearSelection(): void {
+        if (!this.options || this.options.length == 0) return;
+        this.selectedItem = this.options[0].value;
     }
 
 

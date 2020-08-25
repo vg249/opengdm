@@ -191,4 +191,5 @@ export class UploaderComponent implements OnInit {
         //             this.onUploaderError.emit(responseHeader);
         //         });
     }
+
 }
