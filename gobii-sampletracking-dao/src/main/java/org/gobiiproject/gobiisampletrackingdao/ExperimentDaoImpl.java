@@ -98,7 +98,7 @@ public class ExperimentDaoImpl implements ExperimentDao {
     public Experiment updateExperiment(Experiment target) throws Exception {
         Experiment experiment = em.merge(target);
         em.flush();
-        //em.refresh(experiment, getHints());
+        em.refresh(experiment, getHints());
         return experiment;
     }
     

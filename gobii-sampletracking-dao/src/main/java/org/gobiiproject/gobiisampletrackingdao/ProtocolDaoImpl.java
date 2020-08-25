@@ -106,7 +106,7 @@ public class ProtocolDaoImpl implements ProtocolDao {
         try {
             em.merge(protocolToBePatched);
             em.flush();
-            em.refresh(protocolToBePatched);
+            em.refresh(protocolToBePatched, this.getProtocolHints());
             //Check unique constraint before flushing
             try {
                 this.checkUniqueConstraint(protocolToBePatched);

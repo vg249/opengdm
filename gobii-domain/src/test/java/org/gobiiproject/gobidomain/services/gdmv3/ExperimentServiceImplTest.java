@@ -329,6 +329,7 @@ public class ExperimentServiceImplTest {
 
     @Test(expected = UnknownEntityException.class)
     public void testUpdateExperimentUnknownVendorProtocol() throws Exception {
+
         ExperimentDTO request = new ExperimentDTO();
         request.setVendorId(4);
         request.setProtocolId(8);
@@ -342,7 +343,6 @@ public class ExperimentServiceImplTest {
         targetVendorProtocol.setProtocol(targetProtocol);
         targetVendorProtocol.setVendor(targetVendor);
         target.setVendorProtocol(targetVendorProtocol);
-
 
         when(experimentDao.getExperiment(123)).thenReturn(target);
         when(vendorProtocolDao.getVendorProtocol(any(), any())).thenReturn(null);
