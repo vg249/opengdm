@@ -316,19 +316,24 @@ public class CallSetServiceImpl implements CallSetService {
                 .add(datasetIdsIter.next());
         }
 
-        if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {
+        Map<String, String> additionalInfo = new HashMap<>();
 
-            Map<String, String> additionalInfo =
-                CvMapper.mapCvIdToCvTerms(dnaSampleGroupCvs, dnaRun.getDnaSample().getProperties());
+        if(dnaRun.getDnaSample() != null) {
 
-            if(!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getGermplasm().getProperties())) {
+            if (!JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getProperties())) {
+                additionalInfo = CvMapper.mapCvIdToCvTerms(dnaSampleGroupCvs,
+                    dnaRun.getDnaSample().getProperties());
+            }
+
+            if (dnaRun.getDnaSample().getGermplasm() != null &&
+                !JsonNodeUtils.isEmpty(dnaRun.getDnaSample().getGermplasm().getProperties())) {
                 additionalInfo = CvMapper.mapCvIdToCvTerms(germplasmGroupCvs,
                     dnaRun.getDnaSample().getGermplasm().getProperties(), additionalInfo);
             }
-
-            callSet.setAdditionalInfo(additionalInfo);
-
         }
+
+        callSet.setAdditionalInfo(additionalInfo);
+
         return callSet;
     }
 
