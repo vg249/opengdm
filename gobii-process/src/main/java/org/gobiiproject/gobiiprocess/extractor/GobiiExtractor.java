@@ -246,12 +246,8 @@ public class GobiiExtractor {
 		            String mapsetFile = extractDir + "mapset.file";
 		            String markerPosFile = markerFile + ".pos";
 		            String sampleFile = extractDir + "sample.file";
-		            String projectFile = extractDir + "project.file";
-		            String extractSummaryFile = extractDir + "summary.file";
-		            if (inst.isQcCheck()) {//FIXES ERROR - KDC EXPECTS PROJECT SUMMARY IN SUMMARY.FILE
-			            projectFile = extractDir + "summary.file"; //HACK, NEED FIX AND REMOVE LATER FOR CONSISTENCY
-			            extractSummaryFile = extractDir + "project_summary.file";
-		            }
+		            String projectFile = extractDir + "summary.file"; //Required to be named as is for flapjack QC
+			        String extractSummaryFile = extractDir + "project_summary.file"; //briefly called 'summary' in non-QC jobs
 		            String chrLengthFile = markerFile + ".chr";
 		            Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
 		            if (!mdePath.toFile().isFile()) {
@@ -568,6 +564,7 @@ public class GobiiExtractor {
 				            case FLAPJACK:
 					            String genoOutFile = extractDir + "Dataset.genotype";
 					            String mapOutFile = extractDir + "Dataset.map";
+					            String markerGroupSummary=extractDir+"marker.file.mg_summary";
 
 					            //Always regenerate requests - may have different parameters
 					            boolean extended = HelperFunctions.checkFileExistence(extendedMarkerFile);
@@ -579,6 +576,10 @@ public class GobiiExtractor {
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
 					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration, true);
 					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration, true);
+					            if(checkFileExistence(markerGroupSummary)){
+					            	Logger.logDebug("GobiiExtractor","Prepending QTL file notation to marker group summary");
+					            	FlapjackTransformer.addFJQTLHeaderLine(markerGroupSummary,tempFolder,errorFile);
+								}
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;

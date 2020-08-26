@@ -15,7 +15,7 @@ export class DtoRequestItemExtractorSubmission implements DtoRequestItem<Extract
     }
 
     public getUrl():string {
-        return "gobii/v1/instructions/extractor";
+        return "crops/{cropType}/gobii/v1/instructions/extractor";
     } // getUrl()
 
     private processType:ProcessType = ProcessType.CREATE;

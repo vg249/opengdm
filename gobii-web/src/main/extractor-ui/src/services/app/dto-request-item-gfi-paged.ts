@@ -31,7 +31,7 @@ export class DtoRequestItemGfiPaged implements DtoRequestItem<PagedFileItemList>
 
     public getUrl(): string {
 
-        let returnVal: string = "gobii/v1";
+        let returnVal: string = "crops/{cropType}/gobii/v1";
 
         if (this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST_PAGED) {
             returnVal += "/datasets";

@@ -29,7 +29,7 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
 
     public getUrl(): string {
 
-        let returnVal: string = "gobii/v1";
+        let returnVal: string = "crops/{cropType}/gobii/v1";
 
         if (this.fileItemParams.getQueryName() === FilterParamNames.DATASET_BY_DATASET_ID ||
             this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST ) {

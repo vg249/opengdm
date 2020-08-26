@@ -42,11 +42,11 @@ public class CropAuthInterceptor extends HandlerInterceptorAdapter {
             throws Exception {
         
         if (handler instanceof HandlerMethod) {
-            String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             if (handlerMethod.hasMethodAnnotation(CropAuth.class)) {
                 log.debug("Handler has CropAuth annotation");
                 CropAuth annotation = handlerMethod.getMethodAnnotation(CropAuth.class);
+                String currentCropType = CropRequestAnalyzer.getGobiiCropType(request).toLowerCase();
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

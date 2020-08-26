@@ -24,7 +24,7 @@ export class DtoRequestItemContact implements DtoRequestItem<Contact> {
 
     public getUrl(): string {
 
-        let returnVal: string = "gobii/v1/contact-search";
+        let returnVal: string = "crops/{cropType}/gobii/v1/contact-search";
 
         if (this.contactSearchType === ContactSearchType.BY_EMAIL) {
 

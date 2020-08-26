@@ -15,7 +15,7 @@ import { getCvTermsDataType } from 'src/store/reducers/fileitems-reducer';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 @Injectable()
-export class DtoRequestService<T> {
+export class DtoRequestService2<T> {
 
 
     constructor(private _http: HttpClient,
@@ -23,59 +23,49 @@ export class DtoRequestService<T> {
     }
 
 
-    public getAString(): string {
-        return 'a string';
-    }
-
     getGobiiCropType(): string {
         return this._authenticationService.getGobiiCropType();
     }
 
-    private _gobbiiVersion = "1.0";
+   
+    // public post(dtoRequestItem: DtoRequestItem<T>): Observable<T> {
 
-    getGobbiiVersion() {
-        return this._gobbiiVersion;
-    }
+    //     let scope$ = this;
 
-    public post(dtoRequestItem: DtoRequestItem<T>): Observable<T> {
+    //     return Observable.create(observer => {
 
-        let scope$ = this;
+    //         scope$._authenticationService
+    //         .getToken()
+    //         .pipe(
+    //             switchMap( (token: string) =>  {
+    //                 let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
+    //                 headers.keys().forEach(h => { console.log(h + ": " + headers.get(h))});
+    //                 return this._http.post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), {headers: headers}) 
+    //             })
+    //         )
+    //         .subscribe(
+    //             json => 
+    //             {
+    //                 let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(json);
 
-        return Observable.create(observer => {
+    //                 if (payloadResponse.header.status.succeeded) {
+    //                     let result = dtoRequestItem.resultFromJson(json);
+    //                     observer.next(result);
+    //                     observer.complete();
+    //                 } else {
+    //                     observer.error(payloadResponse.header);
+    //                 }
+    //             },
+    //             json => {
+    //                 let obj = JSON.parse(json._body)
+    //                 let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
+    //                 observer.error(payloadResponse.header);
+    //             } // subscribe http
+    //         )}
+    //     );
+    // }
 
-            
-            scope$._authenticationService
-            .getToken()
-            .pipe(
-                switchMap( (token: string) =>  {
-                    let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
-                    console.log("Accessing: " + dtoRequestItem.getUrl());
-                    return this._http.post(dtoRequestItem.getUrl().replace("{cropType}", scope$._authenticationService.getGobiiCropType()), dtoRequestItem.getRequestBody(), {headers: headers}) 
-                })
-            )
-            .subscribe(
-                json => 
-                {
-                    let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(json);
-
-                    if (payloadResponse.header.status.succeeded) {
-                        let result = dtoRequestItem.resultFromJson(json);
-                        observer.next(result);
-                        observer.complete();
-                    } else {
-                        observer.error(payloadResponse.header);
-                    }
-                },
-                json => {
-                    let obj = JSON.parse(json._body)
-                    let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
-                    observer.error(payloadResponse.header);
-                } // subscribe http
-            )}
-        );
-    }
-
-    public get(dtoRequestItem: DtoRequestItem<T>, authenticate: boolean = true): Observable<T> {
+    public get(dtoRequestItem: DtoRequestItem<T>): Observable<T> {
 
         let scope$ = this;
 
@@ -89,31 +79,34 @@ export class DtoRequestService<T> {
                 switchMap( (token: string) =>  {
                     let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                     console.log("Accessing: " + dtoRequestItem.getUrl());
-                    console.log("Headers " + JSON.stringify(headers));
+                    console.log("Headers: "  + JSON.stringify(headers));
                     return this._http
-                        .get(dtoRequestItem.getUrl().replace("{cropType}", scope$._authenticationService.getGobiiCropType()), {headers: headers})
+                        .get(dtoRequestItem.getUrl().replace("{cropType}", scope$._authenticationService.getGobiiCropType()), {headers: headers});
                 })
                 
             ).subscribe(
                 json => 
                 {
-                    let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(json);
-
-                    if (payloadResponse.header.status.succeeded) {
-                        scope$._gobbiiVersion = payloadResponse.header.gobiiVersion;
-                        let result = dtoRequestItem.resultFromJson(json);
-                        observer.next(result);
-                        observer.complete();
-                    } else {
-                        observer.error(payloadResponse.header);
-                    }
+                    //console.log(json);
+                    //let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(json);
+                    let result = dtoRequestItem.resultFromJson(json);
+                    observer.next(result);
+                    observer.complete();
+                    // if (payloadResponse.header.status.succeeded) {
+                    //     scope$._gobbiiVersion = payloadResponse.header.gobiiVersion;
+                    //     let result = dtoRequestItem.resultFromJson(json);
+                    //     observer.next(result);
+                    //     observer.complete();
+                    // } else {
+                    //     observer.error(payloadResponse.header);
+                    // }
                 },
                 json => {
                     console.log("Got error " + json);
-                    console.log("Got " + json._body);
-                    let obj = JSON.parse(json._body)
-                    let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
-                    observer.error(payloadResponse.header);
+                    //console.log("Got " + json._body);
+                    //let obj = JSON.parse(json._body)
+                    //let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
+                    observer.error(json);
                 } // subscribe http
             )}
         );

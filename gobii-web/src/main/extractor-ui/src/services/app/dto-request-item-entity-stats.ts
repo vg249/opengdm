@@ -20,7 +20,7 @@ export class DtoRequestItemEntityStats implements DtoRequestItem<EntityStats> {
     public getUrl(): string {
 
         let returnVal: string;
-        let baseUrl:string = "gobii/v1/";
+        let baseUrl:string = "crops/{cropType}/gobii/v1/";
         let entityTypeName: string = EntityType[this.entityType];
 
         if (this.requestType === EntityRequestType.Count) {

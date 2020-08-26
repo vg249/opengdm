@@ -21,7 +21,7 @@ export class AuthenticationService {
     private defaultPassword: string = 'reader';
     private token: string = null;
     private userName: string = null;
-    private _gobiiCropType: string;
+    private _gobiiCropType: string = "";
     //private authUrl: string = "gobii/v1/auth";
 
 

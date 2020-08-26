@@ -18,6 +18,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.utils.URLUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
 import org.keycloak.KeycloakPrincipal;
@@ -47,6 +48,22 @@ public class CropUserFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
+
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+
+        String servicePath = httpServletRequest.getRequestURI().substring(
+            httpServletRequest.getContextPath().length());
+
+        // Skip crop user filter for /crops endpoint
+        if(URLUtils.stripStartAndEndPathSeparator(servicePath)
+            .equals(URLUtils.stripStartAndEndPathSeparator(
+                GobiiControllerType.CROPS.getControllerPath()))) {
+
+            chain.doFilter(request, response); //continue on
+            return;
+
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         HttpServletRequest req = (HttpServletRequest) request;
         if (!this.shouldFilter(req.getRequestURI())) {
@@ -62,9 +79,8 @@ public class CropUserFilter extends GenericFilterBean {
             //Add the response headers
             String currentCropType = null;
             try {
-                currentCropType = CropRequestAnalyzer.getGobiiCropType((HttpServletRequest) request).toLowerCase();
+                currentCropType = CropRequestAnalyzer.getGobiiCropType(httpServletRequest).toLowerCase();
                 httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP, currentCropType);
-                
             } catch (Exception e) {
                 throw new ServletException(e);
             }

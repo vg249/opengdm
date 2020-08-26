@@ -23,7 +23,7 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
 
     public getUrl():string {
 
-        let baseUrl:string = "gobii/v1/names";
+        let baseUrl:string = "crops/{cropType}/gobii/v1/names";
 
         let returnVal:string = baseUrl + "/" + EntityType[this.entityType].toLowerCase();
 

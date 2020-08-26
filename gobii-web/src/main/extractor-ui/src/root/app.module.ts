@@ -54,6 +54,7 @@ import { initializer } from './app.init';
 //import {LoginComponent} from "../views/login.component";
 import { routing } from "./app.routing";
 import { SearchCriteriaBySamplesComponent } from "./page-by-samples.component";
+import { DtoRequestService2 } from '../services/core/dto-request.service2';
 
 
 
@@ -114,6 +115,7 @@ import { SearchCriteriaBySamplesComponent } from "./page-by-samples.component";
         AuthGuard,
         AuthenticationService,
         DtoRequestService,
+        DtoRequestService2,
         NameIdService,
         TreeStructureService,
         FileItemService,

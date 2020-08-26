@@ -29,6 +29,9 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 import {TypeControl} from "../services/core/type-control";
 import { KeycloakService } from 'keycloak-angular';
+import { DtoRequestItemCrops } from 'src/services/app/dto-request-item-crops';
+import { Crop } from '../model/crop';
+import { DtoRequestService2 } from '../services/core/dto-request.service2';
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -76,6 +79,7 @@ export class ExtractorRoot implements OnInit {
     constructor(private _dtoRequestServiceContact: DtoRequestService<Contact>,
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
+                private _dtoRequestServiceCrops: DtoRequestService2<Crop[]>,
                 private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
@@ -116,6 +120,18 @@ export class ExtractorRoot implements OnInit {
     public selectedServerConfig: ServerConfig;
     public serverConfigList: ServerConfig[];
     public currentStatus: string;
+
+    private initializeCropType() {
+        let scope$ = this;
+        this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
+            console.log(crops);
+            if (crops) {
+                console.log("Setting gobii crop type " + crops[0].cropType);
+                this._authenticationService.setGobiiCropType(crops[0].cropType);
+                scope$.initializeServerConfigs();
+            }
+        })
+    }
 
     private initializeServerConfigs() {
         let scope$ = this;
@@ -411,7 +427,8 @@ export class ExtractorRoot implements OnInit {
 
     ngOnInit(): any {
         this._authenticationService.loadUserProfile();
-        this.initializeServerConfigs();
+        this.initializeCropType();
+        //this.initializeServerConfigs();
 
 
     } // ngOnInit()
