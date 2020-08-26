@@ -20,6 +20,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
@@ -295,11 +296,6 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         String parentDirectory = outputFile.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
 
-        //Temporary home of output of running VCF reading
-        String matrixTempFileLocation = parentDirectory + "/digest.matrix_raw";
-        //Place to store the indel lookup table, for an indel storage table
-        String matrixIndelLookupTable = parentDirectory + "/digest.matrix_indel";
-
 
 
 
@@ -314,7 +310,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 if (isVCF) {
                     try {
-                        HTSInterface.setupVariantOnlyInputLine(file);
+                        //TODO - this only works with single files
+                        HTSInterface.setupVariantOnlyInputLine(new File(GobiiFileReader.getSourceFileName(file.toString())));
                         while ((inputRowList = HTSInterface.getVariantOnlyInputLine("") ) != null) {
                                 outputRowList = new ArrayList<>();
                                 ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, true /*isVCF*/, skipValidation);
