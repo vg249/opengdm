@@ -313,10 +313,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 if (isVCF) {
-                    File processedVCF = new File(outputFile.getParent(),"procVCF");
                     try {
-                          HTSInterface.writeVariantOnlyFile(file,processedVCF,"","\t");
-                        HTSInterface.setupVariantOnlyInputLine(processedVCF);
+                        HTSInterface.setupVariantOnlyInputLine(file);
                         while ((inputRowList = HTSInterface.getVariantOnlyInputLine("") ) != null) {
                                 outputRowList = new ArrayList<>();
                                 ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, true /*isVCF*/, skipValidation);
@@ -340,7 +338,6 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
 
                     }
                     //clean up if file was created
-                    FileSystemInterface.rmIfExist(processedVCF);
                 }
                 else{
                         while ((fileRow = bufferedReader.readLine()) != null) {
