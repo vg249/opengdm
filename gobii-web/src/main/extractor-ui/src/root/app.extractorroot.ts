@@ -129,6 +129,8 @@ export class ExtractorRoot implements OnInit {
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
                     let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
+                    //cleanup the gobiiVersion string
+                    //gobiiVersion = gobiiVersion.replace(/GOBII Server/g, '');
 
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
 
@@ -138,7 +140,8 @@ export class ExtractorRoot implements OnInit {
                                     return c.crop === serverCrop;
                                 }
                             )[0];
-                    
+                    //scope$._authenticationService.setGobiiCropType(scope$.selectedServerConfig.crop);
+                    //console.log(scope$._authenticationService.getGobiiCropType());
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
                     

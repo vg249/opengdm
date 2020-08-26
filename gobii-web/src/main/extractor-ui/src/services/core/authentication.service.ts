@@ -44,13 +44,13 @@ export class AuthenticationService {
 
 
     public getGobiiCropType(): string {
-        return "dev";
-        //return this._gobiiCropType;
+        //return "dev";
+        return this._gobiiCropType;
     }
 
-    // private setGobiiCropType(gobiiCropType: string) {
-    //     this._gobiiCropType = gobiiCropType;
-    // }
+    public setGobiiCropType(gobiiCropType: string) {
+         this._gobiiCropType = gobiiCropType;
+    }
 
     // public getUserName(): string {
     //     return this.userName;

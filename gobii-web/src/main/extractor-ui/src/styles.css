@@ -71,3 +71,13 @@ i{
     min-height: 16px !important;
     min-width: 16px !important;
 }
+
+.p-button.p-button-sm {
+    font-size: 0rem;
+    padding: 0rem 0rem;
+}
+
+
+.p-button.p-button-icon-only {
+    width: 0rem;
+}
