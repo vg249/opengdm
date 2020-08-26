@@ -41,6 +41,8 @@ export class NameIdListBoxComponent  {
 
 
     ngOnInit(): any {
+        //TODO: this method is being called multiple times. must find a way
+        //to disable that behavior.
         let scope$ = this;
         this.controlId = this.viewIdGeneratorService.makeIdNameIdListBoxId(this.filterParamName);
         this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
@@ -49,7 +51,6 @@ export class NameIdListBoxComponent  {
             .fileItems$
             .subscribe(items => {
                     scope$.options = [];
-                    console.log("ngInit on nameIdlistbox " + scope$.gobiiExtractFilterType + " " + scope$.filterParamName + " items " + items.length);
                     if (this.previousSelectedItemId === null && items && items.length > 0) {
                         this.previousSelectedItemId = items[0].getFileItemUniqueId();
                         if (items.length > 0) {
