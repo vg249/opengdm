@@ -7,10 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -126,6 +123,7 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
 import io.swagger.annotations.ResponseHeader;
+import org.springframework.web.servlet.HandlerMapping;
 
 
 /**
@@ -140,6 +138,9 @@ import io.swagger.annotations.ResponseHeader;
 public class GOBIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);
+
+    @Autowired
+    HttpServletRequest req;
 
     @Autowired
     private PingService pingService = null;
@@ -220,6 +221,15 @@ public class GOBIIControllerV1 {
     private KeycloakService keycloakService;
 
     private Tika tika = new Tika();
+
+    /**
+     * @return crop type from class level path variable
+     */
+    private String cropType() {
+        Map<String, String> variables = (Map<String, String>)
+            req.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        return variables.get("cropType");
+    }
 
     @ApiOperation(value="ping",
             notes = "Pings the GDB Web server.",
@@ -369,7 +379,7 @@ public class GOBIIControllerV1 {
                 payloadWriter.writeSingleItemForDefaultId(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                                 RestResourceId.GOBII_CONFIGSETTINGS),
-                        configSettingsDTO);
+                        configSettingsDTO, cropType());
 
             } else {
                 returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
@@ -435,7 +445,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_REST_PROFILES),
-                    restProfileDTOToUpdate);
+                    restProfileDTOToUpdate, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -500,7 +510,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ANALYSIS),
-                    analysisDTONew);
+                    analysisDTONew, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -554,7 +564,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ANALYSIS),
-                    analysisDTOReplaced);
+                    analysisDTOReplaced, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -600,7 +610,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ANALYSIS),
-                    analysisDTOs);
+                    analysisDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -649,7 +659,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ANALYSIS),
-                    analysisDTO);
+                    analysisDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -710,7 +720,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CONTACTS),
-                    contactDTONew);
+                    contactDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -766,7 +776,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CONTACTS),
-                    contactDTOReplaced);
+                    contactDTOReplaced, cropType());
 
 
         } catch (GobiiException e) {
@@ -818,7 +828,7 @@ public class GOBIIControllerV1 {
                 payloadWriter.writeSingleItemForDefaultId(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                                 RestResourceId.GOBII_CONTACTS),
-                        contactDTO);
+                        contactDTO, cropType());
 
             } else {
                 returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
@@ -871,7 +881,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CONTACTS),
-                    platformDTOs);
+                    platformDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -990,7 +1000,7 @@ public class GOBIIControllerV1 {
                 payloadWriter.writeSingleItemForDefaultId(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                                 RestResourceId.GOBII_CONTACTS),
-                        contactDTO);
+                        contactDTO, cropType());
             }
 
         } catch (GobiiException e) {
@@ -1055,7 +1065,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CV),
-                    cvDTONew);
+                    cvDTONew, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -1107,7 +1117,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CV),
-                    cvDTOReplaced);
+                    cvDTOReplaced, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1152,7 +1162,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CV),
-                    cvDTOs);
+                    cvDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1200,7 +1210,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CV),
-                    cvDTO);
+                    cvDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1250,7 +1260,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CV),
-                    cvDTODeleted);
+                    cvDTODeleted, cropType());
 
         } catch (GobiiException e) {
 
@@ -1304,7 +1314,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CV),
-                    cvDTOs);
+                    cvDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1358,7 +1368,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceColl(request.getContextPath(),
                             RestResourceId.GOBII_CV)
                             .addUriParam("id"),
-                    cvDTOS);
+                    cvDTOS, cropType());
 
         } catch (GobiiException e) {
 
@@ -1418,7 +1428,7 @@ public class GOBIIControllerV1 {
                         GobiiUriFactory.resourceColl(request.getContextPath(),
                                 RestResourceId.GOBII_CVGROUP)
                                 .addUriParam("id"),
-                        cvGroupDTOS);
+                        cvGroupDTOS, cropType());
             } else {
                 returnVal.getHeader().getStatus().addException(new Exception("Unknown group type: "
                         + cvGroupTypeId.toString()));
@@ -1476,7 +1486,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_CVGROUP),
-                    cvGroupDTO);
+                    cvGroupDTO, cropType());
 
         } catch (GobiiException e) {
 
@@ -1541,7 +1551,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DATASETS),
-                    dataSetDTONew);
+                    dataSetDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1596,7 +1606,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DATASETS),
-                    dataSetDTOReplaced);
+                    dataSetDTOReplaced, cropType());
 //
 
         } catch (GobiiException e) {
@@ -1655,7 +1665,7 @@ public class GOBIIControllerV1 {
                 payloadWriter.writeListFromPagedQuery(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                                 RestResourceId.GOBII_DATASETS),
-                        pagedList);
+                        pagedList, cropType());
 
             } else {
 
@@ -1664,7 +1674,7 @@ public class GOBIIControllerV1 {
                 payloadWriter.writeList(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                                 RestResourceId.GOBII_DATASETS),
-                        dataSetDTOs);
+                        dataSetDTOs, cropType());
             }
 
         } catch (GobiiException e) {
@@ -1714,7 +1724,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DATASETS),
-                    dataSetDTO);
+                    dataSetDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1763,7 +1773,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ANALYSIS),
-                    analysisDTOs);
+                    analysisDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1814,7 +1824,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DATASETTYPES),
-                    nameIdDTOList);
+                    nameIdDTOList, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1864,7 +1874,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DATASETS),
-                    dataSetDTOS);
+                    dataSetDTOS, cropType());
 
 
         } catch (GobiiException e) {
@@ -1920,7 +1930,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_JOB),
-                    jobDTO);
+                    jobDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1976,7 +1986,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DISPLAY),
-                    displayDTONew);
+                    displayDTONew,cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -2031,7 +2041,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DISPLAY),
-                    displayDTOReplaced);
+                    displayDTOReplaced,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2078,7 +2088,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DISPLAY),
-                    displayDTOS);
+                    displayDTOS,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2127,7 +2137,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_DISPLAY),
-                    displayDTO);
+                    displayDTO,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2186,7 +2196,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS),
                     loaderInstructionFilesDTONew,
-                    loaderInstructionFilesDTONew.getInstructionFileName());
+                    loaderInstructionFilesDTONew.getInstructionFileName(),cropType);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2237,7 +2247,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD_INSTRUCTIONS),
                     loaderInstructionFilesDTO,
-                    loaderInstructionFilesDTO.getInstructionFileName());
+                    loaderInstructionFilesDTO.getInstructionFileName(),cropType);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2289,7 +2299,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOADER_JOBS),
                     jobDTO,
-                    jobDTO.getJobName());
+                    jobDTO.getJobName(),cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2348,7 +2358,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS),
                     extractorInstructionFilesDTONew,
-                    extractorInstructionFilesDTONew.getJobId());
+                    extractorInstructionFilesDTONew.getJobId(),cropType);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2399,7 +2409,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS),
                     extractorInstructionFilesDTO,
-                    extractorInstructionFilesDTO.getInstructionFileName());
+                    extractorInstructionFilesDTO.getInstructionFileName(),cropType);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2451,7 +2461,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_EXTRACTOR_JOBS),
                     jobDTO,
-                    jobDTO.getJobName());
+                    jobDTO.getJobName(),cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2513,7 +2523,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MANIFEST),
-                    manifestDTONew);
+                    manifestDTONew, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -2566,7 +2576,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MANIFEST),
-                    manifestDTOReplaced);
+                    manifestDTOReplaced, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2612,7 +2622,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MANIFEST),
-                    manifestDTOS);
+                    manifestDTOS,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2661,7 +2671,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MANIFEST),
-                    manifestDTO);
+                    manifestDTO,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2723,7 +2733,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERS),
-                    dataSetDTONew);
+                    dataSetDTONew,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2779,7 +2789,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERS),
-                    dataSetDTOReplaced);
+                    dataSetDTOReplaced,cropType());
 //
 
         } catch (GobiiException e) {
@@ -2827,7 +2837,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERS),
-                    markerDTOs);
+                    markerDTOs,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2878,7 +2888,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERS),
-                    dataSetDTO);
+                    dataSetDTO,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2931,7 +2941,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERS),
-                    markersByName);
+                    markersByName, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3071,7 +3081,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiEntityNameConverter.toServiceRequestId(request.getContextPath(),
                             gobiiEntityNameType),
-                    nameIdList);
+                    nameIdList, cropType());
 
 
             // for call limit, the case of /names, we need to add the entity type
@@ -3225,7 +3235,7 @@ public class GOBIIControllerV1 {
                 payloadWriter.writeList(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                                 RestResourceId.GOBII_NAMES),
-                        nameIdList);
+                        nameIdList, cropType());
 
                 // return the nameIdDTOs with null IDs
                 for (NameIdDTO currentNameIdDTO : nameIdList) {
@@ -3316,7 +3326,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ORGANIZATION),
-                    OrganizationDTONew);
+                    OrganizationDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3371,7 +3381,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ORGANIZATION),
-                    organizationDTOReplaced);
+                    organizationDTOReplaced, cropType());
 
 
         } catch (GobiiException e) {
@@ -3421,7 +3431,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ORGANIZATION),
-                    organizationDTOs);
+                    organizationDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3473,7 +3483,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ORGANIZATION),
-                    organizationDTO);
+                    organizationDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3538,7 +3548,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MAPSET),
-                    mapsetDTOs);
+                    mapsetDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3610,7 +3620,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PLATFORM),
-                    platformDTONew);
+                    platformDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3666,7 +3676,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PLATFORM),
-                    platformDTOReplaced);
+                    platformDTOReplaced, cropType());
 
 
         } catch (GobiiException e) {
@@ -3716,7 +3726,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PLATFORM),
-                    platformDTOs);
+                    platformDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3768,7 +3778,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PLATFORM),
-                    platformDTO);
+                    platformDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3820,7 +3830,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PLATFORM),
-                    platformDTO);
+                    platformDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3887,7 +3897,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROJECTS),
-                    projectDTONew);
+                    projectDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3942,7 +3952,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROJECTS),
-                    projectDTOReplaced);
+                    projectDTOReplaced, cropType());
 //
 
         } catch (GobiiException e) {
@@ -3990,7 +4000,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROJECTS),
-                    projectDTOs);
+                    projectDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4040,7 +4050,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROJECTS),
-                    projectDTO);
+                    projectDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4102,7 +4112,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_EXPERIMENTS),
-                    exprimentDTONew);
+                    exprimentDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4157,7 +4167,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_EXPERIMENTS),
-                    exprimentDTOReplaced);
+                    exprimentDTOReplaced, cropType());
 
 
         } catch (GobiiException e) {
@@ -4206,7 +4216,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_EXPERIMENTS),
-                    experimentDTOs);
+                    experimentDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4256,7 +4266,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_EXPERIMENTS),
-                    experimentDTO);
+                    experimentDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4324,7 +4334,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROTOCOL),
-                    protocolDTONew);
+                    protocolDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4377,7 +4387,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROTOCOL),
-                    protocolDTOReplaced);
+                    protocolDTOReplaced, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -4428,7 +4438,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROTOCOL),
-                    protocolDTO);
+                    protocolDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4475,7 +4485,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROTOCOL),
-                    ProtocolDTOs);
+                    ProtocolDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4536,7 +4546,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ORGANIZATION),
-                    protocolDTOAssociated);
+                    protocolDTOAssociated, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4590,7 +4600,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_ORGANIZATION),
-                    protocolDTOAssociated);
+                    protocolDTOAssociated, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4646,7 +4656,7 @@ public class GOBIIControllerV1 {
                             .setParamValue("protocolId", protocolId.toString())
                             .appendSegment(RestResourceId.GOBII_VENDORS)
                             .addUriParam("id"), // <-- this is the one that PayloadWriter will set based on the list
-                    organizationDTOs);
+                    organizationDTOs, cropType());
 
         } catch (GobiiException e) {
 
@@ -4697,7 +4707,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_PROTOCOL),
-                    protocolDTO);
+                    protocolDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4752,7 +4762,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD),
-                    loaderFilePreviewDTO
+                    loaderFilePreviewDTO, cropType
             );
 
         } catch (GobiiException e) {
@@ -4807,7 +4817,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_FILE_LOAD),
-                    loaderFilePreviewDTO
+                    loaderFilePreviewDTO, cropType
             );
 
         } catch (GobiiException e) {
@@ -4872,7 +4882,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MAPSET),
-                    mapsetDTONew);
+                    mapsetDTONew, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -4925,7 +4935,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MAPSET),
-                    mapsetDTOReplaced);
+                    mapsetDTOReplaced, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -4971,7 +4981,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MAPSET),
-                    mapsetDTOs);
+                    mapsetDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5020,7 +5030,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MAPSET),
-                    mapsetDTO);
+                    mapsetDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5076,7 +5086,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERGROUP),
-                    markerGroupDTONew);
+                    markerGroupDTONew, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -5129,7 +5139,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERGROUP),
-                    markerGroupDTOReplaced);
+                    markerGroupDTOReplaced,cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5175,7 +5185,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERGROUP),
-                    markerGroupDTOs);
+                    markerGroupDTOs, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5224,7 +5234,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_MARKERGROUP),
-                    markerGroupDTO);
+                    markerGroupDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5285,7 +5295,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_REFERENCE),
-                    referenceDTONew);
+                    referenceDTONew, cropType());
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
@@ -5338,7 +5348,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_REFERENCE),
-                    referenceDTOReplaced);
+                    referenceDTOReplaced, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5384,7 +5394,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_REFERENCE),
-                    referenceDTOS);
+                    referenceDTOS, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5433,7 +5443,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_REFERENCE),
-                    referenceDTO);
+                    referenceDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5814,7 +5824,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_JOB),
-                    jobDTONew);
+                    jobDTONew, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5862,7 +5872,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_JOB),
-                    jobDTOS);
+                    jobDTOS, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5915,7 +5925,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_JOB),
-                    jobDTOReplaced);
+                    jobDTOReplaced, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -5965,7 +5975,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_JOB),
-                    jobDTO);
+                    jobDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -6020,7 +6030,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             RestResourceId.GOBII_JOB),
-                    dnaSampleJobDTO);
+                    dnaSampleJobDTO, cropType());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -6072,7 +6082,7 @@ public class GOBIIControllerV1 {
 
             payloadWriter.writeList(returnVal,
                     null,
-                    allEntityStats);
+                    allEntityStats, cropType());
 
         } catch (GobiiException e) {
 
@@ -6126,7 +6136,7 @@ public class GOBIIControllerV1 {
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     null,
-                    entityStatsDTO);
+                    entityStatsDTO, cropType());
 
         } catch (GobiiException e) {
 
@@ -6180,7 +6190,7 @@ public class GOBIIControllerV1 {
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     null,
-                    entityStatsDTO);
+                    entityStatsDTO, cropType());
 
         } catch (GobiiException e) {
 
@@ -6242,7 +6252,7 @@ public class GOBIIControllerV1 {
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     null,
-                    entityStatsDTO);
+                    entityStatsDTO, cropType());
 
         } catch (GobiiException e) {
 

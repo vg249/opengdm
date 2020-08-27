@@ -57,7 +57,8 @@ public class PayloadWriter<T extends DTOBase> {
     public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
                                      RestUri restUri,
                                      T itemToWrite,
-                                     String id) throws Exception {
+                                     String id,
+                                     String cropType) throws Exception {
 
         if ((null != itemToWrite) &&
                 !LineUtils.isNullOrEmpty(id) &&
@@ -72,7 +73,7 @@ public class PayloadWriter<T extends DTOBase> {
                     restUri.setParamValue("id", id);
                     //And hence we can create the link here
 
-                    String uri = restUri.makeUrlPath();
+                    String uri = restUri.makeUrlPath(cropType);
                     Link link = new Link(uri, "Link to " + dtoType + ", id " + id);
 
                     for (GobiiProcessType currentProcessType : itemToWrite.getAllowedProcessTypes()) {
@@ -117,7 +118,8 @@ public class PayloadWriter<T extends DTOBase> {
 
     public void writeSingleItemForDefaultId(PayloadEnvelope<T> payloadEnvelope,
                                             RestUri restUri,
-                                            T itemToWrite) throws GobiiWebException, Exception {
+                                            T itemToWrite,
+                                            String cropType) throws GobiiWebException, Exception {
 
         if ((null != itemToWrite) && (itemToWrite.getId() != null)) {
             String id = itemToWrite.getId().toString();
@@ -125,7 +127,7 @@ public class PayloadWriter<T extends DTOBase> {
             this.writeSingleItemForId(payloadEnvelope,
                     restUri,
                     itemToWrite,
-                    id);
+                    id, cropType);
         }
 
 
@@ -135,10 +137,11 @@ public class PayloadWriter<T extends DTOBase> {
 
     public void writeList(PayloadEnvelope<T> payloadEnvelope,
                           RestUri restUri,
-                          List<T> itemsToWrite) throws GobiiWebException, Exception {
+                          List<T> itemsToWrite,
+                          String cropType) throws GobiiWebException, Exception {
 
         for (T currentItem : itemsToWrite) {
-            this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
+            this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem, cropType);
         }
 
 
@@ -147,10 +150,11 @@ public class PayloadWriter<T extends DTOBase> {
 
     public void writeListFromPagedQuery(PayloadEnvelope<T> payloadEnvelope,
                                         RestUri restUri,
-                                        PagedList<T> pagedListToWrite) throws GobiiWebException, Exception {
+                                        PagedList<T> pagedListToWrite,
+                                        String cropType) throws GobiiWebException, Exception {
 
         for (T currentItem : pagedListToWrite.getDtoList()) {
-            this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
+            this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem, cropType);
         }
 
         payloadEnvelope.getHeader().setPagination(pagedListToWrite.getPagingQueryId(),
