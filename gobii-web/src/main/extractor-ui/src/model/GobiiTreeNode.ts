@@ -5,7 +5,6 @@ import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
-import { ThrowStmt } from '@angular/compiler';
 
 
 export enum ContainerType {NONE, STRUCTURE, DATA}
