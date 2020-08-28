@@ -25,7 +25,8 @@ export class TreeStructureService {
     private makeCommonNodes(gobiiExtractFilterType: GobiiExtractFilterType): GobiiTreeNode[] {
 
         let returnVal: GobiiTreeNode[] = [
-
+            GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.CROP_TYPE)
+                .setGenericLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.JOB_ID)
                 .setGenericLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)

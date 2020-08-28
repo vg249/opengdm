@@ -48,7 +48,7 @@ export interface State {
     fileItems: fromFileItems.State;
     gobiiTreeNodes: fromGobiiTreeNodes.State;
     history: fromHistory.State;
-
+    
     // collection: fromCollection.State;
     // layout: fromLayout.State;
     // router: fromRouter.RouterState;
