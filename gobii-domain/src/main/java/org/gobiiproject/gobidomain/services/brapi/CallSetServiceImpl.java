@@ -201,7 +201,8 @@ public class CallSetServiceImpl implements CallSetService {
 
                 remainingPageSize = pageSize - callSets.size();
 
-                if (!genotypesSearchQuery.isVariantsQueriesEmpty()) {
+                if (!genotypesSearchQuery.isVariantsQueriesEmpty() ||
+                !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
 
                     markers = markerDao.getMarkers(
                         genotypesSearchQuery.getVariantDbIds(),

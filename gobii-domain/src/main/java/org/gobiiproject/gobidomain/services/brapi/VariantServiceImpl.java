@@ -234,7 +234,8 @@ public class VariantServiceImpl implements VariantService {
 
                 remainingPageSize = pageSize - variants.size();
 
-                if (!genotypesSearchQuery.isCallSetsQueriesEmpty()) {
+                if (!genotypesSearchQuery.isCallSetsQueriesEmpty() ||
+                !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
 
                     dnaRuns = dnaRunDao.getDnaRuns(
                         genotypesSearchQuery.getCallSetDbIds(),
@@ -245,7 +246,7 @@ public class VariantServiceImpl implements VariantService {
                         genotypesSearchQuery.getGermplasmPUIs(),
                         genotypesSearchQuery.getGermplasmDbIds(),
                         genotypesSearchQuery.getGermplasmNames(),
-                        cursors.dnaRunDatasetIds,
+                        genotypesSearchQuery.getVariantSetDbIds(),
                         dnaRunBinSize, cursors.dnaRunBinCursor, null, false);
 
                     if(dnaRuns.size() == 0) {
