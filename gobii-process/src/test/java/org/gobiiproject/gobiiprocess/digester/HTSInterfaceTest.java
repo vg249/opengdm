@@ -36,13 +36,18 @@ public class HTSInterfaceTest {
 
 
     @Test
-    @Ignore //TODO - need to set up 'clean' unit test file and figure out why 'set up' is not firing
+   // @Ignore //TODO - need to set up 'clean' unit test file and figure out why 'set up' is not firing
     public void setupAndRead() throws Exception{
-        String filePath;
-        filePath = " C:\\Users\\jdl232.RS-BTOM1YJDL232\\workspace\\gobiiproject\\gobii-process\\target\\test-classes\\validation\\HTS\\VCF100Testwithperiods_inAlt_071118_S2.vcf";
+        //setUp();
+        String filePath=tempFolderLocation+"\\HTS\\MicroVCFTest.vcf";
+      filePath = "src/test/resources/validation/HTS/MicroVCFTest.vcf";
         org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface.setupVariantOnlyInputLine(new File(filePath));
         List<String> line = org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface.getVariantOnlyInputLine("/");
-        String[] expectedArr = "C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/A, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C, C/C/C/C".split(", ");
+        String[] expectedArr = "A/C, C/A".split(", ");
         Assert.assertEquals("First Read Line is not equal", Arrays.deepToString(expectedArr),Arrays.deepToString(line.toArray()));
+
+        List<String> line1 = org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface.getVariantOnlyInputLine("/");
+        String[] expectedArr2 = "G/G, T/T".split(", ");
+        Assert.assertEquals("Second Read Line is not equal", Arrays.deepToString(expectedArr2),Arrays.deepToString(line1.toArray()));
     }
 }
