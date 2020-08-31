@@ -29,5 +29,7 @@ export class FilterParamNames {
     public static PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
     public static EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
     public static DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
+
+    public static CROP_TYPE = "Crop Type";
 }
 

@@ -32,6 +32,8 @@ import { KeycloakService } from 'keycloak-angular';
 import { DtoRequestItemCrops } from 'src/services/app/dto-request-item-crops';
 import { Crop } from '../model/crop';
 import { DtoRequestService2 } from '../services/core/dto-request.service2';
+import { throwIfEmpty } from 'rxjs/operators';
+import { ReplaceByItemIdAction } from '../store/actions/fileitem-action';
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -51,6 +53,7 @@ export class ExtractorRoot implements OnInit {
     // ************************************************************************
 
     //
+
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
     public typeControl:any = TypeControl;
@@ -124,11 +127,15 @@ export class ExtractorRoot implements OnInit {
     private initializeCropType() {
         let scope$ = this;
         this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
-            console.log(crops);
+            //
             if (crops) {
                 console.log("Setting gobii crop type " + crops[0].cropType);
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
+                this.fileItemService.loadCrops(this.gobiiExtractFilterType, crops, 0);
+                
                 scope$.initializeServerConfigs();
+
+                
             }
         })
     }
@@ -156,8 +163,6 @@ export class ExtractorRoot implements OnInit {
                                     return c.crop === serverCrop;
                                 }
                             )[0];
-                    //scope$._authenticationService.setGobiiCropType(scope$.selectedServerConfig.crop);
-                    //console.log(scope$._authenticationService.getGobiiCropType());
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
                     
@@ -243,6 +248,15 @@ export class ExtractorRoot implements OnInit {
                 .setIsExtractCriterion(true))
     }
 
+    private refreshSelectedCropDisplay() {
+        this.fileItemService.replaceFileItemByCompoundId(
+            GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                .setExtractorItemType(ExtractorItemType.CROP_TYPE)
+                .setItemId(this._authenticationService.getGobiiCropType())
+                .setItemName(this._authenticationService.getGobiiCropType())
+                .setIsExtractCriterion(true))
+    }
+
 
     public handleTabPanelChange(event) {
 
@@ -276,7 +290,7 @@ export class ExtractorRoot implements OnInit {
                     submitReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
                 })
 
-
+            this.refreshSelectedCropDisplay();
             this.refreshJobId();
 
             if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
@@ -384,15 +398,17 @@ export class ExtractorRoot implements OnInit {
     public handleOnMouseOverSubmit(arg, isEnter) {
 
         // this.criteriaInvalid = true;
-
         if (isEnter) {
-
             this.instructionSubmissionService.markMissingItems(this.gobiiExtractFilterType)
         } else {
             this.instructionSubmissionService.unmarkMissingItems(this.gobiiExtractFilterType)
-
         }
 
+    }
+
+    public handleResetCrop(crop) {
+        this._authenticationService.setGobiiCropType(crop);
+        this.handleClearTree();
     }
 
     public handleClearTree() {
@@ -401,6 +417,7 @@ export class ExtractorRoot implements OnInit {
         this.clearSelections();
 
     }
+
 
     public clearSelections() {
         [this.piSelector,
@@ -429,8 +446,6 @@ export class ExtractorRoot implements OnInit {
         this._authenticationService.loadUserProfile();
         this.initializeCropType();
         //this.initializeServerConfigs();
-
-
     } // ngOnInit()
 
 

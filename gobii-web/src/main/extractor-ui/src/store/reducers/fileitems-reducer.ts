@@ -452,6 +452,10 @@ export const getFileItems = (state: State) => state.allFileItems.filter(fi =>
     fi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
 );
 
+export const getCrops = (state: State) => state.allFileItems.filter(fi =>
+    fi.getEntityType() === EntityType.CROP
+);
+
 export const getUniqueIds = (state: State) => state.allFileItems.map(fileItem => fileItem.getFileItemUniqueId());
 
 export const getSelectedUniqueIds = (state: State) => state.uniqueIdsOfExtractFileItems;

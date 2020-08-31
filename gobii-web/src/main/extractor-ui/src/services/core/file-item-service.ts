@@ -1,42 +1,41 @@
-import {Injectable} from "@angular/core";
-import {EntitySubType} from "../../model/type-entity";
-import {Labels} from "../../views/entity-labels";
-import {ExtractorItemType} from "../../model/type-extractor-item";
-import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
-import {GobiiFileItem} from "../../model/gobii-file-item";
-import {HeaderStatusMessage} from "../../model/dto-header-status-message";
-import {ProcessType} from "../../model/type-process";
-import {NameIdService} from "./name-id-service";
-import {FilterParams} from "../../model/filter-params";
+import { Injectable } from "@angular/core";
+import { Store } from "@ngrx/store";
+import "rxjs/add/operator/concat";
+import "rxjs/add/operator/expand";
+import { Observable } from "rxjs/Observable";
+import { CvFilterType } from "../../model/cv-filter-type";
+import { HeaderStatusMessage } from "../../model/dto-header-status-message";
+import { EntityStats } from "../../model/entity-stats";
+import { FilterParamNames } from "../../model/file-item-param-names";
+import { FilterParams } from "../../model/filter-params";
+import { FilterType } from "../../model/filter-type";
+import { GobiiFileItem } from "../../model/gobii-file-item";
+import { GobiiFileItemCompoundId } from "../../model/gobii-file-item-compound-id";
+import { GobiiFileItemEntityRelation } from "../../model/gobii-file-item-entity-relation";
+import { NameIdLabelType } from "../../model/name-id-label-type";
+import { Pagination } from "../../model/payload/pagination";
+import { EntitySubType, EntityType } from "../../model/type-entity";
+import { GobiiExtractFilterType } from "../../model/type-extractor-filter";
+import { ExtractorItemType } from "../../model/type-extractor-item";
+import { ProcessType } from "../../model/type-process";
+import { StatusLevel } from "../../model/type-status-level";
+import { PayloadFilter } from "../../store/actions/action-payload-filter";
+import * as fileItemActions from '../../store/actions/fileitem-action';
 import * as historyAction from '../../store/actions/history-action';
-import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
+import { FilterHistory } from "../../store/reducers/history-reducer";
+import { Labels } from "../../views/entity-labels";
+import { DtoRequestItemEntityStats, EntityRequestType } from "../app/dto-request-item-entity-stats";
+import { DtoRequestItem } from "./dto-request-item";
+import { DtoRequestService } from "./dto-request.service";
+import { FilterParamsColl } from "./filter-params-coll";
+import { NameIdService } from "./name-id-service";
+import { Crop } from 'src/model/crop';
 
-import {Store} from "@ngrx/store";
-import {NameIdLabelType} from "../../model/name-id-label-type";
-import {FilterType} from "../../model/filter-type";
-import {FilterParamNames} from "../../model/file-item-param-names";
-import {Observable} from "rxjs/Observable";
-import "rxjs/add/operator/expand"
-import "rxjs/add/operator/concat"
-import {EntityStats} from "../../model/entity-stats";
-import {DtoRequestService} from "./dto-request.service";
-import {DtoRequestItemEntityStats, EntityRequestType} from "../app/dto-request-item-entity-stats";
-import {FilterHistory} from "../../store/reducers/history-reducer";
-import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
-import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
-import {FilterParamsColl} from "./filter-params-coll";
-import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
-import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
-import {StatusLevel} from "../../model/type-status-level";
-import {DtoRequestItem} from "./dto-request-item";
-import {PagedFileItemList} from "../../model/payload/paged-item-list";
-import {Pagination} from "../../model/payload/pagination";
-import {PayloadFilter} from "../../store/actions/action-payload-filter";
 
 @Injectable()
 export class FileItemService {
+    
 
     private readonly NONE_ITEM_ITEM_ID: string = "-1";
 
@@ -146,6 +145,10 @@ export class FileItemService {
                 returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
                 break;
 
+            case FilterParamNames.CROP_TYPE:
+                returnVal = this.store.select(fromRoot.getCrops);
+                break;
+
             default:
                 returnVal = this.store.select(fromRoot.getAllFileItems);
                 break;
@@ -238,6 +241,54 @@ export class FileItemService {
         }
     }
 
+    public loadCrops(gobiiExtractFilterType: GobiiExtractFilterType, crops: Crop[], selectedIndex: number ) {
+        let cropFileSelection: GobiiFileItem[] = [];
+        let targetSelected: GobiiFileItem = null;
+        crops.filter(crop => crop.userAuthorized).forEach(
+            (crop, index) => {
+                console.log(crop.cropType);
+                console.log(index);
+                let fileItem: GobiiFileItem = GobiiFileItem
+                    .build(gobiiExtractFilterType, ProcessType.CREATE)
+                    .setEntityType(EntityType.CROP)
+                    .setCvFilterType(CvFilterType.UNKNOWN)
+                    .setExtractorItemType(ExtractorItemType.CROP_TYPE)
+                    .setItemName(crop.cropType)
+                    .setItemId(crop.cropType)
+                    .setFileItemUniqueId("crop:" + crop.cropType)
+                    .setIsExtractCriterion(true);
+                if (selectedIndex && index == selectedIndex) {
+                    fileItem.setSelected(true);
+                    targetSelected = fileItem;
+                }
+                cropFileSelection.push(
+                    fileItem
+                );
+            }
+        );
+        let filterParamsToLoad: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.CROP_TYPE, GobiiExtractFilterType.UNKNOWN);
+
+        let loadAction: fileItemActions.LoadFileItemListWithFilterAction = new fileItemActions.LoadFileItemListWithFilterAction(
+            {
+                gobiiFileItems: cropFileSelection,
+                filterId: FilterParams,
+                filter: new PayloadFilter(
+                    gobiiExtractFilterType,
+                    filterParamsToLoad.getTargetEtityUniqueId(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )
+            }
+        );
+        this.store.dispatch(loadAction);
+        if (targetSelected) {
+            this.replaceFileItemByCompoundId(targetSelected);
+        }
+        
+    }
 
     public loadFileItem(gobiiFileItem: GobiiFileItem, selectForExtract: boolean) {
 

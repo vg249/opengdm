@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Store} from "@ngrx/store";
@@ -15,7 +15,6 @@ import {SelectItem} from 'primeng/api';
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['gobiiExtractFilterType','filterParamName'],
     outputs: [],
     templateUrl: 'name-id-list-box.component.html'
 
@@ -28,10 +27,12 @@ export class NameIdListBoxComponent  {
     public options: SelectItem[] = [];
     public selectedItem: string;
 
-    private gobiiExtractFilterType: GobiiExtractFilterType;
+    @Input() private gobiiExtractFilterType: GobiiExtractFilterType;
 
-    private filterParamName:FilterParamNames;
+    @Input() private filterParamName:FilterParamNames;
     public controlId:string = "<NO-ID>";
+
+    @Output() valueChange = new EventEmitter()
 
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService:FileItemService,
@@ -46,7 +47,7 @@ export class NameIdListBoxComponent  {
         let scope$ = this;
         this.controlId = this.viewIdGeneratorService.makeIdNameIdListBoxId(this.filterParamName);
         this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
-        
+
         this
             .fileItems$
             .subscribe(items => {
@@ -57,7 +58,7 @@ export class NameIdListBoxComponent  {
                             this.selectedItem = items[0].getFileItemUniqueId();
                         }
                     }
-                    items.forEach(item => {
+                    items.forEach((item, index) => {
                         let itemLabel = item.getItemName().length < 34 ? item.getItemName() : item.getItemName().substr(0,30).concat(" . . .");
 
                         scope$.options.push(
@@ -73,6 +74,7 @@ export class NameIdListBoxComponent  {
                     this.store.dispatch(new historyAction.AddStatusMessageAction(error))
                 });
 
+        
     }
 
     previousSelectedItemId: string = null;
@@ -94,7 +96,8 @@ export class NameIdListBoxComponent  {
         }));
 
         this.previousSelectedItemId = newFileItemUniqueId;
-
+        //emit change outside
+        this.valueChange.emit(arg.value);
     }
 
     public clearSelection(): void {

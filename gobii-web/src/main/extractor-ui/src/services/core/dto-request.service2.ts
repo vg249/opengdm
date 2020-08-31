@@ -78,8 +78,6 @@ export class DtoRequestService2<T> {
                 //tap(token => {console.log(token);}),
                 switchMap( (token: string) =>  {
                     let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
-                    console.log("Accessing: " + dtoRequestItem.getUrl());
-                    console.log("Headers: "  + JSON.stringify(headers));
                     return this._http
                         .get(dtoRequestItem.getUrl().replace("{cropType}", scope$._authenticationService.getGobiiCropType()), {headers: headers});
                 })
@@ -92,14 +90,6 @@ export class DtoRequestService2<T> {
                     let result = dtoRequestItem.resultFromJson(json);
                     observer.next(result);
                     observer.complete();
-                    // if (payloadResponse.header.status.succeeded) {
-                    //     scope$._gobbiiVersion = payloadResponse.header.gobiiVersion;
-                    //     let result = dtoRequestItem.resultFromJson(json);
-                    //     observer.next(result);
-                    //     observer.complete();
-                    // } else {
-                    //     observer.error(payloadResponse.header);
-                    // }
                 },
                 json => {
                     console.log("Got error " + json);

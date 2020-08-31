@@ -68,6 +68,17 @@ export class FilterParamsColl {
                 CvFilterType.JOB_STATUS,
                 CvFilters.get(CvFilterType.JOB_STATUS));
 
+        // ************************************************************************
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CROP_TYPE,
+                    GobiiExtractFilterType.UNKNOWN,
+                    EntityType.CROP)
+                .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.CROP_TYPE)
+                .setNameIdLabelType(NameIdLabelType.NO)
+        );
 
         // ************************************************************************
         // **************************** BY SAMPLE *********************************
@@ -197,7 +208,7 @@ export class FilterParamsColl {
                     EntityType.MAPSET)
                 .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.NO));
-
+    
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.CV_JOB_STATUS,

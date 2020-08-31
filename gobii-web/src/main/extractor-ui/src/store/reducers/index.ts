@@ -48,7 +48,7 @@ export interface State {
     fileItems: fromFileItems.State;
     gobiiTreeNodes: fromGobiiTreeNodes.State;
     history: fromHistory.State;
-    
+
     // collection: fromCollection.State;
     // layout: fromLayout.State;
     // router: fromRouter.RouterState;
@@ -120,7 +120,7 @@ export const getFileItemsFilters = createSelector(getFileItemsState, fromFileIte
 export const getAllFileItems = createSelector(getFileItemsState, fromFileItems.getAll);
 export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
 
-
+export const getCrops = createSelector(getFileItemsState, fromFileItems.getCrops);
 
 export const getPiContacts = createSelector(getFileItemsState, fromFileItems.getPiContacts);
 export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);
