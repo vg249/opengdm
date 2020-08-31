@@ -329,7 +329,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                                 }
                             }
                             rowNo++;
-                            totalRows = rowNo - csv_BothColumn.getrCoord();
+                            totalRows = rowNo;
 
                     }
                     catch(TribbleException e){
