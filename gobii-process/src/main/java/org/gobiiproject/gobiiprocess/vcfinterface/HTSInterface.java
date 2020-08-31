@@ -115,8 +115,14 @@ public class HTSInterface {
      */
     private static String formattedAlleleString(Genotype gc,String variantSeparator) {
       return gc.getAlleles().stream()
-              .map(Allele::getBaseString)
+              .map(Allele::getBaseString).map(HTSInterface::formatBaseStringToChar)
               .collect(Collectors.joining(variantSeparator));
+    }
+
+    private static String MISSING_ALLELE="N";
+    private static String formatBaseStringToChar(String baseString){
+        if(baseString.length() != 1) return MISSING_ALLELE; //Empty or indel
+        return baseString;
     }
 
 
