@@ -47,7 +47,8 @@ public class MarkerPositionsServiceImpl implements MarkerPositionsService {
 
             List<MarkerLinkageGroup> markerLinkageGroups =
                 markerLinkageGroupDao.getMarkerLinkageGroups(
-                    pageSize, rowOffset,
+                    pageSize,
+                    rowOffset,
                     markerPositionsFilter.getMapDbId(),
                     markerPositionsFilter.getMapName(),
                     null,

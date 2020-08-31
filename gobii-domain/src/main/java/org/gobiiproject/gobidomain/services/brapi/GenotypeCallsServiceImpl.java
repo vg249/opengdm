@@ -919,7 +919,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                             (double) remainingPageSize / dnaRunHdf5IndicesDataset.size());
 
                         if(cursors.dnaRunOffset == totalDnaRuns) {
-                            cursors.pageOffset += 1;
                             cursors.dnaRunOffset = 0;
                         }
 
