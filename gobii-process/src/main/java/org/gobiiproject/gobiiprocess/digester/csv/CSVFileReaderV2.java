@@ -311,7 +311,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                 if (isVCF) {
                     try {
                         //TODO - this only works with single files
-                        HTSInterface.setupVariantOnlyInputLine(new File(GobiiFileReader.getSourceFileName(file.toString())));
+                        HTSInterface.setupVariantOnlyInputLine(file);
                         while ((inputRowList = HTSInterface.getVariantOnlyInputLine("") ) != null) {
                                 outputRowList = new ArrayList<>();
                                 ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, true /*isVCF*/, skipValidation);
