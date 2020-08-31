@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 
+import htsjdk.tribble.TribbleException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
@@ -330,6 +331,10 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                             rowNo++;
                             totalRows = rowNo - csv_BothColumn.getrCoord();
 
+                    }
+                    catch(TribbleException e){
+                        Logger.logError("FileReader","Unable to read VCF File " + e.getMessage());
+                        Logger.logDebug("FileReader",Arrays.deepToString(e.getStackTrace()));
                     }
                     catch(Exception e){
 
