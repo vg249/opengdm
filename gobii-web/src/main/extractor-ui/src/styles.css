@@ -1,3 +1,5 @@
+@import '~@angular/cdk/overlay-prebuilt.css';
+
 html {
     font-size: 0.75rem
 }
@@ -80,4 +82,16 @@ i{
 
 .p-button.p-button-icon-only {
     width: 0rem;
+}
+
+.p-button.p-button-sm .p-button-icon {
+    font-size: 0.5rem;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    text-align: center;
+}
+
+.ui-dropdown {
+    min-width: 100px !important;
 }

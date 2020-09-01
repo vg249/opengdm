@@ -1,6 +1,6 @@
 import { APP_BASE_HREF } from "@angular/common";
 //import {HttpModule} from "@angular/http";
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
@@ -55,6 +55,11 @@ import { initializer } from './app.init';
 import { routing } from "./app.routing";
 import { SearchCriteriaBySamplesComponent } from "./page-by-samples.component";
 import { DtoRequestService2 } from '../services/core/dto-request.service2';
+import { SpinnerOverlayComponent } from 'src/views/spinner-overlay.component';
+import { SpinnerOverlayService } from 'src/services/core/spinner-overlay.service';
+import { SpinnerInterceptor } from 'src/services/core/spinner-interceptor';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 
@@ -72,6 +77,7 @@ import { DtoRequestService2 } from '../services/core/dto-request.service2';
         SharedModule,
         TableModule,
         PanelModule,
+        OverlayModule,
         OverlayPanelModule,
         AccordionModule,
         ListboxModule,
@@ -81,6 +87,7 @@ import { DtoRequestService2 } from '../services/core/dto-request.service2';
         TooltipModule,
         RadioButtonModule,
         FileUploadModule,
+        ProgressSpinnerModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
@@ -104,7 +111,8 @@ import { DtoRequestService2 } from '../services/core/dto-request.service2';
         NameIdListBoxComponent,
         StatusDisplayTreeComponent,
         SearchCriteriaBySamplesComponent,
-        DatasetDatatableComponent],
+        DatasetDatatableComponent,
+        SpinnerOverlayComponent],
     providers: [
         {
             provide: APP_INITIALIZER,
@@ -122,13 +130,19 @@ import { DtoRequestService2 } from '../services/core/dto-request.service2';
         ViewIdGeneratorService,
         InstructionSubmissionService,
         FilterParamsColl,
-        {provide: APP_BASE_HREF, useValue: './'}],
+        SpinnerOverlayService,
+        {provide: APP_BASE_HREF, useValue: './'},
+        {provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true}
+    ],
+    entryComponents: [
+        SpinnerOverlayComponent
+    ],
     
     bootstrap: [AppComponent],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA,
         NO_ERRORS_SCHEMA
-      ]
+    ]
 })
 
 export class AppModule {
