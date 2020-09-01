@@ -92,6 +92,7 @@ i{
     text-align: center;
 }
 
-.ui-dropdown {
+.p-dropdown {
     min-width: 100px !important;
+    width: 100%;
 }
