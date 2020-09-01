@@ -1686,6 +1686,127 @@ public class BrapiV2Controller {
     }
 
     @ApiOperation(
+        value = "Search MarkerPositions", notes = "Creates a search query for marker positions",
+        tags = {"MarkerPositions"}, extensions = {
+        @Extension(properties = {
+            @ExtensionProperty(name="summary", value="Search MarkerPositions")
+        })
+    }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "", response = SearchResultResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/markerpositions", method = RequestMethod.POST,
+        consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>> searchMarkerPositions(
+        @Valid @RequestBody MarkerPositionsSearchQueryDTO markerPositionsSearchQuery,
+        HttpServletRequest request) {
+
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            if (markerPositionsSearchQuery != null) {
+
+                SearchResultDTO searchResultDTO =
+                    searchService.createSearchQueryResource(cropType, markerPositionsSearchQuery);
+
+                BrApiMasterPayload<SearchResultDTO> payload =
+                    new BrApiMasterPayload<>(searchResultDTO);
+
+                return  ResponseEntity.status(HttpStatus.CREATED).body(payload);
+
+            }
+            else {
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing Request body"
+                );
+            }
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage()
+            );
+        }
+    }
+
+    @ApiOperation(
+        value = "List Marker positions for SearchQuery",
+        notes = "List of all the marker positions for given search query",
+        tags = {"MarkerPositions"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List MarkerPositions for SearchQuery")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @RequestMapping(value = "/search/markerpositions/{searchResultDbId}", method = RequestMethod.GET,
+        produces = "application/json")
+    public ResponseEntity<BrApiMasterListPayload<MarkerPositions>> getMarkerPositionsBySearchQuery(
+        @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
+        @PathVariable String searchResultDbId,
+        @ApiParam(value = "Size of the page to be fetched. Default is 1000.")
+        @RequestParam(value = "pageSize", required = false,
+            defaultValue = BrapiDefaults.pageSize) Integer pageSize,
+        @ApiParam(value = "Page number", defaultValue = BrapiDefaults.pageNum)
+        @RequestParam(value = "page", required = false,
+            defaultValue = BrapiDefaults.pageNum) Integer page,
+        HttpServletRequest request) {
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            MarkerPositionsSearchQueryDTO markerPositionsSearchQuery = (MarkerPositionsSearchQueryDTO)
+                searchService.getSearchQuery(searchResultDbId, cropType,
+                    MarkerPositionsSearchQueryDTO.class);
+
+            PagedResult<MarkerPositions> pagedResult = markerPositionsService
+                .getMarkerPositionsBySearchQuery(markerPositionsSearchQuery, pageSize, page);
+
+            BrApiMasterListPayload<MarkerPositions> payload = new BrApiMasterListPayload<>(
+                pagedResult.getResult(), pagedResult.getCurrentPageSize(),
+                pagedResult.getCurrentPageNum());
+
+            return ResponseEntity.ok(payload);
+
+        }
+        catch (GobiiException ge) {
+            throw ge;
+        }
+        catch (Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+                "Internal Server Error " + e.getMessage());
+        }
+    }
+
+    @ApiOperation(
         value = "Download Genotypes in VariantSet",
         notes = "Download of all the genotype calls in a given VariantSet",
         tags = {"VariantSets"},
