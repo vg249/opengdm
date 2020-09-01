@@ -1037,6 +1037,14 @@ public class BrapiV2Controller {
     getCallsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
             @PathVariable("variantSetDbId") Integer variantSetDbId,
+        @ApiParam(value = "Name of the mapset")
+            @RequestParam(value = "mapName", required = false) String mapName,
+        @ApiParam(value = "Name of the linkagage group")
+            @RequestParam(value = "linkageGroupName", required = false) String linkageGroupName,
+        @ApiParam(value = "Minimum marker position")
+        @RequestParam(value = "minPosition", required = false) BigDecimal minPosition,
+        @ApiParam(value = "Maximum marker position")
+        @RequestParam(value = "maxPosition", required = false) BigDecimal maxPosition,
         @ApiParam(value = "Page Token to fetch a page. " +
             "Value is $metadata.pagination.nextPageToken form previous page.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
@@ -1047,7 +1055,9 @@ public class BrapiV2Controller {
 
             PagedResultTyped<GenotypeCallsResult> genotypeCallsPaged =
                 genotypeCallsService
-                    .getGenotypeCallsByVariantSetDbId(variantSetDbId, pageSize, pageToken);
+                    .getGenotypeCallsByVariantSetDbId(variantSetDbId, mapName,
+                        linkageGroupName, minPosition,
+                        maxPosition, pageSize, pageToken);
 
             BrApiMasterPayload<GenotypeCallsResult> payload =
                 new BrApiMasterPayload<>(genotypeCallsPaged.getResult(),

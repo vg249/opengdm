@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,12 @@ public interface MarkerDao {
                             Set<String> datasetIds,
                             Integer pageSize,
                             Integer markerIdCursor);
+
+    List<Marker> getMarkersByMap(Integer pageSize, Integer rowOffset,
+                                 Integer mapsetId, String mapsetName,
+                                 Integer linkageGroupId, String linkageGroupName,
+                                 BigDecimal minPositions, BigDecimal maxPosition,
+                                 Integer datasetId);
 
     Marker getMarkerById(Integer markerId);
 

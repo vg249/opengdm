@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Transactional
@@ -379,7 +380,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public PagedResultTyped<GenotypeCallsResult>
-    getGenotypeCallsByVariantSetDbId(Integer datasetId, Integer pageSize, String pageToken) {
+    getGenotypeCallsByVariantSetDbId(Integer datasetId, String mapsetName,
+                                     String linkageGroupName, BigDecimal minPosition,
+                                     BigDecimal maxPosition, Integer pageSize,
+                                     String pageToken) {
 
         PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
 
@@ -510,8 +514,14 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             }
 
-            markers = markerDao.getMarkersByDatasetId(datasetId, cursors.markerPageSize,
-                cursors.pageOffset);
+            if(mapsetName == null) {
+                markers = markerDao.getMarkersByDatasetId(datasetId, cursors.markerPageSize,
+                    cursors.pageOffset);
+            }
+            else {
+                markers = markerDao.getMarkersByMap(cursors.markerPageSize, cursors.pageOffset,
+                    null, mapsetName, null, linkageGroupName, minPosition, maxPosition, datasetId);
+            }
 
             if(markers.size() == 0) {
                 returnVal.setResult(getGenotypeCallsResult(genotypeCalls));

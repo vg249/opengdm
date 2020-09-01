@@ -5,6 +5,8 @@ import org.gobiiproject.gobiimodel.dto.brapi.*;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 
+import java.math.BigDecimal;
+
 public interface GenotypeCallsService {
 
     PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByCallSetId(
@@ -19,6 +21,10 @@ public interface GenotypeCallsService {
 
     PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantSetDbId(
         Integer datasetId,
+        String mapsetName,
+        String linkageGroupName,
+        BigDecimal minPosition,
+        BigDecimal maxPosition,
         Integer pageSize,
         String pageToken) throws GobiiDomainException;
 

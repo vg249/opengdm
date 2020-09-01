@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +21,18 @@ import javax.transaction.Transactional;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.entity.Analysis;
+import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.hibernate.Session;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,8 +192,85 @@ public class MarkerDaoImpl implements MarkerDao {
     }
 
     @Override
-    public List<Marker> getMarkersByDatasetId(Integer datasetId, Integer pageSize, Integer rowOffset) {
+    public List<Marker> getMarkersByDatasetId(Integer datasetId, Integer pageSize,
+                                              Integer rowOffset) {
         return getMarkers(pageSize, rowOffset, null, datasetId);
+    }
+
+    /**
+     * To filter markers by mapset and its associated fields like linkage group
+     * and marker positions.
+     * @param pageSize - page size
+     * @param rowOffset - row offset
+     * @param mapsetId - ID of the genome map to filter markers
+     * @param mapsetName - Name of the genome map to filter markers
+     * @param linkageGroupId - ID of the linkage group
+     * @param linkageGroupName - Name of the linkage group
+     * @param minPosition - minimum position of markers to be fetched
+     * @param maxPosition - maximum position of marker to be fetched
+     * @param datasetId - ID of the dataset.
+     * @return List of marker entity.
+     */
+    @Override
+    public List<Marker> getMarkersByMap(Integer pageSize, Integer rowOffset,
+                                        Integer mapsetId, String mapsetName,
+                                        Integer linkageGroupId, String linkageGroupName,
+                                        BigDecimal minPosition, BigDecimal maxPosition,
+                                        Integer datasetId) {
+
+        String queryString = "SELECT {marker.*} FROM marker AS marker " +
+            "INNER JOIN marker_linkage_group AS mlg USING(marker_id) " +
+            "INNER JOIN linkage_group AS lg USING(linkage_group_id) " +
+            "INNER JOIN mapset AS mapset ON(mapset.mapset_id = lg.map_id) " +
+            "WHERE (:mapsetId IS NULL OR mapset.mapset_id = :mapsetId) " +
+            "AND (:mapsetName IS NULL OR mapset.name = :mapsetName) " +
+            "AND (:linkageGroupId IS NULL OR lg.linkage_group_id = :linkageGroupId) " +
+            "AND (:linkageGroupName IS NULL OR lg.name = :linkageGroupName) " +
+            "AND (:minPosition IS NULL OR mlg.start >= :minPosition)" +
+            "AND (:maxPosition IS NULL OR mlg.stop <= :maxPosition) " +
+            "AND (:datasetId IS NULL " +
+            "   OR JSONB_EXISTS(marker.dataset_marker_idx, CAST(:datasetId AS TEXT))) " +
+            "LIMIT :pageSize OFFSET :rowOffset";
+
+        try {
+
+            Objects.requireNonNull(pageSize, "pageSize: Required non null");
+            Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
+            if( !ObjectUtils.anyNotNull(mapsetId, mapsetName)) {
+                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "mapset fields are null");
+            }
+
+            Session session = em.unwrap(Session.class);
+
+
+            List<Marker> markers = session.createNativeQuery(queryString)
+                .addEntity("marker", Marker.class)
+                .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
+                .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                .setParameter("mapsetId", mapsetId, IntegerType.INSTANCE)
+                .setParameter("mapsetName", mapsetName, StringType.INSTANCE)
+                .setParameter("linkageGroupId", linkageGroupId, IntegerType.INSTANCE)
+                .setParameter("linkageGroupName", linkageGroupName, StringType.INSTANCE)
+                .setParameter("minPosition", minPosition, BigDecimalType.INSTANCE)
+                .setParameter("maxPosition", maxPosition, BigDecimalType.INSTANCE)
+                .list();
+
+            return markers;
+
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+
+
     }
 
     /**
