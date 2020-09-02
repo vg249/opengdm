@@ -11,7 +11,6 @@ export class SpinnerInterceptor implements HttpInterceptor {
     constructor(private readonly spinnerOverlayService: SpinnerOverlayService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        console.log("intercepting");
         const spinnerSubscription: Subscription = this.spinnerOverlayService.spinner$.subscribe();
         return next.handle(req).pipe(finalize( () => spinnerSubscription.unsubscribe()));
     }

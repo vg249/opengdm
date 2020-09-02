@@ -129,7 +129,6 @@ export class ExtractorRoot implements OnInit {
         this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
             //
             if (crops) {
-                console.log("Setting gobii crop type " + crops[0].cropType);
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.fileItemService.loadCrops(this.gobiiExtractFilterType, crops, 0);
                 
