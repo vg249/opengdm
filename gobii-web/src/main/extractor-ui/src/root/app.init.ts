@@ -18,7 +18,7 @@ export function initializer(keycloak: KeycloakService): () => Promise<any> {
                         silentCheckSsoRedirectUri:
                           window.location.origin + loc  + '/assets/silent-check-sso.html',
                       },
-                    bearerExcludedUrls: []
+                    bearerExcludedUrls: [],
                 });
                 resolve();
             } catch (error) {

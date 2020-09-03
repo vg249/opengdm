@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
   keycloak: {
-    issuer: 'http://localhost:8181/auth', //TODO: will need to script this
-    realm: 'Gobii',
+    issuer: 'http://cbsugobiixvm23.biohpc.cornell.edu:8086/auth', //TODO: will need to script this
+    realm: 'Gobii-Test',
     clientId: 'extractor-ui-gobii-dev'
   }
 };
