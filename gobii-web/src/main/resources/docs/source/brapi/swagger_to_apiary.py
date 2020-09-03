@@ -15,8 +15,9 @@ except ImportError:
     from ordereddict import OrderedDict
 
 tags_order = ["ServerInfo", "Authentication", "Studies", "Genome Maps",
-              "Samples", "CallSets", "Variants",
-              "VariantSets", "Genotype Calls", "NoTag"]
+              "Samples", "CallSets", "Variants", "VariantSets",
+              "Genotype Calls", "NoTag"]
+
 swagger_json_path = None
 doc_md_path = None
 
@@ -24,8 +25,7 @@ parser = argparse.ArgumentParser(
     description="Formats Swagger JSON to YAML file compatible with Apiary")
 
 parser.add_argument("--input",
-                    help=("json file with input properties "
-                            "like swagger json path."))
+                    help=("json file with input properties like swagger json path."))
 
 args = parser.parse_args()
 

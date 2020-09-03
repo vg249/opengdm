@@ -1697,7 +1697,7 @@ public class BrapiV2Controller {
 
     @ApiOperation(
         value = "Search MarkerPositions", notes = "Creates a search query for marker positions",
-        tags = {"MarkerPositions"}, extensions = {
+        tags = {"Genome Maps"}, extensions = {
         @Extension(properties = {
             @ExtensionProperty(name="summary", value="Search MarkerPositions")
         })
@@ -1758,7 +1758,7 @@ public class BrapiV2Controller {
     @ApiOperation(
         value = "List Marker positions for SearchQuery",
         notes = "List of all the marker positions for given search query",
-        tags = {"MarkerPositions"},
+        tags = {"Genome Maps"},
         extensions = {
             @Extension(properties = {
                 @ExtensionProperty(name="summary", value="List MarkerPositions for SearchQuery")
