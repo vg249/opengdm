@@ -95,7 +95,7 @@ public class HttpCore {
         URI returnVal;
 
         URIBuilder baseBuilder = getBaseBuilder()
-                .setPath(restUri.makeUrlPath());
+                .setPath(restUri.makeUrlPath(""));
 
         for (ResourceParam currentParam : restUri.getRequestParams()) {
             baseBuilder.addParameter(currentParam.getName(), currentParam.getValue());
@@ -346,7 +346,7 @@ public class HttpCore {
 
         if (logJson) {
 
-            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath());
+            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath(""));
 
             if (!LineUtils.isNullOrEmpty(body)) {
 
