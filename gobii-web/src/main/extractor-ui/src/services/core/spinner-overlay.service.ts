@@ -27,7 +27,6 @@ export class SpinnerOverlayService {
                     hasBackdrop: true,
 
                 });
-                console.log(this.overlayRef);
                 this.overlayRef.attach(new ComponentPortal(SpinnerOverlayComponent));
 
             }
