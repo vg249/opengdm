@@ -12,8 +12,11 @@
                       
             <div class="card-body container-fluid">
                 <div class="row">
-                    <div class="col-md-8" style="margin-bottom:4px">
-                        <label class="the-label">Select Crop: </label>
+                    <div  style="margin-left: 15px;margin-bottom:10px;display:flex;align-items:center">
+                        <span style="vertical-align: middle;">
+                        <b>Select Crop</b>&nbsp;:&nbsp;
+                        </span>
+                        <span>
                         <name-id-list-box
                             #cropSelector
                             [gobiiExtractFilterType]="gobiiExtractFilterType"
@@ -21,6 +24,7 @@
                             [selectedIndex]="0"
                             (valueChange)="handleResetCrop($event)">
                         </name-id-list-box>
+                        </span>
                     </div>
                 </div>
                 <div class="row">
