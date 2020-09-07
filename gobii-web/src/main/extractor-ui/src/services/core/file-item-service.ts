@@ -255,7 +255,7 @@ export class FileItemService {
                     .setExtractorItemType(ExtractorItemType.CROP_TYPE)
                     .setItemName(crop.cropType)
                     .setItemId(crop.cropType)
-                    .setFileItemUniqueId("crop:" + crop.cropType)
+                    .setFileItemUniqueId(crop.cropType)
                     .setIsExtractCriterion(true);
                 if (selectedIndex && index == selectedIndex) {
                     fileItem.setSelected(true);
