@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiweb.controllers;
+package org.gobiiproject.gobiiweb.controllers.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

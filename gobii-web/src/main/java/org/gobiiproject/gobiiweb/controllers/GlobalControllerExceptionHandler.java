@@ -11,6 +11,7 @@ import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersExcep
 import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiiweb.controllers.brapi.BRAPIIControllerV1;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  */
 @ControllerAdvice(assignableTypes = {
         BRAPIIControllerV1.class,
-        GOBIIControllerV3.class,
-        BrapiV2Controller.class,
-})
+        GOBIIControllerV3.class
+}, basePackages = "org.gobiiproject.gobiiweb.controllers.brapi.v2")
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
