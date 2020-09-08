@@ -101,10 +101,16 @@ export class ExtractorRoot implements OnInit {
             }
         );
 
+        if (this._authenticationService.isProfileLoaded() && !this._authenticationService.getUserEmail()) {
+            this.displayEmailUpdateDialog = true;
+        }
+
     }
 
     public display: boolean = false;
     public currentStatusMessage: string = null;
+
+    public displayEmailUpdateDialog: boolean = false;
 
     showMessagesDialog() {
         this.display = true;
@@ -132,9 +138,7 @@ export class ExtractorRoot implements OnInit {
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.fileItemService.loadCrops(this.gobiiExtractFilterType, crops, 0);
                 
-                scope$.initializeServerConfigs();
-
-                
+                scope$.initializeServerConfigs();   
             }
         })
     }
@@ -151,8 +155,6 @@ export class ExtractorRoot implements OnInit {
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
                     let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
-                    //cleanup the gobiiVersion string
-                    //gobiiVersion = gobiiVersion.replace(/GOBII Server/g, '');
 
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
 
@@ -186,9 +188,6 @@ export class ExtractorRoot implements OnInit {
         scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
             ContactSearchType.BY_USERNAME,
             this.loggedInUser)).subscribe(contact => {
-
-
-                let foo: string = "foo";
 
                 if (contact && contact.contactId && contact.contactId > 0) {
 
