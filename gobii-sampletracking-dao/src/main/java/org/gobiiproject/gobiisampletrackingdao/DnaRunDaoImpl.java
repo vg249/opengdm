@@ -242,48 +242,30 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    public DnaRun getDnaRunById(Integer dnaRunId, boolean fetchAssociations) {
+    public DnaRun getDnaRunById(Integer dnaRunId,
+                                boolean fetchAssociations) throws GobiiException {
 
-        try {
+        List<DnaRun> dnaRunsById = this.getDnaRuns(2, 0,
+                dnaRunId, null,
+                null, null,
+                null, null,
+                null, null, fetchAssociations);
 
-            List<DnaRun> dnaRunsById = this.getDnaRuns(2, 0,
-                    dnaRunId, null,
-                    null, null,
-                    null, null,
-                    null, null, fetchAssociations);
+        if (dnaRunsById.size() > 1) {
 
-            if (dnaRunsById.size() > 1) {
-
-                LOGGER.error("More than one duplicate entries found.");
-
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.NONE,
-                        "More than one dnarun entity exists for the same Id");
-
-            } else if (dnaRunsById.size() == 0) {
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Dna run Entity for given id does not exist");
-            }
-
-            return dnaRunsById.get(0);
-
-        }
-        catch(GobiiException ge) {
-            throw ge;
-        }
-        catch (Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("More than one duplicate entries found.");
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: "
-                            + e.getCause().getMessage());
+                    GobiiValidationStatusType.NONE,
+                    "More than one dnarun entity exists for the same Id");
 
+        } else if (dnaRunsById.size() == 0) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Dna run Entity for given id does not exist");
         }
 
-
+        return dnaRunsById.get(0);
     }
 
     /**
@@ -293,7 +275,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    public DnaRun getDnaRunById(Integer dnaRunId) {
+    public DnaRun getDnaRunById(Integer dnaRunId) throws GobiiException {
         return this.getDnaRunById(dnaRunId, true);
     }
 
