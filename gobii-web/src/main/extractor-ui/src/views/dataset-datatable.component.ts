@@ -28,6 +28,7 @@ import 'rxjs/add/operator/withLatestFrom'
 import {ExtractReadyPayloadFilter, JobTypeFilters, PayloadFilter} from "../store/actions/action-payload-filter";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 import {FileItem} from "ng2-file-upload";
+import { AuthenticationService } from 'src/services/core/authentication.service';
 
 @Component({
     selector: 'dataset-datatable',
@@ -53,6 +54,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 private fileItemService: FileItemService,
                 private filterParamsColl: FilterParamsColl,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
+                private authenticationService: AuthenticationService,
                 public viewIdGeneratorService:ViewIdGeneratorService) {
 
         if (this.doPaging) {
@@ -71,7 +73,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                             FilterParamNames.DATASET_LIST_PAGED,
                             pagination.pagedQueryId,
                             pagination.pageSize,
-                            ++this.page)
+                            ++this.page,
+                            state.fileItems.currentCrop)
                     }
                 }
             });
@@ -255,8 +258,6 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     // gobiiExtractType is not set until you get OnChanges
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-        console.log("Changed detected: ");
-        console.log(JSON.stringify(changes));
         if (changes['gobiiExtractFilterType']
             && (changes['gobiiExtractFilterType'].currentValue != null)
             && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
@@ -264,27 +265,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
-
-                    this.filterToExtractReady = true;
-                    if (this.doPaging) {
-                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
-                            FilterParamNames.DATASET_LIST_PAGED,
-                            null,
-                            5,
-                            0);
-
-                    } else {
-                        this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
-                    }
-                    this.store.select(fromRoot.getSelectedCrop).subscribe(
-                        crop => {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                            FilterParamNames.CV_JOB_STATUS,
-                            null,
-                            crop);
-                        }
-                    );
-
+                    this.refreshData();
                 }
 
             } // if we have a new filter type
@@ -294,14 +275,35 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     } // ngonChanges
 
     public clearSelection(): void {
-        if (this.doPaging) {
-            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntitiesPaged);
-        } else {
-            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntities);
-        }      
+        this.filterToExtractReady = false;
+        this.selectedDatasets = [];
     }
 
     public refreshData(): void {
 
+        this.filterToExtractReady = true;
+        if (this.doPaging) {
+            this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                FilterParamNames.DATASET_LIST_PAGED,
+                null,
+                5,
+                0,
+                this.authenticationService.getGobiiCropType());
+
+        } else {
+            this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST, this.authenticationService.getGobiiCropType());
+        }
+        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            FilterParamNames.CV_JOB_STATUS,
+            null,
+            this.authenticationService.getGobiiCropType());
+        if (this.doPaging) {
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntitiesPaged);
+        } else {
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntities);
+        }
+
+
+        
     }
 }

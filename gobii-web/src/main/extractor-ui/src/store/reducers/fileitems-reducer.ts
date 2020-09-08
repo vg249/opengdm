@@ -731,7 +731,6 @@ export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, 
 
 // here
 export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
-    console.log(JSON.stringify(fileItems));
     let returnVal: GobiiFileItem[] = [];
 
     let contactId: string = null;
@@ -850,7 +849,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 });
 
 export const getDatasetEntities = createSelector(getFileItems, getFilters, (fileItems, filters) => {
-    console.log("Getting data set entities");
+
     let returnVal: GobiiFileItem[] = [];
 
 

@@ -429,10 +429,8 @@ export class ExtractorRoot implements OnInit {
     }
 
     public handleClearTree() {
-        console.log("Handle " + this.gobiiExtractFilterType);
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
         this.clearSelections();
-
     }
 
 

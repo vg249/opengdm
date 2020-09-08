@@ -95,9 +95,7 @@ export class FileItemEffects {
         ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER),
         switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
 
-
                 return Observable.create(observer => {
-
 
                     let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
                         .AddFilterRetrieved(
@@ -219,7 +217,6 @@ export class FileItemEffects {
     replaceInExtract$ = this.actions$.pipe(
         ofType(fileItemActions.REPLACE_BY_ITEM_ID),
         switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
-                console.log(JSON.stringify(action));
                 //  This action is triggered by the ubiguitous NameIdListBoxComponent
                 // as such, there are business behaviors that must be implemented here.
                 // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within

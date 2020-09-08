@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, ɵConsole } from "@angular/core";
 import { Store } from "@ngrx/store";
 import "rxjs/add/operator/concat";
 import "rxjs/add/operator/expand";
@@ -611,7 +611,7 @@ export class FileItemService {
 
 
                                                     }
-                                                    console.log("Creating file item: " + nameIdItem.id + ", " + nameIdItem.name + " for crop " + cropType);
+                                                    //console.log("Creating file item: " + nameIdItem.id + ", " + nameIdItem.name + " for crop " + cropType);
                                                     let currentFileItem: GobiiFileItem =
                                                         GobiiFileItem.build(
                                                             gobiiExtractFilterType,
@@ -961,11 +961,12 @@ export class FileItemService {
     } // recurseFilters()
 
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
-                          fileItemParamName: FilterParamNames) {
-
+                          fileItemParamName: FilterParamNames,
+                          cropType: string) {
+        console.log("Loading entity list dataset for crop: " + cropType);
         let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
         if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
-            this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
+            this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false, cropType)
                 .subscribe(action => {
                     if (action) {
                         this.store.dispatch(action);
@@ -979,7 +980,8 @@ export class FileItemService {
                                fileItemParamName: FilterParamNames,
                                paedQueryId: string,
                                pageSize: number,
-                               pageNum: number) {
+                               pageNum: number,
+                               cropType: string) {
 
         let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
 
@@ -988,7 +990,7 @@ export class FileItemService {
             fileItemParams.setPageNum(pageNum);
             fileItemParams.setPagedQueryId(paedQueryId);
             if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
-                this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
+                this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false, cropType)
                     .subscribe(action => {
                         if (action) {
                             this.store.dispatch(action);
@@ -1007,7 +1009,8 @@ export class FileItemService {
     private makeFileItemActionsFromEntities(gobiiExtractFilterType: GobiiExtractFilterType,
                                             filterParams: FilterParams,
                                             filterValue: string,
-                                            recurse: boolean): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+                                            recurse: boolean,
+                                            cropType: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
         return Observable.create(observer => {
 
@@ -1048,7 +1051,9 @@ export class FileItemService {
 
 
                                 entityItems.forEach(fi => {
+                                    console.log(fi.getEntity());
                                     fi.setGobiiExtractFilterType(gobiiExtractFilterType);
+                                    fi.setCropType(cropType);
                                 });
 
                                 let date: Date = new Date();

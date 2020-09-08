@@ -106,11 +106,9 @@ export class NameIdListBoxComponent  {
     }
 
     public refreshData(): void {
-        console.log("Refreshing data");
+
         let scope$ = this;
         this.fileItemService.getForFilter(this.filterParamName).subscribe( items => {
-            console.log("items");
-            console.log(JSON.stringify(items));
             scope$.options = [];
             
             items.forEach((item, index) => {
