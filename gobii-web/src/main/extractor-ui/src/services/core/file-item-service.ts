@@ -220,13 +220,14 @@ export class FileItemService {
 
     public loadNameIdsFromFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
                                        filterParamName: FilterParamNames,
-                                       filterValue: string) {
+                                       filterValue: string,
+                                       cropType: string) {
 
         let nameIdRequestParamsFromType: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
 
         if (nameIdRequestParamsFromType) {
 
-            this.makeNameIdLoadActions(gobiiExtractFilterType, filterParamName, filterValue)
+            this.makeNameIdLoadActions(gobiiExtractFilterType, filterParamName, filterValue, cropType)
                 .subscribe(action => {
                     if (action) {
                         this.store.dispatch(action);
@@ -246,8 +247,7 @@ export class FileItemService {
         let targetSelected: GobiiFileItem = null;
         crops.filter(crop => crop.userAuthorized).forEach(
             (crop, index) => {
-                console.log(crop.cropType);
-                console.log(index);
+
                 let fileItem: GobiiFileItem = GobiiFileItem
                     .build(gobiiExtractFilterType, ProcessType.CREATE)
                     .setEntityType(EntityType.CROP)
@@ -256,7 +256,8 @@ export class FileItemService {
                     .setItemName(crop.cropType)
                     .setItemId(crop.cropType)
                     .setFileItemUniqueId(crop.cropType)
-                    .setIsExtractCriterion(true);
+                    .setIsExtractCriterion(true)
+                    .setCropType(null);
                 if (selectedIndex && index == selectedIndex) {
                     fileItem.setSelected(true);
                     targetSelected = fileItem;
@@ -373,7 +374,8 @@ export class FileItemService {
      */
     public makeFileActionsFromFilterParamName(gobiiExtractFilterType: GobiiExtractFilterType,
                                               filterParamName: FilterParamNames,
-                                              newTargetFilterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+                                              newTargetFilterValue: string,
+                                              cropType: string) : Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
         return Observable.create(observer => {
 
@@ -420,13 +422,14 @@ export class FileItemService {
                 });
 
         }).concat(
-            this.makeChildActions(gobiiExtractFilterType, filterParamName, newTargetFilterValue)
+            this.makeChildActions(gobiiExtractFilterType, filterParamName, newTargetFilterValue, cropType)
         ); // observable
     }
 
     public makeChildActions(gobiiExtractFilterType: GobiiExtractFilterType,
                             filterParamName: FilterParamNames,
-                            parentFilterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+                            parentFilterValue: string,
+                            cropType: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
         let returnVal: Observable<fileItemActions.LoadFileItemListWithFilterAction>;
 
@@ -447,7 +450,8 @@ export class FileItemService {
                         returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
                             filterParamsToProcess,
                             parentFilterValue,
-                            true);
+                            true,
+                            cropType);
                     } else {
 
                         returnVal = this.recurseFilters(gobiiExtractFilterType,
@@ -478,7 +482,8 @@ export class FileItemService {
 
     public makeNameIdLoadActions(gobiiExtractFilterType: GobiiExtractFilterType,
                                  filterParamName: FilterParamNames,
-                                 filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+                                 filterValue: string,
+                                 cropType: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
         let nameIdRequestParamsFromType: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
 
@@ -486,7 +491,8 @@ export class FileItemService {
             return this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
                 nameIdRequestParamsFromType,
                 filterValue,
-                true);
+                true,
+                cropType);
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
                 + filterParamName.toString()
@@ -519,7 +525,8 @@ export class FileItemService {
     private makeFileItemActionsFromNameIds(gobiiExtractFilterType: GobiiExtractFilterType,
                                            filterParamsToLoad: FilterParams,
                                            filterValue: string,
-                                           recurse: boolean): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+                                           recurse: boolean,
+                                           cropType: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
 
         return Observable.create(observer => {
@@ -543,30 +550,30 @@ export class FileItemService {
              * the store. There is then an effect from that dispatch action that iterates all the query filters: if the
              * lastmodified for a given filter's entity type has changed, the effect requests a refresh of the filter's items.
              */
-            this.entityStatsService.get(new DtoRequestItemEntityStats(
-                EntityRequestType.LasetUpdated,
-                filterParamsToLoad.getEntityType(),
-                null,
-                null))
-                .subscribe(entityStats => {
+            //this.entityStatsService.get(new DtoRequestItemEntityStats(
+            //    EntityRequestType.LasetUpdated,
+            //    filterParamsToLoad.getEntityType(),
+            //    null,
+            //    null))
+            //    .subscribe(entityStats => {
 
-                    this.store.select(fromRoot.getFiltersRetrieved)
-                        .subscribe(filterHistoryItems => {
+                    // this.store.select(fromRoot.getFiltersRetrieved)
+                    //     .subscribe(filterHistoryItems => {
 
-                            let fileHistoryItem: FilterHistory =
-                                filterHistoryItems.find(fhi =>
-                                    fhi.gobiiExtractFilterType === filterParamsToLoad.getGobiiExtractFilterType()
-                                    && fhi.filterId === filterParamsToLoad.getQueryName()
-                                    && fhi.filterValue === filterValue
-                                );
+                    //         let fileHistoryItem: FilterHistory =
+                    //             filterHistoryItems.find(fhi =>
+                    //                 fhi.gobiiExtractFilterType === filterParamsToLoad.getGobiiExtractFilterType()
+                    //                 && fhi.filterId === filterParamsToLoad.getQueryName()
+                    //                 && fhi.filterValue === filterValue
+                    //             );
 
-                            let disregardDateSensitiveQueryingForNow = false;
-                            if (disregardDateSensitiveQueryingForNow ||
-                                (
-                                    (!fileHistoryItem) ||
-                                    (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
-                                )
-                            ) {
+                            //let disregardDateSensitiveQueryingForNow = true; //TODO: changed this to tru --rnduldulao
+                            // if (disregardDateSensitiveQueryingForNow ||
+                            //     (
+                            //         (!fileHistoryItem) ||
+                            //         (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
+                            //     )
+                            // ) {
                                 // Either the data have never been retrieved at all for a given filter value,
                                 // or the server-side entity has been updated. So we shall refresh the
                                 // data and dispatch both the new filter value and the
@@ -604,7 +611,7 @@ export class FileItemService {
 
 
                                                     }
-
+                                                    console.log("Creating file item: " + nameIdItem.id + ", " + nameIdItem.name + " for crop " + cropType);
                                                     let currentFileItem: GobiiFileItem =
                                                         GobiiFileItem.build(
                                                             gobiiExtractFilterType,
@@ -619,7 +626,8 @@ export class FileItemService {
                                                             .setRequired(false)
                                                             .setParentItemId(filterValue)
                                                             .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                                            .withRelatedEntity(entityRelation);
+                                                            .withRelatedEntity(entityRelation)
+                                                            .setCropType(cropType);
 
 
                                                     fileItems.push(currentFileItem);
@@ -628,9 +636,7 @@ export class FileItemService {
                                                 minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
                                                     .map(nameId => nameId.entityLasetModified)));
 
-                                                let temp: string = "foo";
 
-                                                temp = "bar";
 
                                                 if (filterParamsToLoad.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
 
@@ -675,7 +681,8 @@ export class FileItemService {
                                                         .setItemName(label)
                                                         .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                         .setParentItemId(filterValue)
-                                                        .setItemId("0");
+                                                        .setItemId("0")
+                                                        .setCropType(cropType);
 
 
                                                     fileItems.unshift(labelFileItem);
@@ -695,7 +702,8 @@ export class FileItemService {
                                                     .setItemId(this.NONE_ITEM_ITEM_ID)
                                                     .setItemName("<none>")
                                                     .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                                    .setParentItemId(filterValue);
+                                                    .setParentItemId(filterValue)
+                                                    .setCropType(cropType);
 
                                                 fileItems.push(noneFileItem);
                                             }
@@ -740,7 +748,8 @@ export class FileItemService {
                                                             this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
                                                                 rqp,
                                                                 parentId,
-                                                                true)
+                                                                true,
+                                                                cropType)
                                                                 .subscribe(fileItems => observer.next(fileItems));
                                                         }
                                                     }
@@ -753,88 +762,89 @@ export class FileItemService {
                                         responseHeader => {
                                             this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                                         }); // subscribe
-                            } else {
-                                // The data for given filter value exist and do not not need to be
-                                // updated. So here we shall dispatch only the new filter value.
-                                // This action will not update the filter history -- only the filter value
-                                //BEGIN: nameIdService.get()
+                        //     } else {
+                        //         // The data for given filter value exist and do not not need to be
+                        //         // updated. So here we shall dispatch only the new filter value.
+                        //         // This action will not update the filter history -- only the filter value
+                        //         //BEGIN: nameIdService.get()
 
 
-                                let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
-                                    {
-                                        filterId: filterParamsToLoad.getQueryName(),
-                                        filter: new PayloadFilter(
-                                            gobiiExtractFilterType,
-                                            filterParamsToLoad.getTargetEtityUniqueId(),
-                                            filterParamsToLoad.getRelatedEntityUniqueId(),
-                                            filterValue,
-                                            null,
-                                            fileHistoryItem.entityLasteUpdated,
-                                            null
-                                        )
-                                    }
-                                );
-                                observer.next(loadAction);
+                        //         let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                        //             {
+                        //                 filterId: filterParamsToLoad.getQueryName(),
+                        //                 filter: new PayloadFilter(
+                        //                     gobiiExtractFilterType,
+                        //                     filterParamsToLoad.getTargetEtityUniqueId(),
+                        //                     filterParamsToLoad.getRelatedEntityUniqueId(),
+                        //                     filterValue,
+                        //                     null,
+                        //                     fileHistoryItem.entityLasteUpdated,
+                        //                     null
+                        //                 )
+                        //             }
+                        //         );
+                        //         observer.next(loadAction);
 
-                                if (recurse) {
-                                    if (filterParamsToLoad
-                                            .getChildFileItemParams()
-                                            .filter(rqp => rqp.getFilterType() === FilterType.NAMES_BY_TYPEID)
-                                            .length > 0) {
-
-
-                                        // we need to set the current filter in state, but with respect to
-                                        // gobiiFileItems, it should be a null op
-
-                                        //Because we don't have the data freshly from the sever, we shall need
-                                        //to get the "parentId" from the file items we have in the store
-                                        this.store.select(fromRoot.getAllFileItems)
-                                            .subscribe(allFileItems => {
-
-                                                // Get the parent item id from the store;
-                                                // however, this will only work if the parent items have been loaded
-                                                // already.
-                                                let candidateParentFileItems: GobiiFileItem[] =
-                                                    allFileItems.filter(fi =>
-                                                        filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
-                                                        && fi.getParentItemId() === filterValue
-                                                    );
-
-                                                let childItemsFilterValue: string = null;
-                                                if (candidateParentFileItems.length > 0) {
-                                                    childItemsFilterValue = candidateParentFileItems[0].getItemId();
-                                                }
-
-                                                for (let idx: number = 0;
-                                                     idx < filterParamsToLoad.getChildFileItemParams().length;
-                                                     idx++) {
-                                                    let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
-                                                    if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
-                                                        //rqp.setRelatedEntityFilterValue(childItemsFilterValue);
-
-                                                        this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
-                                                            rqp,
-                                                            childItemsFilterValue,
-                                                            true)
-                                                            .subscribe(fileItems => observer.next(fileItems));
-                                                    }
-                                                }
-
-                                            }).unsubscribe();//select all file items
-
-                                    } // if we have child filters
+                        //         if (recurse) {
+                        //             if (filterParamsToLoad
+                        //                     .getChildFileItemParams()
+                        //                     .filter(rqp => rqp.getFilterType() === FilterType.NAMES_BY_TYPEID)
+                        //                     .length > 0) {
 
 
-                                } // if we are recursing
+                        //                 // we need to set the current filter in state, but with respect to
+                        //                 // gobiiFileItems, it should be a null op
 
-                            }// if-else we need to refresh from server or rely on what's in the store already
-                            //END: nameIdService.get()
+                        //                 //Because we don't have the data freshly from the sever, we shall need
+                        //                 //to get the "parentId" from the file items we have in the store
+                        //                 this.store.select(fromRoot.getAllFileItems)
+                        //                     .subscribe(allFileItems => {
 
-                        })
-                        .unsubscribe(); // get filter history items
+                        //                         // Get the parent item id from the store;
+                        //                         // however, this will only work if the parent items have been loaded
+                        //                         // already.
+                        //                         let candidateParentFileItems: GobiiFileItem[] =
+                        //                             allFileItems.filter(fi =>
+                        //                                 filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
+                        //                                 && fi.getParentItemId() === filterValue
+                        //                             );
+
+                        //                         let childItemsFilterValue: string = null;
+                        //                         if (candidateParentFileItems.length > 0) {
+                        //                             childItemsFilterValue = candidateParentFileItems[0].getItemId();
+                        //                         }
+
+                        //                         for (let idx: number = 0;
+                        //                              idx < filterParamsToLoad.getChildFileItemParams().length;
+                        //                              idx++) {
+                        //                             let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
+                        //                             if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
+                        //                                 //rqp.setRelatedEntityFilterValue(childItemsFilterValue);
+
+                        //                                 this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
+                        //                                     rqp,
+                        //                                     childItemsFilterValue,
+                        //                                     true,
+                        //                                     cropType)
+                        //                                     .subscribe(fileItems => observer.next(fileItems));
+                        //                             }
+                        //                         }
+
+                        //                     }).unsubscribe();//select all file items
+
+                        //             } // if we have child filters
 
 
-                }); //subscribe get entity stats
+                        //         } // if we are recursing
+
+                        //     }// if-else we need to refresh from server or rely on what's in the store already
+                        //     //END: nameIdService.get()
+
+                        // })
+                        // .unsubscribe(); // get filter history items
+
+
+             //   }); //subscribe get entity stats
 
         });//return Observer.create
 

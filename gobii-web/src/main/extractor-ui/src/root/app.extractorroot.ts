@@ -34,6 +34,7 @@ import { Crop } from '../model/crop';
 import { DtoRequestService2 } from '../services/core/dto-request.service2';
 import { throwIfEmpty } from 'rxjs/operators';
 import { ReplaceByItemIdAction } from '../store/actions/fileitem-action';
+import { getSelectedCrop } from 'src/store/reducers/fileitems-reducer';
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -78,6 +79,7 @@ export class ExtractorRoot implements OnInit {
     @ViewChild('expSelector') expSelector;
     @ViewChild('typeSelector') typeSelector;
     @ViewChild('platSelector') platSelector;
+    @ViewChild('dataTable') dataTable;
 
     constructor(private _dtoRequestServiceContact: DtoRequestService<Contact>,
                 private _authenticationService: AuthenticationService,
@@ -130,7 +132,8 @@ export class ExtractorRoot implements OnInit {
             //
             if (crops) {
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
-                this.fileItemService.loadCrops(this.gobiiExtractFilterType, crops, 0);
+                this.store.dispatch(new fileItemAction.SetCurrentCropAction(crops[0].cropType));
+                this.fileItemService.loadCrops(GobiiExtractFilterType.UNKNOWN, crops, 0);
                 
                 scope$.initializeServerConfigs();
 
@@ -281,6 +284,7 @@ export class ExtractorRoot implements OnInit {
 
             this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
             this.store.dispatch(new fileItemAction.SetExtractType({gobiiExtractFilterType: arg}));
+            let cropType = this._authenticationService.getGobiiCropType();
 
             this.gobiiExtractFilterType = arg;
 
@@ -296,15 +300,20 @@ export class ExtractorRoot implements OnInit {
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
-                    null);
+                    null,
+                    cropType);
+                
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.PROJECT_FILTER_OPTIONAL,
-                    null);
+                    null,
+                    cropType);
+            
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
-                    null);
+                    null,
+                    cropType);
 
                 this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
 
@@ -312,30 +321,36 @@ export class ExtractorRoot implements OnInit {
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-                    null);
+                    null,
+                    cropType);
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.PROJECTS_BY_CONTACT,
-                    null);
+                    null,
+                    cropType);
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CV_DATATYPE,
-                    null);
+                    null,
+                    cropType);
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.PLATFORMS,
-                    null);
+                    null,
+                    cropType);
 
 
             } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CV_DATATYPE,
-                    null);
+                    null,
+                    cropType);
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.PLATFORMS,
-                    null);
+                    null,
+                    cropType);
 
             }
 
@@ -344,7 +359,8 @@ export class ExtractorRoot implements OnInit {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.MAPSETS,
-                null);
+                null,
+                cropType);
 
 
             //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
@@ -407,11 +423,13 @@ export class ExtractorRoot implements OnInit {
 
     public handleResetCrop(crop) {
         this._authenticationService.setGobiiCropType(crop);
+        this.store.dispatch(new fileItemAction.SetCurrentCropAction(crop));
+        this.store.dispatch(new fileItemAction.ResetFileItems());
         this.handleClearTree();
     }
 
     public handleClearTree() {
-
+        console.log("Handle " + this.gobiiExtractFilterType);
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
         this.clearSelections();
 
@@ -423,10 +441,14 @@ export class ExtractorRoot implements OnInit {
          this.projSelector,
          this.expSelector,
          this.typeSelector,
-         this.platSelector
+         this.platSelector,
+         this.dataTable
         ].forEach(
             selector => {
-                if (selector) selector.clearSelection();
+                if (selector) {
+                    selector.clearSelection();
+                    selector.refreshData();
+                }
             }
         )
     }
@@ -442,8 +464,14 @@ export class ExtractorRoot implements OnInit {
     }
 
     ngOnInit(): any {
-        this._authenticationService.loadUserProfile();
-        this.initializeCropType();
+        let scope$ = this;
+        this._authenticationService.loadUserProfile().subscribe(
+            profile => {
+                this._authenticationService.setProfile(profile);
+                this.initializeCropType();
+            }
+        )
+        
         //this.initializeServerConfigs();
     } // ngOnInit()
 

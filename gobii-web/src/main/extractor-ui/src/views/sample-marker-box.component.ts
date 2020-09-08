@@ -14,6 +14,7 @@ import {StatusLevel} from "../model/type-status-level";
 import * as historyAction from "../store/actions/history-action";
 import {EntityType} from "../model/type-entity";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
+import { switchMap } from 'rxjs/operators';
 
 
 @Component({
@@ -356,9 +357,15 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     ngOnInit(): any {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.MARKER_GROUPS,
-                null);
+            this.store.select(fromRoot.getSelectedCrop).subscribe(
+                crop => {
+                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                        FilterParamNames.MARKER_GROUPS,
+                        null,
+                        crop);
+                }
+            );
+            
         }
 
         return null;

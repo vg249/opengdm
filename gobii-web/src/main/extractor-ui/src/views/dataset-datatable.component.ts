@@ -255,7 +255,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     // gobiiExtractType is not set until you get OnChanges
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-
+        console.log("Changed detected: ");
+        console.log(JSON.stringify(changes));
         if (changes['gobiiExtractFilterType']
             && (changes['gobiiExtractFilterType'].currentValue != null)
             && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
@@ -275,10 +276,14 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                     } else {
                         this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                     }
-
-                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                        FilterParamNames.CV_JOB_STATUS,
-                        null);
+                    this.store.select(fromRoot.getSelectedCrop).subscribe(
+                        crop => {
+                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                            FilterParamNames.CV_JOB_STATUS,
+                            null,
+                            crop);
+                        }
+                    );
 
                 }
 
@@ -286,6 +291,17 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
         } // if filter type changed
 
-
     } // ngonChanges
+
+    public clearSelection(): void {
+        if (this.doPaging) {
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntitiesPaged);
+        } else {
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatasetEntities);
+        }      
+    }
+
+    public refreshData(): void {
+
+    }
 }

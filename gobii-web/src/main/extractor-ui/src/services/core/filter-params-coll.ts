@@ -70,10 +70,41 @@ export class FilterParamsColl {
 
         // ************************************************************************
 
+
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.CROP_TYPE,
                     GobiiExtractFilterType.UNKNOWN,
+                    EntityType.CROP)
+                .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.CROP_TYPE)
+                .setNameIdLabelType(NameIdLabelType.NO)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CROP_TYPE,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.CROP)
+                .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.CROP_TYPE)
+                .setNameIdLabelType(NameIdLabelType.NO)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CROP_TYPE,
+                    GobiiExtractFilterType.BY_MARKER,
+                    EntityType.CROP)
+                .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.CROP_TYPE)
+                .setNameIdLabelType(NameIdLabelType.NO)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CROP_TYPE,
+                    GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CROP)
                 .setIsDynamicFilterValue(false)
                 .setExtractorItemType(ExtractorItemType.CROP_TYPE)

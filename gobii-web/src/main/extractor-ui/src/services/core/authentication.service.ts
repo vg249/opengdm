@@ -8,9 +8,15 @@ import { KeycloakService } from 'keycloak-angular';
 
 import {DtoHeaderAuth} from "../../model/dto-header-auth";
 import {HttpValues} from "../../model/http-values";
+import { KeycloakProfile } from 'keycloak-js';
+import { trigger } from '@angular/animations';
 
 @Injectable()
 export class AuthenticationService {
+    setProfile(profile: KeycloakProfile) {
+        this.profile = profile;
+        this.profileLoaded = true;
+    }
 
 
     constructor(private _http: HttpClient,
@@ -22,6 +28,8 @@ export class AuthenticationService {
     private token: string = null;
     private userName: string = null;
     private _gobiiCropType: string = "";
+    private profile: KeycloakProfile = null;
+    private profileLoaded: boolean = false;
     //private authUrl: string = "gobii/v1/auth";
 
 
@@ -37,9 +45,8 @@ export class AuthenticationService {
     }
 
     public loadUserProfile() {
-        from(this._keycloakService.loadUserProfile()).subscribe(
-            _ => { console.log("User Profile loaded");}
-        );
+        //let scope$ = this;
+        return from(this._keycloakService.loadUserProfile())
     }
 
 
@@ -56,6 +63,8 @@ export class AuthenticationService {
     //     return this.userName;
     // }
     public getUserName() {
+        if (this.profileLoaded) return this.profile.username;
+
         return this._keycloakService.getUsername();
     }
 
