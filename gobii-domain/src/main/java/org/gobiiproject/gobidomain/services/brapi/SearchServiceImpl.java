@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -8,8 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.SamplesSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.noaudit.SearchResultDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -41,45 +40,50 @@ public class SearchServiceImpl implements SearchService {
         try {
 
             String resourceId = UUID.randomUUID().toString();
-
             String extractQueryPath = getSearchQueryResourcePath(resourceId, cropType);
 
             File extractQueryFile = new File(extractQueryPath);
-
-            extractQueryFile.getParentFile().mkdirs();
-
-            objectMapper.writeValue(extractQueryFile, queryObject);
-
-            searchResultDTO.setSearchResultDbId(resourceId);
-
-            return searchResultDTO;
-
-        } catch (Exception e) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+            if (!extractQueryFile.getParentFile().mkdirs()) {
+                throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.NONE,
                     "Internal Server Error");
+            }
 
+            objectMapper.writeValue(extractQueryFile, queryObject);
+            searchResultDTO.setSearchResultDbId(resourceId);
+            return searchResultDTO;
+
+        } catch (IOException e) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Internal Server Error");
         }
     }
 
     private String getSearchQueryResourcePath(String resourceId, String cropType) {
         return Paths.get(
-                configSettingsService.getConfigSettings().getServerConfigs().get(
-                        cropType).getFileLocations().get(GobiiFileProcessDir.RAW_USER_FILES),
-                resourceId,
-                "searchQuery.json").toString();
+            configSettingsService
+                .getConfigSettings()
+                .getServerConfigs()
+                .get(cropType)
+                .getFileLocations()
+                .get(GobiiFileProcessDir.RAW_USER_FILES),
+            resourceId,
+            "searchQuery.json").toString();
     }
 
 
     @Override
-    public Object getSearchQuery(String resourceId, String cropType, Class searchQueryType) {
+    public Object getSearchQuery(String resourceId, String cropType, String searchQueryTypeName) {
 
         Object samplesSearchQuery;
+        ObjectMapper mapper = new ObjectMapper();
 
         try {
 
-            ObjectMapper mapper = new ObjectMapper();
-
+            Class<?> searchQueryType = Class.forName(searchQueryTypeName);
             String extractQueryPath = getSearchQueryResourcePath(resourceId, cropType);
 
             File extractQueryFile = new File(extractQueryPath);
@@ -90,7 +94,9 @@ public class SearchServiceImpl implements SearchService {
             return samplesSearchQuery;
 
         } catch (Exception e) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
                 "Internal Server Error");
 
         }

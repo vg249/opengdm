@@ -150,7 +150,7 @@ public class SearchVariantsController extends SearchController {
             (VariantsSearchQueryDTO) searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                VariantsSearchQueryDTO.class);
+                VariantsSearchQueryDTO.class.getName());
 
         PagedResult<VariantDTO> pagedResult = variantService
             .getVariantsByVariantSearchQuery(variantsSearchQuery, pageSize, pageToken);

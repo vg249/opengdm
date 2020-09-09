@@ -35,12 +35,15 @@ public class VariantServiceImpl implements VariantService {
     private DnaRunDao dnaRunDao = null;
 
     @Override
-    public PagedResult<VariantDTO> getVariants(Integer pageSize, String pageToken,
-                                               Integer variantDbId, Integer variantSetDbId) {
+    public PagedResult<VariantDTO> getVariants(
+        Integer pageSize,
+        String pageToken,
+        Integer variantDbId,
+        Integer variantSetDbId) throws GobiiException {
 
         PagedResult<VariantDTO> returnVal = new PagedResult<>();
 
-        List<VariantDTO> variants = new ArrayList<>();
+        List<VariantDTO> variants;
 
         Integer markerIdCursor = null;
 
@@ -50,42 +53,34 @@ public class VariantServiceImpl implements VariantService {
 
             if(pageToken != null) {
                 Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
-                markerIdCursor = pageTokenParts.get("markerIdCursor");
+                markerIdCursor = pageTokenParts.getOrDefault("markerIdCursor", 0);
             }
 
-
-            List<Marker> markers = markerDao.getMarkersByMarkerIdCursor(
-                    pageSize, markerIdCursor,
-                    variantDbId, variantSetDbId);
+            List<Marker> markers =
+                markerDao.getMarkersByMarkerIdCursor(
+                    pageSize,
+                    markerIdCursor,
+                    variantDbId,
+                    variantSetDbId);
 
             variants = mapMarkersToVariants(markers);
-
             returnVal.setResult(variants);
-
             returnVal.setCurrentPageSize(pageSize);
 
             //Set page token only if there are variants
             if(markers.size() > 0) {
-
                 Map<String, Integer> nextPageCursorMap = new HashMap<>();
-
                 //set next page offset and column offset as page token parts
-                nextPageCursorMap.put("markerIdCursor",
-                        markers.get(markers.size() - 1).getMarkerId());
-
+                nextPageCursorMap
+                    .put("markerIdCursor", markers.get(markers.size() - 1).getMarkerId());
                 String nextPageToken = PageToken.encode(nextPageCursorMap);
-
                 returnVal.setNextPageToken(nextPageToken);
-
             }
 
             return  returnVal;
 
         }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
@@ -128,20 +123,15 @@ public class VariantServiceImpl implements VariantService {
     }
 
     @Override
-    public VariantDTO getVariantByVariantDbId(Integer variantDbId) {
+    public VariantDTO getVariantByVariantDbId(Integer variantDbId) throws GobiiException {
 
         try {
 
             Objects.requireNonNull(variantDbId, "variantDbId : Required non null");
-
             Marker marker = markerDao.getMarkerById(variantDbId);
             return mapMakrerToVariant(marker);
-
         }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
@@ -150,15 +140,14 @@ public class VariantServiceImpl implements VariantService {
 
     @Override
     public PagedResult<VariantDTO> getVariantsByVariantSearchQuery(
-        VariantsSearchQueryDTO variantsSearchQuery, Integer pageSize, String pageToken) {
+        VariantsSearchQueryDTO variantsSearchQuery,
+        Integer pageSize,
+        String pageToken) throws GobiiException {
 
         PagedResult<VariantDTO> returnVal = new PagedResult<>();
-
         List<VariantDTO> variants = new ArrayList<>();
-
         Integer markerIdCursor = 0;
-
-        Map<String, Integer> nextPageCursorMap = new HashMap<>();
+        Map<String, Integer> nextPageCursorMap;
 
         try {
 
@@ -166,7 +155,6 @@ public class VariantServiceImpl implements VariantService {
                 Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
                 markerIdCursor = pageTokenParts.getOrDefault("markerIdCursor", 0);
             }
-
 
             List<Marker> markers = markerDao.getMarkers(
                 variantsSearchQuery.getVariantDbIds(), variantsSearchQuery.getVariantNames(),
@@ -185,13 +173,7 @@ public class VariantServiceImpl implements VariantService {
             returnVal.setCurrentPageSize(variants.size());
             return returnVal;
         }
-        catch (GobiiException gE) {
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-
-            throw new GobiiDomainException(
-                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage());
-        }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
@@ -200,7 +182,8 @@ public class VariantServiceImpl implements VariantService {
     @Override
     public PagedResult<VariantDTO> getVariantsByGenotypesExtractQuery(
         GenotypeCallsSearchQueryDTO genotypesSearchQuery,
-        Integer pageSize, String pageToken) throws GobiiDomainException {
+        Integer pageSize,
+        String pageToken) throws GobiiException {
 
         final int dnaRunBinSize = 1000;
 
@@ -212,7 +195,7 @@ public class VariantServiceImpl implements VariantService {
 
         List<DnaRun> dnaRuns = new ArrayList<>();
 
-        List<Marker> markers = new ArrayList<>();
+        List<Marker> markers;
 
         Map<String, Integer> nextPageCursorMap = new HashMap<>();
 
@@ -257,7 +240,6 @@ public class VariantServiceImpl implements VariantService {
                         cursors.dnaRunDatasetIds.addAll(
                             JsonNodeUtils.getKeysFromJsonObject(dnaRun.getDatasetDnaRunIdx()));
                     }
-
                 }
 
                 if(!CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
@@ -284,7 +266,7 @@ public class VariantServiceImpl implements VariantService {
                     cursors.dnaRunBinCursor = dnaRuns.get(dnaRuns.size() - 1).getDnaRunId();
                     cursors.markerIdCursor = 0;
                 }
-                else if(variants.size() < pageSize && dnaRuns.size() == 0) {
+                else if(variants.size() < pageSize) {
                     break;
                 }
                 else if(variants.size() == pageSize) {
@@ -302,14 +284,7 @@ public class VariantServiceImpl implements VariantService {
             returnVal.setCurrentPageSize(variants.size());
             return returnVal;
         }
-        catch (GobiiException gE) {
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-
-            throw new GobiiDomainException(
-                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage()
-            );
-        }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }

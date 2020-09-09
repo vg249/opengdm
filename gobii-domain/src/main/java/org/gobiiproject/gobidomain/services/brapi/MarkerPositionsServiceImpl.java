@@ -34,8 +34,6 @@ public class MarkerPositionsServiceImpl implements MarkerPositionsService {
         MarkerPositions markerPositionsFilter, BigDecimal minPosition,
         BigDecimal maxPosition, Integer variantSetDbId) throws GobiiException {
 
-        PagedResult<MarkerPositions> returnVal = new PagedResult<>();
-
         List<MarkerPositions> markerPositionsList = new ArrayList<>();
 
         try {
@@ -62,47 +60,34 @@ public class MarkerPositionsServiceImpl implements MarkerPositionsService {
             MarkerPositions markerPositions;
 
             for(MarkerLinkageGroup markerLinkageGroup : markerLinkageGroups) {
-
                 markerPositions = new MarkerPositions();
-
                 ModelMapper.mapEntityToDto(markerLinkageGroup, markerPositions);
-
                 markerPositionsList.add(markerPositions);
-
             }
 
-            returnVal.setCurrentPageSize(pageSize);
-            returnVal.setCurrentPageNum(pageNum);
-            returnVal.setResult(markerPositionsList);
-
-            return  returnVal;
+            return PagedResult.createFrom(pageNum, markerPositionsList);
         }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error. Please check the error log");
-
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error. Please check the error log");
         }
     }
 
     @Override
     public PagedResult<MarkerPositions> getMarkerPositionsBySearchQuery(
         MarkerPositionsSearchQueryDTO searchQuery,
-        Integer pageSize, Integer pageNum) {
-
-        PagedResult<MarkerPositions> returnVal = new PagedResult<>();
+        Integer pageSize,
+        Integer pageNum) throws GobiiException {
 
         List<MarkerPositions> markerPositionsList = new ArrayList<>();
 
         try {
 
-            Objects.requireNonNull(pageSize);
-            Objects.requireNonNull(pageNum);
+            Objects.requireNonNull(pageSize, "pageSize: required non null");
+            Objects.requireNonNull(pageNum, "pageNum: required non null");
 
             Integer rowOffset = pageNum*pageSize;
 
@@ -123,32 +108,20 @@ public class MarkerPositionsServiceImpl implements MarkerPositionsService {
             MarkerPositions markerPositions;
 
             for(MarkerLinkageGroup markerLinkageGroup : markerLinkageGroups) {
-
                 markerPositions = new MarkerPositions();
-
                 ModelMapper.mapEntityToDto(markerLinkageGroup, markerPositions);
-
                 markerPositionsList.add(markerPositions);
-
             }
 
-            returnVal.setCurrentPageSize(pageSize);
-            returnVal.setCurrentPageNum(pageNum);
-            returnVal.setResult(markerPositionsList);
+            return PagedResult.createFrom(pageNum, markerPositionsList);
 
-            return  returnVal;
         }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
                 GobiiValidationStatusType.UNKNOWN,
                 "Internal Server Error. Please check the error log");
-
         }
-
     }
 }

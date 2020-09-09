@@ -148,7 +148,7 @@ public class SearchCallSetsController extends SearchController {
             (CallSetsSearchQueryDTO) searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                CallSetsSearchQueryDTO.class);
+                CallSetsSearchQueryDTO.class.getName());
 
         PagedResult<CallSetDTO> pagedResult = callSetService.getCallSetsBySearchQuery(
             callSetsSearchQuery,

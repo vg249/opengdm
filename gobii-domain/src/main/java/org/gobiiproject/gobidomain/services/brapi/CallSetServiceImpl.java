@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.brapi;
 
 import java.util.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
@@ -23,16 +23,13 @@ import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 
 @Transactional
+@Slf4j
 public class CallSetServiceImpl implements CallSetService {
-
-    Logger LOGGER = LoggerFactory.getLogger(CallSetServiceImpl.class);
 
     @Autowired
     private DnaRunDao dnaRunDao;
@@ -54,48 +51,52 @@ public class CallSetServiceImpl implements CallSetService {
         List<CallSetDTO> callSets;
 
         try {
-
             Objects.requireNonNull(pageSize, "pageSize : Required non null");
             Objects.requireNonNull(pageNum, "pageNum : Required non null");
             Objects.requireNonNull(callSetsFilter, "callSetsFilter : Required non null");
-
-            Integer rowOffset = pageNum * pageSize;
-
-            DnaRun dnaRunFilter = new DnaRun();
-            ModelMapper.mapDtoToEntity(callSetsFilter, dnaRunFilter);
-
-            List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
-                pageSize, rowOffset,
-                callSetsFilter.getCallSetDbId(), callSetsFilter.getCallSetName(),
-                variantSetDbId, callSetsFilter.getStudyDbId(),
-                callSetsFilter.getSampleDbId(), callSetsFilter.getSampleName(),
-                callSetsFilter.getGermplasmDbId(), callSetsFilter.getGermplasmName());
-
-            callSets = mapDnaRunsToCallSetDtos(dnaRuns);
-
-            pagedResult.setResult(callSets);
-            pagedResult.setCurrentPageSize(callSets.size());
-            pagedResult.setCurrentPageNum(pageNum);
-
-            return pagedResult;
         }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
+        catch (NullPointerException nE) {
+            log.error(nE.getMessage(), nE);
             throw new GobiiException(
                 GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                e.getMessage());
+                GobiiValidationStatusType.BAD_REQUEST,
+                nE.getMessage());
         }
+
+        Integer rowOffset = pageNum * pageSize;
+
+        DnaRun dnaRunFilter = new DnaRun();
+        ModelMapper.mapDtoToEntity(callSetsFilter, dnaRunFilter);
+
+        List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
+            pageSize, rowOffset,
+            callSetsFilter.getCallSetDbId(), callSetsFilter.getCallSetName(),
+            variantSetDbId, callSetsFilter.getStudyDbId(),
+            callSetsFilter.getSampleDbId(), callSetsFilter.getSampleName(),
+            callSetsFilter.getGermplasmDbId(), callSetsFilter.getGermplasmName());
+
+        callSets = mapDnaRunsToCallSetDtos(dnaRuns);
+
+        pagedResult.setResult(callSets);
+        pagedResult.setCurrentPageSize(callSets.size());
+        pagedResult.setCurrentPageNum(pageNum);
+
+        return pagedResult;
     }
 
 
     public CallSetDTO getCallSetById(Integer callSetDbId) throws GobiiException {
 
-        Objects.requireNonNull(callSetDbId);
+        try {
+            Objects.requireNonNull(callSetDbId);
+        }
+        catch (NullPointerException nE) {
+            log.error(nE.getMessage(), nE);
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                nE.getMessage());
+        }
 
         DnaRun dnaRun = dnaRunDao.getDnaRunById(callSetDbId);
 
@@ -128,37 +129,31 @@ public class CallSetServiceImpl implements CallSetService {
         }
 
         try {
-
             Objects.requireNonNull(pageNum, "pageNum : Required non null");
             Objects.requireNonNull(pageSize, "pageSize : Required non null");
-
-            List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
-                callSetsSearchQuery.getCallSetDbIds(), callSetsSearchQuery.getCallSetNames(),
-                callSetsSearchQuery.getSampleDbIds(), callSetsSearchQuery.getSampleNames(),
-                callSetsSearchQuery.getSamplePUIs(), callSetsSearchQuery.getGermplasmPUIs(),
-                callSetsSearchQuery.getGermplasmDbIds(), callSetsSearchQuery.getGermplasmNames(),
-                callSetsSearchQuery.getVariantSetDbIds(), pageSize,
-                null, rowOffset, true);
-
-            callSets = mapDnaRunsToCallSetDtos(dnaRuns);
-
-            returnVal.setResult(callSets);
-            returnVal.setCurrentPageSize(callSets.size());
-            returnVal.setCurrentPageNum(pageNum);
-            return returnVal;
         }
-        catch (GobiiException gE) {
-
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-
-            throw new GobiiDomainException(
-                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage()
-            );
+        catch (NullPointerException nE) {
+            log.error(nE.getMessage(), nE);
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                nE.getMessage());
         }
-        catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
+
+        List<DnaRun> dnaRuns = dnaRunDao.getDnaRuns(
+            callSetsSearchQuery.getCallSetDbIds(), callSetsSearchQuery.getCallSetNames(),
+            callSetsSearchQuery.getSampleDbIds(), callSetsSearchQuery.getSampleNames(),
+            callSetsSearchQuery.getSamplePUIs(), callSetsSearchQuery.getGermplasmPUIs(),
+            callSetsSearchQuery.getGermplasmDbIds(), callSetsSearchQuery.getGermplasmNames(),
+            callSetsSearchQuery.getVariantSetDbIds(), pageSize,
+            null, rowOffset, true);
+
+        callSets = mapDnaRunsToCallSetDtos(dnaRuns);
+
+        returnVal.setResult(callSets);
+        returnVal.setCurrentPageSize(callSets.size());
+        returnVal.setCurrentPageNum(pageNum);
+        return returnVal;
     }
 
 
@@ -170,117 +165,105 @@ public class CallSetServiceImpl implements CallSetService {
         final int markerBinSize = 1000;
 
         PagedResult<CallSetDTO> returnVal = new PagedResult<>();
-
         List<CallSetDTO> callSets = new ArrayList<>();
-
         GenotypesRunTimeCursors cursors = new GenotypesRunTimeCursors();
-
         List<DnaRun> dnaRuns;
-
         List<Marker> markers = new ArrayList<>();
-
         Map<String, Integer> nextPageCursorMap = new HashMap<>();
 
-        try {
 
-            if(pageToken != null) {
+        if(pageToken != null) {
+            Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
+            cursors.markerBinCursor = pageTokenParts.getOrDefault("markerBinCursor", 0);
+            cursors.dnaRunIdCursor = pageTokenParts.getOrDefault("dnaRunIdCursor", 0);
+        }
 
-                Map<String, Integer> pageTokenParts = PageToken.decode(pageToken);
-                cursors.markerBinCursor = pageTokenParts.getOrDefault("markerBinCursor", 0);
-                cursors.dnaRunIdCursor = pageTokenParts.getOrDefault("dnaRunIdCursor", 0);
-            }
+        int remainingPageSize;
 
-            int remainingPageSize;
+        while(callSets.size() < pageSize) {
 
-            while(callSets.size() < pageSize) {
+            cursors.markerDatasetIds = new HashSet<>();
+            cursors.dnaRunDatasetIds = new HashSet<>();
 
-                cursors.markerDatasetIds = new HashSet<>();
-                cursors.dnaRunDatasetIds = new HashSet<>();
+            remainingPageSize = pageSize - callSets.size();
 
-                remainingPageSize = pageSize - callSets.size();
+            if (!genotypesSearchQuery.isVariantsQueriesEmpty() ||
+            !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
 
-                if (!genotypesSearchQuery.isVariantsQueriesEmpty() ||
-                !CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
+                markers = markerDao.getMarkers(
+                    genotypesSearchQuery.getVariantDbIds(),
+                    genotypesSearchQuery.getVariantNames(),
+                    genotypesSearchQuery.getVariantSetDbIds(),
+                    markerBinSize, cursors.markerBinCursor);
 
-                    markers = markerDao.getMarkers(
-                        genotypesSearchQuery.getVariantDbIds(),
-                        genotypesSearchQuery.getVariantNames(),
-                        genotypesSearchQuery.getVariantSetDbIds(),
-                        markerBinSize, cursors.markerBinCursor);
-
-                    if(markers.size() == 0) {
-                        returnVal.setResult(callSets);
-                        returnVal.setCurrentPageSize(callSets.size());
-                        break;
-                    }
-
-                    for(Marker marker : markers) {
-                        cursors.markerDatasetIds.addAll(JsonNodeUtils.getKeysFromJsonObject(
-                            marker.getDatasetMarkerIdx()));
-                    }
-
-                }
-
-                if(!CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
-                    cursors.dnaRunDatasetIds
-                        .addAll(new HashSet<>(genotypesSearchQuery.getVariantSetDbIds()));
-                    cursors.dnaRunDatasetIds.retainAll(cursors.markerDatasetIds);
-                }
-                else {
-                    cursors.dnaRunDatasetIds.addAll(cursors.markerDatasetIds);
-                }
-
-                dnaRuns = dnaRunDao.getDnaRuns(
-                    genotypesSearchQuery.getCallSetDbIds(), genotypesSearchQuery.getCallSetNames(),
-                    genotypesSearchQuery.getSampleDbIds(), genotypesSearchQuery.getSampleNames(),
-                    genotypesSearchQuery.getSamplePUIs(), genotypesSearchQuery.getGermplasmPUIs(),
-                    genotypesSearchQuery.getGermplasmDbIds(), genotypesSearchQuery.getGermplasmNames(),
-                    cursors.dnaRunDatasetIds, remainingPageSize, cursors.dnaRunIdCursor, null, true);
-
-                if(dnaRuns.size() > 0) {
-                    cursors.dnaRunIdCursor = dnaRuns.get(dnaRuns.size() - 1).getDnaRunId();
-                }
-
-                callSets.addAll(mapDnaRunsToCallSetDtos(dnaRuns));
-
-                if(callSets.size() < pageSize && markers.size() > 0) {
-                    cursors.markerBinCursor = markers.get(markers.size() - 1).getMarkerId();
-                    cursors.dnaRunIdCursor = 0;
-                }
-                else if(callSets.size() < pageSize) {
+                if(markers.size() == 0) {
+                    returnVal.setResult(callSets);
+                    returnVal.setCurrentPageSize(callSets.size());
                     break;
                 }
-                else if(callSets.size() == pageSize) {
-                    nextPageCursorMap = new HashMap<>();
-                    nextPageCursorMap.put("markerBinCursor", cursors.markerBinCursor);
-                    nextPageCursorMap.put("dnaRunIdCursor", cursors.dnaRunIdCursor);
-                    break;
+
+                for(Marker marker : markers) {
+                    cursors
+                        .markerDatasetIds
+                        .addAll(JsonNodeUtils
+                            .getKeysFromJsonObject(marker.getDatasetMarkerIdx()));
                 }
-            }
-            if(nextPageCursorMap.size() > 0) {
-                String nextPageToken = PageToken.encode(nextPageCursorMap);
-                returnVal.setNextPageToken(nextPageToken);
-            }
-            returnVal.setResult(callSets);
-            returnVal.setCurrentPageSize(callSets.size());
-            return returnVal;
-        }
-        catch (GobiiException gE) {
 
-            LOGGER.error(gE.getMessage(), gE.getMessage());
+            }
 
-            throw new GobiiDomainException(
-                gE.getGobiiStatusLevel(), gE.getGobiiValidationStatusType(), gE.getMessage()
-            );
+            if(!CollectionUtils.isEmpty(genotypesSearchQuery.getVariantSetDbIds())) {
+                cursors
+                    .dnaRunDatasetIds
+                    .addAll(new HashSet<>(genotypesSearchQuery.getVariantSetDbIds()));
+
+                cursors
+                    .dnaRunDatasetIds
+                    .retainAll(cursors.markerDatasetIds);
+            }
+            else {
+                cursors
+                    .dnaRunDatasetIds
+                    .addAll(cursors.markerDatasetIds);
+            }
+
+            dnaRuns = dnaRunDao.getDnaRuns(
+                genotypesSearchQuery.getCallSetDbIds(), genotypesSearchQuery.getCallSetNames(),
+                genotypesSearchQuery.getSampleDbIds(), genotypesSearchQuery.getSampleNames(),
+                genotypesSearchQuery.getSamplePUIs(), genotypesSearchQuery.getGermplasmPUIs(),
+                genotypesSearchQuery.getGermplasmDbIds(), genotypesSearchQuery.getGermplasmNames(),
+                cursors.dnaRunDatasetIds, remainingPageSize, cursors.dnaRunIdCursor, null, true);
+
+            if(dnaRuns.size() > 0) {
+                cursors.dnaRunIdCursor = dnaRuns.get(dnaRuns.size() - 1).getDnaRunId();
+            }
+
+            callSets.addAll(mapDnaRunsToCallSetDtos(dnaRuns));
+
+            if(callSets.size() < pageSize && markers.size() > 0) {
+                cursors.markerBinCursor = markers.get(markers.size() - 1).getMarkerId();
+                cursors.dnaRunIdCursor = 0;
+            }
+            else if(callSets.size() < pageSize) {
+                break;
+            }
+            else if(callSets.size() == pageSize) {
+                nextPageCursorMap = new HashMap<>();
+                nextPageCursorMap.put("markerBinCursor", cursors.markerBinCursor);
+                nextPageCursorMap.put("dnaRunIdCursor", cursors.dnaRunIdCursor);
+                break;
+            }
         }
-        catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
+        if(nextPageCursorMap.size() > 0) {
+            String nextPageToken = PageToken.encode(nextPageCursorMap);
+            returnVal.setNextPageToken(nextPageToken);
         }
+        returnVal.setResult(callSets);
+        returnVal.setCurrentPageSize(callSets.size());
+        return returnVal;
     }
 
 
-    private List<CallSetDTO> mapDnaRunsToCallSetDtos(List<DnaRun> dnaRuns) {
+    private List<CallSetDTO> mapDnaRunsToCallSetDtos(List<DnaRun> dnaRuns) throws GobiiException {
 
         List<CallSetDTO> callSets = new ArrayList<>();
 
@@ -300,8 +283,10 @@ public class CallSetServiceImpl implements CallSetService {
         return callSets;
     }
 
-    private CallSetDTO mapDnaRunEntityToCallSetDto(DnaRun dnaRun, List<Cv> dnaSampleGroupCvs,
-                                                   List<Cv> germplasmGroupCvs) {
+    private CallSetDTO mapDnaRunEntityToCallSetDto(
+        DnaRun dnaRun, List<Cv> dnaSampleGroupCvs,
+        List<Cv> germplasmGroupCvs
+    ) throws GobiiException {
 
         CallSetDTO callSet = new CallSetDTO();
 

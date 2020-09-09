@@ -28,16 +28,11 @@ public class LinkakgeGroupServiceImpl implements LinkageGroupService {
 
         List<LinkageGroupDTO> returnVal = new ArrayList<>();
 
-
         try {
-
             return returnVal;
-
         } catch (Exception e) {
-
             LOGGER.error("Gobii service error: Unknown system error. ", e);
             throw new GobiiDomainException(e);
-
         }
 
     }

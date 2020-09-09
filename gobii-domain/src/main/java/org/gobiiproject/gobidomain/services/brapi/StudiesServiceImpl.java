@@ -27,11 +27,10 @@ public class StudiesServiceImpl implements StudiesService {
     private ExperimentDao experimentDao;
 
     @Override
-    public PagedResult<StudiesDTO> getStudies(Integer pageSize, Integer pageNum,
-                                              Integer projectId)
-            throws GobiiDomainException {
-
-        PagedResult<StudiesDTO> pagedResult = new PagedResult<>();
+    public PagedResult<StudiesDTO> getStudies(Integer pageSize,
+                                              Integer pageNum,
+                                              Integer projectId
+    ) throws GobiiException {
 
         try {
 
@@ -39,19 +38,15 @@ public class StudiesServiceImpl implements StudiesService {
             Objects.requireNonNull(pageNum, "pageNum: Required non null.");
 
             List<StudiesDTO> studies = new ArrayList<>();
-
             Integer rowOffset = pageNum*pageSize;
-
             List<Experiment> experiments = experimentDao.getExperiments(
-                    pageSize, rowOffset, null);
+                pageSize,
+                rowOffset,
+                null);
 
             for (Experiment experiment : experiments) {
-
-
                 StudiesDTO study = new StudiesDTO();
-
                 ModelMapper.mapEntityToDto(experiment, study);
-
                 if(experiment.getProject().getContact() != null) {
                     ContactDTO contactDTO = new ContactDTO();
                     ModelMapper.mapEntityToDto(
@@ -59,23 +54,12 @@ public class StudiesServiceImpl implements StudiesService {
                             contactDTO);
                     study.getContacts().add(contactDTO);
                 }
-
                 studies.add(study);
-
-
             }
 
-            pagedResult.setResult(studies);
+            return PagedResult.createFrom(pageNum, studies);
 
-            pagedResult.setCurrentPageNum(pageNum);
-
-            pagedResult.setCurrentPageSize(pageSize);
-
-            return pagedResult;
-
-        } catch (GobiiException gE) {
-            throw gE;
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
 

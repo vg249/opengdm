@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
@@ -35,11 +34,11 @@ public class SamplesServiceImpl implements SamplesService {
 
     /**
      * Gets the list of dna sample for given search criteria
-     * @param pageNum
-     * @param pageSize
-     * @param sampleDbId
-     * @param germplasmDbId
-     * @param observationUnitDbId
+     * @param pageNum               page number to fetch
+     * @param pageSize              size of the page
+     * @param sampleDbId            get sample by sample id.
+     * @param germplasmDbId         filter by germplasm id.
+     * @param observationUnitDbId   filter by experiment id.
      * @return List of Genotype Calls
      */
     @Override
@@ -47,8 +46,6 @@ public class SamplesServiceImpl implements SamplesService {
                                               Integer sampleDbId, Integer germplasmDbId,
                                               String observationUnitDbId) {
 
-        PagedResult<SamplesDTO> returnVal = new PagedResult<>();
-
         List<SamplesDTO> samplesDTOs;
 
         try {
@@ -56,36 +53,33 @@ public class SamplesServiceImpl implements SamplesService {
             Objects.requireNonNull(pageNum, "pageNum : Required non null");
             Objects.requireNonNull(pageSize, "pageSize : Required non null");
 
-            Integer rowOffset = 0;
-
-            if(pageNum != null && pageSize != null) {
-                rowOffset = pageNum*pageSize;
-            }
+            int rowOffset = pageNum*pageSize;
 
             List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(
-                pageSize, rowOffset,
-                null, sampleDbId,
-                germplasmDbId, observationUnitDbId);
+                pageSize,
+                rowOffset,
+                null,
+                sampleDbId,
+                germplasmDbId,
+                observationUnitDbId);
 
             samplesDTOs = mapDnaSampleEntityToSampleDTO(dnaSamples);
 
-            returnVal.setCurrentPageSize(samplesDTOs.size());
-            returnVal.setCurrentPageNum(pageNum);
-            returnVal.setResult(samplesDTOs);
-
-            return returnVal;
+            return PagedResult.createFrom(pageNum, samplesDTOs);
         }
-        catch(Exception e) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
-                    e.getMessage());
+        catch(NullPointerException e) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                e.getMessage());
         }
     }
 
     @Override
     public PagedResult<SamplesDTO> getSamplesBySamplesSearchQuery(
-        SamplesSearchQueryDTO samplesSearchQuery, Integer pageSize, Integer pageNum) {
-
-        PagedResult<SamplesDTO> returnVal = new PagedResult<>();
+        SamplesSearchQueryDTO samplesSearchQuery,
+        Integer pageSize,
+        Integer pageNum) {
 
         List<SamplesDTO> samplesDTOs;
 
@@ -94,11 +88,7 @@ public class SamplesServiceImpl implements SamplesService {
             Objects.requireNonNull(pageNum, "pageNum : Required non null");
             Objects.requireNonNull(pageSize, "pageSize : Required non null");
 
-            Integer rowOffset = 0;
-
-            if(pageNum != null && pageSize != null) {
-                rowOffset = pageNum*pageSize;
-            }
+            Integer rowOffset = pageNum*pageSize;
 
             List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(
                 samplesSearchQuery.getSampleDbIds(), samplesSearchQuery.getSampleNames(),
@@ -108,26 +98,29 @@ public class SamplesServiceImpl implements SamplesService {
 
             samplesDTOs = mapDnaSampleEntityToSampleDTO(dnaSamples);
 
-            returnVal.setCurrentPageSize(samplesDTOs.size());
-            returnVal.setCurrentPageNum(pageNum);
-            returnVal.setResult(samplesDTOs);
+            return PagedResult.createFrom(pageNum, samplesDTOs);
 
-            return returnVal;
         }
-        catch(Exception e) {
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+        catch(NullPointerException e) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
                 e.getMessage());
         }
 
     }
 
 
-    private List<SamplesDTO> mapDnaSampleEntityToSampleDTO(List<DnaSample> dnaSamples) {
+    private List<SamplesDTO> mapDnaSampleEntityToSampleDTO(
+        List<DnaSample> dnaSamples
+    ) throws GobiiException {
 
         List<SamplesDTO> samplesDTOs = new ArrayList<>();
 
         List<Cv> cvList = cvDao.getCvListByCvGroup(
-            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+            null);
+
         for (DnaSample dnaSample : dnaSamples) {
 
             if (dnaSample != null) {

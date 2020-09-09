@@ -6,5 +6,5 @@ public interface SearchService {
 
     SearchResultDTO createSearchQueryResource(String cropType, Object queryObject);
 
-    Object getSearchQuery(String resourceId, String cropType, Class searchQueryType);
+    Object getSearchQuery(String resourceId, String cropType, String searchQueryTypeName);
 }

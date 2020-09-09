@@ -148,7 +148,7 @@ public class SearchSamplesController extends SearchController {
             searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                SamplesSearchQueryDTO.class);
+                SamplesSearchQueryDTO.class.getName());
 
         PagedResult<SamplesDTO> pagedResult = sampleService.getSamplesBySamplesSearchQuery(
             samplesSearchQuery,

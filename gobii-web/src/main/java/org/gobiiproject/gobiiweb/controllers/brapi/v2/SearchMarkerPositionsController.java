@@ -148,7 +148,7 @@ public class SearchMarkerPositionsController extends SearchController {
             (MarkerPositionsSearchQueryDTO) searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                MarkerPositionsSearchQueryDTO.class);
+                MarkerPositionsSearchQueryDTO.class.getName());
 
         PagedResult<MarkerPositions> pagedResult =
             markerPositionsService.getMarkerPositionsBySearchQuery(

@@ -163,7 +163,7 @@ public class SearchGenotypesController extends SearchController {
             (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                GenotypeCallsSearchQueryDTO.class);
+                GenotypeCallsSearchQueryDTO.class.getName());
 
         PagedResultTyped<GenotypeCallsResult> pagedResult =
             genotypeCallsService
@@ -242,7 +242,7 @@ public class SearchGenotypesController extends SearchController {
             (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                GenotypeCallsSearchQueryDTO.class);
+                GenotypeCallsSearchQueryDTO.class.getName());
 
         PagedResult<VariantDTO> pagedResult = variantService.getVariantsByGenotypesExtractQuery(
             genotypeCallsSearchQueryDTO,
@@ -318,7 +318,7 @@ public class SearchGenotypesController extends SearchController {
             (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
                 searchResultDbId,
                 cropType,
-                GenotypeCallsSearchQueryDTO.class);
+                GenotypeCallsSearchQueryDTO.class.getName());
 
         PagedResult<CallSetDTO> pagedResult = callSetService.getCallSetsByGenotypesExtractQuery(
             genotypeCallsSearchQueryDTO,

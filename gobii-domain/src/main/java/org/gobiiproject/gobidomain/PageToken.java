@@ -8,14 +8,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
+import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class PageToken {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(PageToken.class);
 
     /**
      * Encode the Map object with cursor keys and values into a base 64 encoded string.
@@ -28,12 +26,11 @@ public class PageToken {
            return Base64.getEncoder().encodeToString(cursorMapAsJsonString.getBytes());
        }
        catch(Exception e) {
-
-           LOGGER.error("Unable to encode hashmap to base64 string", e);
-
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Internal server error. Please check the error log.");
+           log.error("Unable to encode hashmap to base64 string", e);
+           throw new GobiiDomainException(
+               GobiiStatusLevel.ERROR,
+               GobiiValidationStatusType.NONE,
+               "Internal server error. Please check the error log.");
        }
     }
 
@@ -45,7 +42,6 @@ public class PageToken {
     public static Map<String, Integer> decode(String pageToken) {
 
         try {
-
             if(pageToken == null || pageToken.isEmpty()) {
                 return null;
             }
@@ -53,28 +49,28 @@ public class PageToken {
             byte[] decodedBytes = Base64.getDecoder().decode(pageToken);
             String cursorMapJsonString = new String(decodedBytes);
 
-            Map<String, Integer> cursorMap = (new ObjectMapper()).readValue(cursorMapJsonString,
+            Map<String, Integer> cursorMap =
+                (new ObjectMapper()).readValue(
+                    cursorMapJsonString,
                     new TypeReference<HashMap<String, Integer>>(){});
 
             return cursorMap;
 
         }
         catch(InvalidFormatException je) {
-
-            LOGGER.error("Unable to parse page token json string", je);
-
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid page token");
+            log.error("Unable to parse page token json string", je);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Invalid page token");
 
         }
         catch(Exception e) {
-
-            LOGGER.error("Unable to decode pageToken", e);
-
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Internal server error. Please check the error log.");
+            log.error("Unable to decode pageToken", e);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Internal server error. Please check the error log.");
         }
 
     }

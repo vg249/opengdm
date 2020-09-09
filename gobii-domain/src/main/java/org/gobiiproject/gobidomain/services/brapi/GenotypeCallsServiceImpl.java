@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.brapi;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
@@ -21,22 +22,16 @@ import org.gobiiproject.gobiimodel.utils.JsonNodeUtils;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
 @Transactional
+@Slf4j
 public class GenotypeCallsServiceImpl implements GenotypeCallsService {
-
-    Logger LOGGER = LoggerFactory.getLogger(GenotypeCallsService.class);
 
     final String unphasedSep = "/";
     final String unknownChar = "N/N";
@@ -205,19 +200,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             return returnVal;
 
         }
-        catch (GobiiException gE) {
-
-            throw gE;
-
-        }
-        catch (Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
-
+        catch (IOException e) {
+            log.error(e.getMessage(), e);
             throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
                 "Internal Server Error. Please check the error log");
-
         }
 
     }
@@ -235,14 +223,13 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantDbId(
-            Integer markerId, Integer pageSize, String pageToken) {
+        Integer markerId,
+        Integer pageSize,
+        String pageToken) {
 
         PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
-
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
-
         GenotypesRunTimeCursors cursors = new GenotypesRunTimeCursors();
-
         String nextPageToken;
 
         try {
@@ -269,10 +256,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             // Sort dataset ids
             Collections.sort(markerDatasetIds);
 
-            Integer datasetIdCursorStart = 0;
+            int datasetIdCursorStart = 0;
 
             if(cursors.startDatasetId != null && cursors.startDatasetId > 0) {
-                datasetIdCursorStart = markerDatasetIds.indexOf(cursors.startDatasetId);
+                datasetIdCursorStart = markerDatasetIds.indexOf(cursors.startDatasetId.toString());
             }
 
             // Read Genotypes for makers in dataset until page is filled
@@ -288,7 +275,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     .get(datasetId)
                     .add(marker.getDatasetMarkerIdx().get(datasetId).textValue());
                 List<DnaRun> dnaRuns =
-                    dnaRunDao.getDnaRunsByDnaRunIdCursor(genotypesToBeRead, cursors.dnaRunIdCursor,
+                    dnaRunDao.getDnaRunsByDnaRunIdCursor(
+                        genotypesToBeRead,
+                        cursors.dnaRunIdCursor,
                         Integer.parseInt(datasetId));
 
                 int indexOffset = genotypeCalls.size();
@@ -337,7 +326,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
 
             if(genotypeCalls.size() >= pageSize) {
-
                 Map<String ,Integer> nextPageCursorMap = new HashMap<>();
                 nextPageCursorMap.put(
                     "datasetId", genotypeCalls.get(genotypeCalls.size() - 1).getVariantSetDbId());
@@ -345,7 +333,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     "dnaRunId", genotypeCalls.get(genotypeCalls.size() - 1).getCallSetDbId());
                 nextPageToken = PageToken.encode(nextPageCursorMap);
                 returnVal.setNextPageToken(nextPageToken);
-
             }
             returnVal.setCurrentPageSize(genotypeCalls.size());
 
@@ -354,17 +341,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             return returnVal;
 
         }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
-
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Internal Server Error. Please check the error log");
-
+        catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Internal Server Error. Please check the error log");
         }
     }
 
@@ -415,10 +397,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 cursors.nextDnaRunOffset = cursors.dnaRunOffset + dnaRuns.size();
                 cursors.nextPageOffset = cursors.pageOffset;
             }
-            /**
-             * case 2: total number of dnarun in the dataset
-             * is less than page size
-             */
+
+            //case 2: total number of dnarun in the dataset
+            //is less than page size
             else if(cursors.dnaRunOffset == 0 && dnaRuns.size() < pageSize) {
 
                 cursors.markerPageSize =
@@ -442,13 +423,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                 cursors.columnOffset = 0;
             }
-            /**
-             * case 3: columnoffset > 0 and dnruns size is
-             * less than page size.
-             */
+            //case 3: columnoffset > 0 and dnruns size is
+            //less than page size.
             else if(cursors.dnaRunOffset > 0 && dnaRuns.size() < pageSize) {
 
-                Integer remainingPageSize = pageSize - dnaRuns.size();
+                int remainingPageSize = pageSize - dnaRuns.size();
 
                 List<DnaRun> remainingDnaRuns =
                     dnaRunDao.getDnaRunsByDatasetId(datasetId, remainingPageSize, 0);
@@ -573,19 +552,24 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
 
             Hdf5InterfaceResultDTO extractResult =
-                this.extractGenotypes(cursors.markerHdf5IndexMap, cursors.dnarunHdf5IndexMap);
+                this.extractGenotypes(
+                    cursors.markerHdf5IndexMap,
+                    cursors.dnarunHdf5IndexMap);
 
-
-            this.readGenotypesFromFile(genotypeCalls, extractResult.getGenotypeFile(),
-                pageSize, datasetId, cursors.columnOffset,
-                markers, dnaRuns, new ArrayList<>(cursors.dnarunHdf5OrderMap.values()));
-
+            this.readGenotypesFromFile(
+                genotypeCalls,
+                extractResult.getGenotypeFile(),
+                pageSize,
+                datasetId,
+                cursors.columnOffset,
+                markers,
+                dnaRuns,
+                new ArrayList<>(cursors.dnarunHdf5OrderMap.values()));
 
             returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
 
             //Set page token only if there are genotypes
             if(genotypeCalls.size() > 0) {
-
                 Map<String, Integer> nextPageCursorMap = new HashMap<>();
 
                 //set next page offset and column offset as page token parts
@@ -597,23 +581,12 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 if(genotypeCalls.size() >= pageSize) {
                     returnVal.setNextPageToken(nextPageToken);
                 }
-
                 returnVal.setCurrentPageSize(genotypeCalls.size());
-
             }
-
             FileUtils.deleteDirectory(new File(extractResult.getOutputFolder()));
-
         }
-        catch (GobiiException gE) {
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-            throw new GobiiDomainException(
-                gE.getGobiiStatusLevel(),
-                gE.getGobiiValidationStatusType(),
-                gE.getMessage());
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
+        catch (NullPointerException | IOException e) {
+            log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
 
@@ -656,7 +629,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
+            log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
 
@@ -717,7 +690,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
+            log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
 
@@ -768,7 +741,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                 cursors.markerBinCursor = pageTokenParts.getOrDefault("markerBinCursor", 0);
             }
 
-            Integer remainingPageSize;
+            int remainingPageSize;
 
             while(genotypeCalls.size() < pageSize) {
 
@@ -867,10 +840,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         cursors.dnarunHdf5IndexMap.get(datasetId);
 
                     int totalDnaRuns = dnaRunHdf5IndicesDataset.size();
-
-                    int nextDnaRunOffset = 0;
-
-                    int numOfMarkersReq = 0;
+                    int nextDnaRunOffset;
+                    int numOfMarkersReq;
 
                     if (pageSize < totalDnaRuns) {
 
@@ -952,7 +923,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         continue;
                     }
 
-                    Integer markerLimit = cursors.pageOffset + numOfMarkersReq;
+                    int markerLimit = cursors.pageOffset + numOfMarkersReq;
 
                     if (markerLimit > markersHdf5IndicesDataset.size()) {
                         markerLimit = markersHdf5IndicesDataset.size();
@@ -983,7 +954,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
                     if (genotypeCalls.size() >= pageSize) {
 
-                        Integer nextPageOffset = 0;
+                        int nextPageOffset;
 
                         if (nextDnaRunOffset > 0 && nextDnaRunOffset < totalDnaRuns) {
                             nextPageOffset = (cursors.pageOffset + numOfMarkersReq - 1);
@@ -1039,15 +1010,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             returnVal.setResult(getGenotypeCallsResult(genotypeCalls));
 
         }
-        catch (GobiiException gE) {
-
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-
-            throw new GobiiDomainException(gE.getGobiiStatusLevel(),
-                gE.getGobiiValidationStatusType(), gE.getMessage());
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
+        catch (IOException e) {
+            log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
 
@@ -1055,7 +1019,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     }
 
     @Override
-    public String getGenotypeCallsAsString(Integer datasetId, Integer pageNum) {
+    public String getGenotypeCallsAsString(Integer datasetId,
+                                           Integer pageNum) throws GobiiException {
 
         String returnVal = "";
 
@@ -1063,20 +1028,21 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
         Objects.requireNonNull(datasetId, "markerRowOffset : Non Null parameter");
 
         //TODO: Add properties in gobii-web.xml to configure maximum page sizes
-        Integer pageSize = 10000;
+        int pageSize = 10000;
+        int dnaRunRowOffset = 0;
 
-        Integer dnaRunRowOffset = 0;
         Integer markerRowOffset = pageNum*pageSize;
 
         List<String> headerValues = new ArrayList<>();
-
         Map<String, List<String>> markerHdf5IndexMap= new HashMap<>();
-
         Map<String, List<String>> dnarunHdf5IndexMap = new HashMap<>();
 
         try {
 
-            List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, pageSize, markerRowOffset);
+            List<Marker> markers = markerDao.getMarkersByDatasetId(
+                datasetId,
+                pageSize,
+                markerRowOffset);
 
             if(markers.size() == 0) {
                 return returnVal;
@@ -1132,18 +1098,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             return returnVal;
         }
-        catch (GobiiException gE) {
-
-            LOGGER.error(gE.getMessage(), gE.getMessage());
-
-            throw new GobiiDomainException(
-                    gE.getGobiiStatusLevel(),
-                    gE.getGobiiValidationStatusType(),
-                    gE.getMessage()
-            );
-        }
-        catch (Exception e) {
-            LOGGER.error("Gobii service error", e);
+        catch (NullPointerException | IOException e) {
+            log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
 
@@ -1155,24 +1111,32 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     private Hdf5InterfaceResultDTO extractGenotypes(Map<String, List<String>> markerHdf5IndexMap,
                                                     Map<String, List<String>> sampleHdf5IndexMap
-    ) throws Exception {
+    ) throws GobiiException {
 
         String tempFolder = UUID.randomUUID().toString();
 
-        Hdf5InterfaceResultDTO extractResult =
-            hdf5Interface.getHDF5Genotypes(
-                true, markerHdf5IndexMap, sampleHdf5IndexMap, tempFolder);
-
-        return extractResult;
-
+        try {
+            return hdf5Interface.getHDF5Genotypes(
+                true,
+                markerHdf5IndexMap,
+                sampleHdf5IndexMap,
+                tempFolder);
+        }
+        catch (FileNotFoundException fE) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Genotypes Extraction failed. System Error.");
+        }
     }
 
 
-    private void readGenotypesFromFile (List<GenotypeCallsDTO> returnVal, String extractListPath,
-                                        int indexOffset) {
-
+    private void readGenotypesFromFile (
+        List<GenotypeCallsDTO> returnVal,
+        String extractListPath,
+        int indexOffset
+    ) {
         try {
-
             File genotypCallsFile = new File(extractListPath);
             FileInputStream fstream = new FileInputStream(genotypCallsFile);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
@@ -1198,9 +1162,11 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             br.close();
             fstream.close();
         }
-        catch (Exception e) {
-            LOGGER.error( "Gobii Extraction service failed to read from result file",e);
-            throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE,
+        catch (IOException e) {
+            log.error( "Gobii Extraction service failed to read from result file",e);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
                 "Genotypes Extraction failed. System Error.");
         }
 
@@ -1216,140 +1182,151 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                                            Integer columnOffset,
                                            List<Marker> markers,
                                            List<DnaRun> dnaruns,
-                                           List<Integer> dnarunOrder)  throws Exception {
+                                           List<Integer> dnarunOrder) throws GobiiException {
 
 
-        File genotypCallsFile = new File(genotypeMatrixFilePath);
+        try {
+            File genotypCallsFile = new File(genotypeMatrixFilePath);
+            FileInputStream fstream = new FileInputStream(genotypCallsFile);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-        FileInputStream fstream = new FileInputStream(genotypCallsFile);
+            int i = 0; // row index
+            int j = 0; // column index
+            int k = 0; // genotypes count
+            int chrEach;
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            StringBuilder genotype = new StringBuilder();
 
-        Integer i = 0; // row index
-        Integer j = 0; // column index
-        int k = 0; // genotypes count
+            while ((chrEach = br.read()) != -1 && k < pageSize) {
+
+                char genotypesChar = (char) chrEach;
+
+                if (genotypesChar == '\t' || genotypesChar == '\n') {
+
+                    if (j < columnOffset) {
+                        j += 1;
+                        genotype.setLength(0);
+                        continue;
+                    }
+
+                    columnOffset = 0;
+
+                    GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+
+                    genotypeCall.setCallSetDbId(dnaruns.get(dnarunOrder.get(j)).getDnaRunId());
+                    genotypeCall.setCallSetName(dnaruns.get(dnarunOrder.get(j)).getDnaRunName());
+                    genotypeCall.setVariantDbId(markers.get(i).getMarkerId());
+                    genotypeCall.setVariantName(markers.get(i).getMarkerName());
+                    genotypeCall.setVariantSetDbId(datasetId);
+                    genotypeCall.setSepUnphased(unphasedSep);
+                    genotypeCall.setUnknownString(unknownChar);
+
+                    genotypeCall.setGenotype(new HashMap<>());
+                    String[] genotypeValues = new String[]{genotype.toString()};
+                    genotypeCall.getGenotype().put("values", genotypeValues);
+
+                    returnVal.add(genotypeCall);
 
 
+                    if (genotypesChar == '\t') {
+                        j++;
+                    } else {
+                        i++;
+                        j = 0;
+                    }
 
-        int chrEach;
+                    k++;
 
-        StringBuilder genotype = new StringBuilder();
-
-        while ((chrEach = br.read()) != -1 && k < pageSize) {
-
-
-            char genotypesChar = (char) chrEach;
-
-            if(genotypesChar == '\t' || genotypesChar == '\n') {
-
-                if(j < columnOffset) {
-                    j += 1;
                     genotype.setLength(0);
-                    continue;
+
+                } else {
+                    genotype.append(genotypesChar);
+                    if (genotype.length() == 2) {
+                        genotype.insert(1, unphasedSep);
+                    }
                 }
-
-                columnOffset = 0;
-
-                GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
-
-                genotypeCall.setCallSetDbId(dnaruns.get(dnarunOrder.get(j)).getDnaRunId());
-                genotypeCall.setCallSetName(dnaruns.get(dnarunOrder.get(j)).getDnaRunName());
-                genotypeCall.setVariantDbId(markers.get(i).getMarkerId());
-                genotypeCall.setVariantName(markers.get(i).getMarkerName());
-                genotypeCall.setVariantSetDbId(datasetId);
-                genotypeCall.setSepUnphased(unphasedSep);
-                genotypeCall.setUnknownString(unknownChar);
-
-                genotypeCall.setGenotype(new HashMap<>());
-                String[] genotypeValues = new String[] {genotype.toString()};
-                genotypeCall.getGenotype().put("values", genotypeValues);
-
-                returnVal.add(genotypeCall);
-
-
-                if(genotypesChar == '\t') {
-                    j++;
-                }
-                else {
-                    i++;
-                    j = 0;
-                }
-
-                k++;
-
-                genotype.setLength(0);
 
             }
-            else {
-                genotype.append(genotypesChar);
-                if(genotype.length() == 2) {
-                    genotype.insert(1, unphasedSep);
-                }
-            }
 
+            br.close();
+            fstream.close();
+
+            return j;
         }
-
-        br.close();
-        fstream.close();
-
-        return j;
+        catch (IOException e) {
+            log.error( "Gobii Extraction service failed to read from result file", e);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Genotypes Extraction failed. System Error.");
+        }
     }
 
     private String readGenotypesFromFile(String genotypeMatrixFilePath,
                                          List<Marker> markerMetadataList,
                                          List<DnaRun> dnarunMetadataList,
-                                         String header)  throws Exception {
+                                         String header)  throws GobiiException {
 
         File genotypCallsFile = new File(genotypeMatrixFilePath);
+        FileInputStream fstream;
 
-        FileInputStream fstream = new FileInputStream(genotypCallsFile);
+        try {
+            fstream = new FileInputStream(genotypCallsFile);
 
-        int i = 0;
+            int i = 0;
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-        int chrEach;
+            int chrEach;
 
-        StringBuilder genotypes = new StringBuilder();
+            StringBuilder genotypes = new StringBuilder();
 
-        if(header != null && !header.isEmpty()) {
-            genotypes.append(header);
-            genotypes.append('\n');
-        }
-
-        genotypes.append(markerMetadataList.get(i).getMarkerName());
-        genotypes.append(',');
-        StringBuilder genotype = new StringBuilder();
-
-        while ((chrEach = br.read()) != -1) {
-            char genotypesChar = (char) chrEach;
-            if(genotypesChar == '\t') {
-                genotypes.append(genotype);
-                genotypes.append(',');
-                genotype.setLength(0);
-            }
-            else if(genotypesChar == '\n') {
-                i++;
-                genotypes.append(genotype);
+            if(header != null && !header.isEmpty()) {
+                genotypes.append(header);
                 genotypes.append('\n');
-                genotype.setLength(0);
-                if(i < markerMetadataList.size()) {
-                    genotypes.append(markerMetadataList.get(i).getMarkerName());
+            }
+
+            genotypes.append(markerMetadataList.get(i).getMarkerName());
+            genotypes.append(',');
+            StringBuilder genotype = new StringBuilder();
+
+            while ((chrEach = br.read()) != -1) {
+                char genotypesChar = (char) chrEach;
+                if(genotypesChar == '\t') {
+                    genotypes.append(genotype);
                     genotypes.append(',');
+                    genotype.setLength(0);
+                }
+                else if(genotypesChar == '\n') {
+                    i++;
+                    genotypes.append(genotype);
+                    genotypes.append('\n');
+                    genotype.setLength(0);
+                    if(i < markerMetadataList.size()) {
+                        genotypes.append(markerMetadataList.get(i).getMarkerName());
+                        genotypes.append(',');
+                    }
+                }
+                else {
+                    genotype.append(genotypesChar);
+                    if(genotype.length() == 2) {
+                        genotype.insert(1, unphasedSep);
+                    }
                 }
             }
-            else {
-                genotype.append(genotypesChar);
-                if(genotype.length() == 2) {
-                    genotype.insert(1, unphasedSep);
-                }
-            }
+
+            br.close();
+            fstream.close();
+
+            return genotypes.toString();
         }
-
-        br.close();
-        fstream.close();
-
-        return genotypes.toString();
+        catch (IOException e) {
+            log.error( "Gobii Extraction service failed to read from result file", e);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Genotypes Extraction failed. System Error.");
+        }
 
     }
 

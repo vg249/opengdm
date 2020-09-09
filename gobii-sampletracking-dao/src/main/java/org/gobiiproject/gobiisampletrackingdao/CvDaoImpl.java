@@ -59,11 +59,11 @@ public class CvDaoImpl implements CvDao {
                     "CV group name should not be null");
             return this.getCvs(null, cvGroupName, cvType, null, null);
         } catch (Exception e) {
-
             log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
-
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage());
         }
     }
 
