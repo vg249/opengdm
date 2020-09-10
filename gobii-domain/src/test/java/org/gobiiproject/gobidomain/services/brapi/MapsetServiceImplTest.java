@@ -83,8 +83,9 @@ public class MapsetServiceImplTest {
                 any(Integer.TYPE), any(Integer.TYPE))
         ).thenThrow(new GobiiDaoException(""));
 
-        assertThrows(GobiiException.class, () ->
-            mapsetBrapiService.getMapSets(any(Integer.TYPE), 0, null));
+        assertThrows(GobiiException.class, () -> {
+            mapsetBrapiService.getMapSets(null, null, null);
+        });
 
 
 
@@ -115,7 +116,7 @@ public class MapsetServiceImplTest {
             mapsetDao.getMapsetWithCountsById(any(Integer.TYPE))
         ).thenThrow(new GobiiDomainException(""));
 
-        assertThrows(GobiiException.class, () ->
+        assertThrows(GobiiDomainException.class, () ->
             mapsetBrapiService.getMapSetById(any(Integer.TYPE)));
     }
 
