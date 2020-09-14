@@ -105,5 +105,28 @@ export class NameIdListBoxComponent  {
         this.selectedItem = this.options[0].value;
     }
 
+    public refreshData(): void {
+
+        let scope$ = this;
+        this.fileItemService.getForFilter(this.filterParamName).subscribe( items => {
+            scope$.options = [];
+            
+            items.forEach((item, index) => {
+                let itemLabel = item.getItemName().length < 34 ? item.getItemName() : item.getItemName().substr(0,30).concat(" . . .");
+                if (index == 0) {
+                    scope$.selectedItem = item.getFileItemUniqueId();
+                }
+                scope$.options.push(
+                    {
+                        label: itemLabel,
+                        value: item.getFileItemUniqueId()
+                    }
+                );
+            });
+
+           
+        });
+    }
+
 
 } // class

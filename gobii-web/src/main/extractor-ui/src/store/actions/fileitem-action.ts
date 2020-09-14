@@ -18,6 +18,8 @@ export const LOAD_FILE_ITEM_LIST_WITH_FILTER = '[GobiiFileItem] Load File Item L
 export const LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item';
 export const LOAD_FILTER = '[GobiiFileItem] Load Filter List';
 export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract';
+export const SET_CROP_TYPE = '[GobiiFileItem] Set crop';
+export const RESET_FILE_ITEMS = '[GobiiFileItem] Reset File Items';
 
 /**
  * Every action is comprised of at least a type and an optional
@@ -136,6 +138,17 @@ export class RemoveAllFromExtractAction implements Action {
     }
 }
 
+export class SetCurrentCropAction implements Action {
+    readonly type = SET_CROP_TYPE;
+    constructor(public payload: string) {
+    }
+}
+
+export class ResetFileItems implements Action {
+    readonly type = RESET_FILE_ITEMS;
+    constructor() {}
+}
+
 
 /**
  * Export a type alias of all actions in this action group
@@ -152,5 +165,7 @@ export type All
     | SetExtractType
     | ReplaceByItemIdAction
     | ReplaceItemOfSameCompoundIdAction
-    | LoadFilterAction;
+    | SetCurrentCropAction
+    | LoadFilterAction
+    | ResetFileItems;
 

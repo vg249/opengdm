@@ -30,13 +30,15 @@ export interface State {
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[];
     filters: Map<string, PayloadFilter>;
+    currentCrop: string;
 };
 
 export const initialState: State = {
     gobiiExtractFilterType: GobiiExtractFilterType.UNKNOWN,
     uniqueIdsOfExtractFileItems: [],
     allFileItems: [],
-    filters: new Map<string, PayloadFilter>()
+    filters: new Map<string, PayloadFilter>(),
+    currentCrop: null
 };
 
 function addToExtractItems(state: State, targetFileItem: GobiiFileItem): State {
@@ -62,7 +64,8 @@ function addToExtractItems(state: State, targetFileItem: GobiiFileItem): State {
         gobiiExtractFilterType: state.gobiiExtractFilterType,
         allFileItems: fileItems,
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
-        filters: state.filters
+        filters: state.filters,
+        currentCrop: state.currentCrop
     };
 
     return returnVal;
@@ -97,7 +100,8 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
         gobiiExtractFilterType: state.gobiiExtractFilterType,
         allFileItems: newFileItemState,
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
-        filters: state.filters
+        filters: state.filters,
+        currentCrop: state.currentCrop,
     };
 
     return returnVal;
@@ -146,7 +150,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: newSelectedFileItemUniqueIdsState,
                 allFileItems: newFileItemsItemsState,
-                filters: state.filters
+                filters: state.filters,
+                currentCrop: state.currentCrop
             };
 
             break;
@@ -184,7 +189,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                 allFileItems: [...state.allFileItems, ...newGobiiFileItems],
-                filters: newFilterState
+                filters: newFilterState,
+                currentCrop: state.currentCrop
             };
 
             break;
@@ -263,7 +269,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                 allFileItems: newFileItemState,
-                filters: newFilterState
+                filters: newFilterState,
+                currentCrop: state.currentCrop
             };
 
             break;
@@ -328,7 +335,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 allFileItems: [...state.allFileItems],
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                filters: state.filters
+                filters: state.filters,
+                currentCrop: state.currentCrop
             };
 
 
@@ -406,7 +414,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 allFileItems: newFIleItemState,
                 uniqueIdsOfExtractFileItems: newSelectedItems,
-                filters: state.filters
+                filters: state.filters,
+                currentCrop: state.currentCrop
             };
 
             break;
@@ -420,11 +429,34 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 gobiiExtractFilterType: gobiiExtractFilterType,
                 allFileItems: state.allFileItems.map(node => GobiiFileItem.copy(node)),
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                filters: state.filters
+                filters: state.filters,
+                currentCrop: state.currentCrop
             };
 
             break;
 
+        }
+
+        case gobiiFileItemAction.SET_CROP_TYPE: {
+            const crop = action.payload;
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                allFileItems: state.allFileItems,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                filters: state.filters,
+                currentCrop: crop
+            };
+        }
+
+        case gobiiFileItemAction.RESET_FILE_ITEMS: {
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                allFileItems: state.allFileItems.filter(fi => fi.getCropType() == null),
+                uniqueIdsOfExtractFileItems: [],
+                filters: state.filters,
+                currentCrop: state.currentCrop
+            }
         }
 
     }
@@ -449,12 +481,20 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 export const getGobiiExtractFilterType = (state: State) => state.gobiiExtractFilterType;
 
 export const getFileItems = (state: State) => state.allFileItems.filter(fi =>
-    fi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
+    fi.getGobiiExtractFilterType() === state.gobiiExtractFilterType 
+);
+
+export const getCropFileItems = (state: State) => state.allFileItems.filter(fi => 
+    fi.getGobiiExtractFilterType() === state.gobiiExtractFilterType && (
+        fi.getCropType() === state.currentCrop 
+    )
 );
 
 export const getCrops = (state: State) => state.allFileItems.filter(fi =>
     fi.getEntityType() === EntityType.CROP
 );
+
+export const getSelectedCrop = (state: State) => state.currentCrop;
 
 export const getUniqueIds = (state: State) => state.allFileItems.map(fileItem => fileItem.getFileItemUniqueId());
 
@@ -691,15 +731,12 @@ export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, 
 
 // here
 export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
-
     let returnVal: GobiiFileItem[] = [];
 
     let contactId: string = null;
     if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
         contactId = filters[FilterParamNames.PROJECTS_BY_CONTACT].relatedEntityFilterValue;
     }
-
-    let projectId
 
     returnVal = fileItems.filter(
         e =>

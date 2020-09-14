@@ -95,9 +95,7 @@ export class FileItemEffects {
         ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER),
         switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
 
-
                 return Observable.create(observer => {
-
 
                     let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
                         .AddFilterRetrieved(
@@ -219,7 +217,6 @@ export class FileItemEffects {
     replaceInExtract$ = this.actions$.pipe(
         ofType(fileItemActions.REPLACE_BY_ITEM_ID),
         switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
-
                 //  This action is triggered by the ubiguitous NameIdListBoxComponent
                 // as such, there are business behaviors that must be implemented here.
                 // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
@@ -240,12 +237,14 @@ export class FileItemEffects {
 
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 //If item ID is 0, is a label item, and so for filtering purposes it's null
-                                let filterValue: string = ( fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
+                                let filterValue: string = ( fileItemToReplaceWith && fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
                                 if (filterParamName !== FilterParamNames.UNKNOWN ) {
-
+                                    let cropType = null;
+                                    if (fileItemToReplaceWith)  cropType == fileItemToReplaceWith.getCropType();  
                                     this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType,
                                         filterParamName,
-                                        filterValue).subscribe(loadFileItemListAction => {
+                                        filterValue,
+                                        cropType).subscribe(loadFileItemListAction => {
 
                                             if( loadFileItemListAction ) {
                                                 if (loadFileItemListAction) {
@@ -262,7 +261,7 @@ export class FileItemEffects {
                                 } // if we had a filter to dispatch
 
                                 // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
-                                if (fileItemToReplaceWith.getIsExtractCriterion()) {
+                                if (fileItemToReplaceWith && fileItemToReplaceWith.getIsExtractCriterion()) {
                                     if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
                                         let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
                                         observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));

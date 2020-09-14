@@ -9,8 +9,12 @@
                 <span class="panel-title">{{currentStatus}}</span>
                 <span class="panel-title" style="float:right">{{loggedInUser}}</span>
             </div> <!-- panel heading  -->
-                      
-            <div class="card-body container-fluid">
+            <div class="card-body container-fluid" *ngIf="isProfileOk() === false">
+                <div>
+                    Your email address is not indicated in your user profile.  Please contact the GDM system administrator immediately.  
+                </div>
+            </div>
+            <div class="card-body container-fluid" *ngIf="isProfileOk() === true">
                 <div class="row">
                     <div  style="margin-left: 15px;margin-top:20px;margin-bottom:20px;display:flex;align-items:center">
                         <span style="vertical-align: middle;color: #007ad9">
@@ -75,8 +79,8 @@
                                                             </tbody>
                                                         </table>
                                                         <p-footer>
-                                                        <dataset-datatable
-                                                                [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                        <dataset-datatable #dataTable
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </dataset-datatable>
                                                         </p-footer>
                                                     

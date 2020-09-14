@@ -5,8 +5,18 @@ import { map } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { KeycloakService } from 'keycloak-angular';
 
+
+import {DtoHeaderAuth} from "../../model/dto-header-auth";
+import {HttpValues} from "../../model/http-values";
+import { KeycloakProfile } from 'keycloak-js';
+import { trigger } from '@angular/animations';
+
 @Injectable()
 export class AuthenticationService {
+    setProfile(profile: KeycloakProfile) {
+        this.profile = profile;
+        this.profileLoaded = true;
+    }
 
 
     constructor(private _http: HttpClient,
@@ -20,14 +30,12 @@ export class AuthenticationService {
     private userEmail: string = null;
     private profileLoaded: boolean = false;
     private _gobiiCropType: string = "";
+    private profile: KeycloakProfile = null;
     //private authUrl: string = "gobii/v1/auth";
 
 
     public getToken() {
         return from(this._keycloakService.getToken());
-
-        //return this.token;
-
     } // getToken()
 
     private setToken(token: string) {
@@ -35,13 +43,8 @@ export class AuthenticationService {
     }
 
     public loadUserProfile() {
-        let scope$ = this;
-        from(this._keycloakService.loadUserProfile()).subscribe(
-            profile => {
-                scope$.profileLoaded = true;
-                scope$.userEmail = profile.email;
-            }
-        );
+        //let scope$ = this;
+        return from(this._keycloakService.loadUserProfile())
     }
 
 
@@ -58,6 +61,8 @@ export class AuthenticationService {
     //     return this.userName;
     // }
     public getUserName() {
+        if (this.profileLoaded) return this.profile.username;
+
         return this._keycloakService.getUsername();
     }
 
@@ -68,5 +73,7 @@ export class AuthenticationService {
     public isProfileLoaded() {
         return this.profileLoaded;
     }
+    
+    
     
 }

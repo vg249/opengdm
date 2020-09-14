@@ -116,11 +116,15 @@ export const getFileItemsState = (state: State) => state.fileItems;
  * The created selectors can also be composed together to select different
  * pieces of state.
  */
-export const getFileItemsFilters = createSelector(getFileItemsState, fromFileItems.getFilters);
-export const getAllFileItems = createSelector(getFileItemsState, fromFileItems.getAll);
-export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
 
 export const getCrops = createSelector(getFileItemsState, fromFileItems.getCrops);
+export const getSelectedCrop = createSelector(getFileItemsState, fromFileItems.getSelectedCrop);
+export const getFileItemsFilters = createSelector(getFileItemsState, fromFileItems.getFilters);
+export const getAllFileItems = createSelector(getFileItemsState,  fromFileItems.getAll);
+export const getAllCropFilItems  = createSelector(getFileItemsState, fromFileItems.getCropFileItems);
+export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
+
+
 
 export const getPiContacts = createSelector(getFileItemsState, fromFileItems.getPiContacts);
 export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);

@@ -18,6 +18,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           _entitySubType: EntitySubType,
                           _cvFilterType: CvFilterType,
                           _cvFilterValue: string,
+                          private _cropType: string,
                           private _itemId: string,
                           private _itemName: string,
                           private _selected: boolean,
@@ -43,6 +44,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._hasEntity = _hasEntity;
         this._pageNumber = _pageNumber;
         this._isEphemeral = _isEphemeral;
+        this._cropType = _cropType;
 
         this._fileItemUniqueId = Guid.generateUUID();
     }
@@ -61,6 +63,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             CvFilterType.UNKNOWN,
             null,
             null,
+            null, //cropType;
             null,
             null,
             null,
@@ -84,6 +87,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             EntityType.UNKNOWN,
             EntitySubType.UNKNOWN,
             CvFilterType.UNKNOWN,
+            null,
             null,
             null,
             null,
@@ -319,6 +323,15 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
 
     setIsEphemeral(value: boolean): GobiiFileItem {
         this._isEphemeral = value;
+        return this;
+    }
+
+    getCropType(): string {
+        return this._cropType;
+    }
+
+    setCropType(value: string) {
+        this._cropType = value;
         return this;
     }
 
