@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobiidomain.services.PingService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmByDbId;

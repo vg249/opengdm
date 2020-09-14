@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.gobiiproject.gobidomain.services.gdmv3.*;
+import org.gobiiproject.gobiidomain.services.gdmv3.*;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
@@ -26,7 +26,6 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.*;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;

@@ -7,8 +7,8 @@ import javax.persistence.PersistenceException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import org.apache.maven.wagon.ResourceDoesNotExistException;
-import org.gobiiproject.gobidomain.services.gdmv3.exceptions.InvalidMarkersException;
-import org.gobiiproject.gobidomain.services.gdmv3.exceptions.MarkerStatus;
+import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidMarkersException;
+import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.MarkerStatus;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiiweb.controllers.brapi.BRAPIIControllerV1;

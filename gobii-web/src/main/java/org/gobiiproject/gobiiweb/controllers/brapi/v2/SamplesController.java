@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiweb.controllers.brapi.v2;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.gobiiproject.gobidomain.services.brapi.SamplesService;
+import org.gobiiproject.gobiidomain.services.brapi.SamplesService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.SamplesDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;

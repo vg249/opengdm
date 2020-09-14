@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiweb.controllers.brapi.v2;
 
 import io.swagger.annotations.*;
-import org.gobiiproject.gobidomain.services.brapi.StudiesService;
+import org.gobiiproject.gobiidomain.services.brapi.StudiesService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.StudiesDTO;
