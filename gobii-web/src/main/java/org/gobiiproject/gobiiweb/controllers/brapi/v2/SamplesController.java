@@ -70,10 +70,8 @@ public class SamplesController {
             defaultValue = BrapiDefaults.pageSize) Integer pageSize
     ) throws GobiiException {
 
-        log.info(
-            "getting Samples by " +
-                "[sampleDdbId | observationUnitDbId | germplasmDbId | page | pageSize]" +
-                "\n {} | {} | {} | {} | {}",
+        log.info("getting Samples by [sampleDdbId | observationUnitDbId | germplasmDbId " +
+                "| page | pageSize]\n {} | {} | {} | {} | {}",
             sampleDbId,
             observationUnitDbId,
             germplasmDbId,

@@ -85,6 +85,8 @@ public class SearchCallSetsController extends SearchController {
         @Valid @RequestBody CallSetsSearchQueryDTO callSetsSearchQuery,
         HttpServletRequest request
     ) throws GobiiException {
+        log.info("submitting Callsets Search query\n {}",
+            callSetsSearchQuery);
         return submitSearchQuery(callSetsSearchQuery, request);
     }
 

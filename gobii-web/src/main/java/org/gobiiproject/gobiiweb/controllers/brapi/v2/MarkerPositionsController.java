@@ -62,6 +62,14 @@ public class MarkerPositionsController {
         MarkerPositions markerPositionsFilter
     ) throws GobiiException {
 
+        log.info("getting Marker Positions by [page | pageSize | minPosition | maxPosition |" +
+            "variantSetDbId]\n {} | {} | {} | {} | {}",
+            page,
+            pageSize,
+            minPosition,
+            maxPosition,
+            variantSetDbId);
+
         PagedResult<MarkerPositions> pagedResult =
             markerPositionsService.getMarkerPositions(
                 pageSize,
