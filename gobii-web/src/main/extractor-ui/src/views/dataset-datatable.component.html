@@ -55,12 +55,12 @@
                     (click)="selectDataset($event,fi,datasetOverlayPanel);"></button>
                 </td>
         
-            <td> {{ fi._entity.datasetName }}</td>
-            <td> {{ fi._entity.projectName }}</td>
-            <td> {{ fi._entity.experimentName }}</td>
-            <td> <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left"
+            <td class="cell-entry"> {{ fi._entity.datasetName }}</td>
+            <td class="cell-entry"> {{ fi._entity.projectName }}</td>
+            <td class="cell-entry"> {{ fi._entity.experimentName }}</td>
+            <td class="cell-entry"> <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left"
                 tooltipStyleClass="tableTooltip"> {{fi._entity.piLastName}}, {{fi._entity.piFirstName}} </span></td>
-            <td> {{ fi._entity.loadedDate | date:'yyyy-MM-dd' }}</td>
+            <td class="cell-entry"> {{ fi._entity.loadedDate | date:'yyyy-MM-dd' }}</td>
             </tr>
            
 

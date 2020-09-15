@@ -92,7 +92,12 @@ i{
     text-align: center;
 }
 
+.p-datatable .p-datatable-tbody > tr > td.cell-entry {
+    text-align: left;
+}
+
 .p-dropdown {
     min-width: 150px !important;
     width: 100%;
 }
+

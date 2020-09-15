@@ -75,5 +75,7 @@ export class AuthenticationService {
     }
     
     
-    
+    public logout() {
+        return from(this._keycloakService.logout());
+    }
 }
