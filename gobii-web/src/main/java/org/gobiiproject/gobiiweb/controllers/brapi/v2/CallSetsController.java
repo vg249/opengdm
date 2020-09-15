@@ -18,7 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-
+/**
+ * Brapi endpoint for CallSet (Dnarun in GDM).
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/callsets")
@@ -45,14 +49,12 @@ public class CallSetsController {
     }
 
     /**
-     * Lists the dnaruns by page size, page token and other filters.
+     * Lists the dnaruns by filter parameters.
      *
-     * @param page - page number to be fetched for callsets
-     * @param pageSize - Page size set by the user.
-     *                 If page size is more than maximum allowed
-     *                 page size, then the response will have maximum page size
-     * @param variantSetDbId - Variant Set Db Id
-     * @param callSetsFilter - CallsetBrapiDTO model to map the filters
+     * @param page              page to be fetched.
+     * @param pageSize          size of the page.
+     * @param variantSetDbId    Corresponds to dataset id
+     * @param callSetsFilter    {@link CallSetsSearchQueryDTO} fields in callsetDTO.
      * @return Brapi response with list of dna runs/call sets
      * @throws GobiiException when it is a bad request or service error.
      */
@@ -113,9 +115,9 @@ public class CallSetsController {
     /**
      * Gets a callset for given callSetDbId
      *
-     * @param callSetDbId ID of the requested callset.
-     * @return ResponseEntity with http status code specifying if retrieval of the
-     * callset is successful.
+     * @param callSetDbId id of the requested callset(dnarun).
+     * @return ResponseEntity with http status code specifying if retrieval of
+     * the callset is successful.
      * @throws GobiiException when it is a bad request or service error.
      */
     @ApiOperation(
@@ -157,13 +159,12 @@ public class CallSetsController {
     /**
      * Gets the list of genotypes calls for given callset id.
      * Fetches genotypes in all the datasets where the given callset id is present.
-     * The list is paged.
      *
-     * @param callSetDbId - DNA run Id.
-     * @param pageSize - Size of the page to fetched.
-     * @param pageToken - Page token to fetch the page.
-     *                  User will get the pageToken from the nextPageToken
-     *                  parameter in the previous response.
+     * @param callSetDbId   DNA run Id.
+     * @param pageSize      Size of the page to fetched.
+     * @param pageToken     Page token to fetch the page.
+     *                      User will get the pageToken from the nextPageToken parameter
+     *                      in the previous response.
      * @return BrApi Response entity with list of genotypes calls for given dnarun id.
      * @throws GobiiException when it is a bad request or service error
      */
