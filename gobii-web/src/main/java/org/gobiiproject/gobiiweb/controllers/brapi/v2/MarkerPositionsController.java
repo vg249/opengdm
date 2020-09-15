@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Brapi endpoint for callsets.
+ * callsets corresponds to dnaruns in gdm.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/markerpositions")
@@ -26,11 +32,30 @@ public class MarkerPositionsController {
 
     private final MarkerPositionsService markerPositionsService;
 
+    /**
+     * Constructor
+     *
+     * @param markerPositionsService    {@link MarkerPositionsService} instance
+     */
     @Autowired
     public MarkerPositionsController(final MarkerPositionsService markerPositionsService) {
         this.markerPositionsService = markerPositionsService;
     }
 
+    /**
+     * Gets markerpositions by user filter parameters.
+     *
+     * @param page                      Page to fetch
+     * @param pageSize                  Size of the page
+     * @param minPosition               Fetch marker positions with start position greater than
+     *                                  the given value.
+     * @param maxPosition               Fetch marker positions with stop position lesser than
+     *                                  the given value.
+     * @param variantSetDbId            Dataset Id marker positions belong to.
+     * @param markerPositionsFilter     {@link MarkerPositions} filter by marker position fields.
+     * @return  a list of marker position that satisfies filter parameters.
+     * @throws GobiiException when the request is bad oe due to any other service error.
+     */
     @ApiOperation(
         value = "List Marker positions", notes = "Lists Marker positions in GDM system.",
         tags = {"Genome Maps"}, extensions = {

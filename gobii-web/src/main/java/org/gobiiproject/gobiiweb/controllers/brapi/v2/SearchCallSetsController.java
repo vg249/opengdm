@@ -38,8 +38,8 @@ public class SearchCallSetsController extends SearchController {
     /**
      * Constructor.
      *
-     * @param searchService     The {@link SearchService} Search service implementation.
-     * @param callSetService    The {@link CallSetService} CallSets service implementation.
+     * @param searchService     The {@link SearchService} instance.
+     * @param callSetService    The {@link CallSetService} instance.
      */
     @Autowired
     public SearchCallSetsController(final SearchService searchService,
@@ -55,7 +55,7 @@ public class SearchCallSetsController extends SearchController {
      * @param callSetsSearchQuery   callSets search query object
      * @param request               http request object to fetch croptype.
      * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException
+     * @throws GobiiException The {@link GobiiException}
      */
     @ApiOperation(
         value = "Search CallSets", notes = "Creates a search query for callsets",
@@ -84,8 +84,12 @@ public class SearchCallSetsController extends SearchController {
         @Valid @RequestBody CallSetsSearchQueryDTO callSetsSearchQuery,
         HttpServletRequest request
     ) throws GobiiException {
-        log.info("submitting Callsets Search query\n {}",
-            callSetsSearchQuery);
+
+        log.info(
+            "Submitting callset search query\n {}",
+            callSetsSearchQuery.toString()
+        );
+
         return submitSearchQuery(callSetsSearchQuery, request);
     }
 
@@ -95,7 +99,7 @@ public class SearchCallSetsController extends SearchController {
      * @param pageSize          size of the page
      * @param page              page number to fetch
      * @return  Brapi list payload with callsets.
-     * @throws GobiiException
+     * @throws GobiiException The {@link GobiiException}
      */
     @ApiOperation(
         value = "List CallSets for SearchQuery",
@@ -144,6 +148,11 @@ public class SearchCallSetsController extends SearchController {
                 GobiiValidationStatusType.NONE,
                 "Internal Server Error " + e.getMessage());
         }
+
+        log.info("Getting search results for callSet search query. " +
+                "[searchResultDbId | cropType]\n {} | {} ",
+            searchResultDbId,
+            cropType);
 
         CallSetsSearchQueryDTO callSetsSearchQuery =
             (CallSetsSearchQueryDTO) searchService.getSearchQuery(

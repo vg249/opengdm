@@ -54,8 +54,9 @@ public class SearchVariantsController extends SearchController {
      *
      * @param variantsSearchQuery   variants search query object
      * @param request               http request object to fetch croptype.
+     *
      * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException
+     * @throws GobiiException when it is a bad request or service error
      */
     @ApiOperation(
         value = "Search Variants", notes = "Creates a search query for variants",

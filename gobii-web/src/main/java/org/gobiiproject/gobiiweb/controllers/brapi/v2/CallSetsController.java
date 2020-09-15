@@ -31,6 +31,12 @@ public class CallSetsController {
     private final CallSetService callSetService;
     private final GenotypeCallsService genotypeCallsService;
 
+    /**
+     * Constructor
+     *
+     * @param callSetService - The {@link CallSetService} instance.
+     * @param genotypeCallsService - The {@link GenotypeCallsService} instance.
+     */
     @Autowired
     public CallSetsController(final CallSetService callSetService,
                               final GenotypeCallsService genotypeCallsService) {
@@ -39,7 +45,8 @@ public class CallSetsController {
     }
 
     /**
-     * Lists the dnaruns by page size and page token
+     * Lists the dnaruns by page size, page token and other filters.
+     *
      * @param page - page number to be fetched for callsets
      * @param pageSize - Page size set by the user.
      *                 If page size is more than maximum allowed
@@ -47,6 +54,7 @@ public class CallSetsController {
      * @param variantSetDbId - Variant Set Db Id
      * @param callSetsFilter - CallsetBrapiDTO model to map the filters
      * @return Brapi response with list of dna runs/call sets
+     * @throws GobiiException when it is a bad request or service error.
      */
     @ApiOperation(value = "List CallSets", notes = "Lists CallSets in GDM System.",
         tags = {"CallSets"}, extensions = {
@@ -103,13 +111,12 @@ public class CallSetsController {
     }
 
     /**
-     * Endpoint for getting a specific callset with a given callSetDbId
+     * Gets a callset for given callSetDbId
      *
-     * @param callSetDbId ID of the requested callsets
-     * @return ResponseEntity with http status code
-     * specifying if retrieval of the callset is successful.
-     *
-     * Response body contains the requested callset information
+     * @param callSetDbId ID of the requested callset.
+     * @return ResponseEntity with http status code specifying if retrieval of the
+     * callset is successful.
+     * @throws GobiiException when it is a bad request or service error.
      */
     @ApiOperation(
         value = "Get CallSet by callSetDbId",
@@ -148,18 +155,17 @@ public class CallSetsController {
     }
 
     /**
-     * Returns the list of genotypes calls in a given DNA run id.
-     * It fetches calls in all the datasets where the dnarun_id is present.
-     * The calls is paged.
+     * Gets the list of genotypes calls for given callset id.
+     * Fetches genotypes in all the datasets where the given callset id is present.
+     * The list is paged.
      *
      * @param callSetDbId - DNA run Id.
      * @param pageSize - Size of the page to fetched.
      * @param pageToken - Page token to fetch the page.
      *                  User will get the pageToken from the nextPageToken
      *                  parameter in the previous response.
-     *
-     * @return BrApi Response entity with list
-     * of genotypes calls for given dnarun id.
+     * @return BrApi Response entity with list of genotypes calls for given dnarun id.
+     * @throws GobiiException when it is a bad request or service error
      */
     @ApiOperation(
         value = "List Genotypes by CallSet", notes = "List of all the genotype calls in a " +

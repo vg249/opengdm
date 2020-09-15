@@ -45,10 +45,9 @@ public class SearchGenotypesController extends SearchController {
     /**
      * Constructor.
      *
-     * @param searchService         The {@link SearchService} Search service implementation.
-     * @param genotypeCallsService  The {@link GenotypeCallsService} GenotypesCalls
-     *                              service implementation.
-     * @param variantService        The {@link VariantService} Variant service implementation.
+     * @param searchService         The {@link SearchService} instance.
+     * @param genotypeCallsService  The {@link GenotypeCallsService} instance.
+     * @param variantService        The {@link VariantService} instance.
      *
      */
     @Autowired
@@ -98,6 +97,10 @@ public class SearchGenotypesController extends SearchController {
         @Valid @RequestBody GenotypeCallsSearchQueryDTO genotypeCallsSearchQuery,
         HttpServletRequest request
     ) throws GobiiException {
+
+        log.info("Submitting genotype calls search query\n {}",
+            genotypeCallsSearchQuery.toString());
+
         return submitSearchQuery(genotypeCallsSearchQuery, request);
     }
 
@@ -146,31 +149,12 @@ public class SearchGenotypesController extends SearchController {
             defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize,
         HttpServletRequest request) throws GobiiException {
 
-        String cropType;
-
-        try {
-            cropType = CropRequestAnalyzer.getGobiiCropType(request);
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.NONE,
-                "Internal Server Error " + e.getMessage()
-            );
-        }
-
-        GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
-            (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
-                searchResultDbId,
-                cropType,
-                GenotypeCallsSearchQueryDTO.class.getName());
 
         PagedResultTyped<GenotypeCallsResult> pagedResult =
-            genotypeCallsService
-                .getGenotypeCallsByExtractQuery(
-                    genotypeCallsSearchQueryDTO,
-                    pageSize,
-                    pageToken);
+            genotypeCallsService.getGenotypeCallsByExtractQuery(
+                getGenotypeCallsSearchQuery(request, searchResultDbId),
+                pageSize,
+                pageToken);
 
         BrApiMasterPayload<GenotypeCallsResult> payload = new BrApiMasterPayload<>(
             pagedResult.getResult(),
@@ -225,27 +209,8 @@ public class SearchGenotypesController extends SearchController {
         HttpServletRequest request
     ) throws GobiiException {
 
-        String cropType;
-
-        try {
-            cropType = CropRequestAnalyzer.getGobiiCropType(request);
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.NONE,
-                "Internal Server Error " + e.getMessage()
-            );
-        }
-
-        GenotypeCallsSearchQueryDTO genotypeCallsSearchQueryDTO =
-            (GenotypeCallsSearchQueryDTO) searchService.getSearchQuery(
-                searchResultDbId,
-                cropType,
-                GenotypeCallsSearchQueryDTO.class.getName());
-
         PagedResult<VariantDTO> pagedResult = variantService.getVariantsByGenotypesExtractQuery(
-            genotypeCallsSearchQueryDTO,
+            getGenotypeCallsSearchQuery(request, searchResultDbId),
             pageSize,
             pageToken);
 
@@ -301,6 +266,25 @@ public class SearchGenotypesController extends SearchController {
             defaultValue = BrapiDefaults.pageSize) Integer pageSize,
         HttpServletRequest request
     ) throws GobiiException {
+
+        PagedResult<CallSetDTO> pagedResult = callSetService.getCallSetsByGenotypesExtractQuery(
+            getGenotypeCallsSearchQuery(request, searchResultDbId),
+            pageSize,
+            pageToken);
+
+        BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getNextPageToken());
+
+        return ResponseEntity.ok(payload);
+    }
+
+
+    private GenotypeCallsSearchQueryDTO getGenotypeCallsSearchQuery(HttpServletRequest request,
+                                                                    String searchResultDbId
+    ) throws GobiiException {
+
         String cropType;
 
         try {
@@ -320,17 +304,8 @@ public class SearchGenotypesController extends SearchController {
                 cropType,
                 GenotypeCallsSearchQueryDTO.class.getName());
 
-        PagedResult<CallSetDTO> pagedResult = callSetService.getCallSetsByGenotypesExtractQuery(
-            genotypeCallsSearchQueryDTO,
-            pageSize,
-            pageToken);
+        return genotypeCallsSearchQueryDTO;
 
-        BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getNextPageToken());
-
-        return ResponseEntity.ok(payload);
     }
 
 

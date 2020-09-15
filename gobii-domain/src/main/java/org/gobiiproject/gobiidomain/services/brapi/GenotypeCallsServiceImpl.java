@@ -71,7 +71,9 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public PagedResultTyped<GenotypeCallsResult>
-    getGenotypeCallsByCallSetId(Integer callSetDbId, Integer pageSize, String pageToken) {
+    getGenotypeCallsByCallSetId(Integer callSetDbId,
+                                Integer pageSize,
+                                String pageToken) {
 
         PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
 
@@ -222,10 +224,10 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      * @return List of Genotype calls for given dnarunId.
      */
     @Override
-    public PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantDbId(
-        Integer markerId,
-        Integer pageSize,
-        String pageToken) {
+    public PagedResultTyped<GenotypeCallsResult>
+    getGenotypeCallsByVariantDbId(Integer markerId,
+                                  Integer pageSize,
+                                  String pageToken) {
 
         PagedResultTyped<GenotypeCallsResult> returnVal = new PagedResultTyped<>();
         List<GenotypeCallsDTO> genotypeCalls = new ArrayList<>();
@@ -391,13 +393,15 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, pageSize,
                 cursors.dnaRunOffset, false);
 
+            /**
+             * Case 1: When fetched dnaRuns is equal to the page size requested.
+             */
             if(dnaRuns.size() == pageSize) {
                 cursors.markerPageSize = 1;
                 cursors.columnOffset = 0;
                 cursors.nextDnaRunOffset = cursors.dnaRunOffset + dnaRuns.size();
                 cursors.nextPageOffset = cursors.pageOffset;
             }
-
             //case 2: total number of dnarun in the dataset
             //is less than page size
             else if(cursors.dnaRunOffset == 0 && dnaRuns.size() < pageSize) {
@@ -709,7 +713,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     @Override
     public PagedResultTyped<GenotypeCallsResult>
     getGenotypeCallsByExtractQuery(GenotypeCallsSearchQueryDTO genotypesSearchQuery,
-                                   Integer pageSize, String pageToken) {
+                                   Integer pageSize,
+                                   String pageToken) {
 
         final int dnaRunBinSize = 1000;
         final int markerBinSize = 1000;

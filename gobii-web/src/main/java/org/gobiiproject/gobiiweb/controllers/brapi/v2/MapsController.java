@@ -26,11 +26,25 @@ public class MapsController {
 
     private final MapsetService mapsetService;
 
+    /**
+     * Constructor.
+     *
+     * @param mapsetService The {@link MapsetService} instance.
+     */
     @Autowired
     public MapsController(final MapsetService mapsetService) {
         this.mapsetService = mapsetService;
     }
 
+    /**
+     * Gets genome maps based on user filter parameters.
+     *
+     * @param page      Page to get
+     * @param pageSize  Size of the page
+     * @param studyDbId Id of experiment. Get maps in the given experiment.
+     * @return
+     * @throws GobiiException
+     */
     @ApiOperation(
         value = "List Genome Maps", notes = "Lists Genome maps in GDM system.",
         tags = {"Genome Maps"}, extensions = {
@@ -89,6 +103,13 @@ public class MapsController {
 
     }
 
+    /**
+     * Gets genome map by id
+     *
+     * @param mapDbId   Id the the genome map to be fetched.
+     * @return a genome map
+     * @throws GobiiException when it is a bad request or service error.
+     */
     @ApiOperation(
         value = "Get Map by mapDbId", notes = "Gets a genome map by map id",
         tags = {"Genome Maps"}, extensions = {

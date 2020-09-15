@@ -49,7 +49,8 @@ public class SearchController {
        if (searchQueryObject != null) {
 
            SearchResultDTO searchResultDTO = searchService.createSearchQueryResource(
-               cropType, searchQueryObject);
+               cropType,
+               searchQueryObject);
 
            BrApiMasterPayload<SearchResultDTO> payload =
                new BrApiMasterPayload<>(searchResultDTO);
