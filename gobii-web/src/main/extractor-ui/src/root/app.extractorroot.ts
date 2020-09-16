@@ -484,7 +484,6 @@ export class ExtractorRoot implements OnInit {
         this._authenticationService.logout()
             .subscribe(
                 obj => {
-                    console.log("Logged out " + obj)
                     this.router.navigate(["/"]);
                 }
             )
