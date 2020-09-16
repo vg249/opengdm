@@ -409,7 +409,6 @@ export class ExtractorRoot implements OnInit {
 
     public handleOnMouseOverSubmit(arg, isEnter) {
 
-        // this.criteriaInvalid = true;
         if (isEnter) {
             this.instructionSubmissionService.markMissingItems(this.gobiiExtractFilterType)
         } else {
