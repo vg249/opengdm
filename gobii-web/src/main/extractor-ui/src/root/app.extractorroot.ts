@@ -94,7 +94,6 @@ export class ExtractorRoot implements OnInit {
         this.messages$.subscribe(
             messages => {
                 if (messages.length > 0) {
-
                     this.currentStatusMessage = messages[0];
                     this.showMessagesDialog();
                 }
@@ -109,7 +108,6 @@ export class ExtractorRoot implements OnInit {
 
     public display: boolean = false;
     public currentStatusMessage: string = null;
-
     public displayEmailUpdateDialog: boolean = false;
 
     showMessagesDialog() {
@@ -133,12 +131,10 @@ export class ExtractorRoot implements OnInit {
     private initializeCropType() {
         let scope$ = this;
         this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
-            //
             if (crops) {
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.store.dispatch(new fileItemAction.SetCurrentCropAction(crops[0].cropType));
                 this.fileItemService.loadCrops(GobiiExtractFilterType.UNKNOWN, crops, 0);
-                
                 scope$.initializeServerConfigs();   
             }
         })
@@ -157,7 +153,7 @@ export class ExtractorRoot implements OnInit {
 
                     let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
 
-                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
+                    scope$.currentStatus = (gobiiVersion.startsWith("GOBII Server")) ? gobiiVersion : "GOBII Server" + gobiiVersion;
 
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
