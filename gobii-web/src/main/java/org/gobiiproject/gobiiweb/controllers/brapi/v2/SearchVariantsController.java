@@ -25,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * Brapi REST endpoint for search variants.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/search/variants")
@@ -38,8 +43,8 @@ public class SearchVariantsController extends SearchController {
     /**
      * Constructor.
      *
-     * @param searchService     The {@link SearchService} Search service implementation.
-     * @param variantService    The {@link VariantService} Variant service implementation.
+     * @param searchService     The {@link SearchService} instance.
+     * @param variantService    The {@link VariantService} instance.
      */
     @Autowired
     public SearchVariantsController(final SearchService searchService,
@@ -50,13 +55,12 @@ public class SearchVariantsController extends SearchController {
 
     /**
      * Creates variants search query resource and returns the id for the same.
-     * resource id is used to fetch variants which matches the search query.
      *
      * @param variantsSearchQuery   variants search query object
      * @param request               http request object to fetch croptype.
      *
-     * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException when it is a bad request or service error
+     * @return {@link SearchResultDTO} Brapi result object with search query resource id
+     * @throws GobiiException when it is a bad request or due to any other service error
      */
     @ApiOperation(
         value = "Search Variants", notes = "Creates a search query for variants",
@@ -90,11 +94,13 @@ public class SearchVariantsController extends SearchController {
 
     /**
      * Gets Variants for search query result id.
+     *
      * @param searchResultDbId  variants search result id.
      * @param pageSize          size of the page
-     * @param pageToken         page token with cursors encoded.
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
      * @return  Brapi list payload with variants.
-     * @throws GobiiException
+     * @throws GobiiException when it is a bad request or due to any other service error
      */
     @ApiOperation(
         value = "List Variants for SearchQuery",

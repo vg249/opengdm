@@ -29,6 +29,11 @@ import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Brapi REST endpoint for variantsets (datasets)
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/variantsets")
@@ -42,13 +47,6 @@ public class VariantSetsController {
     private final VariantService variantService;
     private final GenotypeCallsService genotypeCallsService;
 
-    private class GenotypeCallsListResponse
-        extends BrApiMasterPayload<BrApiResult<GenotypeCallsDTO>>{}
-    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
-    private class CallSetListResponse extends BrApiMasterPayload<BrApiResult<CallSetDTO>>{}
-    private class VariantSetResponse extends BrApiMasterPayload<VariantSetDTO>{}
-    private class VariantSetListResponse extends BrApiMasterPayload<BrApiResult<VariantSetDTO>>{}
-
     @Autowired
     public VariantSetsController(final VariantSetsService variantSetsService,
                                  final CallSetService callSetService,
@@ -61,13 +59,12 @@ public class VariantSetsController {
     }
 
     /**
-     * Lists the variantsets by page size and page token
+     * Gets variantsets by filter parameters
      *
-     * @param pageNum - Page number to be fetched. 0 indexed.
-     * @param pageSize - Page size set by the user.
-     *                 If page size is more than maximum allowed
-     *                 page size, then the response will have maximum page size
-     * @return Brapi response with list of variantsets
+     * @param pageNum   page number to fetch
+     * @param pageSize  size of the page
+     * @return Brapi list of variantsets
+     * @throws GobiiException when it is a bad request or service error
      */
     @ApiOperation(
         value = "List VariantSets", notes = "Lists VariantSets in GDM system.",
@@ -77,7 +74,8 @@ public class VariantSetsController {
         })
     })
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Success", response = VariantSetListResponse.class),
+        @ApiResponse(code = 200, message = "Success",
+            response = SwaggerResponseModels.VariantListResponse.class),
         @ApiResponse(code = 500, message = "Internal Server Error", response = ErrorPayload.class),
         @ApiResponse(code = 400, message = "Bad Request", response = ErrorPayload.class),
         @ApiResponse(code = 401, message = "Unauthorized", response = ErrorPayload.class),
@@ -88,7 +86,7 @@ public class VariantSetsController {
             name="Authorization", value="Authentication Token",
             required=true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/", method= RequestMethod.GET, produces = "application/json")
+    @GetMapping(produces = "application/json")
     public @ResponseBody
     ResponseEntity<BrApiMasterListPayload<VariantSetDTO>> getVariantSets(
         @ApiParam(value = "Id of the VariantSet to be fetched. Corresponds to dataset Id")
@@ -103,43 +101,31 @@ public class VariantSetsController {
             defaultValue = BrapiDefaults.pageSize) Integer pageSize,
         @ApiParam(value = "Page number to be fetched")
         @RequestParam(value = "page", required = false,
-            defaultValue = BrapiDefaults.pageNum) Integer pageNum) {
-        try {
+            defaultValue = BrapiDefaults.pageNum) Integer pageNum
+    ) throws GobiiException {
 
-            PagedResult<VariantSetDTO> pagedResult = variantSetsService.getVariantSets(
-                pageSize,
-                pageNum,
-                variantSetDbId,
-                null,
-                studyDbId,
-                studyName);
+        PagedResult<VariantSetDTO> pagedResult = variantSetsService.getVariantSets(
+            pageSize,
+            pageNum,
+            variantSetDbId,
+            null,
+            studyDbId,
+            studyName);
 
-            BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(
-                pagedResult.getResult(),
-                pagedResult.getCurrentPageSize(),
-                pagedResult.getCurrentPageNum());
+        BrApiMasterListPayload<VariantSetDTO> payload = new BrApiMasterListPayload<>(
+            pagedResult.getResult(),
+            pagedResult.getCurrentPageSize(),
+            pagedResult.getCurrentPageNum());
 
-            return ResponseEntity.ok(payload);
-
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
-                "Internal Server Error" + e.getMessage()
-            );
-        }
+        return ResponseEntity.ok(payload);
     }
 
     /**
-     * Endpoint for getting a specific variantSet with a given variantSetDbId
+     * Get variantset by id.
      *
-     * @param variantSetDbId ID of the requested variantSet
-     * @return ResponseEntity with http status code specifying,
-     *          if retrieval of the variantSet is successful.
-     * Response body contains the requested variantSet information
+     * @param variantSetDbId    id of the variantset to fetch
+     * @return  Brapi result object with variantset
+     * @throws GobiiException when it is a bad request or service error
      */
     @ApiOperation(
         value = "Get VariantSet by variantSetDbId",
@@ -152,7 +138,8 @@ public class VariantSetsController {
         }
     )
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "", response = VariantSetResponse.class),
+        @ApiResponse(code = 200, message = "",
+            response = SwaggerResponseModels.VariantSetResponse.class),
         @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
@@ -167,37 +154,27 @@ public class VariantSetsController {
         produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
         @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
-        @PathVariable("variantSetDbId") Integer variantSetDbId)
-    {
-        try {
+        @PathVariable("variantSetDbId") Integer variantSetDbId
+    ) throws GobiiException {
 
-            VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
+        VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
 
-            BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
+        BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
 
-            return ResponseEntity.ok(payload);
+        return ResponseEntity.ok(payload);
 
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Entity does not exist"
-            );
-        }
     }
 
     /**
-     * Lists the variants for a given VariantSetDbId by page size and page token
+     * Get variants(markers) in variantset (dataset) by filter parameters
      *
-     * @param variantSetDbId - Integer ID of the VariantSet to be fetched
-     * @param pageToken - String page token
-     * @param pageSize - Page size set by the user.
-     *                 If page size is more than maximum allowed page size,
-     *                 then the response will have maximum page size
-     * @return Brapi response with list of CallSets
+     * @param variantSetDbId    id of the dataset
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
+     * @param pageSize          size of the page
+     * @param variantDbId       id of the marker
+     * @return Brapi list of variants in the dataset
+     * @throws GobiiException when it is a bad request or service error
      */
     @ApiOperation(
         value = "List Variants in VariantSet",
@@ -210,7 +187,8 @@ public class VariantSetsController {
         }
     )
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "", response = VariantListResponse.class),
+        @ApiResponse(code = 200, message = "",
+            response = SwaggerResponseModels.VariantListResponse.class),
         @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
@@ -235,7 +213,7 @@ public class VariantSetsController {
             defaultValue = BrapiDefaults.pageSize) Integer pageSize,
         @ApiParam(value = "Get Variant with given variantDbId.")
         @RequestParam(value = "variantDbId", required = false) Integer variantDbId
-    ){
+    ) throws GobiiException {
         try {
 
             VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
@@ -265,7 +243,22 @@ public class VariantSetsController {
         }
     }
 
-
+    /**
+     * Get list of genotypes in variantset.
+     *
+     * @param variantSetDbId    id of the variantset
+     * @param mapName           filter parameter to genotypes calls list by genome map
+     * @param linkageGroupName  filter parameter to genotype calls by linkage group name
+     * @param minPosition       filter parameter to get gentypes with
+     *                          marker positions greater than given minPosition
+     * @param maxPosition       filter parameter to get genotypes with marker positions
+     *                          lesser than maxPosition
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
+     * @param pageSize          size of the page
+     * @return Brapi list of genotypes call
+     * @throws GobiiException when it is a bad request or service error
+     */
     @ApiOperation(
         value = "List Genotypes in VariantSet",
         notes = "List of all the genotype calls in a given VariantSet",
@@ -277,7 +270,8 @@ public class VariantSetsController {
         }
     )
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "", response = GenotypeCallsListResponse.class),
+        @ApiResponse(code = 200, message = "",
+            response = SwaggerResponseModels.GenotypeCallsListResponse.class),
         @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
@@ -288,8 +282,7 @@ public class VariantSetsController {
             name="Authorization", value="Authentication Token",
             required=true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/{variantSetDbId}/calls", method=RequestMethod.GET,
-        produces = "application/json")
+    @GetMapping(produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
     getCallsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
@@ -307,45 +300,35 @@ public class VariantSetsController {
             @RequestParam(value = "pageToken", required = false) String pageToken,
         @ApiParam(value = "Size of the page to be fetched. Default is 100000.")
             @RequestParam(value = "pageSize", required = false,
-                defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize) {
-        try {
+                defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize
+    ) throws GobiiException {
+        PagedResultTyped<GenotypeCallsResult> genotypeCallsPaged =
+            genotypeCallsService.getGenotypeCallsByVariantSetDbId(
+                variantSetDbId,
+                mapName,
+                linkageGroupName,
+                minPosition,
+                maxPosition,
+                pageSize,
+                pageToken);
 
-            PagedResultTyped<GenotypeCallsResult> genotypeCallsPaged =
-                genotypeCallsService.getGenotypeCallsByVariantSetDbId(
-                    variantSetDbId,
-                    mapName,
-                    linkageGroupName,
-                    minPosition,
-                    maxPosition,
-                    pageSize,
-                    pageToken);
+        BrApiMasterPayload<GenotypeCallsResult> payload = new BrApiMasterPayload<>(
+            genotypeCallsPaged.getResult(),
+            genotypeCallsPaged.getCurrentPageSize(),
+            genotypeCallsPaged.getNextPageToken());
 
-            BrApiMasterPayload<GenotypeCallsResult> payload = new BrApiMasterPayload<>(
-                genotypeCallsPaged.getResult(),
-                genotypeCallsPaged.getCurrentPageSize(),
-                genotypeCallsPaged.getNextPageToken());
-
-            return ResponseEntity.ok(payload);
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                "Internal Server Error" + e.getMessage());
-        }
+        return ResponseEntity.ok(payload);
     }
 
     /**
-     * Lists the callsets for a given VariantSetDbId by page size and page number
+     * Get list of callsets in given variantset.
      *
-     * @param variantSetDbId - Integer ID of the VariantSet to be fetched
-     * @param pageSize - Page size set by the user. If page size is more
-     *                 than maximum allowed page size,
-     *                 then the response will have maximum page size
-     * @return Brapi response with list of CallSets
+     * @param variantSetDbId    id of the variantset
+     * @param page              page to fetch
+     * @param pageSize          size of the page
+     * @param callSetsFilter    {@link CallSetDTO} filter object
+     * @return Brapi list of callsets
+     *
      */
     @ApiOperation(
         value = "List CallSets in VariantSet", notes = "Lists CallSets in VariantSet",
@@ -354,7 +337,8 @@ public class VariantSetsController {
             @ExtensionProperty(name="summary", value="List CallSets in VariantSet")
         })})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "", response = CallSetListResponse.class),
+        @ApiResponse(code = 200, message = "",
+            response = SwaggerResponseModels.CallSetListResponse.class),
         @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
@@ -366,7 +350,7 @@ public class VariantSetsController {
             required = true, paramType = "header", dataType = "string"
         )
     })
-    @RequestMapping(value="/{variantSetDbId:[\\d]+}/callsets", method=RequestMethod.GET)
+    @GetMapping(value="/{variantSetDbId:[\\d]+}/callsets")
     public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
     getCallSetsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
@@ -378,37 +362,32 @@ public class VariantSetsController {
         @RequestParam(value = "pageSize", required = false,
             defaultValue = BrapiDefaults.pageSize) Integer pageSize,
         CallSetDTO callSetsFilter
-    ) {
-        try {
-            VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
+    ) throws GobiiException {
+        VariantSetDTO variantSet = variantSetsService.getVariantSetById(variantSetDbId);
 
-            PagedResult<CallSetDTO> callSets = callSetService.getCallSets(
-                pageSize,
-                page,
-                variantSet.getVariantSetDbId(),
-                callSetsFilter);
+        PagedResult<CallSetDTO> callSets = callSetService.getCallSets(
+            pageSize,
+            page,
+            variantSet.getVariantSetDbId(),
+            callSetsFilter);
 
-            BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
-                callSets.getResult(),
-                callSets.getCurrentPageSize(),
-                callSets.getCurrentPageNum());
+        BrApiMasterListPayload<CallSetDTO> payload = new BrApiMasterListPayload<>(
+            callSets.getResult(),
+            callSets.getCurrentPageSize(),
+            callSets.getCurrentPageNum());
 
-            return ResponseEntity.ok(payload);
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                "Internal Server Error" + e.getMessage()
-            );
-        }
+        return ResponseEntity.ok(payload);
     }
 
 
+    /**
+     *  Download genotypes in varianset as file
+     *
+     * @param variantSetDbId    id of the variantset
+     *
+     * @return text/csv file
+     * @throws GobiiException when it is a bad request or service error.
+     */
     @ApiOperation(
         value = "Download Genotypes in VariantSet",
         notes = "Download of all the genotype calls in a given VariantSet",
@@ -433,8 +412,8 @@ public class VariantSetsController {
             @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
         }
     )
-    @RequestMapping(
-        value="/{variantSetDbId:[\\d]+}/calls/download", method=RequestMethod.GET,
+    @GetMapping(
+        value="/{variantSetDbId:[\\d]+}/calls/download",
         produces = "text/csv")
     public ResponseEntity<ResponseBodyEmitter> handleRbe(
         @ApiParam(value = "Id of the variantset to download")

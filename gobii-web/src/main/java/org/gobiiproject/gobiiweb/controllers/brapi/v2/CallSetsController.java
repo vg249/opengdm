@@ -19,7 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Brapi endpoint for CallSet (Dnarun in GDM).
+ * Brapi REST endpoint for CallSet (Dnarun in GDM).
  *
  * @author vg249
  */

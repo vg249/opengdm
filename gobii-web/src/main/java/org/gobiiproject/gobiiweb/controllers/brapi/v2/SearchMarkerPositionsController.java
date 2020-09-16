@@ -26,6 +26,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * Brapi REST endpoint for search marker positions.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/search/markerpositions")
@@ -39,9 +44,8 @@ public class SearchMarkerPositionsController extends SearchController {
     /**
      * Constructor.
      *
-     * @param searchService             The {@link SearchService} Search service implementation.
-     * @param markerPositionsService    The {@link SamplesService} Marker Positions
-     *                                  service implementation.
+     * @param searchService             The {@link SearchService} instance.
+     * @param markerPositionsService    The {@link SamplesService} instance.
      */
     @Autowired
     public SearchMarkerPositionsController(final SearchService searchService,
@@ -55,9 +59,9 @@ public class SearchMarkerPositionsController extends SearchController {
      * resource id is used to fetch marker positions which matches the search query.
      *
      * @param markerPositionsSearchQuery    marker positions search query object
-     * @param request                       http request object to fetch croptype.
-     * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException
+     * @param request                       http request object to fetch crop type.
+     * @return {@link SearchResultDTO} Brapi Result object with search query resource id
+     * @throws GobiiException when the invalid query is submitted or due to any other service error
      */
     @ApiOperation(
         value = "Search MarkerPositions", notes = "Creates a search query for marker positions",
@@ -88,12 +92,13 @@ public class SearchMarkerPositionsController extends SearchController {
     }
 
     /**
-     * Gets MarkerPositions for search query result id.
+     * Gets MarkerPositions for given search query result id.
+     *
      * @param searchResultDbId  markerpositions search result id.
      * @param pageSize          size of the page
      * @param page              page number to fetch
      * @return  Brapi list payload with markerpositions.
-     * @throws GobiiException
+     * @throws GobiiException when the invalid query is submitted or due to any other service error
      */
     @ApiOperation(
         value = "List Marker positions for SearchQuery",

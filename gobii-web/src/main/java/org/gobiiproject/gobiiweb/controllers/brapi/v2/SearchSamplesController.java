@@ -25,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * Brapi REST endpoint for search samples.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/search/samples")
@@ -38,8 +43,8 @@ public class SearchSamplesController extends SearchController {
     /**
      * Constructor.
      *
-     * @param searchService The {@link SearchService} Search service implementation.
-     * @param sampleService The {@link SamplesService} Samples service implementation.
+     * @param searchService The {@link SearchService} instance.
+     * @param sampleService The {@link SamplesService} instance.
      */
     @Autowired
     public SearchSamplesController(final SearchService searchService,
@@ -50,12 +55,11 @@ public class SearchSamplesController extends SearchController {
 
     /**
      * Creates samples search query resource and returns the id for the same.
-     * resource id is used to fetch samples which matches the search query.
      *
      * @param samplesSearchQuery    samples search query object
      * @param request               http request object to fetch croptype.
-     * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException
+     * @return {@link SearchResultDTO} Brapi Result object with search query resource id
+     * @throws GobiiException when it is a bad request or due to any other service error.
      */
     @ApiOperation(
         value = "Search Samples", notes = "Creates a search query for samples",
@@ -88,11 +92,12 @@ public class SearchSamplesController extends SearchController {
 
     /**
      * Gets Samples result for search query result id.
+     *
      * @param searchResultDbId  samples search result id.
      * @param pageSize          size of the page
      * @param page              page number to fetch
      * @return  Brapi list payload with samples.
-     * @throws GobiiException
+     * @throws GobiiException   when is it a bad request or due to any other service error.
      */
     @ApiOperation(
         value = "List Samples for SearchQuery",

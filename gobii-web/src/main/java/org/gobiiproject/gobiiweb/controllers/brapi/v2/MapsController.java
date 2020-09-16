@@ -16,6 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Brapi REST endpoint for genome maps.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/maps")
@@ -27,7 +32,7 @@ public class MapsController {
     private final MapsetService mapsetService;
 
     /**
-     * Constructor.
+     * Constructor
      *
      * @param mapsetService The {@link MapsetService} instance.
      */

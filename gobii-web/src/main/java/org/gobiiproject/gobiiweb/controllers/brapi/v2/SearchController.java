@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Brapi REST base endpoint for submitting search.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/search")
@@ -27,10 +32,22 @@ public class SearchController {
 
    protected final SearchService searchService;
 
+    /**
+     * Constructor
+     *
+     * @param searchService {@link SearchService} instance
+     */
    public SearchController(final SearchService searchService) {
        this.searchService = searchService;
    }
 
+    /**
+     *
+     * @param searchQueryObject Search query as object
+     * @param request   http request
+     * @return  Response entity with search result db id.
+     * @throws GobiiException when the invalid search query is submitted or other service error.
+     */
    public ResponseEntity<BrApiMasterPayload<SearchResultDTO>>
    submitSearchQuery(Object searchQueryObject, HttpServletRequest request) throws GobiiException {
 
@@ -67,13 +84,4 @@ public class SearchController {
        }
 
    }
-
-
-
-
-
-
-
-
-
 }

@@ -23,6 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Brapi REST endpoint for variants (markers and snps)
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/variants")
@@ -32,13 +37,16 @@ import org.springframework.web.bind.annotation.*;
 public class VariantsController {
 
 
-    private class VariantListResponse extends BrApiMasterPayload<BrApiResult<VariantDTO>>{}
-    private class VariantResponse extends BrApiMasterPayload<VariantDTO>{}
-    private class GenotypeCallsResponse extends BrApiMasterPayload<GenotypeCallsDTO>{}
 
     private final VariantService variantService;
     private final GenotypeCallsService genotypeCallsService;
 
+    /**
+     * Constructor
+     *
+     * @param variantService        {@link VariantService} instance
+     * @param genotypeCallsService  {@link GenotypeCallsService} instance
+     */
     @Autowired
     public VariantsController(final VariantService variantService,
                               final GenotypeCallsService genotypeCallsService) {
@@ -47,12 +55,15 @@ public class VariantsController {
     }
 
     /**
-     * Lists the variants by page size and page token
+     * Gets variants by given filter parameters.
      *
-     * @param pageSize - Page size set by the user.
-     *                 If page size is more than maximum allowed page size,
-     *                 then the response will have maximum page size
-     * @return Brapi response with list of variants
+     * @param pageSize          Size of the page
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
+     * @param variantDbId       id of the variant (marker/snp)
+     * @param variantSetDbId    id of the dataset
+     * @return  Brapi list of markers
+     * @throws GobiiException when it is a bad request or service error.
      */
     @ApiOperation(
         value = "List Variants",
@@ -65,7 +76,8 @@ public class VariantsController {
         }
     )
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "", response = VariantListResponse.class),
+        @ApiResponse(code = 200, message = "",
+            response = SwaggerResponseModels.VariantListResponse.class),
         @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
         @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
@@ -88,7 +100,7 @@ public class VariantsController {
         @RequestParam(value = "variantDbId", required = false) Integer variantDbId,
         @ApiParam(value = "ID of the variantSet to be extracted")
         @RequestParam(value = "variantSetDbId", required = false) Integer variantSetDbId
-    ) {
+    ) throws GobiiException {
         try {
 
             PagedResult<VariantDTO> pagedResult = variantService.getVariants(
@@ -118,12 +130,11 @@ public class VariantsController {
     }
 
     /**
-     * Endpoint for getting a specific marker with a given markerDbId
+     * Get variant by id.
      *
-     * @param variantDbId ID of the requested marker
-     * @return ResponseEntity with http status code specifying
-     * if retrieval of the marker is successful.
-     * Response body contains the requested marker information
+     * @param variantDbId id of the variant to fetch
+     * @return Brapi result object with requested variant
+     * @throws GobiiException when it is a bad request or service error
      */
     @ApiOperation(
         value = "Get Variant by variantDbId",
@@ -137,7 +148,8 @@ public class VariantsController {
     )
     @ApiResponses(
         value = {
-            @ApiResponse(code = 200, message = "", response = VariantResponse.class),
+            @ApiResponse(code = 200, message = "",
+                response = SwaggerResponseModels.VariantResponse.class),
             @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
             @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
             @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
@@ -170,16 +182,14 @@ public class VariantsController {
     }
 
     /**
-     * Returns the list of genotypes calls in a given Marker id.
-     * It fetches calls in all the datasets where the marker_id is present.
-     * The calls is paged.
+     * Gets list of genotype calls for given variant id.
      *
      * @param variantDbId - Marker run Id.
      * @param pageSize - Size of the page to fetched.
-     * @param pageToken - Page token to fetch the page. User will get the pageToken from
-     *                  the nextPageToken parameter in the previous response.
-     * @return BrApi Response entity with
-     * list of genotypes calls for given dnarun id.
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
+     * @return BrApi list of genotype calls.
+     * @throws GobiiException when it is a brapi request or service error.
      */
     @ApiOperation(
         value = "List Genotypes by Variant", notes = "List of all the genotype calls " +
@@ -192,7 +202,8 @@ public class VariantsController {
     )
     @ApiResponses(
         value = {
-            @ApiResponse(code = 200, message = "", response = GenotypeCallsResponse.class),
+            @ApiResponse(code = 200, message = "",
+                response = SwaggerResponseModels.GenotypeCallsListResponse.class),
             @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
             @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
             @ApiResponse(code = 500, message = "", response = ErrorPayload.class)

@@ -15,6 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Brapi REST endpoint for dna samples
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/samples")
@@ -26,11 +31,27 @@ public class SamplesController {
 
     private final SamplesService samplesService;
 
+    /**
+     * Constructor
+     *
+     * @param samplesBrapiService   The {@link SamplesService} instance.
+     */
     @Autowired
     public SamplesController(final SamplesService samplesBrapiService) {
         this.samplesService = samplesBrapiService;
     }
 
+    /**
+     * Gets list of samples by filter parameters.
+     *
+     * @param sampleDbId            id of the sample to be fetched
+     * @param observationUnitDbId   id of project to which samples belong to
+     * @param germplasmDbId         id of the germplasm to which samples belong to
+     * @param page                  page to be fetched
+     * @param pageSize              size of the page
+     * @return  list of samples filtered by given parameters
+     * @throws GobiiException when request is bad or service error.
+     */
     @ApiOperation(
         value = "List Samples", notes = "Lists Dna Samples in GDM System.",
         tags = {"Samples"}, extensions = {

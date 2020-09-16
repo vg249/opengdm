@@ -25,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * Brapi REST endpoint for search callsets (dna runs)
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/search/callsets")
@@ -55,7 +60,7 @@ public class SearchCallSetsController extends SearchController {
      * @param callSetsSearchQuery   callSets search query object
      * @param request               http request object to fetch croptype.
      * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException The {@link GobiiException}
+     * @throws GobiiException when the request is bad or failure to create a search resource.
      */
     @ApiOperation(
         value = "Search CallSets", notes = "Creates a search query for callsets",
@@ -95,11 +100,12 @@ public class SearchCallSetsController extends SearchController {
 
     /**
      * Gets CallSets result for search query result id.
+     *
      * @param searchResultDbId  callsets search result id.
      * @param pageSize          size of the page
      * @param page              page number to fetch
      * @return  Brapi list payload with callsets.
-     * @throws GobiiException The {@link GobiiException}
+     * @throws GobiiException when it is a bad request or any other service error
      */
     @ApiOperation(
         value = "List CallSets for SearchQuery",

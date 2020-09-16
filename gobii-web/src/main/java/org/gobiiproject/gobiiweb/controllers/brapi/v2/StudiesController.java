@@ -19,6 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Brapi REST endpoint for Studies(experiment)
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI_V2)
@@ -26,15 +31,27 @@ import org.springframework.web.bind.annotation.*;
 @Api
 public class StudiesController {
 
-    private class StudiesListResponse extends BrApiMasterPayload<BrApiResult<StudiesDTO>> {}
 
     private final StudiesService studiesService;
 
+    /**
+     * Constructor
+     *
+     * @param studiesService {@link StudiesService} instance
+     */
     @Autowired
     public StudiesController(final StudiesService studiesService) {
         this.studiesService = studiesService;
     }
 
+    /**
+     *
+     * @param pageSize  Size of the page
+     * @param page      page number
+     * @param projectId id of the project. to filter by project experiments belong to.
+     * @return Brapi list of experiments.
+     * @throws GobiiException when it is a bad request or service error.
+     */
     @ApiOperation(
         value = "List Studies", notes = "Lists Studies in GDM system",
         tags = {"Studies"}, extensions = {
@@ -44,7 +61,8 @@ public class StudiesController {
     })
     @ApiResponses(
         value = {
-            @ApiResponse(code = 200, message = "", response = StudiesListResponse.class),
+            @ApiResponse(code = 200, message = "",
+                response = SwaggerResponseModels.StudiesListResponse.class),
             @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
             @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
             @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
@@ -66,29 +84,19 @@ public class StudiesController {
             defaultValue = BrapiDefaults.pageNum) Integer page,
         @ApiParam(value = "Filter by Project Id")
         @RequestParam(value = "projectId", required = false) Integer projectId
-    ) {
-        try {
+    ) throws GobiiException {
 
-            PagedResult<StudiesDTO> studies = studiesService.getStudies(pageSize, page, projectId);
+        PagedResult<StudiesDTO> studies = studiesService.getStudies(
+            pageSize,
+            page,
+            projectId);
 
-            BrApiMasterListPayload<StudiesDTO> payload =
-                new BrApiMasterListPayload<>(
-                    studies.getResult(),
-                    studies.getCurrentPageSize(),
-                    studies.getCurrentPageNum());
+        BrApiMasterListPayload<StudiesDTO> payload = new BrApiMasterListPayload<>(
+            studies.getResult(),
+            studies.getCurrentPageSize(),
+            studies.getCurrentPageNum());
 
-            return ResponseEntity.ok(payload);
-
-        }
-        catch (GobiiException gE) {
-            throw gE;
-        }
-        catch (Exception e) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                "Internal Server Error" + e.getMessage());
-        }
+        return ResponseEntity.ok(payload);
     }
 
 }

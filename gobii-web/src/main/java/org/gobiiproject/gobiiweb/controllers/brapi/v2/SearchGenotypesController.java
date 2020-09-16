@@ -30,6 +30,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * Brapi REST endpoint for search genotype calls.
+ *
+ * @author vg249
+ */
 @Scope(value = "request")
 @Controller
 @RequestMapping("/brapi/v2/search/calls")
@@ -68,7 +73,7 @@ public class SearchGenotypesController extends SearchController {
      * @param genotypeCallsSearchQuery  genotypes search query object
      * @param request                   http request object to fetch croptype.
      * @return {@link SearchResultDTO} Result object with search query resource id
-     * @throws GobiiException
+     * @throws GobiiException when it is a bad request or due to any other service error.
      */
     @ApiOperation(
         value = "Search Genotypes", notes = "Creates a search query for genotypes search",
@@ -106,12 +111,14 @@ public class SearchGenotypesController extends SearchController {
 
 
     /**
-     * Gets Genotype calls for search query result id.
+     * Gets Genotype calls for given search query result id.
+     *
      * @param searchResultDbId  genotype calls search result id.
      * @param pageSize          size of the page,
-     * @param pageToken         page token with encoded cursors.
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
      * @return  Brapi list payload with genotype calls.
-     * @throws GobiiException
+     * @throws GobiiException when it is a bad request or due to any other service error.
      */
     @ApiOperation(
         value = "List Genotypes for SearchQuery",
@@ -166,11 +173,13 @@ public class SearchGenotypesController extends SearchController {
 
     /**
      * Gets Variants associated with genotypes search result.
+     *
      * @param searchResultDbId  genotypes search result id.
      * @param pageSize          size of the page
-     * @param pageToken         page token with cursors encoded.
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
      * @return  Brapi list payload with variants.
-     * @throws GobiiException
+     * @throws GobiiException when it is a bad request or due to any other service error.
      */
     @ApiOperation(
         value = "List Variants for Genotypes SearchQuery",
@@ -224,11 +233,13 @@ public class SearchGenotypesController extends SearchController {
 
     /**
      * Gets CallSets associated with genotypes search result.
+     *
      * @param searchResultDbId  genotypes search result id.
      * @param pageSize          size of the page
-     * @param pageToken         page token with cursors encoded.
+     * @param pageToken         token to fetch the page. can be obtained
+     *                          from nextPageToken field in previous response.
      * @return  Brapi list payload with variants.
-     * @throws GobiiException
+     * @throws GobiiException when it is a bad request or due to any other service error.
      */
     @ApiOperation(
         value = "List CallSets for Genotypes SearchQuery",

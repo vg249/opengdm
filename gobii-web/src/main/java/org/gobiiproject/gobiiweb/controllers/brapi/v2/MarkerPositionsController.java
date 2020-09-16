@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 /**
- * Brapi endpoint for callsets.
- * callsets corresponds to dnaruns in gdm.
+ * Brapi REST endpoint for marker positions.
  *
  * @author vg249
  */
