@@ -150,8 +150,7 @@ public class VariantSetsController {
             name="Authorization", value="Authentication Token",
             required = true, paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value="/{variantSetDbId:[\\d]+}", method=RequestMethod.GET,
-        produces = "application/json")
+    @GetMapping(value="/{variantSetDbId:[\\d]+}", produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
         @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
         @PathVariable("variantSetDbId") Integer variantSetDbId
@@ -199,8 +198,7 @@ public class VariantSetsController {
             name="Authorization", value="Authentication Token",
             required = true, paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/{variantSetDbId:[\\d]+}/variants", method=RequestMethod.GET,
-        produces = "application/json")
+    @GetMapping(value="/{variantSetDbId:[\\d]+}/variants", produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterListPayload<VariantDTO>>
     getVariantsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet of the Variants to be extracted", required = true)
@@ -282,7 +280,7 @@ public class VariantSetsController {
             name="Authorization", value="Authentication Token",
             required=true, paramType = "header", dataType = "string")
     })
-    @GetMapping(produces = "application/json")
+    @GetMapping(value="/{variantSetDbId:[\\d]+}/callsets", produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
     getCallsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
@@ -350,7 +348,7 @@ public class VariantSetsController {
             required = true, paramType = "header", dataType = "string"
         )
     })
-    @GetMapping(value="/{variantSetDbId:[\\d]+}/callsets")
+    @GetMapping(value="/{variantSetDbId:[\\d]+}/callsets", produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterListPayload<CallSetDTO>>
     getCallSetsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
