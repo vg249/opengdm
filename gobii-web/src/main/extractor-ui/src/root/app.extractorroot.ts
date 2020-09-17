@@ -153,7 +153,7 @@ export class ExtractorRoot implements OnInit {
 
                     let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
 
-                    scope$.currentStatus = (gobiiVersion.startsWith("GOBII Server")) ? gobiiVersion : "GOBII Server" + gobiiVersion;
+                    scope$.currentStatus = (gobiiVersion.startsWith("GOBII Server")) ? gobiiVersion : "GOBII Server " + gobiiVersion;
 
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
