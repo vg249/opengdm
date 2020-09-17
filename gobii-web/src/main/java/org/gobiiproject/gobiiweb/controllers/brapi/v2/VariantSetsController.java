@@ -280,7 +280,7 @@ public class VariantSetsController {
             name="Authorization", value="Authentication Token",
             required=true, paramType = "header", dataType = "string")
     })
-    @GetMapping(value="/{variantSetDbId:[\\d]+}/callsets", produces = "application/json")
+    @GetMapping(value="/{variantSetDbId:[\\d]+}/calls", produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
     getCallsByVariantSetDbId(
         @ApiParam(value = "ID of the VariantSet", required = true)
