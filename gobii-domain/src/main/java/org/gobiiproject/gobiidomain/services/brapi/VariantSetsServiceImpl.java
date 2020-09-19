@@ -42,16 +42,19 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
     @Override
     public PagedResult<VariantSetDTO>
-    getVariantSets(Integer pageSize, Integer pageNum,
-                   Integer variantSetDbId, String variantSetName,
-                   Integer studyDbId, String studyName) throws GobiiException {
+    getVariantSets(Integer pageSize,
+                   Integer pageNum,
+                   Integer variantSetDbId,
+                   String variantSetName,
+                   Integer studyDbId,
+                   String studyName) throws GobiiException {
 
         List<VariantSetDTO> variantSets = new ArrayList<>();
 
-        //To map variantset by datasetid to avoid mapping more than once
+        //To track variantset by datasetid to avoid mapping more than once
         HashMap<Integer, VariantSetDTO> variantSetDtoMapByDatasetId = new HashMap<>();
 
-        //To map analysisdto by analysisid to avoid mapping more than once
+        //To track analysisdto by analysisid to avoid mapping more than once
         HashMap<Integer, AnalysisDTO> analysisDtoMapByAnalysisId = new HashMap<>();
 
         try {
@@ -61,7 +64,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
             Integer rowOffset = pageNum*pageSize;
 
-            List<Object[]> resultTuple = datasetDao.getDatasetsWithAnalysesAndCounts(
+            List<Object[]> tuples = datasetDao.getDatasetsWithAnalysesAndCounts(
                 pageSize,
                 rowOffset,
                 variantSetDbId,
@@ -70,7 +73,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                 studyName);
 
 
-            for (Object[] tuple : resultTuple) {
+            for (Object[] tuple : tuples) {
 
                 VariantSetDTO variantSetDTO;
                 AnalysisDTO analysisDTO;
@@ -87,23 +90,16 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                     ModelMapper.mapEntityToDto(dataset, variantSetDTO);
 
                     variantSets.add(variantSetDTO);
-
                     variantSetDTO.setAvailableFormats(new ArrayList<>());
 
                     FileFormatDTO fileFormat = new FileFormatDTO();
-
                     fileFormat.setDataFormat("tabular");
-
                     fileFormat.setFileFormat("text/csv");
-
                     fileFormat.setSepUnphased(unphasedSep);
-
                     fileFormat.setUnknownString(unknownChar);
-
                     //Set dataset download url
                     fileFormat.setFileURL(
                         MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
-
                     variantSetDTO.getAvailableFormats().add(fileFormat);
 
                     //Set Marker and DnaRun Counts
@@ -193,9 +189,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
 
     private void mapVariantSetExtractReady(Dataset dataset, VariantSetDTO variantSetDTO) {
-
         variantSetDTO.setAdditionalInfo(new HashMap<>());
-
         try {
             if(dataset.getJob() == null) {
                 variantSetDTO.getAdditionalInfo().put("extractReady", false);
@@ -205,23 +199,19 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                     "extractReady",
                     isVariantSetExtractReady(dataset));
             }
-
         }
         catch (Exception e) {
-
             log.error(e.getMessage(), e);
-
             throw new GobiiDomainException(
                     GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage());
-
         }
-
     }
 
     private boolean isVariantSetExtractReady(Dataset dataset) {
-        return !dataset.getJob().getType().getTerm().equals(JobType.CV_JOBTYPE_LOAD.getCvName())
+        return
+            !dataset.getJob().getType().getTerm().equals(JobType.CV_JOBTYPE_LOAD.getCvName())
             || dataset.getJob().getStatus().getTerm().equals(GobiiJobStatus.COMPLETED.getCvTerm());
     }
 

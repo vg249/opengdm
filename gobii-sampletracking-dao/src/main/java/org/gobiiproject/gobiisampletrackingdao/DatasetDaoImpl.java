@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -42,6 +39,8 @@ public class DatasetDaoImpl implements DatasetDao {
 
 
     /**
+     * Get datasets by given parameters.
+     *
      * @param pageSize - size of the page
      * @param rowOffset - Row offset after which the pages need to be fetched
      * @param datasetId - Id for dataset. Unique identifier.
@@ -49,10 +48,15 @@ public class DatasetDaoImpl implements DatasetDao {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<Dataset> getDatasets(Integer pageSize, Integer rowOffset,
-                                     Integer datasetId, String datasetName,
-                                     Integer datasetTypeId, 
-                                     Integer experimentId, String experimentName) {
+    public List<Dataset> getDatasets(
+        Integer pageSize,
+        Integer rowOffset,
+        Integer datasetId,
+        String datasetName,
+        Integer datasetTypeId,
+        Integer experimentId,
+        String experimentName
+    ) throws GobiiException {
 
         List<Dataset> datasets;
 
@@ -65,33 +69,37 @@ public class DatasetDaoImpl implements DatasetDao {
             Objects.requireNonNull(pageSize, "rowOffset : Required non null");
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-
             CriteriaQuery<Dataset> criteriaQuery = criteriaBuilder.createQuery(Dataset.class);
 
             Root<Dataset> datasetRoot = criteriaQuery.from(Dataset.class);
             criteriaQuery.select(datasetRoot);
 
             Join<Object, Object> experiment =
-                    (Join<Object, Object>) datasetRoot.fetch("experiment");
+                (Join<Object, Object>) datasetRoot.fetch("experiment");
 
             if(datasetId != null) {
-                predicates.add(criteriaBuilder.equal(datasetRoot.get("datasetId"), datasetId));
+                predicates.add(
+                    criteriaBuilder.equal(datasetRoot.get("datasetId"), datasetId));
             }
 
             if(datasetName != null) {
-                predicates.add(criteriaBuilder.equal(datasetRoot.get("datasetName"), datasetName));
+                predicates.add(
+                    criteriaBuilder.equal(datasetRoot.get("datasetName"), datasetName));
             }
 
             if(datasetTypeId != null) {
-                predicates.add(criteriaBuilder.equal(datasetRoot.get("type").get("cvId"), datasetTypeId));
+                predicates.add(
+                    criteriaBuilder.equal(datasetRoot.get("type").get("cvId"), datasetTypeId));
             }
 
             if(experimentId != null) {
-                predicates.add(criteriaBuilder.equal(experiment.get("experimentId"), experimentId));
+                predicates.add(
+                    criteriaBuilder.equal(experiment.get("experimentId"), experimentId));
             }
 
             if(experimentName != null) {
-                predicates.add(criteriaBuilder.equal(experiment.get("experimentName"), experimentName));
+                predicates.add(
+                    criteriaBuilder.equal(experiment.get("experimentName"), experimentName));
             }
 
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
@@ -103,67 +111,18 @@ public class DatasetDaoImpl implements DatasetDao {
                     .setMaxResults(pageSize)
                     .getResultList();
 
-
             return datasets;
 
         }
-        catch(Exception e) {
-
+        catch(PersistenceException e) {
             log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
     }
 
-    /**
-     * Gets the dataset entity by dataset id.
-     * @param datasetId - Dataset Id
-     * @return
-     */
-    @Override
-    public Dataset getDatasetById(Integer datasetId) throws GobiiException {
-
-        Objects.requireNonNull(datasetId, "datasetId : Required non null");
-
-        try {
-
-            //Overload the getDatasets
-            List<Dataset> datasetsById = this.getDatasets(1000, 0,
-                    datasetId, null,
-                    null, //datasetTypeId
-                    null, null);
-
-            if (datasetsById.size() > 1) {
-                log.error("More than one duplicate entries found.");
-
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.NONE,
-                        "More than one dataset entity exists for the same Id");
-
-            } else if (datasetsById.size() == 0) {
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Dataset Entity for given id does not exist");
-            }
-
-            return datasetsById.get(0);
-        }
-        catch(GobiiException ge) {
-            throw ge;
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-
-        }
-
-    }
 
     /**
      * Returns a list of object tuple with Dataset entity left joined with analysis entities
@@ -184,9 +143,12 @@ public class DatasetDaoImpl implements DatasetDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Object[]> getDatasetsWithAnalysesAndCounts(
-          Integer pageSize, Integer rowOffset,
-          Integer datasetId, String datasetName,
-          Integer experimentId, String experimentName) {
+        Integer pageSize,
+        Integer rowOffset,
+        Integer datasetId,
+        String datasetName,
+        Integer experimentId,
+        String experimentName) {
 
 
         String queryString = "WITH ds AS (" +
@@ -246,11 +208,10 @@ public class DatasetDaoImpl implements DatasetDao {
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
     }
@@ -261,7 +222,6 @@ public class DatasetDaoImpl implements DatasetDao {
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Dataset> dataset = criteriaQuery.from(Dataset.class);
         Join<Object, Object> callingAnalysis = dataset.join("callingAnalysis");
-        //Fetch<Object, Object> callingAnalysis = dataset.fetch("callingAnalysis");
         criteriaQuery.select(
             criteriaBuilder.count(
                 dataset
@@ -272,9 +232,7 @@ public class DatasetDaoImpl implements DatasetDao {
                 id
             )
         );
-
         return em.createQuery(criteriaQuery).getSingleResult().intValue();
-
     }
 
 	@Override
