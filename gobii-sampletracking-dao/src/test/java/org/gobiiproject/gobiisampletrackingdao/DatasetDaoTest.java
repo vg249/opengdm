@@ -89,7 +89,7 @@ public class DatasetDaoTest {
                 .get(random.nextInt(daoTestSetUp.getCreatedDatasets().size()))
                 .getDatasetId();
 
-        Dataset dataset = datasetDao.getDatasetById(datasetId);
+        Dataset dataset = datasetDao.getDataset(datasetId);
 
         assertTrue("Failing get Dataset by Id",
                 dataset.getDatasetId() == datasetId);

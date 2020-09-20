@@ -1,13 +1,14 @@
 package org.gobiiproject.gobiidomain.services.brapi;
 
+import java.io.File;
+import java.security.MessageDigest;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
@@ -24,6 +25,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 
 import javax.transaction.Transactional;
 
@@ -207,6 +209,28 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage());
         }
+    }
+
+    @Override
+    public String getEtag(Integer variantSetDbId) throws GobiiDomainException {
+
+        Dataset dataset = datasetDao.getDataset(variantSetDbId);
+
+        if (dataset == null) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                "Variantset does not exist");
+        }
+
+        if(StringUtils.isNotEmpty(dataset.getDataFile())) {
+            File dataFile = new File(dataset.getDataFile());
+            if (dataFile.exists()) {
+                return DigestUtils.md5DigestAsHex(
+                    String.valueOf(dataFile.lastModified()).getBytes());
+            }
+        }
+        return null;
     }
 
     private boolean isVariantSetExtractReady(Dataset dataset) {
