@@ -22,6 +22,8 @@ public interface ContactDao {
     Contact addContact(Contact contact);
     Contact addContact(String username, String lastName, String firstName, String email, Organization organization, String createdBy) throws Exception;
 
+    Contact updateContact(Contact contact) throws Exception;
+    
     void stampCreated(BaseEntity auditable, String userid) throws Exception;
 
     void stampModified(BaseEntity auditable, String userid) throws Exception;

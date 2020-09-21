@@ -125,6 +125,13 @@ public class ContactDaoImpl implements ContactDao {
         return this.addContact(contact);
     }
 
+    @Override
+    public Contact updateContact(Contact contact) throws Exception {
+        em.merge(contact);
+        em.flush();
+        return contact;
+    }
+
     
      
  }

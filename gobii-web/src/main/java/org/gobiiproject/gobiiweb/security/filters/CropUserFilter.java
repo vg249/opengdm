@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.utils.URLUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
