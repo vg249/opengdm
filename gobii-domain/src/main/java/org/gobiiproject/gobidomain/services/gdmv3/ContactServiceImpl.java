@@ -79,11 +79,22 @@ public class ContactServiceImpl implements ContactService {
                 contact.setOrganization(organization);
             }
 
+
             contactDao.addContact(contact);
 
         }
+
+        //detect email is still the same
+        else  {
+            if (!contact.getEmail().equals(email)) {
+                //update email
+                contact.setEmail(email);
+                contactDao.updateContact(contact);
+            }
+        }
+
         return getContactDTO(contact);
-    }
+    } 
 
     private Organization createOrganization(String orgName)  {
         try {
