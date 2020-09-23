@@ -507,62 +507,56 @@
             </configuration>
             </plugin>
 
-            <!-- Replacing deprecated grunt-maven-plugin with front-end-maven-plugin
-                https://github.com/allegro/grunt-maven-plugin
-            -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>${frontend-maven-plugin-version}</version>
-
+                <configuration>
+                    <workingDirectory>src/main/extractor-ui</workingDirectory>
+                </configuration>
                 <executions>
-
-
-
                     <execution>
-                        <!-- optional: you don't really need execution ids,
-                        but it looks nice in your build log. -->
-                        <id>install node and npm</id>
+                        <id>install-node-and-npm</id>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>${node-version}</nodeVersion>
-                            <npmVersion>${npm-version}</npmVersion>
+                            <nodeVersion>v12.18.3</nodeVersion>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>npm install</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
-
-                        <!-- optional: default phase is "generate-resources" -->
-                        <phase>generate-resources</phase>
-
                         <configuration>
-                            <!-- optional: The default argument is actually
-                            "install", so unless you need to run some other npm command,
-                            you can remove this whole <configuration> section.
-                            -->
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-
                     <execution>
-                        <id>npm run build</id>
+                        <id>npm build</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>generate-resources</phase>
                         <configuration>
-                            <skip>${maven.exec.skip}</skip>
                             <arguments>run build</arguments>
                         </configuration>
+                        <phase>generate-resources</phase>
                     </execution>
-
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <!-- Add frontend folder to war package -->
+                    <webResources>
+                        <resource>
+                            <directory>src/main/extractor-ui/dist/extractor-ui/</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
             </plugin>
 
             <!--
@@ -595,91 +589,6 @@
                                         <include>index.adoc</include>
                                         <include>gobii-api.adoc</include>
                                         <include>gobii-system.adoc</include>
-                                    </includes>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>prepare-package-nodemodules</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Copy all generated javascript files into the final directory structure -->
-                            <!--<outputDirectory>${project.build.outputDirectory}/${project.artifactId}</outputDirectory>-->
-                            <outputDirectory>${project.build.directory}/${project.build.finalName}/js/node_modules
-                            </outputDirectory>
-                            <resources>
-                                <resource>
-                                    <!-- Take the node-module code from where npm puts it -->
-                                    <directory>${project.basedir}/node_modules</directory>
-                                    <includes>
-                                        <!-- *************************************************-->
-                                        <!-- packageed javascript libraries to support angular2-->
-                                        <!-- ***** GROUP 1: supporting libraries -->
-                                        <include>es6-shim/es6-shim.min.js</include>
-                                        <include>systemjs/dist/system-polyfills.js</include>
-                                        <include>systemjs/dist/system.src.js</include>
-                                        <include>rx/dist/rx.js</include>
-                                        <include>bootstrap/dist/css/bootstrap.min.css</include>
-                                        <include>bootswatch/cerulean/bootstrap.min.css</include>
-                                        <include>bootswatch/cosmo/bootstrap.min.css</include>
-                                        <include>bootswatch/cyborg/bootstrap.min.css</include>
-                                        <include>bootswatch/darkly/bootstrap.min.css</include>
-                                        <include>bootswatch/flatly/bootstrap.min.css</include>
-                                        <include>bootswatch/fonts/bootstrap.min.css</include>
-                                        <include>bootswatch/journal/bootstrap.min.css</include>
-                                        <include>bootswatch/lumen/bootstrap.min.css</include>
-                                        <include>bootswatch/paper/bootstrap.min.css</include>
-                                        <include>bootswatch/readable/bootstrap.min.css</include>
-                                        <include>bootswatch/sandstone/bootstrap.min.css</include>
-                                        <include>bootswatch/simplex/bootstrap.min.css</include>
-                                        <include>bootswatch/slate/bootstrap.min.css</include>
-                                        <include>bootswatch/spacelab/bootstrap.min.css</include>
-                                        <include>bootswatch/superhero/bootstrap.min.css</include>
-                                        <include>bootswatch/united/bootstrap.min.css</include>
-                                        <include>bootswatch/yeti/bootstrap.min.css</include>
-                                        <include>zone.js/dist/zone.js</include>
-                                        <include>core-js/client/shim.min.js</include>
-                                        <include>reflect-metadata/Reflect.js</include>
-                                        <include>rxjs/**</include>
-                                        <include>rxjs-compat/**</include>
-                                        <include>ng2-uploader/**</include>
-                                        <include>ng2-file-upload/**</include>
-                                        <include>primeng/**</include>
-                                        <include>primeicons/**</include>
-
-
-                                        <!-- ***** GROUP 2: angular bundle files-->
-                                        <include>@angular/core/bundles/core.umd.js</include>
-                                        <include>@angular/common/bundles/common.umd.js</include>
-                                        <include>@angular/compiler/bundles/compiler.umd.js</include>
-                                        <include>@angular/router/bundles/router.umd.js</include>
-                                        <include>@angular/http/bundles/http.umd.js</include>
-                                        <include>@angular/platform-browser/bundles/platform-browser.umd.js</include>
-                                        <include>@angular/platform-browser/bundles/platform-browser-animations.umd.js
-                                        </include>
-                                        <include>
-                                            @angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js
-                                        </include>
-                                        <include>@angular/forms/bundles/forms.umd.js</include>
-                                        <include>@angular/animations/bundles/animations.umd.js</include>
-                                        <include>@angular/animations/bundles/animations-browser.umd.js</include>
-                                        <include>@angular/animations/bundles/animations-browser.umd.js</include>
-
-                                        <!-- ***** GROUP 3: angular bundle files-->
-                                        <include>deep-freeze-strict/index.js</include>
-                                        <include>ngrx-store-freeze/dist/index.js</include>
-                                        <include>reselect/dist/reselect.js</include>
-                                        <include>@ngrx/db/bundles/db.umd.js</include>
-                                        <include>@ngrx/effects/bundles/effects.umd.js</include>
-                                        <include>@ngrx/router-store/bundles/router-store.umd.js</include>
-                                        <include>@ngrx/store/bundles/store.umd.js</include>
-                                        <include>@ngrx/store-devtools/bundles/store-devtools.umd.js</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>

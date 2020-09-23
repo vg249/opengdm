@@ -70,19 +70,23 @@
     </bean>
 
     <security:http auto-config="false" entry-point-ref="keycloakAuthenticationEntryPoint" use-expressions="true" >
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
         <security:csrf disabled="true"/>
         <security:custom-filter ref="authTokenRewriteFilter" before="FIRST" />
         <security:custom-filter ref="keycloakPreAuthActionsFilter" before="LOGOUT_FILTER" />
         <security:custom-filter ref="keycloakAuthenticationProcessingFilter" before="FORM_LOGIN_FILTER" />
         <security:custom-filter ref="customGDMFilter" after="LAST" />
         <security:intercept-url pattern="/crops" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/gobii/v1/auth" access="permitAll"/>
-        <security:intercept-url pattern="/gobii/v1/**" access="isAuthenticated()" />
-        <security:intercept-url pattern="/brapi/v1/token" access="permitAll"/>
-        <security:intercept-url pattern="/brapi/v1/**" access="isAuthenticated()" />
-        <security:intercept-url pattern="/brapi/v2/token" access="permitAll"/>
-        <security:intercept-url pattern="/brapi/v2/**" access="isAuthenticated()" />
-        <security:intercept-url pattern="/gobii/v3/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/crops/*/gobii/v1/auth" access="permitAll"/>
+        <security:intercept-url pattern="/error" access="permitAll"/>
+        <security:intercept-url pattern="/crops/*/gobii/v1/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/crops/*/brapi/v1/token" access="permitAll"/>
+        <security:intercept-url pattern="/crops/*/brapi/v1/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/crops/*/brapi/v2/token" access="permitAll"/>
+        <security:intercept-url pattern="/crops/*/brapi/v2/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/crops/*/gobii/v3/**" access="isAuthenticated()" />
         <!-- <security:intercept-url pattern="/admin**" access="ROLE_ADMIN" /> -->
         <security:custom-filter ref="logoutFilter" position="LOGOUT_FILTER" />
     </security:http>

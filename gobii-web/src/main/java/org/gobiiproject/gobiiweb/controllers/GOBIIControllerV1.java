@@ -257,14 +257,14 @@ public class GOBIIControllerV1 {
 
             // add gobii version
             returnVal.getHeader().setGobiiVersion(GobiiVersionInfo.getVersion());
+            returnVal.getHeader().setCropType(CropRequestAnalyzer.getGobiiCropType());
+
 
             returnVal.getPayload().getData().add(pingDTOResponse);
         } catch (GobiiException e) {
-
             returnVal.getHeader().getStatus().addException(e);
 
         } catch (Exception e) {
-
             returnVal.getHeader().getStatus().addException(e);
             LOGGER.error(e.getMessage());
         }
