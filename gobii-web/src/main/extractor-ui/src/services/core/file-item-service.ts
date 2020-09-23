@@ -963,7 +963,6 @@ export class FileItemService {
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
                           fileItemParamName: FilterParamNames,
                           cropType: string) {
-        console.log("Loading entity list dataset for crop: " + cropType);
         let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
         if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
             this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false, cropType)
@@ -1051,7 +1050,6 @@ export class FileItemService {
 
 
                                 entityItems.forEach(fi => {
-                                    console.log(fi.getEntity());
                                     fi.setGobiiExtractFilterType(gobiiExtractFilterType);
                                     fi.setCropType(cropType);
                                 });

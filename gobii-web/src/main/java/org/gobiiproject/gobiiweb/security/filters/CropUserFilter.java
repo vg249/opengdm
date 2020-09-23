@@ -53,10 +53,21 @@ public class CropUserFilter extends GenericFilterBean {
         String servicePath = httpServletRequest.getRequestURI().substring(
             httpServletRequest.getContextPath().length());
 
+        //TODO:  move these two conditions to filter config
         // Skip crop user filter for /crops endpoint
         if(URLUtils.stripStartAndEndPathSeparator(servicePath)
             .equals(URLUtils.stripStartAndEndPathSeparator(
                 GobiiControllerType.CROPS.getControllerPath()))) {
+
+            chain.doFilter(request, response); //continue on
+            return;
+
+        }
+
+         // Skip crop user filter for /crops endpoint
+        if(URLUtils.stripStartAndEndPathSeparator(servicePath)
+            .equals(URLUtils.stripStartAndEndPathSeparator(
+                "/config/extractor"))) {
 
             chain.doFilter(request, response); //continue on
             return;
