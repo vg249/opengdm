@@ -1,40 +1,36 @@
 ////<reference path="../../../../../../typings/index.d.ts"/>
-import {Component, OnInit, ChangeDetectorRef, ViewChild} from "@angular/core";
-import {DtoRequestService} from "../services/core/dto-request.service";
-import {ProcessType} from "../model/type-process";
-import {GobiiFileItem} from "../model/gobii-file-item";
-import {ServerConfig} from "../model/server-config";
-import {EntitySubType, EntityType} from "../model/type-entity";
-import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
-import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {CvFilterType} from "../model/cv-filter-type";
-import {ExtractorItemType} from "../model/type-extractor-item";
-import {GobiiExtractFormat} from "../model/type-extract-format";
-import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {FileName} from "../model/file_name";
-import {Contact} from "../model/contact";
-import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-request-item-contact";
-import {AuthenticationService} from "../services/core/authentication.service";
-import {NameIdLabelType} from "../model/name-id-label-type";
-import {StatusLevel} from "../model/type-status-level";
-import {Store} from "@ngrx/store";
-import * as fromRoot from '../store/reducers';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { Observable } from "rxjs/Observable";
+import { DtoRequestItemCrops } from 'src/services/app/dto-request-item-crops';
+import { Contact } from "../model/contact";
+import { Crop } from '../model/crop';
+import { CvFilterType } from "../model/cv-filter-type";
+import { HeaderStatusMessage } from "../model/dto-header-status-message";
+import { FilterParamNames } from "../model/file-item-param-names";
+import { FileName } from "../model/file_name";
+import { GobiiFileItem } from "../model/gobii-file-item";
+import { ServerConfig } from "../model/server-config";
+import { EntitySubType, EntityType } from "../model/type-entity";
+import { GobiiExtractFormat } from "../model/type-extract-format";
+import { GobiiExtractFilterType } from "../model/type-extractor-filter";
+import { ExtractorItemType } from "../model/type-extractor-item";
+import { GobiiSampleListType } from "../model/type-extractor-sample-list";
+import { ProcessType } from "../model/type-process";
+import { StatusLevel } from "../model/type-status-level";
+import { ContactSearchType, DtoRequestItemContact } from "../services/app/dto-request-item-contact";
+import { DtoRequestItemServerConfigs } from "../services/app/dto-request-item-serverconfigs";
+import { AuthenticationService } from "../services/core/authentication.service";
+import { DtoRequestService } from "../services/core/dto-request.service";
+import { DtoRequestService2 } from '../services/core/dto-request.service2';
+import { FileItemService } from "../services/core/file-item-service";
+import { InstructionSubmissionService } from "../services/core/instruction-submission-service";
+import { TypeControl } from "../services/core/type-control";
+import { ViewIdGeneratorService } from "../services/core/view-id-generator-service";
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
-import {FilterParamNames} from "../model/file-item-param-names";
-import {FileItemService} from "../services/core/file-item-service";
-import {Observable} from "rxjs/Observable";
-import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
-import {GobiiSampleListType} from "../model/type-extractor-sample-list";
-import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
-import {TypeControl} from "../services/core/type-control";
-import { KeycloakService } from 'keycloak-angular';
-import { DtoRequestItemCrops } from 'src/services/app/dto-request-item-crops';
-import { Crop } from '../model/crop';
-import { DtoRequestService2 } from '../services/core/dto-request.service2';
-import { throwIfEmpty } from 'rxjs/operators';
-import { ReplaceByItemIdAction } from '../store/actions/fileitem-action';
-import { getSelectedCrop } from 'src/store/reducers/fileitems-reducer';
+import * as fromRoot from '../store/reducers';
+import { Router } from '@angular/router';
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -54,6 +50,7 @@ export class ExtractorRoot implements OnInit {
     // ************************************************************************
 
     //
+    public profileOk: boolean = null;
 
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -90,23 +87,28 @@ export class ExtractorRoot implements OnInit {
                 private instructionSubmissionService: InstructionSubmissionService,
                 private changeDetectorRef: ChangeDetectorRef,
                 public viewIdGeneratorService: ViewIdGeneratorService,
+                private router: Router
                 //private _keycloakService: KeycloakService
     ) {
 
         this.messages$.subscribe(
             messages => {
                 if (messages.length > 0) {
-
                     this.currentStatusMessage = messages[0];
                     this.showMessagesDialog();
                 }
             }
         );
 
+        if (this._authenticationService.isProfileLoaded() && !this._authenticationService.getUserEmail()) {
+            this.displayEmailUpdateDialog = true;
+        }
+
     }
 
     public display: boolean = false;
     public currentStatusMessage: string = null;
+    public displayEmailUpdateDialog: boolean = false;
 
     showMessagesDialog() {
         this.display = true;
@@ -129,15 +131,11 @@ export class ExtractorRoot implements OnInit {
     private initializeCropType() {
         let scope$ = this;
         this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
-            //
             if (crops) {
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.store.dispatch(new fileItemAction.SetCurrentCropAction(crops[0].cropType));
                 this.fileItemService.loadCrops(GobiiExtractFilterType.UNKNOWN, crops, 0);
-                
-                scope$.initializeServerConfigs();
-
-                
+                scope$.initializeServerConfigs();   
             }
         })
     }
@@ -154,10 +152,8 @@ export class ExtractorRoot implements OnInit {
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
                     let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
-                    //cleanup the gobiiVersion string
-                    //gobiiVersion = gobiiVersion.replace(/GOBII Server/g, '');
 
-                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
+                    scope$.currentStatus = (gobiiVersion.startsWith("GOBII Server")) ? gobiiVersion : "GOBII Server " + gobiiVersion;
 
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
@@ -189,9 +185,6 @@ export class ExtractorRoot implements OnInit {
         scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
             ContactSearchType.BY_USERNAME,
             this.loggedInUser)).subscribe(contact => {
-
-
-                let foo: string = "foo";
 
                 if (contact && contact.contactId && contact.contactId > 0) {
 
@@ -412,7 +405,6 @@ export class ExtractorRoot implements OnInit {
 
     public handleOnMouseOverSubmit(arg, isEnter) {
 
-        // this.criteriaInvalid = true;
         if (isEnter) {
             this.instructionSubmissionService.markMissingItems(this.gobiiExtractFilterType)
         } else {
@@ -465,8 +457,13 @@ export class ExtractorRoot implements OnInit {
         let scope$ = this;
         this._authenticationService.loadUserProfile().subscribe(
             profile => {
-                this._authenticationService.setProfile(profile);
-                this.initializeCropType();
+                if (profile.email) {
+                    this._authenticationService.setProfile(profile);
+                    this.profileOk = true;
+                    this.initializeCropType();
+                } else {
+                    this.profileOk = false;
+                }
             }
         )
         
@@ -474,5 +471,17 @@ export class ExtractorRoot implements OnInit {
     } // ngOnInit()
 
 
+    public isProfileOk() {
+        return this.profileOk;
+    }
+
+    public logout() {
+        this._authenticationService.logout()
+            .subscribe(
+                obj => {
+                    this.router.navigate(["/"]);
+                }
+            )
+    }
 }
 

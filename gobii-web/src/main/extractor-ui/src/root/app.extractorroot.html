@@ -2,15 +2,28 @@
     <div class="card-header">
         <img src="assets/gdm_logo.png" alt="GDM Logo" style="height: 100px; width: auto"/>
     </div> <!-- panel heading -->
-
     <div class="card-body">
         <div class="card">
             <div class="card-header">
                 <span class="panel-title">{{currentStatus}}</span>
-                <span class="panel-title" style="float:right">{{loggedInUser}}</span>
+                <div style="float:right;vertical-align:middle">
+                <span class="panel-title">
+                <p-button label="{{loggedInUser}}" styleClass="p-button-text p-button-plain"></p-button>
+                <p-button label="Sign out" styleClass="p-button-text" (onClick)="logout()" *ngIf="isProfileOk() === true"></p-button>
+                </span>
+                </div>
             </div> <!-- panel heading  -->
-                      
-            <div class="card-body container-fluid">
+            <p-dialog header="System Message"
+                    modal="modal"
+                    visible="true"
+                    [contentStyle]="{'width': '400px'}"
+                    *ngIf="isProfileOk() === false"
+                    >
+                    <div class="panel-body" style="text-align:center">
+                        Email id not found. Please contact your system administrator to update email id for your account.
+                    </div> 
+            </p-dialog>
+            <div class="card-body container-fluid" *ngIf="isProfileOk() === true">
                 <div class="row">
                     <div  style="margin-left: 15px;margin-top:20px;margin-bottom:20px;display:flex;align-items:center">
                         <span style="vertical-align: middle;color: #007ad9">
@@ -200,17 +213,18 @@
                             [(visible)]="display"
                             (onHide)="onHideMessageDialog($event)"
                             [contentStyle]="{'width': '400px'}">
-                        <p-panel>
+
                             <div class="panel-body" [id]="viewIdGeneratorService.makeStandardId(typeControl.SYSTEM_STATUS_MESSAGE_BODY)">
                                 {{currentStatusMessage}}
                                 <!--<status-display [messages$]="messages$"></status-display>-->
                             </div> <!-- panel body -->
-                        </p-panel> <!-- panel primary -->
+
                         <p-footer>
                             <button type="button" pButton icon="pi pi-check" (click)="display=false"
                                     label="OK"></button>
                         </p-footer>
                     </p-dialog>
+
 
                     <div class="col-md-4"> <!-- outer grid column 2: Criteria summary -->
 
