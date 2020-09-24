@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices;
 
-import org.gobiiproject.gobidomain.services.ExperimentService;
+import org.gobiiproject.gobiidomain.services.ExperimentService;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;

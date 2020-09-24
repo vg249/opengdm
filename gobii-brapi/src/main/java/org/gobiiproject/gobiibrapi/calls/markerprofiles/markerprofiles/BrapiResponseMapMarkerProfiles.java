@@ -2,7 +2,7 @@ package org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles;
 
 import java.util.ArrayList;
 
-import org.gobiiproject.gobidomain.services.SampleService;
+import org.gobiiproject.gobiidomain.services.SampleService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.springframework.beans.factory.annotation.Autowired;

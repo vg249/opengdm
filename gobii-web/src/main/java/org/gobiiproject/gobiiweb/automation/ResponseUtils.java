@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.springframework.http.MediaType;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 
 public class ResponseUtils {
     

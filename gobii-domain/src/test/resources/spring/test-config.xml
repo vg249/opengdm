@@ -53,11 +53,11 @@
 
 
     <bean id="projectService"
-          class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.ProjectServiceImpl"/>
     <bean id="experimentDao"
           class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
-    <bean id="keycloakService" class="org.gobiiproject.gobidomain.services.gdmv3.KeycloakServiceImpl"/>
+    <bean id="keycloakService" class="org.gobiiproject.gobiidomain.services.gdmv3.KeycloakServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
@@ -69,27 +69,27 @@
 
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
-    <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
+    <bean id="contactService" class="org.gobiiproject.gobiidomain.services.impl.ContactServiceImpl"/>
     <!-- gdm v3 contactSErvice-->
-     <bean id="contactServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ContactServiceImpl"/>
+     <bean id="contactServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.ContactServiceImpl"/>
 
       <!-- gdm v3 ReferenceSErvice-->
-     <bean id="referenceServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ReferenceServiceImpl"/>
+     <bean id="referenceServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.ReferenceServiceImpl"/>
     <bean id="rsContact"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
     <bean id="rsProject"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
     <!-- gdm v3 platform service -->
-    <bean id="platformServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.PlatformServiceImpl"/>
+    <bean id="platformServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.PlatformServiceImpl"/>
     <bean id="platformDaoV3" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
     <!-- *** Cv Service Bean -->
-    <bean id="cvServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.CvServiceImpl"/>
+    <bean id="cvServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.CvServiceImpl"/>
     
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
     
     <!-- **** Marker Group Service/DAo-->
-    <bean id="markerGroupService" class="org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupServiceImpl"/>
+    <bean id="markerGroupService" class="org.gobiiproject.gobiidomain.services.gdmv3.MarkerGroupServiceImpl"/>
     <bean id="markerGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerGroupDaoImpl"/>
     <!-- **** Projects Beans *************************************** -->
     <bean id="rsProjectDao"
@@ -170,7 +170,7 @@
 
 
 
-    <context:component-scan base-package="org.gobiiproject.gobidomain.spring"/>
+    <context:component-scan base-package="org.gobiiproject.gobiidomain.spring"/>
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSourceMulti"/>

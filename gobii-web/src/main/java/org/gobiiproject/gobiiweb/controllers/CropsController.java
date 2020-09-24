@@ -1,8 +1,8 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import io.swagger.annotations.Api;
-import org.gobiiproject.gobidomain.services.gdmv3.CropService;
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterListPayload;
+import org.gobiiproject.gobiidomain.services.gdmv3.CropService;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CropsDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.springframework.beans.factory.annotation.Autowired;

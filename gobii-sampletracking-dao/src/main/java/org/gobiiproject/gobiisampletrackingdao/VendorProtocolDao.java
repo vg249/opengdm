@@ -13,7 +13,7 @@ import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import java.util.List;
 
 public interface VendorProtocolDao {
-
     List<VendorProtocol> getVendorProtocols(Integer page, Integer pageSize);
-
+    VendorProtocol getVendorProtocol(Integer protocolId, Integer vendorId);
+    VendorProtocol createVendorProtocol(VendorProtocol vendorProtocol);
  }

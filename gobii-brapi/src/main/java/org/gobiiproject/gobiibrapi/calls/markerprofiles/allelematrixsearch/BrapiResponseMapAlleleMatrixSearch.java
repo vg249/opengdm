@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch;
 
-import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
+import org.gobiiproject.gobiidomain.services.CvService;
+import org.gobiiproject.gobiidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;

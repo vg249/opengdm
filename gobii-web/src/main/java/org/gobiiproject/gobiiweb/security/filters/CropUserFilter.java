@@ -14,7 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
+import org.gobiiproject.gobiidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.URLUtils;

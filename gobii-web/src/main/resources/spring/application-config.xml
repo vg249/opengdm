@@ -28,6 +28,7 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
     <!-- <context:component-scan base-package="org.gobiiproject.gobidomain.security"/> -->
+    <context:component-scan base-package="org.gobiiproject.gobiidomain.security"/>
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
@@ -72,12 +73,12 @@
     <bean id="dtoMapSampleTrackingProject"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapProjectImpl"/>
     <bean id="projectService"
-          class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.ProjectServiceImpl"/>
     <bean id="propertiesService"
-          class="org.gobiiproject.gobidomain.services.impl.PropertiesServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.PropertiesServiceImpl"/>
 
     <!-- Keycloak Service Bean-->
-    <bean id="keycloakService" class="org.gobiiproject.gobidomain.services.gdmv3.KeycloakServiceImpl"/>
+    <bean id="keycloakService" class="org.gobiiproject.gobiidomain.services.gdmv3.KeycloakServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
@@ -96,7 +97,7 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
     <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapPingImpl"/>
     <bean id="pingService"
-          class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.PingServiceImpl"/>
 
 
     <!-- **** NameIdList Beans *************************************** -->
@@ -263,43 +264,43 @@
 
 
     <bean id="nameIdListService"
-          class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.NameIdListServiceImpl"/>
 
-    <bean id="cropService" class="org.gobiiproject.gobidomain.services.gdmv3.CropServiceImpl"/>
+    <bean id="cropService" class="org.gobiiproject.gobiidomain.services.gdmv3.CropServiceImpl"/>
 
     <!-- **** Loader File Beans *************************************** -->
 
     <bean id="filesService"
-          class="org.gobiiproject.gobidomain.services.impl.FileServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.FileServiceImpl"/>
 
     <bean id="dtoMapLoaderFiles"
           class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapLoaderFilesImpl"/>
     <bean id="loaderFilesService"
-          class="org.gobiiproject.gobidomain.services.impl.LoaderFilesServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.LoaderFilesServiceImpl"/>
 
     <!-- **** Loader Instruction File Beans *************************************** -->
     <bean id="dtoMapLoaderInstructions"
           class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapLoaderInstructionsImpl"/>
     <bean id="loaderInstructionFilesService"
-          class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
     <!-- **** Extractor File Beans *************************************** -->
     <bean id="dtoMapExtractorInstructions"
           class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapExtractorInstructionsImpl"/>
     <bean id="ExtractorInstructionFilesService"
-          class="org.gobiiproject.gobidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
 
 
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
-    <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
-    <bean id="contactServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.ContactServiceImpl"/>
+    <bean id="contactService" class="org.gobiiproject.gobiidomain.services.impl.ContactServiceImpl"/>
+    <bean id="contactServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.ContactServiceImpl"/>
     <!-- **** Display Beans *************************************** -->
     <bean id="rsDisplayDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
     <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDisplayImpl"/>
     <bean id="displayService"
-          class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.DisplayServiceImpl"/>
 
 
     <!-- **** DataSet Beans *************************************** -->
@@ -307,7 +308,7 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl"/>
     <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl"/>
     <bean id="DataSetService"
-          class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.DataSetServiceImpl"/>
 
     <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"
@@ -317,11 +318,11 @@
     <bean id="dtoMapSampleTrackingExperiment"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapExperimentImpl"/>
     <bean id="ExperimentService"
-          class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.ExperimentServiceImpl"/>
 
     <!-- *** Experiment Service V3 -->
     <bean id="ExperimentServiceV3"
-          class="org.gobiiproject.gobidomain.services.gdmv3.ExperimentServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.gdmv3.ExperimentServiceImpl"/>
 
 
     <!-- **** Analysis Beans *************************************** -->
@@ -330,15 +331,15 @@
     <bean id="dtoMapAnalysis"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisImpl"/>
     <bean id="AnalysisService"
-          class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.AnalysisServiceImpl"/>
     
     <!-- Analysis Service V3 -->
     <bean id="AnalysisServiceV3"
-          class="org.gobiiproject.gobidomain.services.gdmv3.AnalysisServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.gdmv3.AnalysisServiceImpl"/>
     <bean id="AnalysisDao"
           class="org.gobiiproject.gobiisampletrackingdao.AnalysisDaoImpl"/>
     <bean id="ReferenceServiceV3"
-          class="org.gobiiproject.gobidomain.services.gdmv3.ReferenceServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.gdmv3.ReferenceServiceImpl"/>
     <bean id="ReferenceDao"
           class="org.gobiiproject.gobiisampletrackingdao.ReferenceDaoImpl"/>
 
@@ -348,7 +349,7 @@
     <bean id="dtoMapPlatform"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapPlatformImpl"/>
     <bean id="platformService"
-          class="org.gobiiproject.gobidomain.services.impl.PlatformServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.PlatformServiceImpl"/>
 
 
     <!-- **** Map Beans *************************************** -->
@@ -357,7 +358,7 @@
     <bean id="dtoMapMapset"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetImpl"/>
     <bean id="MapsetService"
-          class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.MapsetServiceImpl"/>
 
 
     <!-- **** Marker Beans *************************************** -->
@@ -365,11 +366,11 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerDaoImpl"/>
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerImpl"/>
     <bean id="markerService"
-          class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
+          class="org.gobiiproject.gobiidomain.services.impl.MarkerServiceImpl"/>
 
 
     <!-- **** Marker Group Service/DAO V3-->
-    <bean id="markerGroupService" class="org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupServiceImpl"/>
+    <bean id="markerGroupService" class="org.gobiiproject.gobiidomain.services.gdmv3.MarkerGroupServiceImpl"/>
     <bean id="markerGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerGroupDaoImpl"/>
 
     <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
@@ -379,27 +380,27 @@
     <bean id="rsReferenceDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl"/>
     <bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapReferenceImpl"/>
-    <bean id="ReferenceService" class="org.gobiiproject.gobidomain.services.impl.ReferenceServiceImpl"/>
+    <bean id="ReferenceService" class="org.gobiiproject.gobiidomain.services.impl.ReferenceServiceImpl"/>
 
     <!-- **** CvTerms Beans *************************************** -->
     <bean id="rsCvDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvDaoImpl"/>
     <bean id="dtoMapCv" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapCvImpl"/>
-    <bean id="CvService" class="org.gobiiproject.gobidomain.services.impl.CvServiceImpl"/>
+    <bean id="CvService" class="org.gobiiproject.gobiidomain.services.impl.CvServiceImpl"/>
 
     <!-- *** CvGroup Beans ******************************************* -->
     <bean id="rsCvGroupDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvGroupDaoImpl"/>
     <bean id="dtoMapCvGroup" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapCvGroupImpl"/>
-    <bean id="CvGroupService" class="org.gobiiproject.gobidomain.services.impl.CvGroupServiceImpl"/>
+    <bean id="CvGroupService" class="org.gobiiproject.gobiidomain.services.impl.CvGroupServiceImpl"/>
 
     <!-- **** MarkerGroup Beans *************************************** -->
     <bean id="rsMarkerGroupDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl"/>
     <bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMarkerGroupImpl"/>
-    <bean id="MarkerGroupService" class="org.gobiiproject.gobidomain.services.impl.MarkerGroupServiceImpl"/>
+    <bean id="MarkerGroupService" class="org.gobiiproject.gobiidomain.services.impl.MarkerGroupServiceImpl"/>
 
     <!-- **** ConfigSetrings Beans *************************************** -->
     <bean id="dtoMapConfigSettings" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapConfigSettingsImpl"/>
-    <bean id="configSettingsService" class="org.gobiiproject.gobidomain.services.impl.ConfigSettingsServiceImpl"/>
+    <bean id="configSettingsService" class="org.gobiiproject.gobiidomain.services.impl.ConfigSettingsServiceImpl"/>
 
     <!-- **** Role Beans *************************************** -->
     <bean id="rsRoleDao"
@@ -415,20 +416,23 @@
    <!-- **** Projects V3  Beans -->
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
     <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
-    <bean id="gobiiProjectService" class="org.gobiiproject.gobidomain.services.gdmv3.ProjectServiceImpl"/>
+    <bean id="gobiiProjectService" class="org.gobiiproject.gobiidomain.services.gdmv3.ProjectServiceImpl"/>
 
     <!-- **** VednorProtocol V3  Beans -->
     <bean id="vendorProtocolDao" class="org.gobiiproject.gobiisampletrackingdao.VendorProtocolDaoImpl"/>
-    <bean id="vendorProtocolService" class="org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolServiceImpl"/>
+    <bean id="vendorProtocolService" class="org.gobiiproject.gobiidomain.services.gdmv3.VendorProtocolServiceImpl"/>
 
     <!-- *** Cv Service Bean -->
-    <bean id="cvServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.CvServiceImpl"/>
-    
+    <bean id="cvServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.CvServiceImpl"/>
+
+    <!-- *** New Vendor Protocol Dao -->
+    <bean id="vendorProtocolDaoV3" class="org.gobiiproject.gobiisampletrackingdao.VendorProtocolDaoImpl"/>
+
     <!-- **** New CV DAO -->
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
 
     <!-- **** New Dataset Dao -->
-    <bean id="datasetServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.DatasetServiceImpl"/>
+    <bean id="datasetServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.DatasetServiceImpl"/>
     <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
 
     <!-- **** New Samples DAO for accessing DNA samples -->
@@ -443,43 +447,49 @@
     <!-- **** New DnaRun Dao -->
     <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
 
+    <!-- **** New Protocol Dao -->
+    <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
+
      <!-- gdm v3 platform service -->
-    <bean id="platformServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.PlatformServiceImpl"/>
+    <bean id="platformServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.PlatformServiceImpl"/>
     <bean id="platformDaoV3" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
 
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
     <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapManifestImpl"/>
-    <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/>
+    <bean id="ManifestService" class="org.gobiiproject.gobiidomain.services.impl.ManifestServiceImpl"/>
 
 
     <!-- **** Organization Beans *************************************** -->
     <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>
     <bean id="dtoMapOrganization"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapOrganizationImpl"/>
-    <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
+    <bean id="OrganizationService" class="org.gobiiproject.gobiidomain.services.impl.OrganizationServiceImpl"/>
 
     <!-- **** Organization Beans V3 -->
-    <bean id="OrganizationServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.OrganizationServiceImpl"/>
+    <bean id="OrganizationServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.OrganizationServiceImpl"/>
     <bean id="OrganizationDaoV3" class="org.gobiiproject.gobiisampletrackingdao.OrganizationDaoImpl"/>
 
     <!-- **** Protocol Beans *************************************** -->
     <bean id="rsProtocolDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProtocolDaoImpl"/>
     <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProtocolImpl"/>
-    <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
+    <bean id="ProtocolService" class="org.gobiiproject.gobiidomain.services.impl.ProtocolServiceImpl"/>
 
+    <!-- **** Protocol Beans V3 *************************************** -->
+    <bean id="protocolDaoV3" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
+    <bean id="protocolServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.ProtocolServiceImpl"/>
 
     <!-- **** Job Beans *************************************** -->
-    <bean id="JobService" class="org.gobiiproject.gobidomain.services.impl.JobServiceImpl"/>
+    <bean id="JobService" class="org.gobiiproject.gobiidomain.services.impl.JobServiceImpl"/>
     <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapJobImpl"/>
     <bean id="rsJobDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
     <!-- **** Entity Status Beans *************************************** -->
-    <bean id="entityStatsService" class="org.gobiiproject.gobidomain.services.impl.EntityStatsServiceImpl"/>
+    <bean id="entityStatsService" class="org.gobiiproject.gobiidomain.services.impl.EntityStatsServiceImpl"/>
     <bean id="dtoMapEntityStatsImpl"
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
     <!-- **** Sample Beans *************************************** -->
-    <bean id="sampleService" class="org.gobiiproject.gobidomain.services.impl.SampleServiceImpl"/>
+    <bean id="sampleService" class="org.gobiiproject.gobiidomain.services.impl.SampleServiceImpl"/>
     <bean id="dtoMapSample" class="org.gobiiproject.gobiidtomapping.impl.DtoMapSampleImpl"/>
     <bean id="rsSampleDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsSampleDaoImpl"/>
 
@@ -488,38 +498,38 @@
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
 
     <!-- ** Studies BRAPI BEANS **-->
-    <bean id="studiesService" class="org.gobiiproject.gobidomain.services.brapi.StudiesServiceImpl"/>
+    <bean id="studiesService" class="org.gobiiproject.gobiidomain.services.brapi.StudiesServiceImpl"/>
     <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
 
 
     <!-- ** SAMPLE BRAPI BEANS **-->
-    <bean id="sampleBrapiService" class="org.gobiiproject.gobidomain.services.brapi.SamplesServiceImpl"/>
+    <bean id="sampleBrapiService" class="org.gobiiproject.gobiidomain.services.brapi.SamplesServiceImpl"/>
 
     <!-- ** Mapset BRAPI BEANS **-->
-    <bean id="mapsetService" class="org.gobiiproject.gobidomain.services.brapi.MapsetServiceImpl"/>
+    <bean id="mapsetService" class="org.gobiiproject.gobiidomain.services.brapi.MapsetServiceImpl"/>
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
 
     <!-- ** Mapset GDMV v3 Bean -->
-    <bean id="mapsetServiceV3" class="org.gobiiproject.gobidomain.services.gdmv3.MapsetServiceImpl"/>
+    <bean id="mapsetServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.MapsetServiceImpl"/>
 
     <!-- ** Marker Positions BRAPI BEANS **-->
-    <bean id="markerPositionService" class="org.gobiiproject.gobidomain.services.brapi.MarkerPositionsServiceImpl"/>
+    <bean id="markerPositionService" class="org.gobiiproject.gobiidomain.services.brapi.MarkerPositionsServiceImpl"/>
     <bean id="markerLinkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerLinkageGroupDaoImpl"/>
 
     <!-- ** VariantSets BRAPI BEANS **-->
-    <bean id="variantSetsService" class="org.gobiiproject.gobidomain.services.brapi.VariantSetsServiceImpl"/>
+    <bean id="variantSetsService" class="org.gobiiproject.gobiidomain.services.brapi.VariantSetsServiceImpl"/>
 
     <!-- *** Linkage Groups BRAPI BEANS *********** -->
-    <bean id="linkageGroupService" class="org.gobiiproject.gobidomain.services.brapi.LinkakgeGroupServiceImpl"/>
+    <bean id="linkageGroupService" class="org.gobiiproject.gobiidomain.services.brapi.LinkakgeGroupServiceImpl"/>
 
     <!-- *** Callsets BRAPI BEANS *********** -->
-    <bean id="callSetService" class="org.gobiiproject.gobidomain.services.brapi.CallSetServiceImpl"/>
+    <bean id="callSetService" class="org.gobiiproject.gobiidomain.services.brapi.CallSetServiceImpl"/>
 
     <!-- *** Variant BRAPI BEANS *********** -->
-    <bean id="variantService" class="org.gobiiproject.gobidomain.services.brapi.VariantServiceImpl"/>
+    <bean id="variantService" class="org.gobiiproject.gobiidomain.services.brapi.VariantServiceImpl"/>
 
     <!-- *** Genotype Calls BRAPI BEANS *********** -->
-    <bean id="genotypeCallsService" class="org.gobiiproject.gobidomain.services.brapi.GenotypeCallsServiceImpl"/>
+    <bean id="genotypeCallsService" class="org.gobiiproject.gobiidomain.services.brapi.GenotypeCallsServiceImpl"/>
 
 
 
@@ -1173,6 +1183,6 @@
         <constructor-arg index="1" ref="hdf5ProcessPathSelector"/>
     </bean>
 
-    <bean id="searchService" class="org.gobiiproject.gobidomain.services.brapi.SearchServiceImpl"/>
+    <bean id="searchService" class="org.gobiiproject.gobiidomain.services.brapi.SearchServiceImpl"/>
 
 </beans>

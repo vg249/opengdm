@@ -22,37 +22,20 @@ public class JsonNodeUtils {
      * @return
      */
     public static <T> List<T> getListFromIterator(Iterator<T> iterator) {
-
-
         Iterable<T> iterable = () -> iterator;
-
         List<T> list = StreamSupport
                 .stream(iterable.spliterator(), false)
                 .collect(Collectors.toList());
-
         return list;
-
     }
 
-    public static List<String> getKeysFromJsonObject(JsonNode jsonNode) throws Exception{
-
-        try {
-            List<String> datasetIds = new ArrayList<>();
-
-            Iterator<String> datasetIdsIter = jsonNode.fieldNames();
-
-            while (datasetIdsIter.hasNext()) {
-                datasetIds.add(datasetIdsIter.next());
-            }
-
-            return datasetIds;
+    public static List<String> getKeysFromJsonObject(JsonNode jsonNode) {
+        List<String> datasetIds = new ArrayList<>();
+        Iterator<String> datasetIdsIter = jsonNode.fieldNames();
+        while (datasetIdsIter.hasNext()) {
+            datasetIds.add(datasetIdsIter.next());
         }
-        catch (Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
-
-            throw e;
-        }
+        return datasetIds;
     }
 
     public static boolean isEmpty(JsonNode jsonNode) {
