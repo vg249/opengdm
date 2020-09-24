@@ -639,7 +639,7 @@
                         <apiSource>
                             <springmvc>true</springmvc>
                             <locations>
-                                <location>org.gobiiproject.gobiiweb.controllers.GOBIIControllerV1</location>
+                                <location>org.gobiiproject.gobiiweb.controllers.gdm.GOBIIControllerV1</location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>

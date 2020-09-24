@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiiweb.controllers;
+package org.gobiiproject.gobiiweb.controllers.gdm;
 
 import java.io.File;
 import java.io.FileInputStream;

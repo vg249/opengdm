@@ -7,7 +7,7 @@
  * @version 1.0
  * @since 2020-03-06
  */
-package org.gobiiproject.gobiiweb.controllers;
+package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
 import java.util.ArrayList;
 import java.util.List;
