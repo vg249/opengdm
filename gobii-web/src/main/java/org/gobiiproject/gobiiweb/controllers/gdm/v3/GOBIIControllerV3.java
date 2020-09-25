@@ -272,30 +272,6 @@ public class GOBIIControllerV3  {
 
 
     /**
-     * List Contacts
-     * @return
-     */
-    @GetMapping("/contacts")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getContacts(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-        //@RequestParam(required=false) Integer organizationId
-        @RequestParam(required=false, defaultValue = "pi") String role
-    ) throws Exception {
-        Integer pageSizeToUse = getPageSize(pageSize);
-        // PagedResult<ContactDTO> pagedResult = contactService.getContacts(
-        //     Math.max(0, page),
-        //     pageSizeToUse,
-        //     organizationId
-        // );
-        String cropType = this.getCropType();
-        PagedResult<ContactDTO> pagedResult = contactService.getUsers(cropType, role.toLowerCase(), page, pageSizeToUse);
-        BrApiMasterListPayload<ContactDTO> payload = this.getMasterListPayload(pagedResult);
-        return ResponseEntity.ok(payload);
-    }
-
-    /**
      * Lists Experiments
      * @return
      */

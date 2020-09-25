@@ -362,39 +362,7 @@ public class GOBIIControllerV3Test {
         verify(projectService, times(1)).deleteProject(eq(84));
     }
 
-    @Test
-    public void testGetContacts() throws Exception {
-        assert contactService != null;
-        PowerMockito.mockStatic(CropRequestAnalyzer.class);
-
-        // CropRequestAnalyzer.getGobiiCropType();
-
-        when(CropRequestAnalyzer.getGobiiCropType()).thenReturn("dev");
-
-        List<ContactDTO> mockList = new ArrayList<ContactDTO>();
-        ContactDTO mockItem = new ContactDTO();
-        mockItem.setPiContactId("111");
-        mockItem.setPiContactFirstName("test");
-        mockList.add(mockItem);
-        PagedResult<ContactDTO> mockPayload = new PagedResult<>();
-        mockPayload.setResult(mockList);
-        mockPayload.setCurrentPageNum(0);
-        mockPayload.setCurrentPageSize(1);
-
-        // use the spy
-        // doReturn("dev").when(gobiiControllerV3).getCropType();
-
-        when(contactService.getUsers("dev", Roles.PI, 0, 1000)).thenReturn(mockPayload);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/contacts").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.metadata.pagination.currentPage").value(0))
-                .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
-                .andExpect(jsonPath("$.result.data[0].piContactId").value(mockItem.getPiContactId()))
-                .andExpect(jsonPath("$.result.data[0].piContactFirstName").value(mockItem.getPiContactFirstName()));
-        verify(contactService, times(1)).getUsers("dev", Roles.PI, 0, 1000);
-    }
+   
 
     @Test
     public void testGetExperimentsSimple() throws Exception {
