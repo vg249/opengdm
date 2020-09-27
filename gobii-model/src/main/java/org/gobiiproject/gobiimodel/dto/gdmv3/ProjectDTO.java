@@ -38,14 +38,11 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @Override
     public Integer getId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void setId(Integer id) {
-        // TODO Auto-generated method stub
-
     }
 
     public ProjectDTO() {
