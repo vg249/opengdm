@@ -26,6 +26,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
@@ -33,16 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
-@Slf4j
+@AllArgsConstructor
 public class ExperimentsController {
     
     private ExperimentService experimentService;
-
-    public ExperimentsController(
-        ExperimentService experimentService
-    ) {
-        this.experimentService = experimentService;
-    }
 
      /**
      * Lists Experiments

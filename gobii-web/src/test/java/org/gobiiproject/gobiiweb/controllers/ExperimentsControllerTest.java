@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 )
 @WebAppConfiguration
 @Slf4j
-public class ExpermentsControllerTest {
+public class ExperimentsControllerTest {
     
     @Mock
     private ExperimentService experimentService;

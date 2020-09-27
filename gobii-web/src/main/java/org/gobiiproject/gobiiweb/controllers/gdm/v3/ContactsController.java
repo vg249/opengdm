@@ -17,23 +17,17 @@ import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 
 import io.swagger.annotations.Api;
 //import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
 
 @Scope(value = "request")
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
-//@Slf4j
+@AllArgsConstructor
 public class ContactsController {
     
     private ContactService contactService;
-
-    public ContactsController(
-        ContactService contactService
-    ) {
-        this.contactService = contactService;
-    }
-
 
     /**
      * List Contacts

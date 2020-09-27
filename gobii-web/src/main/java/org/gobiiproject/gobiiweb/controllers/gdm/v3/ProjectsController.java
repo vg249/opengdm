@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
@@ -36,16 +37,11 @@ import lombok.extern.slf4j.Slf4j;
 @Api()
 @CrossOrigin
 @Slf4j
+@AllArgsConstructor
 public class ProjectsController {
     
     private ProjectService projectService;
 
-    public ProjectsController(
-        ProjectService projectService
-    ) {
-        this.projectService = projectService;
-    }
-    
     /**
      * getProjectsList 
      * 

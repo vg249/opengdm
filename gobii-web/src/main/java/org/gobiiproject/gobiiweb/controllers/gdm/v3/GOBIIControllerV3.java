@@ -69,12 +69,6 @@ public class GOBIIControllerV3  {
     private ProjectService projectService;
 
     @Autowired
-    private ContactService contactService;
-
-    @Autowired
-    private ExperimentService experimentService;
-
-    @Autowired
     private AnalysisService analysisService;
 
     @Autowired
@@ -166,124 +160,6 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
-    /**
-     * List Analyses
-     * 
-     * @return
-     */
-    @GetMapping("/analyses")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<AnalysisDTO>> getAnalyses(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        Integer pageSizeToUse = getPageSize(pageSize);
-        PagedResult<AnalysisDTO> pagedResult = analysisService.getAnalyses(page, pageSizeToUse);
-
-        BrApiMasterListPayload<AnalysisDTO> payload = this.getMasterListPayload(pagedResult);
-        return ResponseEntity.ok(payload);
-    }
-
-    /**
-     * Create Analyses
-     * 
-     * @return
-     */
-    @CropAuth(CURATOR)
-    @PostMapping("/analyses")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> createAnalysis(
-        @RequestBody @Validated(AnalysisDTO.Create.class) final AnalysisDTO analysisRequest,
-        BindingResult bindingResult
-    ) throws Exception {
-        this.checkBindingErrors(bindingResult);
-        String user = this.getCurrentUser();
-        AnalysisDTO result = analysisService.createAnalysis(analysisRequest, user);
-
-        BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(result);
-        return ResponseEntity.created(null).body(payload);
-    }
-
-    /**
-     * Update Analysis  By Id
-     */
-    @CropAuth(CURATOR)
-    @PatchMapping("/analyses/{analysisId}")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> patchAnalysis(
-        @PathVariable Integer analysisId,
-        @RequestBody final AnalysisDTO analysisRequest,
-        BindingResult bindingResult
-    ) throws Exception {
-        this.checkBindingErrors(bindingResult);
-        String user = this.getCurrentUser();
-
-        AnalysisDTO result = analysisService.updateAnalysis(analysisId, analysisRequest, user);
-
-        BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(result);
-        return ResponseEntity.ok(payload);
-    }
-
-    /**
-     * Get Analysis By Id
-     */
-    @GetMapping("/analyses/{analysisId}")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<AnalysisDTO>> getAnalysis(
-        @PathVariable Integer analysisId
-    ) throws Exception {
-        AnalysisDTO analysisDTO = analysisService.getAnalysis(analysisId);
-        BrApiMasterPayload<AnalysisDTO> payload = this.getMasterPayload(analysisDTO);
-        return ResponseEntity.ok(payload);
-    }
-
-    /**
-     * Get Analysis By Id
-     */
-    @CropAuth(CURATOR)
-    @DeleteMapping("/analyses/{analysisId}")
-    @ResponseBody
-    @SuppressWarnings("rawtypes")
-    public ResponseEntity deleteAnalysis(
-        @PathVariable Integer analysisId
-    ) throws Exception {
-        analysisService.deleteAnalysis(analysisId);
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Create Analysis Type
-     * @return
-     */
-    @CropAuth(CURATOR)
-    @PostMapping("/analyses/types")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createAnalysisType(
-        @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO analysisTypeRequest,
-        BindingResult bindingResult
-    ) throws Exception {
-        this.checkBindingErrors(bindingResult);
-        String user = this.getCurrentUser();
-        CvTypeDTO result = analysisService.createAnalysisType(analysisTypeRequest, user);
-        BrApiMasterPayload<CvTypeDTO> payload = this.getMasterPayload(result);
-        return ResponseEntity.created(null).body(payload);
-    }
-
-    /**
-     * List Analysis Types
-     * @return
-     */
-    @GetMapping("/analyses/types")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getAnalysisTypes(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        Integer pageSizeToUse = getPageSize(pageSize);
-        PagedResult<CvTypeDTO> result = analysisService.getAnalysisTypes(page, pageSizeToUse);
-        BrApiMasterListPayload<CvTypeDTO> payload = this.getMasterListPayload(result);
-        return ResponseEntity.ok(payload);
-    }
 
     //-----Dataset API Handlers section
 
