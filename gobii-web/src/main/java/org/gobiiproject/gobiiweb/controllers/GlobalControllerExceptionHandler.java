@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiiweb.controllers.brapi.BRAPIIControllerV1;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.ContactsController;
+import org.gobiiproject.gobiiweb.controllers.gdm.v3.ExperimentsController;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.GOBIIControllerV3;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.ProjectsController;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
@@ -34,11 +35,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * in this project and returns appropriate HTTP response.
  */
 @ControllerAdvice(assignableTypes = {
-        BRAPIIControllerV1.class,
-        ContactsController.class,
-        ProjectsController.class,
-        GOBIIControllerV3.class
-}, basePackages = "org.gobiiproject.gobiiweb.controllers.brapi.v2")
+        BRAPIIControllerV1.class
+}, basePackages = {"org.gobiiproject.gobiiweb.controllers.brapi.v2", "org.gobiiproject.gobiiweb.controllers.gdm.v3"})
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
