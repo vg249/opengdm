@@ -1,6 +1,6 @@
 /**
  * ProjectController.java
- * Gobii API endpoint controllers for projects
+ * Gobii API endpoint -- now only contains /auth handler
  * 
  * 
  * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>

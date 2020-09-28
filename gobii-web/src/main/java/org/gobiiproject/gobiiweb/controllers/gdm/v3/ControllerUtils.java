@@ -1,14 +1,21 @@
+/**
+ * ControllerUtils.java
+ * Utility functions for V3 endpoint handlers.
+ * 
+ * 
+ * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>
+ * @version 1.0
+ * @since 2020-09-28
+ */
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.exceptions.ValidationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 
 public class ControllerUtils {

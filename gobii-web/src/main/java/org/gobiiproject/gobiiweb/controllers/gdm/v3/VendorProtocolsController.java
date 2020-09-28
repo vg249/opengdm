@@ -1,3 +1,12 @@
+/**
+ * VendorProtoclsController.java
+ * Gobii API endpoint controllers for vendor protocols.
+ * 
+ * 
+ * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>
+ * @version 1.0
+ * @since 2020-09-28
+ */
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;

@@ -1,3 +1,12 @@
+/**
+ * ExperimentsController.java
+ * Gobii API endpoint controllers for experiments
+ * 
+ * 
+ * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>
+ * @version 1.0
+ * @since 2020-09-28
+ */
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
 import static org.gobiiproject.gobiimodel.config.Roles.*;
@@ -27,7 +36,7 @@ import org.gobiiproject.gobiiweb.security.CropAuth;
 
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
 @RestController

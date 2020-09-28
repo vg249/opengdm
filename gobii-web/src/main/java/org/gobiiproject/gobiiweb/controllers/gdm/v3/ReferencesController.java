@@ -1,5 +1,13 @@
+/**
+ * ReferencesController.java
+ * Gobii API endpoint controllers for references
+ * 
+ * 
+ * @author Rodolfo N. Duldulao, Jr. <rnduldulaojr@gmail.com>
+ * @version 1.0
+ * @since 2020-09-28
+ */
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
-
 
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
