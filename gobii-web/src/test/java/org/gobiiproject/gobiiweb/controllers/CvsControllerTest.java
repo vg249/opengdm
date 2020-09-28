@@ -144,4 +144,13 @@ public class CvsControllerTest {
     }
 
 
+    @Test
+    public void listCvGroups() throws Exception {
+        when(cvService.getCvGroups(0, 1000)).thenReturn(new PagedResult<>());
+        mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/cvs/groups").contextPath("/gdm"))
+                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
+        verify(cvService, times(1)).getCvGroups(0, 1000);
+    }
+
+
 }

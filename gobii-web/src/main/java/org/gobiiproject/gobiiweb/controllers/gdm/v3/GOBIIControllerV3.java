@@ -138,27 +138,7 @@ public class GOBIIControllerV3  {
     }
 
 
-    /**
-     * List Vendor Protocols
-     * @return
-     */
-    @GetMapping("/vendorprotocols")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<VendorProtocolDTO>> getVendorProtocols(
-            @RequestParam(required=false, defaultValue = "0") Integer page,
-            @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-
-        Integer pageSizeToUse = getPageSize(pageSize);
-
-        PagedResult<VendorProtocolDTO> pagedResult =
-                vendorProtocolService.getVendorProtocols(
-                        Math.max(0, page),
-                        pageSizeToUse
-        );
-        BrApiMasterListPayload<VendorProtocolDTO> payload = this.getMasterListPayload(pagedResult);
-        return ResponseEntity.ok(payload);
-    }
+ 
 
 
     //-----Dataset API Handlers section
@@ -181,111 +161,8 @@ public class GOBIIControllerV3  {
 
 
     //---- Marker Group
-    @CropAuth(CURATOR)
-    @PostMapping("/markergroups")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> createMarkerGroup(
-        @RequestBody @Validated(MarkerGroupDTO.Create.class) final MarkerGroupDTO request,
-        BindingResult bindingResult
-    ) throws Exception {
-        this.checkBindingErrors(bindingResult);
-        String creator = this.getCurrentUser();
-        MarkerGroupDTO markerGroupDTO = markerGroupService.createMarkerGroup(request, creator);
-        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
-        return ResponseEntity.created(null).body(payload);
-    }
 
-    @GetMapping("/markergroups")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<MarkerGroupDTO>> getMarkerGroups(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        Integer pageSizeToUse = this.getPageSize(pageSize);
-        PagedResult<MarkerGroupDTO> results = markerGroupService.getMarkerGroups(page, pageSizeToUse);
-        BrApiMasterListPayload<MarkerGroupDTO> payload = this.getMasterListPayload(results);
-        return ResponseEntity.ok(payload);
 
-    }
-
-    @GetMapping("/markergroups/{markerGroupId}")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> getMarkerGroupById(
-        @PathVariable Integer markerGroupId
-    ) throws Exception {
-        MarkerGroupDTO markerGroupDTO = markerGroupService.getMarkerGroup(markerGroupId);
-        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
-        return ResponseEntity.ok(payload);
-    }
-
-    @CropAuth(CURATOR)
-    @PatchMapping("/markergroups/{markerGroupId}")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<MarkerGroupDTO>> updateMarkerGroup(
-        @PathVariable Integer markerGroupId,
-        @RequestBody final MarkerGroupDTO request,
-        BindingResult bindingResult
-    ) throws Exception {
-        this.checkBindingErrors(bindingResult);
-        String updatedBy = this.getCurrentUser();
-        MarkerGroupDTO markerGroupDTO = markerGroupService.updateMarkerGroup(markerGroupId, request, updatedBy);
-        BrApiMasterPayload<MarkerGroupDTO> payload = this.getMasterPayload(markerGroupDTO);
-        return ResponseEntity.ok(payload);
-    }
-
-    @CropAuth(CURATOR)
-    @DeleteMapping("/markergroups/{markerGroupId}")
-    @ResponseBody
-    @SuppressWarnings("rawtypes")
-    public ResponseEntity deleteMarkerGroup(
-        @PathVariable Integer markerGroupId
-    ) throws Exception {
-        markerGroupService.deleteMarkerGroup(markerGroupId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @CropAuth(CURATOR)
-    @PostMapping("/markergroups/{markerGroupId}/markerscollection")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> mapMarkers(
-        @PathVariable Integer markerGroupId,
-        @RequestBody final List<MarkerDTO> markers,
-        BindingResult bindingResult
-    ) throws Exception {
-        this.checkBindingErrors(bindingResult);
-        String editedBy = this.getCurrentUser();
-        PagedResult<MarkerDTO> results = markerGroupService.mapMarkers(markerGroupId, markers, editedBy);
-        BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
-        return ResponseEntity.ok(payload);
-    }
-
-    @GetMapping("/markergroups/{markerGroupId}/markers")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<MarkerDTO>> getMarkerGroupMarkers(
-        @PathVariable Integer markerGroupId,
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        PagedResult<MarkerDTO> results = markerGroupService.getMarkerGroupMarkers(markerGroupId, page, pageSize);
-        BrApiMasterListPayload<MarkerDTO> payload = this.getMasterListPayload(results);
-        return ResponseEntity.ok(payload);
-    }
-
-    
-    // --test
-    @GetMapping("/test")
-    @CropAuth("pi")
-    @ResponseBody
-    public ResponseEntity<String> testMe() {
-        return ResponseEntity.ok("test");
-    }
-
-    @GetMapping("/test2")
-    @PreAuthorize("hasPermission('test2', 'read')")
-    @ResponseBody
-    public ResponseEntity<String> testMe2() {
-        return ResponseEntity.ok("test2");
-    }
 
     public ProjectService getProjectService() {
         return projectService;

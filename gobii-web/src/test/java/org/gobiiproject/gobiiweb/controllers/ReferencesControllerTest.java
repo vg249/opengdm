@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import org.gobiiproject.gobiidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.AuthUtils;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.ReferencesController;
@@ -54,7 +55,7 @@ public class ReferencesControllerTest {
 
     @Before
     public void setup() throws Exception {
-        log.info("Setting up Gobii V3 Projects Controller test");
+        log.info("Setting up Gobii V3 References Controller test");
         MockitoAnnotations.initMocks(this);
 
         this.referencesController = new ReferencesController( referenceService );
@@ -65,6 +66,17 @@ public class ReferencesControllerTest {
         // assert this.projectsController.getProjectService() != null.
 
     }
+
+    @Test
+    public void testGetReferences() throws Exception {
+        when(referenceService.getReferences(0, 1000)).thenReturn(new PagedResult<ReferenceDTO>());
+        mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/references").contextPath("/gdm"))
+                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(referenceService, times(1)).getReferences(0, 1000);
+
+    }
+
     @Test
     public void testCreateGenomeReference() throws Exception {
         PowerMockito.mockStatic(AuthUtils.class);
