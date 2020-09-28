@@ -330,7 +330,6 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                             }
                             rowNo++;
                             totalRows = rowNo;
-
                     }
                     catch(TribbleException e){
                         Logger.logError("FileReader","Unable to read VCF File " + e.getMessage());

@@ -21,6 +21,7 @@ import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 
 import static java.util.stream.Collectors.toList;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
@@ -66,12 +67,29 @@ public class HDF5Interface {
                 logError("Digester","Unknown type "+dst.toString());return false;
         }
         Logger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
+
+
+        String matrixFilePath = variantFile.getPath();
+        String tempMatrixFilePath = matrixFilePath+".temp";
+        String hdf5MapFile = HDF5File+".map";
+
+        if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
+        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
+            FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"[|/]","\t"); ;//TODO - fix regex for / in 2 letter
+        }
+
+
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+
+        rmIfExist(tempMatrixFilePath);
         if(!success){
             //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
             rmIfExist(HDF5File);
+            rmIfExist(hdf5MapFile);
             return false;
         }
+
         GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
         return true;
     }
@@ -250,6 +268,9 @@ public class HDF5Interface {
 
         logDebug("Extractor","HDF5 Ordering is "+ordering);
 
+        String HDF5MapFile = HDF5File+".map";
+        String tmpGenoFile = genoFile + ".temp";
+
         if(markerList!=null) {
             String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
             Logger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
@@ -258,6 +279,11 @@ public class HDF5Interface {
                 rmIfExist(genoFile);
                 return null;
             }
+
+            //decode in marker list
+            mv(genoFile, tmpGenoFile);
+            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), markerList, new File(genoFile), "/","\t"); //TODO- separator is always tab
+
         }
         else {
             String hdf5Extractor=pathToHDF5+"dumpdataset";
@@ -267,6 +293,10 @@ public class HDF5Interface {
                 rmIfExist(genoFile);
                 return null;
             }
+
+            //decode in dumpdataset
+            mv(genoFile, tmpGenoFile);
+            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(genoFile), "/","\t"); //TODO- separator is always tab
 
         }
         if(sampleList!=null){

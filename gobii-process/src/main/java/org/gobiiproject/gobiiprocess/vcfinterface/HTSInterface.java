@@ -121,7 +121,8 @@ public class HTSInterface {
 
     private static String MISSING_ALLELE="N";
     private static String formatBaseStringToChar(String baseString){
-        if(baseString.length() != 1) return MISSING_ALLELE; //Empty or indel
+        if(baseString.length() < 1) return MISSING_ALLELE; //Empty
+        //If BaseString is > 1, is Indel
         return baseString;
     }
 
@@ -148,69 +149,4 @@ public class HTSInterface {
         }
         System.out.println("Input file seems to be in order");
     }
-}
-
-class HTSRowReader{
-    List<String> nonstandardAlleles = new ArrayList<String>();
-    HashSet<String> nonstandardAlleleMap = new HashSet<String>();
-    HashSet<String> unencodedAlleles = new HashSet<String>(Arrays.asList("A","C","G","T"));
-
-    HTSRowReader(VariantContext variantContext){
-        variantContext.getAlleles().stream();
-    }
-
-    HTSRowReader(String markerRow){
-        decode(markerRow);
-    }
-
-    //decodes a string encoded with 'encode'
-    void decode(String markerRow){
-        String namelessRow = markerRow.substring(markerRow.indexOf('\t'));//remove everything before first tab
-        String[] segments= namelessRow.split(";",-1);
-        for(int i = 0; i < segments.length; i++){
-            String cleanSegment = cleanSegment(segments[i]);
-            orderNonstandardAllele(cleanSegment);
-        }
-    }
-
-    //returns any insertion segment
-    static String cleanSegment(String segment){
-        switch(segment.charAt(0)){
-            case 'I':
-                if(segment.length()>1) {
-                    return segment.substring(1);
-                }
-                else{
-                    return null;
-                }
-            case 'D':{
-                return "";
-            }
-            default:return null;
-        }
-    }
-
-    //Encodes the current state of the rowreader into a 'marker row' for data encoded in this marker
-    String encode(){
-        //Every nonstandard allele is prepended with an "I" for futureproofing
-        return nonstandardAlleles.stream().map(s->"I"+s).collect(Collectors.joining(";I"));
-    }
-
-    //Add a cannonical number to a novel base string
-    void orderNonstandardAllele(Allele a){
-        orderNonstandardAllele(a.getBaseString());
-    }
-    void orderNonstandardAllele(String baseString){
-        if(unencodedAlleles.contains(baseString) || nonstandardAlleleMap.contains(baseString)){
-            return;
-        }
-        nonstandardAlleles.add(baseString);
-        nonstandardAlleleMap.add(baseString);
-    }
-
-    String getEncodedValue(Allele a){
-        return "";//TODO - fix
-    }
-
-
 }
