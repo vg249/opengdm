@@ -1,46 +1,24 @@
 package org.gobiiproject.gobiiweb.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import org.gobiiproject.gobiidomain.services.gdmv3.ProjectService;
 import org.gobiiproject.gobiidomain.services.gdmv3.ProtocolService;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.AuthUtils;
-import org.gobiiproject.gobiiweb.controllers.gdm.v3.ProjectsController;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.ProtocolsController;
-import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -71,7 +49,7 @@ public class ProtocolsControllerTest {
 
     @Before
     public void setup() throws Exception {
-        log.info("Setting up Gobii V3 Projects Controller test");
+        log.info("Setting up Gobii V3 Protocols Controller test");
         MockitoAnnotations.initMocks(this);
 
         this.protocolsController = new ProtocolsController( protocolService );
@@ -83,5 +61,13 @@ public class ProtocolsControllerTest {
 
     }
 
-    //TODO: missing protocol controller endpoint tests
+    @Test
+    public void testGetProtocols() throws Exception {
+        when(protocolService.getProtocols(0, 1000, null)).thenReturn(new PagedResult<ProtocolDTO>());
+        mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/protocols").contextPath("/gdm"))
+            .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(protocolService, times(1)).getProtocols(0, 1000, null);
+
+    }
 }

@@ -10,15 +10,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import org.gobiiproject.gobiidomain.services.gdmv3.MarkerGroupService;
-import org.gobiiproject.gobiidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.AuthUtils;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.MarkerGroupsController;
-import org.gobiiproject.gobiiweb.controllers.gdm.v3.ReferencesController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

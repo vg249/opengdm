@@ -6,7 +6,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 
 public interface ProtocolService {
     ProtocolDTO getProtocolById(Integer protocolId) throws GobiiDomainException;
-    PagedResult<ProtocolDTO> getProtocols(Integer pageSize, Integer pageNum,
+    PagedResult<ProtocolDTO> getProtocols(Integer pageNum, Integer pageSize,
                                           Integer platformId);
     ProtocolDTO createProtocol(ProtocolDTO protocolDTO);
     ProtocolDTO patchProtocol(Integer protocolId, ProtocolDTO protocolDTO);

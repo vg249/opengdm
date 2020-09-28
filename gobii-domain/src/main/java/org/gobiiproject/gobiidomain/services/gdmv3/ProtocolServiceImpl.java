@@ -48,7 +48,7 @@ public class ProtocolServiceImpl implements ProtocolService {
     }
 
     @Override
-    public PagedResult<ProtocolDTO> getProtocols(Integer pageSize, Integer pageNum,
+    public PagedResult<ProtocolDTO> getProtocols(Integer pageNum, Integer pageSize,
                                                  Integer platformId) {
         List<ProtocolDTO> protocolDTOs = new ArrayList<>();
         try {

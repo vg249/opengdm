@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-//import lombok.extern.slf4j.Slf4j;
+import io.swagger.annotations.Api;import lombok.extern.slf4j.Slf4j;
 import lombok.AllArgsConstructor;
 
 @Scope(value = "request")
@@ -31,7 +30,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
-//@Slf4j
+@Slf4j
 @AllArgsConstructor
 public class ProtocolsController {
 
@@ -46,11 +45,12 @@ public class ProtocolsController {
     public ResponseEntity<BrApiMasterListPayload<ProtocolDTO>> getProtocols(
         @RequestParam(required=false, defaultValue = "0") Integer page,
         @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-        @RequestParam(required = false) Integer platformId
+        @RequestParam(required=false) Integer platformId
     ) throws Exception {
+        
         pageSize = ControllerUtils.getPageSize(pageSize);
         PagedResult<ProtocolDTO> pagedResult = protocolService.getProtocols(
-            pageSize, page, platformId);
+            page, pageSize, platformId);
         BrApiMasterListPayload<ProtocolDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
