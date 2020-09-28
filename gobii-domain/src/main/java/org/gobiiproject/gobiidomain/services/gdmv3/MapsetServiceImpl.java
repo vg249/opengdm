@@ -84,7 +84,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         // status
         Cv status = cvDao.getNewStatus();
-        createdMapset.setStatus(status); // TODO: replace the status with cv type
+        createdMapset.setStatus(status); 
 
         createdMapset = mapsetDao.createMapset(createdMapset);
         MapsetDTO createdMapsetDTO = new MapsetDTO();
@@ -111,7 +111,7 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         if (patchData.getMapsetDescription() != null) {
-            mapset.setMapsetDescription(patchData.getMapsetDescription()); // TODO: refactor MapSetDescription
+            mapset.setMapsetDescription(patchData.getMapsetDescription()); 
         }
 
         if (patchData.getMapsetTypeId() != null) {
@@ -131,7 +131,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         // updated status
         Cv status = cvDao.getModifiedStatus();
-        mapset.setStatus(status); // TODO: replace the status with cv type?
+        mapset.setStatus(status);
 
         mapset = mapsetDao.updateMapset(mapset);
         MapsetDTO updatedMapsetDTO = new MapsetDTO();

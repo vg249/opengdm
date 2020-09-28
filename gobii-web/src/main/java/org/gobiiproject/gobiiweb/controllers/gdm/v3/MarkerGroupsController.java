@@ -6,12 +6,10 @@ import java.util.List;
 
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.MarkerGroupService;
-import org.gobiiproject.gobiidomain.services.gdmv3.ReferenceService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.context.annotation.Scope;

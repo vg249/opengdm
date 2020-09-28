@@ -21,7 +21,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.entity.Protocol;
 import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
