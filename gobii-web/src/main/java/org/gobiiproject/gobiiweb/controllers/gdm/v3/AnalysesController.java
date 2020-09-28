@@ -28,14 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
-@Slf4j
 @AllArgsConstructor
 public class AnalysesController {
 
