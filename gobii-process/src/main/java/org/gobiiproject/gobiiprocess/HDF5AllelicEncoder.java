@@ -73,14 +73,20 @@ public class HDF5AllelicEncoder {
     }
 
     public static void createDecodedFile(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator){
+
+        BufferedReader lookupFile = null;
+        try {
+            lookupFile = new BufferedReader(new FileReader(lookupFilePath));
+        }catch(Exception e){
+            //no lookup file
+        }
         try(
                 BufferedReader encodedFile = new BufferedReader( new FileReader(encodedFilePath));
-                BufferedReader lookupFile = new BufferedReader( new FileReader(lookupFilePath));
                 BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
         ){
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
 
-            String lookupLine=lookupFile.readLine();
+            String lookupLine=lookupFile!=null?lookupFile.readLine():null;
             String inputLine;
             int i = 0;
             int nextLookupLineRow = -1;
@@ -125,14 +131,20 @@ public class HDF5AllelicEncoder {
     //corresponding to rows in the translation table.
     public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
         Iterator<String> posListIterator = Arrays.stream(posList.split(",")).iterator();
+
+        BufferedReader lookupFile = null;
+        try {
+            lookupFile = new BufferedReader(new FileReader(lookupFilePath));
+        }catch(Exception e){
+            //no lookup file
+        }
         try(
                 BufferedReader encodedFile = new BufferedReader( new FileReader(encodedFilePath));
-                BufferedReader lookupFile = new BufferedReader( new FileReader(lookupFilePath));
                 BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
         ){
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
 
-            String lookupLine=lookupFile.readLine();
+            String lookupLine=lookupFile!=null?lookupFile.readLine():null;
             String inputLine;
             int nextLookupLineRow = -1;
             while((inputLine=encodedFile.readLine()) != null && posListIterator.hasNext()) {
