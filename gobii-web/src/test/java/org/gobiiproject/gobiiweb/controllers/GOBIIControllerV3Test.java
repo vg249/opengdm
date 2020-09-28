@@ -135,19 +135,19 @@ public class GOBIIControllerV3Test {
     }
 
     private ProjectDTO createMockProjectDTO() {
-        ProjectDTO dto = new ProjectDTO();
+        final ProjectDTO dto = new ProjectDTO();
         dto.setId(1);
         dto.setModifiedBy(1);
         dto.setProjectName("test-project");
 
-        List<CvPropertyDTO> propDtoList = createMockPropDTOList();
+        final List<CvPropertyDTO> propDtoList = createMockPropDTOList();
         dto.setProperties(propDtoList);
         return dto;
     }
 
     private CvPropertyDTO createMockPropDTO() {
         // mock DTO
-        CvPropertyDTO propDto = new CvPropertyDTO();
+        final CvPropertyDTO propDto = new CvPropertyDTO();
         propDto.setPropertyId(1);
         propDto.setPropertyName("test-prop");
         propDto.setPropertyGroupId(1);
@@ -157,7 +157,7 @@ public class GOBIIControllerV3Test {
     }
 
     private List<CvPropertyDTO> createMockPropDTOList() {
-        List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
+        final List<CvPropertyDTO> propDtoList = new java.util.ArrayList<>();
         propDtoList.add(createMockPropDTO());
         return propDtoList;
     }
@@ -177,153 +177,14 @@ public class GOBIIControllerV3Test {
 
  
 
-    @Test
-    public void getOrganizationsList() throws Exception {
-        when(organizationService.getOrganizations(0, 1000)).thenReturn(new PagedResult<OrganizationDTO>());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/organizations").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(organizationService, times(1)).getOrganizations(0, 1000);
-    }
-
-    @Test
-    public void getOrganizationById() throws Exception {
-        Integer organizationId = 122;
-        when(organizationService.getOrganization(organizationId)).thenReturn(new OrganizationDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/organizations/122").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(organizationService, times(1)).getOrganization(122);
-    }
-
-    @Test
-    public void testCreateOrganization() throws Exception {
-        String requestJson = "{\"organizationName\": \"test-org\", \"organizationAddress\": \"organization-address\", \"organizationWebsite\": \"https://website.com\"}";
-
-        when(organizationService.createOrganization(any(OrganizationDTO.class), eq("test-user")))
-                .thenReturn(new OrganizationDTO());
-
-        when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gobii-dev/gobii/v3/organizations")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson).contextPath("/gobii-dev")).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-
-        verify(organizationService, times(1)).createOrganization(any(OrganizationDTO.class), eq("test-user"));
-    }
-
-    @Test
-    public void testUpdateOrganization() throws Exception {
-        String requestJson = "{\"organizationName\": \"test-org\", \"organizationAddress\": \"organization-address\", \"organizationWebsite\": \"https://website.com\"}";
-
-        when(organizationService.updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user")))
-                .thenReturn(new OrganizationDTO());
-
-        when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
-
-        mockMvc.perform(MockMvcRequestBuilders.patch("/gobii-dev/gobii/v3/organizations/123")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson).contextPath("/gobii-dev")).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(organizationService, times(1)).updateOrganization(eq(123), any(OrganizationDTO.class), eq("test-user"));
-    }
-
-    @Test
-    public void testDeleteOrganization() throws Exception {
-        doNothing().when(organizationService).deleteOrganization(123);
-        mockMvc.perform(
-                MockMvcRequestBuilders.delete("/gobii-dev/gobii/v3/organizations/123").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isNoContent());
-        verify(organizationService, times(1)).deleteOrganization(123);
-    }
+ 
 
     // --- Cv tests
-
-    @Test
-    public void testCreateCv() throws Exception {
-        String requestJson = "{\"cvName\": \"test-cv\", \"cvDescription\": \"test-desc\", \"cvGroupId\" : \"16\"}";
-
-        when(cvService.createCv(any(CvDTO.class))).thenReturn(new CvDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gobii-dev/gobii/v3/cvs").contextPath("/gobii-dev")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson)).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-    }
-
-    @Test
-    public void testUpdateCv() throws Exception {
-        String requestJson = "{\"cvName\": \"updated-cv-name\"}";
-
-        when(cvService.updateCv(eq(123), any(CvDTO.class))).thenReturn(new CvDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.patch("/gobii-dev/gobii/v3/cvs/123").content(requestJson)
-                .contentType(MediaType.APPLICATION_JSON).contextPath("/gobii-dev")).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(cvService, times(1)).updateCv(eq(123), any(CvDTO.class));
-    }
-
-    @Test
-    public void testListCvsDefault() throws Exception {
-
-        when(cvService.getCvs(0, 1000, null, null)).thenReturn(new PagedResult<CvDTO>());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/cvs").contextPath("/gobii-dev")).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(cvService, times(1)).getCvs(0, 1000, null, null);
-
-    }
-
-    @Test
-    public void testGetCvById() throws Exception {
-        when(cvService.getCv(123)).thenReturn(new CvDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/cvs/123").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(cvService, times(1)).getCv(123);
-    }
-
-    @Test
-    public void testGetCvProps() throws Exception {
-
-        when(cvService.getCvProperties(0, 1000)).thenReturn(new PagedResult<CvPropertyDTO>());
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/cvs/properties").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(cvService, times(1)).getCvProperties(0, 1000);
-    }
-
-    @Test
-    public void testAddCvProps() throws Exception {
-        String requestJson = "{\"propertyName\": \"test-prop\", \"propertyDescription\": \"test-desc\"}";
-        CvPropertyDTO mockDTO = new CvPropertyDTO();
-        mockDTO.setPropertyGroupType(1);
-        when(cvService.addCvProperty(any(CvPropertyDTO.class))).thenReturn(new CvPropertyDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gobii-dev/gobii/v3/cvs/properties").contextPath("/gobii-dev")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson)).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-
-        verify(cvService, times(1)).addCvProperty(any(CvPropertyDTO.class));
-    }
-
-    @Test
-    public void testDeleteCv() throws Exception {
-        doNothing().when(cvService).deleteCv(123);
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/gobii-dev/gobii/v3/cvs/123").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isNoContent());
-
-        verify(cvService, times(1)).deleteCv(123);
-    }
 
     // --Platforms
     @Test
     public void testCreatePlatform() throws Exception {
-        String requestJson = "{\"platformName\": \"test-platform-name\", \"platformTypeId\": \"7\"}";
+        final String requestJson = "{\"platformName\": \"test-platform-name\", \"platformTypeId\": \"7\"}";
 
         when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
 
@@ -365,7 +226,7 @@ public class GOBIIControllerV3Test {
         when(platformService.updatePlatform(eq(123), any(PlatformDTO.class), eq("test-user")))
                 .thenReturn(new PlatformDTO());
 
-        String requestJson = "{\"platformName\": \"updated-platform-name\", \"platformTypeId\": \"12\"}";
+        final String requestJson = "{\"platformName\": \"updated-platform-name\", \"platformTypeId\": \"12\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/gobii-dev/gobii/v3/platforms/123").contextPath("/gobii-dev")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson)).andDo(print())
@@ -387,7 +248,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testCreatePlatformType() throws Exception {
-        String requestJson = "{\"typeName\": \"new-platform-type\", \"typeDescription\": \"12\"}";
+        final String requestJson = "{\"typeName\": \"new-platform-type\", \"typeDescription\": \"12\"}";
 
         when(platformService.createPlatformType(any(CvTypeDTO.class))).thenReturn(new CvTypeDTO());
 
@@ -415,7 +276,7 @@ public class GOBIIControllerV3Test {
 
         when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
 
-        String requestJson = "{\"referenceName\": \"test-ref\", \"version\": \"vtest\"}";
+        final String requestJson = "{\"referenceName\": \"test-ref\", \"version\": \"vtest\"}";
         mockMvc.perform(MockMvcRequestBuilders.post("/gobii-dev/gobii/v3/references")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson).contextPath("/gobii-dev")).andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -440,7 +301,7 @@ public class GOBIIControllerV3Test {
         when(referenceService.updateReference(eq(123), any(ReferenceDTO.class), eq("test-user")))
                 .thenReturn(new ReferenceDTO());
 
-        String requestJson = "{\"referenceName\": \"test-ref-update\", \"version\": \"vtest1\"}";
+        final String requestJson = "{\"referenceName\": \"test-ref-update\", \"version\": \"vtest1\"}";
         mockMvc.perform(MockMvcRequestBuilders.patch("/gobii-dev/gobii/v3/references/123")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson).contextPath("/gobii-dev")).andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -460,7 +321,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testCreateMarkerSet() throws Exception {
-        String requestJson = "{\"markerGroupName\": \"test-marker-group\", \"germplasmGroup\": \"test-germplasm-group\"}";
+        final String requestJson = "{\"markerGroupName\": \"test-marker-group\", \"germplasmGroup\": \"test-germplasm-group\"}";
 
         when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
         when(markerGroupService.createMarkerGroup(any(MarkerGroupDTO.class), eq("test-user")))
@@ -494,7 +355,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testEditMarkerGroup() throws Exception {
-        String requestJson = "{\"markerGroupName\": \"test-marker-group-updated\", \"germplasmGroup\": \"test-germplasm-group\"}";
+        final String requestJson = "{\"markerGroupName\": \"test-marker-group-updated\", \"germplasmGroup\": \"test-germplasm-group\"}";
         when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
         when(markerGroupService.updateMarkerGroup(eq(123), any(MarkerGroupDTO.class), eq("test-user")))
                 .thenReturn(new MarkerGroupDTO());
@@ -518,7 +379,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testAssignMarkersToMarkerGroup() throws Exception {
-        String requestJson = "[{\"markerName\": \"foo marker\", \"platformName\": \"foo platform\", \"favorableAlleles\": [\"A\"]},{\"markerName\": \"bar marker\",\"platformName\": \"bar platform\", \"favorableAlleles\": [\"G\"]}]";
+        final String requestJson = "[{\"markerName\": \"foo marker\", \"platformName\": \"foo platform\", \"favorableAlleles\": [\"A\"]},{\"markerName\": \"bar marker\",\"platformName\": \"bar platform\", \"favorableAlleles\": [\"G\"]}]";
         when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
         when(markerGroupService.mapMarkers(eq(123), anyListOf(MarkerDTO.class), eq("test-user")))
                 .thenReturn(new PagedResult<MarkerDTO>());
