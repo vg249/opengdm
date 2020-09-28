@@ -50,7 +50,7 @@ public class ProtocolsController {
         
         pageSize = ControllerUtils.getPageSize(pageSize);
         PagedResult<ProtocolDTO> pagedResult = protocolService.getProtocols(
-            page, pageSize, platformId);
+            pageSize, page, platformId);
         BrApiMasterListPayload<ProtocolDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }

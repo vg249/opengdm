@@ -63,11 +63,11 @@ public class ProtocolsControllerTest {
 
     @Test
     public void testGetProtocols() throws Exception {
-        when(protocolService.getProtocols(0, 1000, null)).thenReturn(new PagedResult<ProtocolDTO>());
+        when(protocolService.getProtocols(1000, 0, null)).thenReturn(new PagedResult<ProtocolDTO>());
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/protocols").contextPath("/gdm"))
             .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(protocolService, times(1)).getProtocols(0, 1000, null);
+        verify(protocolService, times(1)).getProtocols(1000, 0, null);
 
     }
 }
