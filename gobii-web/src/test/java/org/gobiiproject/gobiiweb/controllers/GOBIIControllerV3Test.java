@@ -184,54 +184,7 @@ public class GOBIIControllerV3Test {
     // --Platforms
  
     // -- References
-    @Test
-    public void testCreateGenomeReference() throws Exception {
-        when(referenceService.createReference(any(ReferenceDTO.class), eq("test-user"))).thenReturn(new ReferenceDTO());
 
-        when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
-
-        final String requestJson = "{\"referenceName\": \"test-ref\", \"version\": \"vtest\"}";
-        mockMvc.perform(MockMvcRequestBuilders.post("/gobii-dev/gobii/v3/references")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson).contextPath("/gobii-dev")).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-
-        verify(referenceService, times(1)).createReference(any(ReferenceDTO.class), eq("test-user"));
-    }
-
-    @Test
-    public void testGetReference() throws Exception {
-        when(referenceService.getReference(123)).thenReturn(new ReferenceDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/gobii-dev/gobii/v3/references/123").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(referenceService, times(1)).getReference(123);
-    }
-
-    @Test
-    public void testUpdateReference() throws Exception {
-        when(projectService.getDefaultProjectEditor()).thenReturn("test-user");
-
-        when(referenceService.updateReference(eq(123), any(ReferenceDTO.class), eq("test-user")))
-                .thenReturn(new ReferenceDTO());
-
-        final String requestJson = "{\"referenceName\": \"test-ref-update\", \"version\": \"vtest1\"}";
-        mockMvc.perform(MockMvcRequestBuilders.patch("/gobii-dev/gobii/v3/references/123")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson).contextPath("/gobii-dev")).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(referenceService, times(1)).updateReference(eq(123), any(ReferenceDTO.class), eq("test-user"));
-    }
-
-    @Test
-    public void testDeleteReference() throws Exception {
-        doNothing().when(referenceService).deleteReference(123);
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/gobii-dev/gobii/v3/references/123").contextPath("/gobii-dev"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isNoContent());
-
-        verify(referenceService, times(1)).deleteReference(123);
-    }
 
     @Test
     public void testCreateMarkerSet() throws Exception {
