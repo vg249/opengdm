@@ -426,18 +426,7 @@ public class GOBIIControllerV3  {
         return ResponseEntity.ok(payload);
     }
 
-    //-- cv group
-    @GetMapping("/cvs/groups")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<CvGroupDTO>> getCvGroups(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        PagedResult<CvGroupDTO> results = cvService.getCvGroups(page, pageSize);
-        BrApiMasterListPayload<CvGroupDTO> payload = this.getMasterListPayload(results);
-        return ResponseEntity.ok(payload);
-    }
-
+    
     // --test
     @GetMapping("/test")
     @CropAuth("pi")

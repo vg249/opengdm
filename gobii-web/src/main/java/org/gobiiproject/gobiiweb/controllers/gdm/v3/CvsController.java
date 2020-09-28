@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.context.annotation.Scope;
@@ -127,6 +128,19 @@ public class CvsController {
         cvService.deleteCv(cvId);
         return ResponseEntity.noContent().build();
     } 
+
+    //-- cv group
+    @GetMapping("/cvs/groups")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<CvGroupDTO>> getCvGroups(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) throws Exception {
+        PagedResult<CvGroupDTO> results = cvService.getCvGroups(page, pageSize);
+        BrApiMasterListPayload<CvGroupDTO> payload = ControllerUtils.getMasterListPayload(results);
+        return ResponseEntity.ok(payload);
+    }
+
 
     
 }
