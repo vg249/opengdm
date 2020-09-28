@@ -13,7 +13,6 @@ public class AuthTokenConverterServletWrapper extends HttpServletRequestWrapper 
 
     public AuthTokenConverterServletWrapper(HttpServletRequest request) {
         super(request);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

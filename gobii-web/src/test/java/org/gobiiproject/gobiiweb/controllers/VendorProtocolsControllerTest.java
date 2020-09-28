@@ -71,6 +71,5 @@ public class VendorProtocolsControllerTest {
 
     }
 
-    //TODO: missing protocol controller endpoint tests
 }
 
