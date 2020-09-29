@@ -71,7 +71,7 @@ public class HDF5Interface {
 
         String matrixFilePath = variantFile.getPath();
         String tempMatrixFilePath = matrixFilePath+".temp";
-        String hdf5MapFile = HDF5File+".map";
+        String hdf5MapFile = HDF5File+".idl";
 
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
         || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
@@ -268,7 +268,7 @@ public class HDF5Interface {
 
         logDebug("Extractor","HDF5 Ordering is "+ordering);
 
-        String HDF5MapFile = HDF5File+".map";
+        String HDF5MapFile = HDF5File+".idl";
         String tmpGenoFile = genoFile + ".temp";
 
         if(markerList!=null) {
