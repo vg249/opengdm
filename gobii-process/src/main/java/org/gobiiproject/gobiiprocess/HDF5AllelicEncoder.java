@@ -72,6 +72,14 @@ public class HDF5AllelicEncoder {
         }
     }
 
+    /**
+     * Decodes and adds separators to the output of an HDF5 matrix
+     * @param encodedFilePath
+     * @param lookupFilePath
+     * @param decodedFilePath
+     * @param alleleSeparator
+     * @param elementSeparator
+     */
     public static void createDecodedFile(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator){
 
         BufferedReader lookupFile = null;
@@ -104,18 +112,13 @@ public class HDF5AllelicEncoder {
                     }
                 }
 
-                if(lookupLine != null && nextLookupLineRow == i){
-                    currentRowTranslator = new RowTranslator(lookupLine);
-                }
-                else{
-                    currentRowTranslator=null;
-                }
 
-                if(currentRowTranslator != null) {
+
+                if(lookupLine != null && nextLookupLineRow == i) {
                     decodedFile.write(decodeRow(inputLine,lookupLine,alleleSeparator,elementSeparator));
                 }
-                else{ //If there's nothing in the row to translate, just copy over. Simple as that, save some time and effort
-                    decodedFile.write(inputLine);
+                else{ //Even if there's nothing to translate, the row still needs to have separators applied, so it gets to go through the sausage factory... Less code paths, but could be optimized
+                    decodedFile.write(decodeRow(inputLine,null,alleleSeparator,elementSeparator));
                 }
                 decodedFile.write(System.lineSeparator());
 
@@ -211,7 +214,9 @@ public class HDF5AllelicEncoder {
          * @param encodedRow
          */
         RowTranslator(String encodedRow) {
-            decode(encodedRow);
+            if(encodedRow!=null) {
+                decode(encodedRow);
+            }
         }
 
         //An empty one
@@ -369,7 +374,17 @@ public class HDF5AllelicEncoder {
                 return internalAllele;
             }
             char internalChar=internalAllele.charAt(0);
-            int index = decodeChar(internalChar);
+
+            int index;
+            try {
+                index = decodeChar(internalChar);
+            }
+            catch(Exception e){
+                //Throw a warning, but pass through the character on catastrophic decode failure. (Probably an unexpected unencoded value, not an encoded value at all.)
+                index = -1;
+                Logger.logWarning("HDF5AlleleEncoder","No character to decode to- " + internalAllele);
+                return internalAllele;
+            }
             if(index>nonstandardAlleles.size()){
                 throw new Exception("Decoded character from h5 does not map (over translator length)");
             }
