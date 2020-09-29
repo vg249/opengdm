@@ -54,7 +54,7 @@ public class MapsetDTO extends DTOBaseAuditable {
     @NotBlank(groups = {MapsetDTO.Create.class})
     private String mapsetName;
 
-    @GobiiEntityMap(paramName = "mapSetDescription", entity = Mapset.class)
+    @GobiiEntityMap(paramName = "mapsetDescription", entity = Mapset.class)
     private String mapsetDescription;
 
     @GobiiEntityMap(paramName = "type.cvId", entity = Mapset.class, deep = true)
