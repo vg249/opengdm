@@ -31,7 +31,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     public NucleotideSeparatorSplitter(int nucleotideCount, Set<String> missingSegmentsFromFile){
         this.nucleotideCount = nucleotideCount;
         this.missingSegmentsFromFile = missingSegmentsFromFile;
-        this.unknownSegment = StringUtils.repeat(UNKNOWN_ALLELE,nucleotideCount);
+        this.unknownSegment = String.join(OUTPUT_SEPARATOR,StringUtils.repeat(UNKNOWN_ALLELE,nucleotideCount).split(""));
     }
 
     public boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
