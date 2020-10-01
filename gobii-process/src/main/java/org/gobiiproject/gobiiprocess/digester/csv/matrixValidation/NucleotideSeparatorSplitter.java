@@ -3,15 +3,17 @@ package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 
+import java.nio.CharBuffer;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A separation routine for multi-allelic nucleotides for GDM-446. Takes a delimited string and converts it into an
  * undelimited N character string of alleles, with N being the number of alleles its looking for.
  */
 public class NucleotideSeparatorSplitter implements RowProcessor {
-
+    private static final String OUTPUT_SEPARATOR = "/";
     private int nucleotideCount;
     private static String UNKNOWN_ALLELE = "N";
     private String unknownSegment;
@@ -60,8 +62,13 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
 
                     error = validateInputElement(element);
                     if(error==null) {
-                        result = processInputElement(element);
-                        error = validateOutputElement(result);
+                        try {
+                            result = processInputElement(element);
+                            error = validateOutputElement(result);
+                        }
+                        catch(Exception e){
+                                error=e.getMessage();
+                            }
                     }
                 }
                 outrow.add(result);
@@ -113,19 +120,34 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
     }
 
     /**
-     * Removes separators from input elements
+     * Replaces separators from input elements
      * @param element input element
      * @return processed input element
      */
-    private String processInputElement(String element){
+    private String processInputElement(String element) throws Exception {
         int length = element.length();
         boolean hasSeparators=((length != nucleotideCount));
         if(hasSeparators && length>1) { //If nucleotideCount=1, there's no separator character
-            char separator = element.charAt(1);
+            String separator = findSeparator(element);
+            if(separator==null){
+                throw new Exception("No separator found for element of unusual length " + element);
+            }
             //Pattern.quote to escape literals like / and | being interpreted as regular expression syntax
-            return element.replaceAll(Pattern.quote( ""+separator ), "");
+            return element.replaceAll(Pattern.quote( separator ), OUTPUT_SEPARATOR);
+        }
+        //There are no separators, so each allele is 'naked'
+        else if(length > 1){
+            //Really complicated way of saying split out every character, put OUTPUT_SEPARATOR between them. What a one-liner, though...
+            return String.join(OUTPUT_SEPARATOR, element.split(""));
         }
         else return element;
+    }
+
+    private String findSeparator(String separatedString){
+        for(String character:separatedString.split("")){
+            if(validSeparators.contains(character))return character;
+        }
+        return null;
     }
 
     /**
@@ -134,9 +156,9 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
      * @return null on success, error message on failure
      */
     private String validateOutputElement(String element) {
-        if (element.length() != nucleotideCount) {
-            return "Unexpected Segment Count after split in " + element;
-        }
+        //if (element.length() != nucleotideCount) {
+         //   return "Unexpected Segment Count after split in " + element;
+        //}
         return null;
     }
 }

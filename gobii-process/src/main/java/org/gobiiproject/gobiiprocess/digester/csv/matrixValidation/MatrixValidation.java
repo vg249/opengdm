@@ -59,12 +59,7 @@ public class MatrixValidation {
         //Set of missing file entries, in lowercase to enable easy case insensitive mapping
         Set<String> missingFileSet = missingFileElements.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
-	    if(LoaderGlobalConfigs.isNewTwoLetterNucleotideParse()){
-		    diploidProcessor =  new NucleotideSeparatorSplitter(2,missingFileSet);
-	    }
-	    else {
-		    diploidProcessor = new SNPSepRemoval(missingFileElements);
-	    }
+        diploidProcessor =  new NucleotideSeparatorSplitter(2,missingFileSet);
 
 	    tetraploidSplitter = new NucleotideSeparatorSplitter(4,missingFileSet);
         return true;
