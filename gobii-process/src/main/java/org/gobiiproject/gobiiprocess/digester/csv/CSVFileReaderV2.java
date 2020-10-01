@@ -45,7 +45,7 @@ import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
  */
 
 public class CSVFileReaderV2 extends CSVFileReaderInterface {
-
+    private static final String OUTPUT_SEPARATOR="/";
     private static final String NEWLINE = "\n";
     private static final String TAB = "\t";
     private final String loaderScriptPath;
@@ -313,7 +313,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                     try {
                         //TODO - this only works with single files
                         HTSInterface.setupVariantOnlyInputLine(file);
-                        while ((inputRowList = HTSInterface.getVariantOnlyInputLine("") ) != null) {
+                        while ((inputRowList = HTSInterface.getVariantOnlyInputLine(OUTPUT_SEPARATOR) ) != null) {
                                 outputRowList = new ArrayList<>();
                                 ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, true /*isVCF*/, skipValidation);
                                 if (validationResult.success) {
