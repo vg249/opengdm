@@ -7,14 +7,13 @@ import java.util.Map;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
-
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -212,6 +211,27 @@ public class MapsetDaoImpl implements MapsetDao {
   @Override
   public Mapset getMapset(Integer mapsetId) {
       return em.find(Mapset.class, mapsetId, this.getMapsetHints());
+  }
+
+  @Override
+  public Mapset getMapsetByName(String name) {
+    try {
+      CriteriaBuilder cb = em.getCriteriaBuilder();
+      CriteriaQuery<Mapset> cq = cb.createQuery(Mapset.class);
+      Root<Mapset> from = cq.from(Mapset.class);
+      cq.select(from);
+      cq.where(cb.equal(from.get("mapsetName"), name));
+    
+      Mapset mapset = em.createQuery(cq).getSingleResult();
+      return mapset;
+    } catch (NoResultException nre) {
+      return null;
+    } catch (Exception e) {
+        throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+        e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+    }
+
+
   }
 
   @Override
