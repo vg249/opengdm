@@ -9,7 +9,7 @@ public class EntityAlreadyExistsException extends GobiiException {
     
     public EntityAlreadyExistsException(String entityType) {
         super(GobiiStatusLevel.ERROR,
-              GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, 
+              GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
               String.format("%s already exists", entityType)
         );
     }

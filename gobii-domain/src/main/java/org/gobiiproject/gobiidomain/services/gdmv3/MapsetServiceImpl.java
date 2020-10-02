@@ -111,8 +111,12 @@ public class MapsetServiceImpl implements MapsetService {
     @Override
     public MapsetDTO updateMapset(Integer mapsetId, MapsetDTO patchData, String editedBy) throws Exception {
         Mapset mapset = this.loadMapset(mapsetId);
-
         if (patchData.getMapsetName() != null) {
+            //check if other mapset already exists
+            Mapset other = mapsetDao.getMapsetByName(patchData.getMapsetName());
+            if (other != null && other.getMapsetId() != mapset.getMapsetId()) {
+                throw new EntityAlreadyExistsException.Mapset();
+            }
             mapset.setMapsetName(patchData.getMapsetName());
         }
 
