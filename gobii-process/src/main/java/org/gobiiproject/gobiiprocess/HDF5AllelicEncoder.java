@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * marker to the dataset
  */
 public class HDF5AllelicEncoder {
+    private static final String DEFAULT_SEPARATOR="/";
     /**
      * @param inputRow         entire input row as a string
      * @param alleleSeparator  Separator between alleles (usually /)
@@ -24,7 +26,7 @@ public class HDF5AllelicEncoder {
         RowTranslator currentRowTranslator = new RowTranslator();
 
         boolean first=true;
-        for(String element:inputRow.split(elementSeparator)){
+        for(String element:inputRow.split(Pattern.quote(elementSeparator))){
             if(!first){
                 outRow.append(elementSeparator);
             }
@@ -105,7 +107,7 @@ public class HDF5AllelicEncoder {
                     lookupLine=lookupFile.readLine();
                     if(lookupLine != null) {
                         try {
-                            nextLookupLineRow = Integer.parseInt(lookupLine.split("\t")[0]);
+                            nextLookupLineRow = Integer.parseInt(lookupLine.split(Pattern.quote("\t"))[0]);
                         } catch (Exception e) {
                             Logger.logError("HDF5AllelicEncoder", "Invalid lookup table row found when looking for line " + i);
                         }
@@ -158,7 +160,7 @@ public class HDF5AllelicEncoder {
                     lookupLine=lookupFile.readLine();
                     if(lookupLine != null) {
                         try {
-                            nextLookupLineRow = Integer.parseInt(lookupLine.split("\t")[0]);
+                            nextLookupLineRow = Integer.parseInt(lookupLine.split(Pattern.quote("\t"))[0]);
                         } catch (Exception e) {
                             Logger.logError("HDF5AllelicEncoder", "Invalid lookup table row found when looking for line " + i);
                         }
@@ -192,7 +194,7 @@ public class HDF5AllelicEncoder {
         RowTranslator currentRowTranslator = new RowTranslator(lookupRow);
 
         boolean first=true;
-        for(String element:inputRow.split(elementSeparator)){
+        for(String element:inputRow.split(Pattern.quote(elementSeparator))){
             if(!first){
                 outRow.append(elementSeparator);
             }
@@ -230,8 +232,8 @@ public class HDF5AllelicEncoder {
          */
         RowTranslator(List<String> inputRow) {
             for(String val:inputRow){
-                if(val.contains("/")){//TODO- for now assume the 2 let is coming in with /, fix soonish?
-                    for(String inner:val.split("/")){
+                if(val.contains(DEFAULT_SEPARATOR)){//for now assume the 2 let is coming in with /, all upstreams coded to match
+                    for(String inner:val.split(Pattern.quote(DEFAULT_SEPARATOR))){
                         orderNonstandardAllele(inner);
                     }
                 }
@@ -332,7 +334,7 @@ public class HDF5AllelicEncoder {
          * @return
          */
         String getEncodedString(String input, String separator, boolean strict) throws Exception{
-            String[] segments=input.split(separator);
+            String[] segments=input.split(Pattern.quote(separator));
             String output="";//Not a stringbuilder as it's only 2, maybe 4 characters long. Schmiel the painter doesn't have far to go
             for(String segment: segments){
                 output+=getEncodedAllele(segment,strict);
