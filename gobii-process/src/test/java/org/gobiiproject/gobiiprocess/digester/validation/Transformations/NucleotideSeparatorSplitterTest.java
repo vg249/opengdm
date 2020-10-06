@@ -96,10 +96,11 @@ public class NucleotideSeparatorSplitterTest {
     @Test
     public void testMissingAlleleCase(){
         List<String> input = Arrays.asList("A/A/A/A","A/C//T","C/C/G/T","G/T/T/T","A/C/G/T");
-        // List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
+        List<String> expectedOutput = Arrays.asList("A/A/A/A","A/C//T","C/C/G/T","G/T/T/T","A/C/G/T");
 
         List<String> output = runSplitter(input);
-        expectedError("Unexpected Length Element A/C//T  in row 0");
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
     }
 
     @Test
@@ -117,7 +118,7 @@ public class NucleotideSeparatorSplitterTest {
         //List<String> expectedOutput = Arrays.asList("AAAA","ACGT","CCGT","GTTT","ACGT");
 
         List<String> output = runSplitter(input);
-        expectedError("Unexpected character in separator slot in A/C|G|T: | Expected:/  in row 0");
+        expectedError("Unexpected Length Element A/C|G|T  in row 0");
     }
 
     @Test
@@ -145,6 +146,20 @@ public class NucleotideSeparatorSplitterTest {
     public void testUnknownInAlleleCase(){
         List<String> input = Arrays.asList("A/A/A/A","A/?/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
         List<String> expectedOutput = Arrays.asList("A/A/A/A","A/?/G/T","C/C/G/T","G/T/T/T","A/C/G/T");
+
+        List<String> output = runSplitter(input);
+        //expectedError("Unexpected allele ? in A?GT  in row 0");
+        //This case now caught downstream
+
+        noErrorsExpected();
+        assertEquals("Transform equals input",expectedOutput,output);
+
+    }
+
+    @Test
+    public void testInsertionAlleleCase(){
+        List<String> input = Arrays.asList("ACCAC/A/A/A","A/?/CCAT/T","C/C/G/TAA","G/T/T/T","A/C/G/T");
+        List<String> expectedOutput = Arrays.asList("ACCAC/A/A/A","A/?/CCAT/T","C/C/G/TAA","G/T/T/T","A/C/G/T");
 
         List<String> output = runSplitter(input);
         //expectedError("Unexpected allele ? in A?GT  in row 0");

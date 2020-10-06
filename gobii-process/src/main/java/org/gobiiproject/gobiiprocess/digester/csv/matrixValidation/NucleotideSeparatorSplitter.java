@@ -98,21 +98,16 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
 
 
         boolean hasSeparators=(length != nucleotideCount);
-        if((length != nucleotideCount) && (length != expectedLengthWithSeparators)){
-            return "Unexpected Length Element " + element; // incorrect length
+        String separatorCharacter = findSeparator(element);
+        if(separatorCharacter!=null) {
+          String[] subelements= element.split(Pattern.quote(separatorCharacter));
+          if(subelements.length != nucleotideCount){
+              return "Unexpected Length Element " + element; // incorrect length
+          }
         }
-
-        if(hasSeparators) {
-            char separatorCharacter = element.charAt(1);
-            if(!validSeparators.contains(""+separatorCharacter)){
-                return "Unexpected separator in " + element + ": " + separatorCharacter + " Expected:" + Arrays.deepToString(validSeparators.toArray()); // incorrect separator character OR wrongly sized element
-                //Expected separator from <list>, received garbage
-            }
-            for(int i = 1; i < element.length();i+=2){
-                if(element.charAt(i) != separatorCharacter){
-                    return "Unexpected character in separator slot in " + element + ": " + element.charAt(i) + " Expected:" + separatorCharacter; // incorrect separator character OR wrongly sized element
-                    //Expected more of the same separator, received garbage
-                }
+        else{
+            if(element.length()!=nucleotideCount){
+                return "Unexpected Length Element " + element; // incorrect length
             }
         }
 
