@@ -1,6 +1,6 @@
 import { APP_BASE_HREF } from "@angular/common";
 //import {HttpModule} from "@angular/http";
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
@@ -117,7 +117,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         {
             provide: APP_INITIALIZER,
             useFactory: initializer,
-            deps: [ KeycloakService ],
+            deps: [ KeycloakService, HttpClient ],
             multi: true
         },
         AuthGuard,

@@ -144,5 +144,7 @@ public class KeycloakConfig {
     @Element(required = true)
     private String adminPassword;
     
-
+    //Added for extractor UI config
+    @Element(required = true)
+    private String extractorUIClient;
 }
