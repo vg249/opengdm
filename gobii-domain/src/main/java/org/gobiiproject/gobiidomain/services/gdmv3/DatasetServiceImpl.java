@@ -139,7 +139,7 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check if the cv is a dataset type
-		if (datasetType.getCvGroup().getCvGroupName() != CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName()) {
+		if (!datasetType.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName())) {
 			throw new InvalidException("Dataset Type Id");
 		}
 
