@@ -27,8 +27,6 @@ public class DatasetRequestDTO {
     private Integer experimentId;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @Null(groups = { DatasetRequestDTO.Create.class, DatasetRequestDTO.Update.class })
-    @Digits(integer = 10, fraction = 0, groups = { DatasetRequestDTO.Create.class, DatasetRequestDTO.Update.class })
     private Integer datasetTypeId;
 
     @JsonSerialize(using = ToStringSerializer.class)

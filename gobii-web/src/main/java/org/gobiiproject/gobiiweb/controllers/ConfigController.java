@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
-import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.config.KeycloakConfig;
 import org.gobiiproject.gobiimodel.dto.system.ExtractorConfigDTO;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.EntityAlreadyExistsException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidTypeException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityException;
@@ -61,6 +62,11 @@ public class MapsetServiceImpl implements MapsetService {
         // check if mapset has mapsetTypeId and if it's a valid mapsetTypeId
         Cv type = this.getType(mapset.getMapsetTypeId());
 
+        // check same name mapset -- this should have been implemented in DB if name should be unique
+        if (mapsetDao.getMapsetByName(mapset.getMapsetName()) != null) {
+            throw new EntityAlreadyExistsException.Mapset();
+        }
+
         // check the referenceId
         Reference reference = null;
         if (mapset.getReferenceId() != null) {
@@ -105,8 +111,12 @@ public class MapsetServiceImpl implements MapsetService {
     @Override
     public MapsetDTO updateMapset(Integer mapsetId, MapsetDTO patchData, String editedBy) throws Exception {
         Mapset mapset = this.loadMapset(mapsetId);
-
         if (patchData.getMapsetName() != null) {
+            //check if other mapset already exists
+            Mapset other = mapsetDao.getMapsetByName(patchData.getMapsetName());
+            if (other != null && other.getMapsetId() != mapset.getMapsetId()) {
+                throw new EntityAlreadyExistsException.Mapset();
+            }
             mapset.setMapsetName(patchData.getMapsetName());
         }
 
