@@ -98,15 +98,18 @@ class DigestMatrix {
                         return false;
                     }
                 }
+                return true;
             }
-            String[] subEntities = entity.split(Pattern.quote("/"));
+            String[] subEntities = entity.split(Pattern.quote("/"),-1);
             if(subEntities.length != numberOfElements){
                 return false;
             }
             for(String subEntity:subEntities){
-                for(String s : entity.split("")){
-                    if(!allowedSet.contains(s)){
-                        return false;
+                if(subEntity.length()>0) {
+                    for (String s : subEntity.split("")) {
+                        if (!allowedSet.contains(s)) {
+                            return false;
+                        }
                     }
                 }
             }
