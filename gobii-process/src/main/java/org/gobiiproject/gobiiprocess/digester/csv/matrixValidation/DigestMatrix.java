@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.types.DataSetType;
@@ -89,11 +90,24 @@ class DigestMatrix {
         @Override
         public boolean isAllowed(String entity) {
             //There are the right number of elements
-            if(entity.length()!=numberOfElements) return false;
-            //Each element is a valid element
-            for(String s: entity.split("")){
-                if(!allowedSet.contains(s)){
-                    return false;
+            if(!entity.contains("/")) {
+                if (entity.length() != numberOfElements) return false;
+                //Each element is a valid element
+                for (String s : entity.split("")) {
+                    if (!allowedSet.contains(s)) {
+                        return false;
+                    }
+                }
+            }
+            String[] subEntities = entity.split(Pattern.quote("/"));
+            if(subEntities.length != numberOfElements){
+                return false;
+            }
+            for(String subEntity:subEntities){
+                for(String s : entity.split("")){
+                    if(!allowedSet.contains(s)){
+                        return false;
+                    }
                 }
             }
             return true;
