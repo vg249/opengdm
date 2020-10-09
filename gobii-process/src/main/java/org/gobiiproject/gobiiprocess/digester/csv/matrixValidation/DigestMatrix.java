@@ -16,7 +16,7 @@ class DigestMatrix {
             case NUCLEOTIDE_2_LETTER:
             case IUPAC:
             case VCF:
-                allowedEntities = new AllowedEntitiesSet(new HashSet<String>(initNucleotide2letterList()));
+                allowedEntities = new AllowedNucleotides(2); //TODO - VCF 4 letter?
                 break;
             case CO_DOMINANT_NON_NUCLEOTIDE:
                 allowedEntities = new AllowedEntitiesSet(new HashSet<String>(initCoDominantList()));

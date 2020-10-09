@@ -66,6 +66,14 @@ public class DigestMatrixValidationTest {
         DigestMatrix.validateDatasetList(0,input,"NUCLEOTIDE_4_LETTER",dummy);
         noErrorsExpected();
     }
+    @Test
+    public void testNormalTwoLetterCase(){
+        resetTest();
+        List<String> input = Arrays.asList("T/T","T/T","C/","G/T","A/C");
+        DigestMatrix.validateDatasetList(0,input,"NUCLEOTIDE_2_LETTER",dummy);
+        noErrorsExpected();
+    }
+
 
 
 
