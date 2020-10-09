@@ -304,6 +304,7 @@ public class BRAPIIControllerV1Test {
     public void testGetSamplesList() throws Exception {
 
         Integer pageSize = random.nextInt(100);
+        if(pageSize==0)pageSize++;//Fixes 1 in 100 unit test failure when page size is zero.
 
         final Integer defaultPageNum =  0;
 
