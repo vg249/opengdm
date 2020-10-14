@@ -7,10 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -19,6 +17,7 @@ import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
+import org.hibernate.internal.util.xml.ErrorLogger;
 
 import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -217,6 +216,43 @@ public class HDF5Interface {
             rmIfExist(tempGenoFile);
         }
         return genoFile;
+    }
+
+    /**
+     * Concatenates a list of input files to an output file, so that each sequential input file appears in order in the
+     * output, much like the unix 'paste' command.
+     * @param inputFileList Comma separated list of input files to read
+     * @param betweenFileSeparator Character to put between rows
+     * @param outpufFilePath Output file to write to
+     */
+    private static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
+        String[] stringList = inputFileList.split(Pattern.quote(","));
+        List<BufferedReader> readerList = new LinkedList<BufferedReader>();
+        try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
+            for(String input:stringList){
+                readerList.add(new BufferedReader(new FileReader(input)));
+            }
+            while(!readerList.isEmpty()){
+                boolean first=true;
+                for(BufferedReader reader:readerList){
+                    String readLine = reader.readLine();
+                    if(readLine==null){
+                        readerList.remove(reader);
+                        reader.close();
+                        continue;
+                    }
+                    if(!first){
+                        output.write(betweenFileSeparator);
+                    }
+                    output.write(readLine);
+                    first=false;
+                }
+                output.write(System.lineSeparator());
+            }
+            output.flush();
+        } catch (IOException e) {
+            Logger.logError("HDF5Interface",e);
+        }
     }
 
     /**
