@@ -26,7 +26,7 @@ public class QcHandler {
 		GobiiExtractorInstruction qcExtractInstruction = createQCExtractInstruction(metadata);
 		setQCExtractPaths(qcExtractInstruction, metadata);
 
-		sendQCExtract(qcExtractInstruction, configuration, metadata.getGobiiCropType());
+		sendQCExtract(qcExtractInstruction, configuration, metadata);
 	}
 
 	private GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderMetadata metadata) {
@@ -34,11 +34,7 @@ public class QcHandler {
 		Logger.logInfo("Digester", "qcCheck detected");
 		Logger.logInfo("Digester", "Entering into the QC Subsection #1 of 3...");
 		gobiiExtractorInstruction = new GobiiExtractorInstruction();
-		gobiiExtractorInstruction.setContactEmail(metadata.getContactEmail());
-		gobiiExtractorInstruction.setContactId(metadata.getContactId());
-		gobiiExtractorInstruction.setGobiiCropType(metadata.getGobiiCropType());
 		gobiiExtractorInstruction.getMapsetIds().add(metadata.getMapset().getId());
-		gobiiExtractorInstruction.setQcCheck(true);
 		Logger.logInfo("Digester", "Done with the QC Subsection #1 of 3!");
 		return gobiiExtractorInstruction;
 	}
@@ -59,12 +55,16 @@ public class QcHandler {
 		Logger.logInfo("Digester", "Done with the QC Subsection #2 of 3!");
 	}
 
-	private void sendQCExtract(GobiiExtractorInstruction qcExtractInstruction, ConfigSettings configuration, String crop) throws Exception {
+	private void sendQCExtract(GobiiExtractorInstruction qcExtractInstruction, ConfigSettings configuration, GobiiLoaderMetadata metadata) throws Exception {
 		Logger.logInfo("Digester", "Entering into the QC Subsection #3 of 3...");
 		ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
-		extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
+		extractorInstructionFilesDTOToSend.getProcedure().getMetadata().setContactEmail(metadata.getContactEmail());
+		extractorInstructionFilesDTOToSend.getProcedure().getMetadata().setContactId(metadata.getContactId());
+		extractorInstructionFilesDTOToSend.getProcedure().getMetadata().setGobiiCropType(metadata.getGobiiCropType());
+		extractorInstructionFilesDTOToSend.getProcedure().getMetadata().setQcCheck(true);
+		extractorInstructionFilesDTOToSend.getProcedure().getInstructions().add(qcExtractInstruction);
 		extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_" + DateUtils.makeDateIdString());
-		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, metadata.getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
 		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
 			Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
 			return;
