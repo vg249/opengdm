@@ -207,7 +207,8 @@ public class HDF5Interface {
         String genotypePartFileIdentifier=genoFileString.toString();
 
         if(markerFast) {
-            tryExec("paste" + genotypePartFileIdentifier, genoFile, errorFile);
+            //tryExec("paste" + genotypePartFileIdentifier, genoFile, errorFile);
+            coallateFiles(genotypePartFileIdentifier,"\t",genoFile);
         }
         else{
             tryExec("cat" + genotypePartFileIdentifier, genoFile, errorFile);
