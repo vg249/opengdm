@@ -226,9 +226,10 @@ public class HDF5Interface {
      * @param betweenFileSeparator Character to put between rows
      * @param outpufFilePath Output file to write to
      */
-    private static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
+    static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
         String[] stringList = inputFileList.split(Pattern.quote(","));
         List<BufferedReader> readerList = new LinkedList<BufferedReader>();
+        List<BufferedReader> emptyList = new LinkedList<BufferedReader>();
         try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
             for(String input:stringList){
                 readerList.add(new BufferedReader(new FileReader(input)));
@@ -238,7 +239,7 @@ public class HDF5Interface {
                 for(BufferedReader reader:readerList){
                     String readLine = reader.readLine();
                     if(readLine==null){
-                        readerList.remove(reader);
+                        emptyList.add(reader);//to prevent concurrent modifications
                         reader.close();
                         continue;
                     }
@@ -248,6 +249,8 @@ public class HDF5Interface {
                     output.write(readLine);
                     first=false;
                 }
+                readerList.removeAll(emptyList);
+                emptyList.clear();
                 output.write(System.lineSeparator());
             }
             output.flush();
