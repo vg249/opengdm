@@ -16,6 +16,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.gobii.masticator.Masticator;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -216,9 +217,6 @@ public class GobiiFileReader {
 
         Integer dataSetId = procedure.getMetadata().getDataset().getId();
 
-        OldInstructionFileProcessingResult oldInstructionFileProcessingResult = new OldInstructionFileProcessingResult();
-        success = oldInstructionFileProcessingResult.success;
-        boolean sendQc = oldInstructionFileProcessingResult.sendQc;
         String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
 
         String logDir = configuration.getFileSystemLog();
@@ -234,8 +232,23 @@ public class GobiiFileReader {
             //FileSystemInterface.rmIfExist(oldLogFile);
         }
 
-        // ----------- Data Validation Block. Common for both aspect and old instruction file
+        OldInstructionFileProcessingResult oldInstructionFileProcessingResult =
+            processOldInstructionFile(args,
+                instructionFile,
+                procedure,
+                pm,
+                jobStatus,
+                loaderInstructionMap,
+                configuration,
+                dataSetId,
+                loaderInstructionList,
+                gobiiCropConfig);
 
+        success = oldInstructionFileProcessingResult.success;
+        boolean sendQc = oldInstructionFileProcessingResult.sendQc;
+
+
+        // ----------- Data Validation Block. Common for both aspect and old instruction file
         //Metadata Validation
         boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.isEnableValidation()) {
@@ -357,16 +370,17 @@ public class GobiiFileReader {
 
     }
 
-    private OldInstructionFileProcessingResult processOldInstructionFile(String[] args,
-                                           String instructionFile,
-                                           GobiiLoaderProcedure procedure,
-                                           ProcessMessage pm,
-                                           JobStatus jobStatus,
-                                           Map<String, File> loaderInstructionMap,
-                                           ConfigSettings configuration,
-                                           Integer dataSetId,
-                                           List<String> loaderInstructionList,
-                                           GobiiCropConfig gobiiCropConfig) throws Exception {
+    private static OldInstructionFileProcessingResult processOldInstructionFile(
+        String[] args,
+        String instructionFile,
+        GobiiLoaderProcedure procedure,
+        ProcessMessage pm,
+        JobStatus jobStatus,
+        Map<String, File> loaderInstructionMap,
+        ConfigSettings configuration,
+        Integer dataSetId,
+        List<String> loaderInstructionList,
+        GobiiCropConfig gobiiCropConfig) throws Exception {
 
         boolean success = true;
 
