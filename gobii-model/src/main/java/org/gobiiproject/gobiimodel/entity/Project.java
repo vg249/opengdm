@@ -64,7 +64,7 @@ public class Project extends BaseEntity {
         return null;
     }
 
-    @OneToOne
+    @OneToOne(mappedBy = "project")
     private ProjectStats projectStats;
     
 
