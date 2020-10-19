@@ -11,4 +11,6 @@ public interface VariantSetsService {
 
     VariantSetDTO getVariantSetById(Integer variantSetDbId);
 
+    String getEtag(Integer datasetId);
+
 }

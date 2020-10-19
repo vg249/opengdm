@@ -68,7 +68,8 @@ public class ProjectDTO extends DTOBaseAuditable {
     private Integer contactId;
 
     @NotNull(groups = {ProjectDTO.Create.class})
-    private String piContactId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore
@@ -80,12 +81,16 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String piContactFirstName;
 
     //TODO: when the stats table is done
+    @GobiiEntityMap(paramName="projectStats.experimentCount", entity=Project.class, deep=true)
     private Integer experimentCount;
 
+    @GobiiEntityMap(paramName="projectStats.datasetCount", entity=Project.class, deep=true)
     private Integer datasetCount;
 
+    @GobiiEntityMap(paramName="projectStats.markerCount", entity=Project.class, deep=true)
     private Integer markersCount;
 
+    @GobiiEntityMap(paramName="projectStats.dnarunCount", entity=Project.class, deep=true)
     private Integer dnaRunsCount;
 
     @Valid
