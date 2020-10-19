@@ -69,7 +69,7 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @NotNull(groups = {ProjectDTO.Create.class})
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer piContactId;
+    private String piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore

@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -64,7 +66,7 @@ public class Project extends BaseEntity {
         return null;
     }
 
-    @OneToOne(mappedBy = "project", cascade = CascadeType.REFRESH)
+    @OneToOne(mappedBy="project")
     private ProjectStats projectStats;
     
 
