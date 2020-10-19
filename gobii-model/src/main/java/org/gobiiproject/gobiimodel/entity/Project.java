@@ -64,7 +64,7 @@ public class Project extends BaseEntity {
         return null;
     }
 
-    @OneToOne(mappedBy = "project", cascade = CascadeType.REFRESH)
+    @OneToOne
     private ProjectStats projectStats;
     
 
