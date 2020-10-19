@@ -78,12 +78,16 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String piContactFirstName;
 
     //TODO: when the stats table is done
+    @GobiiEntityMap(paramName="projectStats.experimentCount", entity=Project.class, deep=true)
     private Integer experimentCount;
 
+    @GobiiEntityMap(paramName="projectStats.datasetCount", entity=Project.class, deep=true)
     private Integer datasetCount;
 
+    @GobiiEntityMap(paramName="projectStats.markerCount", entity=Project.class, deep=true)
     private Integer markersCount;
 
+    @GobiiEntityMap(paramName="projectStats.dnarunCount", entity=Project.class, deep=true)
     private Integer dnaRunsCount;
 
     @Valid

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -61,5 +63,9 @@ public class Project extends BaseEntity {
         if (this.getContact() != null) return this.getContact().getContactId();
         return null;
     }
+
+    @OneToOne(mappedBy = "project", cascade = CascadeType.REFRESH)
+    private ProjectStats projectStats;
+    
 
 }
