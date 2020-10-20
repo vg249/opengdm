@@ -1,4 +1,7 @@
 {
+  "cropType": "zoan",
+  "inputFile": "/data/gobii_bundle/crops/zoan/files/data_20180611_181211_Deb_Proj1_FlexQuery_marker/Deb_FQ_codom_markermap1-10.txt",
+  "outputDir": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180611_181211_Deb_Proj1_FlexQuery_marker",
   "aspects": {
     "marker": {
       "platform_id":"11",
@@ -20,9 +23,19 @@
     "marker_linkage_group": {
       "platform_id":"11",
       "map_id":"33",
-      "stop":["COLUMN", {"row":1, "column":2}],
+      "stop": [
+        "COLUMN",
+        {
+          "row":1,
+          "column":2
+        }
+      ],
       "marker_name": [
-        "COLUMN", {"row":1, "column":0}
+        "COLUMN",
+        {
+          "row":1,
+          "column":0
+        }
       ],
       "start": [
         "COLUMN",

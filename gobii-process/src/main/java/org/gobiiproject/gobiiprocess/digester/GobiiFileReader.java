@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.nio.file.Files;
@@ -26,17 +28,15 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -97,11 +97,6 @@ public class GobiiFileReader {
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
 
-    public static class OldInstructionFileProcessingResult {
-        boolean success;
-        boolean sendQc;
-    }
-
     /**
      * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
      *
@@ -135,15 +130,26 @@ public class GobiiFileReader {
             System.exit(2);
         }
 
+        Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
+        List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
+
+        JsonNode loaderInstructions;
+        GobiiLoaderProcedure procedure;
+        String cropType;
+        boolean success;
+        boolean sendQc;
+        String dstFilePath;
+        String errorPath;
+        Integer dataSetId = null;
+        String jobName;
+        String datasetType;
+        String loadTypeName;
+
         extractorScriptPath = rootDir + "extractors/";
         loaderScriptPath = rootDir + "loaders/";
         HDF5Interface.setPathToHDF5(loaderScriptPath + "hdf5/bin/");
 
         if (propertiesFile == null) propertiesFile = rootDir + "config/gobii-web.xml";
-
-        boolean success = true;
-        Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
-        List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
 
         ConfigSettings configuration = null;
         try {
@@ -166,42 +172,54 @@ public class GobiiFileReader {
         }
 
         final String instructionFileContents = HelperFunctions.readFile(instructionFile);
-
-        GobiiLoaderProcedure procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
-        //Job Id is the 'name' part of the job file  /asd/de/name.json
-        String filename = new File(instructionFile).getName();
-        String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-        JobStatus jobStatus = null;
+        // TODO: Find a way to replace code which process json file as string value.
+        ObjectMapper jsonMapper = new ObjectMapper();
         try {
-            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobFileName);
-        } catch (Exception e) {
-            Logger.logError("GobiiFileReader", "Error Checking Status", e);
+            File file = new File(instructionFile);
+            loaderInstructions = jsonMapper.readTree(instructionFileContents);
+        }
+        catch (JsonProcessingException jE) {
+            throw new GobiiException(jE);
         }
 
-        GobiiCropConfig gobiiCropConfig;
-        try {
-            gobiiCropConfig = configuration.getCropConfig(procedure.getMetadata().getGobiiCropType());
-        } catch (Exception e) {
-            logError("Digester", "Unknown loading error", e);
-            return;
+        if(loaderInstructions.has("aspects")) {
+            cropType = loaderInstructions.get("cropType").asText();
+            dstFilePath = loaderInstructions.get("inputFile").asText();
+            jobName = getJobReadableIdentifier(cropType,loaderInstructions.get("source").asText());
+            datasetType = loaderInstructions.get("datasetType").asText();
+            loadTypeName = loaderInstructions.get("loadType").asText();
         }
-        if (gobiiCropConfig == null) {
-            logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType() + " in the Configuration File");
-            return;
+        else {
+            procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
+            cropType = procedure.getMetadata().getGobiiCropType();
+            dstFilePath = getDestinationFile(procedure, procedure.getInstructions().get(0));//Intermediate 'file
+            jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
+            datasetType = procedure.getMetadata().getDatasetType().getName();
+            GobiiFileType loadType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
+            loadTypeName = "";//No load type name if default
+            if (loadType.equals(GobiiFileType.GENERIC)) loadTypeName = loadType.name();
         }
 
-        String dstFilePath = getDestinationFile(procedure, procedure.getInstructions().get(0));//Intermediate 'file'
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
             dstDir = new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
         }
 
-        String errorPath = getLogName(procedure, procedure.getMetadata().getGobiiCropType());
 
-        //Validation logic before loading any metadata
+        GobiiCropConfig gobiiCropConfig;
+        try {
+            gobiiCropConfig = configuration.getCropConfig(cropType);
+        } catch (Exception e) {
+            logError("Digester", "Unknown loading error", e);
+            return;
+        }
+        if (gobiiCropConfig == null) {
+            logError("Digester", "Unknown Crop Type: " + cropType + " in the Configuration File");
+            return;
+        }
         String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
 
-        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, procedure.getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
+        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, cropType, GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
             return;
@@ -215,9 +233,17 @@ public class GobiiFileReader {
         String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
 
-        Integer dataSetId = procedure.getMetadata().getDataset().getId();
-
-        String jobName = getJobReadableIdentifier(procedure.getMetadata().getGobiiCropType(), procedure);
+        //Job Id is the 'name' part of the job file  /asd/de/name.json
+        String filename = new File(instructionFile).getName();
+        String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
+        JobStatus jobStatus = null;
+        try {
+            jobStatus = new JobStatus(configuration,
+                cropType,
+                jobFileName);
+        } catch (Exception e) {
+            Logger.logError("GobiiFileReader", "Error Checking Status", e);
+        }
 
         String logDir = configuration.getFileSystemLog();
         String logFile = null;
@@ -232,20 +258,32 @@ public class GobiiFileReader {
             //FileSystemInterface.rmIfExist(oldLogFile);
         }
 
-        OldInstructionFileProcessingResult oldInstructionFileProcessingResult =
-            processOldInstructionFile(args,
-                instructionFile,
-                procedure,
-                pm,
-                jobStatus,
-                loaderInstructionMap,
-                configuration,
-                dataSetId,
-                loaderInstructionList,
-                gobiiCropConfig);
+        if(loaderInstructions.has("aspects")) {
+            success = true;
+            sendQc = true;
+        }
+        else {
 
-        success = oldInstructionFileProcessingResult.success;
-        boolean sendQc = oldInstructionFileProcessingResult.sendQc;
+            procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
+            dataSetId = procedure.getMetadata().getDataset().getId();
+            InstructionFileProcessingResult oldInstructionFileProcessingResult =
+                processOldInstructionFile(args,
+                    instructionFile,
+                    procedure,
+                    pm,
+                    jobStatus,
+                    loaderInstructionMap,
+                    configuration,
+                    dataSetId,
+                    loaderInstructionList,
+                    gobiiCropConfig);
+            success = oldInstructionFileProcessingResult.isSuccess();
+            sendQc = oldInstructionFileProcessingResult.isSendQc();
+        }
+
+
+
+
 
 
         // ----------- Data Validation Block. Common for both aspect and old instruction file
@@ -289,7 +327,7 @@ public class GobiiFileReader {
         // ---------- IFL input file creation block common for both aspect and old instruction file
         if (success && Logger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
-            errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "IFLs");
+            errorPath = getLogName(dstFilePath, cropType, "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
 
@@ -329,8 +367,8 @@ public class GobiiFileReader {
                 Logger.logError("FileReader", "No new data was uploaded.");
             }
             //Load Monet/HDF5
-            errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "Matrix_Upload");
-            String variantFilename = "DS" + dataSetId;
+            errorPath = getLogName(dstFilePath, cropType, "Matrix_Upload");
+            String variantFilename = "DS" + dataSetId.toString();
             File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 
             if (variantFile != null && dataSetId == null) {
@@ -338,8 +376,8 @@ public class GobiiFileReader {
             }
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
                 jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
-                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, procedure.getMetadata().getDatasetType().getName(),
-                        configuration, dataSetId, procedure.getMetadata().getGobiiCropType(), errorPath, variantFilename, variantFile);
+                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, datasetType,
+                        configuration, dataSetId, cropType, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
             }
@@ -347,7 +385,7 @@ public class GobiiFileReader {
                 Logger.logInfo("Digester", "Successful Data Upload");
                 if (sendQc) {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
-                    sendQCExtract(configuration, procedure.getMetadata().getGobiiCropType());
+                    sendQCExtract(configuration, cropType);
                 } else {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
                 }
@@ -364,13 +402,19 @@ public class GobiiFileReader {
         }
 
         //Send Email
-        finalizeProcessing(pm, configuration, mailInterface, instructionFile,
-                procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
-
+        finalizeProcessing(
+            pm,
+            configuration,
+            mailInterface,
+            instructionFile,
+            loadTypeName,
+            cropType,
+            jobName,
+            logFile);
 
     }
 
-    private static OldInstructionFileProcessingResult processOldInstructionFile(
+    private static InstructionFileProcessingResult processOldInstructionFile(
         String[] args,
         String instructionFile,
         GobiiLoaderProcedure procedure,
@@ -517,7 +561,7 @@ public class GobiiFileReader {
             SequenceInPlaceTransform intermediateFile = new SequenceInPlaceTransform(fromFile, errorPath);
             if (procedure.getMetadata().getDatasetType().getName() != null
                 && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
-                errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "Matrix_Processing"); //Temporary Error File Name
+                errorPath = getLogName(dstFilePath, procedure.getMetadata().getGobiiCropType(), "Matrix_Processing"); //Temporary Error File Name
 
                 if (DatasetOrientationType.SAMPLE_FAST.equals(procedure.getMetadata().getDatasetOrientationType())) {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
@@ -551,11 +595,9 @@ public class GobiiFileReader {
 
         }
 
-        OldInstructionFileProcessingResult oldInstructionFileProcessingResult =
-            new OldInstructionFileProcessingResult();
+        InstructionFileProcessingResult oldInstructionFileProcessingResult =
+            new InstructionFileProcessingResult(success, sendQc);
 
-        oldInstructionFileProcessingResult.sendQc = sendQc;
-        oldInstructionFileProcessingResult.success = success;
 
         return oldInstructionFileProcessingResult;
     }
@@ -576,12 +618,9 @@ public class GobiiFileReader {
      * @param logFile
      * @throws Exception
      */
-    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure, String crop, String jobName, String logFile) throws Exception {
+    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, String loadTypeName, String crop, String jobName, String logFile) throws Exception {
             String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
                 try {
-            GobiiFileType loadType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
-            String loadTypeName = "";//No load type name if default
-            if (loadType != GobiiFileType.GENERIC) loadTypeName = loadType.name();
             pm.addPath("Instruction File", instructionFilePath, configuration, false);
             pm.addPath("Error Log", logFile, configuration, false);
             pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
@@ -778,8 +817,13 @@ public class GobiiFileReader {
      * @return a human readable name for the job
      */
     private static String getJobReadableIdentifier(String cropName, GobiiLoaderProcedure procedure) {
+        return getJobReadableIdentifier(cropName,
+            getSourceFileName(procedure.getMetadata().getGobiiFile()));
+    }
+
+    private static String getJobReadableIdentifier(String cropName, String sourceFileName) {
         cropName = cropName.charAt(0) + cropName.substring(1).toLowerCase();// MAIZE -> Maize
-        String jobName = "[GOBII - Loader]: " + cropName + " - digest of \"" + getSourceFileName(procedure.getMetadata().getGobiiFile()) + "\"";
+        String jobName = "[GOBII - Loader]: " + cropName + " - digest of \"" + sourceFileName + "\"";
         return jobName;
     }
 
@@ -791,6 +835,10 @@ public class GobiiFileReader {
      */
     public static String getSourceFileName(GobiiFile file) {
         String source = file.getSource();
+        return getSourceFileName(source);
+    }
+
+    public static String getSourceFileName(String source) {
         File sourceFolder = new File(source);
         File[] f = sourceFolder.listFiles();
         if (f.length != 0) source = f[0].getName();
@@ -822,6 +870,10 @@ public class GobiiFileReader {
      */
     private static String getLogName(GobiiLoaderMetadata metadata, String cropName, String process) {
         String destination = metadata.getGobiiFile().getDestination();
+        return destination + "/" + cropName + "_Process-" + process + ".log";
+    }
+
+    private static String getLogName(String destination, String cropName, String process) {
         return destination + "/" + cropName + "_Process-" + process + ".log";
     }
 
