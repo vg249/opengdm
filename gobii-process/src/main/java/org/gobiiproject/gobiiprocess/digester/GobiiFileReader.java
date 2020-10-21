@@ -185,7 +185,7 @@ public class GobiiFileReader {
         if(loaderInstructions.has("aspects")) {
             cropType = loaderInstructions.get("cropType").asText();
             dstFilePath = loaderInstructions.get("inputFile").asText();
-            jobName = getJobReadableIdentifier(cropType,loaderInstructions.get("source").asText());
+            jobName = getJobReadableIdentifier(cropType,loaderInstructions.get("inputFile").asText());
             datasetType = loaderInstructions.get("datasetType").asText();
             loadTypeName = loaderInstructions.get("loadType").asText();
         }
@@ -259,6 +259,10 @@ public class GobiiFileReader {
         }
 
         if(loaderInstructions.has("aspects")) {
+            String[] masticatorArgs = {"-a", instructionFile,
+            "-d", loaderInstructions.get("inputFile").asText(),
+            "-o", loaderInstructions.get("outputDir").asText()};
+            Masticator.main(masticatorArgs);
             success = true;
             sendQc = true;
         }
@@ -366,20 +370,23 @@ public class GobiiFileReader {
             if (!loadedData) {
                 Logger.logError("FileReader", "No new data was uploaded.");
             }
-            //Load Monet/HDF5
-            errorPath = getLogName(dstFilePath, cropType, "Matrix_Upload");
-            String variantFilename = "DS" + dataSetId.toString();
-            File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 
-            if (variantFile != null && dataSetId == null) {
-                logError("Digester", "Data Set ID is null for variant call");
-            }
-            if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
-                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
-                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, datasetType,
+            if(dataSetId != null) {
+                //Load Monet/HDF5
+                errorPath = getLogName(dstFilePath, cropType, "Matrix_Upload");
+                String variantFilename = "DS" + dataSetId.toString();
+                File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
+
+                if (variantFile != null && dataSetId == null) {
+                    logError("Digester", "Data Set ID is null for variant call");
+                }
+                if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
+                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
+                    boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, datasetType,
                         configuration, dataSetId, cropType, errorPath, variantFilename, variantFile);
-                rmIfExist(variantFile.getPath());
-                success &= HDF5Success;
+                    rmIfExist(variantFile.getPath());
+                    success &= HDF5Success;
+                }
             }
             if (success && Logger.success()) {
                 Logger.logInfo("Digester", "Successful Data Upload");
