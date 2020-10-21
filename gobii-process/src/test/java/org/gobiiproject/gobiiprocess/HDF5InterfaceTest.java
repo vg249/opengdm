@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess;
 
+import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,42 +46,4 @@ public class HDF5InterfaceTest {
         t3.delete();
         out.delete();
     }
-<<<<<<< HEAD
-    @Test
-    public void testEncodeDecode() throws IOException {
-        File input = new File("encodeinput");
-        File encoded = new File("encodeddata");
-        File out = new File("decodedinput");
-
-        try (FileWriter inputwriter = new FileWriter(input)) {
-            inputwriter.write("A/C\tG/T\tN/N");
-            inputwriter.write(System.lineSeparator());
-            inputwriter.write("ACAT/GAG\t/\tA/A");
-            inputwriter.write(System.lineSeparator());
-            inputwriter.write("A/ACAT\tG/GAG\tA/C");
-            inputwriter.write(System.lineSeparator());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        HDF5Interface.coallateFiles("testfile1,testfile2,testfile3","\t","testfileout");
-
-        BufferedReader outReader = new BufferedReader(new FileReader(out));
-        String line1 = outReader.readLine();
-        String line2 = outReader.readLine();
-        String line3 = outReader.readLine();
-
-        Assert.assertEquals("Derp\tDerp3\tDerp5",line1);
-        Assert.assertEquals("Derp2\tDerp4\tDerp6",line2);
-        Assert.assertEquals("Derp7",line3);
-
-        t1.delete();
-        t2.delete();
-        t3.delete();
-        out.delete();
-    }
-
-=======
->>>>>>> standalone_develop
 }

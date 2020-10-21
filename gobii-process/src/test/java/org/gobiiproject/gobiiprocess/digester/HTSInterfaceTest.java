@@ -1,10 +1,11 @@
 package org.gobiiproject.gobiiprocess.digester;
 
 import org.apache.commons.io.FileUtils;
+import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

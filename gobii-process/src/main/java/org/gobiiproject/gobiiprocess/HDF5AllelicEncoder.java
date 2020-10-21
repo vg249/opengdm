@@ -4,6 +4,7 @@ import htsjdk.variant.variantcontext.Allele;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class HDF5AllelicEncoder {
     public static void createEncodedFile(File originalFilePath, File encodedFilePath, File lookupFilePath, String alleleSeparator, String elementSeparator){
         try(BufferedReader input = new BufferedReader(new FileReader(originalFilePath));
             //In theory, this should prevent any encoding issues when sent to the raw HDF5 interface
-            OutputStreamWriter encodedFile = new OutputStreamWriter( new BufferedOutputStream(new FileOutputStream(encodedFilePath)));
+            OutputStreamWriter encodedFile = new OutputStreamWriter( new BufferedOutputStream(new FileOutputStream(encodedFilePath)),StandardCharsets.UTF_8);
             OutputStreamWriter lookupFile = new OutputStreamWriter( new BufferedOutputStream(new FileOutputStream(lookupFilePath)))){
 
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
@@ -91,7 +92,8 @@ public class HDF5AllelicEncoder {
             //no lookup file
         }
         try(
-                BufferedReader encodedFile = new BufferedReader( new FileReader(encodedFilePath));
+                BufferedReader encodedFile = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(encodedFilePath), StandardCharsets.UTF_8));
                 BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
         ){
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
@@ -99,7 +101,7 @@ public class HDF5AllelicEncoder {
             String lookupLine=lookupFile!=null?lookupFile.readLine():null;
             String inputLine;
             int i = 0;
-            int nextLookupLineRow = -1;
+            int nextLookupLineRow = lookupLine!=null?Integer.parseInt(lookupLine.split(Pattern.quote("\t"))[0]):-1;
             while((inputLine=encodedFile.readLine()) != null) {
                 RowTranslator currentRowTranslator = null;
                 //advance through the lookup line to find 'this' line if we're behind
@@ -151,7 +153,7 @@ public class HDF5AllelicEncoder {
 
             String lookupLine=lookupFile!=null?lookupFile.readLine():null;
             String inputLine;
-            int nextLookupLineRow = -1;
+            int nextLookupLineRow = lookupLine!=null?Integer.parseInt(lookupLine.split(Pattern.quote("\t"))[0]):-1;
             while((inputLine=encodedFile.readLine()) != null && posListIterator.hasNext()) {
                 int i = Integer.parseInt(posListIterator.next());
                 RowTranslator currentRowTranslator = null;
@@ -170,8 +172,8 @@ public class HDF5AllelicEncoder {
                 if(lookupLine != null && nextLookupLineRow == i){
                     currentRowTranslator = new RowTranslator(lookupLine);
                 }
-                else{
-                    currentRowTranslator=null;
+                else{ //Even if there's nothing to translate, the row still needs to have separators applied, so it gets to go through the sausage factory... Less code paths, but could be optimized
+                    decodedFile.write(decodeRow(inputLine,null,alleleSeparator,elementSeparator));
                 }
 
                 if(currentRowTranslator != null) {
@@ -246,7 +248,7 @@ public class HDF5AllelicEncoder {
 
         //decodes a string encoded with 'encode'
         void decode(String encodedRow) {
-            String namelessRow = encodedRow.substring(encodedRow.indexOf('\t'));//remove everything before first tab
+            String namelessRow = encodedRow.substring(encodedRow.indexOf('\t')+1);//remove everything before first tab, including the tab
             String[] segments = namelessRow.split(";", -1);
             for (String segment : segments) {
                 String cleanSegment = cleanSegment(segment);
@@ -384,23 +386,23 @@ public class HDF5AllelicEncoder {
             catch(Exception e){
                 //Throw a warning, but pass through the character on catastrophic decode failure. (Probably an unexpected unencoded value, not an encoded value at all.)
                 index = -1;
-                Logger.logWarning("HDF5AlleleEncoder","No character to decode to- " + internalAllele);
+                Logger.logWarning("HDF5AlleleEncoder","No character to decode to- '" + internalAllele + "'");
                 return internalAllele;
             }
-            if(index>nonstandardAlleles.size()){
-                throw new Exception("Decoded character from h5 does not map (over translator length)");
+            if(index>=nonstandardAlleles.size()){
+                throw new Exception("Decoded character from h5 does not map (over translator length) " + index);
             }
             return nonstandardAlleles.get(index);
         }
     }
 
     private static char encodeChar(int value){
-        return (char)(value+128);
+        return (char)(value+129);
     }
 
     private static int decodeChar(char value) throws Exception{
         int intVal=(int)value;
-        if(intVal <= 128) throw new Exception("Decoded character from h5 does not map (under 128)");
-        return ((int)value)-128;
+        if(intVal < 129) throw new Exception("Decoded character from h5 does not map (under 128)");
+        return ((int)value)-129;
     }
 }
