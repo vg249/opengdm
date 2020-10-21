@@ -59,11 +59,11 @@ public class CvDaoImpl implements CvDao {
                     "CV group name should not be null");
             return this.getCvs(null, cvGroupName, cvType, null, null);
         } catch (Exception e) {
-
             log.error(e.getMessage(), e);
-
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
-
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage());
         }
     }
 
@@ -203,5 +203,22 @@ public class CvDaoImpl implements CvDao {
     public void deleteCv(Cv cv) throws Exception {
         em.remove(cv);
         em.flush();
+    }
+
+    @Override
+    public List<CvGroup> getCvGroups(Integer pageSize, Integer offset) {
+        try {
+
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<CvGroup> criteriaQuery = criteriaBuilder.createQuery(CvGroup.class);
+            Root<CvGroup> cvGroup = criteriaQuery.from(CvGroup.class);
+            criteriaQuery.select(cvGroup);
+            
+            TypedQuery<CvGroup> q = em.createQuery(criteriaQuery);
+            return q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+
+        } catch (Exception e) {
+            throw new GobiiException(e);
+        }
     }
 }

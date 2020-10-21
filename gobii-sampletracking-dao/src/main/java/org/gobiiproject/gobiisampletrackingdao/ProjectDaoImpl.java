@@ -90,6 +90,7 @@ public class ProjectDaoImpl implements ProjectDao {
     public Project patchProject(Project projectToBePatched) throws Exception {   
         Project project = em.merge(projectToBePatched);
         em.flush();
+        em.refresh(project, this.getContactHints());
         return project;
     }
 
@@ -101,6 +102,7 @@ public class ProjectDaoImpl implements ProjectDao {
 
     @Override
     public Project getProject(Integer projectId) {
+        log.info("Getting project %d", projectId );
         Project project = em.find(Project.class, projectId, getContactHints());
         return project;
     }

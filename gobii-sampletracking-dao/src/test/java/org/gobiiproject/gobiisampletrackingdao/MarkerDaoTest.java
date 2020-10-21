@@ -2,10 +2,12 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import static junit.framework.TestCase.assertTrue;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Marker;
+import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,6 +83,61 @@ public class MarkerDaoTest {
         for(Marker marker : markers) {
             assertTrue(marker.getDatasetMarkerIdx().has(testDatasetId.toString()));
         }
+
+
+    }
+
+    @Test
+    public void testGetMarkersByMap() {
+
+        daoTestSetUp.createTestMarkerLinkageGroups(10);
+        em.flush();
+
+        MarkerLinkageGroup testMarkerLinkageGroup = daoTestSetUp
+            .getCreatedMarkerLinkageGroups()
+            .get(random.nextInt(daoTestSetUp.getCreatedMarkerLinkageGroups().size()));
+
+        Integer testDatasetId = Integer.parseInt(testMarkerLinkageGroup
+            .getMarker().getDatasetMarkerIdx().fieldNames().next());
+
+        Integer testMapsetId = testMarkerLinkageGroup.getLinkageGroup().getMapset().getMapsetId();
+
+
+        List<Marker> markers = markerDao.getMarkersByMap(
+            testPageSize, 0, testMapsetId, null,
+            null, null, null, null,
+            testDatasetId);
+
+        assertTrue("marker result list size not equal to the page size",
+            markers.size() <= testPageSize);
+
+        for(Marker marker : markers) {
+            assertTrue(marker.getDatasetMarkerIdx().has(testDatasetId.toString()));
+        }
+
+        // Test minPosition
+        BigDecimal testMinPos = testMarkerLinkageGroup.getStart();
+
+        Set<Integer> markersHigherThanMinPos = new HashSet<>();
+
+        for(MarkerLinkageGroup markerLinkageGroup : daoTestSetUp.getCreatedMarkerLinkageGroups()) {
+            if(markerLinkageGroup.getStart().compareTo(testMinPos) >= 0 &&
+                markerLinkageGroup.getLinkageGroup().getMapset().getMapsetId() == testMapsetId) {
+                markersHigherThanMinPos.add(markerLinkageGroup.getMarker().getMarkerId());
+            }
+        }
+
+        markers = markerDao.getMarkersByMap(
+            testPageSize, 0, testMapsetId, null,
+            null, null, testMinPos, null,
+            null);
+
+
+        for(Marker marker : markers) {
+            markersHigherThanMinPos.remove(marker.getMarkerId());
+        }
+
+        assertTrue(markersHigherThanMinPos.size() == 0);
 
 
     }

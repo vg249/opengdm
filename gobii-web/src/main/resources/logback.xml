@@ -13,10 +13,16 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 
-    <logger name="org.gobii" level="debug" additivity="false">
+    <logger name="org.gobiiproject.gobiiweb" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
-	 
+    <logger name="org.gobiiproject.gobiidomain" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.gobiiproject.gobiisampletrackingdao" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
 	<root level="error">
 		<appender-ref ref="STDOUT" />
 	</root>

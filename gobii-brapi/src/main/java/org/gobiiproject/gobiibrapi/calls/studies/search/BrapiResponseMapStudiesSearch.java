@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiibrapi.calls.studies.search;
 
-import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiidomain.services.ProjectService;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -43,6 +43,8 @@ public class DaoTestSetUp {
     private List<Platform> createdPlatforms = new ArrayList<>();
     private List<Marker> createdMarkers = new ArrayList<>();
     private List<MarkerLinkageGroup> createdMarkerLinkageGroups = new ArrayList<>();
+    private List<VendorProtocol> createdVendorProtocols = new ArrayList<>();
+    private List<Organization> createdOrganizations = new ArrayList<>();
 
     public void createTestContacts(int numOfContacts) {
         for(int i = 0; i < numOfContacts; i++) {
@@ -63,7 +65,7 @@ public class DaoTestSetUp {
             CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         if(createdContacts.size() == 0) {
-            createTestContacts((int)(int) Math.ceil((double) numOfProjects/2));
+            createTestContacts((int) Math.ceil((double) numOfProjects/2));
         }
         for(int i = 0; i < numOfProjects; i++) {
             //Add Project
@@ -116,9 +118,18 @@ public class DaoTestSetUp {
 
     public void createTestProtocols(int numOfProtocols) {
 
+        if(createdPlatforms.size() == 0) {
+            createTestPlatforms(numOfProtocols);
+        }
+
         for(int i = 0; i < numOfProtocols; i++) {
+
             Protocol protocol = new Protocol();
+
             protocol.setName(RandomStringUtils.random(7, true, true));
+            protocol.setDescription(RandomStringUtils.random(7));
+            protocol.setPlatform(createdPlatforms.get(random.nextInt(createdPlatforms.size())));
+
             em.persist(protocol);
             createdProtocols.add(protocol);
         }
@@ -390,6 +401,43 @@ public class DaoTestSetUp {
             em.persist(markerLinkageGroup);
 
             createdMarkerLinkageGroups.add(markerLinkageGroup);
+        }
+    }
+
+    public void createTestVendorProtocols(int numVendorProtocols) {
+        if (createdProtocols.size() == 0) {
+            createTestProtocols(10);
+        }
+
+        if (createdOrganizations.size() == 0) {
+            createTestOrganizations(10);
+        }
+
+        Cv newStatus = cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        for (int i = 0; i<numVendorProtocols; i++) {
+            VendorProtocol vp = new VendorProtocol();
+            vp.setName(RandomStringUtils.random(10, true, true));
+            vp.setStatus(newStatus);
+            vp.setProtocol( createdProtocols.get( random.nextInt(createdProtocols.size())));
+            vp.setVendor( createdOrganizations.get( random.nextInt(createdOrganizations.size())));
+            em.persist(vp);
+
+            createdVendorProtocols.add(vp);
+        }
+    }
+
+    public void createTestOrganizations(int numOrganizations) {
+        Cv newStatus = cvDao.getCvs("new", CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        for (int i = 0; i < numOrganizations; i++) {
+            Organization org = new Organization();
+            org.setName( RandomStringUtils.random(10, true, true));
+            org.setAddress(RandomStringUtils.random(20, true, true));
+            org.setWebsite(RandomStringUtils.random(20, true, true));
+            org.setStatus(newStatus);
+            em.persist(org);
+            createdOrganizations.add(org);
         }
     }
 

@@ -36,8 +36,10 @@ import lombok.EqualsAndHashCode;
     subgraphs = {
         @NamedSubgraph(
             name = "graph.vp.protocol",
-            attributeNodes = @NamedAttributeNode(value = "protocol", subgraph = "graph.protocol.platform")
-        ),
+            attributeNodes = {
+                @NamedAttributeNode(value = "protocol", subgraph = "graph.protocol.platform"),
+                @NamedAttributeNode(value = "vendor")
+            }),
         @NamedSubgraph(
             name = "graph.protocol.platform",
             attributeNodes = @NamedAttributeNode(value = "platform")

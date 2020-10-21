@@ -12,8 +12,7 @@ public interface DatasetDao {
                               Integer datasetTypeId,
                               Integer experimentId, String experimentName);
 
-    Dataset getDatasetById(Integer datasetId);
-    Dataset getDataset(Integer datasetId); //this one uses the entitygraph
+    Dataset getDataset(Integer datasetId);
 
     List<Object[]> getDatasetsWithAnalysesAndCounts(Integer pageSize, Integer rowOffset,
                                                     Integer datasetId, String datasetName,

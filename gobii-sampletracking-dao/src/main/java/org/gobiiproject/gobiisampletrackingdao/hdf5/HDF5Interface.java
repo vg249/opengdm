@@ -134,6 +134,11 @@ public class HDF5Interface {
         catch(IOException e) {
 
             ErrorLogger.error("GobiiExtractor", "MarkerList reading failed", e);
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "HDF5 Interface Error. " +
+                    "Failed to read markers.");
 
         }
 

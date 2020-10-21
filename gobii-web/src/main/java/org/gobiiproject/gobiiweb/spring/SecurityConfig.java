@@ -1,11 +1,11 @@
 package org.gobiiproject.gobiiweb.spring;
 
-import org.gobiiproject.gobidomain.security.TokenManager;
-import org.gobiiproject.gobidomain.security.impl.TokenManagerSingle;
-import org.gobiiproject.gobidomain.services.AuthenticationService;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
-import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
+import org.gobiiproject.gobiidomain.security.TokenManager;
+import org.gobiiproject.gobiidomain.security.impl.TokenManagerSingle;
+import org.gobiiproject.gobiidomain.services.AuthenticationService;
+import org.gobiiproject.gobiidomain.services.ContactService;
+import org.gobiiproject.gobiidomain.services.impl.AuthenticationServiceDefault;
+import org.gobiiproject.gobiidomain.services.impl.UserDetailsServiceImpl;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.RestResourceId;

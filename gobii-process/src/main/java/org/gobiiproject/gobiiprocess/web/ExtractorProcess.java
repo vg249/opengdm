@@ -7,7 +7,7 @@ package org.gobiiproject.gobiiprocess.web;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobiidomain.services.PingService;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

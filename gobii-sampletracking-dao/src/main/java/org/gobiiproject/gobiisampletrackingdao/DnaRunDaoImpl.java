@@ -10,13 +10,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
@@ -85,6 +79,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 dnaSampleJoin= (Join<Object, Object>) dnaRunRoot.fetch("dnaSample");
                 germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
                 experimentJoin = (Join<Object, Object>) dnaRunRoot.fetch("experiment");
+                germplasmJoin.fetch("germplasmType", JoinType.LEFT);
             }
             else {
                 if (dnaSampleId != null || dnaSampleName != null
@@ -247,48 +242,30 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    public DnaRun getDnaRunById(Integer dnaRunId, boolean fetchAssociations) {
+    public DnaRun getDnaRunById(Integer dnaRunId,
+                                boolean fetchAssociations) throws GobiiException {
 
-        try {
+        List<DnaRun> dnaRunsById = this.getDnaRuns(2, 0,
+                dnaRunId, null,
+                null, null,
+                null, null,
+                null, null, fetchAssociations);
 
-            List<DnaRun> dnaRunsById = this.getDnaRuns(2, 0,
-                    dnaRunId, null,
-                    null, null,
-                    null, null,
-                    null, null, fetchAssociations);
+        if (dnaRunsById.size() > 1) {
 
-            if (dnaRunsById.size() > 1) {
-
-                LOGGER.error("More than one duplicate entries found.");
-
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.NONE,
-                        "More than one dnarun entity exists for the same Id");
-
-            } else if (dnaRunsById.size() == 0) {
-                throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Dna run Entity for given id does not exist");
-            }
-
-            return dnaRunsById.get(0);
-
-        }
-        catch(GobiiException ge) {
-            throw ge;
-        }
-        catch (Exception e) {
-
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("More than one duplicate entries found.");
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    e.getMessage() + " Cause Message: "
-                            + e.getCause().getMessage());
+                    GobiiValidationStatusType.NONE,
+                    "More than one dnarun entity exists for the same Id");
 
+        } else if (dnaRunsById.size() == 0) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Dna run Entity for given id does not exist");
         }
 
-
+        return dnaRunsById.get(0);
     }
 
     /**
@@ -298,7 +275,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
      * @return - DnaRun Entity with the given id
      */
     @Override
-    public DnaRun getDnaRunById(Integer dnaRunId) {
+    public DnaRun getDnaRunById(Integer dnaRunId) throws GobiiException {
         return this.getDnaRunById(dnaRunId, true);
     }
 
@@ -411,6 +388,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
                     if(fetchAssociations) {
                         germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                        germplasmJoin.fetch("germplasmType", JoinType.LEFT);
                     } else {
                         germplasmJoin = dnaSampleJoin.join("germplasm");
                     }
@@ -424,12 +402,15 @@ public class DnaRunDaoImpl implements DnaRunDao {
                     if(!CollectionUtils.isEmpty(germplasmNames)) {
                         predicates.add(germplasmJoin.get("germplasmName").in(germplasmNames));
                     }
+                } else if(fetchAssociations) {
+                    germplasmJoin = (Join<Object, Object>) dnaSampleJoin.fetch("germplasm");
+                    germplasmJoin.fetch("germplasmType", JoinType.LEFT);
                 }
             }
             else {
                 if(fetchAssociations) {
                     dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
-                    dnaSampleJoin.fetch("germplasm");
+                    dnaSampleJoin.fetch("germplasm").fetch("germplasmType", JoinType.LEFT);
 
                 }
             }

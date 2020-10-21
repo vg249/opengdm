@@ -45,6 +45,7 @@ public class HDF5InterfaceTest {
         t3.delete();
         out.delete();
     }
+<<<<<<< HEAD
     @Test
     public void testEncodeDecode() throws IOException {
         File input = new File("encodeinput");
@@ -80,4 +81,6 @@ public class HDF5InterfaceTest {
         out.delete();
     }
 
+=======
+>>>>>>> standalone_develop
 }
