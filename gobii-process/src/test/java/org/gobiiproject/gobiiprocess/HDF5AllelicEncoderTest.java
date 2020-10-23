@@ -62,4 +62,41 @@ public class HDF5AllelicEncoderTest {
         output.delete();
     }
 
+    @Test
+    public void testEncodeDecode4letRWExample() throws IOException {
+        File input = new File("encodeinput2");
+        File encoded = new File("encodeddata2");
+        File lookup = new File("lookupfile2");
+        File output = new File("decodedinput2");
+
+        try (FileWriter inputwriter = new FileWriter(input)) {
+            inputwriter.write("A/A/A/A\tA/A/C/T");
+            inputwriter.write(System.lineSeparator());
+            inputwriter.write("A/C/G/T\tUncallable");
+            inputwriter.write(System.lineSeparator());
+            inputwriter.write("T/T/T/T\tUNKNOWN");
+            inputwriter.write(System.lineSeparator());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        HDF5AllelicEncoder.createEncodedFile(input,encoded,lookup,null,"\t");
+        HDF5AllelicEncoder.createDecodedFile(encoded,lookup,output,"/","\t");
+
+
+        BufferedReader encodedReader = new BufferedReader(new FileReader(encoded));
+        BufferedReader outReader = new BufferedReader(new FileReader(output));
+        String line1 = outReader.readLine();
+        String line2 = outReader.readLine();
+        String line3 = outReader.readLine();
+
+        Assert.assertEquals("A/A/A/A\tA/A/C/T",line1);
+
+        input.delete();
+        encoded.delete();
+        lookup.delete();
+        output.delete();
+    }
+
+
 }

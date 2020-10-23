@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess;
 
 import htsjdk.variant.variantcontext.Allele;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +19,7 @@ public class HDF5AllelicEncoder {
     private static final String DEFAULT_SEPARATOR="/";
     /**
      * @param inputRow         entire input row as a string
-     * @param alleleSeparator  Separator between alleles (usually /)
+     * @param alleleSeparator  Separator between alleles (usually /). If null, each element will get a separator based on NucleotideSeparatorSplitter's default logic
      * @param elementSeparator Separator between elements (usually tab)
      * @return A pair of values, the data entry, and the inner value of the lookup table entry
      */
@@ -34,6 +35,10 @@ public class HDF5AllelicEncoder {
             else{
                 first=false;
             }
+            //In case first element is an unknown, or otherwise oddball, check for each element if we don't know beforehand (a usual case)
+            if(alleleSeparator == null){
+                alleleSeparator = NucleotideSeparatorSplitter.findSeparator(element);
+            }
             outRow.append(currentRowTranslator.getEncodedString(element,alleleSeparator,false));
         }
         return new EncodedValues(outRow.toString(),currentRowTranslator.encodeRowTransform());
@@ -48,6 +53,14 @@ public class HDF5AllelicEncoder {
         }
     }
 
+    /**
+     * Encodes an entire file using encodeRow on each row of the input file, generating a lookup file
+     * @param originalFilePath The Bare input to convert to an encoded file
+     * @param encodedFilePath Where the encoded file of fixed width characters (the one to HDF5) should go
+     * @param lookupFilePath Where the lookup file should go
+     * @param alleleSeparator If null, uses the builtins to determine separator for each element. See NucleotideSeparatorSplitter.getSeparator()
+     * @param elementSeparator Usually tab, but put in for strange formats, what the between-value separator is
+     */
     public static void createEncodedFile(File originalFilePath, File encodedFilePath, File lookupFilePath, String alleleSeparator, String elementSeparator){
         try(BufferedReader input = new BufferedReader(new FileReader(originalFilePath));
             //In theory, this should prevent any encoding issues when sent to the raw HDF5 interface

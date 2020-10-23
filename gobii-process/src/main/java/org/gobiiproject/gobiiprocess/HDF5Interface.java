@@ -75,7 +75,7 @@ public class HDF5Interface {
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
         || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
-            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"[|/]","\t"); ;//TODO - fix regex for / in 2 letter
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),null,"\t");
         }
 
 
