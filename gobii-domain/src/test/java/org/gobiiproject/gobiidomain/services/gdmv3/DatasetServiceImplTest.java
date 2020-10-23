@@ -420,61 +420,61 @@ public class DatasetServiceImplTest {
         assertTrue(arg.getValue().getDatasetName().equals("new-name"));
     }
 
-    @Test
-    public void testUpdateDatasetExperimentUpdateOnlyOk() throws Exception {
-        Dataset mockDataset = new Dataset();
-        mockDataset.setDatasetName("test-name");
-        mockDataset.setExperiment(new Experiment());
+    // @Test
+    // public void testUpdateDatasetExperimentUpdateOnlyOk() throws Exception {
+    //     Dataset mockDataset = new Dataset();
+    //     mockDataset.setDatasetName("test-name");
+    //     mockDataset.setExperiment(new Experiment());
 
-        Experiment mockExperiment = getMockExperiment();
-        mockExperiment.setExperimentId(1);
+    //     Experiment mockExperiment = getMockExperiment();
+    //     mockExperiment.setExperimentId(1);
 
-        when(experimentDao.getExperiment(1)).thenReturn(mockExperiment);
+    //     when(experimentDao.getExperiment(1)).thenReturn(mockExperiment);
 
-        when(datasetDao.getDataset(123)).thenReturn(mockDataset);
+    //     when(datasetDao.getDataset(123)).thenReturn(mockDataset);
 
-        Cv mockModStatus = new Cv();
-        mockModStatus.setTerm("modified");
-        mockModStatus.setCvId(1);
+    //     Cv mockModStatus = new Cv();
+    //     mockModStatus.setTerm("modified");
+    //     mockModStatus.setCvId(1);
 
-        when(cvDao.getModifiedStatus()).thenReturn(mockModStatus);
-        Contact mockEditor = new Contact();
-        mockEditor.setContactId(2);
-        mockEditor.setUsername("test-user");
-        when(contactDao.getContactByUsername("test-user")).thenReturn(mockEditor);
+    //     when(cvDao.getModifiedStatus()).thenReturn(mockModStatus);
+    //     Contact mockEditor = new Contact();
+    //     mockEditor.setContactId(2);
+    //     mockEditor.setUsername("test-user");
+    //     when(contactDao.getContactByUsername("test-user")).thenReturn(mockEditor);
 
-        DatasetRequestDTO request = new DatasetRequestDTO();
-        request.setExperimentId(1);
+    //     DatasetRequestDTO request = new DatasetRequestDTO();
+    //     request.setExperimentId(1);
 
-        Dataset mockDataset2 = new Dataset();
-        mockDataset.setExperiment(mockExperiment);
+    //     Dataset mockDataset2 = new Dataset();
+    //     mockDataset.setExperiment(mockExperiment);
 
-        when(datasetDao.updateDataset(any(Dataset.class))).thenReturn(mockDataset2);
+    //     when(datasetDao.updateDataset(any(Dataset.class))).thenReturn(mockDataset2);
 
-        ArgumentCaptor<Dataset> arg = ArgumentCaptor.forClass(Dataset.class);
-        datasetServiceImpl.updateDataset(123, request, "test-user");
-        verify(datasetDao).updateDataset(arg.capture());
+    //     ArgumentCaptor<Dataset> arg = ArgumentCaptor.forClass(Dataset.class);
+    //     datasetServiceImpl.updateDataset(123, request, "test-user");
+    //     verify(datasetDao).updateDataset(arg.capture());
 
-        assertTrue(arg.getValue().getDatasetName().equals("test-name"));
-        assertTrue(arg.getValue().getExperiment().getExperimentId() == 1);
-    }
+    //     assertTrue(arg.getValue().getDatasetName().equals("test-name"));
+    //     assertTrue(arg.getValue().getExperiment().getExperimentId() == 1);
+    // } -- updating Experiment Id no longer allowed
 
-    @Test(expected = GobiiException.class)
-    public void testUpdateDatasetExperimentUpdateOnlyNotFound() throws Exception {
-        Dataset mockDataset = new Dataset();
-        mockDataset.setDatasetName("test-name");
-        mockDataset.setExperiment(new Experiment());
+    // @Test(expected = GobiiException.class)
+    // public void testUpdateDatasetExperimentUpdateOnlyNotFound() throws Exception {
+    //     Dataset mockDataset = new Dataset();
+    //     mockDataset.setDatasetName("test-name");
+    //     mockDataset.setExperiment(new Experiment());
 
-        when(datasetDao.getDataset(123)).thenReturn(mockDataset);
+    //     when(datasetDao.getDataset(123)).thenReturn(mockDataset);
 
-        when(experimentDao.getExperiment(1)).thenReturn(null);
+    //     when(experimentDao.getExperiment(1)).thenReturn(null);
 
-        DatasetRequestDTO request = new DatasetRequestDTO();
-        request.setExperimentId(1);
+    //     DatasetRequestDTO request = new DatasetRequestDTO();
+    //     request.setExperimentId(1);
 
-        datasetServiceImpl.updateDataset(123, request, "test-user");
-        verify(datasetDao, times(0)).updateDataset(any(Dataset.class));
-    }
+    //     datasetServiceImpl.updateDataset(123, request, "test-user");
+    //     verify(datasetDao, times(0)).updateDataset(any(Dataset.class));
+    // }
 
     @Test(expected = GobiiException.class)
     public void testUpdateDatasetExperimentCallingAnalysisOnlyNotFound() throws Exception {
