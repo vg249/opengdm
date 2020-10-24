@@ -3,22 +3,26 @@ package org.gobiiproject.gobiiprocess.digester;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.google.gson.JsonParseException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.gobii.masticator.Masticator;
+import org.gobii.masticator.aspects.AspectParser;
+import org.gobii.masticator.aspects.FileAspect;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -33,6 +37,7 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -61,6 +66,8 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+
+import static org.gobii.Util.slurp;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
@@ -93,6 +100,7 @@ public class GobiiFileReader {
     private static String propertiesFile;
     private static GobiiUriFactory gobiiUriFactory;
     private static GobiiExtractorInstruction qcExtractInstruction = null;
+    private static final String masticatorModuleName = "MASTICATOR";
 
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
@@ -137,7 +145,7 @@ public class GobiiFileReader {
         GobiiLoaderProcedure procedure;
         String cropType;
         boolean success;
-        boolean sendQc;
+        boolean sendQc = false;
         String dstFilePath;
         String errorPath;
         Integer dataSetId = null;
@@ -184,7 +192,7 @@ public class GobiiFileReader {
 
         if(loaderInstructions.has("aspects")) {
             cropType = loaderInstructions.get("cropType").asText();
-            dstFilePath = loaderInstructions.get("inputFile").asText();
+            dstFilePath = loaderInstructions.get("outputDir").asText();
             jobName = getJobReadableIdentifier(cropType,loaderInstructions.get("inputFile").asText());
             datasetType = loaderInstructions.get("datasetType").asText();
             loadTypeName = loaderInstructions.get("loadType").asText();
@@ -259,15 +267,41 @@ public class GobiiFileReader {
         }
 
         if(loaderInstructions.has("aspects")) {
-            String[] masticatorArgs = {"-a", instructionFile,
-            "-d", loaderInstructions.get("inputFile").asText(),
-            "-o", loaderInstructions.get("outputDir").asText()};
-            Masticator.main(masticatorArgs);
-            success = true;
-            sendQc = true;
+
+            try {
+                success = processAspectFile(
+                    instructionFile,
+                    loaderInstructions.get("inputFile").asText(),
+                    loaderInstructions.get("outputDir").asText(),
+                    loaderInstructionMap);
+            }
+            catch (GobiiException e) {
+                Logger.logError(
+                    masticatorModuleName,
+                    e.getMessage(),
+                    e);
+                success = false;
+            }
+
+
+            Map<String, IflConfig> iflConfigMap = jsonMapper.readValue(
+                GobiiFileReader.class.getResourceAsStream("/IFLConfig.json"),
+                jsonMapper
+                    .getTypeFactory()
+                    .constructMapType(
+                        HashMap.class,
+                        String.class,
+                        IflConfig.class));
+
+            if(iflConfigMap.containsKey(loadTypeName)) {
+                loaderInstructionList = iflConfigMap.get(loadTypeName).getLoadOrder();
+            }
+            else {
+                loaderInstructionList = new ArrayList<>(loaderInstructionMap.keySet());
+            }
+
         }
         else {
-
             procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
             dataSetId = procedure.getMetadata().getDataset().getId();
             InstructionFileProcessingResult oldInstructionFileProcessingResult =
@@ -284,10 +318,6 @@ public class GobiiFileReader {
             success = oldInstructionFileProcessingResult.isSuccess();
             sendQc = oldInstructionFileProcessingResult.isSendQc();
         }
-
-
-
-
 
 
         // ----------- Data Validation Block. Common for both aspect and old instruction file
@@ -440,7 +470,7 @@ public class GobiiFileReader {
 
         if (procedure == null || procedure.getInstructions() == null || procedure.getInstructions().isEmpty()) {
             logError("Digester", "No instruction for file " + instructionFile);
-            throw new NullPointerException("Null Loader instruction");
+            throw new GobiiException("Null Loader instruction");
         }
 
 
@@ -468,7 +498,7 @@ public class GobiiFileReader {
         if (!(Files.exists(cropPath) &&
             Files.isDirectory(cropPath))) {
             logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType());
-            throw new NullPointerException("No Crop directory");
+            throw new GobiiException("No Crop directory");
         }
         if (HDF5Interface.getPathToHDF5Files() == null)
             HDF5Interface.setPathToHDF5Files(cropPath.toString() + "/hdf5/");
@@ -611,6 +641,102 @@ public class GobiiFileReader {
 
 
     /**
+     * Duplicates main method in Masticator module.
+     * Masticator is the module which process refactored instruction file.
+     * To avoid making changes directly in masticator as it is maintained separately,
+     * just duplicate parts of it.
+     *
+     * @param aspectFilePath - Aspect file path (refactored instruction file)
+     * @param inputFilePath - input file path
+     * @param outputDirPath - digestor where digest file needs to be written to.
+     * @param instructionFileMap - Map to keep track of digest file for each table
+     */
+    private static boolean processAspectFile(String aspectFilePath,
+                                             String inputFilePath,
+                                             String outputDirPath,
+                                             Map<String, File> instructionFileMap
+    ) throws GobiiException {
+
+        FileAspect aspect;
+        try {
+            aspect = AspectParser.parse(slurp(aspectFilePath));
+        } catch (IOException e) {
+            throw new GobiiException(
+                String.format("File for aspect at %s not found", aspectFilePath));
+        } catch (JsonParseException e) {
+            throw new GobiiException(
+                String.format("File for aspect at %s not found", aspectFilePath),
+                e);
+        }
+
+        File data = new File(inputFilePath);
+        if (! data.exists()) {
+            throw new GobiiException(
+                String.format("Data file at %s does not exist", inputFilePath));
+        }
+
+        File outputDir = new File(outputDirPath);
+
+        if (! outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        if (! outputDir.isDirectory()) {
+            throw new GobiiException(
+                String.format("Output Path %s is not a directory", outputDirPath));
+        }
+
+        Masticator masticator = new Masticator(aspect, data);
+
+        List<Thread> threads = new LinkedList<>();
+
+        for (String table : aspect.getAspects().keySet()) {
+            String outputFilePath = String.format("%s%sdigest.%s", outputDir.getAbsolutePath(), File.separator, table);
+            File outputFile = new File(outputFilePath);
+
+            instructionFileMap.put(table, outputFile);
+
+            try {
+                outputFile.createNewFile();
+            }
+            catch (IOException ioE) {
+                throw new GobiiException(
+                    String.format("Unable to create digest files %s", outputFilePath));
+            }
+
+            final Thread t = new Thread(() -> {
+                try (FileWriter fileWriter = new FileWriter(outputFile, false);
+                     BufferedWriter writer = new BufferedWriter(fileWriter);) {
+                    masticator.run(table, writer);
+                } catch (IOException e) {
+                    throw new GobiiException(
+                        String.format("IOException while processing {}", table),
+                        e);
+                }
+            });
+
+            t.start();
+
+            threads.add(t);
+        }
+
+
+        for (Thread t : threads) {
+            try {
+                t.join();
+            }
+            catch (InterruptedException iE) {
+                throw new GobiiException(
+                    String.format("Unable to finish processing aspect file"),
+                    iE);
+            }
+        }
+
+        return true;
+
+    }
+
+
+    /**
      * Finalize processing step
      * *Include log files
      * *Send Email
@@ -625,13 +751,30 @@ public class GobiiFileReader {
      * @param logFile
      * @throws Exception
      */
-    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, String loadTypeName, String crop, String jobName, String logFile) throws Exception {
-            String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
-                try {
-            pm.addPath("Instruction File", instructionFilePath, configuration, false);
-            pm.addPath("Error Log", logFile, configuration, false);
-            pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
-            mailInterface.send(pm);
+    private static void finalizeProcessing(ProcessMessage pm,
+                                           ConfigSettings configuration,
+                                           MailInterface mailInterface,
+                                           String instructionFile,
+                                           String loadTypeName,
+                                           String crop,
+                                           String jobName,
+                                           String logFile) throws Exception {
+
+            String instructionFilePath = HelperFunctions.completeInstruction(
+                instructionFile,
+                configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+
+            try {
+                pm.addPath("Instruction File", instructionFilePath, configuration, false);
+                pm.addPath("Error Log", logFile, configuration, false);
+                pm.setBody(jobName,
+                    loadTypeName,
+                    SimpleTimer.stop("FileRead"),
+                    Logger.getFirstErrorReason(),
+                    Logger.success(),
+                    Logger.getAllErrorStringsHTML());
+                mailInterface.send(pm);
+
         } catch (Exception e) {
             Logger.logError("MailInterface", "Error Sending Mail", e);
         }
