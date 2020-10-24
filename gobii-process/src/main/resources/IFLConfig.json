@@ -1,0 +1,10 @@
+{
+  "MARKER": {
+    "loadOrder" : [
+       "marker",
+       "linkage_group",
+       "marker_linkage_group"
+     ],
+     "requiredFields": {}
+  }
+}
