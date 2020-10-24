@@ -1,6 +1,6 @@
 {
   "cropType": "zoan",
-  "loadType": "GENERIC",
+  "loadType": "MARKER",
   "datasetType": "IUPAC",
   "inputFile": "/data/gobii_bundle/crops/zoan/files/data_20180611_181211_Deb_Proj1_FlexQuery_marker/Deb_FQ_codom_markermap1-10.txt",
   "outputDir": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180611_181211_Deb_Proj1_FlexQuery_marker",
