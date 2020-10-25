@@ -69,6 +69,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Override
 	public DatasetDTO createDataset(DatasetRequestDTO request, String user) throws Exception {
 		//check if the experiment exists
+		log.debug("Creating new dataset");
 		Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
 		if (
 			experiment == null
@@ -138,7 +139,7 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check if the cv is a dataset type
-		if (datasetType.getCvGroup().getCvGroupName() != CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName()) {
+		if (!datasetType.getCvGroup().getCvGroupName().equals(CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName())) {
 			throw new InvalidException("Dataset Type Id");
 		}
 

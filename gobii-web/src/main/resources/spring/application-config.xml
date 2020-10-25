@@ -27,6 +27,7 @@
         implementions of interfaces as system needs evolve -->
     <context:annotation-config/>
     <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
+    <!-- <context:component-scan base-package="org.gobiiproject.gobidomain.security"/> -->
     <context:component-scan base-package="org.gobiiproject.gobiidomain.security"/>
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
@@ -64,7 +65,7 @@
 
     <!-- ******************** ****************************************** -->
     <!-- ******************** explicitly defined beans **************** -->
-
+    
     <!-- **** Security Beans *************************************** -->
     <bean id="UserDao"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.UserDaoImpl"/>
@@ -75,6 +76,9 @@
           class="org.gobiiproject.gobiidomain.services.impl.ProjectServiceImpl"/>
     <bean id="propertiesService"
           class="org.gobiiproject.gobiidomain.services.impl.PropertiesServiceImpl"/>
+
+    <!-- Keycloak Service Bean-->
+    <bean id="keycloakService" class="org.gobiiproject.gobiidomain.services.gdmv3.KeycloakServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
@@ -261,6 +265,8 @@
 
     <bean id="nameIdListService"
           class="org.gobiiproject.gobiidomain.services.impl.NameIdListServiceImpl"/>
+
+    <bean id="cropService" class="org.gobiiproject.gobiidomain.services.gdmv3.CropServiceImpl"/>
 
     <!-- **** Loader File Beans *************************************** -->
 
@@ -1150,8 +1156,8 @@
 
     <!-- *********************************************** SECURITY CONFIGURATION
         *********************************************** -->
-    <security:global-method-security
-            secured-annotations="enabled" pre-post-annotations="enabled"/>
+    <!-- <security:global-method-security
+            secured-annotations="enabled" pre-post-annotations="enabled"/> -->
 
 
     <bean id="multipartResolver"

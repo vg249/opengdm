@@ -1,5 +1,11 @@
 package org.gobiiproject.gobiidomain.services.brapi;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.transaction.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -9,11 +15,6 @@ import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Transactional
 @Slf4j

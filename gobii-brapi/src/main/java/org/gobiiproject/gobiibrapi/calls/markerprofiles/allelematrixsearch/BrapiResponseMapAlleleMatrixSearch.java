@@ -230,7 +230,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
                                         .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
                                         .addQueryParam("fileName", currentFile.getName());
 
-                                String fileUri = restUri.makeUrlComplete();
+                                String fileUri = restUri.makeUrlComplete(crop);
                                 dataFiles.add(fileUri);
                             }
 

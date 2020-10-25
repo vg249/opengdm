@@ -1,5 +1,10 @@
 package org.gobiiproject.gobiidomain.services.brapi;
 
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
+
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.MapsetDTO;
@@ -13,11 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @WebAppConfiguration
 public class MapsetServiceImplTest {

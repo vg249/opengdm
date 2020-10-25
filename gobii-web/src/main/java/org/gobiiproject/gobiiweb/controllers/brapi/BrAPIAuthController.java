@@ -2,17 +2,19 @@ package org.gobiiproject.gobiiweb.controllers.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
+
+import org.gobiiproject.gobiidomain.services.gdmv3.KeycloakService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseLogin;
-import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseMapLogin;
 import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.security.TokenInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,9 @@ public class BrAPIAuthController {
 
     private ObjectMapper objectMapper =
             new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+    @Autowired
+    private KeycloakService keycloakService;
 
     @RequestMapping(value = "/token",
             method = RequestMethod.POST,
@@ -52,7 +57,7 @@ public class BrAPIAuthController {
 
         String returnVal;
 
-        BrapiResponseLogin brapiResponseLogin = null;
+        BrapiResponseLogin brapiResponseLogin = new BrapiResponseLogin();
 
         try {
 
@@ -61,10 +66,19 @@ public class BrAPIAuthController {
 
             BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
 
-            BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
+            //BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
 
-            brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
+            //brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
 
+            TokenInfo tokenInfo = keycloakService.getToken(
+                    brapiRequestLogin.getUserName(),
+                    brapiRequestLogin.getPassword()
+            );
+            
+
+            brapiResponseLogin.setAccessToken(tokenInfo.getAccessToken());
+            brapiResponseLogin.setUserDisplayName(brapiRequestLogin.getUserName());
+            brapiResponseLogin.setExpiresIn("" + tokenInfo.getExpiry());
 
             brapiResponseLogin.getBrapiMetaData().setPagination(new BrapiPagination(
                     1,
@@ -80,7 +94,7 @@ public class BrAPIAuthController {
             brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
-
+        
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
             brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);

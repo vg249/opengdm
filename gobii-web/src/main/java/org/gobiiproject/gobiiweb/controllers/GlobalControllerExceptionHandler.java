@@ -31,9 +31,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * in this project and returns appropriate HTTP response.
  */
 @ControllerAdvice(assignableTypes = {
-        BRAPIIControllerV1.class,
-        GOBIIControllerV3.class
-}, basePackages = "org.gobiiproject.gobiiweb.controllers.brapi.v2")
+        BRAPIIControllerV1.class
+}, basePackages = {"org.gobiiproject.gobiiweb.controllers.brapi.v2", "org.gobiiproject.gobiiweb.controllers.gdm.v3"})
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);

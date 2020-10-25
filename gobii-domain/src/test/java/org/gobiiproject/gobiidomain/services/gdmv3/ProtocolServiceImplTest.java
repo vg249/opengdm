@@ -1,5 +1,12 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
+import java.util.List;
+import java.util.Random;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiidomain.services.brapi.MockSetup;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProtocolDTO;
@@ -15,14 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.List;
-import java.util.Random;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @WebAppConfiguration
 public class ProtocolServiceImplTest {

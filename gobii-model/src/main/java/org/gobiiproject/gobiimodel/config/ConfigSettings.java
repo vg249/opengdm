@@ -410,4 +410,12 @@ public class ConfigSettings {
         this.configValues.setEmailSvrFrom(emailSvrFrom);
     }
 
+	public KeycloakConfig getKeycloakConfig() {
+		return this.configValues.getKeycloakConfig();
+    }
+    
+    public void setKeycloakConfig(KeycloakConfig config) {
+        this.configValues.setKeycloakConfig(config);
+    }
+
 }

@@ -69,7 +69,7 @@ public class CvServiceImplTest {
 
         ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
 
-        CvDTO dto = cvServiceImpl.createCv(cvDTORequest);
+        cvServiceImpl.createCv(cvDTORequest);
 
         verify(cvDao).createCv(arg.capture());
 
@@ -125,7 +125,7 @@ public class CvServiceImplTest {
 
         ArgumentCaptor<Cv> arg = ArgumentCaptor.forClass(Cv.class);
 
-        CvDTO dto = cvServiceImpl.createCv(cvDTORequest);
+        cvServiceImpl.createCv(cvDTORequest);
 
         verify(cvDao).createCv(arg.capture());
 

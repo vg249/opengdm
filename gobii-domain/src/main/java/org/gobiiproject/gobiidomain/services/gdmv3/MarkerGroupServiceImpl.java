@@ -64,8 +64,6 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         markerGroup.setName(request.getMarkerGroupName());
         markerGroup.setGermplasmGroup(request.getGermplasmGroup());
 
-        //code ::
-        // TODO Auto-generated method stub
         Cv newStatus = cvDao.getNewStatus();
         markerGroup.setStatus(newStatus);
 
@@ -156,7 +154,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
     @Transactional
 	@Override
-	public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
+    public PagedResult<MarkerDTO> mapMarkers(Integer markerGroupId, List<MarkerDTO> markers, String editedBy) throws Exception {
         Objects.requireNonNull(markers, "No markers to process");
         //check data size
         if (markers.size() > 1000) {
@@ -267,8 +265,6 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
         results.forEach( marker -> {
             MarkerDTO markerDTO = new MarkerDTO();
             ModelMapper.mapEntityToDto(marker, markerDTO);
-            //TODO:  must be better if we just use Map<String, String> type
-            //JsonNode is not too simple
             JsonNode node = markers.get(marker.getMarkerId().toString());
             ArrayList<?> array = objectMapper.convertValue(node, ArrayList.class);
             markerDTO.setFavorableAlleles(array.toArray(new String[0]));
