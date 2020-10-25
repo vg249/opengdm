@@ -2,12 +2,9 @@ package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.LoaderTemplateDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
-import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -26,8 +23,17 @@ import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 public class LoaderTemplateController {
 
 
+    private final LoaderTemplateService loaderTemplateService;
+
+    /**
+     * Constructor.
+     *
+     * @param loaderTemplateService {@link LoaderTemplateService}
+     */
     @Autowired
-    private LoaderTemplateService loaderTemplateService;
+    public LoaderTemplateController(final LoaderTemplateService loaderTemplateService) {
+        this.loaderTemplateService = loaderTemplateService;
+    }
 
     /**
      * Adds the marker template to the GDM system

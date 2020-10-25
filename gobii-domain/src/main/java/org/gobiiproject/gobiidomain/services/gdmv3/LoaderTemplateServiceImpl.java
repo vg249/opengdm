@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
+import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
@@ -58,8 +59,7 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
 
 
         // Set marker payload type as template type
-        Cv templateType = cvDao.getCvs(
-            "markers",
+        Cv templateType = cvDao.getCvs(GobiiLoaderPayloadTypes.MARKERS.getTerm(),
             CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 

@@ -1,16 +1,25 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 public class LoaderInstruction {
 
+    @NotNull(message = "Required Crop Type")
     private String cropType;
+
+    @NotNull(message = "Required Load Type")
     private String loadType;
+
     private String datasetType;
+
+    @NotNull(message = "Required Input file")
     private String inputFile;
+
+    @NotNull(message = "Output direcotory not defined")
     private String outputDir;
 
-    private Map<String, Table> aspects;
+    private Map<String, Object> aspects;
 
     public String getCropType() {
         return cropType;
@@ -52,11 +61,11 @@ public class LoaderInstruction {
         this.outputDir = outputDir;
     }
 
-    public Map<String, Table> getAspects() {
+    public Map<String, Object> getAspects() {
         return aspects;
     }
 
-    public void setAspects(Map<String, Table> aspects) {
+    public void setAspects(Map<String, Object> aspects) {
         this.aspects = aspects;
     }
 }

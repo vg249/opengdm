@@ -38,6 +38,7 @@ import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -141,7 +142,7 @@ public class GobiiFileReader {
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
         List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
 
-        JsonNode loaderInstructions;
+        LoaderInstruction loaderInstructions;
         GobiiLoaderProcedure procedure;
         String cropType;
         boolean success;
@@ -184,18 +185,18 @@ public class GobiiFileReader {
         ObjectMapper jsonMapper = new ObjectMapper();
         try {
             File file = new File(instructionFile);
-            loaderInstructions = jsonMapper.readTree(instructionFileContents);
+            loaderInstructions = jsonMapper.readValue(instructionFileContents, LoaderInstruction.class);
         }
         catch (JsonProcessingException jE) {
             throw new GobiiException(jE);
         }
 
-        if(loaderInstructions.has("aspects")) {
-            cropType = loaderInstructions.get("cropType").asText();
-            dstFilePath = loaderInstructions.get("outputDir").asText();
-            jobName = getJobReadableIdentifier(cropType,loaderInstructions.get("inputFile").asText());
-            datasetType = loaderInstructions.get("datasetType").asText();
-            loadTypeName = loaderInstructions.get("loadType").asText();
+        if(!Objects.isNull(loaderInstructions.getAspects())) {
+            cropType = loaderInstructions.getCropType();
+            dstFilePath = loaderInstructions.getOutputDir();
+            jobName = getJobReadableIdentifier(cropType, loaderInstructions.getInputFile());
+            datasetType = loaderInstructions.getDatasetType();
+            loadTypeName = loaderInstructions.getLoadType();
         }
         else {
             procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
@@ -212,7 +213,6 @@ public class GobiiFileReader {
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
             dstDir = new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
         }
-
 
         GobiiCropConfig gobiiCropConfig;
         try {
@@ -266,13 +266,13 @@ public class GobiiFileReader {
             //FileSystemInterface.rmIfExist(oldLogFile);
         }
 
-        if(loaderInstructions.has("aspects")) {
+        if(!Objects.isNull(loaderInstructions.getAspects())) {
 
             try {
                 success = processAspectFile(
                     instructionFile,
-                    loaderInstructions.get("inputFile").asText(),
-                    loaderInstructions.get("outputDir").asText(),
+                    loaderInstructions.getInputFile(),
+                    loaderInstructions.getOutputDir(),
                     loaderInstructionMap);
             }
             catch (GobiiException e) {

@@ -6,7 +6,7 @@ import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
 
 public interface MarkerService {
 
-    JobDTO uploadMarkerFile(String markerTemplateId,
+    JobDTO uploadMarkerFile(byte[] markerFile,
                             MarkerUploadRequestDTO markerUploadRequest,
                             String cropType) throws GobiiException;
 }

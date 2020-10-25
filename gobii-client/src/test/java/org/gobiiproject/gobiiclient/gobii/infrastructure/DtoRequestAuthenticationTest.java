@@ -71,9 +71,10 @@ public class DtoRequestAuthenticationTest {
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
 
+        String currentGobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         String url = RestResourceId.GOBII_ANALYSIS.getRequestUrl(GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot(),
-                GobiiControllerType.GOBII.getControllerPath());
+                GobiiControllerType.GOBII.getControllerPath(), currentGobiiCropType);
 
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
