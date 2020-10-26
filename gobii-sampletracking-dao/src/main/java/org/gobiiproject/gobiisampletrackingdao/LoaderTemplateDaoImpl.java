@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class LoaderTemplateDaoImpl implements LoaderTemplateDao {
 
-    Logger LOGGER = LoggerFactory.getLogger(LinkageGroupDaoImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(LoaderTemplate.class);
 
     @PersistenceContext
     protected EntityManager em;
