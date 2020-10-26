@@ -274,6 +274,10 @@ public class GobiiFileReader {
         if(!Objects.isNull(loaderInstructions.getAspects())) {
 
             try {
+                SimpleTimer.start("FileRead");
+                jobStatus.set(
+                    JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(),
+                    "Beginning file digest");
                 success = processAspectFile(
                     instructionFile,
                     loaderInstructions.getInputFile(),
@@ -537,13 +541,13 @@ public class GobiiFileReader {
         pm.setUser(procedure.getMetadata().getContactEmail());
 
 
-        SimpleTimer.start("FileRead");
 
         boolean qcCheck;//  zero.isQcCheck();
 //		if (qcCheck) {//QC - Subsection #1 of 3
 //			qcExtractInstruction = createQCExtractInstruction(zero, crop);
 //		}
 
+        SimpleTimer.start("FileRead");
 
 
         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(), "Beginning file digest");
