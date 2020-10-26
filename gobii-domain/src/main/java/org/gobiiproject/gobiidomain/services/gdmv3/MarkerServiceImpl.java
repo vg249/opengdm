@@ -145,6 +145,8 @@ public class MarkerServiceImpl implements MarkerService {
         job.setType(jobType);
         job = jobDao.create(job);
 
+        // Set contact email
+        loaderInstruction.setContactEmail(createdBy.getEmail());
 
         //Set Input file
         String markerFileName = "markers.txt";
@@ -244,10 +246,20 @@ public class MarkerServiceImpl implements MarkerService {
 
         loaderInstruction.setAspects(aspects);
 
+        // Write instruction file
         try {
             String loaderInstructionText = mapper.writeValueAsString(loaderInstruction);
+            String instructionFileName = jobName + ".json";
+
+            String instructionFilesDir = Utils.getProcessDir(cropType,
+                GobiiFileProcessDir.LOADER_INSTRUCTIONS);
+
+            String instructionFilePath = Paths.get(
+                instructionFilesDir,
+                instructionFileName).toString();
+
             Utils.writeByteArrayToFile(
-                "/home/vg249/inst.json",
+                instructionFilePath,
                 loaderInstructionText.getBytes());
         }
         catch (JsonProcessingException jE) {

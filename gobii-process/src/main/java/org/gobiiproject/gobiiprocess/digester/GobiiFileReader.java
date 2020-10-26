@@ -201,6 +201,7 @@ public class GobiiFileReader {
             jobName = getJobReadableIdentifier(cropType, loaderInstructions.getInputFile());
             datasetType = loaderInstructions.getDatasetType();
             loadTypeName = loaderInstructions.getLoadType();
+            pm.setUser(loaderInstructions.getContactEmail());
         }
         else {
             procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
@@ -422,6 +423,8 @@ public class GobiiFileReader {
                     success &= HDF5Success;
                 }
             }
+            System.out.println(success);
+            System.out.println(Logger.getAllErrors());
             if (success && Logger.success()) {
                 Logger.logInfo("Digester", "Successful Data Upload");
                 if (sendQc) {

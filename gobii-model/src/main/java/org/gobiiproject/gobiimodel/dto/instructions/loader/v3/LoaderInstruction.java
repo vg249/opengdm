@@ -22,6 +22,8 @@ public class LoaderInstruction {
     @NotNull(message = "Output direcotory not defined")
     private String outputDir;
 
+    private String contactEmail;
+
     private Map<String, Object> aspects;
 
     public String getCropType() {
@@ -70,5 +72,13 @@ public class LoaderInstruction {
 
     public void setAspects(Map<String, Object> aspects) {
         this.aspects = aspects;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 }
