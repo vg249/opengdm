@@ -344,6 +344,7 @@ public final class GobiiClientContext {
     public GobiiUriFactory getUriFactory() throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
+        String cropType = this.getServerConfig().getGobiiCropType();
         return new GobiiUriFactory(contextPath);
     }
 

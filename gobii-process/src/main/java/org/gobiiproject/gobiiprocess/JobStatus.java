@@ -36,6 +36,7 @@ public class JobStatus {
     GobiiUriFactory uriFactory;
     String jobName;
 	JobDTO lastStatus;
+	String cropName;
 	/**List of valid statuses. Update as appropriate. Stops 'random argument' assignment, even though Progress Status
 	 * has been stringly typed.
 	 */
@@ -58,16 +59,23 @@ public class JobStatus {
 		// set up authentication and so forth
 		// you'll need to get the current from the instruction file
 		GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
+		this.cropName = cropName;
 		uriFactory = context.getUriFactory();
     }
 
-    public void set(String status,String message){
+    public void set(String status,String message) {
+        set(status, message, null);
+    }
+
+    public void set(String status,String message, String cropType){
     	if(status==null || !acceptedStatuses.contains(status)){
     		Logger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
 		}
             try{
-                RestUri restUri=uriFactory
-                        .resourceByUriIdParam(RestResourceId.GOBII_JOB);
+
+                RestUri restUri = uriFactory
+                    .resourceByUriIdParam(RestResourceId.GOBII_JOB, cropName);
+
                 restUri.setParamValue("id", jobName);
             GobiiEnvelopeRestResource<JobDTO,JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
             PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource

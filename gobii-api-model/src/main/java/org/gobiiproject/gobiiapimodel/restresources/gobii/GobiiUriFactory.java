@@ -77,6 +77,32 @@ public class GobiiUriFactory {
                 .addUriParam(paramName);
     } //
 
+    public RestUri resourceByUriIdParam(RestResourceId restResourceId, String cropType) throws Exception {
+
+        String paramName = "id";
+        String controllerPath = this.gobiiControllerType.getControllerPath();
+        if(controllerPath.contains("{cropType}")) {
+            controllerPath = controllerPath.replace("{cropType}", cropType);
+        }
+        return new RestUri(this.domain,
+            this.port,
+            this.cropContextRoot,
+            controllerPath,
+            restResourceId.getResourcePath())
+            .addUriParam(paramName);
+    } //
+
+    public RestUri resourceByUriIdParam(String resourcePath) throws Exception {
+
+        String paramName = "id";
+        return new RestUri(this.domain,
+            this.port,
+            this.cropContextRoot,
+            this.gobiiControllerType.getControllerPath(),
+            resourcePath)
+            .addUriParam(paramName);
+    } //
+
     public RestUri resourceByUriIdParamName(String paramName, RestResourceId restResourceId) throws Exception {
 
         return new RestUri(this.domain,
