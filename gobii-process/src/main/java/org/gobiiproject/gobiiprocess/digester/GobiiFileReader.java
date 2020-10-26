@@ -194,6 +194,10 @@ public class GobiiFileReader {
         if(!Objects.isNull(loaderInstructions.getAspects())) {
             cropType = loaderInstructions.getCropType();
             dstFilePath = loaderInstructions.getOutputDir();
+            //There are some function failing without / for dir path
+            if(!dstFilePath.endsWith("/")) {
+                dstFilePath = dstFilePath.concat("/");
+            }
             jobName = getJobReadableIdentifier(cropType, loaderInstructions.getInputFile());
             datasetType = loaderInstructions.getDatasetType();
             loadTypeName = loaderInstructions.getLoadType();
