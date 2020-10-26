@@ -16,18 +16,12 @@ import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiisampletrackingdao.ContactDao;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
-import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
-import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
+import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class MarkerServiceImpl implements MarkerService {
 
@@ -41,9 +35,14 @@ public class MarkerServiceImpl implements MarkerService {
     private PlatformDao platformDao;
 
     @Autowired
+    private MapsetDao mapsetDao;
+
+    @Autowired
     private CvDao cvDao;
 
     ObjectMapper mapper = new ObjectMapper();
+
+    final String loadType = "MARKER";
 
     @Override
     public JobDTO uploadMarkerFile(
@@ -53,6 +52,7 @@ public class MarkerServiceImpl implements MarkerService {
 
         BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
+        loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 
         String fileHeader;
@@ -74,11 +74,26 @@ public class MarkerServiceImpl implements MarkerService {
         markerTable.setPlatformId(platform.getPlatformId().toString());
         markerLinkageGroupTable.setPlatformId(platform.getPlatformId().toString());
 
-        //Get new status
+
+        // Set mapSet for linkage group and marker linkage group
+        if(markerUploadRequest.getMapId() != null) {
+            Mapset mapset = mapsetDao.getMapset(markerUploadRequest.getMapId());
+            if(mapset == null) {
+                throw new GobiiDomainException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid mapset id");
+            }
+            linkageGroupTable.setMapId(mapset.getMapsetId().toString());
+            markerLinkageGroupTable.setMapId(mapset.getMapsetId().toString());
+        }
+
+        //Set new status for marker table
         Cv status = cvDao.getCvs(
             "new",
             CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        markerTable.setStatus(status.getCvId().toString());
 
 
         // Read marker template
@@ -127,6 +142,8 @@ public class MarkerServiceImpl implements MarkerService {
             MarkerTemplateDTO.class);
         Map<String, EntityFieldBean> templateFieldEntityMap = this.getTemplateFieldEntityMap(
             markerTemplateMap, dtoEntityMap);
+        Map<String, String> fileColumnsApiFieldsMap = this.getFileColumnsApiFieldsMap(
+            markerTemplateMap);
 
 
         //Read Header
@@ -142,42 +159,65 @@ public class MarkerServiceImpl implements MarkerService {
                 "No able to read file header");
         }
 
+        // Set Marker Aspects
         Map<String, Object> aspects = new HashMap<>();
-
         String[] fileColumns = fileHeader.split("\t");
+
         for(int i = 0; i < fileColumns.length; i++) {
             String fileColumn = fileColumns[i];
             if(templateFieldEntityMap.containsKey(fileColumn)) {
                 EntityFieldBean entityFieldBean = templateFieldEntityMap.get(fileColumn);
                 String tableName = entityFieldBean.getTableName();
 
-                ColumnCoordinates columnCoordinates = new ColumnCoordinates(0, i);
+                ColumnCoordinates columnCoordinates = new ColumnCoordinates(1, i);
                 ColumnAspect columnAspect = new ColumnAspect();
                 columnAspect.setColumnCoordinates(columnCoordinates);
 
-                if(!aspects.containsKey(tableName)) {
-                    aspects.put(tableName, new HashMap<>());
-                    if(tableName.equals("marker")) {
-                        ((HashMap<String, String>)aspects.get(tableName))
-                            .put("platformId", platform.getPlatformId().toString());
-                        ((HashMap<String, String>)aspects.get(tableName))
-                            .put("status", status.getCvId().toString());
+                if(tableName.equals("marker") &&!aspects.containsKey(tableName)) {
+                    aspects.put(tableName, markerTable);
+                }
+                else if(tableName.equals("marker_linkage_group")
+                    && !aspects.containsKey(tableName)) {
+                    if(markerUploadRequest.getMapId() == null) {
+                        throw new GobiiDomainException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Unable to load marker positions without genome map mapped");
                     }
-                    else if(tableName.equals("marker_linkage_group")) {
-                        ((HashMap<String, String>)aspects.get(tableName))
-                            .put("platformId", platform.getPlatformId().toString());
+                    aspects.put(tableName, markerLinkageGroupTable);
+                }
+                else if(tableName.equals("linkage_group") && !aspects.containsKey(tableName)) {
+                    if(markerUploadRequest.getMapId() == null) {
+                        throw new GobiiDomainException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Unable to load linkage groups without genome map mapped");
                     }
+                    aspects.put(tableName, linkageGroupTable);
                 }
 
-                ((HashMap<String, ColumnAspect>)aspects.get(tableName))
-                    .put(entityFieldBean.getColumnName(), columnAspect);
-
+                try {
+                    Utils.setField(
+                        aspects.get(tableName),
+                        fileColumnsApiFieldsMap.get(fileColumn),
+                        columnAspect);
+                }
+                catch (NoSuchFieldException | IllegalAccessException e) {
+                    throw new GobiiDomainException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unable to submit job file");
+                }
             }
+        }
+
+        if(aspects.containsKey("marker_linkage_group")) {
+            ((MarkerLinkageGroupTable)aspects.get("marker_linkage_group"))
+                .setMarkerName(((MarkerTable)aspects.get("marker")).getMarkerName());
         }
 
         loaderInstruction.setAspects(aspects);
 
-        System.out.println(dtoEntityMap);
         try {
             String loaderInstructionText = mapper.writeValueAsString(loaderInstruction);
             Utils.writeByteArrayToFile(
@@ -209,6 +249,21 @@ public class MarkerServiceImpl implements MarkerService {
         }
 
         return templateFieldsEntityMap;
+    }
+
+    private Map<String, String> getFileColumnsApiFieldsMap(
+        Map<String, List<String>> markerTemplateMap
+    ) {
+        Map<String, String> fileColumnsApiFieldsMap = new HashMap<>();
+        for(String apiField : markerTemplateMap.keySet()) {
+            if(markerTemplateMap.get(apiField).size() > 0) {
+                fileColumnsApiFieldsMap.put(
+                    markerTemplateMap.get(apiField).get(0),
+                    apiField);
+            }
+        }
+
+        return fileColumnsApiFieldsMap;
     }
 
 }

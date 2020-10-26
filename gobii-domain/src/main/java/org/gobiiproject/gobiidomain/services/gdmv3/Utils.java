@@ -10,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 public class Utils {
 
@@ -55,5 +56,13 @@ public class Utils {
         if(!file.isDirectory()) {
             file.mkdirs();
         }
+    }
+
+    static void setField(Object instance, String fieldName, Object value
+    ) throws NoSuchFieldException, IllegalAccessException {
+        Field field = instance.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(instance, value);
+
     }
 }

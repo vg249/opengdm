@@ -1,9 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MarkerLinkageGroupTable implements Table {
 
     @JsonProperty("platform_id")
@@ -22,9 +25,11 @@ public class MarkerLinkageGroupTable implements Table {
     @NotNull(message = "map id is required")
     private String mapId;
 
-    private ColumnAspect start;
+    @JsonProperty("start")
+    private ColumnAspect markerStart;
 
-    private ColumnAspect stop;
+    @JsonProperty("stop")
+    private ColumnAspect markerStop;
 
     public String getPlatformId() {
         return platformId;
@@ -58,19 +63,27 @@ public class MarkerLinkageGroupTable implements Table {
         this.mapId = mapId;
     }
 
-    public ColumnAspect getStart() {
-        return start;
+    public ColumnAspect getMarkerStart() {
+        return markerStart;
     }
 
-    public void setStart(ColumnAspect start) {
-        this.start = start;
+    public void setMarkerStart(ColumnAspect markerStart) {
+        this.markerStart = markerStart;
     }
 
-    public ColumnAspect getStop() {
-        return stop;
+    public ColumnAspect getMarkerStop() {
+        return markerStop;
     }
 
-    public void setStop(ColumnAspect stop) {
-        this.stop = stop;
+    public void setMarkerStop(ColumnAspect markerStop) {
+        this.markerStop = markerStop;
     }
+
+    public void setField(String fieldName, Object value)
+        throws NoSuchFieldException, IllegalAccessException {
+        Field field = getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(this, value);
+    }
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MarkerTable implements Table {
@@ -12,18 +13,25 @@ public class MarkerTable implements Table {
     @NotNull(message = "platform id cannot be null")
     private String platformId;
 
-    private ColumnAspect name;
+    private String status;
 
-    private ColumnAspect ref;
+    @JsonProperty("name")
+    private ColumnAspect markerName;
 
-    private ColumnAspect alt;
+    @JsonProperty("ref")
+    private ColumnAspect markerRef;
 
-    private ColumnAspect sequence;
+    @JsonProperty("alt")
+    private ColumnAspect markerAlt;
+
+    @JsonProperty("sequence")
+    private ColumnAspect markerSequence;
 
     @JsonProperty("strand_name")
-    private ColumnAspect starndName;
+    private ColumnAspect markerStrandName;
 
-    private JsonAspect props;
+    @JsonProperty("props")
+    private JsonAspect markerProperties;
 
     public String getPlatformId() {
         return platformId;
@@ -33,51 +41,59 @@ public class MarkerTable implements Table {
         this.platformId = platformId;
     }
 
-    public ColumnAspect getName() {
-        return name;
+    public ColumnAspect getMarkerName() {
+        return markerName;
     }
 
-    public void setName(ColumnAspect name) {
-        this.name = name;
+    public void setMarkerName(ColumnAspect markerName) {
+        this.markerName = markerName;
     }
 
-    public ColumnAspect getRef() {
-        return ref;
+    public ColumnAspect getMarkerRef() {
+        return markerRef;
     }
 
-    public void setRef(ColumnAspect ref) {
-        this.ref = ref;
+    public void setMarkerRef(ColumnAspect markerRef) {
+        this.markerRef = markerRef;
     }
 
-    public ColumnAspect getAlt() {
-        return alt;
+    public ColumnAspect getMarkerAlt() {
+        return markerAlt;
     }
 
-    public void setAlt(ColumnAspect alt) {
-        this.alt = alt;
+    public void setMarkerAlt(ColumnAspect markerAlt) {
+        this.markerAlt = markerAlt;
     }
 
-    public ColumnAspect getSequence() {
-        return sequence;
+    public ColumnAspect getMarkerSequence() {
+        return markerSequence;
     }
 
-    public void setSequence(ColumnAspect sequence) {
-        this.sequence = sequence;
+    public void setMarkerSequence(ColumnAspect markerSequence) {
+        this.markerSequence = markerSequence;
     }
 
-    public ColumnAspect getStarndName() {
-        return starndName;
+    public ColumnAspect getMarkerStrandName() {
+        return markerStrandName;
     }
 
-    public void setStarndName(ColumnAspect starndName) {
-        this.starndName = starndName;
+    public void setMarkerStrandName(ColumnAspect markerStrandName) {
+        this.markerStrandName = markerStrandName;
     }
 
-    public JsonAspect getProps() {
-        return props;
+    public JsonAspect getMarkerProperties() {
+        return markerProperties;
     }
 
-    public void setProps(JsonAspect props) {
-        this.props = props;
+    public void setMarkerProperties(JsonAspect markerProperties) {
+        this.markerProperties = markerProperties;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

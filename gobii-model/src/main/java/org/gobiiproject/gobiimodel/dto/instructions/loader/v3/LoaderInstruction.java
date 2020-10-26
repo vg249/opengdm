@@ -1,8 +1,11 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoaderInstruction {
 
     @NotNull(message = "Required Crop Type")
