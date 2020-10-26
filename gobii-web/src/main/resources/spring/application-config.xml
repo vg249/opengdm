@@ -450,6 +450,9 @@
     <!-- **** New Protocol Dao -->
     <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
 
+    <!-- **** New Job Dao -->
+    <bean id="jobDao" class="org.gobiiproject.gobiisampletrackingdao.JobDaoImpl"/>
+
     <bean id="loaderTemplateDao" class="org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDaoImpl"/>
 
     <!-- gdm v3 marker service -->
