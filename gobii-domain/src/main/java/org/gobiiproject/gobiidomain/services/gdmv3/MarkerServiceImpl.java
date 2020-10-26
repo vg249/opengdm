@@ -5,24 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
+import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
-import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
 
+@Transactional
 public class MarkerServiceImpl implements MarkerService {
 
     @Autowired
@@ -39,6 +39,9 @@ public class MarkerServiceImpl implements MarkerService {
 
     @Autowired
     private CvDao cvDao;
+
+    @Autowired
+    private JobDao jobDao;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -112,8 +115,9 @@ public class MarkerServiceImpl implements MarkerService {
 
         // Create Job
         String userName = ContactService.getCurrentUser();
+        Contact createdBy;
         try {
-            Contact createdBy = contactDao.getContactByUsername(userName);
+            createdBy = contactDao.getContactByUsername(userName);
         }
         catch (Exception e) {
             throw new GobiiDomainException(
@@ -122,6 +126,25 @@ public class MarkerServiceImpl implements MarkerService {
                 "Unable to find user in system");
         }
         String jobName = UUID.randomUUID().toString().replace("-", "");
+        Job job = new Job();
+        job.setJobName(jobName);
+        job.setMessage("Submitted marker upload job");
+        // Get payload type
+        Cv payloadType = cvDao.getCvs(GobiiLoaderPayloadTypes.MARKERS.getTerm(),
+            CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        job.setPayloadType(payloadType);
+        job.setStatus(status);
+        job.setSubmittedBy(createdBy);
+        job.setSubmittedDate(new Date());
+        // Get load type
+        Cv jobType = cvDao.getCvs(
+            JobType.CV_JOBTYPE_LOAD.getCvName(),
+            CvGroupTerm.CVGROUP_JOBTYPE.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        job.setType(jobType);
+        job = jobDao.create(job);
+
 
         //Set Input file
         String markerFileName = "markers.txt";
@@ -214,6 +237,9 @@ public class MarkerServiceImpl implements MarkerService {
         if(aspects.containsKey("marker_linkage_group")) {
             ((MarkerLinkageGroupTable)aspects.get("marker_linkage_group"))
                 .setMarkerName(((MarkerTable)aspects.get("marker")).getMarkerName());
+            ((MarkerLinkageGroupTable)aspects.get("marker_linkage_group"))
+                .setLinkageGroupName(
+                    ((LinkageGroupTable)aspects.get("linkage_group")).getLinkageGroupName());
         }
 
         loaderInstruction.setAspects(aspects);
@@ -231,8 +257,9 @@ public class MarkerServiceImpl implements MarkerService {
                 "Unable to submit job file");
         }
 
-
-        return new JobDTO();
+        JobDTO jobDTO = new JobDTO();
+        ModelMapper.mapEntityToDto(job, jobDTO);
+        return jobDTO;
     }
 
     private Map<String, EntityFieldBean> getTemplateFieldEntityMap(
