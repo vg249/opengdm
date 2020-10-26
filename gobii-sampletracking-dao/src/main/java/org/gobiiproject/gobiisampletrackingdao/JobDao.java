@@ -1,9 +1,9 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
+import org.gobiiproject.gobiimodel.entity.Job;
 
-public interface LoaderTemplateDao {
+public interface JobDao {
 
-    LoaderTemplate create(LoaderTemplate loaderTemplate) throws GobiiDaoException;
-    LoaderTemplate getById(Integer templateId);
+    Job create(Job job) throws GobiiDaoException;
+    Job getById(Integer jobId);
 }
