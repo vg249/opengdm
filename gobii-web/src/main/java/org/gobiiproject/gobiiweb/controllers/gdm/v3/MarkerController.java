@@ -18,7 +18,7 @@ import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
 @Scope(value = "request")
 @Controller
-@RequestMapping("/crops/{cropType}/gobii/v3/marker")
+@RequestMapping("/crops/{cropType}/gobii/v3/markers")
 @CrossOrigin
 @Api
 @Slf4j

@@ -21,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Transactional
 public class LoaderTemplateServiceImpl implements LoaderTemplateService {
@@ -71,6 +73,24 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
 
         return loaderTemplateDTO;
 
+    }
+
+    @Override
+    public MarkerTemplateDTO getMarkerTemplate() throws GobiiException {
+
+        MarkerTemplateDTO markerTemplateDTO = new MarkerTemplateDTO();
+
+        // Get marker properties
+        List<Cv> markerProperties = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_MARKER_PROP.getCvGroupName(),
+            null);
+
+        for(Cv markerProperty : markerProperties) {
+            markerTemplateDTO.getMarkerProperties()
+                .put(markerProperty.getTerm(), new ArrayList<>());
+        }
+
+        return markerTemplateDTO;
     }
 
 

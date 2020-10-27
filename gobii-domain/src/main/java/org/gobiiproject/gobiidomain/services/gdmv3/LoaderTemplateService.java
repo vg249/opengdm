@@ -11,4 +11,6 @@ public interface LoaderTemplateService {
     LoaderTemplateDTO addMarkerTemplate(
         LoaderTemplateDTO markerTemplate
     ) throws Exception;
+
+    MarkerTemplateDTO getMarkerTemplate() throws GobiiException;
 }

@@ -5,42 +5,45 @@ import org.gobiiproject.gobiimodel.entity.LinkageGroup;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MarkerTemplateDTO {
 
     @GobiiEntityMap(paramName = "markerName", entity = Marker.class)
-    private List<String> markerName;
+    private List<String> markerName = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "ref", entity = Marker.class)
-    private  List<String> markerRef;
+    private  List<String> markerRef = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "alts", entity = Marker.class)
-    private  List<String> markerAlt;
+    private  List<String> markerAlt = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "start", entity = MarkerLinkageGroup.class)
-    private  List<String> markerStart;
+    private  List<String> markerStart = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "stop", entity = MarkerLinkageGroup.class)
-    private  List<String> markerEnd;
+    private  List<String> markerEnd = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "sequence", entity = Marker.class)
-    private  List<String> markerSequence;
+    private  List<String> markerSequence = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "strandName", entity = Marker.class)
-    private List<String> markerStrandName;
+    private List<String> markerStrandName = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "linkageGroupName", entity = LinkageGroup.class)
-    private List<String> linkageGroupName;
+    private List<String> linkageGroupName = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "linkageGroupStart", entity = LinkageGroup.class)
-    private List<String> linkageGroupStart;
+    private List<String> linkageGroupStart = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "linkageGroupStop", entity = LinkageGroup.class)
-    private List<String> linkageGroupStop;
+    private List<String> linkageGroupStop = new ArrayList<>();
 
-    private Map<String, List<String>> markerProperties;
+    private Map<String, List<String>> markerProperties = new HashMap<>();
+
 
     public List<String> getMarkerName() {
         return markerName;
