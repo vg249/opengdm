@@ -458,6 +458,8 @@
     <!-- gdm v3 marker service -->
     <bean id="markerServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.MarkerServiceImpl"/>
 
+    <!-- gdm v3 job service -->
+    <bean id="jobService" class="org.gobiiproject.gobiidomain.services.gdmv3.JobServiceImpl"></bean>
 
      <!-- gdm v3 platform service -->
     <bean id="platformServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.PlatformServiceImpl"/>
