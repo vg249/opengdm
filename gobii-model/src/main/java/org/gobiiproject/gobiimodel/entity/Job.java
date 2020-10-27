@@ -12,6 +12,7 @@ import javax.persistence.*;
     attributeNodes = {
         @NamedAttributeNode(value = "payloadType"),
         @NamedAttributeNode(value = "submittedBy"),
+        @NamedAttributeNode(value = "type"),
     }
 )
 public class Job {
