@@ -58,7 +58,7 @@ public class MarkerController {
 
         BrApiMasterPayload<JobDTO> payload = ControllerUtils.getMasterPayload(job);
 
-        return ResponseEntity.created(null).body(payload);
+        return ResponseEntity.accepted().body(payload);
 
     }
 
