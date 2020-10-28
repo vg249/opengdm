@@ -59,7 +59,7 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setAspects(new HashMap<>());
 
         String fileHeader;
-        Map<String, List<String>> markerTemplateMap;
+        Map<String, Object> markerTemplateMap;
 
         loaderInstruction.setCropType(cropType);
         MarkerTable markerTable = new MarkerTable();
@@ -187,6 +187,8 @@ public class MarkerServiceImpl implements MarkerService {
         // Set Marker Aspects
         Map<String, Object> aspects = new HashMap<>();
         String[] fileColumns = fileHeader.split("\t");
+        Map<String, Cv> markerPropertiesCvsMap = new HashMap<>();
+        Map<String, ColumnAspect> markerPropertiesAspects = new HashMap<>();
 
         for(int i = 0; i < fileColumns.length; i++) {
             String fileColumn = fileColumns[i];
@@ -221,19 +223,50 @@ public class MarkerServiceImpl implements MarkerService {
                     aspects.put(tableName, linkageGroupTable);
                 }
 
-                try {
-                    Utils.setField(
-                        aspects.get(tableName),
-                        fileColumnsApiFieldsMap.get(fileColumn),
-                        columnAspect);
+                // Check for properties fields
+                if(fileColumnsApiFieldsMap.get(fileColumn).startsWith("markerProperties.")) {
+                    if(markerPropertiesAspects.size() == 0) {
+                        List<Cv> markerPropertiesCvList = cvDao.getCvListByCvGroup(
+                            CvGroupTerm.CVGROUP_MARKER_PROP.getCvGroupName(),
+                            null);
+                        markerPropertiesCvsMap = Utils.mapCyNames(markerPropertiesCvList);
+
+                    }
+                    String propertyName = fileColumnsApiFieldsMap
+                        .get(fileColumn)
+                        .replace("markerProperties.", "");
+
+                    if(markerPropertiesCvsMap.containsKey(propertyName)) {
+                        String propertyId = markerPropertiesCvsMap
+                            .get(propertyName)
+                            .getCvId().toString();
+                        markerPropertiesAspects.put(propertyId, columnAspect);
+                    }
+
+
                 }
-                catch (NoSuchFieldException | IllegalAccessException e) {
-                    throw new GobiiDomainException(
-                        GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.NONE,
-                        "Unable to submit job file");
+                else {
+                    try {
+                        Utils.setField(
+                            aspects.get(tableName),
+                            fileColumnsApiFieldsMap.get(fileColumn),
+                            columnAspect);
+                    }
+                    catch (NoSuchFieldException | IllegalAccessException e) {
+                        throw new GobiiDomainException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.NONE,
+                            "Unable to submit job file");
+                    }
                 }
             }
+        }
+
+        //Set JsonAspect
+        if(markerPropertiesAspects.size() > 0) {
+            JsonAspect jsonAspect = new JsonAspect();
+            jsonAspect.setJsonMap(markerPropertiesAspects);
+            ((MarkerTable)aspects.get("marker")).setMarkerProperties(jsonAspect);
         }
 
         if(aspects.containsKey("marker_linkage_group")) {
@@ -274,31 +307,67 @@ public class MarkerServiceImpl implements MarkerService {
         return jobDTO;
     }
 
+
+
     private Map<String, EntityFieldBean> getTemplateFieldEntityMap(
-        Map<String, List<String>> markerTemplateMap,
+        Map<String, Object> markerTemplateMap,
         Map<String, EntityFieldBean> dtoEntityMap
     ) {
         Map<String, EntityFieldBean> templateFieldsEntityMap = new HashMap<>();
+        List<String> fileField;
         for(String apiField : markerTemplateMap.keySet()) {
-            if(markerTemplateMap.get(apiField).size() > 0) {
-                templateFieldsEntityMap.put(
-                    markerTemplateMap.get(apiField).get(0),
-                    dtoEntityMap.get(apiField));
+            if(apiField.equals("markerProperties")) {
+                Map<String, List<String>> markerProperties =
+                    (HashMap<String, List<String>>) markerTemplateMap.get(apiField);
+                for(String property : markerProperties.keySet()) {
+                    fileField = markerProperties.get(property);
+                    if(fileField.size() > 0) {
+                        templateFieldsEntityMap.put(
+                            fileField.get(0),
+                            dtoEntityMap.get(apiField));
+                    }
+                }
             }
+            else {
+                fileField = (List<String>) markerTemplateMap.get(apiField);
+                if(fileField.size() > 0) {
+                    templateFieldsEntityMap.put(
+                        fileField.get(0),
+                        dtoEntityMap.get(apiField));
+                }
+            }
+
         }
 
         return templateFieldsEntityMap;
     }
 
     private Map<String, String> getFileColumnsApiFieldsMap(
-        Map<String, List<String>> markerTemplateMap
+        Map<String, Object> markerTemplateMap
     ) {
         Map<String, String> fileColumnsApiFieldsMap = new HashMap<>();
+        List<String> fileField;
         for(String apiField : markerTemplateMap.keySet()) {
-            if(markerTemplateMap.get(apiField).size() > 0) {
-                fileColumnsApiFieldsMap.put(
-                    markerTemplateMap.get(apiField).get(0),
-                    apiField);
+            if(apiField.equals("markerProperties")) {
+                Map<String, List<String>> markerProperties =
+                    (HashMap<String, List<String>>) markerTemplateMap.get(apiField);
+                for(String property : markerProperties.keySet()) {
+                    fileField = markerProperties.get(property);
+                    if(fileField.size() > 0) {
+                        fileColumnsApiFieldsMap.put(
+                            fileField.get(0),
+                            apiField+"."+property);
+                    }
+                }
+            }
+            else {
+
+                fileField = (List<String>) markerTemplateMap.get(apiField);
+                if (fileField.size() > 0) {
+                    fileColumnsApiFieldsMap.put(
+                        fileField.get(0),
+                        apiField);
+                }
             }
         }
 
