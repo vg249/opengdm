@@ -32,7 +32,9 @@ public class LoaderTemplateDaoImpl implements LoaderTemplateDao {
             return loaderTemplate;
         }
         catch (PersistenceException pe) {
-            throw new GobiiDaoException("Unable to create loader template");
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Unable to create loader template. Constraint violation");
         }
     }
 
