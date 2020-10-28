@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -11,6 +12,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Utils {
 
@@ -64,5 +68,17 @@ public class Utils {
         field.setAccessible(true);
         field.set(instance, value);
 
+    }
+
+    /**
+     * @param cvs List of cvs
+     * @return map of Cvs by their names
+     */
+    static Map<String, Cv> mapCyNames(List<Cv> cvs) {
+        Map<String, Cv> cvMap = new HashMap<>();
+        for(Cv cv : cvs) {
+            cvMap.put(cv.getTerm(), cv);
+        }
+        return cvMap;
     }
 }
