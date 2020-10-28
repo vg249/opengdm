@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3.templates;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.entity.LinkageGroup;
 import org.gobiiproject.gobiimodel.entity.Marker;
@@ -42,6 +43,7 @@ public class MarkerTemplateDTO {
     @GobiiEntityMap(paramName = "linkageGroupStop", entity = LinkageGroup.class)
     private List<String> linkageGroupStop = new ArrayList<>();
 
+    @GobiiEntityMap(paramName = "properties", entity = Marker.class)
     private Map<String, List<String>> markerProperties = new HashMap<>();
 
 
