@@ -299,11 +299,12 @@ public class GobiiExtractor {
 			            datasetName = datasetPropNameId.getName();
 		            }
 
-		            String markerListFileLocation = null, sampleListFileLocation = null;//Generally list file location, populated as needed
-		            switch (filterType) {
-			            case WHOLE_DATASET:
-				            extractType = "Extract by Dataset";
-				            gobiiMDE = "python " + mdePath +
+					String markerListFileLocation = null, sampleListFileLocation = null;//Generally list file location, populated as needed
+
+					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);					switch (filterType) {
+						case WHOLE_DATASET:
+							extractType = "Extract by Dataset";
+							gobiiMDE = "python " + mdePath +
 						            " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 						            " --extractByDataset" +
 						            " -m " + markerFile +
@@ -328,60 +329,64 @@ public class GobiiExtractor {
 				            } else if (extract.getListFileName() != null) {
 					            markerListFileLocation = extract.getListFileName();
 				            }
-				            if (markerListFileLocation != null) {
-					            markerListTerm = " -X " + markerListFileLocation;
-				            }
-				            //else if file is null and list is empty or null - > no term
+							if (markerListFileLocation != null) {
+								markerListTerm = " -X " + markerListFileLocation;
 
-				            if (markerListOverrideLocation != null)
+								makeFileUnique(markerListFileLocation,errorFile);
+							}
+							//else if file is null and list is empty or null - > no term
+
+							if (markerListOverrideLocation != null)
 					            markerListTerm = " -x " + markerListOverrideLocation;
 
 				            String markerGroupTerm = "";
 				            if (extract.getMarkerGroups() != null && !extract.getMarkerGroups().isEmpty()) {
 					            markerGroupTerm = " -G " + commaFormat(toIdList(extract.getMarkerGroups()));
-				            }
+							}
 
 
-				            //Actually call the thing
-				            gobiiMDE = "python " + mdePath +
-						            " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
-						            " --extractByMarkers" +
-						            " -m " + markerFile +
-						            " -b " + mapsetFile +
-						            " -s " + sampleFile +
-						            " -p " + projectFile +
-						            markerGroupTerm +
-						            markerListTerm +
-						            " --datasetType " + extract.getGobiiDatasetType().getId() +
-						            mapIdTerm +
-						            platformTerm +
-						            " -l" +
-						            verboseTerm + " ";
+							//Actually call the thing
+							gobiiMDE = "python " + mdePath +
+									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
+									" --extractByMarkers" +
+									" -m " + markerFile +
+									" -b " + mapsetFile +
+									" -s " + sampleFile +
+									" -p " + projectFile +
+									markerGroupTerm +
+									markerListTerm +
+									" --datasetType " + extract.getGobiiDatasetType().getId() +
+									mapIdTerm +
+									platformTerm +
+									" -l" +
+									verboseTerm + " ";
 
-				            break;
-			            case BY_SAMPLE:
-				            extractType = "Extract by Sample";
-				            //List takes extra work, as it might be a <List> or a <File>
-				            //Create a file out of the List if non-null, else use the <File>
-				            List<String> sampleList = extract.getSampleList();
-				            if (sampleList != null && !sampleList.isEmpty()) {
-					            sampleListFileLocation = createTempListFile(extractDir, sampleList, "sampleList");
-				            } else if (extract.getListFileName() != null) {
-					            sampleListFileLocation = extract.getListFileName();
-				            }
-				            if (sampleListFileLocation != null) {
-					            sampleListTerm = " -Y " + sampleListFileLocation;
-				            }
+							break;
+						case BY_SAMPLE:
+							extractType = "Extract by Sample";
+							//List takes extra work, as it might be a <List> or a <File>
+							//Create a file out of the List if non-null, else use the <File>
+							List<String> sampleList = extract.getSampleList();
+							if (sampleList != null && !sampleList.isEmpty()) {
+								sampleListFileLocation = createTempListFile(extractDir, sampleList, "sampleList");
+							} else if (extract.getListFileName() != null) {
+								sampleListFileLocation = extract.getListFileName();
+							}
+							if (sampleListFileLocation != null) {
 
-				            GobiiSampleListType type = extract.getGobiiSampleListType();
-				            String sampleListTypeTerm = (type == null) ? "" : " --sampleType " + getNumericType(type);
+								makeFileUnique(sampleListFileLocation,errorFile);
+								sampleListTerm = " -Y " + sampleListFileLocation;
+							}
 
-				            String PITerm, projectTerm;
-				            PITerm = projectTerm = "";
-				            PropNameId PI = extract.getPrincipleInvestigator();
-				            PropNameId project = extract.getProject();
-				            if (PI != null && PI.getId() != null) {
-					            PITerm = " --piId " + PI.getId();
+							GobiiSampleListType type = extract.getGobiiSampleListType();
+							String sampleListTypeTerm = (type == null) ? "" : " --sampleType " + getNumericType(type);
+
+							String PITerm, projectTerm;
+							PITerm = projectTerm = "";
+							PropNameId PI = extract.getPrincipleInvestigator();
+							PropNameId project = extract.getProject();
+							if (PI != null && PI.getId() != null) {
+								PITerm = " --piId " + PI.getId();
 				            }
 				            if (project != null && project.getId() != null) {
 					            projectTerm = " --projectId " + project.getId();
@@ -417,88 +422,88 @@ public class GobiiExtractor {
 
 		            samplePosFile = sampleFile + ".pos";
 
-		            String errorFile = getLogName(extract, gobiiCropConfig, datasetId);
-		            Logger.logInfo("Extractor", "Executing MDEs");
+					Logger.logInfo("Extractor", "Executing MDEs");
 
-		            if(verbose) {
-			            tryExec(gobiiMDE,extractDir + "mdeOut", errorFile,extractDir+"MDEStdOut");
-		            }
-		            else {
+					if(verbose) {
+						tryExec(gobiiMDE,extractDir + "mdeOut", errorFile,extractDir+"MDEStdOut");
+					}
+					else {
 			            tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
-		            }
-		            //Clean some variables ahead of declaration
-		            final String defaultMapName = "No Mapset info available";
-		            String mapName = defaultMapName;
-		            String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration); //Get name from postgres
-		            if (postgresName != null) mapName = postgresName;
-		            GobiiSampleListType type = extract.getGobiiSampleListType();
+					}
+					//Clean some variables ahead of declaration
+					final String defaultMapName = "No Mapset info available";
+					String mapName = defaultMapName;
+					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration); //Get name from postgres
+					if (postgresName != null) mapName = postgresName;
+					GobiiSampleListType type = extract.getGobiiSampleListType();
 
-		            String formatName = uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase());
+					String formatName = uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase());
 
-		            ExtractSummaryWriter esw = new ExtractSummaryWriter();
+					ExtractSummaryWriter esw = new ExtractSummaryWriter();
 
-		            pm.addCriteria("Crop", inst.getGobiiCropType());
-		            pm.addCriteria("Email", inst.getContactEmail());
-		            pm.addCriteria("Job ID", jobFileName);
-		            esw.addItem("Job ID", jobFileName);
-		            esw.addItem("Submit as", inst.getContactEmail());
-		            esw.addItem("Format", formatName);
-		            if (!mapName.equals(defaultMapName)) {
-			            esw.addItem("Mapset", mapName);
-		            }
-		            pm.addCriteria("Principal Investigator", extract.getPrincipleInvestigator());
+					pm.addCriteria("Crop", inst.getGobiiCropType());
+					pm.addCriteria("Email", inst.getContactEmail());
+					pm.addCriteria("Job ID", jobFileName);
+					esw.addItem("Job ID", jobFileName);
+					esw.addItem("Submit as", inst.getContactEmail());
+					esw.addItem("Format", formatName);
+					if (!mapName.equals(defaultMapName)) {
+						esw.addItem("Mapset", mapName);
+					}
+					pm.addCriteria("Principal Investigator", extract.getPrincipleInvestigator());
 
-		            pm.addCriteria("Project", extract.getProject());
-		            pm.addCriteria("Dataset", extract.getDataSet());
-		            pm.addCriteria("Dataset Type", extract.getGobiiDatasetType());
-		            esw.addItem("Data Set", extract.getDataSet());
-		            esw.addItem("Dataset Type", extract.getGobiiDatasetType());
-		            esw.addPropList("Platform", extract.getPlatforms());
-		            if (type != null) {
-			            esw.addItem("List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
-		            }
+					pm.addCriteria("Project", extract.getProject());
+					pm.addCriteria("Dataset", extract.getDataSet());
+					pm.addCriteria("Dataset Type", extract.getGobiiDatasetType());
+					esw.addItem("Data Set", extract.getDataSet());
+					esw.addItem("Dataset Type", extract.getGobiiDatasetType());
+					esw.addPropList("Platform", extract.getPlatforms());
+					if (type != null) {
+						esw.addItem("List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
+					}
 
-		            pm.addCriteria("Mapset", mapName);
-		            pm.addCriteria("Format", formatName);
-		            pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
+					pm.addCriteria("Mapset", mapName);
+					pm.addCriteria("Format", formatName);
+					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
 
-		            esw.addItem("Principal Investigator", extract.getPrincipleInvestigator());
-		            esw.addItem("Project", extract.getProject());
+					esw.addItem("Principal Investigator", extract.getPrincipleInvestigator());
+					esw.addItem("Project", extract.getProject());
 
-		            //turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
-		            //We're moving it into the extract directory when we're done now, so lets be vague as to its location.
-		            //They'll find it if they want to
+					//turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
+					//We're moving it into the extract directory when we're done now, so lets be vague as to its location.
+					//They'll find it if they want to
 
 
-		            //Marker List or List File (see above for selection logic)
-		            if ((extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) || (filterType == BY_MARKER && markerListFileLocation != null)) {
-			            pm.addCriteria("Marker List", markerListFileLocation);
-			            esw.addItem("Marker List", markerListFileLocation);
-		            }
+					//Marker List or List File (see above for selection logic)
+					if ((extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) || (filterType == BY_MARKER && markerListFileLocation != null)) {
+						pm.addCriteria("Marker List", markerListFileLocation);
+						esw.addItem("Marker List", markerListFileLocation);
 
-		            //Marker groups (spelled out, unlike marker and sample files)
-		            List<PropNameId> mGroup = extract.getMarkerGroups();
-		            if((mGroup!= null && !mGroup.isEmpty())){
-		            	List<String> markerGroupNames = mGroup.stream().map(PropNameId::getName).collect(Collectors.toList());
-		            	pm.addCriteria("Marker Group", String.join(", ",markerGroupNames));
-			            esw.addPropList("Marker Group", mGroup);
-		            }
+					}
 
-		            if (type != null) {
-			            pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
-		            }
+					//Marker groups (spelled out, unlike marker and sample files)
+					List<PropNameId> mGroup = extract.getMarkerGroups();
+					if((mGroup!= null && !mGroup.isEmpty())){
+						List<String> markerGroupNames = mGroup.stream().map(PropNameId::getName).collect(Collectors.toList());
+						pm.addCriteria("Marker Group", String.join(", ",markerGroupNames));
+						esw.addPropList("Marker Group", mGroup);
+					}
 
-		            if ((extract.getSampleList() != null && !extract.getSampleList().isEmpty()) || (filterType == BY_SAMPLE && sampleListFileLocation != null)) {
-			            pm.addCriteria("Sample List", sampleListFileLocation);
-			            esw.addItem("Sample File", sampleListFileLocation);
-		            }
+					if (type != null) {
+						pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
+					}
 
-		            List<Integer> mapsetIds = inst.getMapsetIds();
-		            //If the only mapset in the list is the mapset displayed above, lets not display it twice...
-		            boolean mapsetIsAlreadyDisplayed = (mapsetIds.size() == 1) && mapsetIds.contains(mapId);
+					if ((extract.getSampleList() != null && !extract.getSampleList().isEmpty()) || (filterType == BY_SAMPLE && sampleListFileLocation != null)) {
+						pm.addCriteria("Sample List", sampleListFileLocation);
+						esw.addItem("Sample File", sampleListFileLocation);
+					}
 
-		            if (inst.getMapsetIds() != null && !inst.getMapsetIds().isEmpty() && !mapsetIsAlreadyDisplayed) {
-			            pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
+					List<Integer> mapsetIds = inst.getMapsetIds();
+					//If the only mapset in the list is the mapset displayed above, lets not display it twice...
+					boolean mapsetIsAlreadyDisplayed = (mapsetIds.size() == 1) && mapsetIds.contains(mapId);
+
+					if (inst.getMapsetIds() != null && !inst.getMapsetIds().isEmpty() && !mapsetIsAlreadyDisplayed) {
+						pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 		            }
 
 		            //Note - link to place where it *will* be if there are no errors. Sadly, we won't know if it's right until we've sent all the emails already
@@ -1197,4 +1202,15 @@ public class GobiiExtractor {
             return null;
         }
     }
+
+	/**
+	 * In place file uniqueness. First implementation is a simple sort -u
+	 * @param inputFile input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
+	 */
+	private static void makeFileUnique(String inputFilePath, String errorFile){
+    	String tempPath = inputFilePath+".tmp";
+    	FileSystemInterface.mv(inputFilePath,tempPath);
+    	tryExec("sort -u ",inputFilePath,errorFile,tempPath);
+    	FileSystemInterface.rmIfExist(tempPath);
+}
 }
