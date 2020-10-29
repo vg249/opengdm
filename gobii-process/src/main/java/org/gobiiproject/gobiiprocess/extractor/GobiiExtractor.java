@@ -317,7 +317,8 @@ public class GobiiExtractor {
 					}
 
 					String markerListFileLocation = null, sampleListFileLocation = null;//Generally list file location, populated as needed
-					switch (filterType) {
+
+					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);					switch (filterType) {
 						case WHOLE_DATASET:
 							extractType = "Extract by Dataset";
 							gobiiMDE = "python " + mdePath +
@@ -347,6 +348,8 @@ public class GobiiExtractor {
 							}
 							if (markerListFileLocation != null) {
 								markerListTerm = " -X " + markerListFileLocation;
+
+								makeFileUnique(markerListFileLocation,errorFile);
 							}
 							//else if file is null and list is empty or null - > no term
 
@@ -387,6 +390,8 @@ public class GobiiExtractor {
 								sampleListFileLocation = extract.getListFileName();
 							}
 							if (sampleListFileLocation != null) {
+
+								makeFileUnique(sampleListFileLocation,errorFile);
 								sampleListTerm = " -Y " + sampleListFileLocation;
 							}
 
@@ -434,7 +439,6 @@ public class GobiiExtractor {
 
 					samplePosFile = sampleFile + ".pos";
 
-					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);
 					Logger.logInfo("Extractor", "Executing MDEs");
 
 					if(verbose) {
@@ -491,6 +495,7 @@ public class GobiiExtractor {
 					if ((extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) || (filterType == BY_MARKER && markerListFileLocation != null)) {
 						pm.addCriteria("Marker List", markerListFileLocation);
 						esw.addItem("Marker List", markerListFileLocation);
+
 					}
 
 					//Marker groups (spelled out, unlike marker and sample files)
@@ -1211,4 +1216,15 @@ public class GobiiExtractor {
             return null;
         }
     }
+
+	/**
+	 * In place file uniqueness. First implementation is a simple sort -u
+	 * @param inputFile input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
+	 */
+	private static void makeFileUnique(String inputFilePath, String errorFile){
+    	String tempPath = inputFilePath+".tmp";
+    	FileSystemInterface.mv(inputFilePath,tempPath);
+    	tryExec("sort -u ",inputFilePath,errorFile,tempPath);
+    	FileSystemInterface.rmIfExist(tempPath);
+	}
 }
