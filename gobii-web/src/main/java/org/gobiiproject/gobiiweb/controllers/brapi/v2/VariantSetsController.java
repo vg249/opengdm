@@ -19,12 +19,15 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -153,14 +156,29 @@ public class VariantSetsController {
     @GetMapping(value="/{variantSetDbId:[\\d]+}", produces = "application/json")
     public @ResponseBody ResponseEntity<BrApiMasterPayload<VariantSetDTO>> getVariantSetById(
         @ApiParam(value = "ID of the VariantSet to be extracted", required = true)
-        @PathVariable("variantSetDbId") Integer variantSetDbId
+        @PathVariable("variantSetDbId") Integer variantSetDbId,
+        HttpServletRequest request
     ) throws GobiiException {
 
-        VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
+        String ifNoneMatch = request.getHeader(HttpHeaders.IF_NONE_MATCH);
+        String etag = variantSetsService.getEtag(variantSetDbId);
 
+        if(ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).eTag(etag).body(null);
+        }
+
+        VariantSetDTO variantSetDTO = variantSetsService.getVariantSetById(variantSetDbId);
         BrApiMasterPayload<VariantSetDTO> payload = new BrApiMasterPayload<>(variantSetDTO);
 
-        return ResponseEntity.ok(payload);
+        if(etag != null) {
+            return ResponseEntity
+                .ok()
+                .eTag(etag)
+                .body(payload);
+        }
+        else {
+            return ResponseEntity.ok(payload);
+        }
 
     }
 
@@ -300,6 +318,7 @@ public class VariantSetsController {
             @RequestParam(value = "pageSize", required = false,
                 defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize
     ) throws GobiiException {
+
         PagedResultTyped<GenotypeCallsResult> genotypeCallsPaged =
             genotypeCallsService.getGenotypeCallsByVariantSetDbId(
                 variantSetDbId,
@@ -413,10 +432,18 @@ public class VariantSetsController {
     @GetMapping(
         value="/{variantSetDbId:[\\d]+}/calls/download",
         produces = "text/csv")
-    public ResponseEntity<ResponseBodyEmitter> handleRbe(
+    public ResponseEntity<ResponseBodyEmitter> downloadGenotypes(
         @ApiParam(value = "Id of the variantset to download")
-        @PathVariable("variantSetDbId") Integer variantSetDbId
+        @PathVariable("variantSetDbId") Integer variantSetDbId,
+        HttpServletRequest request
     ) throws GobiiException {
+
+        String ifNoneMatch = request.getHeader(HttpHeaders.IF_NONE_MATCH);
+        String etag = variantSetsService.getEtag(variantSetDbId);
+
+        if(ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).eTag(etag).body(null);
+        }
 
         //Giving Response emitter to finish the download within 30 mins.
         //The request thread will be terminated once 30 mins is done.
@@ -459,6 +486,7 @@ public class VariantSetsController {
                 "attachment; filename=" + variantSetDbId.toString() + ".csv"
             )
             .contentType(MediaType.parseMediaType("text/csv"))
+            .eTag(etag)
             .body(emitter);
     }
 
