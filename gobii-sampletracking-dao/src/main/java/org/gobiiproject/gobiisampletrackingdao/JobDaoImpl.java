@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import org.gobiiproject.gobiimodel.entity.Job;
-import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class JobDaoImpl implements JobDao {
         try {
             em.persist(job);
             em.flush();
-            em.refresh(job, Utils.getHints(em, "graph.job"));
+            em.refresh(job, DaoUtils.getHints(em, "graph.job"));
             return job;
         }
         catch (PersistenceException pe) {
@@ -44,7 +43,7 @@ public class JobDaoImpl implements JobDao {
             job = em.find(
                 Job.class,
                 jobId,
-                Utils.getHints(em, "graph.job"));
+                DaoUtils.getHints(em, "graph.job"));
         }
         catch (IllegalArgumentException e) {
            throw new GobiiDaoException(

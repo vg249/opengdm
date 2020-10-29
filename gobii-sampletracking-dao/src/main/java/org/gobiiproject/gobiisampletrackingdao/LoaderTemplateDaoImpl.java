@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class LoaderTemplateDaoImpl implements LoaderTemplateDao {
@@ -28,7 +26,7 @@ public class LoaderTemplateDaoImpl implements LoaderTemplateDao {
         try {
             em.persist(loaderTemplate);
             em.flush();
-            em.refresh(loaderTemplate, Utils.getHints(em, "graph.loader_template"));
+            em.refresh(loaderTemplate, DaoUtils.getHints(em, "graph.loader_template"));
             return loaderTemplate;
         }
         catch (PersistenceException pe) {
@@ -45,7 +43,7 @@ public class LoaderTemplateDaoImpl implements LoaderTemplateDao {
             loaderTemplate = em.find(
                 LoaderTemplate.class,
                 templateId,
-                Utils.getHints(em, "graph.loader_template"));
+                DaoUtils.getHints(em, "graph.loader_template"));
         }
         catch (IllegalArgumentException e) {
            throw new GobiiDaoException(

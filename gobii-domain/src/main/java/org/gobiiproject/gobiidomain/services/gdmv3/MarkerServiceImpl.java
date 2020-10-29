@@ -19,9 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 @Transactional
 public class MarkerServiceImpl implements MarkerService {
 
@@ -43,7 +45,7 @@ public class MarkerServiceImpl implements MarkerService {
     @Autowired
     private JobDao jobDao;
 
-    ObjectMapper mapper = new ObjectMapper();
+    final ObjectMapper mapper = new ObjectMapper();
 
     final String loadType = "MARKER";
 
@@ -62,9 +64,16 @@ public class MarkerServiceImpl implements MarkerService {
         Map<String, Object> markerTemplateMap;
 
         loaderInstruction.setCropType(cropType);
+
+        // Tables loaded in marker upload
         MarkerTable markerTable = new MarkerTable();
         LinkageGroupTable linkageGroupTable = new LinkageGroupTable();
         MarkerLinkageGroupTable markerLinkageGroupTable = new MarkerLinkageGroupTable();
+
+        // Get tables names in database
+        String markerTableName = DaoUtils.getTableName(Marker.class);
+        String linkageGroupTableName = DaoUtils.getTableName(LinkageGroup.class);
+        String markerLinkageTableName = DaoUtils.getTableName(MarkerLinkageGroup.class);
 
 
         // Set Platform Id in Table Aspects
@@ -174,7 +183,10 @@ public class MarkerServiceImpl implements MarkerService {
         //Read Header
         InputStream sampleInputStream = new ByteArrayInputStream(markerFile);
         try {
-            br = new BufferedReader(new InputStreamReader(sampleInputStream, "UTF-8"));
+
+            br = new BufferedReader(
+                new InputStreamReader(sampleInputStream, StandardCharsets.UTF_8));
+
             fileHeader = br.readLine();
         }
         catch (IOException io) {
@@ -200,10 +212,10 @@ public class MarkerServiceImpl implements MarkerService {
                 ColumnAspect columnAspect = new ColumnAspect();
                 columnAspect.setColumnCoordinates(columnCoordinates);
 
-                if(tableName.equals("marker") &&!aspects.containsKey(tableName)) {
+                if(tableName.equals(markerTableName) &&!aspects.containsKey(tableName)) {
                     aspects.put(tableName, markerTable);
                 }
-                else if(tableName.equals("marker_linkage_group")
+                else if(tableName.equals(markerLinkageTableName)
                     && !aspects.containsKey(tableName)) {
                     if(markerUploadRequest.getMapId() == null) {
                         throw new GobiiDomainException(
@@ -213,7 +225,7 @@ public class MarkerServiceImpl implements MarkerService {
                     }
                     aspects.put(tableName, markerLinkageGroupTable);
                 }
-                else if(tableName.equals("linkage_group") && !aspects.containsKey(tableName)) {
+                else if(tableName.equals(linkageGroupTableName) && !aspects.containsKey(tableName)) {
                     if(markerUploadRequest.getMapId() == null) {
                         throw new GobiiDomainException(
                             GobiiStatusLevel.ERROR,
@@ -266,15 +278,16 @@ public class MarkerServiceImpl implements MarkerService {
         if(markerPropertiesAspects.size() > 0) {
             JsonAspect jsonAspect = new JsonAspect();
             jsonAspect.setJsonMap(markerPropertiesAspects);
-            ((MarkerTable)aspects.get("marker")).setMarkerProperties(jsonAspect);
+            ((MarkerTable)aspects.get(markerTableName)).setMarkerProperties(jsonAspect);
         }
 
-        if(aspects.containsKey("marker_linkage_group")) {
-            ((MarkerLinkageGroupTable)aspects.get("marker_linkage_group"))
-                .setMarkerName(((MarkerTable)aspects.get("marker")).getMarkerName());
-            ((MarkerLinkageGroupTable)aspects.get("marker_linkage_group"))
+
+        if(aspects.containsKey(markerLinkageTableName)) {
+            ((MarkerLinkageGroupTable)aspects.get(markerLinkageTableName))
+                .setMarkerName(((MarkerTable)aspects.get(markerTableName)).getMarkerName());
+            ((MarkerLinkageGroupTable)aspects.get(markerLinkageTableName))
                 .setLinkageGroupName(
-                    ((LinkageGroupTable)aspects.get("linkage_group")).getLinkageGroupName());
+                    ((LinkageGroupTable)aspects.get(linkageGroupTableName)).getLinkageGroupName());
         }
 
         loaderInstruction.setAspects(aspects);
@@ -306,6 +319,7 @@ public class MarkerServiceImpl implements MarkerService {
         ModelMapper.mapEntityToDto(job, jobDTO);
         return jobDTO;
     }
+
 
 
 
