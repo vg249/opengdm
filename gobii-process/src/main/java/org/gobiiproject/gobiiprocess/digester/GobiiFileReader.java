@@ -43,6 +43,8 @@ import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -67,6 +69,10 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.gobii.Util.slurp;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -106,6 +112,10 @@ public class GobiiFileReader {
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
 
+    public static  String configLoation;
+    public static String cropType;
+
+
     /**
      * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
      *
@@ -139,12 +149,13 @@ public class GobiiFileReader {
             System.exit(2);
         }
 
+        configLoation = propertiesFile;
+
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
         List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
 
         LoaderInstruction loaderInstructions;
         GobiiLoaderProcedure procedure;
-        String cropType;
         boolean success;
         boolean sendQc = false;
         String dstFilePath;
@@ -213,6 +224,14 @@ public class GobiiFileReader {
             loadTypeName = "";//No load type name if default
             if (loadType.equals(GobiiFileType.GENERIC)) loadTypeName = loadType.name();
         }
+
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+            "classpath:/spring/application-config.xml");
+
+        CvDao cvDao = context.getBean(CvDao.class);
+        List<CvGroup> cvs = cvDao.getCvGroups(100, 0);
+
+        System.out.println(cvs);
 
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant

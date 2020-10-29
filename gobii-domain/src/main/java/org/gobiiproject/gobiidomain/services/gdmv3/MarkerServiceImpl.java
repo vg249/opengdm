@@ -49,11 +49,20 @@ public class MarkerServiceImpl implements MarkerService {
 
     final String loadType = "MARKER";
 
+    /**
+     * Uploads markers in the file to the database.
+     * Also, loads marker positions and linkage groups when provided in the same file.
+     *
+     * @param markerFile
+     * @param markerUploadRequest
+     * @param cropType
+     * @return
+     * @throws GobiiException
+     */
     @Override
-    public JobDTO uploadMarkerFile(
-        byte[] markerFile,
-        MarkerUploadRequestDTO markerUploadRequest,
-        String cropType) throws GobiiException {
+    public JobDTO uploadMarkerFile(byte[] markerFile,
+                                   MarkerUploadRequestDTO markerUploadRequest,
+                                   String cropType) throws GobiiException {
 
         BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
