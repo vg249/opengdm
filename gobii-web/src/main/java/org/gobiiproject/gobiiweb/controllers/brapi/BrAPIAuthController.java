@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
 
+import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiidomain.services.gdmv3.KeycloakService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.NotAuthorizedException;
 
 @Scope(value = "request")
 @Controller
@@ -59,44 +61,27 @@ public class BrAPIAuthController {
 
         BrapiResponseLogin brapiResponseLogin = new BrapiResponseLogin();
 
+        BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(
+                BrapiRequestLogin.class);
+
+        BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
+
+        TokenInfo tokenInfo;
         try {
-
-            BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(
-                    BrapiRequestLogin.class);
-
-            BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
-
-            //BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
-
-            //brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
-
-            TokenInfo tokenInfo = keycloakService.getToken(
-                    brapiRequestLogin.getUserName(),
-                    brapiRequestLogin.getPassword()
+            tokenInfo = keycloakService.getToken(
+                brapiRequestLogin.getUserName(),
+                brapiRequestLogin.getPassword()
             );
-            
-
             brapiResponseLogin.setAccessToken(tokenInfo.getAccessToken());
             brapiResponseLogin.setUserDisplayName(brapiRequestLogin.getUserName());
             brapiResponseLogin.setExpiresIn("" + tokenInfo.getExpiry());
 
             brapiResponseLogin.getBrapiMetaData().setPagination(new BrapiPagination(
-                    1,
-                    1,
-                    1,
-                    0
-            ));
-
-        } catch (GobiiException e) {
-
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
-            brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
-
-        } catch (Exception e) {
-        
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
+                1, 1, 1, 0));
+        }
+        catch (NotAuthorizedException nE) {
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+            String message = "Unauthorized";
             brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
