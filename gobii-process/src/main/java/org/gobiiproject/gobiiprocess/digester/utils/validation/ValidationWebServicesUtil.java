@@ -33,8 +33,19 @@ import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public class ValidationWebServicesUtil {
+
+    @PersistenceContext
+    private static EntityManager em;
+
+    @Autowired
+    private PlatformDao platformDao;
 
     public static boolean loginToServer(String url, String username, String password, String crop, List<Failure> failures) {
         try {
