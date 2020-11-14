@@ -31,9 +31,6 @@ public class MarkerTemplateDTO {
     @GobiiEntityMap(paramName = "sequence", entity = Marker.class)
     private  List<String> markerSequence = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "strandName", entity = Marker.class)
-    private List<String> markerStrandName = new ArrayList<>();
-
     @GobiiEntityMap(paramName = "linkageGroupName", entity = LinkageGroup.class)
     private List<String> linkageGroupName = new ArrayList<>();
 
@@ -46,6 +43,13 @@ public class MarkerTemplateDTO {
     @GobiiEntityMap(paramName = "properties", entity = Marker.class)
     private Map<String, List<String>> markerProperties = new HashMap<>();
 
+    private List<String> markerStrandName = new ArrayList<>();
+
+    private List<String> markerReferenceName = new ArrayList<>();
+
+    private List<String> platformName = new ArrayList<>();
+
+    private List<String> genomeMapName = new ArrayList<>();
 
     public List<String> getMarkerName() {
         return markerName;

@@ -74,7 +74,7 @@ public class JobStatus {
             try{
 
                 RestUri restUri = uriFactory
-                    .resourceByUriIdParam(RestResourceId.GOBII_JOB, cropName);
+                    .resourceByUriIdParam(RestResourceId.GOBII_JOB);
 
                 restUri.setParamValue("id", jobName);
             GobiiEnvelopeRestResource<JobDTO,JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);

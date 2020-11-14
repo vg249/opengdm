@@ -446,13 +446,21 @@ class ValidationUtil {
     static void validateDatabaseCalls(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig cropConfig) {
         try {
             if (condition.typeName != null) {
-                if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)
+                ) {
                     if (condition.fieldToCompare != null) {
                         if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
-                            if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
+                            if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) ||
+                                condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) ||
+                                condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
                                 validateDB(fileName, condition, failureList,cropConfig);
                             } else {
                                 if (condition.foreignKey != null) {
@@ -555,7 +563,9 @@ class ValidationUtil {
                     multiplePlatformIdError(condition, failureList);
                     return;
                 }
-                if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE)) {
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) ||
+                    condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE)) {
+
                     switch (condition.foreignKey.toLowerCase()){
                         case "platform_id":
                             for (String platformId : foreignKeyList) {
