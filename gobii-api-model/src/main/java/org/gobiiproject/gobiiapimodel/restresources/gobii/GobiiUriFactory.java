@@ -46,7 +46,7 @@ public class GobiiUriFactory {
     }
 
     public String getControllerPath() {
-        String controllerPath = this.getControllerPath();
+        String controllerPath = this.gobiiControllerType.getControllerPath();
         if(controllerPath.contains("{cropType}") && this.cropType != null) {
             controllerPath = controllerPath.replace("{cropType}", cropType);
         }
