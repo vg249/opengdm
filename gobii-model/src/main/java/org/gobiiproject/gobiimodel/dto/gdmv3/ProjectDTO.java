@@ -1,13 +1,13 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
-
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,10 +22,8 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -38,11 +36,14 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @Override
     public Integer getId() {
+        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void setId(Integer id) {
+        // TODO Auto-generated method stub
+
     }
 
     public ProjectDTO() {
@@ -64,15 +65,13 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String projectDescription;
 
     @GobiiEntityMap(paramName="contact.contactId", entity = Project.class, deep=true)
-    @JsonIgnore
-    private Integer contactId;
-
     @NotNull(groups = {ProjectDTO.Create.class})
-    private String piContactId;
+    @Null(groups = {ProjectDTO.Update.class})
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Integer piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore
-    @Getter(AccessLevel.NONE)
     private String piContactLastName;
 
     @GobiiEntityMap(paramName="contact.firstName", entity = Project.class, deep=true)
@@ -104,12 +103,6 @@ public class ProjectDTO extends DTOBaseAuditable {
             return piContactLastName;
         }
         return null;
-    }
-
-
-    //custom getter
-    public String getPiContactId() {
-        return Optional.ofNullable(contactId).map(v -> v.toString()).orElse(piContactId);
     }
 
    

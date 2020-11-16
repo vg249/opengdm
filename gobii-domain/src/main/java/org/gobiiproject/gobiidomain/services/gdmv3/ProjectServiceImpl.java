@@ -139,9 +139,9 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = this.loadProject(projectId);
 
         //convert
-        if (request.getPiContactId() != null) {   
-            this.updateContact(project, request.getPiContactId());
-        }
+        // if (request.getPiContactId() != null) {   
+        //     this.updateContact(project, request.getPiContactId());
+        // } -- no longer allowed to update contact
         if (request.getProjectName() != null) {
             this.updateProjectName(project, request.getProjectName());
         }

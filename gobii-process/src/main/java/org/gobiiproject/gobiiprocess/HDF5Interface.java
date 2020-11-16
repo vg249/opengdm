@@ -227,7 +227,7 @@ public class HDF5Interface {
      * @param outpufFilePath Output file to write to
      */
     static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
-        String[] stringList = inputFileList.split(Pattern.quote(","));
+        String[] stringList = inputFileList.split(Pattern.quote(" "));
         List<BufferedReader> readerList = new LinkedList<BufferedReader>();
         List<BufferedReader> emptyList = new LinkedList<BufferedReader>();
         try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
