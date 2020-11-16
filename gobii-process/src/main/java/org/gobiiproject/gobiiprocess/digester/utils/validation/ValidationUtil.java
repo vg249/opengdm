@@ -607,7 +607,9 @@ class ValidationUtil {
                             undefinedForeignKey(condition,condition.foreignKey,failureList);
                     }
                 } else {
-                    foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);
+                    foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(
+                        condition.typeName,
+                        failureList);
                 }
 
                 for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
