@@ -205,9 +205,9 @@ public class ProjectServiceImplTest {
 
         mockProject.setContact(mockContact);
 
-        Contact mockNewContact = new Contact();
-        mockNewContact.setContactId(222);
-        mockNewContact.setUsername("new-user");
+        // Contact mockNewContact = new Contact();
+        // mockNewContact.setContactId(222);
+        // mockNewContact.setUsername("new-user");
 
         Contact mockEditor = new Contact();
         mockEditor.setContactId(444);
@@ -218,12 +218,12 @@ public class ProjectServiceImplTest {
         mockModifiedStatus.setTerm("modified");
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId(222);
+        //request.setPiContactId(222);
         request.setProjectName("new-project-name");
         request.setProjectDescription("new-project-description");
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
-        when(contactDao.getContact(222)).thenReturn(mockNewContact);
+        //when(contactDao.getContact(222)).thenReturn(mockNewContact);
         when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
         when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
         when(projectDao.patchProject(any(Project.class))).thenReturn(new Project());
@@ -235,7 +235,7 @@ public class ProjectServiceImplTest {
         Project param = arg.getValue();
         assertTrue(param.getProjectName().equals("new-project-name"));
         assertTrue(param.getProjectDescription().equals("new-project-description"));
-        assertTrue(param.getContact().getContactId() == 222);
+        //assertTrue(param.getContact().getContactId() == 222);
 
     }
 
