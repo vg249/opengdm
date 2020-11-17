@@ -19,7 +19,9 @@ public interface MapsetDao {
 
 	Mapset createMapset(Mapset createdMapset);
 
-	Mapset getMapset(Integer mapsetId);
+    Mapset getMapset(Integer mapsetId);
+    
+    Mapset getMapsetByName(String name);
 
 	Mapset updateMapset(Mapset mapset);
 

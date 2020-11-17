@@ -16,44 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.gobiiproject.gobidomain.services.gdmv3.AnalysisService;
-import org.gobiiproject.gobidomain.services.gdmv3.ContactService;
-import org.gobiiproject.gobidomain.services.gdmv3.CvService;
-import org.gobiiproject.gobidomain.services.gdmv3.DatasetService;
-import org.gobiiproject.gobidomain.services.gdmv3.ExperimentService;
-import org.gobiiproject.gobidomain.services.gdmv3.MapsetService;
-import org.gobiiproject.gobidomain.services.gdmv3.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.gdmv3.OrganizationService;
-import org.gobiiproject.gobidomain.services.gdmv3.PlatformService;
-import org.gobiiproject.gobidomain.services.gdmv3.ProjectService;
-import org.gobiiproject.gobidomain.services.gdmv3.ReferenceService;
-import org.gobiiproject.gobidomain.services.gdmv3.VendorProtocolService;
+import org.gobiiproject.gobiidomain.services.gdmv3.*;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.auditable.GobiiProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.DatasetRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ReferenceDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.VendorProtocolDTO;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentPatchRequest;
-import org.gobiiproject.gobiimodel.dto.request.ExperimentRequest;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectPatchDTO;
-import org.gobiiproject.gobiimodel.dto.request.GobiiProjectRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.*;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -121,6 +91,9 @@ public class GOBIIControllerV3  {
     private OrganizationService organizationService;
 
     @Autowired
+    private ProtocolService protocolService;
+
+    @Autowired
     private CvService cvService;
 
     @Autowired
@@ -176,19 +149,19 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/projects")
     @ResponseBody 
-    public ResponseEntity<BrApiMasterListPayload<GobiiProjectDTO>> getProjectsList(
+    public ResponseEntity<BrApiMasterListPayload<ProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-            @RequestParam(required=false) Integer piContactId) {
+            @RequestParam(required=false) Integer piContactId) throws Exception {
         log.debug("Querying projects List");
         Integer pageSizeToUse = getPageSize(pageSize);
 
-        PagedResult<GobiiProjectDTO> pagedResult =  projectService.getProjects(
+        PagedResult<ProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, page),
             pageSizeToUse,
             piContactId
         );
-        BrApiMasterListPayload<GobiiProjectDTO> payload = this.getMasterListPayload(pagedResult);   
+        BrApiMasterListPayload<ProjectDTO> payload = this.getMasterListPayload(pagedResult);   
         return ResponseEntity.ok(payload);
     }
 
@@ -200,8 +173,8 @@ public class GOBIIControllerV3  {
      */
     @PostMapping("/projects")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> createProject(
-            @RequestBody @Valid final GobiiProjectRequestDTO project,
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> createProject(
+            @RequestBody @Validated(ProjectDTO.Create.class) final ProjectDTO project,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -209,8 +182,8 @@ public class GOBIIControllerV3  {
         //Get the current user
         String userName = this.getCurrentUser();
 
-        GobiiProjectDTO createdDTO = projectService.createProject(project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(createdDTO);
+        ProjectDTO createdDTO = projectService.createProject(project, userName);
+        BrApiMasterPayload<ProjectDTO> result = this.getMasterPayload(createdDTO);
         return ResponseEntity.created(null).body(result);
     }
 
@@ -223,14 +196,14 @@ public class GOBIIControllerV3  {
      */
     @GetMapping("/projects/{projectId}")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> getProject(
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> getProject(
         @PathVariable Integer projectId
     ) throws Exception {
-        GobiiProjectDTO project = projectService.getProject(projectId);
+        ProjectDTO project = projectService.getProject(projectId);
         if (project == null) {
             throw new NullPointerException("Project does not exist");
         }
-        BrApiMasterPayload<GobiiProjectDTO> result = this.getMasterPayload(project);
+        BrApiMasterPayload<ProjectDTO> result = this.getMasterPayload(project);
         return ResponseEntity.ok(result);
     }
 
@@ -241,15 +214,15 @@ public class GOBIIControllerV3  {
      */
     @PatchMapping("/projects/{projectId}")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<GobiiProjectDTO>> patchProject(
+    public ResponseEntity<BrApiMasterPayload<ProjectDTO>> patchProject(
         @PathVariable Integer projectId,
-        @RequestBody @Valid final GobiiProjectPatchDTO project,
+        @RequestBody @Validated(ProjectDTO.Update.class) final ProjectDTO project,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
         String userName = this.getCurrentUser();
-        GobiiProjectDTO dto = projectService.patchProject(projectId, project, userName);
-        BrApiMasterPayload<GobiiProjectDTO> payload = this.getMasterPayload(dto);
+        ProjectDTO dto = projectService.patchProject(projectId, project, userName);
+        BrApiMasterPayload<ProjectDTO> payload = this.getMasterPayload(dto);
         return ResponseEntity.ok(payload);
     }
 
@@ -357,7 +330,7 @@ public class GOBIIControllerV3  {
     @PostMapping("/experiments")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> createProject(
-            @RequestBody @Valid final ExperimentRequest experiment,
+            @RequestBody @Validated(ExperimentDTO.Create.class) final ExperimentDTO experiment,
             BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -381,7 +354,7 @@ public class GOBIIControllerV3  {
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<ExperimentDTO>> updateExperiment(
         @PathVariable Integer experimentId,
-        @RequestBody @Valid final ExperimentPatchRequest request,
+        @RequestBody @Validated(ExperimentDTO.Update.class) final ExperimentDTO request,
         BindingResult bindingResult
     ) throws Exception {
         this.checkBindingErrors(bindingResult);
@@ -1118,6 +1091,86 @@ public class GOBIIControllerV3  {
         return ResponseEntity.noContent().build();
     }
 
+    // -- Protocols
+
+    /**
+     * Get Protocol
+     * @return
+     */
+    @GetMapping("/protocols")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ProtocolDTO>> getProtocols(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required = false) Integer platformId
+    ) throws Exception {
+        pageSize = this.getPageSize(pageSize);
+        PagedResult<ProtocolDTO> pagedResult = protocolService.getProtocols(
+            pageSize, page, platformId);
+        BrApiMasterListPayload<ProtocolDTO> payload = this.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Create protocol
+     * @return
+     */
+    @PostMapping("/protocols")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> createProtocol(
+        @RequestBody @Validated(ProtocolDTO.Create.class) final ProtocolDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        ProtocolDTO protocolDTO = protocolService.createProtocol(request);
+        BrApiMasterPayload<ProtocolDTO> payload =  this.getMasterPayload(protocolDTO);
+        return ResponseEntity.created(null).body(payload);
+    }
+
+    /**
+     * Get Protocol by Id
+     * @return
+     */
+    @GetMapping("/protocols/{protocolId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> getProtocol(
+        @PathVariable Integer protocolId
+    ) throws Exception {
+        ProtocolDTO protocolDTO = protocolService.getProtocolById(protocolId);
+        BrApiMasterPayload<ProtocolDTO> payload = this.getMasterPayload(protocolDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Update Protocol by Id
+     */
+    @PatchMapping("/protocols/{protocolId}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<ProtocolDTO>> updateProtocol(
+        @PathVariable Integer protocolId,
+        @RequestBody @Validated(ProtocolDTO.Update.class) final ProtocolDTO request,
+        BindingResult bindingResult
+    ) throws Exception {
+        this.checkBindingErrors(bindingResult);
+        ProtocolDTO protocolDTO = protocolService.patchProtocol(protocolId, request);
+        BrApiMasterPayload<ProtocolDTO> payload = this.getMasterPayload(protocolDTO);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * Delete Protocol by Id
+     * @return
+     */
+    @DeleteMapping("/protocols/{protocolId}")
+    @ResponseBody
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity deleteProtocol(
+        @PathVariable Integer protocolId
+    ) throws Exception {
+        protocolService.deleteProtocol(protocolId);
+        return ResponseEntity.noContent().build();
+    }
+
     //---- Marker Group
 
     @PostMapping("/markergroups")
@@ -1245,7 +1298,8 @@ public class GOBIIControllerV3  {
                     info.add(objErr.getField() + " " + objErr.getDefaultMessage());
                 }
             );
-            throw new ValidationException("Bad Request. " + String.join(", ", info.toArray(new String[info.size()])));
+            throw new ValidationException("Bad Request. "
+                + String.join(", ", info.toArray(new String[info.size()])));
         } 
     }
 

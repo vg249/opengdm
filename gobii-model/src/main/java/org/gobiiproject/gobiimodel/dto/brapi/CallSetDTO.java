@@ -2,8 +2,10 @@ package org.gobiiproject.gobiimodel.dto.brapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.ToString;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
@@ -19,6 +21,7 @@ import java.util.*;
         "modifiedBy", "modifiedDate", "createdDate"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ToString
 public class CallSetDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "dnaRunId", entity = DnaRun.class)
@@ -39,7 +42,7 @@ public class CallSetDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "dnaSample.dnaSampleName", entity = DnaRun.class, deep = true)
     private String sampleName;
 
-    private List<Integer> variantSetIds = new ArrayList<>();
+    private List<String> variantSetDbIds = new ArrayList<>();
 
     @GobiiEntityMap(paramName = "dnaSample.germplasm.germplasmId",
         entity = DnaRun.class, deep = true)
@@ -98,12 +101,12 @@ public class CallSetDTO extends DTOBaseAuditable {
         this.callSetName = callSetName;
     }
 
-    public List<Integer> getVariantSetIds() {
-        return variantSetIds;
+    public List<String> getVariantSetDbIds() {
+        return variantSetDbIds;
     }
 
-    public void setVariantSetIds(List<Integer> variantSetIds) {
-        this.variantSetIds = variantSetIds;
+    public void setVariantSetDbIds(List<String> variantSetDbIds) {
+        this.variantSetDbIds = variantSetDbIds;
     }
 
     public Integer getGermplasmDbId() {
@@ -157,4 +160,5 @@ public class CallSetDTO extends DTOBaseAuditable {
     }
 
     public CallSetDTO() { super(GobiiEntityNameType.DNARUN);}
+
 }

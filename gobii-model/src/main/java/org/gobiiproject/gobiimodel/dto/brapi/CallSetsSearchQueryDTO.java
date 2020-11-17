@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.brapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
 import org.gobiiproject.gobiimodel.validators.CheckAtLeastOneNotNullOrEmpty;
 
@@ -14,6 +15,7 @@ import java.util.Set;
             "samplePUIs", "variantSetDbIds", "germplasmPUIs", "germplasmDbIds",
             "germplasmNames"
         })
+@ToString
 public class CallSetsSearchQueryDTO {
 
     @Size(max = 1000, message = "Only 1000 callSetIds allowed per query")

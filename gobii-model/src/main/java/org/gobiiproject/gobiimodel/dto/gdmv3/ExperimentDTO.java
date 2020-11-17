@@ -8,6 +8,10 @@
 
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Positive;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -27,6 +31,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class ExperimentDTO extends DTOBaseAuditable {
     
+    public interface Create {}
+    public interface Update {}
+
     public ExperimentDTO() {
         super(GobiiEntityNameType.EXPERIMENT);
     }
@@ -50,23 +57,41 @@ public class ExperimentDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName = "project.projectId",  entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
+    @Positive(groups = {ProjectDTO.Create.class})
+    @Null(groups = {ProjectDTO.Update.class})
     private Integer projectId;
 
     @GobiiEntityMap(paramName = "project.projectName", entity = Experiment.class, deep = true)
+    @NotBlank(groups = {ProjectDTO.Create.class})
     private String projectName;
 
-    @GobiiEntityMap(paramName = "vendorProtocol.vendorProtocolId", entity = Experiment.class, deep = true)
+    @GobiiEntityMap(paramName = "vendorProtocol.protocol.protocolId",
+        entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer vendorProtocolId;
+    @Positive(groups = {ProjectDTO.Create.class})
+    private Integer protocolId;
     
-    @GobiiEntityMap(paramName = "vendorProtocol.name", entity = Experiment.class, deep = true)
-    private String vendorProtocolName;
-    
-    @GobiiEntityMap(paramName = "vendorProtocol.protocol.platform.platformId", entity = Experiment.class, deep = true)
+    @GobiiEntityMap(paramName = "vendorProtocol.protocol.name",
+        entity = Experiment.class, deep = true)
+    private String protocolName;
+
+    @GobiiEntityMap(paramName = "vendorProtocol.vendor.organizationId",
+        entity = Experiment.class, deep = true)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Positive(groups = {ProjectDTO.Create.class})
+    private Integer vendorId;
+
+    @GobiiEntityMap(paramName = "vendorProtocol.vendor.name",
+        entity = Experiment.class, deep = true)
+    private String vendorName;
+
+    @GobiiEntityMap(paramName = "vendorProtocol.protocol.platform.platformId",
+        entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer platformId;
 
-    @GobiiEntityMap(paramName = "vendorProtocol.protocol.platform.platformName", entity = Experiment.class, deep = true)
+    @GobiiEntityMap(paramName = "vendorProtocol.protocol.platform.platformName",
+        entity = Experiment.class, deep = true)
     private String platformName;
 
     //TODO: when the stats table is done
