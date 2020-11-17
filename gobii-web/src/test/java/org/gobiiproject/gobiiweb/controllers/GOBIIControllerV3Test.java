@@ -321,7 +321,7 @@ public class GOBIIControllerV3Test {
 
     @Test
     public void testPatchWithProperties() throws Exception {
-        String requestJson = "{\"piContactId\" : \"4\",\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
+        String requestJson = "{\"projectName\" : \"test\", \"projectDescription\" : \"Test description\"," +
             "\"properties\" : [ {\"propertyId\" : \"4\",  \"propertyValue\" : \"test-value\"} ]}";
 
         ProjectDTO mockGobiiProject = new ProjectDTO();
