@@ -21,6 +21,8 @@
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
     <bean id="platformDao" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
+    <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
+    <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
 
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>

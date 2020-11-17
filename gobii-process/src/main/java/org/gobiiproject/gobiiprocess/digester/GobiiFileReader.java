@@ -225,13 +225,7 @@ public class GobiiFileReader {
             if (loadType.equals(GobiiFileType.GENERIC)) loadTypeName = loadType.name();
         }
 
-        ApplicationContext context = new ClassPathXmlApplicationContext(
-            "classpath:/spring/application-config.xml");
 
-        CvDao cvDao = context.getBean(CvDao.class);
-        List<CvGroup> cvs = cvDao.getCvGroups(100, 0);
-
-        System.out.println(cvs);
 
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant

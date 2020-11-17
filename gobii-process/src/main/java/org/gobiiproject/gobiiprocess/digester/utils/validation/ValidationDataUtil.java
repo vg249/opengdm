@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
@@ -17,151 +18,215 @@ import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Mapset;
+import org.gobiiproject.gobiimodel.entity.Platform;
+import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
 import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
+import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URL;
 import java.util.*;
 
 public class ValidationDataUtil {
 
-    @PersistenceContext
-    private static EntityManager em;
-
-    @Autowired
-    private PlatformDao platformDao;
-
-    @Autowired
-    private static MapsetDao mapsetDao;
-
     private final static int pageSize = 1000;
+
+    private static ApplicationContext context = new ClassPathXmlApplicationContext(
+        "classpath:/spring/application-config.xml");
+
+    private static MapsetDao mapsetDao = context.getBean(MapsetDao.class);
+
+    private static ExperimentDao experimentDao = context.getBean(ExperimentDao.class);
+
+    private static ProjectDao projectDao = context.getBean(ProjectDao.class);
+
+    private static PlatformDao platformDao = context.getBean(PlatformDao.class);
 
     /**
      * Gets the allowed values for foreign key
      */
-    public static Map<String, String> getAllowedForeignKeyList(String foreignKey, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public static Map<String, String> getAllowedForeignKeyList(String foreignKey,
+                                                               List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
         Map<String, String> foreignKeyIdNameMap = new HashMap<>();
         try {
-            GobiiUriFactory uriFactory = GobiiClientContext.getInstance(null, false).getUriFactory();
-            RestUri restUri;
+            int offset = 0;
             if (foreignKey.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
-                List<Mapset> mapsets = mapsetDao.getMapsets(pageSize, 0, null);
-                mapsets.forEach(mapset -> {
-                    foreignKeyIdNameMap.put(mapset.getMapsetId().toString(),
-                        mapset.getMapsetName());
-                });
-                return foreignKeyIdNameMap;
+                List<Mapset> mapsets = new ArrayList<>();
+                while (mapsets.size() == pageSize || offset == 0) {
+                    mapsets = mapsetDao.getMapsets(pageSize, offset, null);
+                    mapsets.forEach(mapset -> {
+                        foreignKeyIdNameMap.put(
+                            mapset.getMapsetId().toString(),
+                            mapset.getMapsetName());
+                    });
+                    offset += pageSize;
+                }
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNARUN)) {
-                restUri = uriFactory.resourceColl(RestResourceId.GOBII_EXPERIMENTS);
-                return foreignKeyIdNameMap;
+                List<Experiment> experiments = new ArrayList<>();
+                while (experiments.size() == pageSize || offset == 0) {
+                    experiments = experimentDao.getExperiments(pageSize, 0, null);
+                    experiments.forEach(experiment -> {
+                        foreignKeyIdNameMap.put(
+                            experiment.getExperimentId().toString(),
+                            experiment.getExperimentName());
+                    });
+                    offset += pageSize;
+                }
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME)) {
-                restUri = uriFactory.resourceColl(RestResourceId.GOBII_PROJECTS);
-                return foreignKeyIdNameMap;
+                List<Project> projects = new ArrayList<>();
+                while (projects.size() == pageSize || offset == 0) {
+                    projects = projectDao.getProjects(offset/pageSize, pageSize, null);
+                    projects.forEach(project -> {
+                        foreignKeyIdNameMap.put(
+                            project.getProjectId().toString(),
+                            project.getProjectName());
+                    });
+                    offset += pageSize;
+                }
             } else {
-                ValidationUtil.createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY, new ArrayList<>(), foreignKey, failureList);
-                return foreignKeyIdNameMap;
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY,
+                    new ArrayList<>(),
+                    foreignKey,
+                    failureList);
             }
         } catch (Exception e) {
-            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
-            return foreignKeyIdNameMap;
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
         }
+        return foreignKeyIdNameMap;
     }
 
     /**
      * Verifies whether the Platform Id is valid or not
      */
-    public static Map<String, String> validatePlatformId(String platformId, List<Failure> failureList) throws MaximumErrorsValidationException {
-        Map<String, String> mapsetDTOList = new HashMap<>();
+    public static Map<String, String> validatePlatformId(String platformId,
+                                                         List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
+        Map<String, String> platformIdNameMap = new HashMap<>();
         try {
-            RestUri restUri = GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceByUriIdParam(RestResourceId.GOBII_PLATFORM);
-            restUri.setParamValue("id", platformId);
-            GobiiEnvelopeRestResource<PlatformDTO, PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource.get(PlatformDTO.class);
-            if (resultEnvelope.getHeader().getStatus().isSucceeded())
-                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getPlatformId().toString(), dto.getPlatformName()));
-            else
-                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PLATFORM_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
-            return mapsetDTOList;
+            Integer intPlatformId = Integer.parseInt(platformId);
+            Platform platform = platformDao.getPlatform(intPlatformId);
+            if(platform != null) {
+                platformIdNameMap.put(platform.getPlatformId().toString(),
+                    platform.getPlatformName());
+            }
+            else {
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PLATFORM_ID,
+                    new ArrayList<>(),
+                    "Platform not found",
+                    failureList);
+            }
         } catch (Exception e) {
-            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
-            return mapsetDTOList;
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
         }
+        return platformIdNameMap;
     }
 
     /**
      * Verifies whether the Project Id is valid or not
      */
-    public static Map<String, String> validateProjectId(String projectId, List<Failure> failureList) throws MaximumErrorsValidationException {
-        Map<String, String> mapsetDTOList = new HashMap<>();
+    public static Map<String, String> validateProjectId(String projectId,
+                                                        List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
+        Map<String, String> projectIdNameMap = new HashMap<>();
         try {
-            RestUri restUri = GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceByUriIdParam(RestResourceId.GOBII_PROJECTS);
-            restUri.setParamValue("id", projectId);
-            GobiiEnvelopeRestResource<ProjectDTO, ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ProjectDTO.class);
-            if (resultEnvelope.getHeader().getStatus().isSucceeded())
-                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getProjectId().toString(), dto.getProjectName()));
-            else
-                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PROJECT_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
-            return mapsetDTOList;
+            Integer intProjectId = Integer.parseInt(projectId);
+            Project project = projectDao.getProject(intProjectId);
+            if(project != null) {
+                projectIdNameMap.put(project.getProjectId().toString(),
+                    project.getProjectName());
+            }
+            else {
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PROJECT_ID,
+                    new ArrayList<>(),
+                    "Project not found",
+                    failureList);
+            }
         } catch (Exception e) {
-            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
-            return mapsetDTOList;
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
         }
+        return projectIdNameMap;
     }
 
     /**
      * Verifies whether the Experiment Id is valid or not
      */
-    public static Map<String, String> validateExperimentId(String experimentId, List<Failure> failureList) throws MaximumErrorsValidationException {
-        Map<String, String> mapsetDTOList = new HashMap<>();
+    public static Map<String, String> validateExperimentId(String experimentId,
+                                                           List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
+        Map<String, String> experimentIdNameMap = new HashMap<>();
         try {
-            RestUri restUri = GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS);
-            restUri.setParamValue("id", experimentId);
-            GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ExperimentDTO.class);
-            if (resultEnvelope.getHeader().getStatus().isSucceeded())
-                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentId().toString(), dto.getExperimentName()));
-            else
-                ValidationUtil.createFailure(FailureTypes.UNDEFINED_EXPERIMENT_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
-            return mapsetDTOList;
+            Integer intExperimentId = Integer.parseInt(experimentId);
+            Experiment experiment = experimentDao.getExperiment(intExperimentId);
+            if(experiment != null) {
+                experimentIdNameMap.put(
+                    experiment.getExperimentId().toString(),
+                    experiment.getExperimentName());
+            }
+            else {
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_EXPERIMENT_ID,
+                    new ArrayList<>(),
+                    "Experiment not found",
+                    failureList);
+            }
         } catch (Exception e) {
-            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
-            return mapsetDTOList;
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
         }
+        return experimentIdNameMap;
     }
 
-    public static Map<String, String> validateMapId(String mapId, List<Failure> failureList) throws MaximumErrorsValidationException {
-        Map<String, String> mapsetDTOList = new HashMap<>();
+    public static Map<String, String> validateMapId(String mapId,
+                                                    List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetIdNameMap = new HashMap<>();
         try {
-            RestUri restUri = GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceByUriIdParam(RestResourceId.GOBII_MAPSET);
-            restUri.setParamValue("id", mapId);
-            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
-            if (resultEnvelope.getHeader().getStatus().isSucceeded())
-                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getMapsetId().toString(), dto.getName()));
-            else
-                ValidationUtil.createFailure(FailureTypes.UNDEFINED_MAP_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
-            return mapsetDTOList;
+            Integer intMapSetId = Integer.parseInt(mapId);
+            MapsetDao mapsetDao = context.getBean(MapsetDao.class);
+            Mapset mapset = mapsetDao.getMapset(intMapSetId);
+            if(mapset != null) {
+                mapsetIdNameMap.put(
+                    mapset.getMapsetId().toString(),
+                    mapset.getMapsetName());
+            }
+            else {
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_MAP_ID,
+                    new ArrayList<>(),
+                    "Genome Map not found",
+                    failureList);
+            }
         } catch (Exception e) {
-            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
-            return mapsetDTOList;
+            ValidationUtil.createFailure(
+                FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
         }
+        return mapsetIdNameMap;
     }
 
     //TODO - this limit can be divined by another webservice call

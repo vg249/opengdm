@@ -524,7 +524,8 @@ class ValidationUtil {
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
                     String projectId = foreignKeyList.iterator().next();//There's only 1
-                    foreignKeyValueFromDB = ValidationWebServicesUtil.validateProjectId(projectId, failureList);
+                    foreignKeyValueFromDB = ValidationDataUtil.validateProjectId(
+                        projectId, failureList);
                     if (foreignKeyValueFromDB.size() == 0) {
                         undefinedForeignKey(condition, projectId, failureList);
                         return;
@@ -551,7 +552,12 @@ class ValidationUtil {
         }
     }
 
-    private static void validateDbWithForeignKey(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig cropConfig) throws MaximumErrorsValidationException {
+    private static void validateDbWithForeignKey(String fileName,
+                                                 ConditionUnit condition,
+                                                 List<Failure> failureList,
+                                                 GobiiCropConfig cropConfig
+    ) throws MaximumErrorsValidationException {
+
         String fieldToCompare = condition.fieldToCompare.get(0);
         String typeName = condition.typeName;
         Set<String> foreignKeyList = new HashSet<>();
@@ -559,7 +565,8 @@ class ValidationUtil {
             Map<String, Set<String>> mapForeignkeyAndName = new HashMap<>();
             if (createForeignKeyGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
                 Map<String, String> foreignKeyValueFromDB = new HashMap<>();
-                if ((foreignKeyList.size() != 1) && condition.foreignKey.equalsIgnoreCase("platform_id")) {
+                if ((foreignKeyList.size() != 1) &&
+                    condition.foreignKey.equalsIgnoreCase("platform_id")) {
                     multiplePlatformIdError(condition, failureList);
                     return;
                 }
@@ -569,7 +576,8 @@ class ValidationUtil {
                     switch (condition.foreignKey.toLowerCase()){
                         case "platform_id":
                             for (String platformId : foreignKeyList) {
-                                foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                                foreignKeyValueFromDB = ValidationDataUtil.validatePlatformId(
+                                    platformId, failureList);
                                 if (foreignKeyValueFromDB.size() == 0) {
                                     undefinedForeignKey(condition, platformId, failureList);
                                     return;
@@ -578,7 +586,8 @@ class ValidationUtil {
                             break;
                         case "map_id":
                             for (String mapId : foreignKeyList) {
-                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateMapId(mapId, failureList);
+                                foreignKeyValueFromDB = ValidationDataUtil.validateMapId(
+                                    mapId, failureList);
                                 if (foreignKeyValueFromDB.size() == 0) {
                                     undefinedForeignKey(condition, mapId, failureList);
                                     return;
@@ -587,7 +596,8 @@ class ValidationUtil {
                             break;
                         case "experiment_id":
                             for (String experimentId : foreignKeyList) {
-                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateExperimentId(experimentId, failureList);
+                                foreignKeyValueFromDB = ValidationDataUtil.validateExperimentId(
+                                    experimentId, failureList);
                                 if (foreignKeyValueFromDB.size() == 0) {
                                     undefinedForeignKey(condition, experimentId, failureList);
                                     return;
@@ -596,7 +606,9 @@ class ValidationUtil {
                             break;
                         case "project_id":
                             for (String projectId : foreignKeyList) {
-                                foreignKeyValueFromDB = ValidationWebServicesUtil.validateProjectId(projectId, failureList);
+                                foreignKeyValueFromDB = ValidationDataUtil.validateProjectId(
+                                    projectId,
+                                    failureList);
                                 if (foreignKeyValueFromDB.size() == 0) {
                                     undefinedForeignKey(condition, projectId, failureList);
                                     return;
@@ -607,7 +619,7 @@ class ValidationUtil {
                             undefinedForeignKey(condition,condition.foreignKey,failureList);
                     }
                 } else {
-                    foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(
+                    foreignKeyValueFromDB = ValidationDataUtil.getAllowedForeignKeyList(
                         condition.typeName,
                         failureList);
                 }
@@ -641,11 +653,23 @@ class ValidationUtil {
                                 failureReason = FailureTypes.UNDEFINED_MARKER_NAME__VALUE;
                                 break;
                             default:
-                                Logger.logError("ValidationUtils","No valid ValidationConstant defined for validation "+ condition.typeName);
+                                Logger.logError(
+                                    "ValidationUtils",
+                                    "No valid ValidationConstant defined for validation "
+                                        + condition.typeName);
                         }
 
-                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, foreignKey, failureList, cropConfig);
-                        processResponseList(nameIdDTOListResponse, fieldToCompare, failureReason, failureList);
+                        List<NameIdDTO> nameIdDTOListResponse =
+                            ValidationWebServicesUtil.getNamesByNameList(
+                                nameIdDTOList,
+                                typeName,
+                                foreignKey,
+                                failureList,
+                                cropConfig);
+                        processResponseList(nameIdDTOListResponse,
+                            fieldToCompare,
+                            failureReason,
+                            failureList);
                     } else undefinedForeignKey(condition, ent.getKey(), failureList);
                 }//end for entry in entryset
             }
