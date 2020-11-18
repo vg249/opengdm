@@ -158,7 +158,8 @@ public class CropUserFilter extends GenericFilterBean {
         if (LineUtils.isNullOrEmpty(token.getEmail())) {
             throw new GobiiException(GobiiStatusLevel.ERROR,
                                      GobiiValidationStatusType.BAD_REQUEST,
-                                     "User does not have email id. Please contact admin to update their email.");                              
+                                     "User does not have email id. Please contact admin to update their email.");  
+        }                            
         contactService.addContact(
             token.getPreferredUsername(),
             token.getGivenName(),
