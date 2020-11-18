@@ -17,6 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.gobiiproject.gobiidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.URLUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
@@ -150,7 +154,11 @@ public class CropUserFilter extends GenericFilterBean {
                               .ofNullable(token.getOtherClaims().get("organization"))
                               .map(o -> o.toString())
                               .orElse(null);
-                                            
+        // check null check on email
+        if (LineUtils.isNullOrEmpty(token.getEmail())) {
+            throw new GobiiException(GobiiStatusLevel.ERROR,
+                                     GobiiValidationStatusType.BAD_REQUEST,
+                                     "User does not have email id. Please contact admin to update their email.");                              
         contactService.addContact(
             token.getPreferredUsername(),
             token.getGivenName(),
