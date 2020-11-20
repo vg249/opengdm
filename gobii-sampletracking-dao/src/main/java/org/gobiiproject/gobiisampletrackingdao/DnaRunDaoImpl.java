@@ -323,12 +323,18 @@ public class DnaRunDaoImpl implements DnaRunDao {
     }
 
     @Override
-    public List<DnaRun> getDnaRuns(Set<Integer> dnaRunIds, Set<String> dnaRunNames,
-                                   Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
-                                   Set<String> dnaSampleUuids, Set<String> germplasmExternalCodes,
-                                   Set<Integer> germplasmIds, Set<String> germplasmNames,
-                                   Set<String> datasetIds, Integer pageSize,
-                                   Integer dnaRunIdCursor, Integer rowOffset,
+    public List<DnaRun> getDnaRuns(Set<Integer> dnaRunIds,
+                                   Set<String> dnaRunNames,
+                                   Set<Integer> dnaSampleIds,
+                                   Set<String> dnaSampleNames,
+                                   Set<String> dnaSampleUuids,
+                                   Set<String> germplasmExternalCodes,
+                                   Set<Integer> germplasmIds,
+                                   Set<String> germplasmNames,
+                                   Set<String> datasetIds,
+                                   Integer pageSize,
+                                   Integer dnaRunIdCursor,
+                                   Integer rowOffset,
                                    boolean fetchAssociations) {
 
         List<DnaRun> dnaruns;
@@ -455,7 +461,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
             criteria.where(predicates.toArray(new Predicate[]{}));
 
-            /*Really Important for fetching by cursor*/
             criteria.orderBy(cb.asc(root.get("dnaRunId")));
 
             Query query =  em.createQuery(criteria);
