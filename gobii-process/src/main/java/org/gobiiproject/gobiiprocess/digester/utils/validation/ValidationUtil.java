@@ -6,15 +6,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -625,18 +617,18 @@ class ValidationUtil {
                 }
 
                 for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
+
                     String foreignKey=ent.getKey();
+
                     if (foreignKeyValueFromDB.keySet().contains(foreignKey)) {
-                        Set <String> nameSet = new HashSet<String>();
+
+                        // Remove duplicate names
+                        List<String> names = new ArrayList<>();
+                        Set<String> distinctNames = new LinkedHashSet<>();
                         for (String name : ent.getValue()) {
-                            nameSet.add(name);
+                            distinctNames.add(name);
                         }
-                        List<NameIdDTO> nameIdDTOList = new ArrayList<>(); //Put into set, before final array
-                        for(String name: nameSet) {
-                            NameIdDTO nameIdDTO = new NameIdDTO();
-                            nameIdDTO.setName(name);
-                            nameIdDTOList.add(nameIdDTO);
-                        }
+                        names.addAll(distinctNames);
 
                         String failureReason = null;
                         switch(condition.typeName.toLowerCase()) {
@@ -660,12 +652,12 @@ class ValidationUtil {
                         }
 
                         List<NameIdDTO> nameIdDTOListResponse =
-                            ValidationWebServicesUtil.getNamesByNameList(
-                                nameIdDTOList,
+                            ValidationDataUtil.getNamesByNameList(
+                                names,
                                 typeName,
                                 foreignKey,
-                                failureList,
-                                cropConfig);
+                                failureList);
+
                         processResponseList(nameIdDTOListResponse,
                             fieldToCompare,
                             failureReason,
