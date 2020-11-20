@@ -24,7 +24,6 @@
     <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
 
-
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
 
     <context:component-scan base-package="org.gobiiproject.gobiiprocess.spring"/>
