@@ -228,7 +228,7 @@ public class ValidationDataUtil {
                                                      String gobiiEntityNameType,
                                                      String filterValue,
                                                      List<Failure> failureList
-    ) throws GobiiDaoException {
+    ) throws MaximumErrorsValidationException {
 
         int numEntities = names.size();
 
@@ -252,53 +252,101 @@ public class ValidationDataUtil {
                                                  String filterValue,
                                                  List<Failure> failureList
     ) throws MaximumErrorsValidationException {
+
         List<NameIdDTO> nameIdDTOs = new ArrayList<>();
+        Integer intFilterValue;
+        try {
+            intFilterValue = Integer.parseInt(filterValue);
+        }
+        catch (NumberFormatException nE) {
+            ValidationUtil.createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY,
+                new ArrayList<>(),
+                filterValue,
+                failureList);
+            return nameIdDTOs;
+        }
 
         try {
             switch (gobiiEntityNameType.toLowerCase()) {
 
-                case GobiiEntityNameType.DNARUN.name().toLowerCase():
-                    nameIdDTOs = getAnalysesNameIds(names, );
+                case "dnarun":
+                    nameIdDTOs = getDnaRunNameIds(names, intFilterValue);
                     break;
+                case "dnasample":
+                    nameIdDTOs = getDnaSampleNameIds(names, intFilterValue);
+                    break;
+                default:
+                    ValidationUtil.createFailure(FailureTypes.UNDEFINED_CONDITION_TYPE,
+                        new ArrayList<>(),
+                        filterValue,
+                        failureList);
+                    return nameIdDTOs;
+
 
             }
 
-            if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
-                switch (filterValue) {
-                    case "species_name":
-                        namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
-                        break;
-                    case "type_name":
-                        namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
-                        break;
-                    case "strand_name":
-                        namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_MARKER_STRAND.getCvGroupName());
-                        break;
-                    default:
-                        ValidationUtil.createFailure(FailureTypes.UNDEFINED_CV, new ArrayList<>(), filterValue, failureList);
-                        return nameIdDTOListResponse;
-                }
-            } else namesUri.setParamValue("filterValue", filterValue);
+            //if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
+            //    switch (filterValue) {
+            //        case "species_name":
+            //            namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+            //            break;
+            //        case "type_name":
+            //            namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
+            //            break;
+            //        case "strand_name":
+            //            namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_MARKER_STRAND.getCvGroupName());
+            //            break;
+            //        default:
+            //            ValidationUtil.createFailure(FailureTypes.UNDEFINED_CV, new ArrayList<>(), filterValue, failureList);
+            //            return nameIdDTOListResponse;
+            //    }
+            //} else namesUri.setParamValue("filterValue", filterValue);
 
-        } catch (MaximumErrorsValidationException e) {
+        }
+        catch (GobiiDaoException gE) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                gE.getMessage(),
+                failureList);
+        }
+        catch (MaximumErrorsValidationException e) {
             throw e;
         } catch (Exception e) {
-            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
         }
         return nameIdDTOs;
     }
 
-    private static List<NameIdDTO> getAnalysesNameIds(Set<String> names) {
+    /**
+     * @param names         List of dnaRun names for which
+     * @param filterValue   for DnaRun filter value is experiment id
+     * @return NameIdDto list
+     */
+    private static List<NameIdDTO> getDnaRunNameIds(Set<String> names,
+                                                    Integer filterValue
+    ) throws GobiiDaoException {
         List<NameIdDTO> nameIdDTOs = new ArrayList<>();
-        AnalysisDao analysisDao = context.getBean(AnalysisDao.class);
-        List<Analysis> analyses = analysisDao.getAnalysesByAnalysisNames(names);
-        for(Analysis analysis : analyses) {
-            nameIdDTOs.add(new NameIdDTO(analysis.getAnalysisId(), analysis.getAnalysisName()));
+        DnaRunDao dnaRunDao = context.getBean(DnaRunDao.class);
+        List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDnaRunNames(names, filterValue);
+        for(DnaRun dnaRun : dnaRuns) {
+            nameIdDTOs.add(new NameIdDTO(dnaRun.getDnaRunId(), dnaRun.getDnaRunName()));
         }
         return nameIdDTOs;
     }
 
-    private static NameIdDTO getNameIdDTO(Integer id, String name) {
-        return
+    private static List<NameIdDTO> getDnaSampleNameIds(Set<String> names,
+                                                       Integer filterValue
+    ) throws GobiiDaoException {
+        List<NameIdDTO> nameIdDTOs = new ArrayList<>();
+        DnaSampleDao dnaSampleDao = context.getBean(DnaSampleDao.class);
+        List<DnaSample> dnaSamples = dnaSampleDao.getDnaSamples(names, filterValue);
+        for(DnaSample dnaSample : dnaSamples) {
+            nameIdDTOs.add(new NameIdDTO(dnaSample.getDnaSampleId(), dnaSample.getDnaSampleName()));
+        }
+        return nameIdDTOs;
     }
+
 }

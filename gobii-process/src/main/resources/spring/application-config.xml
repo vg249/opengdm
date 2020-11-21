@@ -23,6 +23,9 @@
     <bean id="platformDao" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
     <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
+    <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
+    <bean id="dnaSampleDao" class="org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl"/>
+
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
 

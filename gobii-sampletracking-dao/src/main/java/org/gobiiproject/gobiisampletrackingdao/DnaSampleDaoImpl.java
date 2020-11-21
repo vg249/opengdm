@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -228,10 +225,15 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     @Override
     public List<DnaSample> getDnaSamples(
-        Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
-        Set<String> dnaSampleUuids, Set<Integer> germplasmIds,
-        Set<String> germplasmNames, Set<String> germplasmExternalCodes,
-        Set<Integer> projectIds, Integer pageSize, Integer rowOffset) {
+        Set<Integer> dnaSampleIds,
+        Set<String> dnaSampleNames,
+        Set<String> dnaSampleUuids,
+        Set<Integer> germplasmIds,
+        Set<String> germplasmNames,
+        Set<String> germplasmExternalCodes,
+        Set<Integer> projectIds,
+        Integer pageSize,
+        Integer rowOffset) throws GobiiDaoException {
 
         List<DnaSample> dnasamples;
 
@@ -305,5 +307,22 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
         }
 
     }
+
+    public List<DnaSample> getDnaSamples(Set<String> dnaSampleNames,
+                                         Integer projectId) throws GobiiDaoException {
+        Set<Integer> projectIds = new HashSet<>();
+        projectIds.add(projectId);
+        return this.getDnaSamples(
+            null, // dnaSampleIds
+            dnaSampleNames,
+            null, // dnaSampleUuids
+            null, // germplasmIds
+            null, // germplasmNames
+            null, // germplasmExternalCodes
+            projectIds,
+            dnaSampleNames.size(),
+            0);
+    }
+
 
 }
