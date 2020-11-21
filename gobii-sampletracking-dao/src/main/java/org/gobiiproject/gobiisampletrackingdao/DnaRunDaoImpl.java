@@ -364,6 +364,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                                    Set<Integer> germplasmIds,
                                    Set<String> germplasmNames,
                                    Set<String> datasetIds,
+                                   Set<Integer> experimentIds,
                                    Integer pageSize,
                                    Integer dnaRunIdCursor,
                                    Integer rowOffset,
@@ -377,8 +378,6 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         try {
 
-            Objects.requireNonNull(pageSize, "pageSize : Required non null");
-
             CriteriaBuilder cb  = em.getCriteriaBuilder();
             CriteriaQuery<DnaRun> criteria = cb.createQuery(DnaRun.class);
 
@@ -386,9 +385,15 @@ public class DnaRunDaoImpl implements DnaRunDao {
             Root<DnaRun> root = criteria.from(DnaRun.class);
             Join<Object, Object> dnaSampleJoin;
             Join<Object, Object> germplasmJoin;
+            Join<Object, Object> experimentJoin;
 
-            if(fetchAssociations) {
-                root.fetch("experiment");
+            if(CollectionUtils.isNotEmpty(experimentIds)) {
+                if(fetchAssociations) {
+                    experimentJoin = (Join<Object, Object>) root.fetch("experiment");
+                }
+                else {
+                    experimentJoin = root.join("experiment");
+                }
             }
 
             if(!CollectionUtils.isEmpty(dnaSampleIds) ||
@@ -447,6 +452,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 if(fetchAssociations) {
                     dnaSampleJoin = (Join<Object, Object>) root.fetch("dnaSample");
                     dnaSampleJoin.fetch("germplasm").fetch("germplasmType", JoinType.LEFT);
+                    root.fetch("experiment");
                 }
             }
 
@@ -543,6 +549,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
             null,
             null,
             null,
+            null,
             dnaRunIds.size(),
             null,
             null,
@@ -567,7 +574,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
             null,
             null,
             null,
-            dnaRunNames.size(),
+            null,
+            null,
             null,
             null,
             false);

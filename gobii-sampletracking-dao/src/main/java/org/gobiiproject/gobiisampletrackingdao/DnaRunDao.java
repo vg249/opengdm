@@ -28,6 +28,7 @@ public interface DnaRunDao {
                             Set<Integer> germplasmIds,
                             Set<String> germplasmNames,
                             Set<String> datasetIds,
+                            Set<Integer> experimentIds,
                             Integer pageSize,
                             Integer dnaRunIdCursor,
                             Integer rowOffset, boolean fetchAssociations);

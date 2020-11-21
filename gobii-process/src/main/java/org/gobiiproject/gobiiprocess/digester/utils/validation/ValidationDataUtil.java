@@ -236,9 +236,7 @@ public class ValidationDataUtil {
         int maxEntitiesPerCall = MAX_ENTITIES_PER_QUERY;
 
         for(int i=0; i < numEntities; i+=maxEntitiesPerCall) {
-
             Set<String> namesSubSet = new HashSet<>(names.subList(i, i+maxEntitiesPerCall));
-
             results.addAll(mapNamesToIds(namesSubSet,
                 gobiiEntityNameType,
                 filterValue,
@@ -247,6 +245,15 @@ public class ValidationDataUtil {
         return results;
     }
 
+    /**
+     *
+     * @param names
+     * @param gobiiEntityNameType
+     * @param filterValue
+     * @param failureList
+     * @return
+     * @throws MaximumErrorsValidationException
+     */
     private static List<NameIdDTO> mapNamesToIds(Set<String> names,
                                                  String gobiiEntityNameType,
                                                  String filterValue,

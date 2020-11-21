@@ -308,8 +308,11 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
 
     }
 
+    @Override
     public List<DnaSample> getDnaSamples(Set<String> dnaSampleNames,
-                                         Integer projectId) throws GobiiDaoException {
+                                         Integer projectId,
+                                         Integer pageSize,
+                                         Integer rowOffset) throws GobiiDaoException {
         Set<Integer> projectIds = new HashSet<>();
         projectIds.add(projectId);
         return this.getDnaSamples(
@@ -320,8 +323,8 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
             null, // germplasmNames
             null, // germplasmExternalCodes
             projectIds,
-            dnaSampleNames.size(),
-            0);
+            pageSize,
+            rowOffset);
     }
 
 
