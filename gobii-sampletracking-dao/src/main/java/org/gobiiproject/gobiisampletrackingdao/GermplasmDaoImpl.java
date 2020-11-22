@@ -37,7 +37,7 @@ public class GermplasmDaoImpl implements GermplasmDao {
         Integer pageSize,
         Integer rowOffset) throws GobiiDaoException {
 
-        List<Germplasm> germplasms;
+        List<Germplasm> germplasms = new ArrayList<>();
         List<Predicate> predicates = new ArrayList<>();
 
         try {
@@ -53,21 +53,16 @@ public class GermplasmDaoImpl implements GermplasmDao {
                 predicates.add(root.get("externalCode").in(externalCodes));
                 criteria.select(root);
                 criteria.where(predicates.toArray(new Predicate[]{}));
+                criteria.orderBy(cb.asc(root.get("germplasmId")));
 
-                germplasms = em.createQuery(criteria)
-                    .setMaxResults(pageSize)
-                    .setFirstResult(rowOffset)
-                    .getResultList();
+                germplasms =
+                    em.createQuery(criteria)
+                        .setMaxResults(pageSize)
+                        .setFirstResult(rowOffset)
+                        .getResultList();
 
-                return germplasms;
             }
-            else {
-                throw new GobiiDaoException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Empty Dnarun names");
-            }
-
+            return germplasms;
         }
         catch (IllegalStateException | PersistenceException | IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);

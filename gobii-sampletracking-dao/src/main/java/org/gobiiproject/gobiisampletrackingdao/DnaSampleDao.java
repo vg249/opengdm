@@ -46,4 +46,6 @@ public interface DnaSampleDao {
                                   Integer pageSize,
                                   Integer rowOffset) throws GobiiDaoException;
 
+    List<DnaSample> queryByNameAndNum(List<DnaSample> queryParams, Integer projectId);
+
 }

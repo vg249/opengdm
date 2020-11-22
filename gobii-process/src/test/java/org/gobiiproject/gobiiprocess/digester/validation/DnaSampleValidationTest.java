@@ -69,12 +69,7 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleAllPassTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
-
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -93,12 +88,8 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleMissingRequiredFieldTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -124,12 +115,10 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleMismatchComparisionTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -152,7 +141,7 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleColumnCombinationNotUniqueTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/columnCombinationNotUnique", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/columnCombinationNotUnique", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -179,7 +168,7 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleExternalCodesGermplasmTableTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/externalCodesGermplasmTable", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/externalCodesGermplasmTable", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito

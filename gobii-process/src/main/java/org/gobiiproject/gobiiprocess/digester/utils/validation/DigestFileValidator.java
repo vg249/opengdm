@@ -21,35 +21,30 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.allowedExtensions;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginToServer;
 
 public class DigestFileValidator {
 
     static class InputParameters {
-        String rootDir, validationFile, url, password, userName;
+        String rootDir, validationFile;
     }
 
-    private String rootDir, rulesFile, url, password, username;
+    private String rootDir, rulesFile;
 
-    public DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
+    public DigestFileValidator(String rootDir, String validationFile) {
         this.rootDir = rootDir;
-        this.url = url;
         this.rulesFile = validationFile;
-        this.username = username;
-        this.password = password;
     }
 
-    public DigestFileValidator(String rootDir, String url, String username, String password) {
+    public DigestFileValidator(String rootDir) {
         this.rootDir = rootDir;
-        this.url = url;
-        this.username = username;
-        this.password = password;
     }
 
     public static void main(String[] args) {
         InputParameters inputParameters = new InputParameters();
         readInputParameters(args, inputParameters);
-        DigestFileValidator digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            inputParameters.rootDir,
+            inputParameters.validationFile);
         digestFileValidator.performValidation(null);
     }
 
@@ -65,28 +60,19 @@ public class DigestFileValidator {
             List<ValidationUnit> validations = readRules(writer);
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
-            List<Failure> failures = new ArrayList<>();
-            if (loginToServer(url, username, password, null, failures)) {
-                try {
-                    List<ValidationError> validationErrorList = doValidations(validations, cropConfig);
-                    writer.write(validationErrorList);
-                } catch (Exception e) {
-                    validationError.status = ValidationConstants.FAILURE;
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.VALIDATION_ERROR;
-                    failure.values.add(e.getMessage());
-                    validationError.failures.add(failure);
-                    List<ValidationError> validationErrorList = new ArrayList<>();
-                    validationErrorList.add(validationError);
-                    writer.write(validationErrorList);
-                    Logger.logError("DigestFileValidator",e);
-                }
-            } else {
+            try {
+                List<ValidationError> validationErrorList = doValidations(validations, cropConfig);
+                writer.write(validationErrorList);
+            } catch (Exception e) {
                 validationError.status = ValidationConstants.FAILURE;
-                validationError.failures.addAll(failures);
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.VALIDATION_ERROR;
+                failure.values.add(e.getMessage());
+                validationError.failures.add(failure);
                 List<ValidationError> validationErrorList = new ArrayList<>();
                 validationErrorList.add(validationError);
                 writer.write(validationErrorList);
+                Logger.logError("DigestFileValidator",e);
             }
             writer.close();
         } catch (IOException e) {
@@ -130,10 +116,7 @@ public class DigestFileValidator {
     private static void readInputParameters(String[] args, InputParameters inputParameters) {
         Options o = new Options()
                 .addOption("r", true, "Fully qualified path to digest directory")
-                .addOption("v", true, "Validation rule file path")
-                .addOption("h", true, "Host server URL")
-                .addOption("u", true, "User Name")
-                .addOption("p", true, "Password");
+                .addOption("v", true, "Validation rule file path");
         if (args.length != 8 && args.length != 10) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
@@ -142,24 +125,12 @@ public class DigestFileValidator {
             CommandLine cli = new DefaultParser().parse(o, args);
             if (cli.hasOption("r")) inputParameters.rootDir = cli.getOptionValue("r");
             if (cli.hasOption("v")) inputParameters.validationFile = cli.getOptionValue("v");
-            if (cli.hasOption("h")) inputParameters.url = cli.getOptionValue("h");
-            if (cli.hasOption("u")) inputParameters.userName = cli.getOptionValue("u");
-            if (cli.hasOption("p")) inputParameters.password = cli.getOptionValue("p");
-
-            if (ValidationUtil.isNullAndEmpty(inputParameters.rootDir) || ValidationUtil.isNullAndEmpty(inputParameters.url) || ValidationUtil.isNullAndEmpty(inputParameters.userName) || ValidationUtil.isNullAndEmpty(inputParameters.password)) {
-                new HelpFormatter().printHelp("DigestFileValidator", o);
-                System.exit(1);
-            }
-            if (inputParameters.validationFile == null) {
-                inputParameters.validationFile = "validationConfig.json";
-            }
-            if (inputParameters.url.charAt(inputParameters.url.length() - 1) != '/')
-                inputParameters.url = inputParameters.url + "/";
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
         }
-        Logger.logDebug("Entered Options are ", inputParameters.rootDir + " , " + inputParameters.validationFile + " , " + inputParameters.url + " , " + inputParameters.userName + " , " + inputParameters.password);
+        Logger.logDebug("Entered Options are ", inputParameters.rootDir + " , "
+            + inputParameters.validationFile);
     }
 
     /**

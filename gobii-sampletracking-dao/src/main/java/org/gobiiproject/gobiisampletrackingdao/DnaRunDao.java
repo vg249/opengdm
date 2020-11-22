@@ -31,7 +31,8 @@ public interface DnaRunDao {
                             Set<Integer> experimentIds,
                             Integer pageSize,
                             Integer dnaRunIdCursor,
-                            Integer rowOffset, boolean fetchAssociations);
+                            Integer rowOffset,
+                            boolean fetchAssociations);
 
     List<DnaRun> getDnaRuns(Integer pageSize,
                             Integer rowOffset,
@@ -63,10 +64,11 @@ public interface DnaRunDao {
 
     List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds);
 
-    List<DnaRun> getDnaRunsByDnaRunNames(Set<String> dnaRunNames);
 
     List<DnaRun> getDnaRunsByDnaRunNames(Set<String> dnaRunNames,
-                                         Integer experimentId) throws GobiiDaoException;
+                                         Integer experimentId,
+                                         Integer pageSize,
+                                         Integer rowOffset) throws GobiiDaoException;
 
 }
 

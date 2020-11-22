@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
@@ -453,11 +454,11 @@ class ValidationUtil {
                             if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) ||
                                 condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) ||
                                 condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
-                                validateDB(fileName, condition, failureList,cropConfig);
+                                validateDB(fileName, condition, failureList);
                             } else {
                                 if (condition.foreignKey != null) {
                                     if (condition.fieldToCompare.size() == 1)
-                                        validateDbWithForeignKey(fileName, condition, failureList,cropConfig);
+                                        validateDbWithForeignKey(fileName, condition, failureList);
                                     else validateDNASampleNameAndNum(fileName, condition, failureList,cropConfig);
                                 } else printMissingFieldError("DB", "foreignKey", failureList);
                             }
@@ -476,34 +477,51 @@ class ValidationUtil {
      * @param condition   condition
      * @param failureList failure list
      */
-    private static void validateDB(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig config) throws MaximumErrorsValidationException {
+    private static void validateDB(String fileName,
+                                   ConditionUnit condition,
+                                   List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
         Set<String> fieldNameList = new HashSet<>();
         String fieldToCompare = condition.fieldToCompare.get(0);
         String typeName = condition.typeName;
         if (readColumnIntoSet(fileName, fieldToCompare, fieldNameList, failureList)) {
-            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-            for (String fieldName : fieldNameList) {
-                NameIdDTO nameIdDTO = new NameIdDTO();
-                nameIdDTO.setName(fieldName);
-                nameIdDTOList.add(nameIdDTO);
-            }
-            if (typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE))
+            List<String> names = new ArrayList<>(fieldNameList);
+            if (typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
                 typeName = GobiiEntityNameType.GERMPLASM.name();
-            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, fieldToCompare, failureList, config);
+            }
+            List<String> invalidNames = ValidationDataUtil.validateNames(
+                names,
+                typeName,
+                fieldToCompare,
+                failureList);
+
             if (typeName.equalsIgnoreCase(ValidationConstants.CV)) {
-                processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList);
+                createFailure(FailureTypes.UNDEFINED_CV_VALUE,
+                    Collections.singletonList(fieldToCompare),
+                    invalidNames,
+                    failureList);
             }
             else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
-                processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_REFERENCE_VALUE, failureList);
+                createFailure(FailureTypes.UNDEFINED_REFERENCE_VALUE,
+                    Collections.singletonList(fieldToCompare),
+                    invalidNames,
+                    failureList);
             }
             else{
                 //In theory, 'germplasm' works as a field to compare
-                processResponseList(nameIdDTOListResponse,fieldToCompare,FailureTypes.UNDEFINED_VALUE, failureList);
+                createFailure(FailureTypes.UNDEFINED_VALUE,
+                    Collections.singletonList(fieldToCompare),
+                    invalidNames,
+                    failureList);
             }
         }
     }
 
-    private static void validateDNASampleNameAndNum(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig cropConfig) throws MaximumErrorsValidationException {
+    private static void validateDNASampleNameAndNum(String fileName,
+                                                    ConditionUnit condition,
+                                                    List<Failure> failureList,
+                                                    GobiiCropConfig cropConfig
+    ) throws MaximumErrorsValidationException {
         List<String> fieldToCompare = condition.fieldToCompare;
         Set<String> foreignKeyList = new HashSet<>();
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
@@ -523,21 +541,30 @@ class ValidationUtil {
                         return;
                     }
                 } else {
-                    createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY, Collections.singletonList(condition.foreignKey), failureList);
+                    createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY,
+                        Collections.singletonList(condition.foreignKey),
+                        failureList);
                     return;
                 }
-                String paramName = "dnaSampleNum";
                 for (Map.Entry<String, Set<List<String>>> ent : mapForeignkeyAndName.entrySet()) {
                     if (foreignKeyValueFromDB.keySet().contains(ent.getKey())) {
-                        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                        List<DnaSample> queryParams  = new ArrayList<>();
                         for (List<String> name : ent.getValue()) {
-                            NameIdDTO nameIdDTO = new NameIdDTO();
-                            nameIdDTO.setName(name.get(0));
-                            nameIdDTO.getParameters().put(paramName, ""+name.get(1));//Num is stringly typed
-                            nameIdDTOList.add(nameIdDTO);
+                            DnaSample queryParam = new DnaSample();
+                            queryParam.setDnaSampleName(name.get(0));
+                            queryParam.setDnaSampleName(""+name.get(1));//Num is stringly typed
+                            queryParams.add(queryParam);
                         }
-                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, GobiiEntityNameType.DNASAMPLE.toString(), ent.getKey(), failureList, cropConfig);
-                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNASAMPLE_NAME_NUM_VALUE, failureList);
+                        List<String> invalidNames =
+                            ValidationDataUtil.validateSampleNums(
+                                queryParams,
+                                ent.getKey(),
+                                failureList);
+                        createFailure(
+                            FailureTypes.UNDEFINED_DNASAMPLE_NAME_NUM_VALUE,
+                            fieldToCompare,
+                            invalidNames,
+                            failureList);
                     } else undefinedForeignKey(condition, ent.getKey(), failureList);
                 }
             }
@@ -546,8 +573,7 @@ class ValidationUtil {
 
     private static void validateDbWithForeignKey(String fileName,
                                                  ConditionUnit condition,
-                                                 List<Failure> failureList,
-                                                 GobiiCropConfig cropConfig
+                                                 List<Failure> failureList
     ) throws MaximumErrorsValidationException {
 
         String fieldToCompare = condition.fieldToCompare.get(0);
@@ -651,16 +677,17 @@ class ValidationUtil {
                                         + condition.typeName);
                         }
 
-                        List<NameIdDTO> nameIdDTOListResponse =
-                            ValidationDataUtil.getNamesByNameList(
+                        List<String> invalidNames =
+                            ValidationDataUtil.validateNames(
                                 names,
                                 typeName,
                                 foreignKey,
                                 failureList);
 
-                        processResponseList(nameIdDTOListResponse,
-                            fieldToCompare,
+                        createFailure(
                             failureReason,
+                            Collections.singletonList(fieldToCompare),
+                            invalidNames,
                             failureList);
                     } else undefinedForeignKey(condition, ent.getKey(), failureList);
                 }//end for entry in entryset
@@ -671,15 +698,19 @@ class ValidationUtil {
         }
         else{//readForeignKey
             Logger.logWarning("Vaidation","Unable to read foreign key");
-
         }
     }
 
-    private static void undefinedForeignKey(ConditionUnit condition, String value, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static void undefinedForeignKey(ConditionUnit condition,
+                                            String value,
+                                            List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
         createFailure(FailureTypes.UNDEFINED_VALUE, Collections.singletonList(condition.foreignKey), value, failureList);
     }
 
-    private static void multiplePlatformIdError(ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static void multiplePlatformIdError(ConditionUnit condition,
+                                                List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
         Failure failure = new Failure();
         failure.reason = FailureTypes.MULTIPLE_PLATFORM_ID;
         failure.columnName.add(condition.fieldToCompare.get(0));
@@ -687,7 +718,9 @@ class ValidationUtil {
         ValidationUtil.addMessageToList(failure, failureList);
     }
 
-    private static void multipleProjectIdError(ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static void multipleProjectIdError(ConditionUnit condition,
+                                               List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
         Failure failure = new Failure();
         failure.reason = FailureTypes.MULTIPLE_PROJECT_ID;
         failure.columnName.add(condition.fieldToCompare.get(0));
@@ -705,7 +738,11 @@ class ValidationUtil {
      * @param failureList          failure list
      * @return status true if succeeded
      */
-    private static boolean createForeignKeyGroup(String fileName, ConditionUnit condition, Map<String, Set<String>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static boolean createForeignKeyGroup(String fileName,
+                                                 ConditionUnit condition,
+                                                 Map<String, Set<String>> mapForeignkeyAndName,
+                                                 List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
         List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
         List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
         if (foreignKey.size() != fileColumn.size()) {
@@ -885,5 +922,18 @@ class ValidationUtil {
             failure.columnName.addAll(columnName);
         failure.values.add(value);
         ValidationUtil.addMessageToList(failure, failureList);
+    }
+
+    static void createFailure(String reason,
+                              List<String> columnName,
+                              List<String> values,
+                              List<Failure> failureList) throws MaximumErrorsValidationException {
+        for(String value : values) {
+            createFailure(
+                reason,
+                columnName,
+                value,
+                failureList);
+        }
     }
 }

@@ -285,22 +285,15 @@ public class DnaRunDaoTest {
             experimentDnaRunMap.get(dnaRun.getExperiment().getExperimentId()).add(dnaRun);
         }
 
-        List<DnaRun> dnaruns = dnaRunDao.getDnaRunsByDnaRunNames(dnarunNameSet);
-
-        assertTrue("Failed DnaRuns Test Setup",
-            dnaruns.size() <= dnarunNameSet.size()
-                && dnaruns.size() > 0);
-
-        for(DnaRun dnaRun : dnaruns) {
-            assertTrue("Failed DanRun filter by dnarun names",
-                dnarunNameSet.contains(dnaRun.getDnaRunName()));
-        }
-
         assertTrue("Invalid test data for experiment filter",
             experimentDnaRunMap.size() > 0);
 
         Integer testExperimentId = new ArrayList<>(experimentDnaRunMap.keySet()).get(0);
-        dnaruns = dnaRunDao.getDnaRunsByDnaRunNames(dnarunNameSet, testExperimentId);
+        List<DnaRun> dnaruns = dnaRunDao.getDnaRunsByDnaRunNames(
+            dnarunNameSet,
+            testExperimentId,
+            dnarunNameSet.size(),
+            0);
 
         assertTrue("Failed Experiment Id filter",
             dnaruns.size() == experimentDnaRunMap.get(testExperimentId).size());

@@ -346,7 +346,7 @@ public class GobiiFileReader {
         //Metadata Validation
         boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.isEnableValidation()) {
-            DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
+            DigestFileValidator digestFileValidator = new DigestFileValidator(directory);
             digestFileValidator.performValidation(gobiiCropConfig);
             //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
             List<Path> pathList =

@@ -2,10 +2,8 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import org.apache.commons.collections.CollectionUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -310,16 +308,16 @@ public class DnaRunDaoImpl implements DnaRunDao {
                           Integer rowOffset) {
 
         return getDnaRuns(
-            pageSize,
-            rowOffset,
-            null,
-            null,
-            datasetId,
-            null,
-            null,
-            null,
-            null,
-            null,
+            pageSize,  // Page size
+            rowOffset, // Row Offset
+            null,      // DnaRun Id
+            null,      // Dnarun Name
+            datasetId, // Dataset Id
+            null,      // Experiment Id
+            null,      // Dnasample Id
+            null,      // Dnasample Name
+            null,      // Germplasm Id
+            null,      // Germplasm Name
             true );
 
     }
@@ -378,6 +376,8 @@ public class DnaRunDaoImpl implements DnaRunDao {
 
         try {
 
+            Objects.requireNonNull(pageSize, "pageSize: Required non null");
+
             CriteriaBuilder cb  = em.getCriteriaBuilder();
             CriteriaQuery<DnaRun> criteria = cb.createQuery(DnaRun.class);
 
@@ -394,6 +394,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                 else {
                     experimentJoin = root.join("experiment");
                 }
+                predicates.add(experimentJoin.get("experimentId").in(experimentIds));
             }
 
             if(!CollectionUtils.isEmpty(dnaSampleIds) ||
@@ -539,87 +540,48 @@ public class DnaRunDaoImpl implements DnaRunDao {
     @Override
     public List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds) {
 
-        return this.getDnaRuns(
-            dnaRunIds,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            dnaRunIds.size(),
-            null,
-            null,
-            false);
-    }
-
-
-    /**
-     * Lists DnaRun Entities with given DnaRun Names
-     * @param dnaRunNames - List of Names for which dnaRuns need to be fecthed.
-     * @return - List of DnaRun Entity result.
-     */
-    @Override
-    public List<DnaRun> getDnaRunsByDnaRunNames(Set<String> dnaRunNames) {
-        return this.getDnaRuns(
-            null,
-            dnaRunNames,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            false);
+            return this.getDnaRuns(
+                dnaRunIds,          // Dnarun Ids
+                null,               // Dnarun names
+                null,               // Dna Sample Ids
+                null,               // Dna Samples names
+                null,               // Dna Sample Uuids
+                null,               // Germplasm External Codes
+                null,               // Germplasm Ids
+                null,               // Germplasm Names
+                null,               // Dataset Ids
+                null,               // Experiment Ids
+                dnaRunIds.size(),   // Page Size
+                null,               // Page Id Cursor
+                null,               // Row Offset
+                false);             // To Fetch association or not
     }
 
     @Override
     public List<DnaRun> getDnaRunsByDnaRunNames(Set<String> dnaRunNames,
-                                                Integer experimentId) throws GobiiDaoException {
-        List<DnaRun> dnaruns;
-        List<Predicate> predicates = new ArrayList<>();
-        try {
-            Objects.requireNonNull(dnaRunNames, "dnaRunNames: Required non null");
-            if(CollectionUtils.isNotEmpty(dnaRunNames)) {
-                CriteriaBuilder cb  = em.getCriteriaBuilder();
-                CriteriaQuery<DnaRun> criteria = cb.createQuery(DnaRun.class);
-                Root<DnaRun> root = criteria.from(DnaRun.class);
-
-                if(experimentId != null) {
-                    Join experimentJoin = root.join("experiment");
-                    predicates.add(cb.equal(experimentJoin.get("experimentId"), experimentId));
-                }
-
-                predicates.add(root.get("dnaRunName").in(dnaRunNames));
-                criteria.select(root);
-                criteria.where(predicates.toArray(new Predicate[]{}));
-
-                dnaruns = em.createQuery(criteria).getResultList();
-                return dnaruns;
-            }
-            else {
-                throw new GobiiDaoException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Empty Dnarun names");
-            }
-
+                                                Integer experimentId,
+                                                Integer pageSize,
+                                                Integer rowOffset) throws GobiiDaoException {
+        Set<Integer> experimentIds = null;
+        if(IntegerUtils.isNullOrZero(experimentId)) {
+            experimentIds = new HashSet<>();
+            experimentIds.add(experimentId);
         }
-        catch (IllegalStateException | PersistenceException | IllegalArgumentException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
-                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-        }
+        return this.getDnaRuns(
+            null,          // Dnarun Ids
+            dnaRunNames,   // Dnarun names
+            null,          // Dna Sample Ids
+            null,          // Dna Samples names
+            null,          // Dna Sample Uuids
+            null,          // Germplasm External Codes
+            null,          // Germplasm Ids
+            null,          // Germplasm Names
+            null,          // Dataset Ids
+            experimentIds, // Experiment Ids
+            pageSize,      // Page Size
+            null,          // Page Id Cursor
+            rowOffset,     // Row Offset
+            false);        // To Fetch association or not
     }
 
 }

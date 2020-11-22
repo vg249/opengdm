@@ -775,7 +775,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                         genotypesSearchQuery.getGermplasmPUIs(),
                         genotypesSearchQuery.getGermplasmDbIds(),
                         genotypesSearchQuery.getGermplasmNames(),
-                        genotypesSearchQuery.getVariantSetDbIds(),
+                        genotypesSearchQuery.getVariantSetDbIds(), null,
                         dnaRunBinSize, cursors.dnaRunBinCursor, null, false);
 
                     sampleMetaDataQueriesFound = true;
@@ -802,7 +802,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     if(!sampleMetaDataQueriesFound) {
 
                         dnaRuns = dnaRunDao.getDnaRuns(null, null, null, null,
-                            null, null, null, null, cursors.markerDatasetIds, dnaRunBinSize,
+                            null, null, null, null, cursors.markerDatasetIds,null, dnaRunBinSize,
                             cursors.dnaRunBinCursor, null, false);
 
                         if(dnaRuns.size() > 0) {

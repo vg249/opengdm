@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationDataUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
@@ -70,42 +71,16 @@ public class DatasetMarkerValidationTest {
      */
     @Test
     public void datasetMarkerAllPassTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/allPass",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
 
-        List<NameIdDTO> referenceResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker1");
-            nameIdDTOResponse.setId(1);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker2");
-            nameIdDTOResponse.setId(2);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker3");
-            nameIdDTOResponse.setId(3);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker4");
-            nameIdDTOResponse.setId(4);
-            referenceResponse.add(nameIdDTOResponse);
-        }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, new ArrayList<>());
         digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
@@ -122,41 +97,16 @@ public class DatasetMarkerValidationTest {
      */
     @Test
     public void missingPlatformIdAllPassTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
+
+        PowerMockito.mockStatic(ValidationDataUtil.class);
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("81", "Dart_clone");
 
-        List<NameIdDTO> referenceResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker1");
-            nameIdDTOResponse.setId(1);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker2");
-            nameIdDTOResponse.setId(2);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker3");
-            nameIdDTOResponse.setId(3);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker4");
-            nameIdDTOResponse.setId(4);
-            referenceResponse.add(nameIdDTOResponse);
-        }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, new ArrayList<>());
         digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId"))
@@ -179,42 +129,16 @@ public class DatasetMarkerValidationTest {
      */
     @Test
     public void datasetMarkerMissingRequiredFieldTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
 
-        List<NameIdDTO> referenceResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker1");
-            nameIdDTOResponse.setId(1);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker2");
-            nameIdDTOResponse.setId(2);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker3");
-            nameIdDTOResponse.setId(3);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker4");
-            nameIdDTOResponse.setId(4);
-            referenceResponse.add(nameIdDTOResponse);
-        }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, new ArrayList<>());
         digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
@@ -236,43 +160,19 @@ public class DatasetMarkerValidationTest {
      */
     @Test
     public void markerNameFailTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/markerNameFailTest", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/markerNameFailTest",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
 
-        List<NameIdDTO> referenceResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker1");
-            nameIdDTOResponse.setId(1);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker2");
-            nameIdDTOResponse.setId(2);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker3");
-            nameIdDTOResponse.setId(3);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarkerss4");
-            nameIdDTOResponse.setId(0);
-            referenceResponse.add(nameIdDTOResponse);
-        }
+        List<String> invalidNames = new ArrayList<>();
+        invalidNames.add("dommarkerss4");
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, invalidNames);
         digestFileValidator.performValidation(null);
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/markerNameFailTest"))
@@ -291,13 +191,13 @@ public class DatasetMarkerValidationTest {
         assertEquals("Unexpected column value", "dommarkerss4", failures.get(0).values.get(0));
     }
 
-    private void mockForTestCase(Map<String, String> foreignKeyValueFromDBPlatformId, List<NameIdDTO> referenceResponse) {
+    private void mockForTestCase(Map<String, String> foreignKeyValueFromDBPlatformId, List<String> invalidNames) {
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.validatePlatformId(eq("8"), any())).thenReturn(foreignKeyValueFromDBPlatformId);
+                    .when(ValidationDataUtil.validatePlatformId(eq("8"), any())).thenReturn(foreignKeyValueFromDBPlatformId);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("marker"), eq("8"), any(),null))
-                    .thenReturn(referenceResponse);
+                    .when(ValidationDataUtil.validateNames(Matchers.any(), eq("marker"), eq("8"), any()))
+                    .thenReturn(invalidNames);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
