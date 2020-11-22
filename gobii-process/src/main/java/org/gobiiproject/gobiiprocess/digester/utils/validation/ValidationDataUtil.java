@@ -2,37 +2,13 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.payload.Status;
-import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.config.ServerConfigItem;
-import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.dto.auditable.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.auditable.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.types.*;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 import org.gobiiproject.gobiisampletrackingdao.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,8 +18,9 @@ public class ValidationDataUtil {
 
     static final int MAX_ENTITIES_PER_QUERY = 2000;
 
-    private static ApplicationContext context = new ClassPathXmlApplicationContext(
-        "classpath:/spring/application-config.xml");
+    private static ApplicationContext getContext() {
+        return new ClassPathXmlApplicationContext("classpath:/spring/application-config.xml");
+    }
 
     /**
      * Gets the allowed values for foreign key
@@ -56,7 +33,7 @@ public class ValidationDataUtil {
             int offset = 0;
             if (foreignKey.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
                 List<Mapset> mapsets = new ArrayList<>();
-                MapsetDao mapsetDao = context.getBean(MapsetDao.class);
+                MapsetDao mapsetDao = getContext().getBean(MapsetDao.class);
                 while (mapsets.size() == pageSize || offset == 0) {
                     mapsets = mapsetDao.getMapsets(pageSize, offset, null);
                     mapsets.forEach(mapset -> {
@@ -68,7 +45,7 @@ public class ValidationDataUtil {
                 }
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNARUN)) {
                 List<Experiment> experiments = new ArrayList<>();
-                ExperimentDao experimentDao = context.getBean(ExperimentDao.class);
+                ExperimentDao experimentDao = getContext().getBean(ExperimentDao.class);
                 while (experiments.size() == pageSize || offset == 0) {
                     experiments = experimentDao.getExperiments(pageSize, 0, null);
                     experiments.forEach(experiment -> {
@@ -80,7 +57,7 @@ public class ValidationDataUtil {
                 }
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME)) {
                 List<Project> projects = new ArrayList<>();
-                ProjectDao projectDao = context.getBean(ProjectDao.class);
+                ProjectDao projectDao = getContext().getBean(ProjectDao.class);
                 while (projects.size() == pageSize || offset == 0) {
                     projects = projectDao.getProjects(offset/pageSize, pageSize, null);
                     projects.forEach(project -> {
@@ -114,7 +91,7 @@ public class ValidationDataUtil {
         Map<String, String> platformIdNameMap = new HashMap<>();
         try {
             Integer intPlatformId = Integer.parseInt(platformId);
-            PlatformDao platformDao = context.getBean(PlatformDao.class);
+            PlatformDao platformDao = getContext().getBean(PlatformDao.class);
             Platform platform = platformDao.getPlatform(intPlatformId);
             if(platform != null) {
                 platformIdNameMap.put(platform.getPlatformId().toString(),
@@ -144,7 +121,7 @@ public class ValidationDataUtil {
         Map<String, String> projectIdNameMap = new HashMap<>();
         try {
             Integer intProjectId = Integer.parseInt(projectId);
-            ProjectDao projectDao = context.getBean(ProjectDao.class);
+            ProjectDao projectDao = getContext().getBean(ProjectDao.class);
             Project project = projectDao.getProject(intProjectId);
             if(project != null) {
                 projectIdNameMap.put(project.getProjectId().toString(),
@@ -174,7 +151,7 @@ public class ValidationDataUtil {
         Map<String, String> experimentIdNameMap = new HashMap<>();
         try {
             Integer intExperimentId = Integer.parseInt(experimentId);
-            ExperimentDao experimentDao = context.getBean(ExperimentDao.class);
+            ExperimentDao experimentDao = getContext().getBean(ExperimentDao.class);
             Experiment experiment = experimentDao.getExperiment(intExperimentId);
             if(experiment != null) {
                 experimentIdNameMap.put(
@@ -202,7 +179,7 @@ public class ValidationDataUtil {
         Map<String, String> mapsetIdNameMap = new HashMap<>();
         try {
             Integer intMapSetId = Integer.parseInt(mapId);
-            MapsetDao mapsetDao = context.getBean(MapsetDao.class);
+            MapsetDao mapsetDao = getContext().getBean(MapsetDao.class);
             Mapset mapset = mapsetDao.getMapset(intMapSetId);
             if(mapset != null) {
                 mapsetIdNameMap.put(
@@ -270,7 +247,7 @@ public class ValidationDataUtil {
 
             for(int i=0; i < numEntities; i+=maxEntitiesPerCall) {
                 List<DnaSample> queryParamsSubList = queryParams.subList(i, i+maxEntitiesPerCall);
-                DnaSampleDao dnaSampleDao = context.getBean(DnaSampleDao.class);
+                DnaSampleDao dnaSampleDao = getContext().getBean(DnaSampleDao.class);
                 Integer intProjectId = Integer.parseInt(filterValue);
                 List<DnaSample> dnaSamples = dnaSampleDao.queryByNameAndNum(
                     queryParamsSubList,
@@ -387,7 +364,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        DnaRunDao dnaRunDao = context.getBean(DnaRunDao.class);
+        DnaRunDao dnaRunDao = getContext().getBean(DnaRunDao.class);
         List<DnaRun> dnaRuns = new ArrayList<>();
         Integer pageSize = names.size();
         Integer rowOffset = 0;
@@ -425,7 +402,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        DnaSampleDao dnaSampleDao = context.getBean(DnaSampleDao.class);
+        DnaSampleDao dnaSampleDao = getContext().getBean(DnaSampleDao.class);
 
         List<DnaSample> dnaSamples = new ArrayList<>();
         Integer pageSize = names.size();
