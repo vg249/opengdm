@@ -25,6 +25,8 @@
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
     <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
     <bean id="dnaSampleDao" class="org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl"/>
+    <bean id="germplasmDao" class="org.gobiiproject.gobiisampletrackingdao.GermplasmDaoImpl"/>
+    <bean id="linkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.LinkageGroupDaoImpl"/>
 
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>

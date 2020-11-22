@@ -317,7 +317,7 @@ public class DnaSampleDaoImpl implements DnaSampleDao {
                                          Integer pageSize,
                                          Integer rowOffset) throws GobiiDaoException {
         Set<Integer> projectIds = null;
-        if(IntegerUtils.isNullOrZero(projectId)) {
+        if(!IntegerUtils.isNullOrZero(projectId)) {
             projectIds  = new HashSet<>();
             projectIds.add(projectId);
         }

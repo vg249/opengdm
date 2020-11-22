@@ -215,7 +215,13 @@ public class ValidationDataUtil {
         int maxEntitiesPerCall = MAX_ENTITIES_PER_QUERY;
 
         for(int i=0; i < numEntities; i+=maxEntitiesPerCall) {
-            Set<String> namesSubSet = new HashSet<>(names.subList(i, i+maxEntitiesPerCall));
+            Set<String> namesSubSet;
+            try {
+                namesSubSet = new HashSet<>(names.subList(i, i+maxEntitiesPerCall));
+            }
+            catch (IndexOutOfBoundsException e) {
+                namesSubSet = new HashSet<>(names.subList(i, numEntities));
+            }
             results.addAll(findInvalidNames(namesSubSet,
                 gobiiEntityNameType,
                 filterValue,
@@ -308,6 +314,12 @@ public class ValidationDataUtil {
                 case "dnasample":
                     invalidNames = findInvalidDnaSampleNames(names, intFilterValue);
                     break;
+                case "germplasm":
+                    invalidNames = findInvalidGermplasmExternalCodes(names);
+                    break;
+                case "linkage_group":
+                    invalidNames = findInvalidLinkageGroupNames(names, intFilterValue);
+                    break;
                 default:
                     ValidationUtil.createFailure(FailureTypes.UNDEFINED_CONDITION_TYPE,
                         new ArrayList<>(),
@@ -377,6 +389,73 @@ public class ValidationDataUtil {
                 rowOffset);
             for(DnaRun dnaRun : dnaRuns) {
                 validNames.add(dnaRun.getDnaRunName());
+            }
+            rowOffset += pageSize;
+        }
+
+        names.removeAll(validNames);
+
+        return new ArrayList<>(names);
+    }
+
+    private static List<String> findInvalidLinkageGroupNames(Set<String> names,
+                                                             Integer filterValue
+    ) throws GobiiDaoException {
+
+        List<String> invalidNames = new ArrayList<>();
+        Set<String> validNames = new HashSet<>();
+
+        // Exit to make sure empty nameset not getting queried
+        if(CollectionUtils.isEmpty(names)) {
+            return invalidNames;
+        }
+
+        LinkageGroupDao linkageGroupDao = getContext().getBean(LinkageGroupDao.class);
+        List<LinkageGroup> linkageGroups = new ArrayList<>();
+        Integer pageSize = names.size();
+        Integer rowOffset = 0;
+
+        while (rowOffset == 0 || linkageGroups.size() == pageSize) {
+            linkageGroups = linkageGroupDao.getLinkageGroupsByNames(
+                names,
+                filterValue,
+                pageSize,
+                rowOffset);
+            for(LinkageGroup linkageGroup : linkageGroups) {
+                validNames.add(linkageGroup.getLinkageGroupName());
+            }
+            rowOffset += pageSize;
+        }
+
+        names.removeAll(validNames);
+
+        return new ArrayList<>(names);
+    }
+
+    private static List<String> findInvalidGermplasmExternalCodes(
+        Set<String> names) throws GobiiDaoException {
+
+        List<String> invalidNames = new ArrayList<>();
+        Set<String> validNames = new HashSet<>();
+
+        // Exit to make sure empty nameset not getting queried
+        if(CollectionUtils.isEmpty(names)) {
+            return invalidNames;
+        }
+
+        GermplasmDao germplasmDao = getContext().getBean(GermplasmDao.class);
+        List<Germplasm> germplasms = new ArrayList<>();
+
+        Integer pageSize = names.size();
+        Integer rowOffset = 0;
+
+        while (rowOffset == 0 || germplasms.size() == pageSize) {
+            germplasms = germplasmDao.getGermplamsByExternalCodes(
+                names,
+                pageSize,
+                rowOffset);
+            for(Germplasm germplasm : germplasms) {
+                validNames.add(germplasm.getExternalCode());
             }
             rowOffset += pageSize;
         }

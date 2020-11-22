@@ -563,7 +563,7 @@ public class DnaRunDaoImpl implements DnaRunDao {
                                                 Integer pageSize,
                                                 Integer rowOffset) throws GobiiDaoException {
         Set<Integer> experimentIds = null;
-        if(IntegerUtils.isNullOrZero(experimentId)) {
+        if(!IntegerUtils.isNullOrZero(experimentId)) {
             experimentIds = new HashSet<>();
             experimentIds.add(experimentId);
         }

@@ -43,6 +43,9 @@ public class GermplasmDaoImpl implements GermplasmDao {
         try {
 
             Objects.requireNonNull(externalCodes, "expernalCodes: Required non null");
+            Objects.requireNonNull(pageSize, "pageSize: Required non null");
+            Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
+
             if(CollectionUtils.isNotEmpty(externalCodes)) {
 
                 CriteriaBuilder cb  = em.getCriteriaBuilder();
