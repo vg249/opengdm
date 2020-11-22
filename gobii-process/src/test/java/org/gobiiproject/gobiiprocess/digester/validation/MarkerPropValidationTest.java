@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.validation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationDataUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import org.junit.*;
@@ -30,7 +30,7 @@ import static org.mockito.Matchers.eq;
 
 @Ignore //TODO- Refactor. Powermock static mocking is broken in Java 13
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ValidationWebServicesUtil.class)
+@PrepareForTest(ValidationDataUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 public class MarkerPropValidationTest {
@@ -64,12 +64,9 @@ public class MarkerPropValidationTest {
      */
     @Test
     public void markerPropAllPassTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -88,12 +85,9 @@ public class MarkerPropValidationTest {
      */
     @Test
     public void markerPropMissingRequiredFieldTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -117,12 +111,9 @@ public class MarkerPropValidationTest {
      */
     @Test
     public void markerPropMissingValuesInRequiredFieldTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -146,12 +137,9 @@ public class MarkerPropValidationTest {
      */
     @Test
     public void markerPropMissingComparisonFileTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =

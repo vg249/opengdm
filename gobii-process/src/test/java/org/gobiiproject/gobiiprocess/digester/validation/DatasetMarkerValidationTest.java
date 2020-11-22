@@ -2,11 +2,9 @@ package org.gobiiproject.gobiiprocess.digester.validation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationDataUtil;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import org.junit.*;
@@ -37,7 +35,7 @@ import static org.mockito.Matchers.eq;
 
 @Ignore //TODO- Refactor. Powermock static mocking is broken in Java 13
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ValidationWebServicesUtil.class)
+@PrepareForTest(ValidationDataUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 public class DatasetMarkerValidationTest {
