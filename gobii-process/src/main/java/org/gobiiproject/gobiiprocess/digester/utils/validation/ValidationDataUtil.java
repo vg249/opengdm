@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
@@ -18,8 +19,14 @@ public class ValidationDataUtil {
 
     static final int MAX_ENTITIES_PER_QUERY = 2000;
 
+    private static ApplicationContext context;
+
     private static ApplicationContext getContext() {
-        return new ClassPathXmlApplicationContext("classpath:/spring/application-config.xml");
+        if(context == null) {
+            context = new ClassPathXmlApplicationContext(
+                "classpath:/spring/application-config.xml");
+        }
+        return context;
     }
 
     /**
@@ -209,23 +216,27 @@ public class ValidationDataUtil {
                                              List<Failure> failureList
     ) throws MaximumErrorsValidationException {
 
-        int numEntities = names.size();
-
         List<String> results = new ArrayList<>();
-        int maxEntitiesPerCall = MAX_ENTITIES_PER_QUERY;
+        if(gobiiEntityNameType.toLowerCase().equals("cv")) {
+            Set<String> namesSet = new HashSet<>(names);
+            results = findInvalidCvNames(namesSet, filterValue, failureList);
+        }
+        else {
+            int numEntities = names.size();
+            int maxEntitiesPerCall = MAX_ENTITIES_PER_QUERY;
 
-        for(int i=0; i < numEntities; i+=maxEntitiesPerCall) {
-            Set<String> namesSubSet;
-            try {
-                namesSubSet = new HashSet<>(names.subList(i, i+maxEntitiesPerCall));
+            for (int i = 0; i < numEntities; i += maxEntitiesPerCall) {
+                Set<String> namesSubSet;
+                try {
+                    namesSubSet = new HashSet<>(names.subList(i, i + maxEntitiesPerCall));
+                } catch (IndexOutOfBoundsException e) {
+                    namesSubSet = new HashSet<>(names.subList(i, numEntities));
+                }
+                results.addAll(findInvalidNames(namesSubSet,
+                    gobiiEntityNameType,
+                    filterValue,
+                    failureList));
             }
-            catch (IndexOutOfBoundsException e) {
-                namesSubSet = new HashSet<>(names.subList(i, numEntities));
-            }
-            results.addAll(findInvalidNames(namesSubSet,
-                gobiiEntityNameType,
-                filterValue,
-                failureList));
         }
         return results;
     }
@@ -277,6 +288,54 @@ public class ValidationDataUtil {
         return results;
     }
 
+
+    private static List<String> findInvalidCvNames(Set<String> names,
+                                                   String filterValue,
+                                                   List<Failure> failureList
+    ) throws MaximumErrorsValidationException {
+        List<String> invalidNames = new ArrayList<>();
+        CvGroupTerm cvGroupTerm;
+        try {
+
+            switch (filterValue) {
+                case "species_name":
+                    cvGroupTerm = CvGroupTerm.CVGROUP_GERMPLASM_SPECIES;
+                    break;
+                case "type_name":
+                    cvGroupTerm = CvGroupTerm.CVGROUP_GERMPLASM_TYPE;
+                    break;
+                case "strand_name":
+                    cvGroupTerm = CvGroupTerm.CVGROUP_MARKER_STRAND;
+                    break;
+                default:
+                    ValidationUtil.createFailure(FailureTypes.UNDEFINED_CV,
+                        new ArrayList<>(),
+                        filterValue,
+                        failureList);
+                    return invalidNames;
+            }
+
+            // Get Cvs for given cvgroup
+            CvDao cvDao = getContext().getBean(CvDao.class);
+            List<Cv> cvs = cvDao.getCvListByCvGroup(cvGroupTerm.getCvGroupName(), null);
+
+            // Remove valid cv names from input names
+            Set<String> validCvNames = cvs.stream().map(Cv::getTerm).collect(Collectors.toSet());
+            names.removeAll(validCvNames);
+            return new ArrayList<>(names);
+        }
+        catch (MaximumErrorsValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION,
+                new ArrayList<>(),
+                e.getMessage(),
+                failureList);
+        }
+        return invalidNames;
+    }
+
+
     /**
      *
      * @param names
@@ -294,10 +353,10 @@ public class ValidationDataUtil {
 
         List<String> invalidNames = new ArrayList<>();
         Integer intFilterValue;
+
         try {
             intFilterValue = Integer.parseInt(filterValue);
-        }
-        catch (NumberFormatException nE) {
+        } catch (NumberFormatException nE) {
             ValidationUtil.createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY,
                 new ArrayList<>(),
                 filterValue,
@@ -307,7 +366,6 @@ public class ValidationDataUtil {
 
         try {
             switch (gobiiEntityNameType.toLowerCase()) {
-
                 case "dnarun":
                     invalidNames = findInvalidDnaRunNames(names, intFilterValue);
                     break;
@@ -320,33 +378,18 @@ public class ValidationDataUtil {
                 case "linkage_group":
                     invalidNames = findInvalidLinkageGroupNames(names, intFilterValue);
                     break;
+                case "marker":
+                    invalidNames = findInvalidMarkerNames(names, intFilterValue);
+                    break;
+                case "cv":
+                    break;
                 default:
                     ValidationUtil.createFailure(FailureTypes.UNDEFINED_CONDITION_TYPE,
                         new ArrayList<>(),
                         filterValue,
                         failureList);
                     return invalidNames;
-
-
             }
-
-            //if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
-            //    switch (filterValue) {
-            //        case "species_name":
-            //            namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
-            //            break;
-            //        case "type_name":
-            //            namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
-            //            break;
-            //        case "strand_name":
-            //            namesUri.setParamValue("filterValue", CvGroupTerm.CVGROUP_MARKER_STRAND.getCvGroupName());
-            //            break;
-            //        default:
-            //            ValidationUtil.createFailure(FailureTypes.UNDEFINED_CV, new ArrayList<>(), filterValue, failureList);
-            //            return nameIdDTOListResponse;
-            //    }
-            //} else namesUri.setParamValue("filterValue", filterValue);
-
         }
         catch (MaximumErrorsValidationException e) {
             throw e;
@@ -358,6 +401,8 @@ public class ValidationDataUtil {
         }
         return invalidNames;
     }
+
+
 
     /**
      * @param names         List of dnaRun names for which id needs to be fetched
@@ -423,6 +468,40 @@ public class ValidationDataUtil {
                 rowOffset);
             for(LinkageGroup linkageGroup : linkageGroups) {
                 validNames.add(linkageGroup.getLinkageGroupName());
+            }
+            rowOffset += pageSize;
+        }
+
+        names.removeAll(validNames);
+
+        return new ArrayList<>(names);
+    }
+
+    private static List<String> findInvalidMarkerNames(Set<String> names,
+                                                       Integer filterValue
+    ) throws GobiiDaoException {
+
+        List<String> invalidNames = new ArrayList<>();
+        Set<String> validNames = new HashSet<>();
+
+        // Exit to make sure empty nameset not getting queried
+        if(CollectionUtils.isEmpty(names)) {
+            return invalidNames;
+        }
+
+        MarkerDao markerDao = getContext().getBean(MarkerDao.class);
+        List<Marker> markers = new ArrayList<>();
+        Integer pageSize = names.size();
+        Integer rowOffset = 0;
+
+        while (rowOffset == 0 || markers.size() == pageSize) {
+            markers = markerDao.queryMarkersByNamesAndPlatformId(
+                names,
+                filterValue,
+                pageSize,
+                rowOffset);
+            for(Marker marker : markers) {
+                validNames.add(marker.getMarkerName());
             }
             rowOffset += pageSize;
         }

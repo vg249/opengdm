@@ -139,13 +139,19 @@ public class GobiiFileReader {
             if (cli.hasOption("verbose")) verbose = true;
             if (cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
             if (cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
+            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(
+                cli.getOptionValue("hdfFiles"));
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
 
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("java -jar Digester.jar ",
-                "Also accepts input file directly after arguments\n" + "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json", o, null, true);
+                "Also accepts input file directly after arguments\n"
+                    + "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties " +
+                    "-v /home/jdl232/testLoad.json",
+                o,
+                null,
+                true);
             System.exit(2);
         }
 

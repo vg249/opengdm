@@ -374,7 +374,7 @@
           "columnName": "linkage_group_name",
           "required": "yes",
           "fileExistenceCheck": "digest.linkage_group",
-          "fileExists": "yes",
+          "fileExists": "no",
           "type": "DB",
           "typeName": "linkage_group",
           "foreignKey": "map_id",
