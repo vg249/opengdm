@@ -57,6 +57,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
             if(CollectionUtils.isNotEmpty(referenceNames)) {
                 predicates.add(referenceRoot.get("referenceName").in(referenceNames));
             }
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
 
             criteriaQuery.orderBy(criteriaBuilder.asc(referenceRoot.get("referenceId")));
 

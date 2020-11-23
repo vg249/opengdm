@@ -384,6 +384,9 @@ public class ValidationDataUtil {
                 case "reference":
                     invalidNames = findInvalidReferences(names);
                     break;
+                case "platform":
+                    invalidNames = findInvalidPlatforms(names);
+                    break;
                 case "cv":
                     break;
                 default:
@@ -503,6 +506,38 @@ public class ValidationDataUtil {
                 rowOffset);
             for(Reference reference : references) {
                 validNames.add(reference.getReferenceName());
+            }
+            rowOffset += pageSize;
+        }
+
+        names.removeAll(validNames);
+
+        return new ArrayList<>(names);
+    }
+
+    private static List<String> findInvalidPlatforms(Set<String> names
+    ) throws GobiiDaoException {
+
+        List<String> invalidNames = new ArrayList<>();
+        Set<String> validNames = new HashSet<>();
+
+        // Exit to make sure empty nameset not getting queried
+        if(CollectionUtils.isEmpty(names)) {
+            return invalidNames;
+        }
+
+        PlatformDao platformDao = getContext().getBean(PlatformDao.class);
+        List<Platform> platforms  = new ArrayList<>();
+        Integer pageSize = names.size();
+        Integer rowOffset = 0;
+
+        while (rowOffset == 0 || platforms.size() == pageSize) {
+            platforms = platformDao.getPlatforms(
+                names,
+                pageSize,
+                rowOffset);
+            for(Platform platform : platforms) {
+                validNames.add(platform.getPlatformName());
             }
             rowOffset += pageSize;
         }
