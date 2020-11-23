@@ -2,39 +2,23 @@ package org.gobiiproject.gobiiprocess;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
-import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Job;
-import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiiprocess.services.JobService;
+import org.gobiiproject.gobiiprocess.spring.DataBaseContextSingleton;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
-import org.gobiiproject.gobiisampletrackingdao.JobDao;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import javax.transaction.Transactional;
 
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
-@Transactional
+
 public class JobStatus {
 
     Job job;
+
+    JobService jobService;
 
 	private static Set<String> acceptedStatuses=new HashSet<>(Arrays.asList(
 			JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED.getCvName(),
@@ -51,42 +35,28 @@ public class JobStatus {
 			JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName()
 	));
 
-	private static ApplicationContext context = new ClassPathXmlApplicationContext(
-        "classpath:/spring/application-config.xml");
-
     public JobStatus(String jobName) throws GobiiDaoException {
-        JobDao jobDao = context.getBean(JobDao.class);
-        this.job = jobDao.getByName(jobName);
+        this.jobService = DataBaseContextSingleton
+            .getInstance()
+            .getContext()
+            .getBean(JobService.class);
+        this.job = jobService.getByName(jobName);
     }
 
-    public void set(String status,String message) {
-
+    public void set(String status, String message) {
     	if(status==null || !acceptedStatuses.contains(status)) {
     		Logger.logError(
     		    "JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,
                 new Exception());
+    		return;
 		}
     	try{
-            JobDao jobDao = context.getBean(JobDao.class);
-    	    CvDao cvDao = context.getBean(CvDao.class);
-    	    List<Cv> statuses = cvDao.getCvs(status,
-                CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
-
-    	    if(statuses.size() != 1) {
-                Logger.logError(
-                    "JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,
-                    new Exception());
-            }
-
-    	    Cv statusCv = statuses.get(0);
-
-    	    this.job.setStatus(statusCv);
     	    this.job.setMessage(message);
-    	    this.job = jobDao.update(this.job);
-
+    	    Cv newStatus = new Cv();
+    	    newStatus.setTerm(status);
+    	    this.jobService.update(job);
     	} catch (Exception e) {
-    	    logError("Digester", "Exception while referencing Job table in Postgresql", e);
+    	    logError("Digester", "Exception while referencing Job table", e);
     	    return;
     	}
 	}
@@ -98,8 +68,7 @@ public class JobStatus {
 	public void setError(String message){
         String errorMessage="";
         if(this.job!=null){
-            JobDao jobDao = context.getBean(JobDao.class);
-            this.job = jobDao.getByName(this.job.getJobName());
+            this.job = jobService.getByName(this.job.getJobName());
             errorMessage="Status: " + this.job.getStatus().getTerm()+" - "
                 + this.job.getMessage() + " | \n";
         }

@@ -16,7 +16,6 @@
 	http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.gobiiproject.gobiidomain.security"/>
 
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
     <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
@@ -30,6 +29,7 @@
     <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
     <bean id="referenceDao" class="org.gobiiproject.gobiisampletrackingdao.ReferenceDaoImpl"/>
     <bean id="jobDao" class="org.gobiiproject.gobiisampletrackingdao.JobDaoImpl"/>
+    <bean id="jobService" class="org.gobiiproject.gobiiprocess.services.JobServiceImpl"/>
 
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
@@ -58,6 +58,7 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
     <tx:annotation-driven/>
+
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 

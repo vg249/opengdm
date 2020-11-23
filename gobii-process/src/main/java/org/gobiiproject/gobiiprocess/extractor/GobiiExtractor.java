@@ -21,6 +21,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -1219,7 +1220,6 @@ public class GobiiExtractor {
 
 	/**
 	 * In place file uniqueness. First implementation is a simple sort -u
-	 * @param inputFile input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
 	 */
 	private static void makeFileUnique(String inputFilePath, String errorFile){
     	String tempPath = inputFilePath+".tmp";
