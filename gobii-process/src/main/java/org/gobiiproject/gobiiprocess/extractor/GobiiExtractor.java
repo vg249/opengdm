@@ -199,7 +199,7 @@ public class GobiiExtractor {
 		String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
 		JobStatus jobStatus = null;
 		try {
-			jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
+			jobStatus = new JobStatus(jobFileName);
 		} catch (Exception e) {
 			Logger.logError("GobiiFileReader", "Error Checking Status", e);
 		}

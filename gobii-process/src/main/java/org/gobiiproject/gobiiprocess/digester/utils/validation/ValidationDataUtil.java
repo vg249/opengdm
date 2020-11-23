@@ -387,8 +387,6 @@ public class ValidationDataUtil {
                 case "platform":
                     invalidNames = findInvalidPlatforms(names);
                     break;
-                case "cv":
-                    break;
                 default:
                     ValidationUtil.createFailure(FailureTypes.UNDEFINED_CONDITION_TYPE,
                         new ArrayList<>(),

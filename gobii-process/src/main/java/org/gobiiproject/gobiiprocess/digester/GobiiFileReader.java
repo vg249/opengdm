@@ -74,6 +74,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.transaction.Transactional;
+
 import static org.gobii.Util.slurp;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
@@ -274,9 +276,7 @@ public class GobiiFileReader {
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
         JobStatus jobStatus = null;
         try {
-            jobStatus = new JobStatus(configuration,
-                cropType,
-                jobFileName);
+            jobStatus = new JobStatus(jobFileName);
         } catch (Exception e) {
             Logger.logError("GobiiFileReader", "Error Checking Status", e);
         }

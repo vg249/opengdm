@@ -12,34 +12,30 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
+import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
+import org.gobiiproject.gobiisampletrackingdao.JobDao;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.transaction.Transactional;
+
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
-
-/**
- * Encapsulate calling and updating status.
- *
- * Note: Status is created when the instruction file is, and the base elements are populated there.
- * This is important * If you're making your own jobs, you need to create a Status and deal with it there.*
- */
+@Transactional
 public class JobStatus {
-    /**
-     * Creates a new job object based on information about the job already in progress.
-     * @param config
-     * @param cropName
-     * @param jobName the name of the instruction file, minus the .json suffix
-     */
-    GobiiUriFactory uriFactory;
-    String jobName;
-	JobDTO lastStatus;
-	String cropName;
-	/**List of valid statuses. Update as appropriate. Stops 'random argument' assignment, even though Progress Status
-	 * has been stringly typed.
-	 */
+
+    Job job;
+
 	private static Set<String> acceptedStatuses=new HashSet<>(Arrays.asList(
 			JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED.getCvName(),
 			JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),
@@ -54,70 +50,45 @@ public class JobStatus {
 			JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(),
 			JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName()
 	));
-    public JobStatus(ConfigSettings config, String cropName, String jobName) throws Exception {
-		this.jobName=jobName;
-		// set up authentication and so forth
-		// you'll need to get the current from the instruction file
-		GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
-		this.cropName = cropName;
-		uriFactory = context.getUriFactory();
+
+	private static ApplicationContext context = new ClassPathXmlApplicationContext(
+        "classpath:/spring/application-config.xml");
+
+    public JobStatus(String jobName) throws GobiiDaoException {
+        JobDao jobDao = context.getBean(JobDao.class);
+        this.job = jobDao.getByName(jobName);
     }
 
     public void set(String status,String message) {
-        set(status, message, null);
-    }
 
-    public void set(String status,String message, String cropType){
-    	if(status==null || !acceptedStatuses.contains(status)){
-    		Logger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
+    	if(status==null || !acceptedStatuses.contains(status)) {
+    		Logger.logError(
+    		    "JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,
+                new Exception());
 		}
-            try{
+    	try{
+            JobDao jobDao = context.getBean(JobDao.class);
+    	    CvDao cvDao = context.getBean(CvDao.class);
+    	    List<Cv> statuses = cvDao.getCvs(status,
+                CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
+                GobiiCvGroupType.GROUP_TYPE_SYSTEM);
 
-                RestUri restUri = uriFactory
-                    .resourceByUriIdParam(RestResourceId.GOBII_JOB);
+    	    if(statuses.size() != 1) {
+                Logger.logError(
+                    "JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,
+                    new Exception());
+            }
 
-                restUri.setParamValue("id", jobName);
-            GobiiEnvelopeRestResource<JobDTO,JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource
-                    .get(JobDTO.class);
+    	    Cv statusCv = statuses.get(0);
 
-				JobDTO dataSetResponse;
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                System.out.println();
-                logError("Digester", "Job table response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return;
-			}
-				List<JobDTO> responses = resultEnvelope.getPayload().getData();
-				if(responses.size()==0){
-					logError("JobStatus","No Job record returned for job " + jobName);
-					return;
-				}
-				dataSetResponse = responses.get(0);
+    	    this.job.setStatus(statusCv);
+    	    this.job.setMessage(message);
+    	    this.job = jobDao.update(this.job);
 
-
-				dataSetResponse.setMessage(message);
-				dataSetResponse.setStatus(status);
-
-				resultEnvelope = gobiiEnvelopeRestResource
-						.put(JobDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
-
-				//Set 'lastStatus' to the current status
-				lastStatus = dataSetResponse;
-				// if you didn't succeed, do not pass go, but do log errors to your log file
-				if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-					logError("Digester", "Data set response response errors");
-					for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-						logError("HeaderError", currentStatusMesage.getMessage());
-					}
-					return;
-				}
-			} catch (Exception e) {
-				logError("Digester", "Exception while referencing Job table in Postgresql", e);
-				return;
-			}
+    	} catch (Exception e) {
+    	    logError("Digester", "Exception while referencing Job table in Postgresql", e);
+    	    return;
+    	}
 	}
 
 	/**
@@ -126,8 +97,11 @@ public class JobStatus {
      */
 	public void setError(String message){
         String errorMessage="";
-        if(lastStatus!=null){
-            errorMessage="Status: " + lastStatus.getStatus()+" - " + lastStatus.getMessage() + " | \n";
+        if(this.job!=null){
+            JobDao jobDao = context.getBean(JobDao.class);
+            this.job = jobDao.getByName(this.job.getJobName());
+            errorMessage="Status: " + this.job.getStatus().getTerm()+" - "
+                + this.job.getMessage() + " | \n";
         }
         errorMessage += message + " : " + Logger.getFirstErrorReason();
         set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),errorMessage);
