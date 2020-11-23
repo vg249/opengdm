@@ -251,7 +251,11 @@ public class GobiiFileReader {
         }
         String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
 
-        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, cropType, GobiiAutoLoginType.USER_RUN_AS);
+        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(
+            configuration,
+            cropType,
+            GobiiAutoLoginType.USER_RUN_AS);
+
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
             return;
@@ -399,10 +403,15 @@ public class GobiiFileReader {
                 if (!VARIANT_CALL_TABNAME.equals(key)) {
                     String inputFile = " -i " + loaderInstructionMap.get(key);
                     String outputFile = " -o " + dstDir.getAbsolutePath() + "/"; //Output here is temporary files, needs terminal /
-
-                    Logger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
+                    Logger.logInfo(
+                        "Digester",
+                        "Running IFL: " + pathToIFL
+                            + " <conntection string> " + inputFile + outputFile);
                     //Lines affected returned by method call - THIS IS NOW IGNORED
-                    HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", verbose ? dstDir.getAbsolutePath() + "/iflOut" : null, errorPath);
+                    HelperFunctions.tryExec(
+                        pathToIFL + connectionString + inputFile + outputFile + " -l",
+                        verbose ? dstDir.getAbsolutePath() + "/iflOut" : null,
+                        errorPath);
 
                     IFLLineCounts counts = calculateTableStats(pm, loaderInstructionMap, dstDir, key);
 
@@ -416,8 +425,12 @@ public class GobiiFileReader {
                     } else {
                         //If there are no issues in the load, clean up temporary intermediate files
                         if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
-                            //And if 'delete intermediate files' is true, clean up all IFL files (we don't need them any more
-                            deleteIFLFiles(dstDir, key,!LoaderGlobalConfigs.isDeleteIntermediateFiles());
+                            // And if 'delete intermediate files' is true,
+                            // clean up all IFL files (we don't need them any more
+                            deleteIFLFiles(
+                                dstDir,
+                                key,
+                                !LoaderGlobalConfigs.isDeleteIntermediateFiles());
                         }
                     }
 

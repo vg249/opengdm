@@ -381,6 +381,9 @@ public class ValidationDataUtil {
                 case "marker":
                     invalidNames = findInvalidMarkerNames(names, intFilterValue);
                     break;
+                case "reference":
+                    invalidNames = findInvalidReferences(names);
+                    break;
                 case "cv":
                     break;
                 default:
@@ -468,6 +471,38 @@ public class ValidationDataUtil {
                 rowOffset);
             for(LinkageGroup linkageGroup : linkageGroups) {
                 validNames.add(linkageGroup.getLinkageGroupName());
+            }
+            rowOffset += pageSize;
+        }
+
+        names.removeAll(validNames);
+
+        return new ArrayList<>(names);
+    }
+
+    private static List<String> findInvalidReferences(Set<String> names
+    ) throws GobiiDaoException {
+
+        List<String> invalidNames = new ArrayList<>();
+        Set<String> validNames = new HashSet<>();
+
+        // Exit to make sure empty nameset not getting queried
+        if(CollectionUtils.isEmpty(names)) {
+            return invalidNames;
+        }
+
+        ReferenceDao referenceDao = getContext().getBean(ReferenceDao.class);
+        List<Reference> references  = new ArrayList<>();
+        Integer pageSize = names.size();
+        Integer rowOffset = 0;
+
+        while (rowOffset == 0 || references.size() == pageSize) {
+            references = referenceDao.getReferences(
+                names,
+                pageSize,
+                rowOffset);
+            for(Reference reference : references) {
+                validNames.add(reference.getReferenceName());
             }
             rowOffset += pageSize;
         }

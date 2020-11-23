@@ -28,6 +28,7 @@
     <bean id="germplasmDao" class="org.gobiiproject.gobiisampletrackingdao.GermplasmDaoImpl"/>
     <bean id="linkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.LinkageGroupDaoImpl"/>
     <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
+    <bean id="referenceDao" class="org.gobiiproject.gobiisampletrackingdao.ReferenceDaoImpl"/>
 
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
