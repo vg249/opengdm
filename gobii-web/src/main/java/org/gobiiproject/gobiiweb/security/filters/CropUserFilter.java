@@ -14,9 +14,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.gobiiproject.gobiidomain.services.gdmv3.ContactService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.URLUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ResponseUtils;
@@ -24,6 +31,7 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -127,8 +135,15 @@ public class CropUserFilter extends GenericFilterBean {
                     //Check if the user is in the db, add if not found
                     try {
                         this.addToContacts(token);
+                    } catch (GobiiException e) {
+                        ErrorPayload payload = new ErrorPayload();
+                        payload.setError(e.getMessage());
+                        ObjectMapper mapper = new ObjectMapper();
+                        httpResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+                        httpResponse.getWriter().write(mapper.writeValueAsString(payload));
+                        return;
                     } catch (Exception e) {
-                        log.error("Could not add user info to contacts table");
+                        e.printStackTrace();
                     }
                     chain.doFilter(request, response);
                     return;
@@ -145,12 +160,17 @@ public class CropUserFilter extends GenericFilterBean {
     }
 
 
-    private void addToContacts(AccessToken token) throws Exception {
+    private void addToContacts(AccessToken token) throws Exception, GobiiException {
         String organization = Optional
                               .ofNullable(token.getOtherClaims().get("organization"))
                               .map(o -> o.toString())
                               .orElse(null);
-                                            
+        // check null check on email
+        if (LineUtils.isNullOrEmpty(token.getEmail())) {
+            throw new GobiiException(GobiiStatusLevel.ERROR,
+                                     GobiiValidationStatusType.BAD_REQUEST,
+                                     "User does not have email id. Please contact admin to update their email.");  
+        }                            
         contactService.addContact(
             token.getPreferredUsername(),
             token.getGivenName(),

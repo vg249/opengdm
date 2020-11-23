@@ -14,6 +14,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -71,11 +72,17 @@ public class ContactDTO extends DTOBaseAuditable {
     private String username;
 
     @GobiiEntityMap(paramName = "email", entity = Contact.class)
-    @JsonIgnore
+    //@JsonIgnore
     private String email;
 
     @Getter(AccessLevel.NONE)
     private String piContactId;
+
+    @JsonProperty
+    public String getFullName() {
+        return String.format("%s, %s", this.getPiContactLastName(), this.getPiContactFirstName());
+    }
+
 
     public String getPiContactId() {
         return Optional.ofNullable(contactId)
