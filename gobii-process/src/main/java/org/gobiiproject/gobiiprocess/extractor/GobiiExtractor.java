@@ -195,24 +195,23 @@ public class GobiiExtractor {
 		String firstCrop = firstExtractInstruction.getGobiiCropType();
 		String firstContactEmail = firstExtractInstruction.getContactEmail();
 		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
-        GobiiProcessContextSingleton.init(firstCrop, propertiesFile);
+        JobStatus jobStatus = null;
 
-		//Job Id is the 'name' part of the job file  /asd/de/name.json
+        //Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename = new File(instructionFile).getName();
 		String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-		JobStatus jobStatus = null;
-		try {
-			jobStatus = new JobStatus(jobFileName);
-		} catch (Exception e) {
-			Logger.logError("GobiiFileReader", "Error Checking Status", e);
-		}
-		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 
 		for (GobiiExtractorInstruction inst : list) {
 			String crop = inst.getGobiiCropType();
 			String extractType = "";
 			if (crop == null) crop = divineCrop(instructionFile);
             GobiiProcessContextSingleton.init(crop, propertiesFile);
+            try {
+                jobStatus = new JobStatus(jobFileName);
+            } catch (Exception e) {
+                Logger.logError("GobiiFileReader", "Error Checking Status", e);
+            }
+            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
