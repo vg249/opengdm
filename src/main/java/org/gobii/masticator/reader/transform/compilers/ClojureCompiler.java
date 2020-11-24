@@ -24,7 +24,7 @@ public class ClojureCompiler implements Compiler {
 		try {
 			String cljTransforms = null;
 			//shamelessly stolen from java tutorial site
-			try (InputStream inputStream = getClass().getResourceAsStream("/input.txt");
+			try (InputStream inputStream = getClass().getResourceAsStream("transformations.clj");
 				 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 				cljTransforms = reader.lines()
 						.collect(Collectors.joining("\n"));

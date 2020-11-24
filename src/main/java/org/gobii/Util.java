@@ -42,14 +42,14 @@ public class Util {
 
 		StringBuilder sb = new StringBuilder();
 
-		try (Reader reader = new BufferedReader(new InputStreamReader
-				(in, Charset.forName(StandardCharsets.UTF_8.name())))) {
-			int c = 0;
-			while ((c = reader.read()) != -1) {
-				sb.append((char) c);
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader
+				(in))) {
+			String line = reader.readLine();
+			while (line !=null) {
+				sb.append(line);
+				line=reader.readLine();
 			}
 		}
-
 		return sb.toString();
 	}
 
