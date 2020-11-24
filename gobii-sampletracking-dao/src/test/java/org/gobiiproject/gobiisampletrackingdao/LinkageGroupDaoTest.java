@@ -4,6 +4,8 @@ import static junit.framework.TestCase.assertTrue;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.gobiiproject.gobiimodel.entity.LinkageGroup;
 import org.junit.Before;
@@ -63,7 +65,7 @@ public class LinkageGroupDaoTest {
             daoTestSetUp
                 .getCreatedLinkageGroups()
                 .get(random.nextInt(
-                    daoTestSetUp.getCreatedLinkageGroups().size()))
+                    daoTestSetUp.getCreatedLinkageGroups().size() - 1))
                 .getLinkageGroupId();
 
         List<LinkageGroup> linkageGroups =
@@ -74,6 +76,33 @@ public class LinkageGroupDaoTest {
         assertTrue("Get by linkageGroupId failed", linkageGroups.size() == 1);
         assertTrue("Get by linkageGroupId failed",
             linkageGroups.get(0).getLinkageGroupId() == testLinkageGroupId);
+
+    }
+
+    @Test
+    public void getLinkageGroupByNamesTest() {
+
+        Set<String> testLinkageGroupNames =
+            daoTestSetUp
+                .getCreatedLinkageGroups()
+                .subList(0, random.nextInt(testPageSize))
+                .stream()
+                .map(LinkageGroup::getLinkageGroupName)
+                .collect(Collectors.toSet());
+
+
+        List<LinkageGroup> linkageGroups =
+            linkageGroupDao.getLinkageGroupsByNames(testLinkageGroupNames,
+                null,
+                testPageSize,
+                0);
+
+        assertTrue("Get by linkageGroupId failed",
+            linkageGroups.size() == testLinkageGroupNames.size());
+
+        linkageGroups.forEach(linkageGroup ->
+            assertTrue("Get by linkageGroupId failed",
+                testLinkageGroupNames.contains(linkageGroup.getLinkageGroupName())));
 
     }
 

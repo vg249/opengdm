@@ -250,7 +250,7 @@ public final class GobiiClientContext {
         HttpCore httpCore = new HttpCore(host, port);
         String settingsPath = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath(), cropId);
 
-        RestUri configSettingsUri = new GobiiUriFactory(null).RestUriFromUri(settingsPath);
+        RestUri configSettingsUri = new GobiiUriFactory(null, cropId).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri);
 
         GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
@@ -345,13 +345,13 @@ public final class GobiiClientContext {
 
         String contextPath = this.getServerConfig().getContextRoot();
         String cropType = this.getServerConfig().getGobiiCropType();
-        return new GobiiUriFactory(contextPath);
+        return new GobiiUriFactory(contextPath, cropId);
     }
 
     public GobiiUriFactory getUriFactory(GobiiControllerType gobiiControllerType) throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
-        return new GobiiUriFactory(contextPath, gobiiControllerType);
+        return new GobiiUriFactory(contextPath, gobiiControllerType, cropId);
     }
 
 

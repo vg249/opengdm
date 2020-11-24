@@ -40,7 +40,9 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+        DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory = new GobiiUriFactory(
+            currentCropContextRoot,
+            GobiiClientContext.getInstance(null, false).getCurrentClientCropType());
 
     }
 

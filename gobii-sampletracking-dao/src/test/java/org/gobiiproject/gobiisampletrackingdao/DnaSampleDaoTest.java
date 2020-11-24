@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.entity.DnaSample;
 import org.gobiiproject.gobiimodel.entity.Germplasm;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -177,6 +178,38 @@ public class DnaSampleDaoTest {
         dnaSamples.forEach(dnaSample -> {
             assertTrue("Filter by ProjectIds failed",
                 projectIds.contains(dnaSample.getProject().getProjectId()));
+        });
+    }
+
+    @Test
+    public void testQueryByNameAndNum() {
+
+        List<DnaSample> dnaSamplesMockSubList = daoTestSetUp.getCreatedDnaSamples()
+            .subList(0, random.nextInt(daoTestSetUp.getCreatedDnaSamples().size() - 4) + 3);
+
+        List<DnaSample> dnaSamples = dnaSampleDao.queryByNameAndNum(dnaSamplesMockSubList, null);
+
+        assertTrue("Get dna samples filter by project ids failed. Count mismatch.",
+            dnaSamples.size() == dnaSamplesMockSubList.size());
+
+        Set<String> sampleNameNumsSet =
+            dnaSamplesMockSubList
+                .stream()
+                .map(dnaSample -> {
+                    if(StringUtils.isNotEmpty(dnaSample.getDnaSampleNum())) {
+                        return dnaSample.getDnaSampleName() + dnaSample.getDnaSampleNum();
+                    }
+                    return dnaSample.getDnaSampleName();
+                }).collect(Collectors.toSet());
+
+        dnaSamples.forEach(dnaSample -> {
+            String dnaSampleNameNum = dnaSample.getDnaSampleName();
+            if(StringUtils.isNotEmpty(dnaSample.getDnaSampleNum())) {
+                dnaSampleNameNum += dnaSample.getDnaSampleNum();
+            }
+            assertTrue(
+                "Query by Name and num failed",
+                sampleNameNumsSet.contains(dnaSampleNameNum));
         });
     }
 

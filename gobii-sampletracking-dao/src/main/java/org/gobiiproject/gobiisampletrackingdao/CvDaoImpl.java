@@ -74,14 +74,17 @@ public class CvDaoImpl implements CvDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Cv> getCvs(String cvTerm, String cvGroupName, GobiiCvGroupType cvType, Integer page, Integer pageSize)
+    public List<Cv> getCvs(String cvTerm,
+                           String cvGroupName,
+                           GobiiCvGroupType cvType,
+                           Integer page,
+                           Integer pageSize)
             throws GobiiException {
 
         List<Predicate> predicates = new ArrayList<>();
 
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-
             CriteriaQuery<Cv> criteriaQuery = criteriaBuilder.createQuery(Cv.class);
 
             Root<Cv> cv = criteriaQuery.from(Cv.class);
@@ -98,21 +101,25 @@ public class CvDaoImpl implements CvDao {
             }
 
             if (cvType != null) {
-                predicates.add(criteriaBuilder.equal(cvGroup.get("cvGroupType"), cvType.getGroupTypeId()));
+                predicates.add(
+                    criteriaBuilder.equal(cvGroup.get("cvGroupType"),
+                    cvType.getGroupTypeId()));
             }
 
             criteriaQuery.where(predicates.toArray(new Predicate[] {}));
             criteriaQuery.orderBy(criteriaBuilder.asc(cv.get("cvId")));
 
-            List<Cv> cvs = null;
+            List<Cv> cvs;
             if (page == null) {
 
                 cvs = em.createQuery(criteriaQuery).getResultList();
             } else {
                 if (pageSize == null || pageSize <= 0)
                     pageSize = 1000;
-                cvs = em.createQuery(criteriaQuery).setFirstResult(page * pageSize).setMaxResults(pageSize)
-                        .getResultList();
+                cvs = em.createQuery(criteriaQuery)
+                    .setFirstResult(page * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
             }
 
             return cvs;
@@ -127,7 +134,8 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public CvGroup getCvGroupByNameAndType(String cvGroupName, Integer type) throws GobiiException {
+    public CvGroup getCvGroupByNameAndType(String cvGroupName,
+                                           Integer type) throws GobiiException {
         try {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();

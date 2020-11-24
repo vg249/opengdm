@@ -201,7 +201,7 @@ public class CallSetServiceImplTest {
                 genotypeCallsSearchQueryDTO.getGermplasmPUIs(),
                 genotypeCallsSearchQueryDTO.getGermplasmDbIds(),
                 genotypeCallsSearchQueryDTO.getGermplasmNames(),
-               testMarkerDatasetIds, expectedDnaRuns.size(), 0, null, true)
+               testMarkerDatasetIds, null, expectedDnaRuns.size(), 0, null, true)
         ).thenReturn(expectedDnaRuns);
 
 

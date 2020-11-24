@@ -7,26 +7,43 @@ import java.util.Set;
 
 public interface DnaRunDao {
 
-    List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
-                            Integer dnaRunId, String dnaRunName,
-                            Integer datasetId, Integer experimentId,
-                            Integer dnaSampleId, String dnaSampleName,
-                            Integer germplasmId, String germplasmName,
+    List<DnaRun> getDnaRuns(Integer pageSize,
+                            Integer rowOffset,
+                            Integer dnaRunId,
+                            String dnaRunName,
+                            Integer datasetId,
+                            Integer experimentId,
+                            Integer dnaSampleId,
+                            String dnaSampleName,
+                            Integer germplasmId,
+                            String germplasmName,
                             boolean fetchAssociations);
 
-    List<DnaRun> getDnaRuns(
-            Set<Integer> dnaRunIds, Set<String> dnaRunNames,
-            Set<Integer> dnaSampleIds, Set<String> dnaSampleNames,
-            Set<String> dnaSampleUuids, Set<String> germplasmExternalCodes,
-            Set<Integer> germplasmIds, Set<String> germplasmNames,
-            Set<String> datasetIds, Integer pageSize,
-            Integer dnaRunIdCursor, Integer rowOffset, boolean fetchAssociations);
+    List<DnaRun> getDnaRuns(Set<Integer> dnaRunIds,
+                            Set<String> dnaRunNames,
+                            Set<Integer> dnaSampleIds,
+                            Set<String> dnaSampleNames,
+                            Set<String> dnaSampleUuids,
+                            Set<String> germplasmExternalCodes,
+                            Set<Integer> germplasmIds,
+                            Set<String> germplasmNames,
+                            Set<String> datasetIds,
+                            Set<Integer> experimentIds,
+                            Integer pageSize,
+                            Integer dnaRunIdCursor,
+                            Integer rowOffset,
+                            boolean fetchAssociations);
 
-    List<DnaRun> getDnaRuns(Integer pageSize, Integer rowOffset,
-                            Integer dnaRunId, String dnaRunName,
-                            Integer datasetId, Integer experimentId,
-                            Integer dnaSampleId, String dnaSampleName,
-                            Integer germplasmId, String germplasmName);
+    List<DnaRun> getDnaRuns(Integer pageSize,
+                            Integer rowOffset,
+                            Integer dnaRunId,
+                            String dnaRunName,
+                            Integer datasetId,
+                            Integer experimentId,
+                            Integer dnaSampleId,
+                            String dnaSampleName,
+                            Integer germplasmId,
+                            String germplasmName);
 
     DnaRun getDnaRunById(Integer dnaRunId);
 
@@ -47,7 +64,11 @@ public interface DnaRunDao {
 
     List<DnaRun> getDnaRunsByDanRunIds(Set<Integer> dnaRunIds);
 
-    List<DnaRun> getDnaRunsByDanRunNames(Set<String> dnaRunNames);
+
+    List<DnaRun> getDnaRunsByDnaRunNames(Set<String> dnaRunNames,
+                                         Integer experimentId,
+                                         Integer pageSize,
+                                         Integer rowOffset) throws GobiiDaoException;
 
 }
 

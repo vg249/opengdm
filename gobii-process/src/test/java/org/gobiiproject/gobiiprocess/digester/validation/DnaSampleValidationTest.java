@@ -2,11 +2,11 @@ package org.gobiiproject.gobiiprocess.digester.validation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.gobiiproject.gobiimodel.dto.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiiprocess.SafePowerMockRunner;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationDataUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import org.junit.*;
@@ -33,9 +33,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
-@Ignore //TODO- Refactor. Powermock static mocking is broken in Java 13
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ValidationWebServicesUtil.class)
+@RunWith(SafePowerMockRunner.class)
+@PrepareForTest(ValidationDataUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 public class DnaSampleValidationTest {
@@ -69,12 +68,7 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleAllPassTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
-
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -93,12 +87,8 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleMissingRequiredFieldTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -124,12 +114,10 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleMismatchComparisionTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -152,12 +140,11 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleColumnCombinationNotUniqueTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/columnCombinationNotUnique", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/columnCombinationNotUnique",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
         digestFileValidator.performValidation(null);
         List<Path> pathList =
@@ -179,66 +166,16 @@ public class DnaSampleValidationTest {
      */
     @Test
     public void dnasampleExternalCodesGermplasmTableTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/externalCodesGermplasmTable", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(
+            tempFolder.getRoot().getAbsolutePath() + "/externalCodesGermplasmTable",
+            tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json");
 
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginToServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
+        PowerMockito.mockStatic(ValidationDataUtil.class);
 
-        List<NameIdDTO> externalCodeResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5555");
-            nameIdDTOResponse.setId(1);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5556");
-            nameIdDTOResponse.setId(2);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5557");
-            nameIdDTOResponse.setId(3);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5558");
-            nameIdDTOResponse.setId(4);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5559");
-            nameIdDTOResponse.setId(5);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5560");
-            nameIdDTOResponse.setId(6);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5561");
-            nameIdDTOResponse.setId(7);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5562");
-            nameIdDTOResponse.setId(8);
-            externalCodeResponse.add(nameIdDTOResponse);
-        }
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.GERMPLASM.toString()), eq("external_code"), any(),null))
-                    .thenReturn(externalCodeResponse);
+                    .when(ValidationDataUtil.validateNames(Matchers.any(), eq(GobiiEntityNameType.GERMPLASM.toString()), eq("external_code"), any()))
+                    .thenReturn(new ArrayList<>());
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }

@@ -74,7 +74,7 @@ public class Utils {
      * @param cvs List of cvs
      * @return map of Cvs by their names
      */
-    static Map<String, Cv> mapCyNames(List<Cv> cvs) {
+    static Map<String, Cv> mapCvNames(List<Cv> cvs) {
         Map<String, Cv> cvMap = new HashMap<>();
         for(Cv cv : cvs) {
             cvMap.put(cv.getTerm(), cv);

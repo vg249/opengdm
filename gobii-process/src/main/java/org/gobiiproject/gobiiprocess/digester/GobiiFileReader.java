@@ -43,6 +43,8 @@ import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -67,6 +69,13 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
+import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.transaction.Transactional;
 
 import static org.gobii.Util.slurp;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -106,6 +115,10 @@ public class GobiiFileReader {
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
 
+    public static  String configLoation;
+    public static String cropType;
+
+
     /**
      * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
      *
@@ -129,22 +142,29 @@ public class GobiiFileReader {
             if (cli.hasOption("verbose")) verbose = true;
             if (cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
             if (cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
+            if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(
+                cli.getOptionValue("hdfFiles"));
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
 
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("java -jar Digester.jar ",
-                "Also accepts input file directly after arguments\n" + "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json", o, null, true);
+                "Also accepts input file directly after arguments\n"
+                    + "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties " +
+                    "-v /home/jdl232/testLoad.json",
+                o,
+                null,
+                true);
             System.exit(2);
         }
+
+        configLoation = propertiesFile;
 
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
         List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
 
         LoaderInstruction loaderInstructions;
         GobiiLoaderProcedure procedure;
-        String cropType;
         boolean success;
         boolean sendQc = false;
         String dstFilePath;
@@ -214,6 +234,8 @@ public class GobiiFileReader {
             if (loadType.equals(GobiiFileType.GENERIC)) loadTypeName = loadType.name();
         }
 
+
+
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
             dstDir = new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
@@ -230,20 +252,9 @@ public class GobiiFileReader {
             logError("Digester", "Unknown Crop Type: " + cropType + " in the Configuration File");
             return;
         }
-        String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
 
-        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, cropType, GobiiAutoLoginType.USER_RUN_AS);
-        if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
-            return;
-        }
-        String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+        GobiiProcessContextSingleton.init(cropType, configLoation);
 
-        GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot);
-        guf.resourceColl(RestResourceId.GOBII_CALLS);
-
-        String user = configuration.getLdapUserForBackendProcs();
-        String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
 
         //Job Id is the 'name' part of the job file  /asd/de/name.json
@@ -251,9 +262,7 @@ public class GobiiFileReader {
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
         JobStatus jobStatus = null;
         try {
-            jobStatus = new JobStatus(configuration,
-                cropType,
-                jobFileName);
+            jobStatus = new JobStatus(jobFileName);
         } catch (Exception e) {
             Logger.logError("GobiiFileReader", "Error Checking Status", e);
         }
@@ -333,7 +342,7 @@ public class GobiiFileReader {
         //Metadata Validation
         boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.isEnableValidation()) {
-            DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
+            DigestFileValidator digestFileValidator = new DigestFileValidator(directory);
             digestFileValidator.performValidation(gobiiCropConfig);
             //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
             List<Path> pathList =
@@ -380,10 +389,15 @@ public class GobiiFileReader {
                 if (!VARIANT_CALL_TABNAME.equals(key)) {
                     String inputFile = " -i " + loaderInstructionMap.get(key);
                     String outputFile = " -o " + dstDir.getAbsolutePath() + "/"; //Output here is temporary files, needs terminal /
-
-                    Logger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
+                    Logger.logInfo(
+                        "Digester",
+                        "Running IFL: " + pathToIFL
+                            + " <conntection string> " + inputFile + outputFile);
                     //Lines affected returned by method call - THIS IS NOW IGNORED
-                    HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", verbose ? dstDir.getAbsolutePath() + "/iflOut" : null, errorPath);
+                    HelperFunctions.tryExec(
+                        pathToIFL + connectionString + inputFile + outputFile + " -l",
+                        verbose ? dstDir.getAbsolutePath() + "/iflOut" : null,
+                        errorPath);
 
                     IFLLineCounts counts = calculateTableStats(pm, loaderInstructionMap, dstDir, key);
 
@@ -397,8 +411,12 @@ public class GobiiFileReader {
                     } else {
                         //If there are no issues in the load, clean up temporary intermediate files
                         if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
-                            //And if 'delete intermediate files' is true, clean up all IFL files (we don't need them any more
-                            deleteIFLFiles(dstDir, key,!LoaderGlobalConfigs.isDeleteIntermediateFiles());
+                            // And if 'delete intermediate files' is true,
+                            // clean up all IFL files (we don't need them any more
+                            deleteIFLFiles(
+                                dstDir,
+                                key,
+                                !LoaderGlobalConfigs.isDeleteIntermediateFiles());
                         }
                     }
 
@@ -855,7 +873,7 @@ public class GobiiFileReader {
             return;
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, crop);
         PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO, ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
                 .resourceColl(RestResourceId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS));
@@ -1073,7 +1091,7 @@ public class GobiiFileReader {
             }
 
             String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, cropName);
 
             RestUri projectsUri = gobiiUriFactory
                     .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);

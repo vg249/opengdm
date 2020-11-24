@@ -49,11 +49,20 @@ public class MarkerServiceImpl implements MarkerService {
 
     final String loadType = "MARKER";
 
+    /**
+     * Uploads markers in the file to the database.
+     * Also, loads marker positions and linkage groups when provided in the same file.
+     *
+     * @param markerFile            Input marker file
+     * @param markerUploadRequest   Request object with meta data and template
+     * @param cropType              Crop type to which the markers need to uploaded
+     * @return  {@link JobDTO}
+     * @throws GobiiException   Gobii Exception for bad request or if any run time system error
+     */
     @Override
-    public JobDTO uploadMarkerFile(
-        byte[] markerFile,
-        MarkerUploadRequestDTO markerUploadRequest,
-        String cropType) throws GobiiException {
+    public JobDTO uploadMarkerFile(byte[] markerFile,
+                                   MarkerUploadRequestDTO markerUploadRequest,
+                                   String cropType) throws GobiiException {
 
         BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
@@ -181,11 +190,11 @@ public class MarkerServiceImpl implements MarkerService {
 
 
         //Read Header
-        InputStream sampleInputStream = new ByteArrayInputStream(markerFile);
+        InputStream fileInputStream = new ByteArrayInputStream(markerFile);
         try {
 
             br = new BufferedReader(
-                new InputStreamReader(sampleInputStream, StandardCharsets.UTF_8));
+                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
 
             fileHeader = br.readLine();
         }
@@ -241,7 +250,7 @@ public class MarkerServiceImpl implements MarkerService {
                         List<Cv> markerPropertiesCvList = cvDao.getCvListByCvGroup(
                             CvGroupTerm.CVGROUP_MARKER_PROP.getCvGroupName(),
                             null);
-                        markerPropertiesCvsMap = Utils.mapCyNames(markerPropertiesCvList);
+                        markerPropertiesCvsMap = Utils.mapCvNames(markerPropertiesCvList);
 
                     }
                     String propertyName = fileColumnsApiFieldsMap
@@ -274,14 +283,14 @@ public class MarkerServiceImpl implements MarkerService {
             }
         }
 
-        //Set JsonAspect
+        //Set JsonAspect for marker properties
         if(markerPropertiesAspects.size() > 0) {
             JsonAspect jsonAspect = new JsonAspect();
             jsonAspect.setJsonMap(markerPropertiesAspects);
             ((MarkerTable)aspects.get(markerTableName)).setMarkerProperties(jsonAspect);
         }
 
-
+        // Required fields marker and linkage group name for markerlinkgaegroup table
         if(aspects.containsKey(markerLinkageTableName)) {
             ((MarkerLinkageGroupTable)aspects.get(markerLinkageTableName))
                 .setMarkerName(((MarkerTable)aspects.get(markerTableName)).getMarkerName());
@@ -345,9 +354,11 @@ public class MarkerServiceImpl implements MarkerService {
             else {
                 fileField = (List<String>) markerTemplateMap.get(apiField);
                 if(fileField.size() > 0) {
-                    templateFieldsEntityMap.put(
-                        fileField.get(0),
-                        dtoEntityMap.get(apiField));
+                    if(dtoEntityMap.containsKey(apiField)) {
+                        templateFieldsEntityMap.put(
+                            fileField.get(0),
+                            dtoEntityMap.get(apiField));
+                    }
                 }
             }
 
