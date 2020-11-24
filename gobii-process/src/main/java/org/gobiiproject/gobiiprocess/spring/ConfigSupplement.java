@@ -27,8 +27,8 @@ public class ConfigSupplement {
      * @throws Exception
      */
     public void readConfigFile() throws Exception{
-        String configFileLocation = GobiiFileReader.configLoation;
-        String cropType = GobiiFileReader.cropType;
+        String configFileLocation = GobiiProcessContextSingleton.getCropConfigLocation();
+        String cropType = GobiiProcessContextSingleton.getCropType();
         if (configFileLocation == null || cropType == null) {
             String message = "The the environment does not define the FQPN of " +
                     "configuration in environment variable";

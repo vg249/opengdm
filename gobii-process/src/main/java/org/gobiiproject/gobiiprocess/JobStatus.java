@@ -8,7 +8,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.services.JobService;
-import org.gobiiproject.gobiiprocess.spring.DataBaseContextSingleton;
+import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
@@ -36,7 +36,7 @@ public class JobStatus {
 	));
 
     public JobStatus(String jobName) throws GobiiDaoException {
-        this.jobService = DataBaseContextSingleton
+        this.jobService = GobiiProcessContextSingleton
             .getInstance()
             .getContext()
             .getBean(JobService.class);

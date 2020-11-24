@@ -67,6 +67,7 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
+import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
@@ -194,6 +195,7 @@ public class GobiiExtractor {
 		String firstCrop = firstExtractInstruction.getGobiiCropType();
 		String firstContactEmail = firstExtractInstruction.getContactEmail();
 		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
+        GobiiProcessContextSingleton.init(firstCrop, propertiesFile);
 
 		//Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename = new File(instructionFile).getName();
@@ -210,6 +212,7 @@ public class GobiiExtractor {
 			String crop = inst.getGobiiCropType();
 			String extractType = "";
 			if (crop == null) crop = divineCrop(instructionFile);
+            GobiiProcessContextSingleton.init(crop, propertiesFile);
 			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&

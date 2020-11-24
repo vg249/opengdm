@@ -69,6 +69,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -251,24 +252,9 @@ public class GobiiFileReader {
             logError("Digester", "Unknown Crop Type: " + cropType + " in the Configuration File");
             return;
         }
-        String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
 
-        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(
-            configuration,
-            cropType,
-            GobiiAutoLoginType.USER_RUN_AS);
+        GobiiProcessContextSingleton.init(cropType, configLoation);
 
-        if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
-            return;
-        }
-        String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-
-        GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot, cropType);
-        guf.resourceColl(RestResourceId.GOBII_CALLS);
-
-        String user = configuration.getLdapUserForBackendProcs();
-        String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
 
         //Job Id is the 'name' part of the job file  /asd/de/name.json
