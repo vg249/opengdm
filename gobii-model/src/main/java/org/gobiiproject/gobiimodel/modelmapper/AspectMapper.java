@@ -1,6 +1,10 @@
 package org.gobiiproject.gobiimodel.modelmapper;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMap;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -47,230 +51,81 @@ public class AspectMapper {
         }
     }
 
-    private static void mapper(Object entityInstance, Object dtoInstance, boolean dtoToEntity, boolean ignoreNull) {
+    public static void mapTemplateToAspects(Object templateInstance,
+                                            Object aspectTableInstance,
+                                            Map<String, Object> valuesToSet
+    ) throws GobiiException {
 
         try {
 
-            List<Field> allFields = getAllDeclaredFields(dtoInstance.getClass());
+            // Get all declared fields in template object
+            List<Field> allFields = getAllDeclaredFields(templateInstance.getClass());
 
-            for (Field dtoField : allFields) {
-                if (dtoField.isAnnotationPresent(GobiiEntityMap.class)) {
+            for (Field templateField : allFields) {
 
-                    GobiiEntityMap[] entityMaps = dtoField.getAnnotationsByType(GobiiEntityMap.class);
-                    dtoField.setAccessible(true);
+                /**
+                 * Look for {@link GobiiAspectMaps}
+                 * */
+                if (templateField.isAnnotationPresent(GobiiAspectMaps.class)) {
 
-                    for (GobiiEntityMap entityMap : entityMaps) {
-                        if (dtoToEntity && entityMap.ignoreOnDtoToEntity()) continue;
-                        if (entityMap.entity().equals(entityInstance.getClass()) || entityMap.base() == true) {
+                    GobiiAspectMaps aspectMaps = templateField.getAnnotation(GobiiAspectMaps.class);
+                    for (GobiiAspectMap aspectMap : aspectMaps.maps()) {
 
-                            String dtoFieldName = dtoField.getName();
+                        // Ignore Aspect maps whose aspect table not same as aspectTableInstance
+                        if(!aspectMap.aspectTable().equals(aspectTableInstance.getClass())) {
+                            continue;
+                        }
 
-                            Object entityToSetOrGet = entityInstance;
+                        String templateFieldName = templateField.getName();
 
-                            String entityFieldName = entityMap.paramName();
+                        // If value is not defined, ignore the field
+                        if(!valuesToSet.containsKey(templateFieldName) ||
+                            ObjectUtils.isEmpty(valuesToSet.get(templateFieldName))) {
+                            continue;
+                        }
 
-                            Field entityField = getDeclaredField(
-                                entityFieldName, entityInstance.getClass());
-
-                            if(entityMap.deep()) {
-                                //escape regular expression dot
-                                String[] deepParams =
-                                    entityFieldName.split("\\.");
-
-                                entityField = getDeclaredField(
-                                    deepParams[0], entityToSetOrGet.getClass());
-
-                                for(int i = 1; i < deepParams.length; i++) {
-                                    if(entityField == null) {
-                                        break;
-                                    }
-
-                                    entityField.setAccessible(true);
-                                    Object entityFieldValue = entityField
-                                        .get(entityToSetOrGet);
-
-                                    // Instantiate entity value when
-                                    // dto value is not null
-                                    if(entityFieldValue == null
-                                        && dtoToEntity
-                                        && dtoField.get(dtoInstance) != null) {
-
-                                        Object emptyFieldValue =
-                                            Class.forName(entityField.getType()
-                                                .getName())
-                                                .getConstructor()
-                                                .newInstance();
-
-                                        entityField.set(
-                                            entityToSetOrGet, emptyFieldValue);
-
-                                        entityToSetOrGet = emptyFieldValue;
-                                    }
-                                    else {
-                                        entityToSetOrGet = entityFieldValue;
-                                        if(entityToSetOrGet == null) {
-                                            break;
-                                        }
-                                    }
-
-                                    entityField = getDeclaredField(deepParams[i],
-                                        entityToSetOrGet.getClass());
-
-                                }
+                        String aspectFieldName = aspectMap.paramName();
+                        if(StringUtils.isEmpty(aspectFieldName)) {
+                            aspectFieldName = templateFieldName;
+                        }
+                        Field aspectField =
+                            getDeclaredField(aspectFieldName, aspectTableInstance.getClass());
+                        if (aspectField == null) {
+                            throw new GobiiException(String.format(
+                                "Invalid Aspect field mapping templateField->aspectField(%s->%s)",
+                                templateFieldName,
+                                aspectFieldName));
+                        }
+                        aspectField.setAccessible(true);
+                        templateField.setAccessible(true);
+                        if (templateField.get(templateInstance) != null) {
+                            Class<?> templateValueClass =
+                                valuesToSet.get(templateFieldName).getClass();
+                            Class<?> aspectFieldClass = aspectField.getType();
+                            if (aspectFieldClass.equals(templateValueClass)) {
+                                aspectField.set(
+                                    aspectTableInstance,
+                                    valuesToSet.get(templateFieldName));
+                            } else {
+                                throw new GobiiException(String.format(
+                                    "Invalid Aspect field mapping: type mismatch, " +
+                                        "templateField->aspectField(%s->%s)",
+                                    templateFieldName,
+                                    aspectFieldName));
                             }
-
-
-                            if(entityField == null || entityToSetOrGet == null) {
-                                continue;
-                            }
-
-                            entityField.setAccessible(true);
-
-                            if(!entityField.getType().equals(dtoField.getType())) {
-                                LoggerFactory.getLogger(AspectMapper.class).error(
-                                        "Unable to map DTO to Entity: DTO field " + dtoFieldName +
-                                                " of type " + dtoField.getType().toString() +
-                                                " is not mappable to Entity field" + entityFieldName +
-                                                " of type " + entityField.getType().toString());
-
-                                throw new GobiiException(
-                                        GobiiStatusLevel.ERROR,
-                                        GobiiValidationStatusType.UNKNOWN,
-                                        "Unable to map DTO to Entity");
-
-                            }
-                            if(dtoToEntity) {
-                                Object value = dtoField.get(dtoInstance);
-                                if (ignoreNull && value == null) continue;
-                                entityField.set(entityToSetOrGet, value);
-                            }
-                            else {
-                                dtoField.set(dtoInstance, entityField.get(entityToSetOrGet));
-                            }
-
                         }
                     }
-
                 }
             }
         }
         catch(Exception e) {
             e.printStackTrace();
-            LoggerFactory.getLogger(AspectMapper.class).error(e.getMessage());
-
+            LoggerFactory.getLogger(ModelMapper.class).error(e.getMessage());
             throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Unable to map DTO to Entity");
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Unable to map DTO to Entity");
         }
-    }
-
-    public static void mapDtoToEntity(Object dtoInstance, Object entityInstance, boolean ignoreNull) throws  GobiiException {
-        AspectMapper.mapper(entityInstance, dtoInstance, true, ignoreNull);
-    }
-
-    public static void mapDtoToEntity(Object dtoInstance, Object entityInstance) throws  GobiiException {
-        AspectMapper.mapper(entityInstance, dtoInstance, true, false);
-    }
-
-    public static void mapEntityToDto(Object entityInstance, Object dtoInstance) throws GobiiException {
-        AspectMapper.mapper(entityInstance, dtoInstance, false, false);
-    }
-
-    @SuppressWarnings("all")
-    private static void getDtoEntityMap(
-            Class dtoClassName,
-            Map<String, EntityFieldBean> returnVal,
-            String prefix) {
-
-        try {
-
-            for(Field field : dtoClassName.getDeclaredFields()) {
-
-                if(field.isAnnotationPresent(GobiiEntityMap.class)) {
-
-                    GobiiEntityMap gobiiEntityMap = field.getAnnotation(GobiiEntityMap.class);
-
-                    String entityParamName = gobiiEntityMap.paramName();
-
-                    Class entityClass = gobiiEntityMap.entity();
-
-                    if(entityParamName != null & entityClass != void.class) {
-
-                        Field entityField;
-
-                        String tableName = null;
-
-                        if(entityClass.isAnnotationPresent(Table.class)) {
-                            Table table = (Table) entityClass.getAnnotation(Table.class);
-                            tableName = table.name();
-                        }
-
-                        try {
-                            entityField = entityClass.getDeclaredField(entityParamName);
-                        }
-                        catch(NoSuchFieldException noFiEx) {
-                            continue;
-                        }
-
-                        if(entityField.isAnnotationPresent(Column.class)) {
-
-                            Column jpaEntity = entityField.getAnnotation(Column.class);
-
-                            String dbColumnName = jpaEntity.name();
-
-                            EntityFieldBean entityFieldBean = new EntityFieldBean();
-
-                            entityFieldBean.setColumnName(dbColumnName);
-
-                            entityFieldBean.setTableName(tableName);
-
-                            if(prefix.isEmpty()) {
-                                returnVal.put(field.getName(), entityFieldBean);
-                            }
-                            else {
-                                returnVal.put(prefix + "." + field.getName(), entityFieldBean);
-                            }
-
-                        }
-                    }
-                }
-                else if(field.getType().getName().startsWith("org.gobiiproject.gobiimodel.dto")) {
-                   getDtoEntityMap(field.getType(), returnVal, field.getName());
-                }
-                else {
-                    if(prefix.isEmpty()) {
-                        returnVal.put(field.getName(), null);
-                    }
-                    else {
-                        returnVal.put(prefix + "." + field.getName(), null);
-                    }
-                }
-            }
-        }
-        catch(Exception e) {
-
-            LoggerFactory.getLogger(AspectMapper.class).error(e.getMessage());
-
-            throw new GobiiException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.UNKNOWN,
-                    "Unable to map DTO to Entity");
-        }
-
-
-
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static Map<String, EntityFieldBean> getDtoEntityMap(Class dtoClassName) {
-
-        Map<String, EntityFieldBean> returnVal = new HashMap<>();
-
-        getDtoEntityMap(dtoClassName, returnVal, "");
-
-        return returnVal;
-
     }
 
 }

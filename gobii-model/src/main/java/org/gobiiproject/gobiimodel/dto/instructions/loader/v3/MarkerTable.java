@@ -2,11 +2,13 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@GobiiAspectTable(name = "marker")
 public class MarkerTable implements Table {
 
     @JsonProperty("platform_id")
@@ -17,6 +19,9 @@ public class MarkerTable implements Table {
 
     @JsonProperty("name")
     private ColumnAspect markerName;
+
+    @JsonProperty("platform_name")
+    private ColumnAspect platformName;
 
     @JsonProperty("ref")
     private ColumnAspect markerRef;
@@ -95,5 +100,13 @@ public class MarkerTable implements Table {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public ColumnAspect getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(ColumnAspect platformName) {
+        this.platformName = platformName;
     }
 }

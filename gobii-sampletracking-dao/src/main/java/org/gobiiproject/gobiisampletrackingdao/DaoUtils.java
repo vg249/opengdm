@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
+
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.Table;
@@ -17,6 +19,6 @@ public class DaoUtils {
     }
 
     public static String getTableName(Class<?> entity) throws NullPointerException {
-        return entity.getDeclaredAnnotation(Table.class).name();
+        return entity.getDeclaredAnnotation(GobiiAspectTable.class).name();
     }
 }

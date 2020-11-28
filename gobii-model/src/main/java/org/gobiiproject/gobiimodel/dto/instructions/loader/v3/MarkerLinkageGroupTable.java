@@ -2,28 +2,34 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@GobiiAspectTable(name="marker_linkage_group")
 public class MarkerLinkageGroupTable implements Table {
 
     @JsonProperty("platform_id")
-    @NotNull(message = "platform id is required")
     private String platformId;
 
     @JsonProperty("marker_name")
     @NotNull(message = "marker name is required")
     private ColumnAspect markerName;
 
+    @JsonProperty("platform_name")
+    private ColumnAspect platformName;
+
     @JsonProperty("linkage_group_name")
     @NotNull(message = "linkage group name is required")
     private ColumnAspect linkageGroupName;
 
     @JsonProperty("map_id")
-    @NotNull(message = "map id is required")
     private String mapId;
+
+    @JsonProperty("map_name")
+    private ColumnAspect mapName;
 
     @JsonProperty("start")
     private ColumnAspect markerStart;
@@ -55,6 +61,14 @@ public class MarkerLinkageGroupTable implements Table {
         this.linkageGroupName = linkageGroupName;
     }
 
+    public ColumnAspect getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(ColumnAspect platformName) {
+        this.platformName = platformName;
+    }
+
     public String getMapId() {
         return mapId;
     }
@@ -79,11 +93,11 @@ public class MarkerLinkageGroupTable implements Table {
         this.markerStop = markerStop;
     }
 
-    public void setField(String fieldName, Object value)
-        throws NoSuchFieldException, IllegalAccessException {
-        Field field = getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(this, value);
+    public ColumnAspect getMapName() {
+        return mapName;
     }
 
+    public void setMapName(ColumnAspect mapName) {
+        this.mapName = mapName;
+    }
 }

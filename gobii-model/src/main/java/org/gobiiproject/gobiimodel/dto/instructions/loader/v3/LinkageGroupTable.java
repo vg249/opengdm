@@ -2,16 +2,20 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@GobiiAspectTable(name = "linkage_group")
 public class LinkageGroupTable implements Table {
 
     @JsonProperty("map_id")
-    @NotNull(message = "map id is required")
     private String mapId;
+
+    @JsonProperty("map_name")
+    private ColumnAspect mapName;
 
     @NotNull(message = "linkage group name is required")
     @JsonProperty("name")
@@ -55,4 +59,11 @@ public class LinkageGroupTable implements Table {
         this.linkageGroupStop = linkageGroupStop;
     }
 
+    public ColumnAspect getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(ColumnAspect mapName) {
+        this.mapName = mapName;
+    }
 }
