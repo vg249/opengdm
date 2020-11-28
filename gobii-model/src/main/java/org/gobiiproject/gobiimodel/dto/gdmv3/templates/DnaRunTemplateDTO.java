@@ -1,182 +1,146 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3.templates;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMap;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LinkageGroupTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerLinkageGroupTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.entity.LinkageGroup;
-import org.gobiiproject.gobiimodel.entity.Marker;
-import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MarkerTemplateDTO {
+public class DnaRunTemplateDTO {
 
-    @GobiiAspectMaps(maps = {
-        @GobiiAspectMap(aspectTable = MarkerTable.class),
-        @GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class),
-    })
-    private List<String> markerName = new ArrayList<>();
+    private List<String> dnaRunName = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
-    private  List<String> markerRef = new ArrayList<>();
+    private Map<String, List<String>> dnaRunProperties = new HashMap<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
-    private  List<String> markerAlt = new ArrayList<>();
+    private List<String> dnaSampleName = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {
-        @GobiiAspectMap(aspectTable = MarkerTable.class),
-        @GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class),
-    })
-    private List<String> platformName = new ArrayList<>();
+    private List<String> dnaSampleWellRow = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class)})
-    private  List<String> markerStart = new ArrayList<>();
+    private List<String> dnaSampleWellCol = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class)})
-    private  List<String> markerEnd = new ArrayList<>();
+    private List<String> dnaSamplePlateName = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
-    private  List<String> markerSequence = new ArrayList<>();
+    private List<String> dnaSampleUuid = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
-    private List<String> linkageGroupName = new ArrayList<>();
+    private Map<String, List<String>> dnaSampleProperties = new HashMap<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
-    private List<String> linkageGroupStart = new ArrayList<>();
+    private List<String> germplasmName = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
-    private List<String> linkageGroupStop = new ArrayList<>();
+    private List<String> germplasmExternalCode = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
-    private Map<String, List<String>> markerProperties = new HashMap<>();
+    private List<String> germplasmSpeciesName = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
-    private List<String> markerStrandName = new ArrayList<>();
+    private List<String> germplasmType = new ArrayList<>();
 
-    private List<String> markerReferenceName = new ArrayList<>();
+    private Map<String, List<String>> germplasmProperties = new HashMap<>();
 
-    @GobiiAspectMaps(maps = {
-        @GobiiAspectMap(paramName = "mapName", aspectTable = MarkerTable.class),
-        @GobiiAspectMap(paramName = "mapName", aspectTable = MarkerLinkageGroupTable.class),
-    })
-    private List<String> genomeMapName = new ArrayList<>();
-
-    public List<String> getMarkerName() {
-        return markerName;
+    public List<String> getDnaRunName() {
+        return dnaRunName;
     }
 
-    public void setMarkerName(List<String> markerName) {
-        this.markerName = markerName;
+    public void setDnaRunName(List<String> dnaRunName) {
+        this.dnaRunName = dnaRunName;
     }
 
-    public List<String> getMarkerRef() {
-        return markerRef;
+    public Map<String, List<String>> getDnaRunProperties() {
+        return dnaRunProperties;
     }
 
-    public void setMarkerRef(List<String> markerRef) {
-        this.markerRef = markerRef;
+    public void setDnaRunProperties(Map<String, List<String>> dnaRunProperties) {
+        this.dnaRunProperties = dnaRunProperties;
     }
 
-    public List<String> getMarkerAlt() {
-        return markerAlt;
+    public List<String> getDnaSampleName() {
+        return dnaSampleName;
     }
 
-    public void setMarkerAlt(List<String> markerAlt) {
-        this.markerAlt = markerAlt;
+    public void setDnaSampleName(List<String> dnaSampleName) {
+        this.dnaSampleName = dnaSampleName;
     }
 
-    public List<String> getMarkerStart() {
-        return markerStart;
+    public List<String> getDnaSampleWellRow() {
+        return dnaSampleWellRow;
     }
 
-    public void setMarkerStart(List<String> markerStart) {
-        this.markerStart = markerStart;
+    public void setDnaSampleWellRow(List<String> dnaSampleWellRow) {
+        this.dnaSampleWellRow = dnaSampleWellRow;
     }
 
-    public List<String> getMarkerEnd() {
-        return markerEnd;
+    public List<String> getDnaSampleWellCol() {
+        return dnaSampleWellCol;
     }
 
-    public void setMarkerEnd(List<String> markerEnd) {
-        this.markerEnd = markerEnd;
+    public void setDnaSampleWellCol(List<String> dnaSampleWellCol) {
+        this.dnaSampleWellCol = dnaSampleWellCol;
     }
 
-    public List<String> getMarkerSequence() {
-        return markerSequence;
+    public List<String> getDnaSamplePlateName() {
+        return dnaSamplePlateName;
     }
 
-    public void setMarkerSequence(List<String> markerSequence) {
-        this.markerSequence = markerSequence;
+    public void setDnaSamplePlateName(List<String> dnaSamplePlateName) {
+        this.dnaSamplePlateName = dnaSamplePlateName;
     }
 
-    public List<String> getMarkerStrandName() {
-        return markerStrandName;
+    public List<String> getDnaSampleUuid() {
+        return dnaSampleUuid;
     }
 
-    public void setMarkerStrandName(List<String> markerStrandName) {
-        this.markerStrandName = markerStrandName;
+    public void setDnaSampleUuid(List<String> dnaSampleUuid) {
+        this.dnaSampleUuid = dnaSampleUuid;
     }
 
-    public List<String> getLinkageGroupName() {
-        return linkageGroupName;
+    public Map<String, List<String>> getDnaSampleProperties() {
+        return dnaSampleProperties;
     }
 
-    public void setLinkageGroupName(List<String> linkageGroupName) {
-        this.linkageGroupName = linkageGroupName;
+    public void setDnaSampleProperties(Map<String, List<String>> dnaSampleProperties) {
+        this.dnaSampleProperties = dnaSampleProperties;
     }
 
-    public List<String> getLinkageGroupStart() {
-        return linkageGroupStart;
+    public List<String> getGermplasmName() {
+        return germplasmName;
     }
 
-    public void setLinkageGroupStart(List<String> linkageGroupStart) {
-        this.linkageGroupStart = linkageGroupStart;
+    public void setGermplasmName(List<String> germplasmName) {
+        this.germplasmName = germplasmName;
     }
 
-    public List<String> getLinkageGroupStop() {
-        return linkageGroupStop;
+    public List<String> getGermplasmExternalCode() {
+        return germplasmExternalCode;
     }
 
-    public void setLinkageGroupStop(List<String> linkageGroupStop) {
-        this.linkageGroupStop = linkageGroupStop;
+    public void setGermplasmExternalCode(List<String> germplasmExternalCode) {
+        this.germplasmExternalCode = germplasmExternalCode;
     }
 
-    public Map<String, List<String>> getMarkerProperties() {
-        return markerProperties;
+    public List<String> getGermplasmSpeciesName() {
+        return germplasmSpeciesName;
     }
 
-    public void setMarkerProperties(Map<String, List<String>> markerProperties) {
-        this.markerProperties = markerProperties;
+    public void setGermplasmSpeciesName(List<String> germplasmSpeciesName) {
+        this.germplasmSpeciesName = germplasmSpeciesName;
     }
 
-    public List<String> getPlatformName() {
-        return platformName;
+    public List<String> getGermplasmType() {
+        return germplasmType;
     }
 
-    public void setPlatformName(List<String> platformName) {
-        this.platformName = platformName;
+    public void setGermplasmType(List<String> germplasmType) {
+        this.germplasmType = germplasmType;
     }
 
-    public List<String> getMarkerReferenceName() {
-        return markerReferenceName;
+    public Map<String, List<String>> getGermplasmProperties() {
+        return germplasmProperties;
     }
 
-    public void setMarkerReferenceName(List<String> markerReferenceName) {
-        this.markerReferenceName = markerReferenceName;
-    }
-
-    public List<String> getGenomeMapName() {
-        return genomeMapName;
-    }
-
-    public void setGenomeMapName(List<String> genomeMapName) {
-        this.genomeMapName = genomeMapName;
+    public void setGermplasmProperties(Map<String, List<String>> germplasmProperties) {
+        this.germplasmProperties = germplasmProperties;
     }
 }
