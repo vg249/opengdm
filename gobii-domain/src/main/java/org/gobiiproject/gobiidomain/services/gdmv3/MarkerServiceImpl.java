@@ -12,7 +12,6 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
-import org.gobiiproject.gobiimodel.modelmapper.EntityFieldBean;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
@@ -51,11 +50,12 @@ public class MarkerServiceImpl implements MarkerService {
 
     final String loadType = "MARKER";
 
+
     /**
      * Uploads markers in the file to the database.
      * Also, loads marker positions and linkage groups when provided in the same file.
      *
-     * @param markerFile            Input marker file
+     * @param markerFile            Input marker file byte array
      * @param markerUploadRequest   Request object with meta data and template
      * @param cropType              Crop type to which the markers need to uploaded
      * @return  {@link JobDTO}
@@ -119,12 +119,6 @@ public class MarkerServiceImpl implements MarkerService {
             markerLinkageGroupTable.setMapId(mapset.getMapsetId().toString());
         }
 
-        //Set new status for marker table
-        Cv status = cvDao.getCvs(
-            "new",
-            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        markerTable.setStatus(status.getCvId().toString());
 
         // Read marker template
         LoaderTemplate loaderTemplate = loaderTemplateDao.getById(
@@ -156,10 +150,19 @@ public class MarkerServiceImpl implements MarkerService {
                 "Unable to find user in system");
         }
 
+        Cv newStatus = cvDao.getCvs(
+            "new",
+            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+
+        // Set new status for marker table
+        markerTable.setStatus(newStatus.getCvId().toString());
+
         // Get a new Job object
         Job job = getNewJob();
-        job.setStatus(status);
         job.setSubmittedBy(createdBy);
+        job.setStatus(newStatus);
+
         String jobName = job.getJobName();
 
         // Set contact email in loader instruction
@@ -252,7 +255,7 @@ public class MarkerServiceImpl implements MarkerService {
         return jobDTO;
     }
 
-    private Job getNewJob() {
+    private Job getNewJob() throws GobiiException {
         String jobName = UUID.randomUUID().toString().replace("-", "");
         Job job = new Job();
         job.setJobName(jobName);

@@ -2,7 +2,8 @@ package org.gobiiproject.gobiimodel.types;
 
 public enum GobiiLoaderPayloadTypes {
 
-    MARKERS("markers");
+    MARKERS("markers"),
+    DNARUNS("dnaruns");
 
     private String payloadType;
 
