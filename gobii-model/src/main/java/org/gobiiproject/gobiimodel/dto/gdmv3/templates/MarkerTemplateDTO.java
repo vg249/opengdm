@@ -1,7 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3.templates;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMap;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityMap;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LinkageGroupTable;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerLinkageGroupTable;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.entity.LinkageGroup;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.entity.MarkerLinkageGroup;
@@ -13,42 +18,54 @@ import java.util.Map;
 
 public class MarkerTemplateDTO {
 
-    @GobiiEntityMap(paramName = "markerName", entity = Marker.class)
+    @GobiiAspectMaps(maps = {
+        @GobiiAspectMap(aspectTable = MarkerTable.class),
+        @GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class),
+    })
     private List<String> markerName = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "ref", entity = Marker.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
     private  List<String> markerRef = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "alts", entity = Marker.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
     private  List<String> markerAlt = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "start", entity = MarkerLinkageGroup.class)
+    @GobiiAspectMaps(maps = {
+        @GobiiAspectMap(aspectTable = MarkerTable.class),
+        @GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class),
+    })
+    private List<String> platformName = new ArrayList<>();
+
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class)})
     private  List<String> markerStart = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "stop", entity = MarkerLinkageGroup.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class)})
     private  List<String> markerEnd = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "sequence", entity = Marker.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
     private  List<String> markerSequence = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "linkageGroupName", entity = LinkageGroup.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
     private List<String> linkageGroupName = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "linkageGroupStart", entity = LinkageGroup.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
     private List<String> linkageGroupStart = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "linkageGroupStop", entity = LinkageGroup.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
     private List<String> linkageGroupStop = new ArrayList<>();
 
-    @GobiiEntityMap(paramName = "properties", entity = Marker.class)
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
     private Map<String, List<String>> markerProperties = new HashMap<>();
 
+    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
     private List<String> markerStrandName = new ArrayList<>();
 
     private List<String> markerReferenceName = new ArrayList<>();
 
-    private List<String> platformName = new ArrayList<>();
-
+    @GobiiAspectMaps(maps = {
+        @GobiiAspectMap(paramName = "mapName", aspectTable = MarkerTable.class),
+        @GobiiAspectMap(paramName = "mapName", aspectTable = MarkerLinkageGroupTable.class),
+    })
     private List<String> genomeMapName = new ArrayList<>();
 
     public List<String> getMarkerName() {
@@ -137,5 +154,29 @@ public class MarkerTemplateDTO {
 
     public void setMarkerProperties(Map<String, List<String>> markerProperties) {
         this.markerProperties = markerProperties;
+    }
+
+    public List<String> getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(List<String> platformName) {
+        this.platformName = platformName;
+    }
+
+    public List<String> getMarkerReferenceName() {
+        return markerReferenceName;
+    }
+
+    public void setMarkerReferenceName(List<String> markerReferenceName) {
+        this.markerReferenceName = markerReferenceName;
+    }
+
+    public List<String> getGenomeMapName() {
+        return genomeMapName;
+    }
+
+    public void setGenomeMapName(List<String> genomeMapName) {
+        this.genomeMapName = genomeMapName;
     }
 }
