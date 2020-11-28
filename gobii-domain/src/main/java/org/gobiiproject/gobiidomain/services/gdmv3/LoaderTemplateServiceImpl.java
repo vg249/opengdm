@@ -41,8 +41,23 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public LoaderTemplateDTO addMarkerTemplate(
-        LoaderTemplateDTO loaderTemplateDTO
+    public LoaderTemplateDTO addMarkerTemplate(LoaderTemplateDTO loaderTemplateDTO
+    ) throws Exception {
+        return addLoaderTemplate(
+            loaderTemplateDTO,
+            GobiiLoaderPayloadTypes.MARKERS);
+    }
+
+    @Override
+    public LoaderTemplateDTO addDnaRunTemplate(LoaderTemplateDTO loaderTemplateDTO
+    ) throws Exception {
+        return addLoaderTemplate(
+            loaderTemplateDTO,
+            GobiiLoaderPayloadTypes.DNARUNS);
+    }
+
+    private LoaderTemplateDTO addLoaderTemplate(LoaderTemplateDTO loaderTemplateDTO,
+                                             GobiiLoaderPayloadTypes payloadType
     ) throws Exception {
 
         LoaderTemplate loaderTemplate  = new LoaderTemplate();
