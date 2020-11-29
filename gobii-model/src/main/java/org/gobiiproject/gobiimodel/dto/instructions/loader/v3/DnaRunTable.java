@@ -5,93 +5,43 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Field;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@GobiiAspectTable(name = "marker")
-public class MarkerTable implements Table {
+@GobiiAspectTable(name = "dnarun")
+public class DnaRunTable implements Table {
 
-    @JsonProperty("platform_id")
-    @NotNull(message = "platform id cannot be null")
-    private String platformId;
+    @JsonProperty("project_id")
+    private String projectId;
 
+    @JsonProperty("experiment_id")
+    private String experimentId;
+
+    @JsonProperty("status")
     private String status;
 
+    @JsonProperty("dnasample_name")
+    private Aspect dnaSampleName;
+
+    @JsonProperty("num")
+    private Aspect dnaSampleNum;
+
     @JsonProperty("name")
-    private ColumnAspect markerName;
+    private Aspect dnaRunName;
 
-    @JsonProperty("platform_name")
-    private ColumnAspect platformName;
-
-    @JsonProperty("ref")
-    private ColumnAspect markerRef;
-
-    @JsonProperty("alt")
-    private ColumnAspect markerAlt;
-
-    @JsonProperty("sequence")
-    private ColumnAspect markerSequence;
-
-    @JsonProperty("strand_name")
-    private ColumnAspect markerStrandName;
-
-    @JsonProperty("props")
-    private JsonAspect markerProperties;
-
-    public String getPlatformId() {
-        return platformId;
+    public String getProjectId() {
+        return projectId;
     }
 
-    public void setPlatformId(String platformId) {
-        this.platformId = platformId;
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
-    public ColumnAspect getMarkerName() {
-        return markerName;
+    public String getExperimentId() {
+        return experimentId;
     }
 
-    public void setMarkerName(ColumnAspect markerName) {
-        this.markerName = markerName;
-    }
-
-    public ColumnAspect getMarkerRef() {
-        return markerRef;
-    }
-
-    public void setMarkerRef(ColumnAspect markerRef) {
-        this.markerRef = markerRef;
-    }
-
-    public ColumnAspect getMarkerAlt() {
-        return markerAlt;
-    }
-
-    public void setMarkerAlt(ColumnAspect markerAlt) {
-        this.markerAlt = markerAlt;
-    }
-
-    public ColumnAspect getMarkerSequence() {
-        return markerSequence;
-    }
-
-    public void setMarkerSequence(ColumnAspect markerSequence) {
-        this.markerSequence = markerSequence;
-    }
-
-    public ColumnAspect getMarkerStrandName() {
-        return markerStrandName;
-    }
-
-    public void setMarkerStrandName(ColumnAspect markerStrandName) {
-        this.markerStrandName = markerStrandName;
-    }
-
-    public JsonAspect getMarkerProperties() {
-        return markerProperties;
-    }
-
-    public void setMarkerProperties(JsonAspect markerProperties) {
-        this.markerProperties = markerProperties;
+    public void setExperimentId(String experimentId) {
+        this.experimentId = experimentId;
     }
 
     public String getStatus() {
@@ -102,11 +52,27 @@ public class MarkerTable implements Table {
         this.status = status;
     }
 
-    public ColumnAspect getPlatformName() {
-        return platformName;
+    public Aspect getDnaSampleName() {
+        return dnaSampleName;
     }
 
-    public void setPlatformName(ColumnAspect platformName) {
-        this.platformName = platformName;
+    public void setDnaSampleName(Aspect dnaSampleName) {
+        this.dnaSampleName = dnaSampleName;
+    }
+
+    public Aspect getDnaSampleNum() {
+        return dnaSampleNum;
+    }
+
+    public void setDnaSampleNum(Aspect dnaSampleNum) {
+        this.dnaSampleNum = dnaSampleNum;
+    }
+
+    public Aspect getDnaRunName() {
+        return dnaRunName;
+    }
+
+    public void setDnaRunName(Aspect dnaRunName) {
+        this.dnaRunName = dnaRunName;
     }
 }
