@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -50,7 +49,6 @@ public class MarkerServiceImpl implements MarkerService {
 
     final String loadType = "MARKER";
 
-
     /**
      * Uploads markers in the file to the database.
      * Also, loads marker positions and linkage groups when provided in the same file.
@@ -62,9 +60,9 @@ public class MarkerServiceImpl implements MarkerService {
      * @throws GobiiException   Gobii Exception for bad request or if any run time system error
      */
     @Override
-    public JobDTO uploadMarkerFile(byte[] markerFile,
-                                   MarkerUploadRequestDTO markerUploadRequest,
-                                   String cropType) throws GobiiException {
+    public JobDTO loadMarkerData(byte[] markerFile,
+                                 MarkerUploadRequestDTO markerUploadRequest,
+                                 String cropType) throws GobiiException {
 
         BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
@@ -169,11 +167,11 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setContactEmail(createdBy.getEmail());
 
         //Set Input file
-        String inputFilePath = writeInputFile(markerFile, jobName, cropType);
+        String inputFilePath = Utils.writeInputFile(markerFile, jobName, cropType);
         loaderInstruction.setInputFile(inputFilePath);
 
         //Set output dir
-        String outputFilesDir = getOutputDir(jobName, cropType);
+        String outputFilesDir = Utils.getOutputDir(jobName, cropType);
         loaderInstruction.setOutputDir(outputFilesDir);
 
         //Get API fields Entity Mapping
@@ -247,7 +245,7 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setAspects(aspects);
 
         // Write instruction file
-        writeInstructionFile(loaderInstruction, jobName, cropType);
+        Utils.writeInstructionFile(loaderInstruction, jobName, cropType);
 
         JobDTO jobDTO = new JobDTO();
         jobDao.create(job);
@@ -273,65 +271,6 @@ public class MarkerServiceImpl implements MarkerService {
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         job.setType(jobType);
         return job;
-    }
-
-    /**
-     *
-     * @param markerFile    byte array of input file to be loaded.
-     * @param jobName       name of the job
-     * @param cropType      type of the crop
-     * @return path of the input file
-     */
-    private String writeInputFile(byte[] markerFile,
-                                  String jobName,
-                                  String cropType) throws GobiiDomainException {
-
-        String markerFileName = "markers.txt";
-        String rawFilesDir = Utils.getProcessDir(cropType, GobiiFileProcessDir.RAW_USER_FILES);
-        String inputFilePath = Paths.get(rawFilesDir, jobName, markerFileName).toString();
-        Utils.writeByteArrayToFile(inputFilePath, markerFile);
-        return inputFilePath;
-    }
-
-    /**
-     * Creates output directory for given job and crop type.
-     * @param jobName   Name of the job
-     * @param cropType  Crop type for which the data is loaded.
-     * @return  output directory where digest files needs to be created for the loading job.
-     */
-    private String getOutputDir(String jobName, String cropType) {
-        String interMediateFilesDir = Utils.getProcessDir(cropType,
-            GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
-        String outputFilesDir = Paths.get(interMediateFilesDir, jobName).toString();
-        Utils.makeDir(outputFilesDir);
-        return outputFilesDir;
-    }
-
-    private void writeInstructionFile(LoaderInstruction loaderInstruction,
-                                      String jobName,
-                                      String cropType) throws GobiiDomainException {
-        try {
-            String loaderInstructionText = mapper.writeValueAsString(loaderInstruction);
-            String instructionFileName = jobName + ".json";
-
-            String instructionFilesDir = Utils.getProcessDir(
-                cropType,
-                GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-
-            String instructionFilePath = Paths.get(
-                instructionFilesDir,
-                instructionFileName).toString();
-
-            Utils.writeByteArrayToFile(
-                instructionFilePath,
-                loaderInstructionText.getBytes());
-        }
-        catch (JsonProcessingException jE) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.NONE,
-                "Unable to submit job file");
-        }
     }
 
     private void validateMarkerTable(MarkerTable markerTable) throws GobiiDomainException {
