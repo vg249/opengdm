@@ -1,7 +1,10 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -12,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +24,10 @@ public class Utils {
 
     static ConfigSettings configSettings = new ConfigSettings();
 
-    static String getProcessDir(String cropType, GobiiFileProcessDir gobiiFileProcessDir
+    static ObjectMapper mapper = new ObjectMapper();
+
+    static String getProcessDir(String cropType,
+                                GobiiFileProcessDir gobiiFileProcessDir
     ) throws GobiiDomainException {
         try {
 
@@ -38,8 +45,8 @@ public class Utils {
         }
     }
 
-    static void writeByteArrayToFile(String filePath, byte[] fileContent
-    ) throws GobiiDomainException {
+    static void writeByteArrayToFile(String filePath,
+                                     byte[] fileContent) throws GobiiDomainException {
         try {
             File file = new File(filePath);
             makeDir(file.getParent());
@@ -57,7 +64,7 @@ public class Utils {
 
     static void makeDir(String dirPath) {
         File file = new File(dirPath);
-        if(!file.isDirectory()) {
+        if(!file.exists()) {
             file.mkdirs();
         }
     }
@@ -81,4 +88,65 @@ public class Utils {
         }
         return cvMap;
     }
+
+    /**
+     *
+     * @param markerFile    byte array of input file to be loaded.
+     * @param jobName       name of the job
+     * @param cropType      type of the crop
+     * @return path of the input file
+     */
+    static String writeInputFile(byte[] markerFile,
+                                 String jobName,
+                                 String cropType) throws GobiiDomainException {
+
+        String markerFileName = "markers.txt";
+        String rawFilesDir = Utils.getProcessDir(cropType, GobiiFileProcessDir.RAW_USER_FILES);
+        String inputFilePath = Paths.get(rawFilesDir, jobName, markerFileName).toString();
+        Utils.writeByteArrayToFile(inputFilePath, markerFile);
+        return inputFilePath;
+    }
+
+    /**
+     * Creates output directory for given job and crop type.
+     * @param jobName   Name of the job
+     * @param cropType  Crop type for which the data is loaded.
+     * @return  output directory where digest files needs to be created for the loading job.
+     */
+    static String getOutputDir(String jobName, String cropType) {
+        String interMediateFilesDir = Utils.getProcessDir(cropType,
+            GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
+        String outputFilesDir = Paths.get(interMediateFilesDir, jobName).toString();
+        Utils.makeDir(outputFilesDir);
+        return outputFilesDir;
+    }
+
+    static void writeInstructionFile(LoaderInstruction loaderInstruction,
+                                     String jobName,
+                                     String cropType) throws GobiiDomainException {
+        try {
+            String loaderInstructionText = mapper.writeValueAsString(loaderInstruction);
+            String instructionFileName = jobName + ".json";
+
+            String instructionFilesDir = Utils.getProcessDir(
+                cropType,
+                GobiiFileProcessDir.LOADER_INSTRUCTIONS);
+
+            String instructionFilePath = Paths.get(
+                instructionFilesDir,
+                instructionFileName).toString();
+
+            Utils.writeByteArrayToFile(
+                instructionFilePath,
+                loaderInstructionText.getBytes());
+        }
+        catch (JsonProcessingException jE) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Unable to submit job file");
+        }
+    }
+
+
 }
