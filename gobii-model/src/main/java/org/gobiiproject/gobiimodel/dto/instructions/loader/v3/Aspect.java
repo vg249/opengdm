@@ -3,22 +3,16 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape=JsonFormat.Shape.ARRAY)
-public class ColumnAspect {
-
-    private final String aspectType = "COLUMN";
+public class Aspect {
 
     private ColumnCoordinates columnCoordinates;
 
-    public ColumnAspect(ColumnCoordinates columnCoordinates) {
+    public Aspect(ColumnCoordinates columnCoordinates) {
         this.columnCoordinates = columnCoordinates;
     }
 
-    public ColumnAspect(int row, int column) {
+    public Aspect(int row, int column) {
         this.columnCoordinates = new ColumnCoordinates(row, column);
-    }
-
-    public String getAspectType() {
-        return aspectType;
     }
 
     public ColumnCoordinates getColumnCoordinates() {
