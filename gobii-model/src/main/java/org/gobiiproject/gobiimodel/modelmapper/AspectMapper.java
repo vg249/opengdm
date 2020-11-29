@@ -23,7 +23,6 @@ public class AspectMapper {
     }
 
     /**
-     * stackoverflow.com/questions/1042798
      * @param fields - Fields of a given model
      * @param type - type of the fileds
      * @return - List of mapped fields.
@@ -63,9 +62,6 @@ public class AspectMapper {
 
             for (Field templateField : allFields) {
 
-                /**
-                 * Look for {@link GobiiAspectMaps}
-                 * */
                 if (templateField.isAnnotationPresent(GobiiAspectMaps.class)) {
 
                     GobiiAspectMaps aspectMaps = templateField.getAnnotation(GobiiAspectMaps.class);
@@ -118,7 +114,7 @@ public class AspectMapper {
                 }
             }
         }
-        catch(Exception e) {
+        catch(NullPointerException | IllegalAccessException e) {
             e.printStackTrace();
             LoggerFactory.getLogger(ModelMapper.class).error(e.getMessage());
             throw new GobiiException(

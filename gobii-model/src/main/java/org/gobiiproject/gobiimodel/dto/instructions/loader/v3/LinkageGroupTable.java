@@ -15,17 +15,17 @@ public class LinkageGroupTable implements Table {
     private String mapId;
 
     @JsonProperty("map_name")
-    private ColumnAspect mapName;
+    private Aspect mapName;
 
     @NotNull(message = "linkage group name is required")
     @JsonProperty("name")
-    private ColumnAspect linkageGroupName;
+    private Aspect linkageGroupName;
 
     @JsonProperty("start")
-    private ColumnAspect linkageGroupStart;
+    private Aspect linkageGroupStart;
 
     @JsonProperty("stop")
-    private ColumnAspect linkageGroupStop;
+    private Aspect linkageGroupStop;
 
     public String getMapId() {
         return mapId;
@@ -35,7 +35,7 @@ public class LinkageGroupTable implements Table {
         this.mapId = mapId;
     }
 
-    public ColumnAspect getLinkageGroupName() {
+    public Aspect getLinkageGroupName() {
         return linkageGroupName;
     }
 
@@ -43,27 +43,31 @@ public class LinkageGroupTable implements Table {
         this.linkageGroupName = linkageGroupName;
     }
 
-    public ColumnAspect getLinkageGroupStart() {
-        return linkageGroupStart;
-    }
-
-    public void setLinkageGroupStart(ColumnAspect linkageGroupStart) {
-        this.linkageGroupStart = linkageGroupStart;
-    }
-
-    public ColumnAspect getLinkageGroupStop() {
-        return linkageGroupStop;
-    }
-
-    public void setLinkageGroupStop(ColumnAspect linkageGroupStop) {
-        this.linkageGroupStop = linkageGroupStop;
-    }
-
-    public ColumnAspect getMapName() {
+    public Aspect getMapName() {
         return mapName;
     }
 
-    public void setMapName(ColumnAspect mapName) {
+    public void setMapName(Aspect mapName) {
         this.mapName = mapName;
+    }
+
+    public void setLinkageGroupName(Aspect linkageGroupName) {
+        this.linkageGroupName = linkageGroupName;
+    }
+
+    public Aspect getLinkageGroupStart() {
+        return linkageGroupStart;
+    }
+
+    public void setLinkageGroupStart(Aspect linkageGroupStart) {
+        this.linkageGroupStart = linkageGroupStart;
+    }
+
+    public Aspect getLinkageGroupStop() {
+        return linkageGroupStop;
+    }
+
+    public void setLinkageGroupStop(Aspect linkageGroupStop) {
+        this.linkageGroupStop = linkageGroupStop;
     }
 }
