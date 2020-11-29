@@ -18,22 +18,22 @@ public class MarkerTable implements Table {
     private String status;
 
     @JsonProperty("name")
-    private ColumnAspect markerName;
+    private Aspect markerName;
 
     @JsonProperty("platform_name")
-    private ColumnAspect platformName;
+    private Aspect platformName;
 
     @JsonProperty("ref")
-    private ColumnAspect markerRef;
+    private Aspect markerRef;
 
     @JsonProperty("alt")
-    private ColumnAspect markerAlt;
+    private Aspect markerAlt;
 
     @JsonProperty("sequence")
-    private ColumnAspect markerSequence;
+    private Aspect markerSequence;
 
     @JsonProperty("strand_name")
-    private ColumnAspect markerStrandName;
+    private Aspect markerStrandName;
 
     @JsonProperty("props")
     private JsonAspect markerProperties;
@@ -46,43 +46,59 @@ public class MarkerTable implements Table {
         this.platformId = platformId;
     }
 
-    public ColumnAspect getMarkerName() {
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Aspect getMarkerName() {
         return markerName;
     }
 
-    public void setMarkerName(ColumnAspect markerName) {
+    public void setMarkerName(Aspect markerName) {
         this.markerName = markerName;
     }
 
-    public ColumnAspect getMarkerRef() {
+    public Aspect getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(Aspect platformName) {
+        this.platformName = platformName;
+    }
+
+    public Aspect getMarkerRef() {
         return markerRef;
     }
 
-    public void setMarkerRef(ColumnAspect markerRef) {
+    public void setMarkerRef(Aspect markerRef) {
         this.markerRef = markerRef;
     }
 
-    public ColumnAspect getMarkerAlt() {
+    public Aspect getMarkerAlt() {
         return markerAlt;
     }
 
-    public void setMarkerAlt(ColumnAspect markerAlt) {
+    public void setMarkerAlt(Aspect markerAlt) {
         this.markerAlt = markerAlt;
     }
 
-    public ColumnAspect getMarkerSequence() {
+    public Aspect getMarkerSequence() {
         return markerSequence;
     }
 
-    public void setMarkerSequence(ColumnAspect markerSequence) {
+    public void setMarkerSequence(Aspect markerSequence) {
         this.markerSequence = markerSequence;
     }
 
-    public ColumnAspect getMarkerStrandName() {
+    public Aspect getMarkerStrandName() {
         return markerStrandName;
     }
 
-    public void setMarkerStrandName(ColumnAspect markerStrandName) {
+    public void setMarkerStrandName(Aspect markerStrandName) {
         this.markerStrandName = markerStrandName;
     }
 
@@ -92,21 +108,5 @@ public class MarkerTable implements Table {
 
     public void setMarkerProperties(JsonAspect markerProperties) {
         this.markerProperties = markerProperties;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ColumnAspect getPlatformName() {
-        return platformName;
-    }
-
-    public void setPlatformName(ColumnAspect platformName) {
-        this.platformName = platformName;
     }
 }
