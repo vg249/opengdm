@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.LoaderTemplateDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -106,6 +107,43 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
         }
 
         return markerTemplateDTO;
+    }
+
+    @Override
+    public DnaRunTemplateDTO getDnaRunTemplate() throws GobiiException {
+
+        DnaRunTemplateDTO dnaRunTemplateDTO = new DnaRunTemplateDTO();
+
+        // Add dnarun properties
+        List<Cv> dnaRunProperties = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_DNARUN_PROP.getCvGroupName(),
+            null);
+        dnaRunProperties.forEach(dnaRunProperty -> {
+            dnaRunTemplateDTO
+                .getDnaRunProperties()
+                .put(dnaRunProperty.getTerm(), new ArrayList<>());
+        });
+
+        // Add dna sample properties
+        List<Cv> dnaSampleProperties = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
+        dnaSampleProperties.forEach(dnaSampleProperty -> {
+            dnaRunTemplateDTO
+                .getDnaSampleProperties()
+                .put(dnaSampleProperty.getTerm(), new ArrayList<>());
+        });
+
+        // Add germplasm properties
+        List<Cv> germplasmProperties = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
+            null);
+        germplasmProperties.forEach(germplasmProperty -> {
+            dnaRunTemplateDTO
+                .getGermplasmProperties()
+                .put(germplasmProperty.getTerm(), new ArrayList<>());
+        });
+
+        return dnaRunTemplateDTO;
     }
 
 
