@@ -1,31 +1,20 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonFormat(shape=JsonFormat.Shape.ARRAY)
-public class ColumnAspect {
+@JsonPropertyOrder({"aspectType", "columnCoordinates"})
+public class ColumnAspect  extends Aspect {
 
-    private final String aspectType = "COLUMN";
-
-    private ColumnCoordinates columnCoordinates;
+    public final String aspectType = "COLUMN";
 
     public ColumnAspect(ColumnCoordinates columnCoordinates) {
-        this.columnCoordinates = columnCoordinates;
+        super(columnCoordinates);
     }
 
     public ColumnAspect(int row, int column) {
-        this.columnCoordinates = new ColumnCoordinates(row, column);
+        super(row, column);
     }
 
-    public String getAspectType() {
-        return aspectType;
-    }
-
-    public ColumnCoordinates getColumnCoordinates() {
-        return columnCoordinates;
-    }
-
-    public void setColumnCoordinates(ColumnCoordinates columnCoordinates) {
-        this.columnCoordinates = columnCoordinates;
-    }
 }
