@@ -51,7 +51,7 @@ public class MarkerController {
 
         byte[] markerFileBytes = markerFile.getBytes();
 
-        JobDTO job = markerService.uploadMarkerFile(
+        JobDTO job = markerService.loadMarkerData(
             markerFileBytes,
             markerUploadRequest,
             cropType);

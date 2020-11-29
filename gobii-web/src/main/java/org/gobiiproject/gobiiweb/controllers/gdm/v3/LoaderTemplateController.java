@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.LoaderTemplateDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,6 @@ public class LoaderTemplateController {
         this.loaderTemplateService = loaderTemplateService;
     }
 
-
-
     /**
      * @return {@link org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO}
      *
@@ -51,6 +50,17 @@ public class LoaderTemplateController {
     public ResponseEntity<MarkerTemplateDTO> getMarkerTemplate() throws Exception {
         MarkerTemplateDTO markerTemplateDTO = loaderTemplateService.getMarkerTemplate();
         return ResponseEntity.ok(markerTemplateDTO);
+    }
+
+    /**
+     * @return {@link org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO}
+     *
+     * @throws Exception
+     */
+    @GetMapping(value = "/dnarun", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DnaRunTemplateDTO> getDnaRunTemplate() throws Exception {
+        DnaRunTemplateDTO dnaRunTemplateDTO = loaderTemplateService.getDnaRunTemplate();
+        return ResponseEntity.ok(dnaRunTemplateDTO);
     }
 
     /**
@@ -65,14 +75,31 @@ public class LoaderTemplateController {
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>> addMarkerTemplate(
         @RequestBody final LoaderTemplateDTO loaderTemplateDTO) throws Exception {
-
         LoaderTemplateDTO loaderTemplate = loaderTemplateService.addMarkerTemplate(
             loaderTemplateDTO);
         BrApiMasterPayload<LoaderTemplateDTO> payload = ControllerUtils.getMasterPayload(
             loaderTemplate);
-
         return ResponseEntity.created(null).body(payload);
+    }
 
+    /**
+     * Adds the dnarun template to the GDM system
+     * CropAuth annotation allows only CURATOR to access the endpoint
+     * @param loaderTemplateDTO    dnarun file upload template to be saved
+     * @return {@link LoaderTemplateDTO} created loader template
+     * @throws Exception
+     */
+    @CropAuth(CURATOR)
+    @PostMapping(value = "/dnarun", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>> addDnaRunTemplate(
+        @RequestBody final LoaderTemplateDTO loaderTemplateDTO
+    ) throws Exception {
+        LoaderTemplateDTO loaderTemplate = loaderTemplateService.addDnaRunTemplate(
+            loaderTemplateDTO);
+        BrApiMasterPayload<LoaderTemplateDTO> payload = ControllerUtils.getMasterPayload(
+            loaderTemplate);
+        return ResponseEntity.created(null).body(payload);
     }
 
 }
