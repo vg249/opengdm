@@ -102,7 +102,7 @@ public class AspectMapper {
                             Class<?> templateValueClass =
                                 valuesToSet.get(templateFieldName).getClass();
                             Class<?> aspectFieldClass = aspectField.getType();
-                            if (aspectFieldClass.equals(templateValueClass)) {
+                            if (aspectFieldClass.isAssignableFrom(templateValueClass)) {
                                 aspectField.set(
                                     aspectTableInstance,
                                     valuesToSet.get(templateFieldName));
