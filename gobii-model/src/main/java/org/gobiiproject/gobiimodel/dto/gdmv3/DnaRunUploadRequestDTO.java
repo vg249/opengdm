@@ -6,35 +6,35 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 public class DnaRunUploadRequestDTO {
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer mapId;
+    private Integer projectId;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer platformId;
+    private Integer experimentId;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer markerTemplateId;
+    private Integer dnaRunTemplateId;
 
-    public Integer getMapId() {
-        return mapId;
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setMapId(Integer mapId) {
-        this.mapId = mapId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
-    public Integer getPlatformId() {
-        return platformId;
+    public Integer getExperimentId() {
+        return experimentId;
     }
 
-    public void setPlatformId(Integer platformId) {
-        this.platformId = platformId;
+    public void setExperimentId(Integer experimentId) {
+        this.experimentId = experimentId;
     }
 
-    public Integer getMarkerTemplateId() {
-        return markerTemplateId;
+    public Integer getDnaRunTemplateId() {
+        return dnaRunTemplateId;
     }
 
-    public void setMarkerTemplateId(Integer markerTemplateId) {
-        this.markerTemplateId = markerTemplateId;
+    public void setDnaRunTemplateId(Integer dnaRunTemplateId) {
+        this.dnaRunTemplateId = dnaRunTemplateId;
     }
 }
