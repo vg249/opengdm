@@ -133,9 +133,10 @@ public class DnaRunServiceImpl implements DnaRunService {
         //Get API fields Entity Mapping
         HashSet<String> propertyFields = new HashSet<>(
             Arrays.asList("dnaRunProperties", "dnaSampleProperties", "germplasmProperties"));
-        Map<String, String> fileColumnsApiFieldsMap =
+        Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(dnaRunTemplateMap, propertyFields);
 
+        // Map for Aspect values to each api field.
         Map<String, Object> aspectValues = new HashMap<>();
 
         //Read Header
@@ -153,6 +154,7 @@ public class DnaRunServiceImpl implements DnaRunService {
         }
 
         String[] fileColumns = fileHeader.split("\t");
+
         Map<String, Cv> dnaRunPropertiesCvsMap = new HashMap<>();
         Map<String, Cv> dnaSamplePropertiesCvsMap = new HashMap<>();
         Map<String, Cv> germplasmPropertiesCvsMap = new HashMap<>();
@@ -164,81 +166,78 @@ public class DnaRunServiceImpl implements DnaRunService {
             String fileColumn = fileColumns[i];
             ColumnAspect columnAspect = new ColumnAspect(1, i);
 
-            // Check for dna run properties fields
-            if(fileColumnsApiFieldsMap.get(fileColumn).startsWith("dnaRunProperties.")) {
-                if(dnaRunTable.getDnaRunProperties() == null) {
+            for(String apiFieldName : fileColumnsApiFieldsMap.get(fileColumn)) {
 
-                    // Initialize and set json aspect for properties field.
-                    JsonAspect jsonAspect = new JsonAspect();
-                    jsonAspect.setJsonMap(dnaRunPropertiesAspects);
-                    aspectValues.put("dnaRunProperties", jsonAspect);
+                // Check for dna run properties fields
+                if (apiFieldName.startsWith("dnaRunProperties.")) {
+                    if (dnaRunTable.getDnaRunProperties() == null) {
 
-                    List<Cv> dnaRunPropertiesCvList = cvDao.getCvListByCvGroup(
-                        CvGroupTerm.CVGROUP_DNARUN_PROP.getCvGroupName(),
-                        null);
-                    dnaRunPropertiesCvsMap = Utils.mapCvNames(dnaRunPropertiesCvList);
+                        // Initialize and set json aspect for properties field.
+                        JsonAspect jsonAspect = new JsonAspect();
+                        jsonAspect.setJsonMap(dnaRunPropertiesAspects);
+                        aspectValues.put("dnaRunProperties", jsonAspect);
+
+                        List<Cv> dnaRunPropertiesCvList = cvDao.getCvListByCvGroup(
+                            CvGroupTerm.CVGROUP_DNARUN_PROP.getCvGroupName(),
+                            null);
+                        dnaRunPropertiesCvsMap = Utils.mapCvNames(dnaRunPropertiesCvList);
+                    }
+                    String propertyName = apiFieldName
+                        .replace("dnaRunProperties.", "");
+
+                    if (dnaRunPropertiesCvsMap.containsKey(propertyName)) {
+                        String propertyId = dnaRunPropertiesCvsMap
+                            .get(propertyName)
+                            .getCvId().toString();
+                        dnaRunPropertiesAspects.put(propertyId, columnAspect);
+                    }
+                } else if (apiFieldName.startsWith("dnaSampleProperties.")) {
+                    if (dnaSampleTable.getDnaSampleProperties() == null) {
+
+                        JsonAspect jsonAspect = new JsonAspect();
+                        jsonAspect.setJsonMap(dnaSamplePropertiesAspects);
+                        aspectValues.put("dnaSampleProperties", jsonAspect);
+
+                        List<Cv> dnaSamplePropertiesCvList = cvDao.getCvListByCvGroup(
+                            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
+                            null);
+                        dnaSamplePropertiesCvsMap = Utils.mapCvNames(dnaSamplePropertiesCvList);
+                    }
+                    String propertyName = apiFieldName
+                        .replace("dnaSampleProperties.", "");
+
+                    if (dnaSamplePropertiesCvsMap.containsKey(propertyName)) {
+                        String propertyId = dnaSamplePropertiesCvsMap
+                            .get(propertyName)
+                            .getCvId().toString();
+                        dnaSamplePropertiesAspects.put(propertyId, columnAspect);
+                    }
+                } else if (apiFieldName.startsWith("germplasmProperties.")) {
+                    if (germplasmTable.getGermplasmProperties() == null) {
+
+                        JsonAspect jsonAspect = new JsonAspect();
+                        jsonAspect.setJsonMap(germplasmPropertiesAspects);
+                        aspectValues.put("germplasmProperties", jsonAspect);
+
+                        List<Cv> germplasmPropertiesCvList = cvDao.getCvListByCvGroup(
+                            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
+                            null);
+                        germplasmPropertiesCvsMap = Utils.mapCvNames(germplasmPropertiesCvList);
+                    }
+                    String propertyName = apiFieldName
+                        .replace("germplasmProperties.", "");
+
+                    if (germplasmPropertiesCvsMap.containsKey(propertyName)) {
+                        String propertyId = germplasmPropertiesCvsMap
+                            .get(propertyName)
+                            .getCvId().toString();
+                        germplasmPropertiesAspects.put(propertyId, columnAspect);
+                    }
+                } else {
+                    aspectValues.put(
+                        apiFieldName,
+                        columnAspect);
                 }
-                String propertyName = fileColumnsApiFieldsMap
-                    .get(fileColumn)
-                    .replace("dnaRunProperties.", "");
-
-                if(dnaRunPropertiesCvsMap.containsKey(propertyName)) {
-                    String propertyId = dnaRunPropertiesCvsMap
-                        .get(propertyName)
-                        .getCvId().toString();
-                    dnaRunPropertiesAspects.put(propertyId, columnAspect);
-                }
-            }
-            else if(fileColumnsApiFieldsMap.get(fileColumn).startsWith("dnaSampleProperties.")) {
-                if(dnaSampleTable.getDnaSampleProperties() == null) {
-
-                    JsonAspect jsonAspect = new JsonAspect();
-                    jsonAspect.setJsonMap(dnaSamplePropertiesAspects);
-                    aspectValues.put("dnaSampleProperties", jsonAspect);
-
-                    List<Cv> dnaSamplePropertiesCvList = cvDao.getCvListByCvGroup(
-                        CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
-                        null);
-                    dnaSamplePropertiesCvsMap = Utils.mapCvNames(dnaSamplePropertiesCvList);
-                }
-                String propertyName = fileColumnsApiFieldsMap
-                    .get(fileColumn)
-                    .replace("dnaSampleProperties.", "");
-
-                if(dnaSamplePropertiesCvsMap.containsKey(propertyName)) {
-                    String propertyId = dnaSamplePropertiesCvsMap
-                        .get(propertyName)
-                        .getCvId().toString();
-                    dnaSamplePropertiesAspects.put(propertyId, columnAspect);
-                }
-            }
-            else if(fileColumnsApiFieldsMap.get(fileColumn).startsWith("germplasmProperties.")) {
-                if(germplasmTable.getGermplasmProperties() == null) {
-
-                    JsonAspect jsonAspect = new JsonAspect();
-                    jsonAspect.setJsonMap(germplasmPropertiesAspects);
-                    aspectValues.put("germplasmProperties", jsonAspect);
-
-                    List<Cv> germplasmPropertiesCvList = cvDao.getCvListByCvGroup(
-                        CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
-                        null);
-                    germplasmPropertiesCvsMap = Utils.mapCvNames(germplasmPropertiesCvList);
-                }
-                String propertyName = fileColumnsApiFieldsMap
-                    .get(fileColumn)
-                    .replace("germplasmProperties.", "");
-
-                if(germplasmPropertiesCvsMap.containsKey(propertyName)) {
-                    String propertyId = germplasmPropertiesCvsMap
-                        .get(propertyName)
-                        .getCvId().toString();
-                    germplasmPropertiesAspects.put(propertyId, columnAspect);
-                }
-            }
-            else {
-                aspectValues.put(
-                    fileColumnsApiFieldsMap.get(fileColumn),
-                    columnAspect);
             }
         }
 

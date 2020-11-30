@@ -168,7 +168,7 @@ public class MarkerServiceImpl implements MarkerService {
         //Get API fields Entity Mapping
         HashSet<String> propertyFields = new HashSet<>(
             Arrays.asList("markerProperties"));
-        Map<String, String> fileColumnsApiFieldsMap =
+        Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(markerTemplateMap, propertyFields);
 
         Map<String, Object> aspectValues = new HashMap<>();
@@ -195,37 +195,35 @@ public class MarkerServiceImpl implements MarkerService {
             String fileColumn = fileColumns[i];
             ColumnAspect columnAspect = new ColumnAspect(1, i);
 
-            // Check for properties fields
-            if(fileColumnsApiFieldsMap.get(fileColumn).startsWith("markerProperties.")) {
-                if(markerTable.getMarkerProperties() == null) {
-                    // Initialize and set json aspect for properties field.
-                    JsonAspect jsonAspect = new JsonAspect();
-                    jsonAspect.setJsonMap(markerPropertiesAspects);
-                    aspectValues.put("markerProperties", jsonAspect);
+            for(String apiFieldName : fileColumnsApiFieldsMap.get(fileColumn)) {
 
-                    // Get list of properties as (cvTerm -> cv) map, so it is easy to map
-                    // cv name to id
-                    List<Cv> markerPropertiesCvList = cvDao.getCvListByCvGroup(
-                        CvGroupTerm.CVGROUP_MARKER_PROP.getCvGroupName(),
-                        null);
-                    markerPropertiesCvsMap = Utils.mapCvNames(markerPropertiesCvList);
-                }
-                String propertyName = fileColumnsApiFieldsMap
-                    .get(fileColumn)
-                    .replace("markerProperties.", "");
+                // Check for properties fields
+                if (apiFieldName.startsWith("markerProperties.")) {
+                    if (markerTable.getMarkerProperties() == null) {
+                        // Initialize and set json aspect for properties field.
+                        JsonAspect jsonAspect = new JsonAspect();
+                        jsonAspect.setJsonMap(markerPropertiesAspects);
+                        aspectValues.put("markerProperties", jsonAspect);
 
-                // Map cv id to properties map
-                if(markerPropertiesCvsMap.containsKey(propertyName)) {
-                    String propertyId = markerPropertiesCvsMap
-                        .get(propertyName)
-                        .getCvId().toString();
-                    markerPropertiesAspects.put(propertyId, columnAspect);
+                        // Get list of properties as (cvTerm -> cv) map, so it is easy to map
+                        // cv name to id
+                        List<Cv> markerPropertiesCvList = cvDao.getCvListByCvGroup(
+                            CvGroupTerm.CVGROUP_MARKER_PROP.getCvGroupName(),
+                            null);
+                        markerPropertiesCvsMap = Utils.mapCvNames(markerPropertiesCvList);
+                    }
+                    String propertyName = apiFieldName.replace("markerProperties.", "");
+
+                    // Map cv id to properties map
+                    if (markerPropertiesCvsMap.containsKey(propertyName)) {
+                        String propertyId = markerPropertiesCvsMap
+                            .get(propertyName)
+                            .getCvId().toString();
+                        markerPropertiesAspects.put(propertyId, columnAspect);
+                    }
+                } else {
+                    aspectValues.put(apiFieldName, columnAspect);
                 }
-            }
-            else {
-                aspectValues.put(
-                    fileColumnsApiFieldsMap.get(fileColumn),
-                    columnAspect);
             }
         }
 

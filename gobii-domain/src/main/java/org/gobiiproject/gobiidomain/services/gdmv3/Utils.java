@@ -153,15 +153,16 @@ public class Utils {
      * @param propertyFieldNames
      * @return
      */
-    public static Map<String, String> getFileColumnsApiFieldsMap(
+    public static Map<String, List<String>> getFileColumnsApiFieldsMap(
         Map<String, Object> dnaRunTemplateMap,
         HashSet<String> propertyFieldNames) {
 
         if(propertyFieldNames == null) {
             propertyFieldNames = new HashSet<>();
         }
-        Map<String, String> fileColumnsApiFieldsMap = new HashMap<>();
+        Map<String, List<String>> fileColumnsApiFieldsMap = new HashMap<>();
         List<String> fileField;
+
         for(String apiField : dnaRunTemplateMap.keySet()) {
             if(propertyFieldNames.contains(apiField)) {
                 Map<String, List<String>> properties =
@@ -169,18 +170,20 @@ public class Utils {
                 for(String property : properties.keySet()) {
                     fileField = properties.get(property);
                     if(fileField.size() > 0) {
-                        fileColumnsApiFieldsMap.put(
-                            fileField.get(0),
-                            apiField+"."+property);
+                        if(!fileColumnsApiFieldsMap.containsKey(fileField.get(0))) {
+                            fileColumnsApiFieldsMap.put(fileField.get(0), new ArrayList<>());
+                        }
+                        fileColumnsApiFieldsMap.get(fileField.get(0)).add(apiField+"."+property);
                     }
                 }
             }
             else {
                 fileField = (List<String>) dnaRunTemplateMap.get(apiField);
                 if (fileField.size() > 0) {
-                    fileColumnsApiFieldsMap.put(
-                        fileField.get(0),
-                        apiField);
+                    if(!fileColumnsApiFieldsMap.containsKey(fileField.get(0))) {
+                        fileColumnsApiFieldsMap.put(fileField.get(0), new ArrayList<>());
+                    }
+                    fileColumnsApiFieldsMap.get(fileField.get(0)).add(apiField);
                 }
             }
         }

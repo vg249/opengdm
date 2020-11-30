@@ -131,7 +131,6 @@
     <build>
 
 
-            <!-- Maven Assembly Plugin -->
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
