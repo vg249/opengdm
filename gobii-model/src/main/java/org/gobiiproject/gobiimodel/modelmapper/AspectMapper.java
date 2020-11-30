@@ -50,18 +50,18 @@ public class AspectMapper {
         }
     }
 
-    public static void mapTemplateToAspects(Object templateInstance,
-                                            Object aspectTableInstance,
-                                            Map<String, Object> valuesToSet
+    public static boolean mapTemplateToAspects(Object templateInstance,
+                                               Object aspectTableInstance,
+                                               Map<String, Object> valuesToSet
     ) throws GobiiException {
 
-        try {
+        boolean mapped = false;
 
+        try {
             // Get all declared fields in template object
             List<Field> allFields = getAllDeclaredFields(templateInstance.getClass());
 
             for (Field templateField : allFields) {
-
                 if (templateField.isAnnotationPresent(GobiiAspectMaps.class)) {
 
                     GobiiAspectMaps aspectMaps = templateField.getAnnotation(GobiiAspectMaps.class);
@@ -102,6 +102,7 @@ public class AspectMapper {
                                 aspectField.set(
                                     aspectTableInstance,
                                     valuesToSet.get(templateFieldName));
+                                mapped = true;
                             } else {
                                 throw new GobiiException(String.format(
                                     "Invalid Aspect field mapping: type mismatch, " +
@@ -122,6 +123,7 @@ public class AspectMapper {
                 GobiiValidationStatusType.UNKNOWN,
                 "Unable to map DTO to Entity");
         }
+        return mapped;
     }
 
 }

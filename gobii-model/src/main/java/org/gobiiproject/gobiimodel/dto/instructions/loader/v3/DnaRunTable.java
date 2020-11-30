@@ -50,6 +50,22 @@ public class DnaRunTable implements Table {
         this.experimentId = experimentId;
     }
 
+    public Aspect getExperimentName() {
+        return experimentName;
+    }
+
+    public void setExperimentName(Aspect experimentName) {
+        this.experimentName = experimentName;
+    }
+
+    public JsonAspect getDnaRunProperties() {
+        return dnaRunProperties;
+    }
+
+    public void setDnaRunProperties(JsonAspect dnaRunProperties) {
+        this.dnaRunProperties = dnaRunProperties;
+    }
+
     public String getStatus() {
         return status;
     }
