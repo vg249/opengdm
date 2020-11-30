@@ -19,6 +19,6 @@ public class DaoUtils {
     }
 
     public static String getTableName(Class<?> entity) throws NullPointerException {
-        return entity.getDeclaredAnnotation(GobiiAspectTable.class).name();
+        return entity.getDeclaredAnnotation(Table.class).name();
     }
 }

@@ -39,8 +39,6 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
     @Autowired
     private ContactDao contactDao;
 
-    ObjectMapper mapper = new ObjectMapper();
-
     @Override
     public LoaderTemplateDTO addMarkerTemplate(LoaderTemplateDTO loaderTemplateDTO
     ) throws Exception {
@@ -54,7 +52,7 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
     ) throws Exception {
         return addLoaderTemplate(
             loaderTemplateDTO,
-            GobiiLoaderPayloadTypes.DNARUNS);
+            GobiiLoaderPayloadTypes.SAMPLES);
     }
 
     private LoaderTemplateDTO addLoaderTemplate(LoaderTemplateDTO loaderTemplateDTO,
@@ -77,7 +75,7 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
 
 
         // Set marker payload type as template type
-        Cv templateType = cvDao.getCvs(GobiiLoaderPayloadTypes.MARKERS.getTerm(),
+        Cv templateType = cvDao.getCvs(payloadType.getTerm(),
             CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
@@ -118,30 +116,24 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
         List<Cv> dnaRunProperties = cvDao.getCvListByCvGroup(
             CvGroupTerm.CVGROUP_DNARUN_PROP.getCvGroupName(),
             null);
-        dnaRunProperties.forEach(dnaRunProperty -> {
-            dnaRunTemplateDTO
-                .getDnaRunProperties()
-                .put(dnaRunProperty.getTerm(), new ArrayList<>());
-        });
+        dnaRunProperties.forEach(dnaRunProperty -> dnaRunTemplateDTO
+            .getDnaRunProperties()
+            .put(dnaRunProperty.getTerm(), new ArrayList<>()));
 
         // Add dna sample properties
         List<Cv> dnaSampleProperties = cvDao.getCvListByCvGroup(
             CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(), null);
-        dnaSampleProperties.forEach(dnaSampleProperty -> {
-            dnaRunTemplateDTO
-                .getDnaSampleProperties()
-                .put(dnaSampleProperty.getTerm(), new ArrayList<>());
-        });
+        dnaSampleProperties.forEach(dnaSampleProperty -> dnaRunTemplateDTO
+            .getDnaSampleProperties()
+            .put(dnaSampleProperty.getTerm(), new ArrayList<>()));
 
         // Add germplasm properties
         List<Cv> germplasmProperties = cvDao.getCvListByCvGroup(
             CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
             null);
-        germplasmProperties.forEach(germplasmProperty -> {
-            dnaRunTemplateDTO
-                .getGermplasmProperties()
-                .put(germplasmProperty.getTerm(), new ArrayList<>());
-        });
+        germplasmProperties.forEach(germplasmProperty -> dnaRunTemplateDTO
+            .getGermplasmProperties()
+            .put(germplasmProperty.getTerm(), new ArrayList<>()));
 
         return dnaRunTemplateDTO;
     }

@@ -77,8 +77,14 @@ public class ExperimentDaoImpl implements ExperimentDao {
     }
 
     @Override
-    public Experiment getExperiment(Integer i) throws Exception {
-        return em.find(Experiment.class, i, getHints());
+    public Experiment getExperiment(Integer i) throws GobiiDaoException {
+        try {
+            return em.find(Experiment.class, i, getHints());
+        }
+        catch (IllegalArgumentException e) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
     }
 
     @Override

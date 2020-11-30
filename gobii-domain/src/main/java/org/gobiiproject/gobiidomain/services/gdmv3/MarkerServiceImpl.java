@@ -73,10 +73,10 @@ public class MarkerServiceImpl implements MarkerService {
         Map<String, Object> markerTemplateMap;
         MarkerTemplateDTO markerTemplate;
 
+        loaderInstruction.setCropType(cropType);
+
         // Set Marker Aspects
         Map<String, Object> aspects = new HashMap<>();
-
-        loaderInstruction.setCropType(cropType);
 
         // Tables loaded in marker upload
         MarkerTable markerTable = new MarkerTable();
@@ -84,9 +84,9 @@ public class MarkerServiceImpl implements MarkerService {
         MarkerLinkageGroupTable markerLinkageGroupTable = new MarkerLinkageGroupTable();
 
         // Get tables names in database
-        String markerTableName = DaoUtils.getTableName(MarkerTable.class);
-        String linkageGroupTableName = DaoUtils.getTableName(LinkageGroupTable.class);
-        String markerLinkageTableName = DaoUtils.getTableName(MarkerLinkageGroupTable.class);
+        String markerTableName = Utils.getTableName(MarkerTable.class);
+        String linkageGroupTableName = Utils.getTableName(LinkageGroupTable.class);
+        String markerLinkageTableName = Utils.getTableName(MarkerLinkageGroupTable.class);
 
         aspects.put(markerTableName, markerTable);
         aspects.put(linkageGroupTableName, linkageGroupTable);
@@ -137,16 +137,7 @@ public class MarkerServiceImpl implements MarkerService {
 
         // Get user submitting the load
         String userName = ContactService.getCurrentUser();
-        Contact createdBy;
-        try {
-            createdBy = contactDao.getContactByUsername(userName);
-        }
-        catch (Exception e) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.NONE,
-                "Unable to find user in system");
-        }
+        Contact createdBy = contactDao.getContactByUsername(userName);
 
         Cv newStatus = cvDao.getCvs(
             "new",
@@ -159,7 +150,6 @@ public class MarkerServiceImpl implements MarkerService {
         // Get a new Job object
         Job job = getNewJob();
         job.setSubmittedBy(createdBy);
-        job.setStatus(newStatus);
 
         String jobName = job.getJobName();
 
@@ -167,7 +157,8 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setContactEmail(createdBy.getEmail());
 
         //Set Input file
-        String inputFilePath = Utils.writeInputFile(markerFile, jobName, cropType);
+        String inputFilePath =
+            Utils.writeInputFile(markerFile, "markers.txt", jobName, cropType);
         loaderInstruction.setInputFile(inputFilePath);
 
         //Set output dir
@@ -175,8 +166,10 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setOutputDir(outputFilesDir);
 
         //Get API fields Entity Mapping
+        HashSet<String> propertyFields = new HashSet<>(
+            Arrays.asList("markerProperties"));
         Map<String, String> fileColumnsApiFieldsMap =
-            this.getFileColumnsApiFieldsMap(markerTemplateMap);
+            Utils.getFileColumnsApiFieldsMap(markerTemplateMap, propertyFields);
 
         Map<String, Object> aspectValues = new HashMap<>();
 
@@ -205,6 +198,13 @@ public class MarkerServiceImpl implements MarkerService {
             // Check for properties fields
             if(fileColumnsApiFieldsMap.get(fileColumn).startsWith("markerProperties.")) {
                 if(markerTable.getMarkerProperties() == null) {
+                    // Initialize and set json aspect for properties field.
+                    JsonAspect jsonAspect = new JsonAspect();
+                    jsonAspect.setJsonMap(markerPropertiesAspects);
+                    aspectValues.put("markerProperties", jsonAspect);
+
+                    // Get list of properties as (cvTerm -> cv) map, so it is easy to map
+                    // cv name to id
                     List<Cv> markerPropertiesCvList = cvDao.getCvListByCvGroup(
                         CvGroupTerm.CVGROUP_MARKER_PROP.getCvGroupName(),
                         null);
@@ -214,6 +214,7 @@ public class MarkerServiceImpl implements MarkerService {
                     .get(fileColumn)
                     .replace("markerProperties.", "");
 
+                // Map cv id to properties map
                 if(markerPropertiesCvsMap.containsKey(propertyName)) {
                     String propertyId = markerPropertiesCvsMap
                         .get(propertyName)
@@ -236,12 +237,6 @@ public class MarkerServiceImpl implements MarkerService {
         validateLinkageGroupTable(linkageGroupTable);
         validateMarkerLinkageGroupTable(markerLinkageGroupTable);
 
-        //Set JsonAspect for marker properties
-        if(markerPropertiesAspects.size() > 0) {
-            JsonAspect jsonAspect = new JsonAspect();
-            jsonAspect.setJsonMap(markerPropertiesAspects);
-            markerTable.setMarkerProperties(jsonAspect);
-        }
         loaderInstruction.setAspects(aspects);
 
         // Write instruction file
@@ -263,6 +258,14 @@ public class MarkerServiceImpl implements MarkerService {
             CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
         job.setPayloadType(payloadType);
+
+        // Get jobstatus as pending
+        Cv jobStatus = cvDao.getCvs(
+            GobiiJobStatus.PENDING.getCvTerm(),
+            CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        job.setStatus(jobStatus);
+
         job.setSubmittedDate(new Date());
         // Get load type
         Cv jobType = cvDao.getCvs(
@@ -310,34 +313,5 @@ public class MarkerServiceImpl implements MarkerService {
         }
     }
 
-    private Map<String, String> getFileColumnsApiFieldsMap(
-        Map<String, Object> markerTemplateMap) {
-        Map<String, String> fileColumnsApiFieldsMap = new HashMap<>();
-        List<String> fileField;
-        for(String apiField : markerTemplateMap.keySet()) {
-            if(apiField.equals("markerProperties")) {
-                Map<String, List<String>> markerProperties =
-                    (HashMap<String, List<String>>) markerTemplateMap.get(apiField);
-                for(String property : markerProperties.keySet()) {
-                    fileField = markerProperties.get(property);
-                    if(fileField.size() > 0) {
-                        fileColumnsApiFieldsMap.put(
-                            fileField.get(0),
-                            apiField+"."+property);
-                    }
-                }
-            }
-            else {
-
-                fileField = (List<String>) markerTemplateMap.get(apiField);
-                if (fileField.size() > 0) {
-                    fileColumnsApiFieldsMap.put(
-                        fileField.get(0),
-                        apiField);
-                }
-            }
-        }
-        return fileColumnsApiFieldsMap;
-    }
 
 }

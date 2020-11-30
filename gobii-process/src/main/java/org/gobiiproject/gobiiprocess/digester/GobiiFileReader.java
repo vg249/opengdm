@@ -244,6 +244,8 @@ public class GobiiFileReader {
         GobiiCropConfig gobiiCropConfig;
         try {
             gobiiCropConfig = configuration.getCropConfig(cropType);
+            Logger.logDebug("Crop Config Load",
+                "Crop config successfully loaded from "+ configLoation);
         } catch (Exception e) {
             logError("Digester", "Unknown loading error", e);
             return;
@@ -254,6 +256,8 @@ public class GobiiFileReader {
         }
 
         GobiiProcessContextSingleton.init(cropType, configLoation);
+        Logger.logDebug("Crop Context loaded",
+            "Crop config successfully loaded from "+ configLoation);
 
         String directory = dstDir.getAbsolutePath();
 

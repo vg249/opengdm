@@ -4,21 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
+import javax.persistence.Table;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Utils {
 
@@ -91,19 +91,19 @@ public class Utils {
 
     /**
      *
-     * @param markerFile    byte array of input file to be loaded.
+     * @param inputFile    byte array of input file to be loaded.
      * @param jobName       name of the job
      * @param cropType      type of the crop
      * @return path of the input file
      */
-    static String writeInputFile(byte[] markerFile,
+    static String writeInputFile(byte[] inputFile,
+                                 String fileName,
                                  String jobName,
                                  String cropType) throws GobiiDomainException {
 
-        String markerFileName = "markers.txt";
         String rawFilesDir = Utils.getProcessDir(cropType, GobiiFileProcessDir.RAW_USER_FILES);
-        String inputFilePath = Paths.get(rawFilesDir, jobName, markerFileName).toString();
-        Utils.writeByteArrayToFile(inputFilePath, markerFile);
+        String inputFilePath = Paths.get(rawFilesDir, jobName, fileName).toString();
+        Utils.writeByteArrayToFile(inputFilePath, inputFile);
         return inputFilePath;
     }
 
@@ -148,5 +148,47 @@ public class Utils {
         }
     }
 
+    /**
+     * @param dnaRunTemplateMap
+     * @param propertyFieldNames
+     * @return
+     */
+    public static Map<String, String> getFileColumnsApiFieldsMap(
+        Map<String, Object> dnaRunTemplateMap,
+        HashSet<String> propertyFieldNames) {
+
+        if(propertyFieldNames == null) {
+            propertyFieldNames = new HashSet<>();
+        }
+        Map<String, String> fileColumnsApiFieldsMap = new HashMap<>();
+        List<String> fileField;
+        for(String apiField : dnaRunTemplateMap.keySet()) {
+            if(propertyFieldNames.contains(apiField)) {
+                Map<String, List<String>> properties =
+                    (HashMap<String, List<String>>) dnaRunTemplateMap.get(apiField);
+                for(String property : properties.keySet()) {
+                    fileField = properties.get(property);
+                    if(fileField.size() > 0) {
+                        fileColumnsApiFieldsMap.put(
+                            fileField.get(0),
+                            apiField+"."+property);
+                    }
+                }
+            }
+            else {
+                fileField = (List<String>) dnaRunTemplateMap.get(apiField);
+                if (fileField.size() > 0) {
+                    fileColumnsApiFieldsMap.put(
+                        fileField.get(0),
+                        apiField);
+                }
+            }
+        }
+        return fileColumnsApiFieldsMap;
+    }
+
+    public static String getTableName(Class<?> entity) throws NullPointerException {
+        return entity.getDeclaredAnnotation(GobiiAspectTable.class).name();
+    }
 
 }

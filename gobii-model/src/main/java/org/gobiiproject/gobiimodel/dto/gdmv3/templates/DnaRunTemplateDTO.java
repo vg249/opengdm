@@ -29,6 +29,12 @@ public class DnaRunTemplateDTO {
     private List<String> dnaSampleName = new ArrayList<>();
 
     @GobiiAspectMaps(maps = {
+        @GobiiAspectMap(aspectTable = DnaRunTable.class),
+        @GobiiAspectMap(aspectTable = DnaSampleTable.class),
+    })
+    private List<String> dnaSampleNum = new ArrayList<>();
+
+    @GobiiAspectMaps(maps = {
         @GobiiAspectMap(aspectTable = DnaSampleTable.class),
     })
     private List<String> dnaSampleWellRow = new ArrayList<>();
@@ -182,4 +188,13 @@ public class DnaRunTemplateDTO {
     public void setGermplasmProperties(Map<String, List<String>> germplasmProperties) {
         this.germplasmProperties = germplasmProperties;
     }
+
+    public List<String> getDnaSampleNum() {
+        return dnaSampleNum;
+    }
+
+    public void setDnaSampleNum(List<String> dnaSampleNum) {
+        this.dnaSampleNum = dnaSampleNum;
+    }
+
 }

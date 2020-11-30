@@ -10,7 +10,7 @@ public interface ExperimentDao {
     List<Experiment> getExperiments(Integer pageSize, Integer rowOffset,
                                     Integer projectId);
 
-	Experiment getExperiment(Integer i) throws Exception;
+	Experiment getExperiment(Integer i) throws GobiiDaoException;
 
 	VendorProtocol getVendorProtocol(Integer vendorProtocolId);
 

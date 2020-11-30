@@ -43,7 +43,7 @@ public class ContactDaoImpl implements ContactDao {
     }
 
     @Override
-    public Contact getContactByUsername(String username) throws Exception {
+    public Contact getContactByUsername(String username) throws GobiiDaoException {
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Contact> criteriaQuery = criteriaBuilder.createQuery(Contact.class);
@@ -58,7 +58,9 @@ public class ContactDaoImpl implements ContactDao {
             log.debug("No contact by username " + username);
             return null;
         } catch (Exception e) {
-            throw e;
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
     }

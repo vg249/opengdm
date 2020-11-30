@@ -103,8 +103,16 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public Project getProject(Integer projectId) {
         log.info("Getting project %d", projectId );
-        Project project = em.find(Project.class, projectId, getContactHints());
-        return project;
+        try {
+            Project project = em.find(Project.class, projectId, getContactHints());
+            return project;
+        }
+        catch (IllegalArgumentException e) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Unable tp fetch project");
+        }
     }
 
     private Map<String, Object> getContactHints() {

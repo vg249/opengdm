@@ -11,7 +11,7 @@ public class GermplasmTable implements Table {
     @JsonProperty("name")
     private Aspect germplasmName;
 
-    @JsonProperty("name")
+    @JsonProperty("external_code")
     private Aspect germplasmExternalCode;
 
     @JsonProperty("type_name")

@@ -3,7 +3,7 @@ package org.gobiiproject.gobiimodel.types;
 public enum GobiiLoaderPayloadTypes {
 
     MARKERS("markers"),
-    DNARUNS("dnaruns");
+    SAMPLES("samples");
 
     private String payloadType;
 
