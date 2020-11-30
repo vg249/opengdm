@@ -16,6 +16,9 @@ public class DnaRunTable implements Table {
     @JsonProperty("experiment_id")
     private String experimentId;
 
+    @JsonProperty("experiment_name")
+    private Aspect experimentName;
+
     @JsonProperty("status")
     private String status;
 
@@ -27,6 +30,9 @@ public class DnaRunTable implements Table {
 
     @JsonProperty("name")
     private Aspect dnaRunName;
+
+    @JsonProperty("props")
+    private JsonAspect dnaRunProperties;
 
     public String getProjectId() {
         return projectId;

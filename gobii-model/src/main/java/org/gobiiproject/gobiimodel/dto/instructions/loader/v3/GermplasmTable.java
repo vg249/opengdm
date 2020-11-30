@@ -5,60 +5,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@GobiiAspectTable(name = "dnasample")
+@GobiiAspectTable(name = "germplasm")
 public class GermplasmTable implements Table {
 
-    @JsonProperty("project_id")
-    private String projectId;
+    @JsonProperty("name")
+    private Aspect germplasmName;
 
     @JsonProperty("name")
-    private Aspect dnaSampleName;
-
-    @JsonProperty("num")
-    private Aspect dnaSampleNum;
-
-    @JsonProperty("external_code")
     private Aspect germplasmExternalCode;
 
-    @JsonProperty("platename")
-    private Aspect dnaSamplePlateName;
+    @JsonProperty("type_name")
+    private Aspect germplasmType;
 
-    @JsonProperty("well_row")
-    private Aspect dnaSampleWellRow;
-
-    @JsonProperty("well_col")
-    private Aspect dnaSampleWellCol;
-
-    @JsonProperty("uuid")
-    private Aspect dnaSampleUuid;
-
-    @JsonProperty("props")
-    private JsonAspect dnaSampleProperties;
+    @JsonProperty("species_name")
+    private Aspect germplasmSpeciesName;
 
     private String status;
 
-    public String getProjectId() {
-        return projectId;
+    @JsonProperty("props")
+    private JsonAspect germplasmProperties;
+
+    public Aspect getGermplasmName() {
+        return germplasmName;
     }
 
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public Aspect getDnaSampleName() {
-        return dnaSampleName;
-    }
-
-    public void setDnaSampleName(Aspect dnaSampleName) {
-        this.dnaSampleName = dnaSampleName;
-    }
-
-    public Aspect getDnaSampleNum() {
-        return dnaSampleNum;
-    }
-
-    public void setDnaSampleNum(Aspect dnaSampleNum) {
-        this.dnaSampleNum = dnaSampleNum;
+    public void setGermplasmName(Aspect germplasmName) {
+        this.germplasmName = germplasmName;
     }
 
     public Aspect getGermplasmExternalCode() {
@@ -69,44 +41,20 @@ public class GermplasmTable implements Table {
         this.germplasmExternalCode = germplasmExternalCode;
     }
 
-    public Aspect getDnaSamplePlateName() {
-        return dnaSamplePlateName;
+    public Aspect getGermplasmType() {
+        return germplasmType;
     }
 
-    public void setDnaSamplePlateName(Aspect dnaSamplePlateName) {
-        this.dnaSamplePlateName = dnaSamplePlateName;
+    public void setGermplasmType(Aspect germplasmType) {
+        this.germplasmType = germplasmType;
     }
 
-    public Aspect getDnaSampleWellRow() {
-        return dnaSampleWellRow;
+    public Aspect getGermplasmSpeciesName() {
+        return germplasmSpeciesName;
     }
 
-    public void setDnaSampleWellRow(Aspect dnaSampleWellRow) {
-        this.dnaSampleWellRow = dnaSampleWellRow;
-    }
-
-    public Aspect getDnaSampleWellCol() {
-        return dnaSampleWellCol;
-    }
-
-    public void setDnaSampleWellCol(Aspect dnaSampleWellCol) {
-        this.dnaSampleWellCol = dnaSampleWellCol;
-    }
-
-    public Aspect getDnaSampleUuid() {
-        return dnaSampleUuid;
-    }
-
-    public void setDnaSampleUuid(Aspect dnaSampleUuid) {
-        this.dnaSampleUuid = dnaSampleUuid;
-    }
-
-    public JsonAspect getDnaSampleProperties() {
-        return dnaSampleProperties;
-    }
-
-    public void setDnaSampleProperties(JsonAspect dnaSampleProperties) {
-        this.dnaSampleProperties = dnaSampleProperties;
+    public void setGermplasmSpeciesName(Aspect germplasmSpeciesName) {
+        this.germplasmSpeciesName = germplasmSpeciesName;
     }
 
     public String getStatus() {
@@ -115,5 +63,13 @@ public class GermplasmTable implements Table {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public JsonAspect getGermplasmProperties() {
+        return germplasmProperties;
+    }
+
+    public void setGermplasmProperties(JsonAspect germplasmProperties) {
+        this.germplasmProperties = germplasmProperties;
     }
 }

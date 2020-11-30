@@ -16,7 +16,9 @@ import java.lang.annotation.Target;
 public @interface GobiiAspectMap {
 
     /**
-     * Name of aspect field to which the value needs to be mapped
+     * Name of aspect field to which the value needs to be mapped if it is different from
+     * dto field name.
+     * If not given, will be mapped to aspect field with same name as dto field.
      */
     String paramName() default "";
 
