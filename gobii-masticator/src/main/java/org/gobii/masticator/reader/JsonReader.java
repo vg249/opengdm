@@ -21,10 +21,10 @@ public class JsonReader implements Reader {
 					String[] toks = s.split("\t", -1);
 					StringJoiner joiner = new StringJoiner(",");
 					for (int i = 0; i < toks.length; i++) {
-						joiner.add(String.format("\"%s\":\"%s\"", reader.getHeader().get(i), toks[i]));
+						joiner.add(String.format("\"\"%s\"\":\"\"%s\"\"", reader.getHeader().get(i), toks[i]));
 					}
 
-					return String.format("{%s}", joiner.toString());
+					return String.format("\"{%s}\"", joiner.toString());
 				});
 	}
 }
