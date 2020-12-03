@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedSubgraph;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -78,6 +79,9 @@ public class Experiment extends BaseEntity{
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status = new Cv();
+
+    @OneToOne(mappedBy="experiment")
+    private ExperimentStats experimentStats;
 
 }
 
