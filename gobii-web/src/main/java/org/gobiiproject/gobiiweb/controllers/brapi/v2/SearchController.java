@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v2/search")
+@RequestMapping("/crops/{cropType}/brapi/v2/search")
 @CrossOrigin
 @Api
 @Slf4j

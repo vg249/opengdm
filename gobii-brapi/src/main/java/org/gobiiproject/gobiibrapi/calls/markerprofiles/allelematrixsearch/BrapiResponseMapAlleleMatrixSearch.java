@@ -223,12 +223,16 @@ public class BrapiResponseMapAlleleMatrixSearch {
 
                             if( currentFile.getName().toLowerCase().contains("dataset.genotype")) {
                                 // first make the http link
-                                RestUri restUri = new GobiiUriFactory(request.getServerName(), request.getServerPort(),
-                                        request.getContextPath(), GobiiControllerType.GOBII)
-                                        .resourceColl(RestResourceId.GOBII_FILES)
-                                        .addUriParam("gobiiJobId", jobId)
-                                        .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
-                                        .addQueryParam("fileName", currentFile.getName());
+                                RestUri restUri = new GobiiUriFactory(
+                                    request.getServerName(),
+                                    request.getServerPort(),
+                                    request.getContextPath(),
+                                    crop,
+                                    GobiiControllerType.GOBII)
+                                    .resourceColl(RestResourceId.GOBII_FILES)
+                                    .addUriParam("gobiiJobId", jobId)
+                                    .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
+                                    .addQueryParam("fileName", currentFile.getName());
 
                                 String fileUri = restUri.makeUrlComplete(crop);
                                 dataFiles.add(fileUri);

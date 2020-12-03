@@ -132,10 +132,10 @@ public class ExperimentServiceImpl implements ExperimentService {
     public ExperimentDTO updateExperiment(Integer experimentId, ExperimentDTO request, String updatedBy) throws Exception {
         Experiment target = this.loadExperiment(experimentId);
 
-        if (request.getProjectId() != null) {
-            Project project = this.loadProject(request.getProjectId());
-            target.setProject(project);
-        }
+        // if (request.getProjectId() != null) {
+        //     Project project = this.loadProject(request.getProjectId());
+        //     target.setProject(project);
+        // }
 
         if (!LineUtils.isNullOrEmpty(request.getExperimentName())) {
             target.setExperimentName(request.getExperimentName());

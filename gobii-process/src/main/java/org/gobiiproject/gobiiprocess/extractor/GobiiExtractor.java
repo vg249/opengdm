@@ -21,6 +21,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -66,6 +67,7 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
+import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
@@ -193,22 +195,23 @@ public class GobiiExtractor {
 		String firstCrop = firstExtractInstruction.getGobiiCropType();
 		String firstContactEmail = firstExtractInstruction.getContactEmail();
 		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
+        JobStatus jobStatus = null;
 
-		//Job Id is the 'name' part of the job file  /asd/de/name.json
+        //Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename = new File(instructionFile).getName();
 		String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-		JobStatus jobStatus = null;
-		try {
-			jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
-		} catch (Exception e) {
-			Logger.logError("GobiiFileReader", "Error Checking Status", e);
-		}
-		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 
 		for (GobiiExtractorInstruction inst : list) {
 			String crop = inst.getGobiiCropType();
 			String extractType = "";
 			if (crop == null) crop = divineCrop(instructionFile);
+            GobiiProcessContextSingleton.init(crop, propertiesFile);
+            try {
+                jobStatus = new JobStatus(jobFileName);
+            } catch (Exception e) {
+                Logger.logError("GobiiFileReader", "Error Checking Status", e);
+            }
+            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
@@ -317,7 +320,8 @@ public class GobiiExtractor {
 					}
 
 					String markerListFileLocation = null, sampleListFileLocation = null;//Generally list file location, populated as needed
-					switch (filterType) {
+
+					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);					switch (filterType) {
 						case WHOLE_DATASET:
 							extractType = "Extract by Dataset";
 							gobiiMDE = "python " + mdePath +
@@ -347,6 +351,8 @@ public class GobiiExtractor {
 							}
 							if (markerListFileLocation != null) {
 								markerListTerm = " -X " + markerListFileLocation;
+
+								makeFileUnique(markerListFileLocation,errorFile);
 							}
 							//else if file is null and list is empty or null - > no term
 
@@ -387,6 +393,8 @@ public class GobiiExtractor {
 								sampleListFileLocation = extract.getListFileName();
 							}
 							if (sampleListFileLocation != null) {
+
+								makeFileUnique(sampleListFileLocation,errorFile);
 								sampleListTerm = " -Y " + sampleListFileLocation;
 							}
 
@@ -434,7 +442,6 @@ public class GobiiExtractor {
 
 					samplePosFile = sampleFile + ".pos";
 
-					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);
 					Logger.logInfo("Extractor", "Executing MDEs");
 
 					if(verbose) {
@@ -491,6 +498,7 @@ public class GobiiExtractor {
 					if ((extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) || (filterType == BY_MARKER && markerListFileLocation != null)) {
 						pm.addCriteria("Marker List", markerListFileLocation);
 						esw.addItem("Marker List", markerListFileLocation);
+
 					}
 
 					//Marker groups (spelled out, unlike marker and sample files)
@@ -1184,7 +1192,7 @@ public class GobiiExtractor {
             }
 
             String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, cropName);
 
             RestUri mapUri = gobiiUriFactory
                     .resourceByUriIdParam(RestResourceId.GOBII_MAPSET);
@@ -1211,4 +1219,14 @@ public class GobiiExtractor {
             return null;
         }
     }
+
+	/**
+	 * In place file uniqueness. First implementation is a simple sort -u
+	 */
+	private static void makeFileUnique(String inputFilePath, String errorFile){
+    	String tempPath = inputFilePath+".tmp";
+    	FileSystemInterface.mv(inputFilePath,tempPath);
+    	tryExec("sort -u ",inputFilePath,errorFile,tempPath);
+    	FileSystemInterface.rmIfExist(tempPath);
+	}
 }

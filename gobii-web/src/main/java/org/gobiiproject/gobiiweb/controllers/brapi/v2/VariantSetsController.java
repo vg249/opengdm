@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v2/variantsets")
+@RequestMapping("/crops/{cropType}/brapi/v2/variantsets")
 @CrossOrigin
 @Api
 @Slf4j

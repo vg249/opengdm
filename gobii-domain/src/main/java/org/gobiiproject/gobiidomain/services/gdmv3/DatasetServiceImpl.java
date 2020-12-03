@@ -250,16 +250,16 @@ public class DatasetServiceImpl implements DatasetService {
 		}
 
 		//check if experiment change
-		if (checkIdItemsExists(request.getExperimentId())) {
-			//check if experiment exists
-			Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
-			if (experiment == null) {
-				throw new InvalidException("Experiment");
-			}
+		// if (checkIdItemsExists(request.getExperimentId())) {
+		// 	//check if experiment exists
+		// 	Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
+		// 	if (experiment == null) {
+		// 		throw new InvalidException("Experiment");
+		// 	}
 
-			targetDataset.setExperiment(experiment);
-			modified = true;
-		}
+		// 	targetDataset.setExperiment(experiment);
+		// 	modified = true;
+		// }
 
 		//check if callingAnalysisId
 		if (checkIdItemsExists(request.getCallingAnalysisId())) {

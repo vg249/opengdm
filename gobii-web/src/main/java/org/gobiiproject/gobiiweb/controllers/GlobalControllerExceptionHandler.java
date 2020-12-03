@@ -176,7 +176,7 @@ public class GlobalControllerExceptionHandler {
         ErrorPayload errorPayload = new ErrorPayload();
         if (pe.getMessage().contains("ConstraintViolation")) {
             errorPayload.setError("Entity already exists");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload);
         }
 
         errorPayload.setError(pe.getMessage());

@@ -44,7 +44,7 @@ public class DtoRequestFileExtractorInstructionsTest {
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, GobiiClientContext.getInstance(null, false).getCurrentClientCropType());
     }
 
     @AfterClass

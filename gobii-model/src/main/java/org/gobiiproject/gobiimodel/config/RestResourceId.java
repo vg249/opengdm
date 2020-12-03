@@ -131,7 +131,7 @@ public enum RestResourceId {
         return this.serverType;
     }
 
-    public String getRequestUrl(String contextRoot, String secondaryPath) throws Exception {
+    public String getRequestUrl(String contextRoot, String secondaryPath, String cropType) throws Exception {
 
         String returnVal = "";
 
@@ -146,7 +146,7 @@ public enum RestResourceId {
 
         returnVal += this.getResourcePath();
 
-        return returnVal;
+        return returnVal.replace("{cropType}", cropType);
     }
 
 }

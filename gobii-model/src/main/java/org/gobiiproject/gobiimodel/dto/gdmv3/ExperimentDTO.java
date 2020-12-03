@@ -9,6 +9,7 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -57,6 +58,7 @@ public class ExperimentDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "project.projectId",  entity = Experiment.class, deep = true)
     @JsonSerialize(using = ToStringSerializer.class)
     @Positive(groups = {ProjectDTO.Create.class})
+    @Null(groups = {ProjectDTO.Update.class})
     private Integer projectId;
 
     @GobiiEntityMap(paramName = "project.projectName", entity = Experiment.class, deep = true)

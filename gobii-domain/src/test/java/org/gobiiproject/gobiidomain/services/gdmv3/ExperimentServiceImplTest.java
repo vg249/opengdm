@@ -179,19 +179,19 @@ public class ExperimentServiceImplTest {
 
         ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
-        request.setProjectId(7);
+        // request.setProjectId(7); -- no longer allowed
         request.setVendorId(4);
         request.setProtocolId(8);
 
-        Project dummyProject = new Project();
-        dummyProject.setProjectId(7);
-        dummyProject.setProjectName("test-project");
+        // Project dummyProject = new Project();
+        // dummyProject.setProjectId(7);
+        // dummyProject.setProjectName("test-project");
         
-        when(
-            projectDao.getProject(7)
-        ).thenReturn(
-            dummyProject
-        );
+        // when(
+        //     projectDao.getProject(7)
+        // ).thenReturn(
+        //     dummyProject
+        // );
 
 
         VendorProtocol dummyVp = new VendorProtocol();
@@ -248,13 +248,13 @@ public class ExperimentServiceImplTest {
         experimentServiceImpl.updateExperiment(123, request, "test-user");
         
         verify(experimentDao).updateExperiment(arg.capture());
-        verify(projectDao, times(1)).getProject(7);
+        //verify(projectDao, times(1)).getProject(7);
         verify(experimentDao, times(2)).getExperiment(123);
         verify(experimentDao, times(1)).updateExperiment( Mockito.any(Experiment.class));
         verify(contactDao, times(1)).getContactByUsername("test-user");
 
         assertTrue(arg.getValue().getExperimentName().equals("test-experiment"));
-        assertTrue(arg.getValue().getProject().getProjectId() == 7);
+        //assertTrue(arg.getValue().getProject().getProjectId() == 7);
     }
 
     @Test
@@ -271,17 +271,17 @@ public class ExperimentServiceImplTest {
 
         ExperimentDTO request = new ExperimentDTO();
         request.setExperimentName("test-experiment");
-        request.setProjectId(7);
+        //request.setProjectId(7);
 
         Project dummyProject = new Project();
         dummyProject.setProjectId(7);
         dummyProject.setProjectName("test-project");
         
-        when(
-            projectDao.getProject(7)
-        ).thenReturn(
-            dummyProject
-        );
+        // when(
+        //     projectDao.getProject(7)
+        // ).thenReturn(
+        //     dummyProject
+        // );
 
 
         Contact dummyContact = new Contact();
@@ -303,28 +303,28 @@ public class ExperimentServiceImplTest {
         experimentServiceImpl.updateExperiment(123, request, "test-user");
         
         verify(experimentDao).updateExperiment(arg.capture());
-        verify(projectDao, times(1)).getProject(7);
+        //verify(projectDao, times(1)).getProject(7);
         verify(experimentDao, times(2)).getExperiment(123);
         verify(experimentDao, times(1)).updateExperiment( Mockito.any(Experiment.class));
         verify(contactDao, times(1)).getContactByUsername("test-user");
 
         assertTrue(arg.getValue().getExperimentName().equals("test-experiment"));
-        assertTrue(arg.getValue().getProject().getProjectId() == 7);
+        //assertTrue(arg.getValue().getProject().getProjectId() == 7);
         assertNull(arg.getValue().getVendorProtocol());
     }
 
 
-    @Test(expected = UnknownEntityException.class)
-    public void testUpdateExperimentUnknownProject() throws Exception {
-        ExperimentDTO request = new ExperimentDTO();
-        request.setProjectId(7);
-        when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
-        when(projectDao.getProject(7)).thenReturn(null);
+    // @Test(expected = UnknownEntityException.class)
+    // public void testUpdateExperimentUnknownProject() throws Exception {
+    //     ExperimentDTO request = new ExperimentDTO();
+    //     request.setProjectId(7);
+    //     when(experimentDao.getExperiment(123)).thenReturn(new Experiment());
+    //     when(projectDao.getProject(7)).thenReturn(null);
 
-        experimentServiceImpl.updateExperiment(123, request, "test-updater");
-        verify(experimentDao, times(0)).updateExperiment(any(Experiment.class));
+    //     experimentServiceImpl.updateExperiment(123, request, "test-updater");
+    //     verify(experimentDao, times(0)).updateExperiment(any(Experiment.class));
 
-    }
+    // } -- no longer allowed
 
     @Test(expected = UnknownEntityException.class)
     public void testUpdateExperimentUnknownVendorProtocol() throws Exception {

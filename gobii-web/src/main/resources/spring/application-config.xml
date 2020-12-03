@@ -450,6 +450,17 @@
     <!-- **** New Protocol Dao -->
     <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
 
+    <!-- **** New Job Dao -->
+    <bean id="jobDao" class="org.gobiiproject.gobiisampletrackingdao.JobDaoImpl"/>
+
+    <bean id="loaderTemplateDao" class="org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDaoImpl"/>
+
+    <!-- gdm v3 marker service -->
+    <bean id="markerServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.MarkerServiceImpl"/>
+
+    <!-- gdm v3 job service -->
+    <bean id="jobService" class="org.gobiiproject.gobiidomain.services.gdmv3.JobServiceImpl"></bean>
+
      <!-- gdm v3 platform service -->
     <bean id="platformServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.PlatformServiceImpl"/>
     <bean id="platformDaoV3" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
@@ -459,6 +470,8 @@
     <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapManifestImpl"/>
     <bean id="ManifestService" class="org.gobiiproject.gobiidomain.services.impl.ManifestServiceImpl"/>
 
+    <!-- gdm v3 loader template service -->
+    <bean id ="loaderTemplateService" class="org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateServiceImpl"></bean>
 
     <!-- **** Organization Beans *************************************** -->
     <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>

@@ -23,6 +23,13 @@
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
+            <artifactId>gobii-sampletracking-dao</artifactId>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-client</artifactId>
         </dependency>
 
@@ -31,6 +38,11 @@
             <artifactId>gobii-domain</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.gobii</groupId>
+            <artifactId>masticator</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- Spring and Transactions -->
         <dependency>
@@ -62,6 +74,8 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Commons -->
@@ -73,19 +87,19 @@
         <!-- Mockito, Hamcrest and PowerMock -->
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.18.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>2.0.0-beta.5</version>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
+            <version>2.0.0-beta.5</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -99,7 +113,14 @@
             <version>1.18.8</version>
             <scope>compile</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.gobii</groupId>
+            <artifactId>masticator</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -142,25 +163,6 @@
 
                     </execution>
 
-                    <!--gobii test data Execution -->
-                    <execution>
-                        <configuration>
-                            <finalName>gobiiadl</finalName>
-                            <!-- MainClass in mainfest make a executable jar -->
-                            <archive>
-                                <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.GobiiAdl</mainClass>
-                                </manifest>
-                            </archive>
-                        </configuration>
-                        <id>make-gobiiadl</id>
-                        <!-- bind to the packaging phase -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-
-                    </execution>
 
                     <!-- brapi integration tool execution -->
                     <execution>

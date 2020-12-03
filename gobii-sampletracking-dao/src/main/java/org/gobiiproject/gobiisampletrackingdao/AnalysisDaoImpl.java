@@ -35,14 +35,11 @@ public class AnalysisDaoImpl implements AnalysisDao {
 
         try {
 
-            Objects.requireNonNull(
-                    analysisIds,
-                    "analysisId : Required non null");
+            Objects.requireNonNull(analysisIds, "analysisId : Required non null");
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
-            CriteriaQuery<Analysis> criteriaQuery =
-                    criteriaBuilder.createQuery(Analysis.class);
+            CriteriaQuery<Analysis> criteriaQuery = criteriaBuilder.createQuery(Analysis.class);
 
             Root<Analysis> analysisRoot = criteriaQuery.from(Analysis.class);
 
@@ -58,6 +55,34 @@ public class AnalysisDaoImpl implements AnalysisDao {
 
             throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+
+    }
+
+    @Override
+    public List<Analysis> getAnalysesByAnalysisNames(
+        Set<String> analysisNames) throws GobiiDaoException {
+
+        List<Analysis> analyses;
+
+        try {
+
+            Objects.requireNonNull(analysisNames, "analysisNames : Required non null");
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+
+            CriteriaQuery<Analysis> criteriaQuery = criteriaBuilder.createQuery(Analysis.class);
+            Root<Analysis> analysisRoot = criteriaQuery.from(Analysis.class);
+            criteriaQuery.select(analysisRoot);
+            criteriaQuery.where(analysisRoot.get("analysisName").in(analysisNames));
+
+            analyses = em.createQuery(criteriaQuery).getResultList();
+            return analyses;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
     }
