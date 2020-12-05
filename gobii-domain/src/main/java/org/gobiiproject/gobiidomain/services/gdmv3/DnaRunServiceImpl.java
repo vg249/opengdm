@@ -109,9 +109,6 @@ public class DnaRunServiceImpl implements DnaRunService {
             CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
-        // Set new status for marker table
-        dnaRunTable.setStatus(newStatus.getCvId().toString());
-
         // Get a new Job object
         Job job = getNewJob();
         job.setSubmittedBy(createdBy);
@@ -276,16 +273,19 @@ public class DnaRunServiceImpl implements DnaRunService {
 
         if(dnaRunMapped) {
             String dnaRunTableName = Utils.getTableName(DnaRunTable.class);
+            dnaRunTable.setStatus(newStatus.getCvId().toString());
             aspects.put(dnaRunTableName, dnaRunTable);
         }
 
         if(dnaSampleMapped) {
             String dnaSampleTableName = Utils.getTableName(DnaSampleTable.class);
+            dnaSampleTable.setStatus(newStatus.getCvId().toString());
             aspects.put(dnaSampleTableName, dnaSampleTable);
         }
 
         if(germplasmMapped) {
             String germplasmTableName = Utils.getTableName(GermplasmTable.class);
+            germplasmTable.setStatus(newStatus.getCvId().toString());
             aspects.put(germplasmTableName, germplasmTable);
         }
 
