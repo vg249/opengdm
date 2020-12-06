@@ -19,8 +19,6 @@ import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -64,12 +62,14 @@ public class MarkerServiceImpl implements MarkerService {
                                  MarkerUploadRequestDTO markerUploadRequest,
                                  String cropType) throws GobiiException {
 
-        BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
+        Map<String, Object> aspectValues = new HashMap<>();
+        Map<String, Cv> markerPropertiesCvsMap = new HashMap<>();
+        Map<String, Aspect> markerPropertiesAspects = new HashMap<>();
+
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 
-        String fileHeader;
         Map<String, Object> markerTemplateMap;
         MarkerTemplateDTO markerTemplate;
 
@@ -171,25 +171,8 @@ public class MarkerServiceImpl implements MarkerService {
         Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(markerTemplateMap, propertyFields);
 
-        Map<String, Object> aspectValues = new HashMap<>();
 
-        //Read Header
-        InputStream fileInputStream = new ByteArrayInputStream(markerFile);
-        try {
-            br = new BufferedReader(
-                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-            fileHeader = br.readLine();
-        }
-        catch (IOException io) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "No able to read file header");
-        }
-
-        String[] fileColumns = fileHeader.split("\t");
-        Map<String, Cv> markerPropertiesCvsMap = new HashMap<>();
-        Map<String, ColumnAspect> markerPropertiesAspects = new HashMap<>();
+        String[] fileColumns = Utils.getFileColumns(markerFile);
 
         for(int i = 0; i < fileColumns.length; i++) {
             String fileColumn = fileColumns[i];

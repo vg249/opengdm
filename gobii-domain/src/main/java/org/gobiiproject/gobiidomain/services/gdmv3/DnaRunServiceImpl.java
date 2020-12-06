@@ -65,12 +65,26 @@ public class DnaRunServiceImpl implements DnaRunService {
     public JobDTO loadDnaRuns(byte[] dnaRunFile,
                               DnaRunUploadRequestDTO dnaRunUploadRequest,
                               String cropType) throws GobiiException {
-        BufferedReader br;
+
         LoaderInstruction loaderInstruction = new LoaderInstruction();
+
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 
-        String fileHeader;
+        // Map for Aspect values to each api field.
+        Map<String, Object> aspectValues = new HashMap<>();
+
+        // Map for Cv Properties
+        Map<String, Cv> dnaRunPropertiesCvsMap = new HashMap<>();
+        Map<String, Cv> dnaSamplePropertiesCvsMap = new HashMap<>();
+        Map<String, Cv> germplasmPropertiesCvsMap = new HashMap<>();
+
+
+        Map<String, Aspect> dnaRunPropertiesAspects = new HashMap<>();
+        Map<String, Aspect> dnaSamplePropertiesAspects = new HashMap<>();
+        Map<String, Aspect> germplasmPropertiesAspects = new HashMap<>();
+
+
         Map<String, Object> dnaRunTemplateMap;
         DnaRunTemplateDTO dnaRunTemplate;
 
@@ -133,31 +147,9 @@ public class DnaRunServiceImpl implements DnaRunService {
         Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(dnaRunTemplateMap, propertyFields);
 
-        // Map for Aspect values to each api field.
-        Map<String, Object> aspectValues = new HashMap<>();
 
-        //Read Header
-        InputStream fileInputStream = new ByteArrayInputStream(dnaRunFile);
-        try {
-            br = new BufferedReader(
-                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-            fileHeader = br.readLine();
-        }
-        catch (IOException io) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "No able to read file header");
-        }
+        String[] fileColumns = Utils.getFileColumns(dnaRunFile);
 
-        String[] fileColumns = fileHeader.split("\t");
-
-        Map<String, Cv> dnaRunPropertiesCvsMap = new HashMap<>();
-        Map<String, Cv> dnaSamplePropertiesCvsMap = new HashMap<>();
-        Map<String, Cv> germplasmPropertiesCvsMap = new HashMap<>();
-        Map<String, ColumnAspect> dnaRunPropertiesAspects = new HashMap<>();
-        Map<String, ColumnAspect> dnaSamplePropertiesAspects = new HashMap<>();
-        Map<String, ColumnAspect> germplasmPropertiesAspects = new HashMap<>();
 
         for(int i = 0; i < fileColumns.length; i++) {
             String fileColumn = fileColumns[i];
