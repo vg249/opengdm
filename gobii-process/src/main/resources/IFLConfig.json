@@ -1,10 +1,14 @@
 {
-  "MARKER": {
-    "loadOrder" : [
+  "loadOrder": {
+    "MARKER" : [
        "marker",
        "linkage_group",
        "marker_linkage_group"
      ],
-     "requiredFields": {}
+    "SAMPLES" : [
+      "germplasm",
+      "dnasample",
+      "dnarun"
+    ]
   }
 }

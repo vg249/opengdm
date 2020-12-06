@@ -161,7 +161,8 @@ public class GobiiFileReader {
         configLoation = propertiesFile;
 
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
-        List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
+        //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
+        List<String> loaderInstructionOrder = new ArrayList<>();
 
         LoaderInstruction loaderInstructions;
         GobiiLoaderProcedure procedure;
@@ -305,23 +306,16 @@ public class GobiiFileReader {
                 success = false;
             }
 
-
-            Map<String, IflConfig> iflConfigMap = jsonMapper.readValue(
+            IflConfig iflConfigMap = jsonMapper.readValue(
                 GobiiFileReader.class.getResourceAsStream("/IFLConfig.json"),
-                jsonMapper
-                    .getTypeFactory()
-                    .constructMapType(
-                        HashMap.class,
-                        String.class,
-                        IflConfig.class));
+                IflConfig.class);
 
-            if(iflConfigMap.containsKey(loadTypeName)) {
-                loaderInstructionList = iflConfigMap.get(loadTypeName).getLoadOrder();
+            if(iflConfigMap.getLoadOrder().containsKey(loadTypeName)) {
+                loaderInstructionOrder = iflConfigMap.getLoadOrder().get(loadTypeName);
             }
             else {
-                loaderInstructionList = new ArrayList<>(loaderInstructionMap.keySet());
+                loaderInstructionOrder = new ArrayList<>(loaderInstructionMap.keySet());
             }
-
         }
         else {
             procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
@@ -335,7 +329,7 @@ public class GobiiFileReader {
                     loaderInstructionMap,
                     configuration,
                     dataSetId,
-                    loaderInstructionList,
+                    loaderInstructionOrder,
                     gobiiCropConfig);
             success = oldInstructionFileProcessingResult.isSuccess();
             sendQc = oldInstructionFileProcessingResult.isSendQc();
@@ -343,19 +337,27 @@ public class GobiiFileReader {
 
 
         // ----------- Data Validation Block. Common for both aspect and old instruction file
-        //Metadata Validation
+        // Metadata Validation
         boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.isEnableValidation()) {
             DigestFileValidator digestFileValidator = new DigestFileValidator(directory);
             digestFileValidator.performValidation(gobiiCropConfig);
-            //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
+
+            //Call validations here, update 'success'
+            // to false with any call to ErrorLogger.logError()
             List<Path> pathList =
                     Files.list(Paths.get(directory))
-                            .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+                        .filter(Files::isRegularFile)
+                        .filter(path -> String.valueOf(path.getFileName()).endsWith(".json"))
+                        .collect(Collectors.toList());
+
             if (pathList.size() < 1) {
                 Logger.logError("Validation","Unable to find validation checks");
             }
-            ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+            ValidationError[] fileErrors =
+                new ObjectMapper()
+                    .readValue(pathList.get(0).toFile(), ValidationError[].class);
+
             boolean hasAnyFailedStatuses=false;
             for(ValidationError status : fileErrors){
                 if(status.status.equalsIgnoreCase(ValidationConstants.FAILURE)){
@@ -364,15 +366,21 @@ public class GobiiFileReader {
             }
             for (ValidationError status : fileErrors) {
                 if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-                    if(!reportedValidationFailures){//Lets only add this to the error log once
+                    if(!reportedValidationFailures){ //Lets only add this to the error log once
                         Logger.logError("Validation", "Validation failures");
                         reportedValidationFailures=true;
                     }
                     for (int i = 0; i < status.failures.size(); i++)
-                        pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
+                        pm.addValidateTableElement(
+                            status.fileName,
+                            status.status,
+                            status.failures.get(i).reason,
+                            status.failures.get(i).columnName,
+                            status.failures.get(i).values);
                 }
                 if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
-                    //If any failed statii(statuses) exist, we should have this table, otherwise it should not exist
+                    //If any failed statii(statuses) exist, we should have this table,
+                    // otherwise it should not exist
                     if(hasAnyFailedStatuses) {
                         pm.addValidateTableElement(status.fileName, status.status);
                     }
@@ -389,21 +397,32 @@ public class GobiiFileReader {
 
             //Load PostgreSQL
             boolean loadedData = false;
-            for (String key : loaderInstructionList) {
+
+            for (String key : loaderInstructionOrder) {
                 if (!VARIANT_CALL_TABNAME.equals(key)) {
+
                     String inputFile = " -i " + loaderInstructionMap.get(key);
-                    String outputFile = " -o " + dstDir.getAbsolutePath() + "/"; //Output here is temporary files, needs terminal /
+
+                    // Output here is temporary files, needs terminal /
+                    String outputFile = " -o " + dstDir.getAbsolutePath() + "/";
                     Logger.logInfo(
                         "Digester",
-                        "Running IFL: " + pathToIFL
-                            + " <conntection string> " + inputFile + outputFile);
-                    //Lines affected returned by method call - THIS IS NOW IGNORED
+                        "Running IFL: "
+                            + pathToIFL
+                            + " <conntection string> "
+                            + inputFile + outputFile);
+
+                    // Lines affected returned by method call - THIS IS NOW IGNORED
                     HelperFunctions.tryExec(
                         pathToIFL + connectionString + inputFile + outputFile + " -l",
                         verbose ? dstDir.getAbsolutePath() + "/iflOut" : null,
                         errorPath);
 
-                    IFLLineCounts counts = calculateTableStats(pm, loaderInstructionMap, dstDir, key);
+                    IFLLineCounts counts = calculateTableStats(
+                        pm,
+                        loaderInstructionMap,
+                        dstDir,
+                        key);
 
                     if (counts.loadedData == 0) {
                         Logger.logDebug("FileReader", "No data loaded for table " + key);
@@ -413,7 +432,8 @@ public class GobiiFileReader {
                     if (counts.invalidData > 0 && !isVariableLengthTable(key)) {
                         Logger.logWarning("FileReader", "Invalid data in table " + key);
                     } else {
-                        //If there are no issues in the load, clean up temporary intermediate files
+                        //If there are no issues in the load,
+                        // clean up temporary intermediate files
                         if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
                             // And if 'delete intermediate files' is true,
                             // clean up all IFL files (we don't need them any more
@@ -423,16 +443,15 @@ public class GobiiFileReader {
                                 !LoaderGlobalConfigs.isDeleteIntermediateFiles());
                         }
                     }
-
                 }
-
-
             }
+
             if (!loadedData) {
                 Logger.logError("FileReader", "No new data was uploaded.");
             }
 
             if(dataSetId != null) {
+
                 //Load Monet/HDF5
                 errorPath = getLogName(dstFilePath, cropType, "Matrix_Upload");
                 String variantFilename = "DS" + dataSetId.toString();
@@ -442,9 +461,21 @@ public class GobiiFileReader {
                     logError("Digester", "Data Set ID is null for variant call");
                 }
                 if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
-                    boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, datasetType,
-                        configuration, dataSetId, cropType, errorPath, variantFilename, variantFile);
+
+                    jobStatus.set(
+                        JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
+                        "Matrix Upload");
+
+                    boolean HDF5Success = HDF5Interface.createHDF5FromDataset(
+                        pm,
+                        datasetType,
+                        configuration,
+                        dataSetId,
+                        cropType,
+                        errorPath,
+                        variantFilename,
+                        variantFile);
+
                     rmIfExist(variantFile.getPath());
                     success &= HDF5Success;
                 }
