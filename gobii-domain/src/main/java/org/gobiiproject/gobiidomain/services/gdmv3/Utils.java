@@ -12,11 +12,9 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import javax.persistence.Table;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -188,6 +186,25 @@ public class Utils {
             }
         }
         return fileColumnsApiFieldsMap;
+    }
+
+    public static String[] getFileColumns(byte[] file) {
+        InputStream fileInputStream = new ByteArrayInputStream(file);
+        String fileHeader;
+        try {
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
+            fileHeader = br.readLine();
+        }
+        catch (IOException io) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.BAD_REQUEST,
+                "No able to read file header");
+        }
+
+        return fileHeader.split("\t");
+
     }
 
     public static String getTableName(Class<?> entity) throws NullPointerException {
