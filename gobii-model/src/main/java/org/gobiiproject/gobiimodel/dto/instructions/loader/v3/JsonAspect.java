@@ -9,17 +9,17 @@ public class JsonAspect {
 
     private final String aspectType = "JSON";
 
-    private Map<String, ColumnAspect> jsonMap;
+    private Map<String, Aspect> jsonMap;
 
     public String getAspectType() {
         return aspectType;
     }
 
-    public Map<String, ColumnAspect> getJsonMap() {
+    public Map<String, Aspect> getJsonMap() {
         return jsonMap;
     }
 
-    public void setJsonMap(Map<String, ColumnAspect> jsonMap) {
+    public void setJsonMap(Map<String, Aspect> jsonMap) {
         this.jsonMap = jsonMap;
     }
 }
