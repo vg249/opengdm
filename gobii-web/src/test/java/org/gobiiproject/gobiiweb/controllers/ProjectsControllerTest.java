@@ -160,7 +160,7 @@ public class ProjectsControllerTest {
     public void testCreateSimple() throws Exception {
         PowerMockito.mockStatic(AuthUtils.class);
         ProjectDTO mockRequest = new ProjectDTO();
-        mockRequest.setPiContactId(1); // need to mock contact here
+        mockRequest.setPiContactId("1"); // need to mock contact here
         mockRequest.setProjectName("Test project");
         mockRequest.setProjectDescription("Test description");
         // this test does not include properties

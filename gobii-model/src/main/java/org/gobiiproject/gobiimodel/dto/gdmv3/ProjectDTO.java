@@ -66,9 +66,8 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @GobiiEntityMap(paramName="contact.contactId", entity = Project.class, deep=true)
     @NotNull(groups = {ProjectDTO.Create.class})
-    @Null(groups = {ProjectDTO.Update.class})
     @JsonSerialize(using = ToStringSerializer.class)
-    private Integer piContactId;
+    private String piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore
@@ -79,13 +78,17 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String piContactFirstName;
 
     //TODO: when the stats table is done
+    @GobiiEntityMap(paramName="projectStats.experimentCount", entity=Project.class, deep=true)
     private Integer experimentCount;
 
+    @GobiiEntityMap(paramName="projectStats.datasetCount", entity=Project.class, deep=true)
     private Integer datasetCount;
 
-    private Integer markersCount;
+    @GobiiEntityMap(paramName="projectStats.markerCount", entity=Project.class, deep=true)
+    private Integer markerCount;
 
-    private Integer dnaRunsCount;
+    @GobiiEntityMap(paramName="projectStats.dnarunCount", entity=Project.class, deep=true)
+    private Integer dnaRunCount;
 
     @Valid
     private List<CvPropertyDTO> properties = new java.util.ArrayList<>();
