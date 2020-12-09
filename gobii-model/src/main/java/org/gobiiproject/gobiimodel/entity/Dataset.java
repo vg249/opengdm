@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiimodel.entity;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedSubgraph;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -178,5 +178,8 @@ public class Dataset extends BaseEntity {
     public Cv getStatus() {
         return status;
     }
+
+    @OneToOne(mappedBy="dataset")
+    private DatasetStats datasetStats;
 
 }
