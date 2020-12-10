@@ -149,7 +149,7 @@ public class DatasetDaoImpl implements DatasetDao {
             ") "                                                                   + 
             "SELECT {ds.*} , {anas.*}, {experiment.*}, {callinganalysis.*}, "      +
             "       {typeCv.*}, {statusCv.*}, {stats.*}, {project.*}, "            +
-            "       {contact.*}, {anaTypeCv.*} "+
+            "       {contact.*}, {anaTypeCv.*}, {reference.*} "                    +
             "FROM ds "                                                             +
             "INNER JOIN experiment AS experiment ON( "                             +
             "    (ds.experiment_id = experiment.experiment_id) "                   +
@@ -166,7 +166,8 @@ public class DatasetDaoImpl implements DatasetDao {
             "LEFT JOIN cv anaTypeCv ON(anas.type_id = anaTypeCv.cv_id) "           +
             "LEFT JOIN dataset_stats stats ON (ds.dataset_id = stats.dataset_id) " +
             "LEFT JOIN project ON (experiment.project_id = project.project_id) "   +
-            "LEFT JOIN contact ON (project.pi_contact = contact.contact_id)";
+            "LEFT JOIN contact ON (project.pi_contact = contact.contact_id) "      +
+            "LEFT JOIN reference ON (anas.reference_id = reference.reference_id) ";
             
             try {
 
@@ -186,6 +187,7 @@ public class DatasetDaoImpl implements DatasetDao {
                         .addJoin("project", "experiment.project")
                         .addJoin("contact", "project.contact")
                         .addJoin("anaTypeCv", "anas.type")
+                        .addJoin("reference", "anas.reference")
                         .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                         .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
                         .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
