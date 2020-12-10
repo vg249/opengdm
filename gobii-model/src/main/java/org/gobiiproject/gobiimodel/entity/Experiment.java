@@ -82,6 +82,5 @@ public class Experiment extends BaseEntity{
 
     @OneToOne(mappedBy="experiment")
     private ExperimentStats experimentStats;
-
 }
 

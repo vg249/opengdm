@@ -152,30 +152,33 @@ public class DatasetDaoImpl implements DatasetDao {
 
 
         String queryString = "WITH ds AS (" +
-                "SELECT * " +
-                "FROM dataset " +
-                "WHERE (:datasetId IS NULL OR dataset_id = :datasetId) " +
-                "AND (:datasetName IS NULL OR dataset.name = :datasetName) " +
-                "LIMIT :pageSize OFFSET :rowOffset) " +
-                "SELECT {ds.*} , {anas.*}, {experiment.*}, {callinganalysis.*}, {job.*}, " +
-                "{typeCv.*}, {statusCv.*}, " +
-                "(SELECT gettotalmarkersindataset " +
-                "FROM gettotalmarkersindataset(CAST(ds.dataset_id AS TEXT))) " +
-                "AS marker_count, " +
-                "(SELECT gettotaldnarunsindataset " +
-                "FROM gettotaldnarunsindataset(CAST(ds.dataset_id AS TEXT))) " +
-                "AS dnarun_count " +
-                "FROM ds " +
-                "INNER JOIN experiment AS experiment ON(" +
-                "   (ds.experiment_id = experiment.experiment_id) " +
-                "   AND (:experimentId IS NULL OR experiment.experiment_id = :experimentId) " +
-                "   AND (:experimentName IS NULL OR experiment.name = :experimentName) " +
-                ") " +
-                "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) " +
-                "LEFT JOIN analysis AS callinganalysis ON(callinganalysis.analysis_id = ds.callinganalysis_id) " +
-                "LEFT JOIN job USING(job_id) " +
-                "LEFT JOIN cv typeCv ON(job.type_id = typeCv.cv_id) " +
-                "LEFT JOIN cv statusCv ON(job.status = statusCv.cv_id) ";
+            "SELECT * " +
+            "FROM dataset " +
+            "WHERE (:datasetId IS NULL OR dataset_id = :datasetId) " +
+            "AND (:datasetName IS NULL OR dataset.name = :datasetName) " +
+            "LIMIT :pageSize OFFSET :rowOffset) " +
+            "SELECT {ds.*}, " +
+            "{anas.*}, " +
+            "{ds_stats.*}, " +
+            "{experiment.*}, " +
+            "{callinganalysis.*}, " +
+            "{job.*}, " +
+            "{typeCv.*}, " +
+            "{statusCv.*} " +
+            "FROM ds " +
+            "INNER JOIN dataset_stats as ds_stats USING(dataset_id) " +
+            "INNER JOIN experiment AS experiment ON(" +
+            "   (ds.experiment_id = experiment.experiment_id) " +
+            "   AND (:experimentId IS NULL OR experiment.experiment_id = :experimentId) " +
+            "   AND (:experimentName IS NULL OR experiment.name = :experimentName) " +
+            ") " +
+            "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) " +
+            "LEFT JOIN analysis AS callinganalysis ON(" +
+                "callinganalysis.analysis_id = ds.callinganalysis_id" +
+            ") " +
+            "LEFT JOIN job USING(job_id) " +
+            "LEFT JOIN cv typeCv ON(job.type_id = typeCv.cv_id) " +
+            "LEFT JOIN cv statusCv ON(job.status = statusCv.cv_id) ";
 
 
         try {
@@ -188,13 +191,12 @@ public class DatasetDaoImpl implements DatasetDao {
             List<Object[]> resultTupleList = session.createNativeQuery(queryString)
                     .addEntity("ds", Dataset.class)
                     .addEntity("anas", Analysis.class)
+                    .addJoin("ds_stats", "ds.datasetStats")
                     .addJoin("experiment", "ds.experiment")
                     .addJoin("job", "ds.job")
                     .addJoin("callinganalysis", "ds.callingAnalysis")
                     .addJoin("typeCv", "job.type")
                     .addJoin("statusCv", "job.status")
-                    .addScalar("marker_count", IntegerType.INSTANCE)
-                    .addScalar("dnarun_count", IntegerType.INSTANCE)
                     .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
                     .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
                     .setParameter("datasetId", datasetId, IntegerType.INSTANCE)

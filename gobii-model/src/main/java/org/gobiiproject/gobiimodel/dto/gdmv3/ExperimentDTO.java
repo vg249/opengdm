@@ -104,5 +104,4 @@ public class ExperimentDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="experimentStats.dnarunCount", entity=Experiment.class, deep=true)
     private Integer dnaRunCount;
 
-
 }

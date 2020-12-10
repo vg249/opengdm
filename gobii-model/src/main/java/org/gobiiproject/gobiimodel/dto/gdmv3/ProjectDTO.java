@@ -77,7 +77,6 @@ public class ProjectDTO extends DTOBaseAuditable {
     @JsonIgnore
     private String piContactFirstName;
 
-    //TODO: when the stats table is done
     @GobiiEntityMap(paramName="projectStats.experimentCount", entity=Project.class, deep=true)
     private Integer experimentCount;
 
