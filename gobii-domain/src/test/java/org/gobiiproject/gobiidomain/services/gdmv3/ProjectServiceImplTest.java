@@ -109,7 +109,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId("111");
+        request.setPiContactId(111);
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO nullValued = new CvPropertyDTO();
@@ -148,7 +148,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId("111");
+        request.setPiContactId(111);
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO valued = new CvPropertyDTO();
@@ -190,7 +190,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId("111");
+        request.setPiContactId(111);
 
         v3ProjectServiceImpl.createProject(request, "test-user");
     }
@@ -346,7 +346,7 @@ public class ProjectServiceImplTest {
         mockModifiedStatus.setTerm("modified");
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId("333");
+        request.setPiContactId(333);
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
         when(contactDao.getContact(333)).thenReturn(mockContact);
@@ -378,7 +378,7 @@ public class ProjectServiceImplTest {
         mockProject.setContact(mockContact);
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId("555");
+        request.setPiContactId(555);
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
         when(contactDao.getContact(555)).thenReturn(null);

@@ -2,6 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import javax.persistence.criteria.Root;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.entity.Analysis;
 import org.gobiiproject.gobiimodel.entity.Dataset;
+import org.gobiiproject.gobiimodel.entity.DatasetStats;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
@@ -123,6 +125,87 @@ public class DatasetDaoImpl implements DatasetDao {
         }
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getDatasetWithAnalysesAndStats(
+        Integer pageSize,
+        Integer rowOffset,
+        Integer datasetId,
+        String datasetName,
+        Integer datasetTypeId,
+        Integer experimentId,
+        String experimentName
+    ) throws GobiiException {
+
+        String queryString = 
+            "WITH ds AS ("                                                         +
+	        "   SELECT * "                                                         + 
+            "   FROM dataset "                                                     +
+	        "   WHERE (:datasetId IS NULL OR dataset_id = :datasetId) "            +
+            "   AND (:datasetName IS NULL OR dataset.name = :datasetName) "        +
+            "   AND (:datasetTypeId IS NULL or dataset.type_id = :datasetTypeId) " +
+            "   ORDER BY dataset_id ASC "                                          +
+            "   LIMIT :pageSize OFFSET :rowOffset "                                +
+            ") "                                                                   + 
+            "SELECT {ds.*} , {anas.*}, {experiment.*}, {callinganalysis.*}, "      +
+            "       {typeCv.*}, {statusCv.*}, {stats.*}, {project.*}, "            +
+            "       {contact.*}, {anaTypeCv.*} "+
+            "FROM ds "                                                             +
+            "INNER JOIN experiment AS experiment ON( "                             +
+            "    (ds.experiment_id = experiment.experiment_id) "                   +
+            "    AND (:experimentId IS NULL OR "                                   +
+            "        experiment.experiment_id = :experimentId) "                   +
+            "    AND (:experimentName IS NULL OR "                                 +
+            "        experiment.name = :experimentName) "                          +
+            ") "                                                                   + 
+            "LEFT JOIN analysis AS anas ON(anas.analysis_id = ANY(ds.analyses)) "  +
+            "LEFT JOIN analysis AS callinganalysis "                               +
+            "     ON(callinganalysis.analysis_id = ds.callinganalysis_id) "        +
+            "LEFT JOIN cv typeCv ON(ds.type_id = typeCv.cv_id) "                   +
+            "LEFT JOIN cv statusCv ON(ds.status = statusCv.cv_id) "                +
+            "LEFT JOIN cv anaTypeCv ON(anas.type_id = anaTypeCv.cv_id) "           +
+            "LEFT JOIN dataset_stats stats ON (ds.dataset_id = stats.dataset_id) " +
+            "LEFT JOIN project ON (experiment.project_id = project.project_id) "   +
+            "LEFT JOIN contact ON (project.pi_contact = contact.contact_id)";
+            
+            try {
+
+                Objects.requireNonNull(pageSize, "pageSize: Required non null");
+                Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
+    
+                Session session = em.unwrap(Session.class);
+    
+                List<Object[]> resultTupleList = session.createNativeQuery(queryString)
+                        .addEntity("ds", Dataset.class)
+                        .addEntity("anas", Analysis.class)
+                        .addJoin("experiment", "ds.experiment")
+                        .addJoin("callinganalysis", "ds.callingAnalysis")
+                        .addJoin("stats", "ds.datasetStats")
+                        .addJoin("typeCv", "ds.type")
+                        .addJoin("statusCv", "ds.status")
+                        .addJoin("project", "experiment.project")
+                        .addJoin("contact", "project.contact")
+                        .addJoin("anaTypeCv", "anas.type")
+                        .setParameter("pageSize", pageSize, IntegerType.INSTANCE)
+                        .setParameter("rowOffset", rowOffset, IntegerType.INSTANCE)
+                        .setParameter("datasetId", datasetId, IntegerType.INSTANCE)
+                        .setParameter("experimentId", experimentId, IntegerType.INSTANCE)
+                        .setParameter("datasetTypeId", datasetTypeId, IntegerType.INSTANCE)
+                        .setParameter("datasetName", datasetName, StringType.INSTANCE)
+                        .setParameter("experimentName", experimentName, StringType.INSTANCE)
+                        .list();
+                
+                return resultTupleList;
+    
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+        }
+    }
 
     /**
      * Returns a list of object tuple with Dataset entity left joined with analysis entities
