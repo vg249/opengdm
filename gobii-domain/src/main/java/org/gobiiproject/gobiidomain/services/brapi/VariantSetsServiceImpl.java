@@ -82,8 +82,6 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                 Dataset dataset = (Dataset) tuple[0];
                 Analysis analysis = (Analysis) tuple[1];
-                Integer markerCount = (Integer) tuple[2];
-                Integer dnaRunCount = (Integer) tuple[3];
 
                 if(!variantSetDtoMapByDatasetId.containsKey(dataset.getDatasetId())) {
 
@@ -104,9 +102,6 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                         MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
                     variantSetDTO.getAvailableFormats().add(fileFormat);
 
-                    //Set Marker and DnaRun Counts
-                    variantSetDTO.setVariantCount(markerCount);
-                    variantSetDTO.setCallSetCount(dnaRunCount);
 
                     //Map extract ready of dataset
                     mapVariantSetExtractReady(dataset, variantSetDTO);
