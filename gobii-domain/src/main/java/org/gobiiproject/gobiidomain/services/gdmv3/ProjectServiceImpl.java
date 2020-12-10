@@ -104,7 +104,7 @@ public class ProjectServiceImpl implements ProjectService {
         //Project properties
         List<CvPropertyDTO> nullFiltered = new ArrayList<>();
         request.getProperties().forEach(cvItem -> {
-            if (cvItem.getPropertyValue() != null) {
+            if (cvItem.getPropertyValue() != null && cvItem.getPropertyId() != null) {
                 nullFiltered.add(cvItem);
             }
         });
