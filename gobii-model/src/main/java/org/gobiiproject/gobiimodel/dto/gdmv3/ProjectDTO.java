@@ -36,14 +36,11 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @Override
     public Integer getId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void setId(Integer id) {
-        // TODO Auto-generated method stub
-
     }
 
     public ProjectDTO() {
@@ -67,7 +64,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="contact.contactId", entity = Project.class, deep=true)
     @NotNull(groups = {ProjectDTO.Create.class})
     @JsonSerialize(using = ToStringSerializer.class)
-    private String piContactId;
+    private Integer piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore
