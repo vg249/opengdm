@@ -56,10 +56,18 @@ public class DigestFileValidator {
          * Perform validation
          * */
         try {
-            SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValues(new FileWriter(new File(validationOutput)));
+
+            SequenceWriter writer =
+                new ObjectMapper()
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValues(new FileWriter(new File(validationOutput)));
+
             List<ValidationUnit> validations = readRules(writer);
             ValidationError validationError = new ValidationError();
-            validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
+
+            validationError.fileName =
+                FilenameUtils.getExtension(validations.get(0).getDigestFileName());
+
             try {
                 List<ValidationError> validationErrorList = doValidations(validations, cropConfig);
                 writer.write(validationErrorList);
@@ -85,12 +93,18 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationError> doValidations(List<ValidationUnit> validations, GobiiCropConfig cropConfig) {
+    private List<ValidationError> doValidations(List<ValidationUnit> validations,
+                                                GobiiCropConfig cropConfig) {
+
         List<ValidationError> validationErrorList = new ArrayList<>();
+
         for (ValidationUnit validation : validations) {
+
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
+
             List<Failure> failureList = validate(validation, cropConfig);
+
             if (failureList != null) {
                 if (failureList.size() > 0) {
                     validationError.status = ValidationConstants.FAILURE;
