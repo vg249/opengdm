@@ -19,6 +19,10 @@ import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -48,6 +52,7 @@ public class MarkerServiceImpl implements MarkerService {
     final ObjectMapper mapper = new ObjectMapper();
 
     final String loadType = "MARKER";
+
 
     /**
      * Uploads markers in the file to the database.
@@ -82,15 +87,14 @@ public class MarkerServiceImpl implements MarkerService {
         MarkerTable markerTable = new MarkerTable();
         LinkageGroupTable linkageGroupTable = new LinkageGroupTable();
         MarkerLinkageGroupTable markerLinkageGroupTable = new MarkerLinkageGroupTable();
+        MarkerGroupTable markerGroupTable = new MarkerGroupTable();
 
         // Get tables names in database
         String markerTableName = Utils.getTableName(MarkerTable.class);
         String linkageGroupTableName = Utils.getTableName(LinkageGroupTable.class);
         String markerLinkageTableName = Utils.getTableName(MarkerLinkageGroupTable.class);
+        String markerGroupTableName = Utils.getTableName(MarkerGroupTable.class);
 
-        aspects.put(markerTableName, markerTable);
-        aspects.put(linkageGroupTableName, linkageGroupTable);
-        aspects.put(markerLinkageTableName, markerLinkageGroupTable);
 
         // Set Platform Id in Table Aspects
         if(!IntegerUtils.isNullOrZero(markerUploadRequest.getPlatformId())) {
@@ -102,6 +106,7 @@ public class MarkerServiceImpl implements MarkerService {
             }
             markerTable.setPlatformId(platform.getPlatformId().toString());
             markerLinkageGroupTable.setPlatformId(platform.getPlatformId().toString());
+            markerGroupTable.setPlatformId(platform.getPlatformId().toString());
         }
 
         // Set mapSet for linkage group and marker linkage group
@@ -195,6 +200,11 @@ public class MarkerServiceImpl implements MarkerService {
             String fileColumn = fileColumns[i];
             ColumnAspect columnAspect = new ColumnAspect(1, i);
 
+            // ignore file columns not mapped by template.
+            if(!fileColumnsApiFieldsMap.containsKey(fileColumn)) {
+                continue;
+            }
+
             for(String apiFieldName : fileColumnsApiFieldsMap.get(fileColumn)) {
 
                 // Check for properties fields
@@ -227,13 +237,38 @@ public class MarkerServiceImpl implements MarkerService {
             }
         }
 
-        AspectMapper.mapTemplateToAspects(markerTemplate, markerTable, aspectValues);
-        AspectMapper.mapTemplateToAspects(markerTemplate, linkageGroupTable, aspectValues);
-        AspectMapper.mapTemplateToAspects(markerTemplate, markerLinkageGroupTable, aspectValues);
+        boolean markerTableMapped =
+            AspectMapper.mapTemplateToAspects(markerTemplate, markerTable, aspectValues);
 
-        validateMarkerTable(markerTable);
-        validateLinkageGroupTable(linkageGroupTable);
-        validateMarkerLinkageGroupTable(markerLinkageGroupTable);
+        boolean linkageGroupTableMapped =
+            AspectMapper.mapTemplateToAspects(markerTemplate, linkageGroupTable, aspectValues);
+
+        AspectMapper.mapTemplateToAspects(markerTemplate, markerGroupTable, aspectValues);
+
+
+        if(markerTableMapped) {
+            validateMarkerTable(markerTable);
+            aspects.put(markerTableName, markerTable);
+        }
+
+        if(linkageGroupTableMapped) {
+            validateLinkageGroupTable(linkageGroupTable);
+            aspects.put(linkageGroupTableName, linkageGroupTable);
+        }
+
+        if(markerTableMapped && linkageGroupTableMapped) {
+            AspectMapper.mapTemplateToAspects(
+                markerTemplate,
+                markerLinkageGroupTable,
+                aspectValues);
+            validateMarkerLinkageGroupTable(markerLinkageGroupTable);
+            aspects.put(markerLinkageTableName, markerLinkageGroupTable);
+        }
+
+        if(markerTableMapped && markerGroupTable.getMarkerGroupName() != null) {
+            FieldValidator.validate(markerGroupTable);
+            aspects.put(markerGroupTableName, markerGroupTable);
+        }
 
         loaderInstruction.setAspects(aspects);
 
@@ -281,6 +316,7 @@ public class MarkerServiceImpl implements MarkerService {
                 GobiiValidationStatusType.BAD_REQUEST,
                 "Neither PlatformId nor Platform name mapped");
         }
+        FieldValidator.validate(markerTable);
     }
 
     private void validateLinkageGroupTable(
@@ -291,10 +327,10 @@ public class MarkerServiceImpl implements MarkerService {
                 GobiiValidationStatusType.BAD_REQUEST,
                 "Neither MapId nor Genome Map name ");
         }
+        FieldValidator.validate(linkageGroupTable);
     }
 
-    private void validateMarkerLinkageGroupTable(
-        MarkerLinkageGroupTable markerLinkageGroupTable) throws GobiiDomainException {
+    private void validateMarkerLinkageGroupTable(MarkerLinkageGroupTable markerLinkageGroupTable) throws GobiiDomainException {
         if(markerLinkageGroupTable.getPlatformId() == null &&
             markerLinkageGroupTable.getPlatformName() == null) {
             throw new GobiiDomainException(
@@ -309,6 +345,7 @@ public class MarkerServiceImpl implements MarkerService {
                 GobiiValidationStatusType.BAD_REQUEST,
                 "Neither MapId nor Genome Map name mapped");
         }
+        FieldValidator.validate(markerLinkageGroupTable);
     }
 
 
