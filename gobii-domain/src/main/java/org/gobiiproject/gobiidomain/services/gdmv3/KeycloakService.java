@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public interface KeycloakService {
     ContactDTO getUser(String uuid) throws Exception;
+    ContactDTO getUserByUserName(String userName) throws GobiiDomainException;
 
     List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception;
 

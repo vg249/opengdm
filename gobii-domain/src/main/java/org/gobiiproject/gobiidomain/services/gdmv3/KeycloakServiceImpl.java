@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiimodel.config.KeycloakConfig;
 import org.gobiiproject.gobiimodel.config.Roles;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.security.TokenInfo;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -29,9 +32,15 @@ public class KeycloakServiceImpl implements KeycloakService {
     
     @Override
     public ContactDTO getUser(String uuid) throws Exception {
+
         Keycloak keycloak = this.getKeycloakAdminClient();
 
-        UserRepresentation user = keycloak.realm(keycloakConfig.getRealm()).users().get(uuid).toRepresentation();
+        UserRepresentation user =
+            keycloak
+                .realm(keycloakConfig.getRealm())
+                .users()
+                .get(uuid).toRepresentation();
+
         keycloak.close();
 
         ContactDTO contact = Optional.ofNullable(user)
@@ -42,7 +51,43 @@ public class KeycloakServiceImpl implements KeycloakService {
         return contact;
     }
 
-    public List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception {
+    public ContactDTO getUserByUserName(String userName) throws GobiiDomainException{
+
+        Keycloak keycloak = this.getKeycloakAdminClient();
+
+        List<UserRepresentation> users =
+            keycloak
+                .realm(keycloakConfig.getRealm())
+                .users()
+                .search(userName);
+
+        keycloak.close();
+
+        if(users.size() == 0) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Contact not defined in keycloak");
+        }
+        if(users.size() > 1) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Duplicate contacts found");
+        }
+
+        ContactDTO contact = Optional.ofNullable(users.get(0))
+            .map(u -> this.getContactDTO(users.get(0)))
+            .orElseThrow(()-> new EntityDoesNotExistException("Contact"));
+
+
+        return contact;
+    }
+
+    public List<ContactDTO> getKeycloakUsers(String cropType,
+                                             String role,
+                                             Integer page,
+                                             Integer pageSize) throws Exception {
         Keycloak keycloak = this.getKeycloakAdminClient();
 
         String rolePath = Optional.ofNullable(role)
@@ -62,7 +107,11 @@ public class KeycloakServiceImpl implements KeycloakService {
         
         //get the members
         List<UserRepresentation> usersInRole = 
-            keycloak.realm(keycloakConfig.getRealm()).groups().group(groupId).members(page, pageSize);
+            keycloak
+                .realm(keycloakConfig.getRealm())
+                .groups()
+                .group(groupId)
+                .members(page*pageSize, pageSize);
 
         List<ContactDTO> contactDTOs = new ArrayList<>();
         
