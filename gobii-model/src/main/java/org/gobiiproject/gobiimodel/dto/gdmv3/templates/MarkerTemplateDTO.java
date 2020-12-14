@@ -45,7 +45,10 @@ public class MarkerTemplateDTO {
     @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = MarkerTable.class)})
     private  List<String> markerSequence = new ArrayList<>();
 
-    @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
+    @GobiiAspectMaps(maps = {
+        @GobiiAspectMap(aspectTable = LinkageGroupTable.class),
+        @GobiiAspectMap(aspectTable = MarkerLinkageGroupTable.class)
+    })
     private List<String> linkageGroupName = new ArrayList<>();
 
     @GobiiAspectMaps(maps = {@GobiiAspectMap(aspectTable = LinkageGroupTable.class)})
