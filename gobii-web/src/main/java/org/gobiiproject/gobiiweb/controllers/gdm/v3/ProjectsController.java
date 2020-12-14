@@ -66,14 +66,16 @@ public class ProjectsController {
     public ResponseEntity<BrApiMasterListPayload<ProjectDTO>> getProjectsList(
             @RequestParam(required=false, defaultValue = "0") Integer page,
             @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
-            @RequestParam(required=false) Integer piContactId) throws Exception {
+            @RequestParam(required=false) Integer piContactId,
+            @PathVariable String cropType) throws Exception {
         log.debug("Querying projects List");
         Integer pageSizeToUse = ControllerUtils.getPageSize(pageSize);
 
         PagedResult<ProjectDTO> pagedResult =  projectService.getProjects(
             Math.max(0, page),
             pageSizeToUse,
-            piContactId
+            piContactId,
+            cropType
         );
         BrApiMasterListPayload<ProjectDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);   
         return ResponseEntity.ok(payload);

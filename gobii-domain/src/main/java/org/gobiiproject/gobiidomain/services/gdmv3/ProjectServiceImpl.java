@@ -8,11 +8,7 @@
  */
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
@@ -64,17 +60,48 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public PagedResult<ProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws Exception {
+    public PagedResult<ProjectDTO> getProjects(Integer page,
+                                               Integer pageSize,
+                                               Integer piContactId,
+                                               String cropType) throws Exception {
+
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         // get Cvs
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
             List<ProjectDTO> projectDTOs = new java.util.ArrayList<>();
-            List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+
+            List<Cv> cvs = cvDao.getCvListByCvGroup(
+                CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(),
+                null);
+
+            // Get all pi contacts for given crop
+            List<ContactDTO> keycloakUsers = new ArrayList<>();
+            int keyCloakPage = 0;
+            while(keyCloakPage == 0 || keycloakUsers.size() == pageSize) {
+                keycloakUsers
+                    .addAll(
+                        keycloakService.getKeycloakUsers(cropType, "pi", keyCloakPage, pageSize));
+                keyCloakPage += 1;
+            }
+
+            Map<String, ContactDTO> mapUserNameKeycloakObject = new HashMap<>();
+            for(ContactDTO keyCloakUser: keycloakUsers) {
+                mapUserNameKeycloakObject.put(keyCloakUser.getUsername(), keyCloakUser);
+            }
+
             List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
             projects.forEach(project -> {
-                projectDTOs.add( createProjectDTO(project, cvs) );
+                ProjectDTO projectDTO = createProjectDTO(project, cvs);
+                // Set keycloak id as piconatct id
+                String userName = project.getContact().getUsername();
+                if(mapUserNameKeycloakObject.containsKey(userName)) {
+                    projectDTO.setPiContactId(
+                        mapUserNameKeycloakObject.get(userName).getPiContactId());
+                }
+                projectDTOs.add(projectDTO);
+
             });
 
             return PagedResult.createFrom(page, projectDTOs);
@@ -90,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDTO createProject(ProjectDTO request, String createdBy) throws Exception {
         // check if contact exists
-        Contact contact = this.loadContact(request.getPiContactId().toString());
+        Contact contact = this.loadContact(request.getPiContactId());
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
@@ -118,9 +145,14 @@ public class ProjectServiceImpl implements ProjectService {
         ModelMapper.mapEntityToDto(project, projectDTO);
 
         //transform Cv
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<Cv> cvs = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         projectDTO.setProperties(propDTOs);
+
+        // Set the contact Id from request
+        projectDTO.setPiContactId(request.getPiContactId());
+
         return projectDTO;
 
     }
@@ -176,6 +208,14 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO getProject(Integer projectId) throws Exception {
         Project project = this.loadProject(projectId);
         ProjectDTO projectDTO = this.createProjectDTO(project, null);
+        try {
+            ContactDTO keyCloakUser =
+                keycloakService.getUserByUserName(project.getContact().getUsername());
+            projectDTO.setPiContactId(keyCloakUser.getPiContactId());
+        }
+        catch (Exception e) {
+            projectDTO.setPiContactId(null);
+        }
         return projectDTO;
     }
 
@@ -228,26 +268,29 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private Contact loadContact(String contactId) throws Exception {
+        // commented it as only keycloak id will be used
         //if contactId is numeric
-        if (contactId.matches("\\d+")) {
-            return Optional.ofNullable(contactDao.getContact(Integer.parseInt(contactId)))
-                        .orElseThrow(() -> new UnknownEntityException.Contact());
-        }
+        //if (contactId.matches("\\d+")) {
+        //    return Optional.ofNullable(contactDao.getContact(Integer.parseInt(contactId)))
+        //                .orElseThrow(() -> new UnknownEntityException.Contact());
+        //}
 
         //else this should be a uuid so load or create/return
-        ContactDTO keycloakUser = keycloakService.getUser(contactId);
-        log.debug("Getting local user record for username: " + keycloakUser.getUsername());
-        Contact contact = contactDao.getContactByUsername(keycloakUser.getUsername());
-        log.debug("Contact: " + contact);
-
-        
-
-        return Optional
+        Contact contact;
+        try {
+            ContactDTO keycloakUser = keycloakService.getUser(contactId);
+            log.debug("Getting local user record for username: " + keycloakUser.getUsername());
+            contact = contactDao.getContactByUsername(keycloakUser.getUsername());
+            log.debug("Contact: " + contact);
+            return Optional
                 .ofNullable(contact)
                 .orElseGet(
                     () -> this.createNewContact(keycloakUser)
                 );
-        
+        }
+        catch (Exception e) {
+            throw new UnknownEntityException.Contact();
+        }
     }
 
     @lombok.Generated //ignore catch coverage

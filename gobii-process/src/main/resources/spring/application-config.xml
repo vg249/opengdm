@@ -51,6 +51,7 @@
             <props>
                 <prop key="hibernate.dialect">org.gobiiproject.gobiimodel.entity.pgsql.GobiiPostgresSQLDialect</prop>
                 <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.query.in_clause_parameter_padding">true</prop>
             </props>
         </property>
     </bean>
