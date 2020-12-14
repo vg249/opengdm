@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
@@ -120,7 +121,7 @@ public class ProjectsControllerTest {
         mockPayload.setResult(mockList);
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
-        when(projectService.getProjects(0, 1000, null)).thenReturn(mockPayload);
+        when(projectService.getProjects(0, 1000, null, "dev")).thenReturn(mockPayload);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/projects").contextPath("/gdm"))
                 .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk())
@@ -130,7 +131,7 @@ public class ProjectsControllerTest {
                 .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
                 .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
                 .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system defined"));
-        verify(projectService, times(1)).getProjects(0, 1000, null);
+        verify(projectService, times(1)).getProjects(0, 1000, null, "dev");
     }
 
     @Test
@@ -143,7 +144,7 @@ public class ProjectsControllerTest {
         mockPayload.setResult(mockList);
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
-        when(projectService.getProjects(1, 100, 2)).thenReturn(mockPayload);
+        when(projectService.getProjects(1, 100, 2, "dev")).thenReturn(mockPayload);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/projects?page=1&pageSize=100&piContactId=2")
                 .contextPath("/gdm")).andDo(print()).andExpect(MockMvcResultMatchers.status().isOk())
@@ -153,14 +154,14 @@ public class ProjectsControllerTest {
                 .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
                 .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
                 .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system defined"));
-        verify(projectService, times(1)).getProjects(1, 100, 2);
+        verify(projectService, times(1)).getProjects(1, 100, 2, "dev");
     }
 
     @Test
     public void testCreateSimple() throws Exception {
         PowerMockito.mockStatic(AuthUtils.class);
         ProjectDTO mockRequest = new ProjectDTO();
-        mockRequest.setPiContactId(1); // need to mock contact here
+        mockRequest.setPiContactId("test-picontact-id"); // need to mock contact here
         mockRequest.setProjectName("Test project");
         mockRequest.setProjectDescription("Test description");
         // this test does not include properties

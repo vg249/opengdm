@@ -193,5 +193,4 @@ public class Utils {
     public static String getTableName(Class<?> entity) throws NullPointerException {
         return entity.getDeclaredAnnotation(GobiiAspectTable.class).name();
     }
-
 }

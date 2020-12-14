@@ -119,4 +119,9 @@ public class DatasetDTO extends DTOBaseAuditable {
     }
 
 
+    @GobiiEntityMap(paramName="datasetStats.markerCount", entity=Dataset.class, deep=true)
+    private Integer markerCount;
+
+    @GobiiEntityMap(paramName="datasetStats.dnarunCount", entity=Dataset.class, deep=true)
+    private Integer dnaRunCount;
 }

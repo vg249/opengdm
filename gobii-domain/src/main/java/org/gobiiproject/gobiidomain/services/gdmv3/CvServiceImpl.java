@@ -41,9 +41,13 @@ public class CvServiceImpl implements CvService {
             Map<String, String> propsMap = new HashMap<>();
             for (int i = 0; i < request.getProperties().size(); i++) {
                 CvPropertyDTO cvPropDTO = request.getProperties().get(i);
+                if(cvPropDTO.getPropertyId() == null) {
+                    continue;
+                }
                 Cv propCv = cvDao.getCvByCvId(cvPropDTO.getPropertyId());
                 if (this.checkInvalidPropCv(propCv)) {
-                    throw new InvalidException(String.format("cv property (Id %d)", cvPropDTO.getPropertyId()));
+                    throw new InvalidException(
+                        String.format("cv property (Id %d)", cvPropDTO.getPropertyId()));
                 }
                 propsMap.put(cvPropDTO.getPropertyId().toString(), cvPropDTO.getPropertyValue());
 
@@ -110,6 +114,9 @@ public class CvServiceImpl implements CvService {
             
             for (int i = 0; i < request.getProperties().size(); i++) {
                 CvPropertyDTO cvPropertyDTO = request.getProperties().get(i);
+                if(cvPropertyDTO.getPropertyId() == null) {
+                    continue;
+                }
                 // check if id does exist and correct group
                 Cv propertyCv = cvDao.getCvByCvId(cvPropertyDTO.getPropertyId());
                 if (this.checkInvalidPropCv(propertyCv)) {
@@ -122,11 +129,13 @@ public class CvServiceImpl implements CvService {
                     if (cvPropertyDTO.getPropertyValue() == null) {
                         properties.remove(cvPropertyDTO.getPropertyId().toString());
                     } else {
-                        properties.put(cvPropertyDTO.getPropertyId().toString(), cvPropertyDTO.getPropertyValue());
+                        properties.put(cvPropertyDTO.getPropertyId().toString(),
+                            cvPropertyDTO.getPropertyValue());
                     }
                 } else {
                     if (cvPropertyDTO.getPropertyValue() != null) {
-                        properties.put(cvPropertyDTO.getPropertyId().toString(), cvPropertyDTO.getPropertyValue());
+                        properties.put(cvPropertyDTO.getPropertyId().toString(),
+                            cvPropertyDTO.getPropertyValue());
                     }
                 }
             }
@@ -167,8 +176,11 @@ public class CvServiceImpl implements CvService {
 
     @Transactional
     @Override
-    public PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType)
-            throws Exception {
+    public PagedResult<CvDTO> getCvs(Integer page,
+                                     Integer pageSize,
+                                     String cvGroupName,
+                                     String cvGroupType
+    ) throws Exception {
         GobiiCvGroupType groupType = null;
         if (!LineUtils.isNullOrEmpty(cvGroupType)) {
             groupType = this.getCvGroupType(cvGroupType.toLowerCase());   
