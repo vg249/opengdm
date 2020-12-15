@@ -72,16 +72,16 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String piContactFirstName;
 
     @GobiiEntityMap(paramName="projectStats.experimentCount", entity=Project.class, deep=true)
-    private Integer experimentCount;
+    private Integer experimentCount = 0;
 
     @GobiiEntityMap(paramName="projectStats.datasetCount", entity=Project.class, deep=true)
-    private Integer datasetCount;
+    private Integer datasetCount = 0;
 
     @GobiiEntityMap(paramName="projectStats.markerCount", entity=Project.class, deep=true)
-    private Integer markerCount;
+    private Integer markerCount = 0;
 
     @GobiiEntityMap(paramName="projectStats.dnarunCount", entity=Project.class, deep=true)
-    private Integer dnaRunCount;
+    private Integer dnaRunCount = 0;
 
     @Valid
     private List<CvPropertyDTO> properties = new java.util.ArrayList<>();
