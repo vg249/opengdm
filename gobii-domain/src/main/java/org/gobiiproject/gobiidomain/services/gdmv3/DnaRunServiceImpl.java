@@ -5,24 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DnaRunUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
-import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -45,11 +39,23 @@ public class DnaRunServiceImpl implements DnaRunService {
     private CvDao cvDao;
 
     @Autowired
-    private JobDao jobDao;
+    private JobService jobService;
 
     final ObjectMapper mapper = new ObjectMapper();
 
     final String loadType = "SAMPLES";
+
+    final String propertyGroupSeparator = ".";
+
+    final HashSet<String> propertyFields = new HashSet<>(Arrays.asList(
+        "dnaRunProperties",
+        "dnaSampleProperties",
+        "germplasmProperties"));
+
+    final Map<String, CvGroupTerm> propertyFieldsCvGroupMap = Map.of(
+        "dnaRunProperties", CvGroupTerm.CVGROUP_DNARUN_PROP,
+        "dnaSampleProperties", CvGroupTerm.CVGROUP_DNASAMPLE_PROP,
+        "germplasmProperties", CvGroupTerm.CVGROUP_GERMPLASM_PROP);
 
     /**
      * Uploads dnaruns in the file to the database.
@@ -65,12 +71,10 @@ public class DnaRunServiceImpl implements DnaRunService {
     public JobDTO loadDnaRuns(byte[] dnaRunFile,
                               DnaRunUploadRequestDTO dnaRunUploadRequest,
                               String cropType) throws GobiiException {
-        BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 
-        String fileHeader;
         Map<String, Object> dnaRunTemplateMap;
         DnaRunTemplateDTO dnaRunTemplate;
 
@@ -109,9 +113,10 @@ public class DnaRunServiceImpl implements DnaRunService {
             CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
 
-        // Get a new Job object
-        Job job = getNewJob();
-        job.setSubmittedBy(createdBy);
+        // Get a new Job object for samples loading
+        JobDTO jobDTO = new JobDTO();
+        jobDTO.setPayload(GobiiLoaderPayloadTypes.SAMPLES.getTerm());
+        JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();
 
@@ -128,112 +133,41 @@ public class DnaRunServiceImpl implements DnaRunService {
         loaderInstruction.setOutputDir(outputFilesDir);
 
         //Get API fields Entity Mapping
-        HashSet<String> propertyFields = new HashSet<>(
-            Arrays.asList("dnaRunProperties", "dnaSampleProperties", "germplasmProperties"));
         Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(dnaRunTemplateMap, propertyFields);
 
         // Map for Aspect values to each api field.
         Map<String, Object> aspectValues = new HashMap<>();
 
-        //Read Header
-        InputStream fileInputStream = new ByteArrayInputStream(dnaRunFile);
-        try {
-            br = new BufferedReader(
-                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-            fileHeader = br.readLine();
-        }
-        catch (IOException io) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "No able to read file header");
-        }
+        String[] fileColumns = Utils.getHeaders(dnaRunFile);
 
-        String[] fileColumns = fileHeader.split("\t");
+        Map<String, Map<String, Cv>> propertiesCvMaps = new HashMap<>();
 
-        Map<String, Cv> dnaRunPropertiesCvsMap = new HashMap<>();
-        Map<String, Cv> dnaSamplePropertiesCvsMap = new HashMap<>();
-        Map<String, Cv> germplasmPropertiesCvsMap = new HashMap<>();
-        Map<String, ColumnAspect> dnaRunPropertiesAspects = new HashMap<>();
-        Map<String, ColumnAspect> dnaSamplePropertiesAspects = new HashMap<>();
-        Map<String, ColumnAspect> germplasmPropertiesAspects = new HashMap<>();
-
+        // Set Aspect for each file column
         for(int i = 0; i < fileColumns.length; i++) {
             String fileColumn = fileColumns[i];
             ColumnAspect columnAspect = new ColumnAspect(1, i);
 
             for(String apiFieldName : fileColumnsApiFieldsMap.get(fileColumn)) {
 
+                String propertyGroupName = null;
+                if(apiFieldName.contains(propertyGroupSeparator)) {
+                    propertyGroupName =
+                        apiFieldName.substring(0, apiFieldName.indexOf(propertyGroupSeparator));
+                }
+
                 // Check for dna run properties fields
-                if (apiFieldName.startsWith("dnaRunProperties.")) {
-                    if (dnaRunTable.getDnaRunProperties() == null) {
-
-                        // Initialize and set json aspect for properties field.
-                        JsonAspect jsonAspect = new JsonAspect();
-                        jsonAspect.setJsonMap(dnaRunPropertiesAspects);
-                        aspectValues.put("dnaRunProperties", jsonAspect);
-
-                        List<Cv> dnaRunPropertiesCvList = cvDao.getCvListByCvGroup(
-                            CvGroupTerm.CVGROUP_DNARUN_PROP.getCvGroupName(),
-                            null);
-                        dnaRunPropertiesCvsMap = Utils.mapCvNames(dnaRunPropertiesCvList);
-                    }
-                    String propertyName = apiFieldName
-                        .replace("dnaRunProperties.", "");
-
-                    if (dnaRunPropertiesCvsMap.containsKey(propertyName)) {
-                        String propertyId = dnaRunPropertiesCvsMap
-                            .get(propertyName)
-                            .getCvId().toString();
-                        dnaRunPropertiesAspects.put(propertyId, columnAspect);
-                    }
-                } else if (apiFieldName.startsWith("dnaSampleProperties.")) {
-                    if (dnaSampleTable.getDnaSampleProperties() == null) {
-
-                        JsonAspect jsonAspect = new JsonAspect();
-                        jsonAspect.setJsonMap(dnaSamplePropertiesAspects);
-                        aspectValues.put("dnaSampleProperties", jsonAspect);
-
-                        List<Cv> dnaSamplePropertiesCvList = cvDao.getCvListByCvGroup(
-                            CvGroupTerm.CVGROUP_DNASAMPLE_PROP.getCvGroupName(),
-                            null);
-                        dnaSamplePropertiesCvsMap = Utils.mapCvNames(dnaSamplePropertiesCvList);
-                    }
-                    String propertyName = apiFieldName
-                        .replace("dnaSampleProperties.", "");
-
-                    if (dnaSamplePropertiesCvsMap.containsKey(propertyName)) {
-                        String propertyId = dnaSamplePropertiesCvsMap
-                            .get(propertyName)
-                            .getCvId().toString();
-                        dnaSamplePropertiesAspects.put(propertyId, columnAspect);
-                    }
-                } else if (apiFieldName.startsWith("germplasmProperties.")) {
-                    if (germplasmTable.getGermplasmProperties() == null) {
-
-                        JsonAspect jsonAspect = new JsonAspect();
-                        jsonAspect.setJsonMap(germplasmPropertiesAspects);
-                        aspectValues.put("germplasmProperties", jsonAspect);
-
-                        List<Cv> germplasmPropertiesCvList = cvDao.getCvListByCvGroup(
-                            CvGroupTerm.CVGROUP_GERMPLASM_PROP.getCvGroupName(),
-                            null);
-                        germplasmPropertiesCvsMap = Utils.mapCvNames(germplasmPropertiesCvList);
-                    }
-                    String propertyName = apiFieldName
-                        .replace("germplasmProperties.", "");
-
-                    if (germplasmPropertiesCvsMap.containsKey(propertyName)) {
-                        String propertyId = germplasmPropertiesCvsMap
-                            .get(propertyName)
-                            .getCvId().toString();
-                        germplasmPropertiesAspects.put(propertyId, columnAspect);
-                    }
+                if (propertyFields.contains(propertyGroupName)) {
+                    String propertyName =
+                        apiFieldName.replace(propertyGroupName+propertyGroupSeparator, "");
+                    setPropertyAspect(
+                        aspectValues,
+                        columnAspect,
+                        propertiesCvMaps,
+                        propertyName,
+                        propertyGroupName);
                 } else {
-                    aspectValues.put(
-                        apiFieldName,
-                        columnAspect);
+                    aspectValues.put(apiFieldName, columnAspect);
                 }
             }
         }
@@ -294,39 +228,49 @@ public class DnaRunServiceImpl implements DnaRunService {
         // Write instruction file
         Utils.writeInstructionFile(loaderInstruction, jobName, cropType);
 
-        JobDTO jobDTO = new JobDTO();
-        jobDao.create(job);
-        ModelMapper.mapEntityToDto(job, jobDTO);
         return jobDTO;
     }
 
-    private Job getNewJob() throws GobiiException {
-        String jobName = UUID.randomUUID().toString().replace("-", "");
-        Job job = new Job();
-        job.setJobName(jobName);
-        job.setMessage("Submitted dnarun upload job");
-        // Get payload type
-        Cv payloadType = cvDao.getCvs(GobiiLoaderPayloadTypes.SAMPLES.getTerm(),
-            CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        job.setPayloadType(payloadType);
-
-        // Get jobstatus as pending
-        Cv jobStatus = cvDao.getCvs(
-            GobiiJobStatus.PENDING.getCvTerm(),
-            CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        job.setStatus(jobStatus);
-
-        job.setSubmittedDate(new Date());
-        // Get load type
-        Cv jobType = cvDao.getCvs(
-            JobType.CV_JOBTYPE_LOAD.getCvName(),
-            CvGroupTerm.CVGROUP_JOBTYPE.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        job.setType(jobType);
-        return job;
+    private Map<String, Cv> getCvMapByTerm(CvGroupTerm cvGroupTerm) throws GobiiException {
+        List<Cv> dnaRunPropertiesCvList = cvDao.getCvListByCvGroup(
+            cvGroupTerm.getCvGroupName(),
+            null);
+        return Utils.mapCvNames(dnaRunPropertiesCvList);
     }
 
+    private void setPropertyAspect(Map<String, Object> aspectValues,
+                                   ColumnAspect columnAspect,
+                                   Map<String, Map<String, Cv>> propertiesCvMaps,
+                                   String propertyName,
+                                   String propertyGroup
+    ) throws GobiiException {
 
+        JsonAspect jsonAspect;
+        Map<String, Cv> cvMap;
+
+        if (!aspectValues.containsKey(propertyGroup)) {
+            // Initialize and set json aspect for properties field.
+            jsonAspect = new JsonAspect();
+            aspectValues.put(propertyGroup, jsonAspect);
+        }
+        else {
+            jsonAspect = ((JsonAspect)aspectValues.get(propertyGroup));
+        }
+
+        if(!propertiesCvMaps.containsKey(propertyGroup)) {
+            cvMap = getCvMapByTerm(propertyFieldsCvGroupMap.get(propertyGroup));
+            propertiesCvMaps.put(propertyGroup, cvMap);
+        }
+        else {
+            cvMap = propertiesCvMaps.get(propertyGroup);
+        }
+        if (cvMap.containsKey(propertyName)) {
+            String propertyId = cvMap
+                .get(propertyName)
+                .getCvId()
+                .toString();
+            jsonAspect.getJsonMap().put(propertyId, columnAspect);
+        }
+
+    }
 }

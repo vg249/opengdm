@@ -47,7 +47,7 @@ public class MarkerServiceImpl implements MarkerService {
     private CvDao cvDao;
 
     @Autowired
-    private JobDao jobDao;
+    private JobService jobService;
 
     final ObjectMapper mapper = new ObjectMapper();
 
@@ -69,12 +69,10 @@ public class MarkerServiceImpl implements MarkerService {
                                  MarkerUploadRequestDTO markerUploadRequest,
                                  String cropType) throws GobiiException {
 
-        BufferedReader br;
         LoaderInstruction loaderInstruction = new LoaderInstruction();
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 
-        String fileHeader;
         Map<String, Object> markerTemplateMap;
         MarkerTemplateDTO markerTemplate;
 
@@ -122,7 +120,6 @@ public class MarkerServiceImpl implements MarkerService {
             markerLinkageGroupTable.setMapId(mapset.getMapsetId().toString());
         }
 
-
         // Read marker template
         LoaderTemplate loaderTemplate = loaderTemplateDao.getById(
             markerUploadRequest.getMarkerTemplateId());
@@ -152,9 +149,9 @@ public class MarkerServiceImpl implements MarkerService {
         // Set new status for marker table
         markerTable.setStatus(newStatus.getCvId().toString());
 
-        // Get a new Job object
-        Job job = getNewJob();
-        job.setSubmittedBy(createdBy);
+        JobDTO jobDTO = new JobDTO();
+        jobDTO.setPayload(GobiiLoaderPayloadTypes.MARKERS.getTerm());
+        JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();
 
@@ -171,28 +168,15 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setOutputDir(outputFilesDir);
 
         //Get API fields Entity Mapping
-        HashSet<String> propertyFields = new HashSet<>(
-            Arrays.asList("markerProperties"));
+        HashSet<String> propertyFields = new HashSet<String>(){{add("markerProperties");}};
         Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(markerTemplateMap, propertyFields);
 
         Map<String, Object> aspectValues = new HashMap<>();
 
-        //Read Header
-        InputStream fileInputStream = new ByteArrayInputStream(markerFile);
-        try {
-            br = new BufferedReader(
-                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
-            fileHeader = br.readLine();
-        }
-        catch (IOException io) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "No able to read file header");
-        }
+        // Get Header
+        String[] fileColumns = Utils.getHeaders(markerFile);
 
-        String[] fileColumns = fileHeader.split("\t");
         Map<String, Cv> markerPropertiesCvsMap = new HashMap<>();
         Map<String, ColumnAspect> markerPropertiesAspects = new HashMap<>();
 
@@ -275,38 +259,7 @@ public class MarkerServiceImpl implements MarkerService {
         // Write instruction file
         Utils.writeInstructionFile(loaderInstruction, jobName, cropType);
 
-        JobDTO jobDTO = new JobDTO();
-        jobDao.create(job);
-        ModelMapper.mapEntityToDto(job, jobDTO);
         return jobDTO;
-    }
-
-    private Job getNewJob() throws GobiiException {
-        String jobName = UUID.randomUUID().toString().replace("-", "");
-        Job job = new Job();
-        job.setJobName(jobName);
-        job.setMessage("Submitted marker upload job");
-        // Get payload type
-        Cv payloadType = cvDao.getCvs(GobiiLoaderPayloadTypes.MARKERS.getTerm(),
-            CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        job.setPayloadType(payloadType);
-
-        // Get jobstatus as pending
-        Cv jobStatus = cvDao.getCvs(
-            GobiiJobStatus.PENDING.getCvTerm(),
-            CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        job.setStatus(jobStatus);
-
-        job.setSubmittedDate(new Date());
-        // Get load type
-        Cv jobType = cvDao.getCvs(
-            JobType.CV_JOBTYPE_LOAD.getCvName(),
-            CvGroupTerm.CVGROUP_JOBTYPE.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
-        job.setType(jobType);
-        return job;
     }
 
     private void validateMarkerTable(MarkerTable markerTable) throws GobiiDomainException {

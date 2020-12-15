@@ -12,6 +12,18 @@
     <groupId>org.gobiiproject</groupId>
     <artifactId>gobii-domain</artifactId>
     <packaging>jar</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <properties>
         <powermock.version>2.0.2</powermock.version>
     </properties>
