@@ -55,10 +55,10 @@ public class DnaRunServiceImpl implements DnaRunService {
      * Uploads dnaruns in the file to the database.
      * Also, loads dna samples and germplasms when provided in the same file.
      *
-     * @param dnaRunFile            Input file byte array
+     * @param dnaRunFile            Dnarun input file byte array
      * @param dnaRunUploadRequest   Request object with meta data and template
      * @param cropType              Crop type to which the dnaruns need to uploaded
-     * @return  {@link JobDTO}
+     * @return {@link JobDTO}   when dnarun loader job is successfully submitted.
      * @throws GobiiException   Gobii Exception for bad request or if any run time system error
      */
     @Override

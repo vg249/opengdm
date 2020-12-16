@@ -42,7 +42,7 @@ public class GermplasmDaoImpl implements GermplasmDao {
 
         try {
 
-            Objects.requireNonNull(externalCodes, "expernalCodes: Required non null");
+            Objects.requireNonNull(externalCodes, "externalCodes: Required non null");
             Objects.requireNonNull(pageSize, "pageSize: Required non null");
             Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
 

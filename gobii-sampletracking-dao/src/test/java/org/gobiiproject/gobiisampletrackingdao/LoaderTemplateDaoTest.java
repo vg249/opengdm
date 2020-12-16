@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
+import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -38,14 +40,12 @@ public class LoaderTemplateDaoTest {
     @Autowired
     private CvDao cvDao;
 
-    private DaoTestSetUp daoTestSetUp;
-
-    Random random = new Random();
+    DaoTestSetUp daoTestSetUp;
 
     @Before
     public void createTestData() {
         daoTestSetUp = new DaoTestSetUp(em, cvDao);
-        daoTestSetUp.createTestContacts(1);
+        daoTestSetUp.createTestLoaderTemplates(10);
         em.flush();
     }
 
@@ -81,6 +81,18 @@ public class LoaderTemplateDaoTest {
         LoaderTemplate result = loaderTemplateDao.create(loaderTemplate);
 
         assertTrue(result.getTemplateId() > 0);
+
+    }
+
+    @Test
+    public void listLoaderTemplateTest() {
+        List<LoaderTemplate> filteredLoaderTemplates = loaderTemplateDao.list(
+            10, 0, GobiiLoaderPayloadTypes.MARKERS);
+        for(LoaderTemplate loaderTemplate : filteredLoaderTemplates) {
+            assertTrue("Filter by payload type failed",
+                loaderTemplate.getTemplateType().getTerm().equals(
+                    GobiiLoaderPayloadTypes.MARKERS.getTerm()));
+        }
 
     }
 

@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateService;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.LoaderTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
 
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
@@ -42,24 +47,56 @@ public class LoaderTemplateController {
     }
 
     /**
-     * @return {@link org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO}
-     *
-     * @throws Exception
+     * List marker loader templates in the system.
+     * @return list of {@link LoaderTemplate}
      */
     @GetMapping(value = "/marker", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MarkerTemplateDTO> getMarkerTemplate() throws Exception {
-        MarkerTemplateDTO markerTemplateDTO = loaderTemplateService.getMarkerTemplate();
+    public ResponseEntity<BrApiMasterListPayload<LoaderTemplateDTO>>
+    getMarkerTemplates(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+    ) {
+        PagedResult<LoaderTemplateDTO> loaderTemplateList =
+            loaderTemplateService.getMarkerTemplates(pageSize, page);
+        BrApiMasterListPayload<LoaderTemplateDTO> payload =
+            ControllerUtils.getMasterListPayload(loaderTemplateList);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * @return empty loader template {@link MarkerTemplateDTO} for marker upload.
+     */
+    @GetMapping(value = "/empty-marker", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MarkerTemplateDTO> getEmptyMarkerTemplate() {
+        MarkerTemplateDTO markerTemplateDTO = loaderTemplateService.getEmptyMarkerTemplate();
         return ResponseEntity.ok(markerTemplateDTO);
     }
 
     /**
-     * @return {@link org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO}
+     * List dna run loader templates in the system
+     * @return list of {@link org.gobiiproject.gobiimodel.entity.LoaderTemplate}
      *
      * @throws Exception
      */
     @GetMapping(value = "/dnarun", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DnaRunTemplateDTO> getDnaRunTemplate() throws Exception {
-        DnaRunTemplateDTO dnaRunTemplateDTO = loaderTemplateService.getDnaRunTemplate();
+    public ResponseEntity<BrApiMasterListPayload<LoaderTemplateDTO>>
+    getDnaRunTemplates(
+        @RequestParam(required=false, defaultValue = "0") Integer page,
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize) {
+
+        PagedResult<LoaderTemplateDTO> loaderTemplateList =
+            loaderTemplateService.getDnaRunTemplates(pageSize, page);
+        BrApiMasterListPayload<LoaderTemplateDTO> payload =
+            ControllerUtils.getMasterListPayload(loaderTemplateList);
+        return ResponseEntity.ok(payload);
+    }
+
+    /**
+     * @return empty loader template {@link DnaRunTemplateDTO} for dnarun upload.
+     */
+    @GetMapping(value = "/empty-dnarun", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DnaRunTemplateDTO> getEmptyDnaRunTemplate() {
+        DnaRunTemplateDTO dnaRunTemplateDTO = loaderTemplateService.getEmptyDnaRunTemplate();
         return ResponseEntity.ok(dnaRunTemplateDTO);
     }
 
