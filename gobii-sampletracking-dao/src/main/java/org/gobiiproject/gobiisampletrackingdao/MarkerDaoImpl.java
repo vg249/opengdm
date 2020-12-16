@@ -316,9 +316,12 @@ public class MarkerDaoImpl implements MarkerDao {
                 ParameterExpression datasetIdsExp = cb.parameter(
                         String[].class,
                         "datasetIds");
-
-                Expression<Boolean> datasetIdExists = cb.function("JSONB_EXISTS_ANY", Boolean.class,
-                        root.get("datasetMarkerIdx"), datasetIdsExp);
+                Expression<Boolean> datasetIdExists =
+                    cb.function(
+                        "JSONB_EXISTS_ANY",
+                        Boolean.class,
+                        root.get("datasetMarkerIdx"),
+                        datasetIdsExp);
 
                 predicates.add(cb.isTrue(datasetIdExists));
 
@@ -335,25 +338,20 @@ public class MarkerDaoImpl implements MarkerDao {
 
             if(!CollectionUtils.isEmpty(datasetIds)) {
                 query
-                        .unwrap(org.hibernate.query.Query.class)
-                        .setParameter(
-                                "datasetIds", datasetIdsArray,
-                                StringArrayType.INSTANCE);
+                    .unwrap(org.hibernate.query.Query.class)
+                    .setParameter(
+                        "datasetIds",
+                        datasetIdsArray,
+                        StringArrayType.INSTANCE);
             }
-
             if(!IntegerUtils.isNullOrZero(pageSize)) {
                 query.setMaxResults(pageSize);
             }
-
-            markers = query
-                    .getResultList();
-
+            markers = query.getResultList();
             return markers;
-
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());

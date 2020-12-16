@@ -5,18 +5,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
+import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -53,7 +61,7 @@ public class MarkerServiceImpl implements MarkerService {
      * @param markerFile            Input marker file byte array
      * @param markerUploadRequest   Request object with meta data and template
      * @param cropType              Crop type to which the markers need to uploaded
-     * @return  {@link JobDTO}  when marker load job is successfully submitted.
+     * @return  {@link JobDTO}
      * @throws GobiiException   Gobii Exception for bad request or if any run time system error
      */
     @Override
@@ -160,8 +168,7 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setOutputDir(outputFilesDir);
 
         //Get API fields Entity Mapping
-        HashSet<String> propertyFields = new HashSet<>(){{add("markerProperties");}};
-
+        HashSet<String> propertyFields = new HashSet<String>(){{add("markerProperties");}};
         Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(markerTemplateMap, propertyFields);
 
@@ -255,11 +262,6 @@ public class MarkerServiceImpl implements MarkerService {
         return jobDTO;
     }
 
-    /**
-     * Validates fields in marker table.
-     * @param markerTable {@link MarkerTable}
-     * @throws GobiiDomainException when validation fails
-     */
     private void validateMarkerTable(MarkerTable markerTable) throws GobiiDomainException {
         if(markerTable.getPlatformId() == null && markerTable.getPlatformName() == null) {
             throw new GobiiDomainException(
@@ -270,11 +272,6 @@ public class MarkerServiceImpl implements MarkerService {
         FieldValidator.validate(markerTable);
     }
 
-    /**
-     * Validates fields in linkage group table.
-     * @param linkageGroupTable {@link LinkageGroupTable}
-     * @throws GobiiDomainException when validation fails.
-     */
     private void validateLinkageGroupTable(
         LinkageGroupTable linkageGroupTable) throws GobiiDomainException {
         if(linkageGroupTable.getMapId() == null && linkageGroupTable.getMapName() == null) {
@@ -286,14 +283,7 @@ public class MarkerServiceImpl implements MarkerService {
         FieldValidator.validate(linkageGroupTable);
     }
 
-    /**
-     * Validates fields in marker linkage group table
-     * @param markerLinkageGroupTable {@link MarkerLinkageGroupTable}
-     * @throws GobiiDomainException when validation fails.
-     */
-    private void validateMarkerLinkageGroupTable(
-        MarkerLinkageGroupTable markerLinkageGroupTable
-    ) throws GobiiDomainException {
+    private void validateMarkerLinkageGroupTable(MarkerLinkageGroupTable markerLinkageGroupTable) throws GobiiDomainException {
         if(markerLinkageGroupTable.getPlatformId() == null &&
             markerLinkageGroupTable.getPlatformName() == null) {
             throw new GobiiDomainException(
