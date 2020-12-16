@@ -12,12 +12,12 @@ import java.lang.reflect.Field;
 public class MarkerTable implements Table {
 
     @JsonProperty("platform_id")
-    @NotNull(message = "platform id cannot be null")
     private String platformId;
 
     private String status;
 
     @JsonProperty("name")
+    @NotNull(message = "marker name not mapped")
     private Aspect markerName;
 
     @JsonProperty("platform_name")
