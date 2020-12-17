@@ -214,14 +214,21 @@ public class CvDaoImpl implements CvDao {
     }
 
     @Override
-    public List<CvGroup> getCvGroups(Integer pageSize, Integer offset) {
+    public List<CvGroup> getCvGroups(Integer pageSize,
+                                     Integer offset,
+                                     GobiiCvGroupType type) {
         try {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<CvGroup> criteriaQuery = criteriaBuilder.createQuery(CvGroup.class);
             Root<CvGroup> cvGroup = criteriaQuery.from(CvGroup.class);
             criteriaQuery.select(cvGroup);
-            
+
+            if(!type.equals(GobiiCvGroupType.GROUP_TYPE_UNKNOWN)) {
+                criteriaQuery
+                    .where(criteriaBuilder.equal(cvGroup.get("cvGroupType"), type.getGroupTypeId()));
+            }
+
             TypedQuery<CvGroup> q = em.createQuery(criteriaQuery);
             return q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
 

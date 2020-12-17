@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -102,31 +103,6 @@ public class CvsController {
 
     }
 
-    @GetMapping("/cvs/properties")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getCvProperties(
-        @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
-    ) throws Exception {
-        PagedResult<CvPropertyDTO> pagedResult = cvService.getCvProperties(page, pageSize);
-        BrApiMasterListPayload<CvPropertyDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
-        return ResponseEntity.ok(payload);
-    }
-
-    @CropAuth(CURATOR)
-    @PostMapping("/cvs/properties")
-    @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<CvPropertyDTO>> createCvProperty(
-        @RequestBody @Validated(CvPropertyDTO.Create.class) final CvPropertyDTO request,
-        BindingResult bindingResult
-    ) throws Exception {
-        ControllerUtils.checkBindingErrors(bindingResult);
-        CvPropertyDTO cvPropertyDTO = cvService.addCvProperty(request);
-        BrApiMasterPayload<CvPropertyDTO> payload = ControllerUtils.getMasterPayload(cvPropertyDTO);
-        return ResponseEntity.created(null).body(payload);
-
-    }
-
     @CropAuth(CURATOR)
     @DeleteMapping("/cvs/{cvId}")
     @ResponseBody
@@ -138,14 +114,15 @@ public class CvsController {
         return ResponseEntity.noContent().build();
     } 
 
-    //-- cv group
-    @GetMapping("/cvs/groups")
+    //-- cv group`
+    @GetMapping("/cv/groups")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvGroupDTO>> getCvGroups(
         @RequestParam(required=false, defaultValue = "0") Integer page,
-        @RequestParam(required=false, defaultValue = "1000") Integer pageSize
+        @RequestParam(required=false, defaultValue = "1000") Integer pageSize,
+        @RequestParam(required=false) String cvGroupType
     ) throws Exception {
-        PagedResult<CvGroupDTO> results = cvService.getCvGroups(page, pageSize);
+        PagedResult<CvGroupDTO> results = cvService.getCvGroups(page, pageSize, cvGroupType);
         BrApiMasterListPayload<CvGroupDTO> payload = ControllerUtils.getMasterListPayload(results);
         return ResponseEntity.ok(payload);
     }

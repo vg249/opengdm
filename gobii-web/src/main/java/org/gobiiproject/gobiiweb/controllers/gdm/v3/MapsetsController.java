@@ -143,7 +143,7 @@ public class MapsetsController {
      * @throws Exception
      */
     @CropAuth(CURATOR)
-    @PostMapping("/mapsets/types")
+    @PostMapping("/mapset/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createMapsetType(
         @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO mapsetTypeRequest,
@@ -165,7 +165,7 @@ public class MapsetsController {
      * Get Mapset Types
      * @return
      */
-    @GetMapping("/mapsets/types")
+    @GetMapping("/mapset/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getMapsetTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,

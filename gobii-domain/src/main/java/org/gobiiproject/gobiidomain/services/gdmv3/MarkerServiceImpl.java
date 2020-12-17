@@ -141,10 +141,7 @@ public class MarkerServiceImpl implements MarkerService {
         String userName = ContactService.getCurrentUser();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        Cv newStatus = cvDao.getNewStatus();
 
         // Set new status for marker table
         markerTable.setStatus(newStatus.getCvId().toString());

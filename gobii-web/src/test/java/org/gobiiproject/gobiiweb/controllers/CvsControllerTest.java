@@ -12,6 +12,7 @@ import org.gobiiproject.gobiidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.controllers.gdm.v3.CvsController;
 import org.junit.Before;
@@ -109,29 +110,6 @@ public class CvsControllerTest {
         verify(cvService, times(1)).getCv(123);
     }
 
-    @Test
-    public void testGetCvProps() throws Exception {
-
-        when(cvService.getCvProperties(0, 1000)).thenReturn(new PagedResult<CvPropertyDTO>());
-        mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/cvs/properties").contextPath("/gdm"))
-                .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(cvService, times(1)).getCvProperties(0, 1000);
-    }
-
-    @Test
-    public void testAddCvProps() throws Exception {
-        final String requestJson = "{\"propertyName\": \"test-prop\", \"propertyDescription\": \"test-desc\"}";
-        final CvPropertyDTO mockDTO = new CvPropertyDTO();
-        mockDTO.setPropertyGroupType(1);
-        when(cvService.addCvProperty(any(CvPropertyDTO.class))).thenReturn(new CvPropertyDTO());
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gdm/crops/dev/gobii/v3/cvs/properties").contextPath("/gdm")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson)).andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-
-        verify(cvService, times(1)).addCvProperty(any(CvPropertyDTO.class));
-    }
 
     @Test
     public void testDeleteCv() throws Exception {
@@ -146,10 +124,10 @@ public class CvsControllerTest {
 
     @Test
     public void listCvGroups() throws Exception {
-        when(cvService.getCvGroups(0, 1000)).thenReturn(new PagedResult<>());
+        when(cvService.getCvGroups(0, 1000, "system_defined")).thenReturn(new PagedResult<>());
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/cvs/groups").contextPath("/gdm"))
                 .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
-        verify(cvService, times(1)).getCvGroups(0, 1000);
+        verify(cvService, times(1)).getCvGroups(0, 1000, "system_defined");
     }
 
 

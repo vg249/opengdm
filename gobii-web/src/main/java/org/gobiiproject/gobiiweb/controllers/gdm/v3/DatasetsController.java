@@ -142,7 +142,7 @@ public class DatasetsController {
      * List dataset types
      * @return
      */
-    @GetMapping("/datasets/types")
+    @GetMapping("/dataset/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getDatasetTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,
@@ -161,7 +161,7 @@ public class DatasetsController {
      * @return
      */
     @CropAuth(CURATOR)
-    @PostMapping("/datasets/types")
+    @PostMapping("/dataset/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createDatasetType(
         @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO datasetTypeRequest,

@@ -115,7 +115,7 @@ public class PlatformsController {
     }
 
     @CropAuth(CURATOR)
-    @PostMapping("/platforms/types")
+    @PostMapping("/platform/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createPlatformType(
         @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO request 
@@ -125,7 +125,7 @@ public class PlatformsController {
         return ResponseEntity.created(null).body(payload);
     }
 
-    @GetMapping("/platforms/types")
+    @GetMapping("/platform/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getPlatformTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,

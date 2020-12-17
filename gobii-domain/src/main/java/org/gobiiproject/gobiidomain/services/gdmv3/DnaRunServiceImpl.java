@@ -108,10 +108,7 @@ public class DnaRunServiceImpl implements DnaRunService {
         String userName = ContactService.getCurrentUser();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        Cv newStatus = cvDao.getNewStatus();
 
         // Get a new Job object for samples loading
         JobDTO jobDTO = new JobDTO();

@@ -138,7 +138,7 @@ public class AnalysesController {
      * @return
      */
     @CropAuth(CURATOR)
-    @PostMapping("/analyses/types")
+    @PostMapping("/analysis/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<CvTypeDTO>> createAnalysisType(
         @RequestBody @Validated(CvTypeDTO.Create.class) final CvTypeDTO analysisTypeRequest,
@@ -155,7 +155,7 @@ public class AnalysesController {
      * List Analysis Types
      * @return
      */
-    @GetMapping("/analyses/types")
+    @GetMapping("/analysis/types")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvTypeDTO>> getAnalysisTypes(
         @RequestParam(required=false, defaultValue = "0") Integer page,

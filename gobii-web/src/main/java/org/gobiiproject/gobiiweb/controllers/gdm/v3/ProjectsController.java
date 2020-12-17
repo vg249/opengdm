@@ -165,7 +165,7 @@ public class ProjectsController {
      * List Project Properties
      * 
      */
-    @GetMapping("/projects/properties")
+    @GetMapping("/project/properties")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<CvPropertyDTO>> getProjectProperties(
             @RequestParam(required=false, defaultValue = "0") Integer page,

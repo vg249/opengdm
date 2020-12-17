@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
 public interface CvService {
 	CvDTO createCv(CvDTO request) throws Exception;
@@ -14,11 +15,9 @@ public interface CvService {
 
 	CvDTO getCv(Integer id) throws Exception;
 
-	PagedResult<CvPropertyDTO> getCvProperties(Integer page, Integer pageSize);
-
-	CvPropertyDTO addCvProperty(CvPropertyDTO request) throws Exception;
-
 	void deleteCv(Integer id) throws Exception;
 
-	PagedResult<CvGroupDTO> getCvGroups(Integer page, Integer pageSize);
+	PagedResult<CvGroupDTO> getCvGroups(Integer page,
+                                        Integer pageSize,
+                                        String cvGroupTypeName);
 }

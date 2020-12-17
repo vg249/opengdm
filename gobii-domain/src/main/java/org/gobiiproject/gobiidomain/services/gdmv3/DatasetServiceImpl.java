@@ -368,14 +368,19 @@ public class DatasetServiceImpl implements DatasetService {
 
 	@Transactional
 	@Override
-	public CvTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
+	public CvTypeDTO createDatasetType(String datasetTypeName,
+                                       String datasetTypeDescription,
+                                       String user) {
         CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
-        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
+        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Dataset Type");
 
         Cv cv = new Cv();
+
+        cv.setTerm(datasetTypeName);
+
         cv.setCvGroup(cvGroup);
 		cv.setTerm(datasetTypeName);
 		
