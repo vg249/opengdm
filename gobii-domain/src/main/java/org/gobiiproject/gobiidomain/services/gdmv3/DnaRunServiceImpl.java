@@ -108,10 +108,11 @@ public class DnaRunServiceImpl implements DnaRunService {
         String userName = ContactService.getCurrentUser();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
-        Cv newStatus = cvDao.getCvs(
-            "new",
-            CvGroupTerm.CVGROUP_STATUS.getCvGroupName(),
-            GobiiCvGroupType.GROUP_TYPE_SYSTEM).get(0);
+        // Set contact email in loader instruction
+        loaderInstruction.setContactEmail(createdBy.getEmail());
+
+        // new status to set for new dna runs
+        Cv newStatus = cvDao.getNewStatus();
 
         // Get a new Job object for samples loading
         JobDTO jobDTO = new JobDTO();
@@ -119,9 +120,6 @@ public class DnaRunServiceImpl implements DnaRunService {
         JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();
-
-        // Set contact email in loader instruction
-        loaderInstruction.setContactEmail(createdBy.getEmail());
 
         //Set Input file
         String inputFilePath =
@@ -141,6 +139,7 @@ public class DnaRunServiceImpl implements DnaRunService {
 
         String[] fileColumns = Utils.getHeaders(dnaRunFile);
 
+        // To memoize cv for each property group for each table.
         Map<String, Map<String, Cv>> propertiesCvMaps = new HashMap<>();
 
         // Set Aspect for each file column
@@ -230,6 +229,7 @@ public class DnaRunServiceImpl implements DnaRunService {
 
         return jobDTO;
     }
+
 
     private Map<String, Cv> getCvMapByTerm(CvGroupTerm cvGroupTerm) throws GobiiException {
         List<Cv> dnaRunPropertiesCvList = cvDao.getCvListByCvGroup(
