@@ -280,7 +280,9 @@ public class MarkerServiceImpl implements MarkerService {
         FieldValidator.validate(linkageGroupTable);
     }
 
-    private void validateMarkerLinkageGroupTable(MarkerLinkageGroupTable markerLinkageGroupTable) throws GobiiDomainException {
+    private void validateMarkerLinkageGroupTable(
+        MarkerLinkageGroupTable markerLinkageGroupTable
+    ) throws GobiiDomainException {
         if(markerLinkageGroupTable.getPlatformId() == null &&
             markerLinkageGroupTable.getPlatformName() == null) {
             throw new GobiiDomainException(

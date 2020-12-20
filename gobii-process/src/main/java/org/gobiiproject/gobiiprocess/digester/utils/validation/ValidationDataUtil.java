@@ -19,8 +19,8 @@ public class ValidationDataUtil {
 
     static final int MAX_ENTITIES_PER_QUERY = 2000;
 
-    private static ApplicationContext getContext() {
-        return GobiiProcessContextSingleton.getInstance().getContext();
+    private static <T> T getBean(Class<T> objectType) {
+        return GobiiProcessContextSingleton.getInstance().getBean(objectType);
     }
 
     /**
@@ -34,7 +34,7 @@ public class ValidationDataUtil {
             int offset = 0;
             if (foreignKey.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
                 List<Mapset> mapsets = new ArrayList<>();
-                MapsetDao mapsetDao = getContext().getBean(MapsetDao.class);
+                MapsetDao mapsetDao = getBean(MapsetDao.class);
                 while (mapsets.size() == pageSize || offset == 0) {
                     mapsets = mapsetDao.getMapsets(pageSize, offset, null);
                     mapsets.forEach(mapset -> {
@@ -46,7 +46,7 @@ public class ValidationDataUtil {
                 }
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNARUN)) {
                 List<Experiment> experiments = new ArrayList<>();
-                ExperimentDao experimentDao = getContext().getBean(ExperimentDao.class);
+                ExperimentDao experimentDao = getBean(ExperimentDao.class);
                 while (experiments.size() == pageSize || offset == 0) {
                     experiments = experimentDao.getExperiments(pageSize, 0, null);
                     experiments.forEach(experiment -> {
@@ -58,7 +58,7 @@ public class ValidationDataUtil {
                 }
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME)) {
                 List<Project> projects = new ArrayList<>();
-                ProjectDao projectDao = getContext().getBean(ProjectDao.class);
+                ProjectDao projectDao = getBean(ProjectDao.class);
                 while (projects.size() == pageSize || offset == 0) {
                     projects = projectDao.getProjects(offset/pageSize, pageSize, null);
                     projects.forEach(project -> {
@@ -92,7 +92,7 @@ public class ValidationDataUtil {
         Map<String, String> platformIdNameMap = new HashMap<>();
         try {
             Integer intPlatformId = Integer.parseInt(platformId);
-            PlatformDao platformDao = getContext().getBean(PlatformDao.class);
+            PlatformDao platformDao = getBean(PlatformDao.class);
             Platform platform = platformDao.getPlatform(intPlatformId);
             if(platform != null) {
                 platformIdNameMap.put(platform.getPlatformId().toString(),
@@ -122,7 +122,7 @@ public class ValidationDataUtil {
         Map<String, String> projectIdNameMap = new HashMap<>();
         try {
             Integer intProjectId = Integer.parseInt(projectId);
-            ProjectDao projectDao = getContext().getBean(ProjectDao.class);
+            ProjectDao projectDao = getBean(ProjectDao.class);
             Project project = projectDao.getProject(intProjectId);
             if(project != null) {
                 projectIdNameMap.put(project.getProjectId().toString(),
@@ -152,7 +152,7 @@ public class ValidationDataUtil {
         Map<String, String> experimentIdNameMap = new HashMap<>();
         try {
             Integer intExperimentId = Integer.parseInt(experimentId);
-            ExperimentDao experimentDao = getContext().getBean(ExperimentDao.class);
+            ExperimentDao experimentDao = getBean(ExperimentDao.class);
             Experiment experiment = experimentDao.getExperiment(intExperimentId);
             if(experiment != null) {
                 experimentIdNameMap.put(
@@ -180,7 +180,7 @@ public class ValidationDataUtil {
         Map<String, String> mapsetIdNameMap = new HashMap<>();
         try {
             Integer intMapSetId = Integer.parseInt(mapId);
-            MapsetDao mapsetDao = getContext().getBean(MapsetDao.class);
+            MapsetDao mapsetDao = getBean(MapsetDao.class);
             Mapset mapset = mapsetDao.getMapset(intMapSetId);
             if(mapset != null) {
                 mapsetIdNameMap.put(
@@ -258,7 +258,7 @@ public class ValidationDataUtil {
 
             for(int i=0; i < numEntities; i+=maxEntitiesPerCall) {
                 List<DnaSample> queryParamsSubList = queryParams.subList(i, i+maxEntitiesPerCall);
-                DnaSampleDao dnaSampleDao = getContext().getBean(DnaSampleDao.class);
+                DnaSampleDao dnaSampleDao = getBean(DnaSampleDao.class);
                 Integer intProjectId = Integer.parseInt(filterValue);
                 List<DnaSample> dnaSamples = dnaSampleDao.queryByNameAndNum(
                     queryParamsSubList,
@@ -310,7 +310,7 @@ public class ValidationDataUtil {
             }
 
             // Get Cvs for given cvgroup
-            CvDao cvDao = getContext().getBean(CvDao.class);
+            CvDao cvDao = getBean(CvDao.class);
             List<Cv> cvs = cvDao.getCvListByCvGroup(cvGroupTerm.getCvGroupName(), null);
 
             // Remove valid cv names from input names
@@ -419,7 +419,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        DnaRunDao dnaRunDao = getContext().getBean(DnaRunDao.class);
+        DnaRunDao dnaRunDao = getBean(DnaRunDao.class);
         List<DnaRun> dnaRuns = new ArrayList<>();
         Integer pageSize = names.size();
         Integer rowOffset = 0;
@@ -453,7 +453,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        LinkageGroupDao linkageGroupDao = getContext().getBean(LinkageGroupDao.class);
+        LinkageGroupDao linkageGroupDao = getBean(LinkageGroupDao.class);
         List<LinkageGroup> linkageGroups = new ArrayList<>();
         Integer pageSize = names.size();
         Integer rowOffset = 0;
@@ -486,7 +486,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        ReferenceDao referenceDao = getContext().getBean(ReferenceDao.class);
+        ReferenceDao referenceDao = getBean(ReferenceDao.class);
         List<Reference> references  = new ArrayList<>();
         Integer pageSize = names.size();
         Integer rowOffset = 0;
@@ -518,7 +518,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        PlatformDao platformDao = getContext().getBean(PlatformDao.class);
+        PlatformDao platformDao = getBean(PlatformDao.class);
         List<Platform> platforms  = new ArrayList<>();
         Integer pageSize = names.size();
         Integer rowOffset = 0;
@@ -551,7 +551,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        MarkerDao markerDao = getContext().getBean(MarkerDao.class);
+        MarkerDao markerDao = getBean(MarkerDao.class);
         List<Marker> markers = new ArrayList<>();
         Integer pageSize = names.size();
         Integer rowOffset = 0;
@@ -584,7 +584,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        GermplasmDao germplasmDao = getContext().getBean(GermplasmDao.class);
+        GermplasmDao germplasmDao = getBean(GermplasmDao.class);
         List<Germplasm> germplasms = new ArrayList<>();
 
         Integer pageSize = names.size();
@@ -622,7 +622,7 @@ public class ValidationDataUtil {
             return invalidNames;
         }
 
-        DnaSampleDao dnaSampleDao = getContext().getBean(DnaSampleDao.class);
+        DnaSampleDao dnaSampleDao = getBean(DnaSampleDao.class);
 
         List<DnaSample> dnaSamples = new ArrayList<>();
         Integer pageSize = names.size();

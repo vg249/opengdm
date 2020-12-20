@@ -382,7 +382,7 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     public List<Marker> getMarkersByPlatformMarkerNameTuples(List<List<String>> markerTuples) {
-        List<Marker> markers = new ArrayList<>();
+        List<Marker> markers;
         List<Predicate> predicates = new ArrayList<>();
   
         try {

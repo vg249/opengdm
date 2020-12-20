@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MarkerGroupTable implements Table {
 
+    @NotNull(message = "platform id cannot be null")
     private String platformId;
 
     @NotNull(message = "marker name cannot be null")

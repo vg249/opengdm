@@ -38,6 +38,10 @@ public class GobiiProcessContextSingleton {
         return context;
     }
 
+    public <T> T getBean(Class<T> requiredType) {
+        return this.context.getBean(requiredType);
+    }
+
     public static String getCropType() {
         return cropType;
     }

@@ -36,8 +36,10 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.Marshal;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnCoordinates;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerGroupTable;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -102,6 +104,7 @@ public class GobiiFileReader {
     private static final String GERMPLASM_PROP_TABNAME = "germplasm_prop";
     private static final String GERMPLASM_TABNAME = "germplasm";
     private static final String MARKER_TABNAME = "marker";
+    private static final String MARKER_GROUP_TABNAME = "marker_group";
     private static final String DS_MARKER_TABNAME = "dataset_marker";
     private static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     private static final String SAMPLE_TABNAME = "dnarun";
@@ -223,6 +226,7 @@ public class GobiiFileReader {
             throw new GobiiException(jE);
         }
 
+        String platformId = null;
         if(!Objects.isNull(loaderInstructions.getAspects())) {
             cropType = loaderInstructions.getCropType();
             dstFilePath = loaderInstructions.getOutputDir();
@@ -234,6 +238,12 @@ public class GobiiFileReader {
             datasetType = loaderInstructions.getDatasetType();
             loadTypeName = loaderInstructions.getLoadType();
             pm.setUser(loaderInstructions.getContactEmail());
+            if(loaderInstructions.getAspects().containsKey(MARKER_GROUP_TABNAME)) {
+                Map markerGroupTable = (LinkedHashMap) loaderInstructions
+                    .getAspects()
+                    .get(MARKER_GROUP_TABNAME);
+                platformId  = (String) markerGroupTable.get("platformId");
+            }
         }
         else {
             procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
@@ -352,32 +362,6 @@ public class GobiiFileReader {
         }
 
         // ------------------------------------------------------------------
-        //File markerFile =
-        //    new File(
-        //        "/data/gobii_bundle/crops/dev/loader/digest/" +
-        //            "710865aae7874e848e3a85b289725f2c/digest.marker");
-        //BufferedReader br = new BufferedReader(new FileReader(markerFile));
-        //String line;
-        //int lineCount = 0;
-        //MarkerDao markerDao =
-        //    GobiiProcessContextSingleton.getInstance().getContext().getBean(MarkerDao.class);
-        //Set<String> markerNames = new HashSet<>();
-        //List<Integer> markers = new ArrayList<>();
-        //long timeStart = System.currentTimeMillis();
-        //while ((line = br.readLine()) != null) {
-        //    String[] d = line.split("\t");
-        //    lineCount += 1;
-        //    markerNames.add(d[1]);
-        //    if(lineCount%1000 == 0) {
-        //        //for(Marker marker : markerDao.getMarkersByMarkerNames(markerNames)) {
-        //        //    markers.add(marker.getMarkerId());
-        //        //}
-        //        markerNames = new HashSet<>();
-        //    }
-        //}
-        //long timeEnd = System.currentTimeMillis();
-
-        //long timeTaken = timeEnd - timeStart;
 
         // ----------- Data Validation Block. Common for both aspect and old instruction file
         //Metadata Validation
@@ -432,9 +416,14 @@ public class GobiiFileReader {
 
             //Load PostgreSQL
             boolean loadedData = false;
-            for (String key : loaderInstructionList) {
-                if (!VARIANT_CALL_TABNAME.equals(key)) {
-                    String inputFile = " -i " + loaderInstructionMap.get(key);
+            for (String tableName : loaderInstructionList) {
+
+                if(!loaderInstructionMap.containsKey(tableName)) {
+                    continue;
+                }
+
+                if (!VARIANT_CALL_TABNAME.equals(tableName)) {
+                    String inputFile = " -i " + loaderInstructionMap.get(tableName);
                     //Output here is temporary files, needs terminal /
                     String outputFile = " -o " + dstDir.getAbsolutePath() + "/";
                     Logger.logInfo(
@@ -448,16 +437,27 @@ public class GobiiFileReader {
                         errorPath);
 
                     IFLLineCounts counts =
-                        calculateTableStats(pm, loaderInstructionMap, dstDir, key);
+                        calculateTableStats(pm, loaderInstructionMap, dstDir, tableName);
 
                     if (counts.loadedData == 0) {
-                        Logger.logDebug("FileReader", "No data loaded for table " + key);
+                        Logger.logDebug("FileReader", "No data loaded for table " + tableName);
                     } else {
                         loadedData = true;
+
                     }
-                    if (counts.invalidData > 0 && !isVariableLengthTable(key)) {
-                        Logger.logWarning("FileReader", "Invalid data in table " + key);
+                    if (counts.invalidData > 0 && !isVariableLengthTable(tableName)) {
+                        Logger.logWarning("FileReader", "Invalid data in table " + tableName);
                     } else {
+
+                        if(tableName.equals(MARKER_TABNAME) &&
+                            loaderInstructionMap.containsKey(MARKER_GROUP_TABNAME)) {
+                            Integer intPlatformId = null;
+                            if(platformId != null) {
+                                intPlatformId = Integer.parseInt(platformId);
+                            }
+                            addMarkerGroups(loaderInstructionMap.get(MARKER_GROUP_TABNAME),
+                                intPlatformId);
+                        }
                         //If there are no issues in the load,
                         // clean up temporary intermediate files
                         if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
@@ -465,7 +465,7 @@ public class GobiiFileReader {
                             // clean up all IFL files (we don't need them any more
                             deleteIFLFiles(
                                 dstDir,
-                                key,
+                                tableName,
                                 !LoaderGlobalConfigs.isDeleteIntermediateFiles());
                         }
 
@@ -526,6 +526,103 @@ public class GobiiFileReader {
             jobName,
             logFile);
 
+    }
+
+    private static void addMarkerGroups(File markerGroupFile, Integer platformId) {
+
+        try {
+
+            BufferedReader br = new BufferedReader(new FileReader(markerGroupFile));
+            String line;
+            int lineCount = 0;
+
+            MarkerDao markerDao =
+                GobiiProcessContextSingleton.getInstance().getBean(MarkerDao.class);
+
+            Set<String> markerNames = new HashSet<>();
+            HashMap<String, HashMap<String, ArrayList<String>>> markerGroupsTobeAdded =
+                new HashMap<>();
+
+            String header = br.readLine();
+
+            Map<String, Integer> mapFieldNamePosition = markerGroupFieldNamePosition(header);
+            Map<String, String> mapMarkerGroupsByMarkerName = new HashMap<>();
+
+            String markerName;
+            String markerGroupName;
+            String[] values;
+
+            while ((line = br.readLine()) != null) {
+                values = line.split("\t");
+                lineCount += 1;
+                markerName = values[mapFieldNamePosition.get("markerName")];
+                markerGroupName = values[mapFieldNamePosition.get("markerGroupName")];
+                markerNames.add(markerName);
+                mapMarkerGroupsByMarkerName.put(markerName, markerGroupName);
+                if (lineCount % 1000 == 0) {
+                    for(Marker marker : markerDao.queryMarkersByNamesAndPlatformId (markerNames,
+                        platformId,
+                        2000,
+                        0)) {
+                        if(!markerGroupsTobeAdded
+                            .containsKey(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))) {
+                            markerGroupsTobeAdded
+                                .put(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()),
+                                    new HashMap<>());
+                        }
+                        markerGroupsTobeAdded
+                            .get(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))
+                            .put("\""+marker.getMarkerId().toString()+"\"", new ArrayList<>());
+                    }
+                    markerNames = new HashSet<>();
+                }
+            }
+            if(markerNames.size() > 0) {
+                for(Marker marker : markerDao.queryMarkersByNamesAndPlatformId (markerNames,
+                    platformId,
+                    2000,
+                    0)) {
+                        if(!markerGroupsTobeAdded
+                        .containsKey(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))) {
+                        markerGroupsTobeAdded
+                            .put(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()),
+                                new HashMap<>());
+                    }
+                    markerGroupsTobeAdded
+                        .get(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))
+                        .put("\""+marker.getMarkerId().toString()+"\"", new ArrayList<>());
+                }
+            }
+            String digestDirPath = markerGroupFile.getParentFile().getPath();
+            String markerGroupDbFile = Paths.get(digestDirPath, "marker_group.db.file").toString();
+
+            FileWriter writer = new FileWriter(markerGroupDbFile);
+            ObjectMapper mapper = new ObjectMapper();
+
+            writer.write("marker_group_name" + "\t" + "markers" + System.lineSeparator());
+
+            for(String markerGroup : markerGroupsTobeAdded.keySet()) {
+                String opLine = markerGroup +
+                    "\t" + "\"" +
+                    mapper.writeValueAsString(
+                        markerGroupsTobeAdded.get(markerGroup)).replace("\\", "") + "\"" +
+                    System.lineSeparator();
+                writer.write(opLine);
+            }
+            writer.close();
+        }
+        catch (NullPointerException | IOException e) {
+            throw new GobiiException("");
+        }
+    }
+
+    private static Map<String, Integer> markerGroupFieldNamePosition(String header) {
+        String[] headerColumns = header.split("\t");
+        Map<String, Integer> mapFieldNamePosition = new HashMap<>();
+        for(int i = 0; i < headerColumns.length; i++) {
+            mapFieldNamePosition.put(headerColumns[i], i);
+        }
+        return mapFieldNamePosition;
     }
 
     private static InstructionFileProcessingResult processOldInstructionFile(
