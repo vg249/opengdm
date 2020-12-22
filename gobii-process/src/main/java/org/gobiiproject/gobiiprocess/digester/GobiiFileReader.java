@@ -29,6 +29,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiidomain.services.gdmv3.MarkerService;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -71,6 +72,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiiprocess.services.MarkerGroupService;
 import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
@@ -238,12 +240,6 @@ public class GobiiFileReader {
             datasetType = loaderInstructions.getDatasetType();
             loadTypeName = loaderInstructions.getLoadType();
             pm.setUser(loaderInstructions.getContactEmail());
-            if(loaderInstructions.getAspects().containsKey(MARKER_GROUP_TABNAME)) {
-                Map markerGroupTable = (LinkedHashMap) loaderInstructions
-                    .getAspects()
-                    .get(MARKER_GROUP_TABNAME);
-                platformId  = (String) markerGroupTable.get("platformId");
-            }
         }
         else {
             procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
@@ -449,14 +445,16 @@ public class GobiiFileReader {
                         Logger.logWarning("FileReader", "Invalid data in table " + tableName);
                     } else {
 
+                        // Load markergroup if aspect found
                         if(tableName.equals(MARKER_TABNAME) &&
                             loaderInstructionMap.containsKey(MARKER_GROUP_TABNAME)) {
-                            Integer intPlatformId = null;
-                            if(platformId != null) {
-                                intPlatformId = Integer.parseInt(platformId);
-                            }
-                            addMarkerGroups(loaderInstructionMap.get(MARKER_GROUP_TABNAME),
-                                intPlatformId);
+
+                            MarkerGroupService markerGroupService = GobiiProcessContextSingleton
+                                .getInstance()
+                                .getBean(MarkerGroupService.class);
+
+                            markerGroupService
+                                .addMarkerGroups(loaderInstructionMap.get(MARKER_GROUP_TABNAME));
                         }
                         //If there are no issues in the load,
                         // clean up temporary intermediate files
@@ -526,103 +524,6 @@ public class GobiiFileReader {
             jobName,
             logFile);
 
-    }
-
-    private static void addMarkerGroups(File markerGroupFile, Integer platformId) {
-
-        try {
-
-            BufferedReader br = new BufferedReader(new FileReader(markerGroupFile));
-            String line;
-            int lineCount = 0;
-
-            MarkerDao markerDao =
-                GobiiProcessContextSingleton.getInstance().getBean(MarkerDao.class);
-
-            Set<String> markerNames = new HashSet<>();
-            HashMap<String, HashMap<String, ArrayList<String>>> markerGroupsTobeAdded =
-                new HashMap<>();
-
-            String header = br.readLine();
-
-            Map<String, Integer> mapFieldNamePosition = markerGroupFieldNamePosition(header);
-            Map<String, String> mapMarkerGroupsByMarkerName = new HashMap<>();
-
-            String markerName;
-            String markerGroupName;
-            String[] values;
-
-            while ((line = br.readLine()) != null) {
-                values = line.split("\t");
-                lineCount += 1;
-                markerName = values[mapFieldNamePosition.get("markerName")];
-                markerGroupName = values[mapFieldNamePosition.get("markerGroupName")];
-                markerNames.add(markerName);
-                mapMarkerGroupsByMarkerName.put(markerName, markerGroupName);
-                if (lineCount % 1000 == 0) {
-                    for(Marker marker : markerDao.queryMarkersByNamesAndPlatformId (markerNames,
-                        platformId,
-                        2000,
-                        0)) {
-                        if(!markerGroupsTobeAdded
-                            .containsKey(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))) {
-                            markerGroupsTobeAdded
-                                .put(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()),
-                                    new HashMap<>());
-                        }
-                        markerGroupsTobeAdded
-                            .get(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))
-                            .put("\""+marker.getMarkerId().toString()+"\"", new ArrayList<>());
-                    }
-                    markerNames = new HashSet<>();
-                }
-            }
-            if(markerNames.size() > 0) {
-                for(Marker marker : markerDao.queryMarkersByNamesAndPlatformId (markerNames,
-                    platformId,
-                    2000,
-                    0)) {
-                        if(!markerGroupsTobeAdded
-                        .containsKey(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))) {
-                        markerGroupsTobeAdded
-                            .put(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()),
-                                new HashMap<>());
-                    }
-                    markerGroupsTobeAdded
-                        .get(mapMarkerGroupsByMarkerName.get(marker.getMarkerName()))
-                        .put("\""+marker.getMarkerId().toString()+"\"", new ArrayList<>());
-                }
-            }
-            String digestDirPath = markerGroupFile.getParentFile().getPath();
-            String markerGroupDbFile = Paths.get(digestDirPath, "marker_group.db.file").toString();
-
-            FileWriter writer = new FileWriter(markerGroupDbFile);
-            ObjectMapper mapper = new ObjectMapper();
-
-            writer.write("marker_group_name" + "\t" + "markers" + System.lineSeparator());
-
-            for(String markerGroup : markerGroupsTobeAdded.keySet()) {
-                String opLine = markerGroup +
-                    "\t" + "\"" +
-                    mapper.writeValueAsString(
-                        markerGroupsTobeAdded.get(markerGroup)).replace("\\", "") + "\"" +
-                    System.lineSeparator();
-                writer.write(opLine);
-            }
-            writer.close();
-        }
-        catch (NullPointerException | IOException e) {
-            throw new GobiiException("");
-        }
-    }
-
-    private static Map<String, Integer> markerGroupFieldNamePosition(String header) {
-        String[] headerColumns = header.split("\t");
-        Map<String, Integer> mapFieldNamePosition = new HashMap<>();
-        for(int i = 0; i < headerColumns.length; i++) {
-            mapFieldNamePosition.put(headerColumns[i], i);
-        }
-        return mapFieldNamePosition;
     }
 
     private static InstructionFileProcessingResult processOldInstructionFile(
