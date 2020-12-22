@@ -27,9 +27,12 @@
     <bean id="germplasmDao" class="org.gobiiproject.gobiisampletrackingdao.GermplasmDaoImpl"/>
     <bean id="linkageGroupDao" class="org.gobiiproject.gobiisampletrackingdao.LinkageGroupDaoImpl"/>
     <bean id="markerDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerDaoImpl"/>
+    <bean id="markerGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerGroupDaoImpl"/>
     <bean id="referenceDao" class="org.gobiiproject.gobiisampletrackingdao.ReferenceDaoImpl"/>
     <bean id="jobDao" class="org.gobiiproject.gobiisampletrackingdao.JobDaoImpl"/>
     <bean id="jobService" class="org.gobiiproject.gobiiprocess.services.JobServiceImpl"/>
+    <bean id="markerGroupService" class="org.gobiiproject.gobiiprocess.services.MarkerGroupServiceImpl"/>
+
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
 
 
