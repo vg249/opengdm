@@ -417,6 +417,46 @@ public class MarkerDaoImpl implements MarkerDao {
         return markers;
     }
 
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public List<Marker> getMarkersByPlatformIdMarkerNameTuples(List<List<String>> markerTuples) {
+        List<Marker> markers;
+        List<Predicate> predicates = new ArrayList<>();
+
+        try {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Marker> criteriaQuery = criteriaBuilder.createQuery(Marker.class);
+
+            Root<Marker> root = criteriaQuery.from(Marker.class);
+
+            root.fetch("platform", JoinType.LEFT);
+
+            for (List<String> markerTuple: markerTuples) {
+                Integer platformId = Integer.parseInt(markerTuple.get(0));
+                predicates.add(
+                    criteriaBuilder.and(
+                        criteriaBuilder
+                            .equal(root.get("platform").get("platformId"), platformId),
+                        criteriaBuilder.equal(root.get("markerName"), markerTuple.get(1))
+                    )
+                );
+            }
+
+            Predicate combinedPredicates = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+            criteriaQuery.select(root);
+            criteriaQuery.where(combinedPredicates);
+
+            markers = em.createQuery(criteriaQuery).getResultList();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+        return markers;
+    }
+
 
     @Override
     public List<Marker> queryMarkersByNamesAndPlatformId(Set<String> markerNames,
