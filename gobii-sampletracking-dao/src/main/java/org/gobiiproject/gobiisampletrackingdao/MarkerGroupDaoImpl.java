@@ -3,8 +3,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -76,5 +75,108 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
         em.remove(markerGroup);
         em.flush();
 	}
-    
+
+	@Override
+    public Long uploadMarkerGroupsFromFile(String filePath) throws GobiiDaoException {
+        try {
+            StoredProcedureQuery storedProcedureQuery = em
+                .createStoredProcedureQuery("load_marker_groups")
+                .registerStoredProcedureParameter(
+                    "_file",
+                    String.class,
+                    ParameterMode.IN)
+                .registerStoredProcedureParameter(
+                    "markerGroupsCount",
+                    Long.TYPE,
+                    ParameterMode.OUT)
+                .setParameter("_file", filePath);
+
+            storedProcedureQuery.execute();
+
+            return (Long) storedProcedureQuery.getOutputParameterValue("markerGroupsCount");
+        }
+        catch (PersistenceException e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+    }
+
+    @Override
+    public Long mapMarkerIdsForMarkerNamesAndPlatformIds(String filePath,
+                                                         String outputFilePath
+    ) throws GobiiDaoException {
+
+        try {
+
+            StoredProcedureQuery storedProcedureQuery = em
+                .createStoredProcedureQuery(
+                    "map_marker_ids_for_marker_groups_markername_platformid"
+                )
+                .registerStoredProcedureParameter(
+                    "_in_file",
+                    String.class,
+                    ParameterMode.IN)
+                .registerStoredProcedureParameter(
+                    "_op_file",
+                    String.class,
+                    ParameterMode.IN)
+                .registerStoredProcedureParameter(
+                    "markerGroupsCount",
+                    Long.TYPE,
+                    ParameterMode.OUT)
+                .setParameter("_in_file", filePath)
+                .setParameter("_op_file", outputFilePath);
+
+            storedProcedureQuery.execute();
+
+            return (Long) storedProcedureQuery.getOutputParameterValue("markerGroupsCount");
+        }
+        catch (PersistenceException e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+    }
+
+    @Override
+    public Long mapMarkerIdsForMarkerNamesAndPlatformNames(String filePath,
+                                                           String outputFilePath
+    ) throws GobiiDaoException {
+
+        try {
+
+            StoredProcedureQuery storedProcedureQuery = em
+                .createStoredProcedureQuery(
+                    "map_marker_ids_for_marker_groups_markername_platformname"
+                )
+                .registerStoredProcedureParameter(
+                    "_in_file",
+                    String.class,
+                    ParameterMode.IN)
+                .registerStoredProcedureParameter(
+                    "_op_file",
+                    String.class,
+                    ParameterMode.IN)
+                .registerStoredProcedureParameter(
+                    "markerGroupsCount",
+                    Long.TYPE,
+                    ParameterMode.OUT)
+                .setParameter("_in_file", filePath)
+                .setParameter("_op_file", outputFilePath);
+
+            storedProcedureQuery.execute();
+
+            return (Long) storedProcedureQuery.getOutputParameterValue("markerGroupsCount");
+        }
+        catch (PersistenceException e) {
+            log.error(e.getMessage(), e);
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+    }
+
 }
