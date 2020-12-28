@@ -23,7 +23,7 @@ public class MarkerPositionsSearchQueryDTO {
     private Set<Integer> variantDbIds;
 
     @Size(max = 1000, message = "Only 1000 variantSetDbIds allowed per query")
-    private Set<Integer> variantSetDbIds;
+    private Set<String> variantSetDbIds;
 
     public Set<String> getLinkageGroupNames() {
         return linkageGroupNames;
@@ -73,11 +73,11 @@ public class MarkerPositionsSearchQueryDTO {
         this.variantDbIds = variantDbIds;
     }
 
-    public Set<Integer> getVariantSetDbIds() {
+    public Set<String> getVariantSetDbIds() {
         return variantSetDbIds;
     }
 
-    public void setVariantSetDbIds(Set<Integer> variantSetDbIds) {
+    public void setVariantSetDbIds(Set<String> variantSetDbIds) {
         this.variantSetDbIds = variantSetDbIds;
     }
 }
