@@ -17,6 +17,8 @@ import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -61,14 +63,14 @@ public class DnaRunServiceImpl implements DnaRunService {
      * Uploads dnaruns in the file to the database.
      * Also, loads dna samples and germplasms when provided in the same file.
      *
-     * @param dnaRunFile            Dnarun input file byte array
+     * @param inputFileStream       Dnarun input file stream
      * @param dnaRunUploadRequest   Request object with meta data and template
      * @param cropType              Crop type to which the dnaruns need to uploaded
      * @return {@link JobDTO}   when dnarun loader job is successfully submitted.
      * @throws GobiiException   Gobii Exception for bad request or if any run time system error
      */
     @Override
-    public JobDTO loadDnaRuns(byte[] dnaRunFile,
+    public JobDTO loadDnaRuns(InputStream inputFileStream,
                               DnaRunUploadRequestDTO dnaRunUploadRequest,
                               String cropType) throws GobiiException {
         LoaderInstruction loaderInstruction = new LoaderInstruction();
@@ -122,9 +124,9 @@ public class DnaRunServiceImpl implements DnaRunService {
         String jobName = job.getJobName();
 
         //Set Input file
-        String inputFilePath =
-            Utils.writeInputFile(dnaRunFile, "samples.txt",jobName, cropType);
-        loaderInstruction.setInputFile(inputFilePath);
+        File dnaRunFile =
+            Utils.writeInputFile(inputFileStream, "samples.txt", jobName, cropType);
+        loaderInstruction.setInputFile(dnaRunFile.getAbsolutePath());
 
         //Set output dir
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);

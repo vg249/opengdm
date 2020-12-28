@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
 @Scope(value = "request")
@@ -49,10 +52,10 @@ public class MarkerController {
         @RequestPart("fileProperties") final MarkerUploadRequestDTO markerUploadRequest
     ) throws Exception {
 
-        byte[] markerFileBytes = markerFile.getBytes();
+        InputStream markerFileInputStream = markerFile.getInputStream();
 
         JobDTO job = markerService.loadMarkerData(
-            markerFileBytes,
+            markerFileInputStream,
             markerUploadRequest,
             cropType);
 

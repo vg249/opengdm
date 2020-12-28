@@ -58,14 +58,14 @@ public class MarkerServiceImpl implements MarkerService {
      * Uploads markers in the file to the database.
      * Also, loads marker positions and linkage groups when provided in the same file.
      *
-     * @param markerFile            Input marker file byte array
+     * @param inputFileStream      marker file input stream
      * @param markerUploadRequest   Request object with meta data and template
      * @param cropType              Crop type to which the markers need to uploaded
      * @return  {@link JobDTO}
      * @throws GobiiException   Gobii Exception for bad request or if any run time system error
      */
     @Override
-    public JobDTO loadMarkerData(byte[] markerFile,
+    public JobDTO loadMarkerData(InputStream inputFileStream,
                                  MarkerUploadRequestDTO markerUploadRequest,
                                  String cropType) throws GobiiException {
 
@@ -156,9 +156,9 @@ public class MarkerServiceImpl implements MarkerService {
         loaderInstruction.setContactEmail(createdBy.getEmail());
 
         //Set Input file
-        String inputFilePath =
-            Utils.writeInputFile(markerFile, "markers.txt", jobName, cropType);
-        loaderInstruction.setInputFile(inputFilePath);
+        File markerFile =
+            Utils.writeInputFile(inputFileStream, "markers.txt", jobName, cropType);
+        loaderInstruction.setInputFile(markerFile.getAbsolutePath());
 
         //Set output dir
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);
