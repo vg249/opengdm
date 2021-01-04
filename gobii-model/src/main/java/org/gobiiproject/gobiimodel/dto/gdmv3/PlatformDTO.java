@@ -59,18 +59,23 @@ public class PlatformDTO extends DTOBaseAuditable {
     private String platformTypeName;
 
     @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
+    @GobiiEntityMap(paramName = "platformStats.protocolCount", entity = Platform.class, deep = true)
     private Integer protocolCount;
 
     @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
+    @GobiiEntityMap(paramName = "platformStats.vendorProtocolCount", entity = Platform.class, deep = true)
     private Integer vendorProtocolCount;
 
     @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
+    @GobiiEntityMap(paramName = "platformStats.experimentCount", entity = Platform.class, deep = true)
     private Integer experimentCount;
 
     @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
+    @GobiiEntityMap(paramName = "platformStats.markerCount", entity = Platform.class, deep = true)
     private Integer markerCount;
 
     @Null(groups = {PlatformDTO.Create.class, PlatformDTO.Update.class})
+    @GobiiEntityMap(paramName = "platformStats.dnarunCount", entity = Platform.class, deep = true)
     private Integer dnaRunCount;
     
 }
