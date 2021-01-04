@@ -41,6 +41,4 @@ public class PlatformStats {
     @MapsId
     private Platform platform;
 
-    @OneToOne(mappedBy = "platform")
-    private PlatformStats platformStats;
 }
