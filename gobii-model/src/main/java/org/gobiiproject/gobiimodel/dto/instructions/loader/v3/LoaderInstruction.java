@@ -26,6 +26,8 @@ public class LoaderInstruction {
 
     private Map<String, Object> aspects;
 
+    private Object matrix;
+
     public String getCropType() {
         return cropType;
     }
@@ -80,5 +82,13 @@ public class LoaderInstruction {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+    }
+
+    public Object getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Object matrix) {
+        this.matrix = matrix;
     }
 }

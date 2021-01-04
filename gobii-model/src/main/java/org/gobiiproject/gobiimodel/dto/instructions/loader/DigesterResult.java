@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class DigestorResult {
+public class DigesterResult {
 
     private boolean success;
 
@@ -32,7 +32,7 @@ public class DigestorResult {
 
     private String jobName;
 
-    public DigestorResult(boolean success,
+    public DigesterResult(boolean success,
                           boolean sendQc,
                           String cropType,
                           GobiiCropConfig cropConfig,
