@@ -38,7 +38,6 @@ public class JobStatus {
     public JobStatus(String jobName) throws GobiiDaoException {
         this.jobService = GobiiProcessContextSingleton
             .getInstance()
-            .getContext()
             .getBean(JobService.class);
         this.job = jobService.getByName(jobName);
     }

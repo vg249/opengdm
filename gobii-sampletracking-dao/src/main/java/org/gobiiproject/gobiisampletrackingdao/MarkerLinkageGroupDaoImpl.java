@@ -135,7 +135,7 @@ public class MarkerLinkageGroupDaoImpl implements MarkerLinkageGroupDao {
                            Set<Integer> linkageGroupIds, Set<String> linkageGroupNames,
                            Set<Integer> markerIds, Set<String> markerNames,
                            BigDecimal minPosition, BigDecimal maxPosition,
-                           Set<Integer> datasetIds) {
+                           Set<String> datasetIds) {
         List<MarkerLinkageGroup> markerLinkageGroups = new ArrayList<>();
 
         List<Predicate> predicates = new ArrayList<>();

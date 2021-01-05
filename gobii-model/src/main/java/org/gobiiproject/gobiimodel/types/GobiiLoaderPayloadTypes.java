@@ -3,7 +3,8 @@ package org.gobiiproject.gobiimodel.types;
 public enum GobiiLoaderPayloadTypes {
 
     MARKERS("markers"),
-    SAMPLES("samples");
+    SAMPLES("samples"),
+    MATRIX("matrix");
 
     private String payloadType;
 

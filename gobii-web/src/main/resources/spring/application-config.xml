@@ -468,6 +468,9 @@
     <!-- gdm v3 dnaRun service -->
     <bean id="dnaRunServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.DnaRunServiceImpl"/>
 
+    <!-- gdm v3 genotypes service -->
+    <bean id="genotypeServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.GenotypeServiceImpl"/>
+
     <!-- gdm v3 job service -->
     <bean id="jobService" class="org.gobiiproject.gobiidomain.services.gdmv3.JobServiceImpl"></bean>
 

@@ -205,7 +205,7 @@ public class GobiiExtractor {
 			String crop = inst.getGobiiCropType();
 			String extractType = "";
 			if (crop == null) crop = divineCrop(instructionFile);
-            GobiiProcessContextSingleton.init(crop, propertiesFile);
+            GobiiProcessContextSingleton.init(crop, configuration);
             try {
                 jobStatus = new JobStatus(jobFileName);
             } catch (Exception e) {

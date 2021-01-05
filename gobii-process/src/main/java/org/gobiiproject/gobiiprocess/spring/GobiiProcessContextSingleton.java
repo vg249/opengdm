@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.spring;
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -9,7 +10,7 @@ public class GobiiProcessContextSingleton {
 
     private ApplicationContext context;
     private static String cropType;
-    private static String cropConfigLocation;
+    private static ConfigSettings configSettings;
 
 
     private GobiiProcessContextSingleton() {}
@@ -18,16 +19,16 @@ public class GobiiProcessContextSingleton {
         return INSTANCE;
     }
 
-    public static void init(String cropType, String cropConfigLocation) {
+    public static void init(String cropType, ConfigSettings configSettings) {
         GobiiProcessContextSingleton.cropType = cropType;
-        GobiiProcessContextSingleton.cropConfigLocation = cropConfigLocation;
+        GobiiProcessContextSingleton.configSettings = configSettings;
         GobiiProcessContextSingleton.INSTANCE.context = new ClassPathXmlApplicationContext(
                 "classpath:/spring/application-config.xml");
     }
 
     public ApplicationContext getContext() {
         if(GobiiProcessContextSingleton.cropType == null
-            || GobiiProcessContextSingleton.cropConfigLocation == null) {
+            || GobiiProcessContextSingleton.configSettings == null) {
             throw new GobiiException(
                 "Initialize Context with crop type and config location");
         }
@@ -38,11 +39,15 @@ public class GobiiProcessContextSingleton {
         return context;
     }
 
+    public <T> T getBean(Class<T> requiredType) {
+        return this.context.getBean(requiredType);
+    }
+
     public static String getCropType() {
         return cropType;
     }
 
-    public static String getCropConfigLocation() {
-        return cropConfigLocation;
+    public static ConfigSettings getConfigSettings() {
+        return configSettings;
     }
 }

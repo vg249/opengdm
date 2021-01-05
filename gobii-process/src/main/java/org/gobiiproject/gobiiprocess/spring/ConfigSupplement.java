@@ -27,14 +27,13 @@ public class ConfigSupplement {
      * @throws Exception
      */
     public void readConfigFile() throws Exception{
-        String configFileLocation = GobiiProcessContextSingleton.getCropConfigLocation();
+        configSettings = GobiiProcessContextSingleton.getConfigSettings();
         String cropType = GobiiProcessContextSingleton.getCropType();
-        if (configFileLocation == null || cropType == null) {
+        if (configSettings == null || cropType == null) {
             String message = "The the environment does not define the FQPN of " +
                     "configuration in environment variable";
             throw new Exception(message);
         }
-        configSettings = new ConfigSettings(configFileLocation);
         configSettings.setCurrentGobiiCropType(cropType);
     }
 

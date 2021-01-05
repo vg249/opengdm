@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
@@ -15,7 +16,9 @@ import javax.persistence.Table;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Utils {
@@ -60,6 +63,25 @@ public class Utils {
         }
     }
 
+    static File writeInputStreamToFile(String filePath,
+                                       InputStream fileStream) throws GobiiDomainException {
+        try {
+            File file = new File(filePath);
+            makeDir(file.getParent());
+            Files.copy(fileStream,
+                file.toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+            IOUtils.closeQuietly(fileStream);
+            return file;
+        }
+        catch (IOException e) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Unable to create input files directory");
+        }
+    }
+
     static void makeDir(String dirPath) {
         File file = new File(dirPath);
         if(!file.exists()) {
@@ -89,20 +111,19 @@ public class Utils {
 
     /**
      *
-     * @param inputFile    byte array of input file to be loaded.
-     * @param jobName       name of the job
-     * @param cropType      type of the crop
+     * @param inputFileStream   input file stream to be loaded.
+     * @param jobName           name of the job
+     * @param cropType          type of the crop
      * @return path of the input file
      */
-    static String writeInputFile(byte[] inputFile,
+    static File writeInputFile(InputStream inputFileStream,
                                  String fileName,
                                  String jobName,
                                  String cropType) throws GobiiDomainException {
 
         String rawFilesDir = Utils.getProcessDir(cropType, GobiiFileProcessDir.RAW_USER_FILES);
         String inputFilePath = Paths.get(rawFilesDir, jobName, fileName).toString();
-        Utils.writeByteArrayToFile(inputFilePath, inputFile);
-        return inputFilePath;
+        return writeInputStreamToFile(inputFilePath, inputFileStream);
     }
 
     /**
@@ -192,13 +213,11 @@ public class Utils {
         return entity.getDeclaredAnnotation(GobiiAspectTable.class).name();
     }
 
-    public static String[] getHeaders(byte[] file) throws GobiiDomainException {
-        InputStream fileInputStream = new ByteArrayInputStream(file);
+    public static String[] getHeaders(File inputFile) throws GobiiDomainException {
         BufferedReader br;
         String fileHeader;
         try {
-            br = new BufferedReader(
-                new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
+            br = new BufferedReader(new FileReader(inputFile));
             fileHeader = br.readLine();
         }
         catch (IOException io) {

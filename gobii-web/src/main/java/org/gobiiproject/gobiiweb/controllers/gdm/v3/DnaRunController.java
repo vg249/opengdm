@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
 @Scope(value = "request")
@@ -51,10 +53,10 @@ public class DnaRunController {
         @RequestPart("fileProperties") final DnaRunUploadRequestDTO dnaRunUploadRequest
     ) throws Exception {
 
-        byte[] dnaRunFileBytes = dnaRunFile.getBytes();
+        InputStream dnaRunFileInputStream = dnaRunFile.getInputStream();
 
         JobDTO job = dnaRunService.loadDnaRuns(
-            dnaRunFileBytes,
+            dnaRunFileInputStream,
             dnaRunUploadRequest,
             cropType);
 

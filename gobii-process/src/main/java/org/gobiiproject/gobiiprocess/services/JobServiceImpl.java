@@ -17,8 +17,8 @@ public class JobServiceImpl implements JobService {
 
 
     public Job update(Job job) throws GobiiDaoException {
-        JobDao jobDao = GobiiProcessContextSingleton.getInstance().getContext().getBean(JobDao.class);
-        CvDao cvDao = GobiiProcessContextSingleton.getInstance().getContext().getBean(CvDao.class);
+        JobDao jobDao = GobiiProcessContextSingleton.getInstance().getBean(JobDao.class);
+        CvDao cvDao = GobiiProcessContextSingleton.getInstance().getBean(CvDao.class);
         List<Cv> statuses = cvDao.getCvs(job.getStatus().getTerm(),
             CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);
@@ -31,7 +31,7 @@ public class JobServiceImpl implements JobService {
     }
 
     public Job getByName(String name) {
-        JobDao jobDao = GobiiProcessContextSingleton.getInstance().getContext().getBean(JobDao.class);
+        JobDao jobDao = GobiiProcessContextSingleton.getInstance().getBean(JobDao.class);
         return jobDao.getByName(name);
     }
 
