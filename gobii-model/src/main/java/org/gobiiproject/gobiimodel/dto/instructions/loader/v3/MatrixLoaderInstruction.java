@@ -10,6 +10,8 @@ public class MatrixLoaderInstruction {
 
     private String dataFormat;
 
+    private boolean loadMarkers;
+
     private GenotypeMatrixTemplate template;
 
 }

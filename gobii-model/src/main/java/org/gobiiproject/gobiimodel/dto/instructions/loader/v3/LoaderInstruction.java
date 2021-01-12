@@ -19,6 +19,9 @@ public class LoaderInstruction {
     @NotNull(message = "Required Input file")
     private String inputFile;
 
+    @NotNull(message = "Required Input file content type")
+    private String inputFileMimeType;
+
     @NotNull(message = "Output direcotory not defined")
     private String outputDir;
 

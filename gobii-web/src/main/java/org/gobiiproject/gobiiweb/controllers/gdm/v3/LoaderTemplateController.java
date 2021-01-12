@@ -1,8 +1,8 @@
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
@@ -19,15 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
-
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
 @Scope(value = "request")
 @Controller
-@RequestMapping("/crops/{cropType}/gobii/v3/loader-templates/")
+@RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @CrossOrigin
 @Api
 @Slf4j
@@ -50,7 +46,7 @@ public class LoaderTemplateController {
      * List marker loader templates in the system.
      * @return list of {@link LoaderTemplate}
      */
-    @GetMapping(value = "/marker", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/loader-template/marker-templates", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BrApiMasterListPayload<LoaderTemplateDTO>>
     getMarkerTemplates(
         @RequestParam(required=false, defaultValue = "0") Integer page,
@@ -66,7 +62,8 @@ public class LoaderTemplateController {
     /**
      * @return empty loader template {@link MarkerTemplateDTO} for marker upload.
      */
-    @GetMapping(value = "/empty-marker", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/loader-template/empty-marker-template",
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MarkerTemplateDTO> getEmptyMarkerTemplate() {
         MarkerTemplateDTO markerTemplateDTO = loaderTemplateService.getEmptyMarkerTemplate();
         return ResponseEntity.ok(markerTemplateDTO);
@@ -78,7 +75,8 @@ public class LoaderTemplateController {
      *
      * @throws Exception
      */
-    @GetMapping(value = "/dnarun", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/loader-template/dnarun-templates",
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BrApiMasterListPayload<LoaderTemplateDTO>>
     getDnaRunTemplates(
         @RequestParam(required=false, defaultValue = "0") Integer page,
@@ -94,7 +92,8 @@ public class LoaderTemplateController {
     /**
      * @return empty loader template {@link DnaRunTemplateDTO} for dnarun upload.
      */
-    @GetMapping(value = "/empty-dnarun", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/loader-template/empty-dnarun-template",
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DnaRunTemplateDTO> getEmptyDnaRunTemplate() {
         DnaRunTemplateDTO dnaRunTemplateDTO = loaderTemplateService.getEmptyDnaRunTemplate();
         return ResponseEntity.ok(dnaRunTemplateDTO);
@@ -108,7 +107,9 @@ public class LoaderTemplateController {
      * @throws Exception
      */
     @CropAuth(CURATOR)
-    @PostMapping(value = "/marker", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/loader-template/marker-templates",
+        consumes = "application/json",
+        produces = "application/json")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>> addMarkerTemplate(
         @RequestBody final LoaderTemplateDTO loaderTemplateDTO) throws Exception {
@@ -127,7 +128,9 @@ public class LoaderTemplateController {
      * @throws Exception
      */
     @CropAuth(CURATOR)
-    @PostMapping(value = "/dnarun", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/loader-template/dnarun-templates",
+        consumes = "application/json",
+        produces = "application/json")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>> addDnaRunTemplate(
         @RequestBody final LoaderTemplateDTO loaderTemplateDTO

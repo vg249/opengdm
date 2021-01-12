@@ -36,6 +36,7 @@ import org.gobiiproject.gobiimodel.dto.Marshal;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -59,6 +60,7 @@ import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.LoaderScripts;
+import org.gobiiproject.gobiiprocess.aspectmappers.HapMapAspectsMapper;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
@@ -185,9 +187,23 @@ public class GobiiFileReader {
         }
 
         String logFile = setLogger(configuration, instructionFile);
+
         //Job Id is the 'name' part of the job file  /asd/de/name.json
         String filename = new File(instructionFile).getName();
         String jobName = filename.substring(0, filename.lastIndexOf('.'));
+
+        // Check if it is a matrix upload
+        //MatrixLoaderInstruction matrixLoaderInstruction;
+        //if(!Objects.isNull(loaderInstructions.getMatrix())) {
+        //    matrixLoaderInstruction =
+        //        jsonMapper.convertValue(
+        //            loaderInstructions.getMatrix(),
+        //            MatrixLoaderInstruction.class);
+        //    HapMapAspectsMapper hapMapAspectsMapper = new HapMapAspectsMapper();
+        //    hapMapAspectsMapper.mapHapMapAspects(matrixLoaderInstruction,
+        //        loaderInstructions.getInputFile());
+        //    System.out.println(matrixLoaderInstruction);
+        //}
 
         // Process instruction file to create intermediate files.
         DigesterResult digestProcessresult;
@@ -347,10 +363,14 @@ public class GobiiFileReader {
         pm.addFolderPath("Destination Directory", dstDir.getAbsolutePath()+"/",configuration);
         pm.addFolderPath("Input Directory", procedure.getMetadata().getGobiiFile().getSource()+"/", configuration);
 
-        Path cropPath = Paths.get(rootDir + "crops/" + procedure.getMetadata().getGobiiCropType().toLowerCase());
+        Path cropPath = Paths.get(rootDir +
+            "crops/"
+            + procedure.getMetadata().getGobiiCropType().toLowerCase());
+
         if (!(Files.exists(cropPath) &&
             Files.isDirectory(cropPath))) {
-            logError("Digester", "Unknown Crop Type: " + procedure.getMetadata().getGobiiCropType());
+            logError("Digester", "Unknown Crop Type: "
+                + procedure.getMetadata().getGobiiCropType());
             throw new GobiiException("No Crop directory");
         }
         if (HDF5Interface.getPathToHDF5Files() == null)
@@ -358,7 +378,8 @@ public class GobiiFileReader {
 
         String errorPath = getLogName(procedure, procedure.getMetadata().getGobiiCropType());
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
+        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),
+                "Beginning Validation");
         // Instruction file Validation
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(procedure);
         instructionFileValidator.processInstructionFile();
@@ -384,7 +405,9 @@ public class GobiiFileReader {
 
         SimpleTimer.start("FileRead");
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(), "Beginning file digest");
+        jobStatus.set(
+            JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(),
+            "Beginning file digest");
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
             if (inst == null) {
@@ -396,7 +419,9 @@ public class GobiiFileReader {
         if (procedure.getMetadata().getGobiiFile() == null) {
             logError("Digester", "Instruction " + instructionFile + " has bad 'file' column");
         }
-        GobiiFileType instructionFileType = procedure.getMetadata().getGobiiFile().getGobiiFileType();
+        GobiiFileType instructionFileType =
+            procedure.getMetadata().getGobiiFile().getGobiiFileType();
+
         if (instructionFileType == null) {
             logError("Digester", "Instruction " + instructionFile + " has missing file format");
         }
@@ -419,14 +444,17 @@ public class GobiiFileReader {
         }
 
         //Database Validation
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Database Validation");
+        jobStatus.set(
+            JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),
+            "Database Validation");
         databaseValidation(loaderInstructionMap, procedure.getMetadata(), gobiiCropConfig);
 
         boolean sendQc = false;
 
         qcCheck = procedure.getMetadata().isQcCheck();
 
-        boolean isVCF = GobiiFileType.VCF.equals(procedure.getMetadata().getGobiiFile().getGobiiFileType());
+        boolean isVCF =
+            GobiiFileType.VCF.equals(procedure.getMetadata().getGobiiFile().getGobiiFileType());
 
         for (GobiiLoaderInstruction inst : procedure.getInstructions()) {
 

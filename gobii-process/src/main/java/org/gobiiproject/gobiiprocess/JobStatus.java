@@ -53,6 +53,7 @@ public class JobStatus {
     	    this.job.setMessage(message);
     	    Cv newStatus = new Cv();
     	    newStatus.setTerm(status);
+    	    job.setStatus(newStatus);
     	    this.jobService.update(job);
     	} catch (Exception e) {
     	    logError("Digester", "Exception while referencing Job table", e);
