@@ -61,8 +61,8 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
                 markerGroup.setMarkerGroupId((Integer) result[0]);
                 markerGroup.setName((String) result[1]);
                 markerGroup.setCode((String) result[2]);
-                markerGroup.setGermplasmGroup((String) result[2]);
-                markerGroup.setStatus((Cv) result[3]);
+                markerGroup.setGermplasmGroup((String) result[3]);
+                markerGroup.setStatus((Cv) result[4]);
                 markerGroups.add(markerGroup);
             });
 
