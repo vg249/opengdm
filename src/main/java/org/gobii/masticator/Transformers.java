@@ -4,6 +4,9 @@ import org.gobii.masticator.reader.transform.compilers.Transformation;
 import org.gobii.masticator.reader.transform.types.IUPACTransform;
 import org.gobii.masticator.reader.transform.types.NucleotideSeparatorSplitter;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class Transformers {
 
 	private static IUPACTransform iupac = new IUPACTransform();
@@ -15,7 +18,8 @@ public class Transformers {
 	}
 	@Transformation
 	public String IUPAC2BI(String value){
-			String retVal = iupac.process(value);
+			String retVal = Arrays.stream(value.split("\t")).map(s -> iupac.process(s)).collect(Collectors.joining("\t"));
+			//String retVal = iupac.process(value);
 			if(retVal==null){
 				throw new RuntimeException("Unable to process IUPAC transformation for value " + value);
 			}
@@ -29,7 +33,9 @@ public class Transformers {
 
 	@Transformation
 	public String FOURLETTERNUCLEOTIDE(String value){
-		String retVal = fourLetter.process(value);
+		String retVal = Arrays.stream(value.split("\t")).map(s -> fourLetter.process(s)).collect(Collectors.joining("\t"));
+
+	//		String retVal = fourLetter.process(value);
 		if(retVal==null){
 			throw new RuntimeException("Unable to process four letter nucleotide cleaning transformation for value " + value);
 		}
@@ -38,7 +44,9 @@ public class Transformers {
 
 	@Transformation
 	public String TWOLETTERNUCLEOTIDE(String value){
-		String retVal = twoLetter.process(value);
+		String retVal = Arrays.stream(value.split("\t")).map(s -> twoLetter.process(s)).collect(Collectors.joining("\t"));
+
+		//String retVal = twoLetter.process(value);
 		if(retVal==null){
 			throw new RuntimeException("Unable to process two letter nucleotide cleaning transformation for value " + value);
 		}
