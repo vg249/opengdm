@@ -193,17 +193,18 @@ public class GobiiFileReader {
         String jobName = filename.substring(0, filename.lastIndexOf('.'));
 
         // Check if it is a matrix upload
-        //MatrixLoaderInstruction matrixLoaderInstruction;
-        //if(!Objects.isNull(loaderInstructions.getMatrix())) {
-        //    matrixLoaderInstruction =
-        //        jsonMapper.convertValue(
-        //            loaderInstructions.getMatrix(),
-        //            MatrixLoaderInstruction.class);
-        //    HapMapAspectsMapper hapMapAspectsMapper = new HapMapAspectsMapper();
-        //    hapMapAspectsMapper.mapHapMapAspects(matrixLoaderInstruction,
-        //        loaderInstructions.getInputFile());
-        //    System.out.println(matrixLoaderInstruction);
-        //}
+        // If matrix load, get the instruction file for it.
+        MatrixLoaderInstruction matrixLoaderInstruction;
+        if(!Objects.isNull(loaderInstructions.getMatrix())) {
+            matrixLoaderInstruction =
+                jsonMapper.convertValue(
+                    loaderInstructions.getMatrix(),
+                    MatrixLoaderInstruction.class);
+            HapMapAspectsMapper hapMapAspectsMapper = new HapMapAspectsMapper();
+            hapMapAspectsMapper.mapHapMapAspects(matrixLoaderInstruction,
+                loaderInstructions.getInputFile());
+            System.out.println(matrixLoaderInstruction);
+        }
 
         // Process instruction file to create intermediate files.
         DigesterResult digestProcessresult;

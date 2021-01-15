@@ -85,18 +85,20 @@ public class HapMapAspectsMapper {
                         continue;
                     }
 
-                    int numOfLinesToCheck = maxLinesToLookForHeader;
-
                     fileScanner = new Scanner(fileToDigest);
 
                     // Get header line for hapmap.
                     // Usually the first line but in some instances they could be not.
                     // So check for first 1000 lines.
                     String headerLine = null;
+                    int headerLineNum = 1;
                     while (fileScanner.hasNextLine()) {
+
                         headerLine = fileScanner.nextLine();
-                        if((!headerLine.startsWith(headerIdentifier)) && numOfLinesToCheck > 0) {
-                            numOfLinesToCheck--;
+
+                        if((!headerLine.startsWith(headerIdentifier)) &&
+                            headerLineNum <= 1000) {
+                            headerLineNum++;
                             continue;
                         }
                     }
@@ -109,10 +111,7 @@ public class HapMapAspectsMapper {
                         continue;
                     }
 
-                    //
-                    for(String headerColumn : headerLine.split(FileUtils.TAB_SEP)) {
 
-                    }
                 }
             }
             else {

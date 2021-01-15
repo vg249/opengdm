@@ -35,7 +35,7 @@ public class MarkerLinkageGroupTable implements Table {
     private Aspect markerStart;
 
     @JsonProperty("stop")
-    private Aspect markerStop;
+    private Aspect markerEnd;
 
     public String getPlatformId() {
         return platformId;
@@ -93,11 +93,11 @@ public class MarkerLinkageGroupTable implements Table {
         this.markerStart = markerStart;
     }
 
-    public Aspect getMarkerStop() {
-        return markerStop;
+    public Aspect getMarkerEnd() {
+        return markerEnd;
     }
 
-    public void setMarkerStop(Aspect markerStop) {
-        this.markerStop = markerStop;
+    public void setMarkerEnd(Aspect markerEnd) {
+        this.markerEnd = markerEnd;
     }
 }
