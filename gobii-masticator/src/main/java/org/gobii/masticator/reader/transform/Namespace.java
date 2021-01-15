@@ -25,7 +25,7 @@ public class Namespace {
 	static {
 		try {
 			Compilers.resolve("clj").load(Util.slurpResource("transformations.clj"));
-		} catch (IOException e) {
+		} catch (IOException | NullPointerException e) {
 			e.printStackTrace();
 		}
 

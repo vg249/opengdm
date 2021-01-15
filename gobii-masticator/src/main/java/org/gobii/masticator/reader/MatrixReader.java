@@ -20,6 +20,8 @@ public class MatrixReader implements Reader {
 
 	private boolean lineBreak = false;
 
+	private boolean hitEoF = false;
+
 	public MatrixReader(File file, int row, int col) throws IOException {
 		this.file = file;
 		this.row = row;
@@ -35,6 +37,9 @@ public class MatrixReader implements Reader {
 
 	}
 
+	/*Skips ahead one less tab character than the column number, indexing on the correct column
+	* (given the relatively safe assumption all tabs are singular and structural)
+	*/
 	private void skipLineBeginning() throws IOException {
 		for (int i = 0 ; i < col ; i++) {
 			while (raf.readByte() != '\t') ;
@@ -49,7 +54,9 @@ public class MatrixReader implements Reader {
 	@Override
 	public ReaderResult read() throws IOException {
 
-		if (lineBreak) {
+		if(hitEoF){
+			return End.inst;
+		} else if (lineBreak) {
 			lineBreak = false;
 			return Break.inst;
 		} else if (raf.getFilePointer() == raf.length() - 1) {
@@ -63,12 +70,11 @@ public class MatrixReader implements Reader {
 			try {
 				c = (char) raf.readByte();
 			} catch (EOFException eof) {
+				hitEoF=true;
 				break;
 			}
-
-			if (c == '\t') {
-				break;
-			} else if (c == '\n') {
+			//Note, removed special handling of tab characters, as internal tabs should be preserved on 'matrix' calls
+			if (c == '\n') {
 				skipLineBeginning();
 				break;
 			} else {
