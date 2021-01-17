@@ -74,5 +74,13 @@ public class MapsetDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName = "reference.referenceName", entity = Mapset.class, deep = true)
     @Null(groups = {MapsetDTO.Create.class, MapsetDTO.Update.class})
     private String referenceName; 
+
+    @GobiiEntityMap(paramName="mapsetStats.markerCount", entity=Mapset.class, deep=true)
+    @Null(groups = {MapsetDTO.Create.class, MapsetDTO.Update.class})
+    private Integer markerCount = 0;
+
+    @GobiiEntityMap(paramName="mapsetStats.linkageGroupCount", entity=Mapset.class, deep=true)
+    @Null(groups = {MapsetDTO.Create.class, MapsetDTO.Update.class})
+    private Integer linkageGroupCount = 0;
   
 }
