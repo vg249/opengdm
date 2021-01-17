@@ -60,7 +60,7 @@ public class Mapset extends BaseEntity {
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status;
 
-    @OneToOne(mappedBy="dataset")
+    @OneToOne(mappedBy="mapset")
     private MapsetStats mapsetStats; //use this for v3 DTOs
 
     @Transient
@@ -148,4 +148,5 @@ public class Mapset extends BaseEntity {
     public void setStatus(Cv status) {
         this.status = status;
     }
+
 }

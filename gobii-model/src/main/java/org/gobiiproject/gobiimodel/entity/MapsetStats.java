@@ -12,13 +12,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "dataset_stats")
+@Table(name = "mapset_stats")
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class MapsetStats {
     @Id
     @Column(name="mapset_id")
-    private Integer datasetId;
+    private Integer mapsetId;
 
 
     @Column(name="marker_count")
