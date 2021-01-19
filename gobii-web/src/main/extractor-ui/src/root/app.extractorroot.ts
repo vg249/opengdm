@@ -51,6 +51,7 @@ export class ExtractorRoot implements OnInit {
 
     //
     public profileOk: boolean = null;
+    public cropsOk: boolean = null;
 
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -130,12 +131,19 @@ export class ExtractorRoot implements OnInit {
 
     private initializeCropType() {
         let scope$ = this;
+        console.log("Initializing crops...");
         this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
-            if (crops) {
+            let authorizedCrops = crops.filter( crop => crop.userAuthorized);
+            console.log(authorizedCrops);
+
+            if (authorizedCrops.length) {
+                this.cropsOk = true;
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.store.dispatch(new fileItemAction.SetCurrentCropAction(crops[0].cropType));
                 this.fileItemService.loadCrops(GobiiExtractFilterType.UNKNOWN, crops, 0);
                 scope$.initializeServerConfigs();   
+            } else {
+                this.cropsOk = false;
             }
         })
     }
@@ -473,6 +481,10 @@ export class ExtractorRoot implements OnInit {
 
     public isProfileOk() {
         return this.profileOk;
+    }
+
+    public isCropsOk() {
+        return this.cropsOk;
     }
 
     public logout() {
