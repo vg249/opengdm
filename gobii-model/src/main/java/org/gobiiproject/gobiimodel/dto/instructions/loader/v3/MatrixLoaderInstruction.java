@@ -6,6 +6,10 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.templates.GenotypeMatrixTemplate;
 @Data
 public class MatrixLoaderInstruction {
 
+    private String platformId;
+
+    private String datasetId;
+
     private String fileType;
 
     private String dataFormat;
@@ -13,5 +17,6 @@ public class MatrixLoaderInstruction {
     private boolean loadMarkers;
 
     private GenotypeMatrixTemplate template;
+
 
 }

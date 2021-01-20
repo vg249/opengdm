@@ -196,14 +196,8 @@ public class GobiiFileReader {
         // If matrix load, get the instruction file for it.
         MatrixLoaderInstruction matrixLoaderInstruction;
         if(!Objects.isNull(loaderInstructions.getMatrix())) {
-            matrixLoaderInstruction =
-                jsonMapper.convertValue(
-                    loaderInstructions.getMatrix(),
-                    MatrixLoaderInstruction.class);
             HapMapAspectsMapper hapMapAspectsMapper = new HapMapAspectsMapper();
-            hapMapAspectsMapper.mapHapMapAspects(matrixLoaderInstruction,
-                loaderInstructions.getInputFile());
-            System.out.println(matrixLoaderInstruction);
+            hapMapAspectsMapper.mapHapMapAspects(loaderInstructions);
         }
 
         // Process instruction file to create intermediate files.
