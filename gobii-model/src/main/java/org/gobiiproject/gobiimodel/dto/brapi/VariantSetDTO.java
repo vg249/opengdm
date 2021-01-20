@@ -55,13 +55,13 @@ public class VariantSetDTO extends DTOBaseAuditable {
     private Set<AnalysisDTO> analyses = new HashSet<>();
 
     @GobiiEntityMap(
-        paramName="dataset.datasetStats.dnarunCount",
+        paramName="datasetStats.dnarunCount",
         entity = Dataset.class,
         deep=true)
     private Integer callSetCount = 0;
 
     @GobiiEntityMap(
-        paramName="dataset.datasetStats.markerCount",
+        paramName="datasetStats.markerCount",
         entity = Dataset.class,
         deep=true)
     private Integer variantCount = 0;
