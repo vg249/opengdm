@@ -32,7 +32,13 @@
                     *ngIf="isCropsOk() === false"
                     >
                     <div class="panel-body" style="text-align:center">
-                        Please contact below administrators: TODO list of admins.
+                        Please contact below Admin to get access: <br/>
+                        <table style="margin-left:auto;margin-right:auto">
+                            <tr *ngFor="let admin of admins">
+                                <td>{{admin.firstName}} {{admin.lastName}} &lt;<a href="mailto:{{admin.email}}">{{admin.email}}</a>&gt;</td>
+                            </tr>
+
+                        </table> 
                         <a href="javascript: void(0)" (click)="logout()">Go to login page.</a>
                     </div> 
             </p-dialog>

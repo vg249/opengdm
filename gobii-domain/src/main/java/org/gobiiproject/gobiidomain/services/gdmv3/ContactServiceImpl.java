@@ -127,6 +127,9 @@ public class ContactServiceImpl implements ContactService {
             throw new GobiiDomainException(e);
         }
     }
+
+
+    
   
 
 }

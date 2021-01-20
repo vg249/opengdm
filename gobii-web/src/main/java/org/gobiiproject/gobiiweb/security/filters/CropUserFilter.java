@@ -81,6 +81,11 @@ public class CropUserFilter extends GenericFilterBean {
             return;
 
         }
+        //skip crop user filter for /contacts/admin
+        if(servicePath.endsWith("/contacts/admin")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         HttpServletRequest req = (HttpServletRequest) request;

@@ -21,6 +21,7 @@ public interface KeycloakService {
     ContactDTO getUserByUserName(String userName) throws GobiiDomainException;
 
     List<ContactDTO> getKeycloakUsers(String cropType, String role, Integer page, Integer pageSize) throws Exception;
+    List<ContactDTO> getKeycloakRealmAdmin() throws Exception;
 
 	TokenInfo getToken(String username, String password) throws Exception;
 

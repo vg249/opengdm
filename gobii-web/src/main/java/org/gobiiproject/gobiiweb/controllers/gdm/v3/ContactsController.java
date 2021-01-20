@@ -30,7 +30,6 @@ import lombok.AllArgsConstructor;
 
 @Scope(value = "request")
 @RestController
-@RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
 @AllArgsConstructor
@@ -42,7 +41,7 @@ public class ContactsController {
      * List Contacts
      * @return
      */
-    @GetMapping("/contacts")
+    @GetMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3 + "/contacts")
     @ResponseBody
     public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getContacts(
         @RequestParam(required=false, defaultValue = "0") Integer page,
@@ -56,4 +55,7 @@ public class ContactsController {
         BrApiMasterListPayload<ContactDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
     }
+
+
+
 }
