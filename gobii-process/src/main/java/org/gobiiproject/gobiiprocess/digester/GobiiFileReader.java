@@ -841,7 +841,9 @@ public class GobiiFileReader {
             logError("Digester", "Data Set ID is null for variant call");
         }
         if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
+            jobStatus
+                .set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
+                    "Matrix Upload");
             hdf5Success = HDF5Interface.createHDF5FromDataset(
                 pm,
                 datasetType,

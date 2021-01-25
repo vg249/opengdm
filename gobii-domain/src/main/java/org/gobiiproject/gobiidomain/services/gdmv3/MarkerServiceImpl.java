@@ -164,12 +164,13 @@ public class MarkerServiceImpl implements MarkerService {
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);
         loaderInstruction.setOutputDir(outputFilesDir);
 
+        Map<String, Object> aspectValues = new HashMap<>();
+
         //Get API fields Entity Mapping
         HashSet<String> propertyFields = new HashSet<String>(){{add("markerProperties");}};
         Map<String, List<String>> fileColumnsApiFieldsMap =
             Utils.getFileColumnsApiFieldsMap(markerTemplateMap, propertyFields);
 
-        Map<String, Object> aspectValues = new HashMap<>();
 
         // Get Header
         String[] fileColumns = Utils.getHeaders(markerFile);
