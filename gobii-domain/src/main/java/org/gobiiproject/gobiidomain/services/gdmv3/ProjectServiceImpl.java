@@ -250,10 +250,10 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProjectName(value);
     }
 
-    private void updateContact(Project project, String value) throws NumberFormatException, Exception {
-        Contact contact = this.loadContact(value);
-        project.setContact(contact);
-    }
+    // private void updateContact(Project project, String value) throws NumberFormatException, Exception {
+    //     Contact contact = this.loadContact(value);
+    //     project.setContact(contact);
+    // }
 
     @Transactional
     @Override
