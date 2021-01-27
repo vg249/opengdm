@@ -195,7 +195,7 @@ public class GobiiFileReader {
         // Check if it is a matrix upload
         // If matrix load, get the instruction file for it.
         MatrixLoaderInstruction matrixLoaderInstruction;
-        if(!Objects.isNull(loaderInstructions.getMatrix())) {
+        if(!Objects.isNull(loaderInstructions.getInstructionType())) {
             HapMapAspectsMapper hapMapAspectsMapper = new HapMapAspectsMapper();
             hapMapAspectsMapper.mapHapMapAspects(loaderInstructions);
         }
