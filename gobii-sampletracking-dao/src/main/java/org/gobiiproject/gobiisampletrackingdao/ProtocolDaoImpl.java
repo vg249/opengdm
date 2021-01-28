@@ -1,20 +1,26 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
-import lombok.extern.slf4j.Slf4j;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.entity.Platform;
-import org.gobiiproject.gobiimodel.entity.Protocol;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.hibernate.exception.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
-import java.util.*;
+
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.entity.Protocol;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ProtocolDaoImpl implements ProtocolDao {

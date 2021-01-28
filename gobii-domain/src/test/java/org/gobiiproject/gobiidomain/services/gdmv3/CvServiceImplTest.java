@@ -179,7 +179,7 @@ public class CvServiceImplTest {
 
         Cv cvToUpdate = arg.getValue();
 
-        assertTrue("test update failed", cvToUpdate.getTerm().equals("test-name")); // TODO: integ test better
+        assertTrue("test update failed", cvToUpdate.getTerm().equals("test-name"));
     }
 
 

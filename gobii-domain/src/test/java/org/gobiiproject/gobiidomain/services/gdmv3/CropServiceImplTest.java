@@ -1,8 +1,12 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
 
-import org.gobiiproject.gobiidomain.services.gdmv3.CropServiceImpl;
-import org.gobiiproject.gobiidomain.services.gdmv3.KeycloakService;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CropsDTO;
@@ -17,12 +21,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @WebAppConfiguration
 @RunWith(PowerMockRunner.class)
