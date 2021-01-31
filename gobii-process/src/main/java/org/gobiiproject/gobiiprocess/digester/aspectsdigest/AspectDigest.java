@@ -3,9 +3,14 @@ package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
+import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.Masticator;
 import org.gobii.masticator.aspects.AspectParser;
 import org.gobii.masticator.aspects.FileAspect;
+import org.gobii.masticator.reader.ReaderResult;
+import org.gobii.masticator.reader.TableReader;
+import org.gobii.masticator.reader.result.End;
+import org.gobii.masticator.reader.result.Val;
 import org.gobiiproject.gobiidomain.services.gdmv3.Utils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
@@ -96,8 +101,8 @@ public abstract class AspectDigest {
                 e);
         }
 
-        File data = new File(loaderInstruction.getInputFile());
-        if (! data.exists()) {
+        File dataFile = new File(loaderInstruction.getInputFile());
+        if (! dataFile.exists()) {
             throw new GobiiException(
                 String.format("Data file at %s does not exist", loaderInstruction.getInputFile()));
         }
@@ -114,7 +119,7 @@ public abstract class AspectDigest {
                     loaderInstruction.getOutputDir()));
         }
 
-        Masticator masticator = new Masticator(aspect, data);
+        Masticator masticator = new Masticator(aspect, dataFile);
 
         List<Thread> threads = new LinkedList<>();
 
@@ -137,7 +142,7 @@ public abstract class AspectDigest {
             }
 
             final Thread t = new Thread(() -> {
-                try (FileWriter fileWriter = new FileWriter(outputFile, false);
+                try (FileWriter fileWriter = new FileWriter(outputFile, true);
                      BufferedWriter writer = new BufferedWriter(fileWriter);) {
                     masticator.run(table, writer);
                 } catch (IOException e) {

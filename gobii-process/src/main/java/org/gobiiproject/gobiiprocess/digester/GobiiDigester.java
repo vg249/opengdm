@@ -147,7 +147,7 @@ public class GobiiDigester {
             if (cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(
                 cli.getOptionValue("hdfFiles"));
             LoaderGlobalConfigs.setFromFlags(cli);
-            args = cli.getArgs();//Remaining args passed through
+            args = cli.getArgs();
         } catch (org.apache.commons.cli.ParseException exp) {
             String helpMessage = (
                 "Also accepts input file directly after arguments\n" +
@@ -198,13 +198,13 @@ public class GobiiDigester {
         String filename = new File(instructionFile).getName();
         String jobName = filename.substring(0, filename.lastIndexOf('.'));
 
-
         // Process instruction file to create intermediate files.
         DigesterResult digestResult;
         if(isAspectInstruction(loaderInstructions)) {
             loaderInstructions.setJobName(jobName);
             digestResult =
-                new AspectDigestFactory().getDigest(loaderInstructions,configuration).digest();
+                new AspectDigestFactory().getDigest(loaderInstructions, configuration).digest();
+            pm.setUser(digestResult.getContactEmail());
         }
         else {
             digestResult = processOldInstructionFile(
@@ -224,9 +224,7 @@ public class GobiiDigester {
         // Load meta data if instruction file processing and validation is successful.
         boolean metaDataLoaded = false;
         if (digestResult.isSuccess() && Logger.success()) {
-            metaDataLoaded = loadMetaData(
-                digestResult,
-                jobStatus);
+            metaDataLoaded = loadMetaData(digestResult, jobStatus);
             if (!metaDataLoaded) {
                 Logger.logError("FileReader", "No new data was uploaded.");
             }
@@ -261,7 +259,6 @@ public class GobiiDigester {
                     JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),
                     "Successful Data Load");
             }
-
         } else { //endIf(success)
             Logger.logWarning("Digester", "Unsuccessful Upload");
             jobStatus.setError("Unsuccessfully Uploaded Files");

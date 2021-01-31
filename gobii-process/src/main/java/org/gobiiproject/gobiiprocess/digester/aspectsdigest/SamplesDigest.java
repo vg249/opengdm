@@ -103,7 +103,6 @@ public class SamplesDigest extends AspectDigest {
                         loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
                     }
 
-
                     DigesterResult digesterResult =
                         new DigesterResult(
                             true,
@@ -118,7 +117,7 @@ public class SamplesDigest extends AspectDigest {
                             jobStatus,
                             null,
                             loaderInstruction.getJobName());
-
+                    digesterResult.setContactEmail(loaderInstruction.getContactEmail());
                     return digesterResult;
                 }
             }
