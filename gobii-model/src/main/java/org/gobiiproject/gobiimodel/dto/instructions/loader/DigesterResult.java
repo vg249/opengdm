@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import com.google.gson.internal.$Gson$Preconditions;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 
 import java.io.File;
@@ -31,6 +32,8 @@ public class DigesterResult {
     private Integer datasetId;
 
     private String jobName;
+
+    private String contactEmail;
 
     public DigesterResult(boolean success,
                           boolean sendQc,
@@ -168,5 +171,13 @@ public class DigesterResult {
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 }
