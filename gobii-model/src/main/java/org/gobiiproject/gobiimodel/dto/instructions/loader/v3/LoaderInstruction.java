@@ -29,12 +29,12 @@ public class LoaderInstruction {
 
     private String contactEmail;
 
-    private Integer templateId;
-
     private String instructionType;
 
     private Map<String, Object> aspects;
 
     private Object userRequest;
+
+    private String jobName;
 
 }

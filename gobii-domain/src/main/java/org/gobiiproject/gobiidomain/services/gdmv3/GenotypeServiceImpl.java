@@ -61,7 +61,6 @@ public class GenotypeServiceImpl implements GenotypeService {
         matrixLoaderInstruction.setFileType(genotypesUploadRequest.getFileType());
         matrixLoaderInstruction.setDataFormat(genotypesUploadRequest.getDataFormat());
 
-        loaderInstruction.setMatrix(matrixLoaderInstruction);
 
         // Write instruction file
         Utils.writeInstructionFile(loaderInstruction, jobName, cropType);

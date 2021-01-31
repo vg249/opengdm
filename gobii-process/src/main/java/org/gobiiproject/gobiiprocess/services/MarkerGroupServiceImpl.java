@@ -2,13 +2,10 @@ package org.gobiiproject.gobiiprocess.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
-import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.MarkerGroupDao;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.io.*;
@@ -50,7 +47,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                 Paths.get(digestDirPath, "marker_group.upload").toString();
 
             MarkerGroupDao markerGroupDao =
-                GobiiProcessContextSingleton.getInstance().getBean(MarkerGroupDao.class);
+                SpringContextLoaderSingleton.getInstance().getBean(MarkerGroupDao.class);
 
             Long mappedIdsCount = null;
 

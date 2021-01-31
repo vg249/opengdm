@@ -4,7 +4,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
-import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 import org.gobiiproject.gobiisampletrackingdao.JobDao;
@@ -17,8 +17,8 @@ public class JobServiceImpl implements JobService {
 
 
     public Job update(Job job) throws GobiiDaoException {
-        JobDao jobDao = GobiiProcessContextSingleton.getInstance().getBean(JobDao.class);
-        CvDao cvDao = GobiiProcessContextSingleton.getInstance().getBean(CvDao.class);
+        JobDao jobDao = SpringContextLoaderSingleton.getInstance().getBean(JobDao.class);
+        CvDao cvDao = SpringContextLoaderSingleton.getInstance().getBean(CvDao.class);
         List<Cv> statuses = cvDao.getCvs(job.getStatus().getTerm(),
             CvGroupTerm.CVGROUP_JOBSTATUS.getCvGroupName(),
             GobiiCvGroupType.GROUP_TYPE_SYSTEM);
@@ -31,7 +31,7 @@ public class JobServiceImpl implements JobService {
     }
 
     public Job getByName(String name) {
-        JobDao jobDao = GobiiProcessContextSingleton.getInstance().getBean(JobDao.class);
+        JobDao jobDao = SpringContextLoaderSingleton.getInstance().getBean(JobDao.class);
         return jobDao.getByName(name);
     }
 

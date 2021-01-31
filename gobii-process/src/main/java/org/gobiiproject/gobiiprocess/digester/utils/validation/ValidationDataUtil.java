@@ -6,9 +6,8 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
-import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.*;
-import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ public class ValidationDataUtil {
     static final int MAX_ENTITIES_PER_QUERY = 2000;
 
     private static <T> T getBean(Class<T> objectType) {
-        return GobiiProcessContextSingleton.getInstance().getBean(objectType);
+        return SpringContextLoaderSingleton.getInstance().getBean(objectType);
     }
 
     /**

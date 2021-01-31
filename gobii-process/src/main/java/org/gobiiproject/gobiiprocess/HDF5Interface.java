@@ -16,8 +16,7 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
-import org.hibernate.internal.util.xml.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
 
 import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -86,7 +85,7 @@ public class HDF5Interface {
             rmIfExist(HDF5File);
             return false;
         }
-        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        GobiiDigester.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
         return true;
     }
 

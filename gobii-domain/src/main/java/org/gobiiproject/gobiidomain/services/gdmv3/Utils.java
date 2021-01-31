@@ -168,12 +168,11 @@ public class Utils {
     }
 
     /**
-     * @param dnaRunTemplateMap
      * @param propertyFieldNames
      * @return
      */
     public static Map<String, List<String>> getFileColumnsApiFieldsMap(
-        Map<String, Object> dnaRunTemplateMap,
+        Map<String, Object> templateMap,
         HashSet<String> propertyFieldNames) {
 
         if(propertyFieldNames == null) {
@@ -182,10 +181,10 @@ public class Utils {
         Map<String, List<String>> fileColumnsApiFieldsMap = new HashMap<>();
         List<String> fileField;
 
-        for(String apiField : dnaRunTemplateMap.keySet()) {
+        for(String apiField : templateMap.keySet()) {
             if(propertyFieldNames.contains(apiField)) {
                 Map<String, List<String>> properties =
-                    (HashMap<String, List<String>>) dnaRunTemplateMap.get(apiField);
+                    (HashMap<String, List<String>>) templateMap.get(apiField);
                 for(String property : properties.keySet()) {
                     fileField = properties.get(property);
                     if(fileField.size() > 0) {
@@ -197,7 +196,7 @@ public class Utils {
                 }
             }
             else {
-                fileField = (List<String>) dnaRunTemplateMap.get(apiField);
+                fileField = (List<String>) templateMap.get(apiField);
                 if (fileField.size() > 0) {
                     if(!fileColumnsApiFieldsMap.containsKey(fileField.get(0))) {
                         fileColumnsApiFieldsMap.put(fileField.get(0), new ArrayList<>());
