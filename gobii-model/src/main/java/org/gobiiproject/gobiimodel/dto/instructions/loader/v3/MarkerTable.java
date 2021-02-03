@@ -18,22 +18,22 @@ public class MarkerTable implements Table {
 
     @JsonProperty("name")
     @NotNull(message = "marker name not mapped")
-    private Aspect markerName;
+    private CoordinatesAspect markerName;
 
     @JsonProperty("platform_name")
-    private Aspect platformName;
+    private CoordinatesAspect platformName;
 
     @JsonProperty("ref")
-    private Aspect markerRef;
+    private CoordinatesAspect markerRef;
 
     @JsonProperty("alt")
-    private Aspect markerAlt;
+    private CoordinatesAspect markerAlt;
 
     @JsonProperty("sequence")
-    private Aspect markerSequence;
+    private CoordinatesAspect markerSequence;
 
     @JsonProperty("strand_name")
-    private Aspect markerStrandName;
+    private CoordinatesAspect markerStrandName;
 
     @JsonProperty("props")
     private JsonAspect markerProperties;
@@ -54,51 +54,51 @@ public class MarkerTable implements Table {
         this.status = status;
     }
 
-    public Aspect getMarkerName() {
+    public CoordinatesAspect getMarkerName() {
         return markerName;
     }
 
-    public void setMarkerName(Aspect markerName) {
+    public void setMarkerName(CoordinatesAspect markerName) {
         this.markerName = markerName;
     }
 
-    public Aspect getPlatformName() {
+    public CoordinatesAspect getPlatformName() {
         return platformName;
     }
 
-    public void setPlatformName(Aspect platformName) {
+    public void setPlatformName(CoordinatesAspect platformName) {
         this.platformName = platformName;
     }
 
-    public Aspect getMarkerRef() {
+    public CoordinatesAspect getMarkerRef() {
         return markerRef;
     }
 
-    public void setMarkerRef(Aspect markerRef) {
+    public void setMarkerRef(CoordinatesAspect markerRef) {
         this.markerRef = markerRef;
     }
 
-    public Aspect getMarkerAlt() {
+    public CoordinatesAspect getMarkerAlt() {
         return markerAlt;
     }
 
-    public void setMarkerAlt(Aspect markerAlt) {
+    public void setMarkerAlt(CoordinatesAspect markerAlt) {
         this.markerAlt = markerAlt;
     }
 
-    public Aspect getMarkerSequence() {
+    public CoordinatesAspect getMarkerSequence() {
         return markerSequence;
     }
 
-    public void setMarkerSequence(Aspect markerSequence) {
+    public void setMarkerSequence(CoordinatesAspect markerSequence) {
         this.markerSequence = markerSequence;
     }
 
-    public Aspect getMarkerStrandName() {
+    public CoordinatesAspect getMarkerStrandName() {
         return markerStrandName;
     }
 
-    public void setMarkerStrandName(Aspect markerStrandName) {
+    public void setMarkerStrandName(CoordinatesAspect markerStrandName) {
         this.markerStrandName = markerStrandName;
     }
 

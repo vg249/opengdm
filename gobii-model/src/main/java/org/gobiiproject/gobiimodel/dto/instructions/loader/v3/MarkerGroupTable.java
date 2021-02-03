@@ -17,18 +17,18 @@ public class MarkerGroupTable implements Table {
 
     @NotNull(message = "marker name cannot be null")
     @JsonProperty("marker_name")
-    private Aspect markerName;
+    private CoordinatesAspect markerName;
 
     @JsonProperty("platform_name")
-    private Aspect platformName;
+    private CoordinatesAspect platformName;
 
     @NotNull(message = "marker group name cannot be null")
     @JsonProperty("marker_group_name")
-    private Aspect markerGroupName;
+    private CoordinatesAspect markerGroupName;
 
-    private Aspect germplasmGroup;
+    private CoordinatesAspect germplasmGroup;
 
     @JsonProperty("fav_alleles")
-    private Aspect favorableAlleles;
+    private CoordinatesAspect favorableAlleles;
 
 }

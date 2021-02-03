@@ -17,19 +17,19 @@ public class DnaRunTable implements Table {
     private String experimentId;
 
     @JsonProperty("experiment_name")
-    private Aspect experimentName;
+    private CoordinatesAspect experimentName;
 
     @JsonProperty("status")
     private String status;
 
     @JsonProperty("dnasample_name")
-    private Aspect dnaSampleName;
+    private CoordinatesAspect dnaSampleName;
 
     @JsonProperty("num")
-    private Aspect dnaSampleNum;
+    private CoordinatesAspect dnaSampleNum;
 
     @JsonProperty("name")
-    private Aspect dnaRunName;
+    private CoordinatesAspect dnaRunName;
 
     @JsonProperty("props")
     private JsonAspect dnaRunProperties;
@@ -50,11 +50,11 @@ public class DnaRunTable implements Table {
         this.experimentId = experimentId;
     }
 
-    public Aspect getExperimentName() {
+    public CoordinatesAspect getExperimentName() {
         return experimentName;
     }
 
-    public void setExperimentName(Aspect experimentName) {
+    public void setExperimentName(CoordinatesAspect experimentName) {
         this.experimentName = experimentName;
     }
 
@@ -74,27 +74,27 @@ public class DnaRunTable implements Table {
         this.status = status;
     }
 
-    public Aspect getDnaSampleName() {
+    public CoordinatesAspect getDnaSampleName() {
         return dnaSampleName;
     }
 
-    public void setDnaSampleName(Aspect dnaSampleName) {
+    public void setDnaSampleName(CoordinatesAspect dnaSampleName) {
         this.dnaSampleName = dnaSampleName;
     }
 
-    public Aspect getDnaSampleNum() {
+    public CoordinatesAspect getDnaSampleNum() {
         return dnaSampleNum;
     }
 
-    public void setDnaSampleNum(Aspect dnaSampleNum) {
+    public void setDnaSampleNum(CoordinatesAspect dnaSampleNum) {
         this.dnaSampleNum = dnaSampleNum;
     }
 
-    public Aspect getDnaRunName() {
+    public CoordinatesAspect getDnaRunName() {
         return dnaRunName;
     }
 
-    public void setDnaRunName(Aspect dnaRunName) {
+    public void setDnaRunName(CoordinatesAspect dnaRunName) {
         this.dnaRunName = dnaRunName;
     }
 }

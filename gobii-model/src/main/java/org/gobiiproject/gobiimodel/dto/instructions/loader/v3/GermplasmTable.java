@@ -9,51 +9,51 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 public class GermplasmTable implements Table {
 
     @JsonProperty("name")
-    private Aspect germplasmName;
+    private CoordinatesAspect germplasmName;
 
     @JsonProperty("external_code")
-    private Aspect germplasmExternalCode;
+    private CoordinatesAspect germplasmExternalCode;
 
     @JsonProperty("type_name")
-    private Aspect germplasmType;
+    private CoordinatesAspect germplasmType;
 
     @JsonProperty("species_name")
-    private Aspect germplasmSpeciesName;
+    private CoordinatesAspect germplasmSpeciesName;
 
     private String status;
 
     @JsonProperty("props")
     private JsonAspect germplasmProperties;
 
-    public Aspect getGermplasmName() {
+    public CoordinatesAspect getGermplasmName() {
         return germplasmName;
     }
 
-    public void setGermplasmName(Aspect germplasmName) {
+    public void setGermplasmName(CoordinatesAspect germplasmName) {
         this.germplasmName = germplasmName;
     }
 
-    public Aspect getGermplasmExternalCode() {
+    public CoordinatesAspect getGermplasmExternalCode() {
         return germplasmExternalCode;
     }
 
-    public void setGermplasmExternalCode(Aspect germplasmExternalCode) {
+    public void setGermplasmExternalCode(CoordinatesAspect germplasmExternalCode) {
         this.germplasmExternalCode = germplasmExternalCode;
     }
 
-    public Aspect getGermplasmType() {
+    public CoordinatesAspect getGermplasmType() {
         return germplasmType;
     }
 
-    public void setGermplasmType(Aspect germplasmType) {
+    public void setGermplasmType(CoordinatesAspect germplasmType) {
         this.germplasmType = germplasmType;
     }
 
-    public Aspect getGermplasmSpeciesName() {
+    public CoordinatesAspect getGermplasmSpeciesName() {
         return germplasmSpeciesName;
     }
 
-    public void setGermplasmSpeciesName(Aspect germplasmSpeciesName) {
+    public void setGermplasmSpeciesName(CoordinatesAspect germplasmSpeciesName) {
         this.germplasmSpeciesName = germplasmSpeciesName;
     }
 

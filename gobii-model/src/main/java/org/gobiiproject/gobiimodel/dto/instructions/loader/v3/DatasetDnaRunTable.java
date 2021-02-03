@@ -8,7 +8,7 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 import javax.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@GobiiAspectTable(name = "marker_group")
+@GobiiAspectTable(name = "dataset_dnarun")
 @Data
 public class DatasetDnaRunTable implements Table {
 
@@ -16,7 +16,7 @@ public class DatasetDnaRunTable implements Table {
     private String platformId;
 
     @JsonProperty("platform_name")
-    private Aspect platformName;
+    private CoordinatesAspect platformName;
 
     @NotNull(message = "dataset id cannot be null")
     @JsonProperty("dataset_id")
@@ -27,9 +27,9 @@ public class DatasetDnaRunTable implements Table {
 
     @NotNull(message = "dnarun name cannot be null")
     @JsonProperty("dnarun_name")
-    private Aspect dnaRunName;
+    private CoordinatesAspect dnaRunName;
 
     @NotNull(message = "datset marker index cannot be null")
     @JsonProperty("dataset_dnarun_idx")
-    private Aspect datasetDnaRunIdx;
+    private RangeAspect datasetDnaRunIdx;
 }

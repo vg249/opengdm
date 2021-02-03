@@ -12,25 +12,25 @@ public class DnaSampleTable implements Table {
     private String projectId;
 
     @JsonProperty("name")
-    private Aspect dnaSampleName;
+    private CoordinatesAspect dnaSampleName;
 
     @JsonProperty("num")
-    private Aspect dnaSampleNum;
+    private CoordinatesAspect dnaSampleNum;
 
     @JsonProperty("external_code")
-    private Aspect germplasmExternalCode;
+    private CoordinatesAspect germplasmExternalCode;
 
     @JsonProperty("platename")
-    private Aspect dnaSamplePlateName;
+    private CoordinatesAspect dnaSamplePlateName;
 
     @JsonProperty("well_row")
-    private Aspect dnaSampleWellRow;
+    private CoordinatesAspect dnaSampleWellRow;
 
     @JsonProperty("well_col")
-    private Aspect dnaSampleWellCol;
+    private CoordinatesAspect dnaSampleWellCol;
 
     @JsonProperty("uuid")
-    private Aspect dnaSampleUuid;
+    private CoordinatesAspect dnaSampleUuid;
 
     @JsonProperty("props")
     private JsonAspect dnaSampleProperties;
@@ -45,59 +45,59 @@ public class DnaSampleTable implements Table {
         this.projectId = projectId;
     }
 
-    public Aspect getDnaSampleName() {
+    public CoordinatesAspect getDnaSampleName() {
         return dnaSampleName;
     }
 
-    public void setDnaSampleName(Aspect dnaSampleName) {
+    public void setDnaSampleName(CoordinatesAspect dnaSampleName) {
         this.dnaSampleName = dnaSampleName;
     }
 
-    public Aspect getDnaSampleNum() {
+    public CoordinatesAspect getDnaSampleNum() {
         return dnaSampleNum;
     }
 
-    public void setDnaSampleNum(Aspect dnaSampleNum) {
+    public void setDnaSampleNum(CoordinatesAspect dnaSampleNum) {
         this.dnaSampleNum = dnaSampleNum;
     }
 
-    public Aspect getGermplasmExternalCode() {
+    public CoordinatesAspect getGermplasmExternalCode() {
         return germplasmExternalCode;
     }
 
-    public void setGermplasmExternalCode(Aspect germplasmExternalCode) {
+    public void setGermplasmExternalCode(CoordinatesAspect germplasmExternalCode) {
         this.germplasmExternalCode = germplasmExternalCode;
     }
 
-    public Aspect getDnaSamplePlateName() {
+    public CoordinatesAspect getDnaSamplePlateName() {
         return dnaSamplePlateName;
     }
 
-    public void setDnaSamplePlateName(Aspect dnaSamplePlateName) {
+    public void setDnaSamplePlateName(CoordinatesAspect dnaSamplePlateName) {
         this.dnaSamplePlateName = dnaSamplePlateName;
     }
 
-    public Aspect getDnaSampleWellRow() {
+    public CoordinatesAspect getDnaSampleWellRow() {
         return dnaSampleWellRow;
     }
 
-    public void setDnaSampleWellRow(Aspect dnaSampleWellRow) {
+    public void setDnaSampleWellRow(CoordinatesAspect dnaSampleWellRow) {
         this.dnaSampleWellRow = dnaSampleWellRow;
     }
 
-    public Aspect getDnaSampleWellCol() {
+    public CoordinatesAspect getDnaSampleWellCol() {
         return dnaSampleWellCol;
     }
 
-    public void setDnaSampleWellCol(Aspect dnaSampleWellCol) {
+    public void setDnaSampleWellCol(CoordinatesAspect dnaSampleWellCol) {
         this.dnaSampleWellCol = dnaSampleWellCol;
     }
 
-    public Aspect getDnaSampleUuid() {
+    public CoordinatesAspect getDnaSampleUuid() {
         return dnaSampleUuid;
     }
 
-    public void setDnaSampleUuid(Aspect dnaSampleUuid) {
+    public void setDnaSampleUuid(CoordinatesAspect dnaSampleUuid) {
         this.dnaSampleUuid = dnaSampleUuid;
     }
 

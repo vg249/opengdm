@@ -8,7 +8,7 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 import javax.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@GobiiAspectTable(name = "marker_group")
+@GobiiAspectTable(name = "dataset_marker")
 @Data
 public class DatasetMarkerTable implements Table {
 
@@ -17,10 +17,10 @@ public class DatasetMarkerTable implements Table {
 
     @NotNull(message = "marker name cannot be null")
     @JsonProperty("marker_name")
-    private Aspect markerName;
+    private CoordinatesAspect markerName;
 
     @JsonProperty("platform_name")
-    private Aspect platformName;
+    private CoordinatesAspect platformName;
 
     @NotNull(message = "dataset id cannot be null")
     @JsonProperty("dataset_id")
@@ -28,6 +28,6 @@ public class DatasetMarkerTable implements Table {
 
     @NotNull(message = "datset marker index cannot be null")
     @JsonProperty("marker_idx")
-    private Aspect datasetMarkerIdx;
+    private RangeAspect datasetMarkerIdx;
 
 }
