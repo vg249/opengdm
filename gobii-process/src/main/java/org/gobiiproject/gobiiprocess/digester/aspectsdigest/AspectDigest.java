@@ -3,31 +3,22 @@ package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
-import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.Masticator;
 import org.gobii.masticator.aspects.AspectParser;
 import org.gobii.masticator.aspects.FileAspect;
-import org.gobii.masticator.reader.ReaderResult;
-import org.gobii.masticator.reader.TableReader;
-import org.gobii.masticator.reader.result.End;
-import org.gobii.masticator.reader.result.Val;
-import org.gobiiproject.gobiidomain.services.gdmv3.Utils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
-import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.utils.SimpleTimer;
-import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
-import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
+import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
@@ -41,7 +32,7 @@ import java.util.*;
 
 public abstract class AspectDigest {
 
-    final ObjectMapper mapper = new ObjectMapper();
+    static final ObjectMapper mapper = new ObjectMapper();
 
     final String propertyGroupSeparator = ".";
 
@@ -77,8 +68,9 @@ public abstract class AspectDigest {
 
     abstract public DigesterResult digest();
 
+
     /**
-     * Masticator is the module which process refactored instruction file.
+     * Masticator is the module. process the refactored instruction file.
      * To avoid making changes directly in masticator as it is maintained separately,
      * just duplicate parts of it.
      *
@@ -133,18 +125,26 @@ public abstract class AspectDigest {
 
             intermediateDigestFileMap.put(table, outputFile);
 
-            try {
-                outputFile.createNewFile();
-            }
-            catch (IOException ioE) {
-                throw new GobiiException(
-                    String.format("Unable to create digest files %s", outputFilePath));
+            // Create output files for each table
+            if(!outputFile.exists()) {
+                try {
+                    outputFile.createNewFile();
+                }
+                catch (IOException ioE) {
+                    throw new GobiiException(
+                        String.format("Unable to create digest files %s", outputFilePath));
+                }
             }
 
+            
             final Thread t = new Thread(() -> {
+                boolean writeHeader = false;
+                if(outputFile.length() == 0) {
+                    writeHeader = true;
+                }
                 try (FileWriter fileWriter = new FileWriter(outputFile, true);
                      BufferedWriter writer = new BufferedWriter(fileWriter);) {
-                    masticator.run(table, writer);
+                    masticator.run(table, writer, writeHeader);
                 } catch (IOException e) {
                     throw new GobiiException(
                         String.format("IOException while processing {}", table),
@@ -173,6 +173,27 @@ public abstract class AspectDigest {
 
         return intermediateDigestFileMap;
 
+
+    }
+
+    protected void setupOutputDirectory() throws GobiiException {
+        
+        File outputDir = new File(loaderInstruction.getOutputDir());
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        if (! outputDir.isDirectory()) {
+            throw new GobiiException(
+                String.format(
+                    "Output Path %s is not a directory",
+                    loaderInstruction.getOutputDir()));
+        }
+        try {
+            org.apache.commons.io.FileUtils.cleanDirectory(outputDir);
+        }
+        catch(IOException e) {
+            throw new GobiiException("Unable to setup output directory for digester");
+        }
 
     }
 
@@ -254,6 +275,42 @@ public abstract class AspectDigest {
         catch (NullPointerException | IllegalAccessException e) {
             throw new GobiiException("Unable to map api fileds to file columns");
         }
+    }
+
+    /**
+     * @param inputFilePath input file path given in instruction file.
+     * @return  List of files to digest
+     * @throws GobiiException when file does not exist
+     */
+    protected List<File> getFilesToDigest() throws GobiiException {
+
+        List<File> filesToDigest = new ArrayList<>();        
+        File inputFile = new File(loaderInstruction.getInputFile());
+
+        if (inputFile.exists()) {
+
+            if(inputFile.isDirectory()) {
+                File[] filesArray = inputFile.listFiles();
+                if(filesArray != null) {
+                    filesToDigest.addAll(Arrays.asList(filesArray));
+                }
+            }
+            else if(inputFile.getName().endsWith(GobiiFileUtils.TAR_GUNZIP_EXTENSION) &&
+                inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
+                filesToDigest = GobiiFileUtils.extractTarGunZipFile(inputFile);
+            }
+            else if(inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
+                filesToDigest.add(GobiiFileUtils.extractGunZipFile(inputFile));
+            }
+            else {
+                filesToDigest.add(inputFile);
+            }
+            return filesToDigest;
+        }
+        else {
+            throw new GobiiException("Input file does not exist");
+        }
+
     }
 
     protected void setPropertyAspect(Map<String, Object> aspectValues,
