@@ -1,10 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.type.MapType;
 import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
-import org.gobiiproject.gobiidomain.services.gdmv3.Utils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
@@ -14,28 +11,26 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
-import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
-import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
-import org.gobiiproject.gobiiprocess.digester.utils.FileUtils;
+import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
-import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 
 @Slf4j
 public class SamplesDigest extends AspectDigest {
+
+    final String digestType = "SAMPLES";
 
     final HashSet<String> propertyFields = new HashSet<>(Arrays.asList(
         "dnaRunProperties",
@@ -50,79 +45,65 @@ public class SamplesDigest extends AspectDigest {
     private ProjectDao projectDao;
     private ExperimentDao experimentDao;
     private CvDao cvDao;
-    private LoaderTemplateDao loaderTemplateDao;
 
+    /**
+     * Constructor
+     * 
+     * @param loaderInstruction {@link LoaderInstruction} for loading dnaruns, samples 
+     * and germplasms.
+     * @param configSettings    Congiguration settings of GDM
+     * @throws GobiiException
+     */
     SamplesDigest(LoaderInstruction loaderInstruction,
                   ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
+
+        // If loadtype is not samples throw exception
+        if(!loaderInstruction.getLoadType().equals(digestType)) {
+            throw new GobiiException("Invalid digest for instruction");
+        }
         this.projectDao = SpringContextLoaderSingleton.getInstance().getBean(ProjectDao.class);
         this.experimentDao =
             SpringContextLoaderSingleton.getInstance().getBean(ExperimentDao.class);
         this.cvDao = SpringContextLoaderSingleton.getInstance().getBean(CvDao.class);
     }
 
-    public DigesterResult digest() {
-
-        File inputFile = new File(loaderInstruction.getInputFile());
+    /**
+     * Digests the loader instruction and creates intermediate files to be consumed by 
+     * Ifl.
+     * @return {@link DigesterResult} with map to intermediate files for each table to be loaded.  
+     */
+    public DigesterResult digest() throws GobiiException {
 
         List<File> filesToDigest = new ArrayList<>();
-
+        Map<String, File> intermediateDigestFileMap = new HashMap<>();
+    
+        // creates new directtory or cleans one if already exists
+        setupOutputDirectory();
+            
+    
         try {
-            if (inputFile.exists()) {
 
-                if(inputFile.isDirectory()) {
-                    File[] filesArray = inputFile.listFiles();
-                    if(filesArray != null) {
-                        filesToDigest.addAll(Arrays.asList(filesArray));
-                    }
-                }
-                else if(inputFile.getName().endsWith(FileUtils.TAR_GUNZIP_EXTENSION) &&
-                    inputFile.getName().endsWith(FileUtils.GUNZIP_EXTENSION)) {
-                    filesToDigest = FileUtils.extractTarGunZipFile(inputFile);
-                }
-                else if(inputFile.getName().endsWith(FileUtils.GUNZIP_EXTENSION)) {
-                    filesToDigest.add(FileUtils.extractGunZipFile(inputFile));
-                }
-                else {
-                    filesToDigest.add(inputFile);
+            filesToDigest = getFilesToDigest();
+
+            // Digested files are merged for each table.
+            for(File fileToDigest : filesToDigest) {
+
+                // Ignore non text file
+                if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
+                    continue;
                 }
 
-                // Digest each file
-                for(File fileToDigest : filesToDigest) {
+                Map<String, Table> aspects = getAspects(fileToDigest);
 
-                    // Ignore non text file
-                    if(!FileUtils.isFileTextFile(fileToDigest)) {
-                        continue;
-                    }
+                // Masticate and set the output.
+                Map<String, File> masticatedFilesMap = masticate(aspects);
 
-                    Map<String, Table> aspects = getAspects(fileToDigest);
-                    Map<String, File> intermediateDigestFileMap = masticate(aspects);
+                // Update the intermediate file map incase if there is any new table
+                masticatedFilesMap.forEach((table, filePath) -> {
+                    intermediateDigestFileMap.put(table, filePath);
+                });
 
-                    List<String> loadOrder = getLoadOrder();
-                    if(loadOrder == null || loadOrder.size() <= 0) {
-                        loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-                    }
-
-                    DigesterResult digesterResult =
-                        new DigesterResult(
-                            true,
-                            false,
-                            loaderInstruction.getCropType(),
-                            this.cropConfig,
-                            loaderInstruction.getOutputDir(),
-                            loaderInstruction.getLoadType(),
-                            intermediateDigestFileMap,
-                            loadOrder,
-                            loaderInstruction.getDatasetType(),
-                            jobStatus,
-                            null,
-                            loaderInstruction.getJobName());
-                    digesterResult.setContactEmail(loaderInstruction.getContactEmail());
-                    return digesterResult;
-                }
-            }
-            else {
-                throw new GobiiException("Input file does not exist");
             }
         }
         catch (Exception e) {
@@ -130,19 +111,41 @@ public class SamplesDigest extends AspectDigest {
             throw new GobiiException(e);
         }
 
-        return null;
+        // Get the load order from ifl config
+        List<String> loadOrder = getLoadOrder();
+        if(loadOrder == null || loadOrder.size() <= 0) {
+            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
+        }
+
+        DigesterResult digesterResult = new DigesterResult
+                .Builder()
+                .setSuccess(true)
+                .setSendQc(false)
+                .setCropType(loaderInstruction.getCropType())
+                .setCropConfig(cropConfig)
+                .setIntermediateFilePath(loaderInstruction.getOutputDir())
+                .setLoadType(loaderInstruction.getLoadType())
+                .setLoaderInstructionsMap(intermediateDigestFileMap)
+                .setLoaderInstructionsList(loadOrder)
+                .setDatasetType(loaderInstruction.getDatasetType())
+                .setJobStatusObject(jobStatus)
+                .setDatasetId(null)
+                .setJobName(loaderInstruction.getJobName())
+                .setContactEmail(loaderInstruction.getContactEmail())
+                .build();
+            
+        return digesterResult;
     }
 
     /**
-     * Get aspects mapped for the given dnarun file headers
-     * @return
+     * @return Map of table names to and aspect map of columns in the table to load to the 
+     * respective crop database.
      */
     private Map<String, Table> getAspects(File fileToDigest) throws GobiiException {
 
         // Set Marker Aspects
         Map<String, Table> aspects = new HashMap<>();
 
-        Scanner fileScanner;
 
         DnaRunTemplateDTO dnaRunTemplate;
         DnaRunTable dnaRunTable = new DnaRunTable();
@@ -160,27 +163,29 @@ public class SamplesDigest extends AspectDigest {
             uploadRequest.getDnaRunTemplateId(),
             DnaRunTemplateDTO.class);
 
-        Integer headerLineNumber = dnaRunTemplate.getHeaderLineNumber();
-
+        // Get file header columns
+        Integer headerLineNumberIndex = dnaRunTemplate.getHeaderLineNumber();
         String fileHeaderLine="";
-
+        Scanner fileScanner;
         try {
             fileScanner = new Scanner(fileToDigest);
         }
         catch (FileNotFoundException e) {
             throw new GobiiException("Input file does not exist");
         }
-        while(headerLineNumber > 0 && fileScanner.hasNextLine()) {
+        while(headerLineNumberIndex > 0 && fileScanner.hasNextLine()) {
             fileHeaderLine = fileScanner.nextLine();
-            headerLineNumber--;
+            headerLineNumberIndex--;
         }
+        fileScanner.close();
 
-        // Map for Aspect values to each api field.
-        Map<String, Object> aspectValues = new HashMap<>();
+        if(headerLineNumberIndex > 0) {
+            throw new GobiiException("Unable to read file header. " +
+                                     "File ended before reaching specified header line number");
+        }
 
         String[] fileHeaders =
             fileHeaderLine.split(dnaRunTemplate.getFileSeparator());
-
 
         //Get API fields Entity Mapping
         Map<String, List<String>> fileColumnsApiFieldsMap =
@@ -188,6 +193,9 @@ public class SamplesDigest extends AspectDigest {
 
         // To memoize cv for each property group for each table.
         Map<String, Map<String, Cv>> propertiesCvMaps = new HashMap<>();
+
+        // Map for Aspect values to each api field.
+        Map<String, Object> aspectValues = new HashMap<>();
 
         // Set Aspect for each file column
         for(int i = 0; i < fileHeaders.length; i++) {

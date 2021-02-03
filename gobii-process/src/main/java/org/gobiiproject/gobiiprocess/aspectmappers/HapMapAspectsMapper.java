@@ -9,7 +9,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiiprocess.digester.utils.FileUtils;
+import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 
 import java.io.*;
 import java.util.*;
