@@ -34,12 +34,12 @@ public class Masticator {
 	private FileAspect fileAspect;
 	private File file;
 
-	public void run(String table, Writer writer) throws IOException {
+	public void run(String table, Writer writer, boolean writeHeader) throws IOException {
 
 		logger.info("Masticating {}", table);
 
         TableReader reader = AspectMapper.map(fileAspect.getAspects().get(table)).build(file);
-        if(file.length() == 0) {
+        if(writeHeader) {
             writer.write(String.join(reader.getDelimiter(), reader.getHeader()) + "\n");
         }
 
