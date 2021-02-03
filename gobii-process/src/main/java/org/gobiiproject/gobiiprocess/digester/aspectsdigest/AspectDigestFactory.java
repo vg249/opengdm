@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 
 public class AspectDigestFactory {
@@ -11,6 +12,16 @@ public class AspectDigestFactory {
         switch (loaderInstruction.getLoadType()) {
             case "SAMPLES":
                 return new SamplesDigest(loaderInstruction, configSettings);
+            case "MATRIX":
+                GenotypeUploadRequestDTO uploadRequest = AspectDigest.mapper.convertValue(
+                    loaderInstruction.getUserRequest(), 
+                    GenotypeUploadRequestDTO.class);                    
+                switch(uploadRequest.getFileType()) {
+                    case "HAPMAP":
+                        return new HapmapsDigest(loaderInstruction, configSettings);
+                    default:
+                        throw new GobiiException("Invalid loader instruction");
+                }
             default:
                 throw new GobiiException("Invalid loader instruction");
         }
