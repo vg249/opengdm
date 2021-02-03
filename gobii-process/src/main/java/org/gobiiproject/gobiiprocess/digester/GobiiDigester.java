@@ -204,7 +204,6 @@ public class GobiiDigester {
             loaderInstructions.setJobName(jobName);
             digestResult =
                 new AspectDigestFactory().getDigest(loaderInstructions, configuration).digest();
-            pm.setUser(digestResult.getContactEmail());
         }
         else {
             digestResult = processOldInstructionFile(
@@ -497,20 +496,22 @@ public class GobiiDigester {
 
         }
 
-        DigesterResult digesterResult =
-            new DigesterResult(
-                success,
-                sendQc,
-                cropType,
-                gobiiCropConfig,
-                dstFilePath,
-                loadTypeName,
-                loaderInstructionMap,
-                loaderInstructionList,
-                datasetType,
-                jobStatus,
-                dataSetId,
-                jobName);
+        DigesterResult digesterResult = new DigesterResult
+                .Builder()
+                .setSuccess(success)
+                .setSendQc(sendQc)
+                .setCropType(cropType)
+                .setCropConfig(gobiiCropConfig)
+                .setIntermediateFilePath(dstFilePath)
+                .setLoadType(loadTypeName)
+                .setLoaderInstructionsMap(loaderInstructionMap)
+                .setLoaderInstructionsList(loaderInstructionList)
+                .setDatasetType(datasetType)
+                .setJobStatusObject(jobStatus)
+                .setDatasetId(dataSetId)
+                .setJobName(jobName)
+                .setContactEmail(procedure.getMetadata().getContactEmail())
+                .build();
 
         return digesterResult;
 
