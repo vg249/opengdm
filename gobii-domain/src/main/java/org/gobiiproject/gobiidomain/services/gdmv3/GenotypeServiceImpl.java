@@ -5,7 +5,6 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypesUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixLoaderInstruction;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
@@ -55,15 +54,6 @@ public class GenotypeServiceImpl implements GenotypeService {
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);
         loaderInstruction.setOutputDir(outputFilesDir);
 
-        MatrixLoaderInstruction matrixLoaderInstruction = new MatrixLoaderInstruction();
-
-        // File type. vcf, hapmap, intertek or miscelleneous
-        matrixLoaderInstruction.setFileType(genotypesUploadRequest.getFileType());
-        matrixLoaderInstruction.setDataFormat(genotypesUploadRequest.getDataFormat());
-
-
-        // Write instruction file
-        Utils.writeInstructionFile(loaderInstruction, jobName, cropType);
 
         return jobDTO;
 

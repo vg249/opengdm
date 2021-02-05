@@ -127,7 +127,7 @@ public class Masticator {
 			final Thread t = new Thread(() -> {
 				try (FileWriter fileWriter = new FileWriter(outputFile, false);
 					 BufferedWriter writer = new BufferedWriter(fileWriter);) {
-					masticator.run(table, writer);
+					masticator.run(table, writer, false);
 				} catch (IOException e) {
 					logger.error("IOException while processing {}", table, e);
 				}

@@ -19,6 +19,8 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetMarkerTable
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTable;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformAspect;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
@@ -96,7 +98,8 @@ public class HapmapsDigest extends AspectDigest {
                 catch (FileNotFoundException e) {
                     throw new GobiiException("Input file does not exist");
                 }
-                while(fileScanner.hasNextLine() && headerLineNumberIndex < maxLinesToLookForHeader) {
+                while(fileScanner.hasNextLine() && 
+                      headerLineNumberIndex < maxLinesToLookForHeader) {
                     fileHeaderLine = fileScanner.nextLine();
                     if(fileHeaderLine.startsWith(headerIdentifier)) {
                         break;
@@ -156,10 +159,19 @@ public class HapmapsDigest extends AspectDigest {
                 datasetDnaRunTable.setDatasetDnaRunIdx(new RangeAspect(1)); 
 
                
-                MatrixTable matrixTable = new MatrixTable();
-                String matrixTableName = AspectUtils.getTableName(MatrixTable.class);
-                MatrixAspect matrixAspect = new MatrixAspect(headerLineNumberIndex+1, 
-                                                             hapMapRequiredColumns.length);
+                //MatrixTable matrixTable = new MatrixTable();
+                //String matrixTableName = AspectUtils.getTableName(MatrixTable.class);
+                //MatrixAspect matrixAspect = new MatrixAspect(headerLineNumberIndex+1, 
+                //                                             hapMapRequiredColumns.length);
+                //matrixTable.setMatrix(matrixAspect);
+                
+                MatrixTransformTable matrixTable = new MatrixTransformTable();
+                String matrixTableName = AspectUtils.getTableName(MatrixTransformTable.class);
+                MatrixTransformAspect matrixAspect = new MatrixTransformAspect(
+                    "TWOLETTERNUCLEOTIDE",
+                    headerLineNumberIndex+1, 
+                    hapMapRequiredColumns.length);
+                    
                 matrixTable.setMatrix(matrixAspect);
                 
                 aspects.put(datasetMarkerTableName, datasetMarkerTable);
