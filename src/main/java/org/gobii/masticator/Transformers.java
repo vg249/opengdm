@@ -5,6 +5,7 @@ import org.gobii.masticator.reader.transform.types.IUPACTransform;
 import org.gobii.masticator.reader.transform.types.NucleotideSeparatorSplitter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Transformers {
@@ -17,25 +18,29 @@ public class Transformers {
 		return "asdf";
 	}
 	@Transformation
-	public String IUPAC2BI(String value){
-			String retVal = Arrays.stream(value.split("\t")).map(s -> iupac.process(s)).collect(Collectors.joining("\t"));
-			//String retVal = iupac.process(value);
+	public String IUPAC2BI(List<String> values, List<Object> args){
+		if(values.size()<1)return "";
+		String value = values.get(0);
+		String retVal = Arrays.stream(value.split("\t")).map(s -> iupac.process(s)).collect(Collectors.joining("\t"));
 			if(retVal==null){
 				throw new RuntimeException("Unable to process IUPAC transformation for value " + value);
 			}
 			return retVal;
 	}
 	@Transformation
-	public String VCF2BI(String value){
+	public String VCF2BI(List<String> values){
+		if(values.size()<1)return "";
+		String value = values.get(0);
 		//Todo - need to run externally
 		throw new RuntimeException("Unable to process VCF. Upstream failed to convert this request");
 	}
 
 	@Transformation
-	public String FOURLETTERNUCLEOTIDE(String value){
+	public String FOURLETTERNUCLEOTIDE(List<String> values, List<Object> args){
+		if(values.size()<1)return "";
+		String value = values.get(0);
 		String retVal = Arrays.stream(value.split("\t")).map(s -> fourLetter.process(s)).collect(Collectors.joining("\t"));
 
-	//		String retVal = fourLetter.process(value);
 		if(retVal==null){
 			throw new RuntimeException("Unable to process four letter nucleotide cleaning transformation for value " + value);
 		}
@@ -43,10 +48,11 @@ public class Transformers {
 	}
 
 	@Transformation
-	public String TWOLETTERNUCLEOTIDE(String value){
+	public String TWOLETTERNUCLEOTIDE(List<String> values, List<Object> args){
+		if(values.size()<1)return "";
+		String value = values.get(0);
 		String retVal = Arrays.stream(value.split("\t")).map(s -> twoLetter.process(s)).collect(Collectors.joining("\t"));
 
-		//String retVal = twoLetter.process(value);
 		if(retVal==null){
 			throw new RuntimeException("Unable to process two letter nucleotide cleaning transformation for value " + value);
 		}
