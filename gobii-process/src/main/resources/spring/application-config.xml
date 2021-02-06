@@ -18,6 +18,7 @@
     <context:annotation-config/>
 
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
+    <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
     <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
     <bean id="platformDao" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
     <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
@@ -34,6 +35,7 @@
     <bean id="loaderTemplateDao" class="org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDaoImpl"/>
     <bean id="jobService" class="org.gobiiproject.gobiiprocess.services.JobServiceImpl"/>
     <bean id="markerGroupService" class="org.gobiiproject.gobiiprocess.services.MarkerGroupServiceImpl"/>
+
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
 
