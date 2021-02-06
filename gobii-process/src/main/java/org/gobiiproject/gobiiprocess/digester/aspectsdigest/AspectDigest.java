@@ -3,15 +3,23 @@ package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
+
+import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.Masticator;
 import org.gobii.masticator.aspects.AspectParser;
 import org.gobii.masticator.aspects.FileAspect;
+import org.gobii.masticator.reader.ReaderResult;
+import org.gobii.masticator.reader.TableReader;
+import org.gobii.masticator.reader.result.End;
+import org.gobii.masticator.reader.result.Val;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiimodel.cvnames.DatasetType;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
@@ -23,6 +31,8 @@ import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +40,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
+@Slf4j
 public abstract class AspectDigest {
 
     static final ObjectMapper mapper = new ObjectMapper();
@@ -41,6 +52,13 @@ public abstract class AspectDigest {
     JobStatus jobStatus;
 
     LoaderTemplateDao loaderTemplateDao;
+
+    protected final Map<String, String> dataTypeToTransformType = Map.of(
+        DatasetType.CV_DATASETTYPE_IUPAC.getDatasetTypeName(), "IUPAC2BI", 
+        DatasetType.CV_DATASETTYPE_NUCLEOTIDE_2_LETTER.getDatasetTypeName(), "TWOLETTERNUCLEOTIDE", 
+        DatasetType.CV_DATASETTYPE_NUCLEOTIDE_4_LETTER.getDatasetTypeName(), "FOURLETTERNUCLEOTIDE"
+    );
+
 
     /**
      * Constructor
@@ -75,18 +93,19 @@ public abstract class AspectDigest {
      * just duplicate parts of it.
      *
      */
-    protected Map<String, File> masticate(Map<String, Table> aspects) throws GobiiException {
+    protected Map<String, MasticatorResult> masticate(
+        Map<String, Table> aspects) throws GobiiException {
 
-        Map<String, File> intermediateDigestFileMap = new HashMap<>();
+        Map<String, MasticatorResult> masticatorResultByTable  = new HashMap<>();
 
         SimpleTimer.start("FileRead");
-        FileAspect aspect;
+        FileAspect fileAspect;
         try {
 
             HashMap<String, Object> aspectMapObject = new HashMap<>();
             aspectMapObject.put("aspects", aspects);
             String loaderInstructionJson = new ObjectMapper().writeValueAsString(aspectMapObject);
-            aspect = AspectParser.parse(loaderInstructionJson);
+            fileAspect = AspectParser.parse(loaderInstructionJson);
         } catch (JsonProcessingException e) {
             throw new GobiiException(
                 String.format("Unable to process aspect file as json object"),
@@ -111,56 +130,33 @@ public abstract class AspectDigest {
                     loaderInstruction.getOutputDir()));
         }
 
-        Masticator masticator = new Masticator(aspect, dataFile);
+        List<MasticatorThread> threads = new ArrayList<>();
 
-        List<Thread> threads = new LinkedList<>();
-
-
-        for (String table : aspect.getAspects().keySet()) {
+        // Spawn maticator threads for each table in the aspects
+        for (String table : fileAspect.getAspects().keySet()) {
 
             String outputFilePath =
                 String.format("%s%sdigest.%s", outputDir.getAbsolutePath(), File.separator, table);
 
-            File outputFile = new File(outputFilePath);
-
-            intermediateDigestFileMap.put(table, outputFile);
-
-            // Create output files for each table
-            if(!outputFile.exists()) {
-                try {
-                    outputFile.createNewFile();
-                }
-                catch (IOException ioE) {
-                    throw new GobiiException(
-                        String.format("Unable to create digest files %s", outputFilePath));
-                }
-            }
-
+            File outputFile = GobiiFileUtils.getFile(outputFilePath);
             
-            final Thread t = new Thread(() -> {
-                boolean writeHeader = false;
-                if(outputFile.length() == 0) {
-                    writeHeader = true;
-                }
-                try (FileWriter fileWriter = new FileWriter(outputFile, true);
-                     BufferedWriter writer = new BufferedWriter(fileWriter);) {
-                    masticator.run(table, writer, writeHeader);
-                } catch (IOException e) {
-                    throw new GobiiException(
-                        String.format("IOException while processing {}", table),
-                        e);
-                }
-            });
-
-            t.start();
-
-            threads.add(t);
+            final MasticatorThread masticatorThread = 
+                new MasticatorThread(table, fileAspect, dataFile, outputFile);
+            
+            masticatorThread.start();
+            threads.add(masticatorThread);
         }
 
 
-        for (Thread t : threads) {
+        // Join spawned threads for all the tables
+        for (MasticatorThread t : threads) {
             try {
                 t.join();
+                MasticatorResult masticatorResult = 
+                    new MasticatorResult(t.getTableName(), 
+                                         t.getOutFile(), 
+                                         t.getTotalLinesWritten());
+                masticatorResultByTable.put(masticatorResult.getTableName(), masticatorResult);
             }
             catch (InterruptedException iE) {
                 throw new GobiiException(
@@ -169,11 +165,7 @@ public abstract class AspectDigest {
             }
         }
 
-
-
-        return intermediateDigestFileMap;
-
-
+        return masticatorResultByTable;
     }
 
     protected void setupOutputDirectory() throws GobiiException {
