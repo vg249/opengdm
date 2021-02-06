@@ -30,6 +30,6 @@ public class DatasetDnaRunTable implements Table {
     private CoordinatesAspect dnaRunName;
 
     @NotNull(message = "datset marker index cannot be null")
-    @JsonProperty("dataset_dnarun_idx")
+    @JsonProperty("dnarun_idx")
     private RangeAspect datasetDnaRunIdx;
 }
