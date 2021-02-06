@@ -11,10 +11,8 @@ import java.util.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.gobii.Util;
 import org.gobii.masticator.aspects.AspectParser;
 import org.gobii.masticator.aspects.FileAspect;
-import org.gobii.masticator.reader.JsonReader;
 import org.gobii.masticator.reader.ReaderResult;
 import org.gobii.masticator.reader.TableReader;
 import org.gobii.masticator.reader.result.End;
@@ -34,14 +32,12 @@ public class Masticator {
 	private FileAspect fileAspect;
 	private File file;
 
-	public void run(String table, Writer writer, boolean writeHeader) throws IOException {
+	public void run(String table, Writer writer) throws IOException {
 
 		logger.info("Masticating {}", table);
 
         TableReader reader = AspectMapper.map(fileAspect.getAspects().get(table)).build(file);
-        if(writeHeader) {
-            writer.write(String.join(reader.getDelimiter(), reader.getHeader()) + "\n");
-        }
+        writer.write(String.join(reader.getDelimiter(), reader.getHeader()) + "\n");
 
 		for (ReaderResult read = reader.read(); ! (read instanceof End) ; read = reader.read()) {
 
@@ -127,7 +123,7 @@ public class Masticator {
 			final Thread t = new Thread(() -> {
 				try (FileWriter fileWriter = new FileWriter(outputFile, false);
 					 BufferedWriter writer = new BufferedWriter(fileWriter);) {
-					masticator.run(table, writer, false);
+					masticator.run(table, writer);
 				} catch (IOException e) {
 					logger.error("IOException while processing {}", table, e);
 				}
