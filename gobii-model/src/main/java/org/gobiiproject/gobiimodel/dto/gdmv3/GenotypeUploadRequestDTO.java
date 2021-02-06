@@ -11,7 +11,7 @@ public class GenotypeUploadRequestDTO {
 
     private String fileType;
 
-    private String dataFormat;
+    private String dataType;
 
     private boolean loadMarkers;
 
