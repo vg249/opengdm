@@ -720,6 +720,7 @@ public class GobiiDigester {
             try {
                 pm.addPath("Instruction File", instructionFilePath, configuration, false);
                 pm.addPath("Error Log", logFile, configuration, false);
+                pm.setUser(digesterResult.getContactEmail());
                 pm.setBody(digesterResult.getJobName(),
                     digesterResult.getLoadType(),
                     SimpleTimer.stop("FileRead"),
