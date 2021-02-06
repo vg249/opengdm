@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DnaRunUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
@@ -77,7 +78,8 @@ public class SamplesDigest extends AspectDigest {
 
         List<File> filesToDigest = new ArrayList<>();
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
-    
+        Map<String, MasticatorResult> masticatedFilesMap = new HashMap<>();
+
         // creates new directtory or cleans one if already exists
         setupOutputDirectory();
             
@@ -97,13 +99,12 @@ public class SamplesDigest extends AspectDigest {
                 Map<String, Table> aspects = getAspects(fileToDigest);
 
                 // Masticate and set the output.
-                Map<String, File> masticatedFilesMap = masticate(aspects);
+                masticatedFilesMap = masticate(aspects);
 
                 // Update the intermediate file map incase if there is any new table
-                masticatedFilesMap.forEach((table, filePath) -> {
-                    intermediateDigestFileMap.put(table, filePath);
+                masticatedFilesMap.forEach((table, masticatorResult) -> {
+                    intermediateDigestFileMap.put(table, masticatorResult.getOutputFile());
                 });
-
             }
         }
         catch (Exception e) {
@@ -127,7 +128,7 @@ public class SamplesDigest extends AspectDigest {
                 .setLoadType(loaderInstruction.getLoadType())
                 .setLoaderInstructionsMap(intermediateDigestFileMap)
                 .setLoaderInstructionsList(loadOrder)
-                .setDatasetType(loaderInstruction.getDatasetType())
+                .setDatasetType(null) // Dataset type is only required for matrix upload
                 .setJobStatusObject(jobStatus)
                 .setDatasetId(null)
                 .setJobName(loaderInstruction.getJobName())
