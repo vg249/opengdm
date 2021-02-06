@@ -16,8 +16,6 @@ public class LoaderInstruction {
     @NotNull(message = "Required Load Type")
     private String loadType;
 
-    private String datasetType;
-
     @NotNull(message = "Required Input file")
     private String inputFile;
 
