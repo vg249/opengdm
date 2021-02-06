@@ -94,5 +94,26 @@ public class GobiiFileUtils {
         }
     }
 
+    /**
+     * Creates new file if it does not exists
+     * @param filePath
+     * @return
+     * @throws GobiiException
+     */
+    public static File getFile(String filePath) throws GobiiException {
+        File file = new File(filePath);
+        // Create output files for each table
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            }
+            catch (IOException ioE) {
+                throw new GobiiException(
+                    String.format("Unable to create digest files %s", filePath));
+            }
+        }
+        return file;
+    }
+
 
 }
