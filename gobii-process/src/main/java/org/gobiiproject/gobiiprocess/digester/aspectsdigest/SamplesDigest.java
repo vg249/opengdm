@@ -20,7 +20,6 @@ import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
-import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 
@@ -45,7 +44,7 @@ public class SamplesDigest extends AspectDigest {
 
     private ProjectDao projectDao;
     private ExperimentDao experimentDao;
-    private CvDao cvDao;
+    private DnaRunUploadRequestDTO uploadRequest;
 
     /**
      * Constructor
@@ -66,7 +65,9 @@ public class SamplesDigest extends AspectDigest {
         this.projectDao = SpringContextLoaderSingleton.getInstance().getBean(ProjectDao.class);
         this.experimentDao =
             SpringContextLoaderSingleton.getInstance().getBean(ExperimentDao.class);
-        this.cvDao = SpringContextLoaderSingleton.getInstance().getBean(CvDao.class);
+        uploadRequest = 
+            mapper.convertValue(loaderInstruction.getUserRequest(), DnaRunUploadRequestDTO.class);
+
     }
 
     /**
@@ -153,13 +154,6 @@ public class SamplesDigest extends AspectDigest {
         DnaSampleTable dnaSampleTable = new DnaSampleTable();
         GermplasmTable germplasmTable = new GermplasmTable();
 
-        // new status to set for new dna runs
-        Cv newStatus = cvDao.getNewStatus();
-
-        DnaRunUploadRequestDTO uploadRequest = mapper.convertValue(
-            loaderInstruction.getUserRequest(),
-            DnaRunUploadRequestDTO.class);
-
         dnaRunTemplate = (DnaRunTemplateDTO) getLoaderTemplate(
             uploadRequest.getDnaRunTemplateId(),
             DnaRunTemplateDTO.class);
@@ -201,7 +195,8 @@ public class SamplesDigest extends AspectDigest {
         // Set Aspect for each file column
         for(int i = 0; i < fileHeaders.length; i++) {
             String fileHeader = fileHeaders[i];
-            ColumnAspect columnAspect = new ColumnAspect(1, i);
+            ColumnAspect columnAspect = 
+                new ColumnAspect(dnaRunTemplate.getHeaderLineNumber(), i);
 
             for(String apiFieldName : fileColumnsApiFieldsMap.get(fileHeader)) {
 
