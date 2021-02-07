@@ -32,6 +32,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
             br = new BufferedReader(new FileReader(markerGroupDigestFile));
             header = br.readLine();
             mapFieldNamePosition = getFileCoulumnNamePosition(header);
+            br.close();
 
             File digestDir = markerGroupDigestFile.getParentFile();
             String digestDirPath = digestDir.getPath();
@@ -95,7 +96,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     .get(markerGroupName)
                     .put("\""+markerId+"\"", favAllelesList);
             }
-
+            br.close();
 
             // Write marker group upload file
             FileWriter writer = new FileWriter(markerGroupUploadFile);
