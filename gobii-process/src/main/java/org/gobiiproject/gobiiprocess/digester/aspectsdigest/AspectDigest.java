@@ -94,6 +94,7 @@ public abstract class AspectDigest {
      *
      */
     protected Map<String, MasticatorResult> masticate(
+        File dataFile,
         Map<String, Table> aspects) throws GobiiException {
 
         Map<String, MasticatorResult> masticatorResultByTable  = new HashMap<>();
@@ -110,12 +111,6 @@ public abstract class AspectDigest {
             throw new GobiiException(
                 String.format("Unable to process aspect file as json object"),
                 e);
-        }
-
-        File dataFile = new File(loaderInstruction.getInputFile());
-        if (! dataFile.exists()) {
-            throw new GobiiException(
-                String.format("Data file at %s does not exist", loaderInstruction.getInputFile()));
         }
 
         File outputDir = new File(loaderInstruction.getOutputDir());
