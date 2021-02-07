@@ -3,7 +3,7 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape=JsonFormat.Shape.ARRAY)
-public class CoordinatesAspect {
+public class CoordinatesAspect implements Aspect {
 
     private ColumnCoordinates columnCoordinates;
 
