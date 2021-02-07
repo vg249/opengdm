@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
+import lombok.Data;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @GobiiAspectTable(name = "dnasample")
+@Data
 public class DnaSampleTable implements Table {
 
     @JsonProperty("project_id")
@@ -15,7 +18,7 @@ public class DnaSampleTable implements Table {
     private CoordinatesAspect dnaSampleName;
 
     @JsonProperty("num")
-    private CoordinatesAspect dnaSampleNum;
+    private Aspect dnaSampleNum;
 
     @JsonProperty("external_code")
     private CoordinatesAspect germplasmExternalCode;
@@ -36,86 +39,5 @@ public class DnaSampleTable implements Table {
     private JsonAspect dnaSampleProperties;
 
     private String status;
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public CoordinatesAspect getDnaSampleName() {
-        return dnaSampleName;
-    }
-
-    public void setDnaSampleName(CoordinatesAspect dnaSampleName) {
-        this.dnaSampleName = dnaSampleName;
-    }
-
-    public CoordinatesAspect getDnaSampleNum() {
-        return dnaSampleNum;
-    }
-
-    public void setDnaSampleNum(CoordinatesAspect dnaSampleNum) {
-        this.dnaSampleNum = dnaSampleNum;
-    }
-
-    public CoordinatesAspect getGermplasmExternalCode() {
-        return germplasmExternalCode;
-    }
-
-    public void setGermplasmExternalCode(CoordinatesAspect germplasmExternalCode) {
-        this.germplasmExternalCode = germplasmExternalCode;
-    }
-
-    public CoordinatesAspect getDnaSamplePlateName() {
-        return dnaSamplePlateName;
-    }
-
-    public void setDnaSamplePlateName(CoordinatesAspect dnaSamplePlateName) {
-        this.dnaSamplePlateName = dnaSamplePlateName;
-    }
-
-    public CoordinatesAspect getDnaSampleWellRow() {
-        return dnaSampleWellRow;
-    }
-
-    public void setDnaSampleWellRow(CoordinatesAspect dnaSampleWellRow) {
-        this.dnaSampleWellRow = dnaSampleWellRow;
-    }
-
-    public CoordinatesAspect getDnaSampleWellCol() {
-        return dnaSampleWellCol;
-    }
-
-    public void setDnaSampleWellCol(CoordinatesAspect dnaSampleWellCol) {
-        this.dnaSampleWellCol = dnaSampleWellCol;
-    }
-
-    public CoordinatesAspect getDnaSampleUuid() {
-        return dnaSampleUuid;
-    }
-
-    public void setDnaSampleUuid(CoordinatesAspect dnaSampleUuid) {
-        this.dnaSampleUuid = dnaSampleUuid;
-    }
-
-    public JsonAspect getDnaSampleProperties() {
-        return dnaSampleProperties;
-    }
-
-    public void setDnaSampleProperties(JsonAspect dnaSampleProperties) {
-        this.dnaSampleProperties = dnaSampleProperties;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
 
 }
