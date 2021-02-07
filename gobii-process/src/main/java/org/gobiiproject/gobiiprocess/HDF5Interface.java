@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
+import org.gobiiproject.gobiiprocess.services.DatasetService;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 
 import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -56,7 +59,7 @@ public class HDF5Interface {
                                                 File variantFile) throws Exception {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
-        String loadHDF5= getPathToHDF5() +"loadHDF5";
+        String loadHDF5= Paths.get(getPathToHDF5(), "loadHDF5").toString();
         dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
         int size = 8;
@@ -85,7 +88,9 @@ public class HDF5Interface {
             rmIfExist(HDF5File);
             return false;
         }
-        GobiiDigester.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        DatasetService datasetService = 
+            SpringContextLoaderSingleton.getInstance().getBean(DatasetService.class);
+        datasetService.update(dataSetId,variantFilename, HDF5File);
         return true;
     }
 
