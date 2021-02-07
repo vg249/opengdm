@@ -38,6 +38,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -69,6 +70,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstan
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import org.gobiiproject.gobiiprocess.services.MarkerGroupService;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
@@ -95,7 +97,6 @@ public class GobiiDigester {
     private static final String DS_MARKER_TABNAME = "dataset_marker";
     private static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     private static final String SAMPLE_TABNAME = "dnarun";
-    private static String pathToHDF5Files;
     private static boolean verbose;
     private static GobiiExtractorInstruction qcExtractInstruction = null;
     private static final String masticatorModuleName = "MASTICATOR";
@@ -230,6 +231,8 @@ public class GobiiDigester {
             Logger.logWarning("Digester", "Aborted - Unsuccessfully Generated Files");
             jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
         }
+
+        
 
         // Load genotype matrix
         boolean dataLoaded = metaDataLoaded;
@@ -623,9 +626,9 @@ public class GobiiDigester {
 
                     // Load markergroup if aspect found
                     if(tableName.equals(MARKER_TABNAME) &&
-                        digesterResult
-                            .getLoaderInstructionsMap()
-                            .containsKey(MARKER_GROUP_TABNAME)) {
+                       digesterResult
+                        .getLoaderInstructionsMap()
+                        .containsKey(MARKER_GROUP_TABNAME)) {
 
                         MarkerGroupService markerGroupService = SpringContextLoaderSingleton
                             .getInstance()
@@ -634,8 +637,10 @@ public class GobiiDigester {
                         markerGroupService
                             .addMarkerGroups(
                                 digesterResult
-                                    .getLoaderInstructionsMap().get(MARKER_GROUP_TABNAME));
+                                    .getLoaderInstructionsMap()
+                                    .get(MARKER_GROUP_TABNAME));
                     }
+                    
                     //If there are no issues in the load,
                     // clean up temporary intermediate files
                     if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
@@ -678,6 +683,8 @@ public class GobiiDigester {
             jobStatus
                 .set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
                     "Matrix Upload");
+            HDF5Interface.setPathToHDF5Files(
+                loaderScripts.getPathToHdf5Files(digesterResult.getCropType()));
             hdf5Success = HDF5Interface.createHDF5FromDataset(
                 pm,
                 digesterResult.getDatasetType(),
@@ -994,74 +1001,6 @@ public class GobiiDigester {
         int fromIndex = upper.indexOf(from) + from.length();
         String crop = upper.substring(fromIndex, upper.indexOf('/', fromIndex));
         return crop;
-    }
-
-    /**
-     * Updates Postgresql through the webservices to update the DataSet's monetDB and HDF5File references.
-     *
-     * @param config         Configuration settings, used to determine connections
-     * @param cropName       Name of the crop
-     * @param dataSetId      Data set to update
-     * @param monetTableName Name of the table in the monetDB database for this dataset.
-     * @param hdfFileName    Name of the HDF5 file for this dataset (Note, these should be obvious)
-     */
-    public static void updateValues(ConfigSettings config,
-                                    String cropName,
-                                    Integer dataSetId,
-                                    String monetTableName,
-                                    String hdfFileName) {
-        try {
-            // set up authentication and so forth
-            // you'll need to get the current from the instruction file
-            GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
-
-            if (LineUtils.isNullOrEmpty(context.getUserToken())) {
-                logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
-                return;
-            }
-
-            String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, cropName);
-
-            RestUri projectsUri = gobiiUriFactory
-                    .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
-            projectsUri.setParamValue("id", dataSetId.toString());
-            GobiiEnvelopeRestResource<DataSetDTO, DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
-            PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                    .get(DataSetDTO.class);
-
-            DataSetDTO dataSetResponse;
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                System.out.println();
-                logError("Digester", "Data set response response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return;
-            } else {
-                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
-            }
-
-            dataSetResponse.setDataTable(monetTableName);
-            dataSetResponse.setDataFile(hdfFileName);
-
-            resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                    .put(DataSetDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
-
-
-            //dataSetResponse = dtoProcessor.process(dataSetResponse);
-            // if you didn't succeed, do not pass go, but do log errors to your log file
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                logError("Digester", "Data set response response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return;
-            }
-        } catch (Exception e) {
-            logError("Digester", "Exception while referencing data sets in Postgresql", e);
-            return;
-        }
     }
 
     @SuppressWarnings("unused")
