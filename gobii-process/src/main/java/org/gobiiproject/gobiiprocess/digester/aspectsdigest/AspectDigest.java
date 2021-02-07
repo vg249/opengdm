@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 
+import org.docx4j.model.datastorage.XPathEnhancerParser.primaryExpr_return;
 import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.Masticator;
 import org.gobii.masticator.aspects.AspectParser;
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -46,6 +48,8 @@ public abstract class AspectDigest {
     static final ObjectMapper mapper = new ObjectMapper();
 
     final String propertyGroupSeparator = ".";
+    
+    private final int maxLinesToLookForHeader = 1000;
 
     LoaderInstruction loaderInstruction;
     GobiiCropConfig cropConfig;
@@ -59,6 +63,9 @@ public abstract class AspectDigest {
         DatasetType.CV_DATASETTYPE_NUCLEOTIDE_4_LETTER.getDatasetTypeName(), "FOURLETTERNUCLEOTIDE"
     );
 
+
+    protected CvDao cvDao;
+    protected Cv newStatus;
 
     /**
      * Constructor
@@ -82,6 +89,8 @@ public abstract class AspectDigest {
         this.jobStatus = new JobStatus(loaderInstruction.getJobName());
         this.loaderTemplateDao =
             SpringContextLoaderSingleton.getInstance().getBean(LoaderTemplateDao.class);
+        this.cvDao = SpringContextLoaderSingleton.getInstance().getBean(CvDao.class);
+        this.newStatus = cvDao.getNewStatus();
     }
 
     abstract public DigesterResult digest();
@@ -182,6 +191,41 @@ public abstract class AspectDigest {
             throw new GobiiException("Unable to setup output directory for digester");
         }
 
+    }
+
+    protected FileHeader getFileHeaderByIdentifier(File file,
+                                                   String headerIdentifier) throws GobiiException {
+        String fileHeaderLine="";
+        int headerLineNumberIndex = 0;
+        Scanner fileScanner;
+        try {
+            fileScanner = new Scanner(file);
+        }
+        catch (FileNotFoundException e) {
+            throw new GobiiException("Input file does not exist");
+        }
+        while(fileScanner.hasNextLine() && 
+              headerLineNumberIndex < maxLinesToLookForHeader) {
+            fileHeaderLine = fileScanner.nextLine();
+            if(fileHeaderLine.startsWith(headerIdentifier)) {
+                break;
+            }
+            headerLineNumberIndex++;
+        }
+        fileScanner.close();
+
+        if(headerLineNumberIndex == maxLinesToLookForHeader) {
+            throw new GobiiException("Unable to read file header. " +
+                                     "Could not find hapmap header in first 1000 lines.");
+        }
+
+        String[] headerColumns = fileHeaderLine.split(GobiiFileUtils.TAB_SEP);
+
+        FileHeader fileHeader = new FileHeader();
+        fileHeader.setHeaderLineNumber(headerLineNumberIndex);
+        fileHeader.setHeaders(headerColumns);
+
+        return fileHeader;
     }
 
     protected List<String> getLoadOrder() throws GobiiException {
@@ -362,5 +406,6 @@ public abstract class AspectDigest {
         }
         return cvMap;
     }
+
 
 }
