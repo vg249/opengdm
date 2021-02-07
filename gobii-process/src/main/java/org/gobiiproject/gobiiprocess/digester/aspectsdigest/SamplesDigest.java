@@ -99,7 +99,7 @@ public class SamplesDigest extends AspectDigest {
                 Map<String, Table> aspects = getAspects(fileToDigest);
 
                 // Masticate and set the output.
-                masticatedFilesMap = masticate(aspects);
+                masticatedFilesMap = masticate(fileToDigest, aspects);
 
                 // Update the intermediate file map incase if there is any new table
                 masticatedFilesMap.forEach((table, masticatorResult) -> {

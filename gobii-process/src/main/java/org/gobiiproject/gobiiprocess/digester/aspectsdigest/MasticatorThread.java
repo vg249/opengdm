@@ -60,12 +60,11 @@ public class MasticatorThread extends Thread {
 		            if (read instanceof Val) {
 		            	writer.write(read.value());
 		            	writer.write('\n');
-                        writer.flush();
                         totalLinesWritten++;
 		            }
 		        }
 
-		        writer.flush();
+		        writer.close();
         } catch (IOException e) {
             throw new GobiiException(
                 String.format("IOException while processing {}", tableName),

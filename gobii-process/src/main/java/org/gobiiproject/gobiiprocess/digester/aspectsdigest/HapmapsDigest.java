@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +11,8 @@ import java.util.Scanner;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.docx4j.model.datastorage.XPathEnhancerParser.primaryExpr_return;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.DatasetType;
 import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
@@ -21,7 +20,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetDnaRunTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetMarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformAspect;
@@ -34,7 +32,6 @@ import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
-import org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -76,14 +73,12 @@ public class HapmapsDigest extends AspectDigest {
         this.datasetDao = SpringContextLoaderSingleton.getInstance().getBean(DatasetDao.class);
     }
 
-    private boolean hasValidHapmaHeaders(String[] headers) {
-        return false;
-    }
  
     public DigesterResult digest() throws GobiiException {        
 
         List<File> filesToDigest = new ArrayList<>();
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
+        Map<String, Integer> totalLinesWrittenForEachTable = new HashMap<>();
 
         Map<String, Table> aspects = new HashMap<>();
     
@@ -94,11 +89,12 @@ public class HapmapsDigest extends AspectDigest {
             loaderInstruction.getUserRequest(), 
             GenotypeUploadRequestDTO.class);                    
                 
-        Map<String, MasticatorResult> masticatedFilesMap = new HashMap<>();
-
         try {
 
             filesToDigest = getFilesToDigest();
+
+            // To keep track of files having uniform dnarun names columsn across files
+            String[] previousFileHeaders = {};
 
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
@@ -135,24 +131,47 @@ public class HapmapsDigest extends AspectDigest {
 
                 String[] headerColumns = fileHeaderLine.split(GobiiFileUtils.TAB_SEP);
 
-                if(!hasValidHapmaHeaders(headerColumns)) {
+                // Make sure file header is valid hapmap header and dnarun names 
+                // match dnarun names from previous file.
+                if(previousFileHeaders.length == 0) {
+                    if(!Arrays.equals(
+                            hapMapRequiredColumns, 
+                            Arrays.copyOfRange(headerColumns, 0, hapMapRequiredColumns.length))) {
+                        throw new GobiiException(String.format(
+                            "Invalid hapmap file %s with header columns not matching " +
+                            "required hapmap columns", fileToDigest.getAbsolutePath()));
+                    }
+                    if(headerColumns.length == hapMapRequiredColumns.length) {
+                        throw new GobiiException(
+                            String.format("File %s does not have any samples", 
+                                          fileToDigest.getAbsolutePath()));
+                    }
+                    previousFileHeaders = headerColumns;
+                    
+                    // Set Dna run aspect only once
+                    String datasetDnaRunTableName = 
+                        AspectUtils.getTableName(DatasetDnaRunTable.class);
+                    aspects.put(datasetDnaRunTableName, 
+                                getDatasetDnaRunTable(headerLineNumberIndex, 1));
 
+                    }
+                else if(!Arrays.equals(headerColumns, previousFileHeaders)) {
+                    throw new GobiiException("Files dont have same columns.");
                 }
                 
                 // Set dataset_marker table aspect               
                 String datasetMarkerTableName = AspectUtils.getTableName(DatasetMarkerTable.class);
-                int hdf5Start = 1;
-                if(masticatedFilesMap.containsKey(datasetMarkerTableName)) {
-                    hdf5Start = 
-                        masticatedFilesMap.get(datasetMarkerTableName).getTotalLinesWritten();
+                Integer hdf5MarkerIndexStart = 1;
+                if(totalLinesWrittenForEachTable.containsKey(datasetMarkerTableName)) {
+                    hdf5MarkerIndexStart = 
+                        totalLinesWrittenForEachTable.get(datasetMarkerTableName) + 1;
                 }
-                aspects.put(datasetMarkerTableName, 
-                            getDatasetMarkerTable(headerColumns, headerLineNumberIndex, hdf5Start));
 
-                // Create dataset danrun aspects
-                String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
-                aspects.put(datasetDnaRunTableName, 
-                            getDatasetDnaRunTable(headerLineNumberIndex, hdf5Start));
+                DatasetMarkerTable datasetMarkerTable = 
+                    getDatasetMarkerTable(headerColumns, 
+                                          headerLineNumberIndex,
+                                          hdf5MarkerIndexStart);
+                aspects.put(datasetMarkerTableName, datasetMarkerTable); 
 
                 if(StringUtils.isNotEmpty(uploadRequest.getDataType()) &&
                     dataTypeToTransformType.containsKey(uploadRequest.getDataType())) {
@@ -168,11 +187,16 @@ public class HapmapsDigest extends AspectDigest {
                 
 
                 // Masticate and set the output.
-                masticatedFilesMap = masticate(aspects);
+                Map<String, MasticatorResult> masticatedFilesMap = masticate(fileToDigest, aspects);
 
                 // Update the intermediate file map incase if there is any new table
                 masticatedFilesMap.forEach((table, masticatorResult) -> {
                     intermediateDigestFileMap.put(table, masticatorResult.getOutputFile());
+                    int updatedCount = masticatorResult.getTotalLinesWritten(); 
+                    if(totalLinesWrittenForEachTable.containsKey(table)) {
+                        updatedCount += totalLinesWrittenForEachTable.get(table);
+                    }
+                    totalLinesWrittenForEachTable.put(table, updatedCount);
                 });
 
             }
