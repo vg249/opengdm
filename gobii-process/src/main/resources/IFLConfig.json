@@ -13,7 +13,7 @@
        "linkage_group",
        "marker_linkage_group",
        "germplasm",
-       "samples",
+       "dnasample",
        "dnarun",
        "dataset_marker",
        "dataset_dnarun",
