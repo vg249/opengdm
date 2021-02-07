@@ -8,7 +8,7 @@ import lombok.Data;
 @JsonFormat(shape=JsonFormat.Shape.ARRAY)
 @JsonPropertyOrder({"aspectType", "rangeStart"})
 @Data
-public class RangeAspect {
+public class RangeAspect implements Aspect {
 
     public final String aspectType = "RANGE";
 
