@@ -35,6 +35,7 @@
     <bean id="loaderTemplateDao" class="org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDaoImpl"/>
     <bean id="jobService" class="org.gobiiproject.gobiiprocess.services.JobServiceImpl"/>
     <bean id="markerGroupService" class="org.gobiiproject.gobiiprocess.services.MarkerGroupServiceImpl"/>
+    <bean id="datasetService" class="org.gobiiproject.gobiiprocess.services.DatasetServiceImpl"/>
 
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
