@@ -53,14 +53,14 @@ public class JobServiceImpl implements JobService {
 
         // Set a unique job name if not set
         if(StringUtils.isEmpty(jobDTO.getJobName())) {
-            String jobName = UUID.randomUUID().toString().replace("-", "");
+            String jobName = Utils.getUniqueName();
             job.setJobName(jobName);
         }
 
         job.setMessage("Submitted marker upload job");
 
         // Set current user as job submitter
-        Contact submittedBy = contactDao.getContactByUsername(ContactService.getCurrentUser());
+        Contact submittedBy = contactDao.getContactByUsername(ContactService.getCurrentUserName());
         job.setSubmittedBy(submittedBy);
 
         // Get payload type

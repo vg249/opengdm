@@ -87,7 +87,7 @@ public class ProtocolServiceImpl implements ProtocolService {
             ModelMapper.mapDtoToEntity(protocolDTO, protocolToCreate);
 
             //Set CreatedBy and CreatedDate
-            String creatorUserName = ContactService.getCurrentUser();
+            String creatorUserName = ContactService.getCurrentUserName();
             Contact creator = contactDao.getContactByUsername(creatorUserName);
             protocolToCreate.setCreatedBy(
                 Optional.ofNullable(creator)
@@ -126,7 +126,7 @@ public class ProtocolServiceImpl implements ProtocolService {
             ModelMapper.mapDtoToEntity(protocolDTO, protocolToBeUpdated, true);
 
             //Set ModifiedBy and ModifiedDate
-            String modifierUserName = ContactService.getCurrentUser();
+            String modifierUserName = ContactService.getCurrentUserName();
             Contact creator = contactDao.getContactByUsername(modifierUserName);
             protocolToBeUpdated.setModifiedBy(
                 Optional.ofNullable(creator)

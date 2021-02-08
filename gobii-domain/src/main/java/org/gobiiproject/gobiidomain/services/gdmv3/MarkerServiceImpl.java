@@ -133,7 +133,7 @@ public class MarkerServiceImpl implements MarkerService {
         }
 
         // Get user submitting the load
-        String userName = ContactService.getCurrentUser();
+        String userName = ContactService.getCurrentUserName();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
         // Set new status for marker table

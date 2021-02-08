@@ -67,7 +67,7 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
         LoaderTemplate loaderTemplate  = new LoaderTemplate();
 
         // Get current user
-        String userName = ContactService.getCurrentUser();
+        String userName = ContactService.getCurrentUserName();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
         loaderTemplate.setTemplateName(loaderTemplateDTO.getTemplateName());

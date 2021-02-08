@@ -107,7 +107,7 @@ public class DnaRunServiceImpl implements DnaRunService {
         }
 
         // Get user submitting the load
-        String userName = ContactService.getCurrentUser();
+        String userName = ContactService.getCurrentUserName();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
         // Set contact email in loader instruction

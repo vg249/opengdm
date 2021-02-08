@@ -126,6 +126,13 @@ public class Utils {
         return writeInputStreamToFile(inputFilePath, inputFileStream);
     }
 
+    static String getRawUserFilesDir(String fileDirName, String cropType) {
+        String rawFilesDir = Utils.getProcessDir(cropType, GobiiFileProcessDir.RAW_USER_FILES);
+        String fileDirPath = Paths.get(rawFilesDir, fileDirName).toString();
+        Utils.makeDir(fileDirPath);
+        return fileDirPath;
+    }
+
     /**
      * Creates output directory for given job and crop type.
      * @param jobName   Name of the job
@@ -230,4 +237,7 @@ public class Utils {
         return fileColumns;
     }
 
+    public static String getUniqueName() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 }

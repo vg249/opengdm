@@ -115,6 +115,19 @@ public class ContactServiceImpl implements ContactService {
         return contactDTO;
     }
 
+    public ContactDTO getCurrentUser() throws GobiiException {
+        ContactDTO contactDTO = new ContactDTO();
+        try {
+            String userName = ContactService.getCurrentUserName();
+            Contact contact = contactDao.getContactByUsername(userName);
+            ModelMapper.mapEntityToDto(contact, contactDTO);
+            return contactDTO;
+        } catch (Exception e) {
+            log.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+}
+
     @Override
     public PagedResult<ContactDTO> getUsers(String cropType, String role, Integer page, Integer pageSize)
             throws Exception {
