@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public PagedResult<ProjectDTO> getProjects(Integer page,
                                                Integer pageSize,
-                                               Integer piContactId,
+                                               String piContactId,
                                                String cropType) throws Exception {
 
         log.debug("Getting projects list offset %d size %d", page, pageSize);
@@ -91,7 +91,15 @@ public class ProjectServiceImpl implements ProjectService {
                 mapUserNameKeycloakObject.put(keyCloakUser.getUsername(), keyCloakUser);
             }
 
-            List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
+            // Get Pi Contact Id of local db for the same user name to filter
+            Integer piContactLocalDbId = null;
+            if(piContactId != null) {
+                ContactDTO contactDTO = keycloakService.getUser(piContactId);
+                Contact contact = contactDao.getContactByUsername(contactDTO.getUsername());
+                piContactLocalDbId = contact.getContactId();
+            }
+
+            List<Project> projects = projectDao.getProjects(page, pageSize, piContactLocalDbId);
             projects.forEach(project -> {
                 ProjectDTO projectDTO = createProjectDTO(project, cvs);
                 // Set keycloak id as piconatct id
