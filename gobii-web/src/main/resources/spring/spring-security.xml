@@ -81,6 +81,7 @@
         <security:intercept-url pattern="/**" method="OPTIONS" access="permitAll()"/>
         <security:intercept-url pattern="/crops" access="isAuthenticated()"/>
         <security:intercept-url pattern="/crops/*/gobii/v1/auth" access="permitAll"/>
+        <security:intercept-url pattern="/crops/*/gobii/v1/configsettings" access="permitAll"/>
         <security:intercept-url pattern="/error" access="permitAll"/>
         <security:intercept-url pattern="/crops/*/gobii/v1/**" access="isAuthenticated()" />
         <security:intercept-url pattern="/crops/*/brapi/v1/token" access="permitAll"/>

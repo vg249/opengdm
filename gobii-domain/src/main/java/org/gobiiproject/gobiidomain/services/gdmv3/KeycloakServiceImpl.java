@@ -179,7 +179,6 @@ public class KeycloakServiceImpl implements KeycloakService {
 
 	@Override
 	public TokenInfo getToken(String username, String password) throws Exception {
-        // TODO Auto-generated method stub
         Keycloak keycloak = KeycloakBuilder.builder()
                             .serverUrl(keycloakConfig.getAuthServerUrl())
                             .realm(keycloakConfig.getRealm())

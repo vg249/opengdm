@@ -54,6 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles("projectsController-test")
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*", "com.sun.org.apache.xalan.*"})
 @PrepareForTest({CropRequestAnalyzer.class, AuthUtils.class})
 @ContextConfiguration(classes = GOBIIControllerV3TestConfiguration.class
 // locations = { "classpath:/spring/application-config.xml" }
@@ -144,7 +145,7 @@ public class ProjectsControllerTest {
         mockPayload.setResult(mockList);
         mockPayload.setCurrentPageNum(0);
         mockPayload.setCurrentPageSize(1);
-        when(projectService.getProjects(1, 100, 2, "dev")).thenReturn(mockPayload);
+        when(projectService.getProjects(1, 100, "contact-uuid", "dev")).thenReturn(mockPayload);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/projects?page=1&pageSize=100&piContactId=2")
                 .contextPath("/gdm")).andDo(print()).andExpect(MockMvcResultMatchers.status().isOk())
@@ -154,7 +155,7 @@ public class ProjectsControllerTest {
                 .andExpect(jsonPath("$.result.data[0].projectId").value(mockItem.getProjectId()))
                 .andExpect(jsonPath("$.result.data[0].projectName").value(mockItem.getProjectName()))
                 .andExpect(jsonPath("$.result.data[0].properties[0].propertyType").value("system defined"));
-        verify(projectService, times(1)).getProjects(1, 100, 2, "dev");
+        verify(projectService, times(1)).getProjects(1, 100, "contact-uuid", "dev");
     }
 
     @Test

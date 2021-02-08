@@ -107,17 +107,6 @@ public class ExperimentServiceImpl implements ExperimentService {
         ExperimentDTO experimentDTO = new ExperimentDTO();
         ModelMapper.mapEntityToDto(experiment, experimentDTO);
         
-        // //TODO: debug this, why is the mapper failing at mapping subobject
-        // if ((experimentDTO.getPlatformId() == null || experimentDTO.getPlatformName() == null) && 
-        //      experiment.getVendorProtocol() != null && 
-        //      experiment.getVendorProtocol().getProtocol() != null && 
-        //      experiment.getVendorProtocol().getProtocol().getPlatform() != null
-        //    ) {
-        //     Platform platform = experiment.getVendorProtocol().getProtocol().getPlatform();
-
-        //     experimentDTO.setPlatformId(platform.getPlatformId());
-        //     experimentDTO.setPlatformName(platform.getPlatformName());
-        // }
         Platform platform  = Optional.ofNullable(experiment.getVendorProtocol())
                                      .map(v -> v.getProtocol())
                                      .map(p -> p.getPlatform())

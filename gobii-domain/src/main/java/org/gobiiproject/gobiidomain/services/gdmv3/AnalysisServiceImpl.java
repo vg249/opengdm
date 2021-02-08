@@ -69,8 +69,6 @@ public class AnalysisServiceImpl implements AnalysisService {
         Cv analysisType = this.loadAnalysisType(analysisRequest.getAnalysisTypeId());
         analysis.setType(analysisType);
 
-        // TODO check if the reference Id
-
         if (analysisRequest.getReferenceId() != null) {
             Reference reference = this.loadReference(analysisRequest.getReferenceId());
             analysis.setReference(reference);
@@ -100,7 +98,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         
         CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroupTerm.CVGROUP_ANALYSIS_TYPE.getCvGroupName(),
-            2 //TODO:  this is custom type
+            2
         );
         if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
 
