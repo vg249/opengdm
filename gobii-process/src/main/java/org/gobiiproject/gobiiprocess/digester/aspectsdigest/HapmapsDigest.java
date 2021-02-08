@@ -34,7 +34,7 @@ import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
-import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
+import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 

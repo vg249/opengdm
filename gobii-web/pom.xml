@@ -474,7 +474,7 @@
     </dependencies>
 
     <build>
-        <finalName>gobii-web</finalName>
+        <finalName>gdm</finalName>
 
         <resources>
             <resource>

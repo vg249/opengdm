@@ -50,18 +50,6 @@
             <type>maven-plugin</type>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.20</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>1.25</version>
-        </dependency>
-
         <!-- Spring and Transactions -->
         <dependency>
             <groupId>org.springframework</groupId>

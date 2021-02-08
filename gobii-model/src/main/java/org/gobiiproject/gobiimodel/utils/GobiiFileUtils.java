@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.utils;
+package org.gobiiproject.gobiimodel.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -6,8 +6,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.Tika;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-
-import static org.mockito.ArgumentMatchers.refEq;
 
 import java.io.File;
 import java.io.FileInputStream;

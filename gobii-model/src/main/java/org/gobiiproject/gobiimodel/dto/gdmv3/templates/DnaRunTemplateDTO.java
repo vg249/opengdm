@@ -1,11 +1,9 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3.templates;
 
 import lombok.Data;
-import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMap;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
-import org.gobiiproject.gobiimodel.entity.LinkageGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -17,8 +17,8 @@ import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
+import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
-import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
@@ -159,29 +159,9 @@ public class SamplesDigest extends AspectDigest {
             DnaRunTemplateDTO.class);
 
         // Get file header columns
-        Integer headerLineNumberIndex = dnaRunTemplate.getHeaderLineNumber();
-        String fileHeaderLine="";
-        Scanner fileScanner;
-        try {
-            fileScanner = new Scanner(fileToDigest);
-        }
-        catch (FileNotFoundException e) {
-            throw new GobiiException("Input file does not exist");
-        }
-        while(headerLineNumberIndex > 0 && fileScanner.hasNextLine()) {
-            fileHeaderLine = fileScanner.nextLine();
-            headerLineNumberIndex--;
-        }
-        fileScanner.close();
-
-        if(headerLineNumberIndex > 0) {
-            throw new GobiiException("Unable to read file header. " +
-                                     "File ended before reaching specified header line number");
-        }
-
-        String[] fileHeaders =
-            fileHeaderLine.split(dnaRunTemplate.getFileSeparator());
-
+        FileHeader fileHeader = 
+            getFileHeaderByLineNumber(fileToDigest, dnaRunTemplate.getHeaderLineNumber());
+        
         //Get API fields Entity Mapping
         Map<String, List<String>> fileColumnsApiFieldsMap =
             getFileColumnsApiFieldsMap(dnaRunTemplate, propertyFields);
@@ -193,12 +173,12 @@ public class SamplesDigest extends AspectDigest {
         Map<String, Object> aspectValues = new HashMap<>();
 
         // Set Aspect for each file column
-        for(int i = 0; i < fileHeaders.length; i++) {
-            String fileHeader = fileHeaders[i];
+        for(int i = 0; i < fileHeader.getHeaders().length; i++) {
+            String fileHeaderColumn = fileHeader.getHeaders()[i];
             ColumnAspect columnAspect = 
-                new ColumnAspect(dnaRunTemplate.getHeaderLineNumber(), i);
+                new ColumnAspect(fileHeader.getHeaderLineNumber()+1, i);
 
-            for(String apiFieldName : fileColumnsApiFieldsMap.get(fileHeader)) {
+            for(String apiFieldName : fileColumnsApiFieldsMap.get(fileHeaderColumn)) {
 
                 String propertyGroupName = null;
                 if(apiFieldName.contains(propertyGroupSeparator)) {

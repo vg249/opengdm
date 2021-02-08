@@ -39,6 +39,8 @@ public class FileServiceImpl implements FileService {
 
             String fileDir = Utils.getRawUserFilesDir(fileDTO.getFileId(), cropType);
 
+            fileDTO.setSystemFilePath(fileDir);
+
             String manifestFilePath = Paths.get(fileDir, manifestFileName).toString();
             File manifestFile = new File(manifestFilePath);
 
@@ -67,7 +69,7 @@ public class FileServiceImpl implements FileService {
             throw new GobiiDomainException(
                 GobiiStatusLevel.ERROR,
                 GobiiValidationStatusType.BAD_REQUEST,
-                "un initiated file upload");
+                "file upload is not initiated or invalid file upload id");
         }
         try {
             fileManifestDTO = mapper.readValue(manifestFile, FileDTO.class);

@@ -4,15 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 
-import org.docx4j.model.datastorage.XPathEnhancerParser.primaryExpr_return;
-import org.gobii.masticator.AspectMapper;
-import org.gobii.masticator.Masticator;
 import org.gobii.masticator.aspects.AspectParser;
 import org.gobii.masticator.aspects.FileAspect;
-import org.gobii.masticator.reader.ReaderResult;
-import org.gobii.masticator.reader.TableReader;
-import org.gobii.masticator.reader.result.End;
-import org.gobii.masticator.reader.result.Val;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -24,20 +17,18 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
+import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
-import org.gobiiproject.gobiiprocess.digester.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -223,6 +214,49 @@ public abstract class AspectDigest {
 
         FileHeader fileHeader = new FileHeader();
         fileHeader.setHeaderLineNumber(headerLineNumberIndex);
+        fileHeader.setHeaders(headerColumns);
+
+        return fileHeader;
+    }
+
+    /**
+     * @param file
+     * @param headerLineNumber
+     * @return
+     * @throws GobiiException
+     */
+    protected FileHeader getFileHeaderByLineNumber(File file, 
+                                                   int headerLineNumber) throws GobiiException {
+
+        Integer headerLineNumberIndex = headerLineNumber;
+        String fileHeaderLine="";
+        Scanner fileScanner;
+
+        if(headerLineNumber < 1) {
+            throw new GobiiException("Invalid Header Line Number");
+        }
+
+        try {
+            fileScanner = new Scanner(file);
+        }
+        catch (FileNotFoundException e) {
+            throw new GobiiException("Input file does not exist");
+        }
+        while(headerLineNumberIndex > 0 && fileScanner.hasNextLine()) {
+            fileHeaderLine = fileScanner.nextLine();
+            headerLineNumberIndex--;
+        }
+        fileScanner.close();
+
+        if(headerLineNumberIndex > 0) {
+            throw new GobiiException("Unable to read file header. " +
+                                     "File ended before reaching specified header line number");
+        }
+
+        String[] headerColumns = fileHeaderLine.split(GobiiFileUtils.TAB_SEP);
+
+        FileHeader fileHeader = new FileHeader();
+        fileHeader.setHeaderLineNumber(headerLineNumber-1);
         fileHeader.setHeaders(headerColumns);
 
         return fileHeader;

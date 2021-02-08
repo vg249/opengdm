@@ -15,6 +15,8 @@ public class FileDTO {
 
     private String fileUploadUrl;
 
+    private String systemFilePath;
+
     private String mimeType;
 
     private String cropType;
