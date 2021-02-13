@@ -9,13 +9,15 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FileDTO {
 
-    private String fileId;
+    private String fileUploadId;
 
     private String fileName;
 
-    private String fileUploadUrl;
+    private String fileUrlPath;
 
-    private String systemFilePath;
+    private String serverFilePath;
+
+    private String type;
 
     private String mimeType;
 

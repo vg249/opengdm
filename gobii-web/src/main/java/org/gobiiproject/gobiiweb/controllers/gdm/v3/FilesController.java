@@ -6,10 +6,12 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.FileService;
 import org.gobiiproject.gobiidomain.services.gdmv3.JobService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypesUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.security.CropAuth;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
@@ -69,7 +72,7 @@ public class FilesController {
         FileDTO fileToUpdate = new FileDTO();
         fileToUpdate.setFileName(file.getOriginalFilename());
         fileToUpdate.setMimeType(file.getContentType());
-        fileToUpdate.setFileId(fileUploadId);
+        fileToUpdate.setFileUploadId(fileUploadId);
 
         InputStream fileChunkInputStream;
         try {
@@ -91,5 +94,18 @@ public class FilesController {
         BrApiMasterPayload<FileDTO> result = ControllerUtils.getMasterPayload(updatedFile);
 
         return ResponseEntity.ok(result);
+    }
+    
+    @GetMapping("/files/{filePath}")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<FileDTO>>
+    listFiles(@PathVariable final String cropType,
+              @PathVariable final String filePath,
+              @RequestParam(defaultValue = "1000") final Integer pageSize,
+              @RequestParam(defaultValue = "0") final Integer page) throws GobiiException {
+        PagedResult<FileDTO> files = 
+            fileService.listFilesByFilePath(filePath, cropType, pageSize, page);
+        BrApiMasterListPayload<FileDTO> payload = ControllerUtils.getMasterListPayload(files);
+        return ResponseEntity.ok(payload);
     }
 }
