@@ -37,6 +37,7 @@ import org.gobii.masticator.reader.prototype.TableReaderPrototype;
 
 public class AspectMapper {
 
+	public static char delimitter;
 
 	private static Map<Class<? extends Aspect>, Function<? extends Aspect, ReaderPrototype>> mappers = new HashMap<>();
 	static {
@@ -104,6 +105,11 @@ public class AspectMapper {
 	}
 
 	public static TableReaderPrototype map(TableAspect aspect) {
+		return (TableReaderPrototype) getMapper(aspect.getClass()).apply(aspect);
+	}
+	
+	public static TableReaderPrototype map(TableAspect aspect, char delimitter) {
+		AspectMapper.delimitter = delimitter;
 		return (TableReaderPrototype) getMapper(aspect.getClass()).apply(aspect);
 	}
 

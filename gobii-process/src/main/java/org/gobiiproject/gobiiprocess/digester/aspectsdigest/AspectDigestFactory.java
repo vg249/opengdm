@@ -12,13 +12,17 @@ public class AspectDigestFactory {
         switch (loaderInstruction.getLoadType()) {
             case "SAMPLES":
                 return new SamplesDigest(loaderInstruction, configSettings);
+            case "MARKER":
+                return new MarkersDigest(loaderInstruction, configSettings);
             case "MATRIX":
                 GenotypeUploadRequestDTO uploadRequest = AspectDigest.mapper.convertValue(
                     loaderInstruction.getUserRequest(), 
                     GenotypeUploadRequestDTO.class);                    
                 switch(uploadRequest.getFileType()) {
-                    case "HAPMAP":
+                    case HAPMAP:
                         return new HapmapsDigest(loaderInstruction, configSettings);
+                    case INTERTEK:
+                        return new InterteksDigest(loaderInstruction, configSettings);
                     default:
                         throw new GobiiException("Invalid loader instruction");
                 }

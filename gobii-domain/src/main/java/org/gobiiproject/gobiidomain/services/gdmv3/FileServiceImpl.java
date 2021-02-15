@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.FileManifestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -15,7 +16,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +28,7 @@ public class FileServiceImpl implements FileService {
     private ContactService contactService;
 
     private String fileUploadUrlFormat = "/files/%s";
+    private String filePathUrlFormat = "/files/%s/%s";
 
     private final String manifestFileName = "MANIFEST.json";
 
@@ -42,16 +43,17 @@ public class FileServiceImpl implements FileService {
      * @return {@link FileDTO} with file path 
      * @throws GobiiDomainException
      */
-    public FileDTO initiateFileUpload(String cropType) throws GobiiDomainException {
+    public FileManifestDTO initiateFileUpload(String cropType) throws GobiiDomainException {
 
-        FileDTO fileDTO = new FileDTO();
+        FileManifestDTO fileDTO = new FileManifestDTO();
 
         try {
             ContactDTO createdBy = contactService.getCurrentUser();
             fileDTO.setCreatedBy(createdBy.getContactId().toString());
             fileDTO.setCreatedDate(new Date());
             fileDTO.setFileUploadId(Utils.getUniqueName());
-            fileDTO.setFileUrlPath(String.format(fileUploadUrlFormat, fileDTO.getFileUploadId()));
+            fileDTO.setFileUploadUrl(
+                String.format(fileUploadUrlFormat, fileDTO.getFileUploadId()));
 
             String fileDir = Utils.getRawUserFilesDir(fileDTO.getFileUploadId(), cropType);
 
@@ -73,11 +75,12 @@ public class FileServiceImpl implements FileService {
     /**
      * 
      */
-    public FileDTO updateFileChunk(FileDTO fileToUpdate,
+    public FileDTO updateFileChunk(FileManifestDTO fileToUpdate,
                                    String cropType,
                                    InputStream inputStream) throws GobiiDomainException {
 
-        FileDTO fileManifestDTO;
+        FileManifestDTO fileManifestDTO;
+        FileDTO file = new FileDTO();
 
         // Get file manifest
         String fileDir = Utils.getRawUserFilesDir(fileToUpdate.getFileUploadId(), cropType);
@@ -91,7 +94,7 @@ public class FileServiceImpl implements FileService {
                 "file upload is not initiated or invalid file upload id");
         }
         try {
-            fileManifestDTO = mapper.readValue(manifestFile, FileDTO.class);
+            fileManifestDTO = mapper.readValue(manifestFile, FileManifestDTO.class);
 
             // Update the manifest with file name for first upload
             if(StringUtils.isEmpty(fileManifestDTO.getFileName())) {
@@ -105,10 +108,12 @@ public class FileServiceImpl implements FileService {
         }
         catch (IOException e) {
             log.error("Invalid file upload id");
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "uninitiated file upload");
+            throw new InvalidException("requst: uninitiated filed upload");
+        }
+
+        // check file name conflict between chunks
+        if(!fileToUpdate.getFileName().equals(fileManifestDTO.getFileName())) {
+            throw new InvalidException("file name mismacth between files");
         }
 
         String filePath = Paths.get(
@@ -129,7 +134,17 @@ public class FileServiceImpl implements FileService {
             // update the manifest
             mapper.writeValue(manifestFile, fileManifestDTO);
 
-            return fileManifestDTO;
+            String filePathUrl = 
+                String.format(filePathUrlFormat, 
+                              fileManifestDTO.getFileUploadId(), 
+                              fileToUpdate.getFileName());
+
+            file.setServerFilePath(filePath);
+            file.setFileUrlPath(filePathUrl);
+            file.setFileManifestPath(manifestFilePath);
+            file.setFileName(fileToUpdate.getFileName());
+
+            return file;
         }
         catch (IOException e) {
             log.error(e.getMessage());
@@ -145,7 +160,6 @@ public class FileServiceImpl implements FileService {
         List<FileDTO> files = new ArrayList<>();
 
         String userFilesDir = Utils.getProcessDir(cropType, GobiiFileProcessDir.RAW_USER_FILES);
-
         File requestFile = Paths.get(userFilesDir, filePath).toFile();
 
         if(!requestFile.exists()) {
@@ -169,13 +183,6 @@ public class FileServiceImpl implements FileService {
                 File childFile = childFiles[i];
                 FileDTO fileDTO = mapFileProperties(childFile); 
                 files.add(fileDTO);
-
-                if(childFile.isDirectory()) {
-                    fileDTO.setType(directoryType);
-                }
-                else {
-                    fileDTO.setType(fileType);
-                }
             }
         }
         else {
@@ -189,6 +196,12 @@ public class FileServiceImpl implements FileService {
         FileDTO fileDTO = new FileDTO();
         fileDTO.setFileName(file.getName());
         fileDTO.setServerFilePath(file.getAbsolutePath());
+        if(file.isDirectory()) {
+            fileDTO.setType(directoryType);
+        }
+        else {
+            fileDTO.setType(fileType);
+        }
         return fileDTO;
     }
 }

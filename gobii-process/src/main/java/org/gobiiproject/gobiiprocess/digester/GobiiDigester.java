@@ -111,7 +111,7 @@ public class GobiiDigester {
 
     private static Boolean isAspectInstruction(LoaderInstruction loaderInstruction) {
         return StringUtils.isNotEmpty(loaderInstruction.getInstructionType()) &&
-            loaderInstruction.getInstructionType().equals("ASPECT");
+            loaderInstruction.getInstructionType().equals("v3");
     }
 
     /**

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import lombok.Data;
+
+import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.reader.result.Val;
 
 @Data
@@ -19,6 +21,8 @@ public class CellReader implements Reader {
 	private String val;
 
 	public CellReader(File file, int row, int col) throws IOException {
+
+		char delimitter = AspectMapper.delimitter;
 		raf = new RandomAccessFile(file, "r");
 
 		for (int i = 0 ; i < row ; i++) {
@@ -30,7 +34,7 @@ public class CellReader implements Reader {
 		}
 
 		StringBuilder s = new StringBuilder();
-		for (char c = (char) raf.readByte() ; c != '\t' ; c = (char) raf.readByte()) {
+		for (char c = (char) raf.readByte() ; c != delimitter ; c = (char) raf.readByte()) {
 			if (c == '\n') {
 				this.closed = true;
 				break;

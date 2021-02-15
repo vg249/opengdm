@@ -25,6 +25,8 @@ public class GobiiFileUtils {
     public static final String ZIP_EXTENSION = ".zip";
 
     public static final String TAB_SEP = "\t";
+    
+    public static final String COMMA_SEP = ",";
 
     private static final Tika tika = new Tika();
 

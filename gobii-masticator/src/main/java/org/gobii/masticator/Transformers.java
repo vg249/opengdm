@@ -21,7 +21,7 @@ public class Transformers {
 	public String IUPAC2BI(List<String> values, List<Object> args){
 		if(values.size()<1)return "";
 		String value = values.get(0);
-		String retVal = Arrays.stream(value.split("\t")).map(s -> iupac.process(s)).collect(Collectors.joining("\t"));
+		String retVal = Arrays.stream(value.split(String.valueOf(AspectMapper.delimitter))).map(s -> iupac.process(s)).collect(Collectors.joining("\t"));
 			if(retVal==null){
 				throw new RuntimeException("Unable to process IUPAC transformation for value " + value);
 			}
@@ -39,7 +39,7 @@ public class Transformers {
 	public String FOURLETTERNUCLEOTIDE(List<String> values, List<Object> args){
 		if(values.size()<1)return "";
 		String value = values.get(0);
-		String retVal = Arrays.stream(value.split("\t")).map(s -> fourLetter.process(s)).collect(Collectors.joining("\t"));
+		String retVal = Arrays.stream(value.split(String.valueOf(AspectMapper.delimitter))).map(s -> fourLetter.process(s)).collect(Collectors.joining("\t"));
 
 		if(retVal==null){
 			throw new RuntimeException("Unable to process four letter nucleotide cleaning transformation for value " + value);
@@ -51,7 +51,7 @@ public class Transformers {
 	public String TWOLETTERNUCLEOTIDE(List<String> values, List<Object> args){
 		if(values.size()<1)return "";
 		String value = values.get(0);
-		String retVal = Arrays.stream(value.split("\t")).map(s -> twoLetter.process(s)).collect(Collectors.joining("\t"));
+		String retVal = Arrays.stream(value.split(String.valueOf(AspectMapper.delimitter))).map(s -> twoLetter.process(s)).collect(Collectors.joining("\t"));
 
 		if(retVal==null){
 			throw new RuntimeException("Unable to process two letter nucleotide cleaning transformation for value " + value);

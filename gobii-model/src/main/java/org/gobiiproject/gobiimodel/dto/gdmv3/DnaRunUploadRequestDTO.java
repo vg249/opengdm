@@ -1,8 +1,13 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import lombok.Data;
+
+@Data
 public class DnaRunUploadRequestDTO {
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -14,27 +19,6 @@ public class DnaRunUploadRequestDTO {
     @JsonSerialize(using = ToStringSerializer.class)
     private Integer dnaRunTemplateId;
 
-    public Integer getProjectId() {
-        return projectId;
-    }
+    private List<FileDTO> inputFiles;
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    public Integer getExperimentId() {
-        return experimentId;
-    }
-
-    public void setExperimentId(Integer experimentId) {
-        this.experimentId = experimentId;
-    }
-
-    public Integer getDnaRunTemplateId() {
-        return dnaRunTemplateId;
-    }
-
-    public void setDnaRunTemplateId(Integer dnaRunTemplateId) {
-        this.dnaRunTemplateId = dnaRunTemplateId;
-    }
 }

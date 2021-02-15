@@ -10,24 +10,18 @@ import java.util.Map;
 @Data
 public class LoaderInstruction {
 
+    final String InstructionType = "v3";
+
     @NotNull(message = "Required Crop Type")
     private String cropType;
 
     @NotNull(message = "Required Load Type")
     private String loadType;
 
-    @NotNull(message = "Required Input file")
-    private String inputFile;
-
-    @NotNull(message = "Required Input file content type")
-    private String inputFileMimeType;
-
     @NotNull(message = "Output direcotory not defined")
     private String outputDir;
 
     private String contactEmail;
-
-    private String instructionType;
 
     private Map<String, Object> aspects;
 

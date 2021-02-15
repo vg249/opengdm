@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
+import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
+import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -97,6 +100,21 @@ public class Utils {
 
     }
 
+    static void checkIfInputFilesAreValid(List<FileDTO> inputFiles) throws GobiiException {
+        for(FileDTO fileDTO : inputFiles) {
+            String filePath = fileDTO.getServerFilePath();
+            if(filePath != null && !filePath.isBlank()) {
+                File inputFile = new File(filePath);
+                if(!inputFile.exists()) {
+                    throw new InvalidException("request: input file path does not exist");
+                }
+            }
+            else {
+                throw new InvalidException("request: empty server file path");
+            }
+        }
+    }
+
     /**
      * @param cvs List of cvs
      * @return map of Cvs by their names
@@ -172,69 +190,6 @@ public class Utils {
                 GobiiValidationStatusType.NONE,
                 "Unable to submit job file");
         }
-    }
-
-    /**
-     * @param propertyFieldNames
-     * @return
-     */
-    public static Map<String, List<String>> getFileColumnsApiFieldsMap(
-        Map<String, Object> templateMap,
-        HashSet<String> propertyFieldNames) {
-
-        if(propertyFieldNames == null) {
-            propertyFieldNames = new HashSet<>();
-        }
-        Map<String, List<String>> fileColumnsApiFieldsMap = new HashMap<>();
-        List<String> fileField;
-
-        for(String apiField : templateMap.keySet()) {
-            if(propertyFieldNames.contains(apiField)) {
-                Map<String, List<String>> properties =
-                    (HashMap<String, List<String>>) templateMap.get(apiField);
-                for(String property : properties.keySet()) {
-                    fileField = properties.get(property);
-                    if(fileField.size() > 0) {
-                        if(!fileColumnsApiFieldsMap.containsKey(fileField.get(0))) {
-                            fileColumnsApiFieldsMap.put(fileField.get(0), new ArrayList<>());
-                        }
-                        fileColumnsApiFieldsMap.get(fileField.get(0)).add(apiField+"."+property);
-                    }
-                }
-            }
-            else {
-                fileField = (List<String>) templateMap.get(apiField);
-                if (fileField.size() > 0) {
-                    if(!fileColumnsApiFieldsMap.containsKey(fileField.get(0))) {
-                        fileColumnsApiFieldsMap.put(fileField.get(0), new ArrayList<>());
-                    }
-                    fileColumnsApiFieldsMap.get(fileField.get(0)).add(apiField);
-                }
-            }
-        }
-        return fileColumnsApiFieldsMap;
-    }
-
-    public static String getTableName(Class<?> entity) throws NullPointerException {
-        return entity.getDeclaredAnnotation(GobiiAspectTable.class).name();
-    }
-
-    public static String[] getHeaders(File inputFile) throws GobiiDomainException {
-        BufferedReader br;
-        String fileHeader;
-        try {
-            br = new BufferedReader(new FileReader(inputFile));
-            fileHeader = br.readLine();
-        }
-        catch (IOException io) {
-            throw new GobiiDomainException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "No able to read file header");
-        }
-
-        String[] fileColumns = fileHeader.split("\t");
-        return fileColumns;
     }
 
     public static String getUniqueName() {

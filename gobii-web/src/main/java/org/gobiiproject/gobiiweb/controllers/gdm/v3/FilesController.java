@@ -4,13 +4,11 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.FileService;
-import org.gobiiproject.gobiidomain.services.gdmv3.JobService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypesUploadRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.FileManifestDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -23,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
@@ -54,10 +51,10 @@ public class FilesController {
     @CropAuth(CURATOR)
     @PostMapping("/files")
     @ResponseBody
-    public ResponseEntity<BrApiMasterPayload<FileDTO>>
+    public ResponseEntity<BrApiMasterPayload<FileManifestDTO>>
     initiateFileUploadRequest(@PathVariable final String cropType) throws GobiiException {
-        FileDTO fileDTO = fileService.initiateFileUpload(cropType);
-        BrApiMasterPayload<FileDTO> result = ControllerUtils.getMasterPayload(fileDTO);
+        FileManifestDTO fileDTO = fileService.initiateFileUpload(cropType);
+        BrApiMasterPayload<FileManifestDTO> result = ControllerUtils.getMasterPayload(fileDTO);
         return ResponseEntity.ok(result);
     }
 
@@ -69,7 +66,7 @@ public class FilesController {
                     @PathVariable final String fileUploadId,
                     @RequestPart("file") MultipartFile file) throws GobiiException {
 
-        FileDTO fileToUpdate = new FileDTO();
+        FileManifestDTO fileToUpdate = new FileManifestDTO();
         fileToUpdate.setFileName(file.getOriginalFilename());
         fileToUpdate.setMimeType(file.getContentType());
         fileToUpdate.setFileUploadId(fileUploadId);

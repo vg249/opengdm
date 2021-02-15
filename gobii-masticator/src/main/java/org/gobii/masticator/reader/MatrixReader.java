@@ -4,6 +4,8 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.reader.result.Break;
 import org.gobii.masticator.reader.result.End;
 import org.gobii.masticator.reader.result.Val;
@@ -42,7 +44,7 @@ public class MatrixReader implements Reader {
 	*/
 	private void skipLineBeginning() throws IOException {
 		for (int i = 0 ; i < col ; i++) {
-			while (raf.readByte() != '\t') ;
+			while (raf.readByte() != AspectMapper.delimitter) ;
 		}
 	}
 
@@ -74,7 +76,7 @@ public class MatrixReader implements Reader {
 				break;
 			}
 			//Note, removed special handling of tab characters, as internal tabs should be preserved on 'matrix' calls
-			if (c == '\n') {
+			if (c == '\n' || c == '\r') {
 				skipLineBeginning();
 				break;
 			} else {

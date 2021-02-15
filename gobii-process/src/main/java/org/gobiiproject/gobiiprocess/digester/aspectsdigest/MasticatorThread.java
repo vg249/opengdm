@@ -26,16 +26,20 @@ public class MasticatorThread extends Thread {
 
     private String tableName;
 
+    private String fileDelimitter;
+
     private int totalLinesWritten = 0;
 
     MasticatorThread(String tableName, 
                      FileAspect fileAspect,
                      File dataFile,
-                     File outputFile) {
+                     File outputFile,
+                     String fileDelimitter) {
         this.tableName = tableName;
         this.dataFile = dataFile;
         this.outputFile = outputFile;
         this.fileAspect = fileAspect;
+        this.fileDelimitter = fileDelimitter;
     }
 
     @Override
@@ -47,7 +51,9 @@ public class MasticatorThread extends Thread {
 		    log.info("Masticating {}", tableName);
 
                 TableReader reader = 
-                    AspectMapper.map(fileAspect.getAspects().get(tableName)).build(dataFile);
+                    AspectMapper
+                        .map(fileAspect.getAspects().get(tableName), fileDelimitter.charAt(0))
+                        .build(dataFile);
 
                 // Matrix file don't need header
                 if(outputFile.length() == 0 && !tableName.equals("matrix")) {

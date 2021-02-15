@@ -1,32 +1,23 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.gobiiproject.gobiidomain.GobiiDomainException;
+import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerUploadRequestDTO;
-import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
 import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
-import org.gobiiproject.gobiimodel.validators.FieldValidator;
 import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
 @Transactional
 public class MarkerServiceImpl implements MarkerService {
-
-    @Autowired
-    private LoaderTemplateDao loaderTemplateDao;
 
     @Autowired
     private ContactDao contactDao;
@@ -36,9 +27,6 @@ public class MarkerServiceImpl implements MarkerService {
 
     @Autowired
     private MapsetDao mapsetDao;
-
-    @Autowired
-    private CvDao cvDao;
 
     @Autowired
     private JobService jobService;
@@ -59,16 +47,11 @@ public class MarkerServiceImpl implements MarkerService {
      * @throws GobiiException   Gobii Exception for bad request or if any run time system error
      */
     @Override
-    public JobDTO loadMarkerData(InputStream inputFileStream,
-                                 MarkerUploadRequestDTO markerUploadRequest,
+    public JobDTO loadMarkerData(MarkerUploadRequestDTO markerUploadRequest,
                                  String cropType) throws GobiiException {
 
         LoaderInstruction loaderInstruction = new LoaderInstruction();
         loaderInstruction.setLoadType(loadType);
-        loaderInstruction.setAspects(new HashMap<>());
-
-        Map<String, Object> markerTemplateMap;
-        MarkerTemplateDTO markerTemplate;
 
         loaderInstruction.setCropType(cropType);
 
@@ -76,9 +59,7 @@ public class MarkerServiceImpl implements MarkerService {
         if(!IntegerUtils.isNullOrZero(markerUploadRequest.getPlatformId())) {
             Platform platform = platformDao.getPlatform(markerUploadRequest.getPlatformId());
             if (platform == null) {
-                throw new GobiiDomainException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid Platform");
+                throw new InvalidException("platform");
             }
         }
 
@@ -86,31 +67,37 @@ public class MarkerServiceImpl implements MarkerService {
         if(!IntegerUtils.isNullOrZero(markerUploadRequest.getMapId())) {
             Mapset mapset = mapsetDao.getMapset(markerUploadRequest.getMapId());
             if(mapset == null) {
-                throw new GobiiDomainException(
-                    GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid mapset id");
+                throw new InvalidException("mapset");
             }
         }
+        
+        // Check if input files are found
+        if(markerUploadRequest.getInputFiles().size() == 0) {
+            throw new InvalidException("request: no input files");
+        }
+
+        // Check whether input file paths are valid
+        Utils.checkIfInputFilesAreValid(markerUploadRequest.getInputFiles());
 
         // Get user submitting the load
         String userName = ContactService.getCurrentUserName();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
-        // Create loader job
+        // Set contact email in loader instruction
+        loaderInstruction.setContactEmail(createdBy.getEmail());
+
+        // Create loader job after validating user input.
         JobDTO jobDTO = new JobDTO();
         jobDTO.setPayload(GobiiLoaderPayloadTypes.MARKERS.getTerm());
         JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();
-
-        // Set contact email in loader instruction
-        loaderInstruction.setContactEmail(createdBy.getEmail());
-
+        
         //Set output dir
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);
         loaderInstruction.setOutputDir(outputFilesDir);
 
+        loaderInstruction.setUserRequest(markerUploadRequest);
 
         // Write instruction file
         Utils.writeInstructionFile(loaderInstruction, jobName, cropType);

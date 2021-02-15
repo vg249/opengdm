@@ -47,8 +47,10 @@ public class MarkersDigest extends AspectDigest {
     private MapsetDao mapsetDao;
 
     private MarkerUploadRequestDTO markerUploadRequest;
-    
-    final HashSet<String> propertyFields = new HashSet<>(Arrays.asList("markerPropeties")); 
+   
+    private MarkerTemplateDTO markerTemplate;
+
+    final HashSet<String> propertyFields = new HashSet<>(Arrays.asList("markerProperties")); 
     
     final Map<String, CvGroupTerm> propertyFieldsCvGroupMap = Map.of(
         "markerProperties", CvGroupTerm.CVGROUP_MARKER_PROP);
@@ -61,6 +63,9 @@ public class MarkersDigest extends AspectDigest {
         this.markerUploadRequest = 
             mapper.convertValue(loaderInstruction.getUserRequest(), MarkerUploadRequestDTO.class);
         
+        // Read marker template
+        this.markerTemplate = (MarkerTemplateDTO)
+            getLoaderTemplate(markerUploadRequest.getMarkerTemplateId(), MarkerTemplateDTO.class);
     }
 
     public DigesterResult digest() throws GobiiException {
@@ -68,13 +73,9 @@ public class MarkersDigest extends AspectDigest {
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
         Map<String, MasticatorResult> masticatedFilesMap = new HashMap<>();
 
-        // creates new directtory or cleans one if already exists
-        setupOutputDirectory();
-            
-    
         try {
 
-            filesToDigest = getFilesToDigest();
+            filesToDigest = getFilesToDigest(markerUploadRequest.getInputFiles());
 
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
@@ -87,7 +88,9 @@ public class MarkersDigest extends AspectDigest {
                 Map<String, Table> aspects = getAspects(fileToDigest);
 
                 // Masticate and set the output.
-                masticatedFilesMap = masticate(fileToDigest, aspects);
+                masticatedFilesMap = masticate(fileToDigest, 
+                                               markerTemplate.getFileSeparator(), 
+                                               aspects);
 
                 // Update the intermediate file map incase if there is any new table
                 masticatedFilesMap.forEach((table, masticatorResult) -> {
@@ -169,10 +172,6 @@ public class MarkersDigest extends AspectDigest {
         // To memoize cv for each property group for each table.
         Map<String, Map<String, Cv>> propertiesCvMaps = new HashMap<>();
 
-        // Read marker template
-        MarkerTemplateDTO markerTemplate = (MarkerTemplateDTO)
-            getLoaderTemplate(markerUploadRequest.getMarkerTemplateId(), MarkerTemplateDTO.class);
-        
         Map<String, Object> aspectValues = new HashMap<>();
 
         //Get API fields Entity Mapping

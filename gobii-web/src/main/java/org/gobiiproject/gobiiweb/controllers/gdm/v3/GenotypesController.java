@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.GenotypeService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypesUploadRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,20 +43,15 @@ public class GenotypesController {
 
     @CropAuth(CURATOR)
     @PostMapping(value = "/genotype/upload",
-        consumes = "multipart/form-data",
+        consumes = "application/json",
         produces = "application/json")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<JobDTO>> uploadGenotypes(
         @PathVariable final String cropType,
-        @RequestPart("genotypesFile") MultipartFile genotypeFile,
-        @RequestPart("fileProperties") final GenotypesUploadRequestDTO genotypesUploadRequest
+        @RequestBody final GenotypeUploadRequestDTO genotypesUploadRequest
         ) throws Exception {
 
-        InputStream dnaRunFileInputStream = genotypeFile.getInputStream();
-
         JobDTO job = genotypeService.loadGenotypes(
-            dnaRunFileInputStream,
-            genotypeFile.getOriginalFilename(),
             genotypesUploadRequest,
             cropType);
 

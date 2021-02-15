@@ -45,6 +45,7 @@ public class SamplesDigest extends AspectDigest {
     private ProjectDao projectDao;
     private ExperimentDao experimentDao;
     private DnaRunUploadRequestDTO uploadRequest;
+    private DnaRunTemplateDTO dnaRunTemplate;
 
     /**
      * Constructor
@@ -65,8 +66,12 @@ public class SamplesDigest extends AspectDigest {
         this.projectDao = SpringContextLoaderSingleton.getInstance().getBean(ProjectDao.class);
         this.experimentDao =
             SpringContextLoaderSingleton.getInstance().getBean(ExperimentDao.class);
-        uploadRequest = 
+        this.uploadRequest = 
             mapper.convertValue(loaderInstruction.getUserRequest(), DnaRunUploadRequestDTO.class);
+        this.dnaRunTemplate = (DnaRunTemplateDTO) getLoaderTemplate(
+            uploadRequest.getDnaRunTemplateId(),
+            DnaRunTemplateDTO.class);
+
 
     }
 
@@ -81,13 +86,10 @@ public class SamplesDigest extends AspectDigest {
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
         Map<String, MasticatorResult> masticatedFilesMap = new HashMap<>();
 
-        // creates new directtory or cleans one if already exists
-        setupOutputDirectory();
-            
     
         try {
 
-            filesToDigest = getFilesToDigest();
+            filesToDigest = getFilesToDigest(uploadRequest.getInputFiles());
 
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
@@ -100,7 +102,8 @@ public class SamplesDigest extends AspectDigest {
                 Map<String, Table> aspects = getAspects(fileToDigest);
 
                 // Masticate and set the output.
-                masticatedFilesMap = masticate(fileToDigest, aspects);
+                masticatedFilesMap = 
+                    masticate(fileToDigest, dnaRunTemplate.getFileSeparator(), aspects);
 
                 // Update the intermediate file map incase if there is any new table
                 masticatedFilesMap.forEach((table, masticatorResult) -> {
@@ -149,14 +152,9 @@ public class SamplesDigest extends AspectDigest {
         Map<String, Table> aspects = new HashMap<>();
 
 
-        DnaRunTemplateDTO dnaRunTemplate;
         DnaRunTable dnaRunTable = new DnaRunTable();
         DnaSampleTable dnaSampleTable = new DnaSampleTable();
         GermplasmTable germplasmTable = new GermplasmTable();
-
-        dnaRunTemplate = (DnaRunTemplateDTO) getLoaderTemplate(
-            uploadRequest.getDnaRunTemplateId(),
-            DnaRunTemplateDTO.class);
 
         // Get file header columns
         FileHeader fileHeader = 

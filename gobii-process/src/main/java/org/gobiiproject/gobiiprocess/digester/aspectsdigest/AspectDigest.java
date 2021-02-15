@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.cvnames.DatasetType;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
+import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
@@ -82,6 +83,8 @@ public abstract class AspectDigest {
             SpringContextLoaderSingleton.getInstance().getBean(LoaderTemplateDao.class);
         this.cvDao = SpringContextLoaderSingleton.getInstance().getBean(CvDao.class);
         this.newStatus = cvDao.getNewStatus();
+        // creates new directtory or cleans one if already exists
+        setupOutputDirectory();            
     }
 
     abstract public DigesterResult digest();
@@ -95,6 +98,7 @@ public abstract class AspectDigest {
      */
     protected Map<String, MasticatorResult> masticate(
         File dataFile,
+        String fileDelimitter,
         Map<String, Table> aspects) throws GobiiException {
 
         Map<String, MasticatorResult> masticatorResultByTable  = new HashMap<>();
@@ -136,7 +140,7 @@ public abstract class AspectDigest {
             File outputFile = GobiiFileUtils.getFile(outputFilePath);
             
             final MasticatorThread masticatorThread = 
-                new MasticatorThread(table, fileAspect, dataFile, outputFile);
+                new MasticatorThread(table, fileAspect, dataFile, outputFile, fileDelimitter);
             
             masticatorThread.start();
             threads.add(masticatorThread);
@@ -347,35 +351,36 @@ public abstract class AspectDigest {
      * @return  List of files to digest
      * @throws GobiiException when file does not exist
      */
-    protected List<File> getFilesToDigest() throws GobiiException {
+    protected List<File> getFilesToDigest(List<FileDTO> fileDTOs) throws GobiiException {
 
         List<File> filesToDigest = new ArrayList<>();        
-        File inputFile = new File(loaderInstruction.getInputFile());
 
-        if (inputFile.exists()) {
+        for(FileDTO fileDTO : fileDTOs) {
+            File inputFile = new File(fileDTO.getServerFilePath());
+            if (inputFile.exists()) {
 
-            if(inputFile.isDirectory()) {
-                File[] filesArray = inputFile.listFiles();
-                if(filesArray != null) {
-                    filesToDigest.addAll(Arrays.asList(filesArray));
+                if(inputFile.isDirectory()) {
+                    File[] filesArray = inputFile.listFiles();
+                    if(filesArray != null) {
+                        filesToDigest.addAll(Arrays.asList(filesArray));
+                    }
+                }
+                else if(inputFile.getName().endsWith(GobiiFileUtils.TAR_GUNZIP_EXTENSION) &&
+                    inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
+                    filesToDigest = GobiiFileUtils.extractTarGunZipFile(inputFile);
+                }
+                else if(inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
+                    filesToDigest.add(GobiiFileUtils.extractGunZipFile(inputFile));
+                }
+                else {
+                    filesToDigest.add(inputFile);
                 }
             }
-            else if(inputFile.getName().endsWith(GobiiFileUtils.TAR_GUNZIP_EXTENSION) &&
-                inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
-                filesToDigest = GobiiFileUtils.extractTarGunZipFile(inputFile);
-            }
-            else if(inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
-                filesToDigest.add(GobiiFileUtils.extractGunZipFile(inputFile));
-            }
             else {
-                filesToDigest.add(inputFile);
+                throw new GobiiException("Input file does not exist");
             }
-            return filesToDigest;
         }
-        else {
-            throw new GobiiException("Input file does not exist");
-        }
-
+        return filesToDigest;
     }
 
     protected void setPropertyAspect(Map<String, Object> aspectValues,
