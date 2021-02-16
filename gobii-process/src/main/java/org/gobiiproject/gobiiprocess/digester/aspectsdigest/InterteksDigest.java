@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
+import org.gobiiproject.gobiiprocess.digester.utils.TransposeMatrix;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 
@@ -173,6 +175,20 @@ public class InterteksDigest extends AspectDigest {
         if(loadOrder == null || loadOrder.size() <= 0) {
             loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
         }
+
+        // Transpose matrix as Intertek is Sample fast
+        String transposeOutputFilePath = 
+            intermediateDigestFileMap.get("matrix").getAbsolutePath()+".transpose";
+        TransposeMatrix.transposeMatrix(
+            "tab", 
+            intermediateDigestFileMap.get("matrix").getAbsolutePath(), 
+            transposeOutputFilePath,
+            loaderInstruction.getOutputDir());
+        File transposedFile = new File(transposeOutputFilePath);
+        if(!transposedFile.exists()) {
+            throw new GobiiException("Unable to transpose file for sample fast.");
+        }
+        intermediateDigestFileMap.put("matrix", transposedFile);
 
         DigesterResult digesterResult = new DigesterResult
                 .Builder()
