@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,17 +146,23 @@ public class InterteksDigest extends AspectDigest {
 
                 // Masticate and set the output.
                 Map<String, MasticatorResult> masticatedFilesMap = 
-                    masticate(fileToDigest, GobiiFileUtils.COMMA_SEP, aspects);
+                    masticate(fileToDigest, GobiiFileUtils.TAB_SEP, aspects);
 
                 // Update the intermediate file map incase if there is any new table
                 for(String table: masticatedFilesMap.keySet()) {
+
                     MasticatorResult masticatorResult = masticatedFilesMap.get(table);
+
                     intermediateDigestFileMap.put(table, masticatorResult.getOutputFile());
+
                     int updatedCount = masticatorResult.getTotalLinesWritten(); 
+
                     if(totalLinesWrittenForEachTable.containsKey(table)) {
+
                         updatedCount += totalLinesWrittenForEachTable.get(table);
-                        if(table.equals(GobiiLoaderPayloadTypes.MATRIX.getTerm()) &&
-                           totalLinesWrittenForEachTable.get(table) > 0) {
+
+                        if(table.equals(GobiiLoaderPayloadTypes.MATRIX.getTerm()) 
+                           && totalLinesWrittenForEachTable.get(table) > 0) {
                             hdf5MarkerIndexStart += (fileHeader.getHeaders().length - 1);
                         } 
                     }
