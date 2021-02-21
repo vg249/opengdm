@@ -137,7 +137,7 @@ public class InterteksDigest extends AspectDigest {
                     String matrixTableName = AspectUtils.getTableName(MatrixTable.class);
                     aspects.put(matrixTableName, getMatrixTable(fileHeader.getHeaderLineNumber()));
                 }
-                
+
                 if(uploadRequest.isLoadMarkers()) {
                     String markerTableName = AspectUtils.getTableName(MarkerTable.class);
                     aspects
@@ -146,7 +146,7 @@ public class InterteksDigest extends AspectDigest {
 
                 // Masticate and set the output.
                 Map<String, MasticatorResult> masticatedFilesMap = 
-                    masticate(fileToDigest, GobiiFileUtils.TAB_SEP, aspects);
+                    masticate(fileToDigest, GobiiFileUtils.COMMA_SEP, aspects);
 
                 // Update the intermediate file map incase if there is any new table
                 for(String table: masticatedFilesMap.keySet()) {
