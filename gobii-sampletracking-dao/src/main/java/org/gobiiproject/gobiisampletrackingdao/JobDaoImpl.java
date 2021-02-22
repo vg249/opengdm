@@ -122,7 +122,7 @@ public class JobDaoImpl implements JobDao {
                 );
             }
             
-
+            // TODO: limit to extractor and loader jobs only?
 
             List<Job> jobs;
 

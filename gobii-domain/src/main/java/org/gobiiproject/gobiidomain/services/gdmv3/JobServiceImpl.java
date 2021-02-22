@@ -3,6 +3,8 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.services.FilesService;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
@@ -22,10 +24,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.UUID;
 import java.util.List;
+import java.io.File;
 import java.util.ArrayList;
 
 @Transactional
 public class JobServiceImpl implements JobService {
+    public static final String EXTRACT = "extract";
+    public static final String LOAD = "load";
+
+    public static final String COMPLETED = "completed";
+    public static final String FAILED = "failed";
+
+    public static final String IN_PROGRESS = "in_progress";
+    public static final String PENDING = "pending";
 
     @Autowired
     private JobDao jobDao;
@@ -38,6 +49,9 @@ public class JobServiceImpl implements JobService {
 
     @Autowired
     private FilesService filesService;
+
+    @Autowired
+    private ConfigSettings configSettings;
 
     @Override
     public JobDTO getJobById(Integer jobId) throws GobiiException {
@@ -100,12 +114,45 @@ public class JobServiceImpl implements JobService {
             JobDTO jobDTO = new JobDTO();
             ModelMapper.mapEntityToDto(job, jobDTO);
 
-            //add download URL
+            // add download URL
             jobDTO.setDownloadUrl(null); // to do
             jobDTOs.add(jobDTO);
         });
 
         return PagedResult.createFrom(page, jobDTOs);
+    }
+
+    @Override
+    public File getJobStatusDirectory(String cropType, String jobName) throws Exception {
+        Job job = jobDao.getByName(jobName);
+        if (job == null) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Job not found.");
+        }
+
+        String status =  job.getStatus().getTerm();
+        String type = job.getType().getTerm();
+
+        GobiiFileProcessDir dir = null;
+        if (type.equals(EXTRACT)) {
+            switch (status) {
+                case COMPLETED:
+                case FAILED: dir = GobiiFileProcessDir.EXTRACTOR_DONE; break;
+                case IN_PROGRESS: dir = GobiiFileProcessDir.EXTRACTOR_INPROGRESS; break;
+                default: dir = GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS; break;
+            }
+        } else if (type.equals(LOAD)) {
+            switch(status) {
+                case COMPLETED:
+                case FAILED: dir = GobiiFileProcessDir.LOADER_DONE; break;
+                case IN_PROGRESS: dir = GobiiFileProcessDir.LOADER_INPROGRESS_FILES; break;
+                default: dir = GobiiFileProcessDir.LOADER_INSTRUCTIONS;
+            }
+        } else {
+            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Job type not supported");
+        }
+
+        String path = configSettings.getProcessingPath(cropType, dir);
+        return new File(path);
     }
 
     

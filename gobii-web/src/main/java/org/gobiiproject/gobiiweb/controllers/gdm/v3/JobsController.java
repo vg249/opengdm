@@ -1,6 +1,16 @@
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
 import io.swagger.annotations.Api;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.JobService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -8,10 +18,12 @@ import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 @Scope(value = "request")
 @RestController
@@ -61,6 +73,56 @@ public class JobsController {
 
         BrApiMasterListPayload<JobDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
         return ResponseEntity.ok(payload);
+    }
+
+    @GetMapping(value="/jobs/{jobName}/files", produces="application/zip")
+    public ResponseEntity<StreamingResponseBody> zipFiles(@PathVariable String jobName) throws Exception {
+        String cropType = CropRequestAnalyzer.getGobiiCropType();
+        File instructionFileDirectory = jobService.getJobStatusDirectory(cropType, jobName);
+        if (instructionFileDirectory == null ) {
+            throw new GobiiException("Job Directory not found.");
+        }
+
+        return ResponseEntity.ok()
+            .header(
+                "Content-Disposition",
+                String.format("attachment; filename=\"%s\"", jobName + ".zip")
+            )
+            .body(out -> {
+                ZipOutputStream zipOut = new ZipOutputStream(out);
+                zipFile(instructionFileDirectory, instructionFileDirectory.getName(), zipOut);
+                zipOut.close();
+            });
+
+    }
+ 
+    private static void zipFile(File file, String filename, ZipOutputStream zipOut) throws IOException {
+        if (file.isHidden()) {
+            return;
+        }
+
+        if (file.isDirectory()) {
+            if (filename.endsWith("/")) {
+                zipOut.putNextEntry(new ZipEntry(filename));
+                zipOut.closeEntry();
+            } else {
+                zipOut.putNextEntry((new ZipEntry(filename + "/")));
+                zipOut.closeEntry();
+            }
+            File[] children = file.listFiles();
+            for (File childFile: children) {
+                zipFile(childFile, filename + "/" + childFile.getName(), zipOut);
+            }
+            return;
+        }
+
+        FileInputStream fis = new FileInputStream(file);
+        ZipEntry zipEntry = new ZipEntry(filename);
+        zipOut.putNextEntry(zipEntry);
+
+        IOUtils.copy(fis, zipOut);
+        fis.close();
+        
     }
 
 
