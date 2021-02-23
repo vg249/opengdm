@@ -15,7 +15,6 @@ import org.gobiiproject.gobiisampletrackingdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.*;
 
 @Transactional

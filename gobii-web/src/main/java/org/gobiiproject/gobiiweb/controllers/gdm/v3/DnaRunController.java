@@ -47,7 +47,7 @@ public class DnaRunController {
      * @throws Exception
      */
     @CropAuth(CURATOR)
-    @PostMapping(value = "/dnarun/upload", produces = "application/json")
+    @PostMapping(value = "/dnarun/load", produces = "application/json")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<JobDTO>> uploadDnaRuns(
         @PathVariable final String cropType,

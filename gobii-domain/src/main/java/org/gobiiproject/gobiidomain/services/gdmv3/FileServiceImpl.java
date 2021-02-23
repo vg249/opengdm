@@ -142,6 +142,7 @@ public class FileServiceImpl implements FileService {
             file.setFileUrlPath(filePathUrl);
             file.setFileManifestPath(manifestFilePath);
             file.setFileName(fileName);
+            file.setTotalBytes(destFile.length());
 
             return file;
         }

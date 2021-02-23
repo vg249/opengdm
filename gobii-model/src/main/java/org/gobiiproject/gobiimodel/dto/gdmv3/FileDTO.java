@@ -18,4 +18,6 @@ public class FileDTO {
 
     private String fileManifestPath;
 
+    private long totalBytes;
+
 }

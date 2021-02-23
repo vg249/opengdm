@@ -42,7 +42,7 @@ public class GenotypesController {
 
 
     @CropAuth(CURATOR)
-    @PostMapping(value = "/genotype/upload",
+    @PostMapping(value = "/genotype/load",
         consumes = "application/json",
         produces = "application/json")
     @ResponseBody

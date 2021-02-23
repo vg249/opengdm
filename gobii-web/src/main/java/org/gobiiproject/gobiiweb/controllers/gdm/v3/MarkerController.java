@@ -42,7 +42,7 @@ public class MarkerController {
 
 
     @CropAuth(CURATOR)
-    @PostMapping(value = "/marker/upload",
+    @PostMapping(value = "/marker/load",
         consumes = "application/json",
         produces = "application/json")
     @ResponseBody

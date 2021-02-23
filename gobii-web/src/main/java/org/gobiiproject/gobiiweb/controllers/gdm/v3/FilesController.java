@@ -72,6 +72,7 @@ public class FilesController {
                     @RequestParam final String fileUploadId,
                     @RequestPart("file") MultipartFile file) throws GobiiException {
 
+
         InputStream fileChunkInputStream;
         try {
             fileChunkInputStream = file.getInputStream();
