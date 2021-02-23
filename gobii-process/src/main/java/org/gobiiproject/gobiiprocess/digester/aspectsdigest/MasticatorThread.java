@@ -30,6 +30,15 @@ public class MasticatorThread extends Thread {
 
     private int totalLinesWritten = 0;
 
+    /**
+     * Thread constructor
+     * 
+     * @param tableName         Table name of intermediate file
+     * @param fileAspect        Json Aspect file to parse the input file
+     * @param dataFile          Input data file
+     * @param outputFile        An intermediate file to load data to database.
+     * @param fileDelimitter    Delimitter of input data fle.
+     */
     MasticatorThread(String tableName, 
                      FileAspect fileAspect,
                      File dataFile,

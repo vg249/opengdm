@@ -11,9 +11,11 @@ public interface FileService {
 
     FileManifestDTO initiateFileUpload(String cropType) throws GobiiDomainException;
 
-    FileDTO updateFileChunk(FileManifestDTO fileToUpdate,
+    FileDTO updateFileChunk(String fileName,
+                            String mimeType,
                             String cropType,
-                            InputStream inputStream) throws GobiiDomainException;
+                            InputStream inputStream,
+                            String parentDirectory) throws GobiiDomainException;
 
     PagedResult<FileDTO> listFilesByFilePath(String filePath, 
                                              String cropType, 

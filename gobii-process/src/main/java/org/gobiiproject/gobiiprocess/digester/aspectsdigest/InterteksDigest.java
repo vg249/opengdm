@@ -163,7 +163,7 @@ public class InterteksDigest extends AspectDigest {
 
                         if(table.equals(GobiiLoaderPayloadTypes.MATRIX.getTerm()) 
                            && totalLinesWrittenForEachTable.get(table) > 0) {
-                            hdf5MarkerIndexStart += (fileHeader.getHeaders().length - 1);
+                            hdf5MarkerIndexStart += fileHeader.getHeaders().length;
                         } 
                     }
                     totalLinesWrittenForEachTable.put(table, updatedCount);

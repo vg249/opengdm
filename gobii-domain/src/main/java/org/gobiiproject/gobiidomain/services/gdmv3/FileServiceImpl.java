@@ -2,7 +2,6 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -19,6 +18,7 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +27,7 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private ContactService contactService;
 
-    private String fileUploadUrlFormat = "/files/%s";
+    private String fileUploadUrlFormat = "/files?fileUploadId=%s";
     private String filePathUrlFormat = "/files/%s/%s";
 
     private final String manifestFileName = "MANIFEST.json";
@@ -35,36 +35,41 @@ public class FileServiceImpl implements FileService {
     private final String fileType = "file";
     private final String directoryType = "directory";
 
-    ObjectMapper mapper = new ObjectMapper();
-
+    private final ObjectMapper mapper = new ObjectMapper();
+    
     /**
-     * Intiate file upload
+     * Intiate file upload by creating a directory for the file upload.
+     * 
      * @param cropType
      * @return {@link FileDTO} with file path 
      * @throws GobiiDomainException
      */
     public FileManifestDTO initiateFileUpload(String cropType) throws GobiiDomainException {
 
-        FileManifestDTO fileDTO = new FileManifestDTO();
+        FileManifestDTO fileManifestDTO = new FileManifestDTO();
+
 
         try {
             ContactDTO createdBy = contactService.getCurrentUser();
-            fileDTO.setCreatedBy(createdBy.getContactId().toString());
-            fileDTO.setCreatedDate(new Date());
-            fileDTO.setFileUploadId(Utils.getUniqueName());
-            fileDTO.setFileUploadUrl(
-                String.format(fileUploadUrlFormat, fileDTO.getFileUploadId()));
+            fileManifestDTO.setCreatedBy(createdBy.getContactId().toString());
+            fileManifestDTO.setCreatedDate(new Date());
+            fileManifestDTO.setFileUploadId(Utils.getUniqueName());
+            fileManifestDTO.setFileUploadUrl(
+                String.format(fileUploadUrlFormat, fileManifestDTO.getFileUploadId()));
+            
 
-            String fileDir = Utils.getRawUserFilesDir(fileDTO.getFileUploadId(), cropType);
+            String fileDir = Utils.getRawUserFilesDir(fileManifestDTO.getFileUploadId(), cropType);
 
-            fileDTO.setServerFilePath(fileDir);
+            fileManifestDTO.setServerDirectoryPath(fileDir);
+            fileManifestDTO.setMimeTypesByFileNames(new HashMap<>());
 
             String manifestFilePath = Paths.get(fileDir, manifestFileName).toString();
             File manifestFile = new File(manifestFilePath);
 
-            mapper.writeValue(manifestFile, fileDTO);
 
-            return fileDTO;
+            mapper.writeValue(manifestFile, fileManifestDTO);
+
+            return fileManifestDTO;
         }
         catch (Exception e) {
             log.error(e.getMessage());
@@ -72,18 +77,17 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    /**
-     * 
-     */
-    public FileDTO updateFileChunk(FileManifestDTO fileToUpdate,
+    public FileDTO updateFileChunk(String fileName,
+                                   String mimeType,
                                    String cropType,
-                                   InputStream inputStream) throws GobiiDomainException {
+                                   InputStream inputStream,
+                                   String parentDirectory) throws GobiiDomainException {
 
         FileManifestDTO fileManifestDTO;
         FileDTO file = new FileDTO();
-
+            
         // Get file manifest
-        String fileDir = Utils.getRawUserFilesDir(fileToUpdate.getFileUploadId(), cropType);
+        String fileDir = Utils.getRawUserFilesDir(parentDirectory, cropType);
         String manifestFilePath = Paths.get(fileDir, manifestFileName).toString();
         File manifestFile = new File(manifestFilePath);
         if(!manifestFile.exists()) {
@@ -96,29 +100,24 @@ public class FileServiceImpl implements FileService {
         try {
             fileManifestDTO = mapper.readValue(manifestFile, FileManifestDTO.class);
 
-            // Update the manifest with file name for first upload
-            if(StringUtils.isEmpty(fileManifestDTO.getFileName())) {
-                fileManifestDTO.setFileName(fileToUpdate.getFileName());
+            if(fileManifestDTO.getMimeTypesByFileNames().containsKey(fileName)
+               && !fileManifestDTO.getMimeTypesByFileNames().get(fileName).equals(mimeType)) {
+                   throw new InvalidException("file chunks mimetype mismatch");
+            }
+            else {
+                fileManifestDTO.getMimeTypesByFileNames().put(fileName, mimeType);
             }
 
-            // Update the manifest with mime type for first upload
-            if(StringUtils.isEmpty(fileManifestDTO.getMimeType())) {
-                fileManifestDTO.setMimeType(fileToUpdate.getMimeType());
-            }
         }
         catch (IOException e) {
+            System.out.println(e);
             log.error("Invalid file upload id");
             throw new InvalidException("requst: uninitiated filed upload");
         }
 
-        // check file name conflict between chunks
-        if(!fileToUpdate.getFileName().equals(fileManifestDTO.getFileName())) {
-            throw new InvalidException("file name mismacth between files");
-        }
-
         String filePath = Paths.get(
-            Utils.getRawUserFilesDir(fileToUpdate.getFileUploadId(), cropType),
-            fileManifestDTO.getFileName()
+            Utils.getRawUserFilesDir(parentDirectory, cropType),
+            fileName
         ).toString();
 
         File destFile = new File(filePath);
@@ -137,12 +136,12 @@ public class FileServiceImpl implements FileService {
             String filePathUrl = 
                 String.format(filePathUrlFormat, 
                               fileManifestDTO.getFileUploadId(), 
-                              fileToUpdate.getFileName());
+                              fileName);
 
             file.setServerFilePath(filePath);
             file.setFileUrlPath(filePathUrl);
             file.setFileManifestPath(manifestFilePath);
-            file.setFileName(fileToUpdate.getFileName());
+            file.setFileName(fileName);
 
             return file;
         }

@@ -15,12 +15,14 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
 
@@ -44,32 +46,31 @@ public class FilesController {
     }
 
     /**
-     * Initiate file upload request
+     * Initiate file upload request.
+     * 
+     * Creates a directory to which file would be uploaded to.
+     * 
      * @return {@link FileDTO}
      * @throws Exception
      */
     @CropAuth(CURATOR)
-    @PostMapping("/files")
+    @PostMapping("/file/upload")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<FileManifestDTO>>
     initiateFileUploadRequest(@PathVariable final String cropType) throws GobiiException {
         FileManifestDTO fileDTO = fileService.initiateFileUpload(cropType);
         BrApiMasterPayload<FileManifestDTO> result = ControllerUtils.getMasterPayload(fileDTO);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
+
     @CropAuth(CURATOR)
-    @PostMapping("/files/{fileUploadId}")
+    @PostMapping(value = "/files", consumes = "multipart/form-data")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<FileDTO>>
     updateFileChunk(@PathVariable final String cropType,
-                    @PathVariable final String fileUploadId,
+                    @RequestParam final String fileUploadId,
                     @RequestPart("file") MultipartFile file) throws GobiiException {
-
-        FileManifestDTO fileToUpdate = new FileManifestDTO();
-        fileToUpdate.setFileName(file.getOriginalFilename());
-        fileToUpdate.setMimeType(file.getContentType());
-        fileToUpdate.setFileUploadId(fileUploadId);
 
         InputStream fileChunkInputStream;
         try {
@@ -84,9 +85,11 @@ public class FilesController {
         }
 
         FileDTO updatedFile = fileService.updateFileChunk(
-            fileToUpdate,
+            file.getOriginalFilename(),
+            file.getContentType(),
             cropType,
-            fileChunkInputStream);
+            fileChunkInputStream,
+            fileUploadId);
 
         BrApiMasterPayload<FileDTO> result = ControllerUtils.getMasterPayload(updatedFile);
 
