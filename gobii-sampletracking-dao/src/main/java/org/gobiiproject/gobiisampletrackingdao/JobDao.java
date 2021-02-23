@@ -11,4 +11,5 @@ public interface JobDao {
     Job getById(Integer jobId);
     Job getByName(String jobName) throws GobiiDaoException;
 	List<Job> getJobs(Integer page, Integer pageSize, Integer contactId);
+	List<Job> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly);
 }

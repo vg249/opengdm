@@ -21,6 +21,8 @@ import org.gobiiproject.gobiisampletrackingdao.JobDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.log4j.Log4j;
+
 import java.util.Date;
 import java.util.UUID;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 @Transactional
+@Log4j
 public class JobServiceImpl implements JobService {
     public static final String EXTRACT = "extract";
     public static final String LOAD = "load";
@@ -46,9 +49,6 @@ public class JobServiceImpl implements JobService {
 
     @Autowired
     private ContactDao contactDao;
-
-    @Autowired
-    private FilesService filesService;
 
     @Autowired
     private ConfigSettings configSettings;
@@ -107,15 +107,12 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public PagedResult<JobDTO> getJobs(Integer page, Integer pageSize, Integer contactId) {
-        List<Job> jobs = jobDao.getJobs(page, pageSize, contactId);
+    public PagedResult<JobDTO> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly) {
+        List<Job> jobs = jobDao.getJobs(page, pageSize, contactId, loadAndExtractOnly);
         List<JobDTO> jobDTOs = new ArrayList<>();
         jobs.forEach(job -> {
             JobDTO jobDTO = new JobDTO();
             ModelMapper.mapEntityToDto(job, jobDTO);
-
-            // add download URL
-            jobDTO.setDownloadUrl(null); // to do
             jobDTOs.add(jobDTO);
         });
 
@@ -152,7 +149,8 @@ public class JobServiceImpl implements JobService {
         }
 
         String path = configSettings.getProcessingPath(cropType, dir);
-        return new File(path);
+        log.debug("Path for job is " + path + "/" + jobName);
+        return new File(path, jobName);
     }
 
     

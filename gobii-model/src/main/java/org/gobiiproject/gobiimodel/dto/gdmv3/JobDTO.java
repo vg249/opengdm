@@ -40,6 +40,4 @@ public class JobDTO {
     @GobiiEntityMap(paramName="submittedBy.username", entity = Job.class, deep = true)
     private String submittedBy;
 
-    private String downloadUrl; //derived attribute
-
 }

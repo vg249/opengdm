@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.JobService;
@@ -64,11 +62,12 @@ public class JobsController {
     public ResponseEntity<BrApiMasterListPayload<JobDTO>> getJobs(
         @RequestParam(required=false, defaultValue="0") Integer page,
         @RequestParam(required=false, defaultValue="1000") Integer pageSize,
-        @RequestParam(required=false, defaultValue="0") Integer contactId
+        @RequestParam(required=false, defaultValue="0") Integer contactId,
+        @RequestParam(required=false, defaultValue="true") boolean loadAndExtractOnly
     ) throws GobiiException {
         Integer pageSizeToUse = ControllerUtils.getPageSize(pageSize);
         PagedResult<JobDTO> pagedResult = jobService.getJobs(
-            page, pageSizeToUse, contactId
+            page, pageSizeToUse, contactId, loadAndExtractOnly
         );
 
         BrApiMasterListPayload<JobDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);

@@ -9,9 +9,12 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.print.attribute.standard.JobImpressionsSupported;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -100,9 +103,15 @@ public class JobDaoImpl implements JobDao {
         return job;
     }
 
+   
     @Override
     public List<Job> getJobs(Integer page, Integer pageSize, Integer contactId) {
-        // TODO Auto-generated method stub
+        return this.getJobs(page, pageSize, contactId, false);
+    }
+
+    @Override
+    public List<Job> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly) {
+        
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
@@ -112,18 +121,24 @@ public class JobDaoImpl implements JobDao {
             jobRoot.fetch("type");
             jobRoot.fetch("payloadType");
             jobRoot.fetch("submittedBy");
-            criteriaQuery.select(jobRoot);
+            
+
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            
             if (contactId > 0) {
-                criteriaQuery.where(
-                    criteriaBuilder.equal(
-                        jobRoot.get("submittedBy"),
-                        contactId
-                    )
+                predicates.add(
+                    criteriaBuilder.equal(jobRoot.get("submittedBy"), contactId)
                 );
             }
-            
-            // TODO: limit to extractor and loader jobs only?
 
+            if (loadAndExtractOnly) {
+                In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
+                inClause.value("load");
+                inClause.value("extract");
+                predicates.add(inClause);
+            }
+            
+            criteriaQuery.select(jobRoot).where(predicates.toArray(new Predicate[]{}));
             List<Job> jobs;
 
             if (pageSize == null || pageSize <= 0)
