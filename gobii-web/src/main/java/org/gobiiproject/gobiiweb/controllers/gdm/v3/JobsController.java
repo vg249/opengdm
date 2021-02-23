@@ -62,12 +62,12 @@ public class JobsController {
     public ResponseEntity<BrApiMasterListPayload<JobDTO>> getJobs(
         @RequestParam(required=false, defaultValue="0") Integer page,
         @RequestParam(required=false, defaultValue="1000") Integer pageSize,
-        @RequestParam(required=false, defaultValue="0") Integer contactId,
+        @RequestParam(required=false, defaultValue="0") String username,
         @RequestParam(required=false, defaultValue="true") boolean loadAndExtractOnly
     ) throws GobiiException {
         Integer pageSizeToUse = ControllerUtils.getPageSize(pageSize);
-        PagedResult<JobDTO> pagedResult = jobService.getJobs(
-            page, pageSizeToUse, contactId, loadAndExtractOnly
+        PagedResult<JobDTO> pagedResult = jobService.getJobsByUsername(
+            page, pageSizeToUse, username, loadAndExtractOnly
         );
 
         BrApiMasterListPayload<JobDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);

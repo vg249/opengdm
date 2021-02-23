@@ -153,6 +153,30 @@ public class JobServiceImpl implements JobService {
         return new File(path, jobName);
     }
 
+    @Override
+    public PagedResult<JobDTO> getJobs(Integer page, Integer pageSizeToUse, Integer contactId) {
+        return this.getJobs(page, pageSizeToUse, contactId, false);
+    }
+
+    @Override
+    public PagedResult<JobDTO> getJobsByUsername(Integer page, Integer pageSizeToUse, String username) {
+        return this.getJobsByUsername(page, pageSizeToUse, username, false);
+    }
+
+    @Override
+    public PagedResult<JobDTO> getJobsByUsername(Integer page, Integer pageSizeToUse, String username,
+            boolean loadAndExtractOnly) {
+                List<Job> jobs = jobDao.getJobsByUsername(page, pageSizeToUse, username, loadAndExtractOnly);
+                List<JobDTO> jobDTOs = new ArrayList<>();
+                jobs.forEach(job -> {
+                    JobDTO jobDTO = new JobDTO();
+                    ModelMapper.mapEntityToDto(job, jobDTO);
+                    jobDTOs.add(jobDTO);
+                });
+        
+                return PagedResult.createFrom(page, jobDTOs);
+    }
+
     
 
 }
