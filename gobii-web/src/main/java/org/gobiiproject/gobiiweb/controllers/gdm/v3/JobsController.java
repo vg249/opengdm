@@ -74,6 +74,25 @@ public class JobsController {
         return ResponseEntity.ok(payload);
     }
 
+    @GetMapping("my/jobs")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<JobDTO>> getJobs(
+        @RequestParam(required=false, defaultValue="0") Integer page,
+        @RequestParam(required=false, defaultValue="1000") Integer pageSize,
+        @RequestParam(required=false, defaultValue="true") boolean loadAndExtractOnly
+    ) throws GobiiException {
+        Integer pageSizeToUse = ControllerUtils.getPageSize(pageSize);
+        String username = AuthUtils.getCurrentUser();
+        PagedResult<JobDTO> pagedResult = jobService.getJobsByUsername(
+            page, pageSizeToUse, username, loadAndExtractOnly
+        );
+
+        BrApiMasterListPayload<JobDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
+    }
+
+
+
     @GetMapping(value="/jobs/{jobName}/files", produces="application/zip")
     public ResponseEntity<StreamingResponseBody> zipFiles(@PathVariable String jobName) throws Exception {
         String cropType = CropRequestAnalyzer.getGobiiCropType();
