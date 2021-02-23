@@ -25,6 +25,6 @@ public class GenotypeUploadRequestDTO {
 
     private boolean loadDnaRunNamesAsSamplesAndGermplasms;
 
-    private Integer templateId;
+    private Integer genotypeTemplateId;
 
 }
