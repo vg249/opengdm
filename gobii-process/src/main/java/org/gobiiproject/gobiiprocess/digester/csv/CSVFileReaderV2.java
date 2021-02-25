@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 
+import htsjdk.tribble.TribbleException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
@@ -20,9 +21,11 @@ import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
+import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
 
 /**
  * CSV-Specific File Loader class, used by
@@ -42,7 +45,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationRes
  */
 
 public class CSVFileReaderV2 extends CSVFileReaderInterface {
-
+    private static final String OUTPUT_SEPARATOR="/";
     private static final String NEWLINE = "\n";
     private static final String TAB = "\t";
     private final String loaderScriptPath;
@@ -293,45 +296,83 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
         String parentDirectory = outputFile.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
+
+
+
+
         MatrixValidation matrixValidation = new MatrixValidation(procedure.getMetadata().getDatasetType().getName(), missingFile, markerFile);
         if (matrixValidation.setUp()) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;
                 String fileRow;
-                ArrayList<String> inputRowList, outputRowList;
+                List<String> inputRowList;
+                ArrayList<String> outputRowList;
                 String delimiter = procedure.getMetadata().getGobiiFile().getDelimiter();
                 boolean isVCF = procedure.getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
-                while ((fileRow = bufferedReader.readLine()) != null) {
-                    if (rowNo >= csv_BothColumn.getrCoord()) {
-                        inputRowList = Arrays.stream(fileRow.split(delimiter))
-                                .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
-                        outputRowList = new ArrayList<>();
-                        getRow(inputRowList, csv_BothColumn);
-                        ValidationResult validationResult=matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
-                        if (validationResult.success) {
-                            writeOutputLine(tempFileBufferedWriter, outputRowList);
-                            totalCols=validationResult.numRows;
-                        }
-                        else {
-                            if (matrixValidation.stopProcessing()) {
-                                tempFileBufferedWriter.flush();
-                                tempFileBufferedWriter.close();
-                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
-                                return new RowColPair<Integer>(totalCols,rowNo);
+                if (isVCF) {
+                    try {
+                        //TODO - this only works with single files
+                        HTSInterface.setupVariantOnlyInputLine(file);
+                        while ((inputRowList = HTSInterface.getVariantOnlyInputLine(OUTPUT_SEPARATOR) ) != null) {
+                                outputRowList = new ArrayList<>();
+                                ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, true /*isVCF*/, skipValidation);
+                                if (validationResult.success) {
+                                    writeOutputLine(tempFileBufferedWriter, outputRowList);
+                                    totalCols = validationResult.numRows;
+                                } else {
+                                    if (matrixValidation.stopProcessing()) {
+                                        tempFileBufferedWriter.flush();
+                                        tempFileBufferedWriter.close();
+                                        FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
+                                        return new RowColPair<Integer>(totalCols, rowNo);
+                                    }
+                                }
                             }
+                            rowNo++;
+                            totalRows = rowNo;
+                    }
+                    catch(TribbleException e){
+                        Logger.logError("FileReader","Unable to read VCF File " + e.getMessage());
+                        Logger.logDebug("FileReader",Arrays.deepToString(e.getStackTrace()));
+                    }
+                    catch(Exception e){
+
+                    }
+                    //clean up if file was created
+                }
+                else{
+                        while ((fileRow = bufferedReader.readLine()) != null) {
+                            if (rowNo >= csv_BothColumn.getrCoord()) {
+                                inputRowList = Arrays.stream(fileRow.split(delimiter))
+                                        .map(String::trim).collect(Collectors.toCollection(ArrayList::new)); //Trim inputs
+                                outputRowList = new ArrayList<>();
+                                getRow(inputRowList, csv_BothColumn);
+                                ValidationResult validationResult = matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
+                                if (validationResult.success) {
+                                    writeOutputLine(tempFileBufferedWriter, outputRowList);
+                                    totalCols = validationResult.numRows;
+                                } else {
+                                    if (matrixValidation.stopProcessing()) {
+                                        tempFileBufferedWriter.flush();
+                                        tempFileBufferedWriter.close();
+                                        FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
+                                        return new RowColPair<Integer>(totalCols, rowNo);
+                                    }
+                                }
+                            }
+                            rowNo++;
+                            totalRows = rowNo - csv_BothColumn.getrCoord();
                         }
                     }
-                    rowNo++;
-                    totalRows=rowNo-csv_BothColumn.getrCoord();
-                }
             }
+
         }
         if (matrixValidation.getErrorCount() != 0) {
-            tempFileBufferedWriter.flush();
-            tempFileBufferedWriter.close();
-            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
-        }
-        return new RowColPair<Integer>(totalRows,totalCols);
+                tempFileBufferedWriter.flush();
+                tempFileBufferedWriter.close();
+                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
+            }
+            return new RowColPair<Integer>(totalRows,totalCols);
     }
 
     /**
