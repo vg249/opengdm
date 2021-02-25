@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers.brapi.v2;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiidomain.services.brapi.CallSetService;
@@ -17,6 +18,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 import org.gobiiproject.gobiimodel.types.BrapiDefaults;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Brapi REST endpoint for variantsets (datasets)
@@ -449,11 +453,26 @@ public class VariantSetsController {
         //The request thread will be terminated once 30 mins is done.
         ResponseBodyEmitter emitter = new ResponseBodyEmitter((long)1800000);
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+        String cropType;
+        try {
+            cropType =  CropRequestAnalyzer.getGobiiCropType(request);
+        }
+        catch (Exception e) {
+            throw new GobiiException("Unable to read crop type from request");
+        }
+
+        String threadName = "gdm-executor-service-thread;cropType:"+cropType;
+        ThreadFactory threadFactory = new ThreadFactoryBuilder()
+            .setNameFormat(threadName+";%d")
+            .build();
+
+        ExecutorService executor = Executors.newSingleThreadExecutor(threadFactory);
 
         executor.execute(() -> {
             try {
                 int pageNum = 0;
+
+                String name = Thread.currentThread().getName();
 
                 String genotypesResult = genotypeCallsService.getGenotypeCallsAsString(
                     variantSetDbId,

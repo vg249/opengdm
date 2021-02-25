@@ -22,7 +22,7 @@ public interface MarkerLinkageGroupDao {
                            Set<Integer> linkageGroupIds, Set<String> linkageGroupNames,
                            Set<Integer> markerIds, Set<String> markerNames,
                            BigDecimal minPosition, BigDecimal maxPosition,
-                           Set<Integer> datasetIds);
+                           Set<String> datasetIds);
 
 
 }

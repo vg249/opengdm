@@ -36,7 +36,7 @@ public class VariantSetsServiceImpl implements VariantSetsService {
     final String unphasedSep = "/";
     final String unknownChar = "N";
 
-    private String fileUrlFormat = "/variantsets/{0, number}/calls/download";
+    private String fileUrlFormat = "/variantsets/{0}/calls/download";
 
     @Autowired
     private DatasetDao datasetDao;
@@ -82,8 +82,6 @@ public class VariantSetsServiceImpl implements VariantSetsService {
 
                 Dataset dataset = (Dataset) tuple[0];
                 Analysis analysis = (Analysis) tuple[1];
-                Integer markerCount = (Integer) tuple[2];
-                Integer dnaRunCount = (Integer) tuple[3];
 
                 if(!variantSetDtoMapByDatasetId.containsKey(dataset.getDatasetId())) {
 
@@ -101,12 +99,10 @@ public class VariantSetsServiceImpl implements VariantSetsService {
                     fileFormat.setUnknownString(unknownChar);
                     //Set dataset download url
                     fileFormat.setFileURL(
-                        MessageFormat.format(this.fileUrlFormat, dataset.getDatasetId()));
+                        MessageFormat.format(this.fileUrlFormat,
+                            dataset.getDatasetId().toString()));
                     variantSetDTO.getAvailableFormats().add(fileFormat);
 
-                    //Set Marker and DnaRun Counts
-                    variantSetDTO.setVariantCount(markerCount);
-                    variantSetDTO.setCallSetCount(dnaRunCount);
 
                     //Map extract ready of dataset
                     mapVariantSetExtractReady(dataset, variantSetDTO);
