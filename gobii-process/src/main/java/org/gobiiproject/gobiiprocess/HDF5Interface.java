@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Strings;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -246,12 +247,19 @@ public class HDF5Interface {
      * @param outpufFilePath Output file to write to
      */
     static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
-        String[] stringList = inputFileList.split(Pattern.quote(" "));
+        String[] stringList = Arrays.stream(inputFileList.split(Pattern.quote(" ")))
+                .map(String::trim).filter(s -> !Strings.isNullOrEmpty(s)).toArray(String[]::new); //Trim whitespace, filter out empty references
+                            //Surprisingly, easier than figuring out how these malformed entities are entering my trim
+
         List<BufferedReader> readerList = new LinkedList<BufferedReader>();
         List<BufferedReader> emptyList = new LinkedList<BufferedReader>();
         try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
             for(String input:stringList){
-                readerList.add(new BufferedReader(new FileReader(input)));
+                try {
+                    readerList.add(new BufferedReader(new FileReader(input)));
+                } catch(IOException e){
+                    Logger.logError("HDF5Interface","Failed to read created genotype file [" + input+"], likely file was not generated or generated incorrectly.",e);
+                }
             }
             while(!readerList.isEmpty()){
                 boolean first=true;
