@@ -139,7 +139,7 @@ public class DatasetDaoTest {
                 null, null);
 
 
-        assertTrue("Failed getDatasetsWithAnalysisAndCounts", resultTuple.size() <= testPageSize);
+        assertTrue("Failed getDatasetsWithAnalysisAndCounts", resultTuple.size() >= testPageSize);
 
     }
 
