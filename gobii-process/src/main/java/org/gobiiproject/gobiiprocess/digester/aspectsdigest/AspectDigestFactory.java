@@ -21,6 +21,8 @@ public class AspectDigestFactory {
                 switch(uploadRequest.getFileType()) {
                     case HAPMAP:
                         return new HapmapsDigest(loaderInstruction, configSettings);
+                    case VCF:
+                        return new VcfDigest(loaderInstruction, configSettings);
                     case INTERTEK:
                         return new InterteksDigest(loaderInstruction, configSettings);
                     default:

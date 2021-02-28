@@ -26,7 +26,7 @@ public class MarkerTable implements Table {
     @JsonProperty("ref")
     private CoordinatesAspect markerRef;
 
-    @JsonProperty("alt")
+    @JsonProperty("alts")
     private CoordinatesAspect markerAlt;
 
     @JsonProperty("sequence")

@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.gobii.Util;
 import org.gobii.masticator.aspects.AlignAspect;
+import org.gobii.masticator.aspects.ArrayColumnAspect;
 import org.gobii.masticator.aspects.Aspect;
 import org.gobii.masticator.aspects.CellAspect;
 import org.gobii.masticator.aspects.ColumnAspect;
@@ -20,6 +21,7 @@ import org.gobii.masticator.aspects.ReferenceTransformAspect;
 import org.gobii.masticator.aspects.RowAspect;
 import org.gobii.masticator.aspects.TableAspect;
 import org.gobii.masticator.reader.prototype.AlignReaderPrototype;
+import org.gobii.masticator.reader.prototype.ArrayColumnReaderPrototype;
 import org.gobii.masticator.reader.prototype.CellReaderPrototype;
 import org.gobii.masticator.reader.prototype.ColumnReaderPrototype;
 import org.gobii.masticator.reader.prototype.CompoundReaderPrototype;
@@ -46,6 +48,12 @@ public class AspectMapper {
 
 		mappers.put(ColumnAspect.class,
 				(ColumnAspect aspect) -> new ColumnReaderPrototype(aspect.getRow(), aspect.getCol()));
+		
+		mappers.put(ArrayColumnAspect.class,
+				(ArrayColumnAspect aspect) -> 
+					new ArrayColumnReaderPrototype(aspect.getRow(), 
+												   aspect.getCol(), 
+												   aspect.getSeparator()));
 
 		mappers.put(RowAspect.class,
 				(RowAspect aspect) -> new RowReaderPrototype(aspect.getRow(), aspect.getCol()));

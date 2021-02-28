@@ -92,13 +92,6 @@ public class Utils {
         }
     }
 
-    static void setField(Object instance, String fieldName, Object value
-    ) throws NoSuchFieldException, IllegalAccessException {
-        Field field = instance.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(instance, value);
-
-    }
 
     static void checkIfInputFilesAreValid(List<FileDTO> inputFiles) throws GobiiException {
         for(FileDTO fileDTO : inputFiles) {
