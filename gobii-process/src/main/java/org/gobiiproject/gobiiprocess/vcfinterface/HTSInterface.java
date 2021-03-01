@@ -48,7 +48,7 @@ public class HTSInterface {
     }
 
     static void writeVariantOnlyFile(File inFile, File outFile) throws Exception{
-        writeVariantOnlyFile(inFile,outFile,"/","\t");
+        writeVariantOnlyFile(inFile,outFile,"/","\t", false);
     }
 
 
@@ -111,7 +111,7 @@ public class HTSInterface {
                 else{
                     printWriter.print(segmentSeparator);
                 }
-                printWriter.print(formattedAlleleString(gc,variantSeparator));
+                printWriter.print(formattedAlleleString(gc, variantSeparator));
             }
         }
 

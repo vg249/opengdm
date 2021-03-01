@@ -93,7 +93,7 @@ public class HDF5Interface {
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
         || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
-            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),null,"\t");
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"","\t");
         }
 
 

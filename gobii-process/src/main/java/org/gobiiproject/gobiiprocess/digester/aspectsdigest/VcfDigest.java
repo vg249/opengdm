@@ -99,6 +99,10 @@ public class VcfDigest extends AspectDigest {
 
             // To keep track of files having uniform dnarun names columsn across files
             String[] previousFileHeaders = {};
+                
+            String matrixDigestFilePath = 
+                Paths.get(loaderInstruction.getOutputDir(), "digest.matrix").toString();
+            File matrixDigestFile = new File(matrixDigestFilePath);
 
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
@@ -181,16 +185,6 @@ public class VcfDigest extends AspectDigest {
                                             fileHeader.getHeaderLineNumber()));
                 }
 
-                // Get vcf digest matrix
-                String matrixDigestFilePath = 
-                    Paths.get(loaderInstruction.getOutputDir(), "digest.matrix").toString();
-                File matrixDigestFile = new File(matrixDigestFilePath);
-                HTSInterface.writeVariantOnlyFile(
-                    fileToDigest,
-                    matrixDigestFile, 
-                    "/", 
-                    "\t", 
-                    true);
 
                 // Masticate and set the output.
                 Map<String, MasticatorResult> masticatedFilesMap = 
@@ -205,6 +199,15 @@ public class VcfDigest extends AspectDigest {
                     }
                     totalLinesWrittenForEachTable.put(table, updatedCount);
                 });
+
+                // Get vcf digest matrix
+                HTSInterface.writeVariantOnlyFile(
+                    fileToDigest,
+                    matrixDigestFile, 
+                    "", 
+                    GobiiFileUtils.TAB_SEP, 
+                    true);
+                intermediateDigestFileMap.put("matrix", matrixDigestFile);
 
             }
         }
