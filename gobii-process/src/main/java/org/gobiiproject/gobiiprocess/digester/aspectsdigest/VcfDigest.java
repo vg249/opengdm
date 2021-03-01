@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 
 import lombok.extern.slf4j.Slf4j;
@@ -178,6 +180,17 @@ public class VcfDigest extends AspectDigest {
                              getMarkerTable(fileHeader.getHeaders(), 
                                             fileHeader.getHeaderLineNumber()));
                 }
+
+                // Get vcf digest matrix
+                String matrixDigestFilePath = 
+                    Paths.get(loaderInstruction.getOutputDir(), "digest.matrix").toString();
+                File matrixDigestFile = new File(matrixDigestFilePath);
+                HTSInterface.writeVariantOnlyFile(
+                    fileToDigest,
+                    matrixDigestFile, 
+                    "/", 
+                    "\t", 
+                    true);
 
                 // Masticate and set the output.
                 Map<String, MasticatorResult> masticatedFilesMap = 
