@@ -129,16 +129,22 @@ public class ContactServiceImpl implements ContactService {
 }
 
     @Override
-    public PagedResult<ContactDTO> getUsers(String cropType, String role, Integer page, Integer pageSize)
-            throws Exception {
-        try {
-            List<ContactDTO> contactDTOs = keycloakService.getKeycloakUsers(cropType, role, page, pageSize);
+    public PagedResult<ContactDTO> getUsers(String cropType, 
+                                            String role, 
+                                            Integer page, 
+                                            Integer pageSize,
+                                            String userName) throws GobiiException {
+            List<ContactDTO> contactDTOs = new ArrayList<>();
 
+            // If user name filter is provided dont have to fetch all
+            if(userName != null && !userName.isBlank()) {
+                ContactDTO contactDTO = keycloakService.getUserByUserName(userName);
+                contactDTOs.add(contactDTO);
+            }
+            else {
+                contactDTOs = keycloakService.getKeycloakUsers(cropType, role, page, pageSize); 
+            }
             return PagedResult.createFrom(page, contactDTOs);
-        } catch (Exception e) {
-            log.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
     }
   
 
