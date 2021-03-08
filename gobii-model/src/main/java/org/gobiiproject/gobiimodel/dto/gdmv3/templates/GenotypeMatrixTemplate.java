@@ -15,7 +15,7 @@ public class GenotypeMatrixTemplate {
     private String headerStartsWith;
 
     // tells if marker is on left or on top
-    private boolean markerAsLeftLabel;
+    private boolean markerAsLeftLabel = true;
 
     // name of the column which is left side label for matrix.
     private String leftLabelColumnName;

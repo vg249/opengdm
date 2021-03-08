@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess;
 
+import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
 import org.junit.Assert;
 import org.junit.Test;
 

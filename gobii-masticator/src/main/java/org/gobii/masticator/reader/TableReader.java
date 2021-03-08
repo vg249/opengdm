@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+
+import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.reader.result.Break;
 import org.gobii.masticator.reader.result.End;
 import org.gobii.masticator.reader.result.Val;
@@ -27,6 +29,7 @@ public class TableReader implements Reader {
 
 
 	public String readHeader() {
+		delimiter = String.valueOf(AspectMapper.delimitter);
 		return String.join(delimiter, header);
 	}
 

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
@@ -43,18 +42,15 @@ public class MarkerController {
 
 
     @CropAuth(CURATOR)
-    @PostMapping(value = "/marker/upload",
-        consumes = "multipart/form-data",
+    @PostMapping(value = "/marker/load",
+        consumes = "application/json",
         produces = "application/json")
     @ResponseBody
     public ResponseEntity<BrApiMasterPayload<JobDTO>> uploadMarkers(
         @PathVariable final String cropType,
-        @RequestPart("markerFile") MultipartFile markerFile,
-        @RequestPart("fileProperties") final MarkerUploadRequestDTO markerUploadRequest
+        @RequestBody final MarkerUploadRequestDTO markerUploadRequest
     ) throws Exception {
-        InputStream markerFileInputStream = markerFile.getInputStream();
         JobDTO job = markerService.loadMarkerData(
-            markerFileInputStream,
             markerUploadRequest,
             cropType);
         BrApiMasterPayload<JobDTO> payload = ControllerUtils.getMasterPayload(job);

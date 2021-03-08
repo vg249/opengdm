@@ -66,7 +66,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         if(users.size() == 0) {
             throw new GobiiDomainException(
                 GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNKNOWN,
+                GobiiValidationStatusType.BAD_REQUEST,
                 "Contact not defined in keycloak");
         }
         if(users.size() > 1) {
@@ -87,7 +87,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     public List<ContactDTO> getKeycloakUsers(String cropType,
                                              String role,
                                              Integer page,
-                                             Integer pageSize) throws Exception {
+                                             Integer pageSize) throws GobiiDomainException {
         Keycloak keycloak = this.getKeycloakAdminClient();
 
         String rolePath = Optional.ofNullable(role)

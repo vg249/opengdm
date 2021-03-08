@@ -60,7 +60,8 @@ public class ProjectDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="projectDescription", entity = Project.class)
     private String projectDescription;
 
-    private String piContactId;
+    @GobiiEntityMap(paramName="contact.username", entity = Project.class, deep=true)
+    private String piContactUserName;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore

@@ -6,5 +6,19 @@
        "marker_linkage_group"
      ],
      "requiredFields": {}
+  },
+  "MATRIX": {
+    "loadOrder" : [
+       "marker",
+       "linkage_group",
+       "marker_linkage_group",
+       "germplasm",
+       "dnasample",
+       "dnarun",
+       "dataset_marker",
+       "dataset_dnarun",
+       "matrix"
+     ],
+     "requiredFields": {}
   }
 }

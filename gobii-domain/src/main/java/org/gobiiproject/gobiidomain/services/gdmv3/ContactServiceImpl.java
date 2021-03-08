@@ -115,17 +115,36 @@ public class ContactServiceImpl implements ContactService {
         return contactDTO;
     }
 
-    @Override
-    public PagedResult<ContactDTO> getUsers(String cropType, String role, Integer page, Integer pageSize)
-            throws Exception {
+    public ContactDTO getCurrentUser() throws GobiiException {
+        ContactDTO contactDTO = new ContactDTO();
         try {
-            List<ContactDTO> contactDTOs = keycloakService.getKeycloakUsers(cropType, role, page, pageSize);
-
-            return PagedResult.createFrom(page, contactDTOs);
+            String userName = ContactService.getCurrentUserName();
+            Contact contact = contactDao.getContactByUsername(userName);
+            ModelMapper.mapEntityToDto(contact, contactDTO);
+            return contactDTO;
         } catch (Exception e) {
             log.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
+}
+
+    @Override
+    public PagedResult<ContactDTO> getUsers(String cropType, 
+                                            String role, 
+                                            Integer page, 
+                                            Integer pageSize,
+                                            String userName) throws GobiiException {
+            List<ContactDTO> contactDTOs = new ArrayList<>();
+
+            // If user name filter is provided dont have to fetch all
+            if(userName != null && !userName.isBlank()) {
+                ContactDTO contactDTO = keycloakService.getUserByUserName(userName);
+                contactDTOs.add(contactDTO);
+            }
+            else {
+                contactDTOs = keycloakService.getKeycloakUsers(cropType, role, page, pageSize); 
+            }
+            return PagedResult.createFrom(page, contactDTOs);
     }
   
 

@@ -155,7 +155,7 @@ public class ContactServiceImplTest {
     public void testGetKeycloakUsers() throws Exception {
         when(keycloakService.getKeycloakUsers("rice", Roles.PI, 0, 1000)).thenReturn(new ArrayList<ContactDTO>());
         
-        contactServiceImpl.getUsers("rice", Roles.PI, 0, 1000);
+        contactServiceImpl.getUsers("rice", Roles.PI, 0, 1000, null);
 
         verify(keycloakService, times(1)).getKeycloakUsers("rice", Roles.PI, 0, 1000);
 
@@ -165,7 +165,7 @@ public class ContactServiceImplTest {
     public void testGetKeycloakUsersThrowException() throws Exception {
         when(keycloakService.getKeycloakUsers("rice", Roles.PI, 0, 1000)).thenThrow(new Exception("foo"));
         
-        contactServiceImpl.getUsers("rice", Roles.PI, 0, 1000);
+        contactServiceImpl.getUsers("rice", Roles.PI, 0, 1000, null);
 
         verify(keycloakService, times(1)).getKeycloakUsers("rice", Roles.PI, 0, 1000);
 

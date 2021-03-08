@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Iterator;
 import lombok.Data;
+
+import org.gobii.masticator.AspectMapper;
 import org.gobii.masticator.reader.result.End;
 import org.gobii.masticator.reader.result.Val;
 
 @Data
 public class ColumnReader implements Reader {
 
-	private static final String delimiter = "\t";
+	private String delimiter = "\t";
 
 	private File file;
 	private int row;
@@ -20,6 +22,7 @@ public class ColumnReader implements Reader {
 	private Iterator<String> lines;
 
 	public ColumnReader(File file, int row, int col) throws IOException {
+		this.delimiter = String.valueOf(AspectMapper.delimitter);
 		this.file = file;
 		this.row = row;
 		this.col = col;

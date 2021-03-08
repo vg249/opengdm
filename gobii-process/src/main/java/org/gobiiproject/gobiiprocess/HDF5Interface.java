@@ -7,19 +7,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Strings;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
-import org.hibernate.internal.util.xml.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
+import org.gobiiproject.gobiiprocess.services.DatasetService;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 
 import static java.util.stream.Collectors.toList;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
@@ -57,7 +61,7 @@ public class HDF5Interface {
                                                 File variantFile) throws Exception {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
-        String loadHDF5= getPathToHDF5() +"loadHDF5";
+        String loadHDF5= Paths.get(getPathToHDF5(), "loadHDF5").toString();
         dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
         int size = 8;
@@ -80,13 +84,31 @@ public class HDF5Interface {
                 return false;
         }
         Logger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
+
+
+        String matrixFilePath = variantFile.getPath();
+        String tempMatrixFilePath = matrixFilePath+".temp";
+        String hdf5MapFile = HDF5File+".idl";
+
+        if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
+        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
+            FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"","\t");
+        }
+
+
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+
+        rmIfExist(tempMatrixFilePath);
         if(!success){
             //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
             rmIfExist(HDF5File);
+            rmIfExist(hdf5MapFile);
             return false;
         }
-        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        DatasetService datasetService = 
+            SpringContextLoaderSingleton.getInstance().getBean(DatasetService.class);
+        datasetService.update(dataSetId,variantFilename, HDF5File);
         return true;
     }
 
@@ -242,12 +264,19 @@ public class HDF5Interface {
      * @param outpufFilePath Output file to write to
      */
     static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
-        String[] stringList = inputFileList.split(Pattern.quote(" "));
+        String[] stringList = Arrays.stream(inputFileList.split(Pattern.quote(" ")))
+                .map(String::trim).filter(s -> !Strings.isNullOrEmpty(s)).toArray(String[]::new); //Trim whitespace, filter out empty references
+                            //Surprisingly, easier than figuring out how these malformed entities are entering my trim
+
         List<BufferedReader> readerList = new LinkedList<BufferedReader>();
         List<BufferedReader> emptyList = new LinkedList<BufferedReader>();
         try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
             for(String input:stringList){
-                readerList.add(new BufferedReader(new FileReader(input)));
+                try {
+                    readerList.add(new BufferedReader(new FileReader(input)));
+                } catch(IOException e){
+                    Logger.logError("HDF5Interface","Failed to read created genotype file [" + input+"], likely file was not generated or generated incorrectly.",e);
+                }
             }
             while(!readerList.isEmpty()){
                 boolean first=true;
@@ -305,6 +334,9 @@ public class HDF5Interface {
 
         logDebug("Extractor","HDF5 Ordering is "+ordering);
 
+        String HDF5MapFile = HDF5File+".idl";
+        String tmpGenoFile = genoFile + ".temp";
+
         if(markerList!=null) {
             String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
             Logger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
@@ -313,6 +345,11 @@ public class HDF5Interface {
                 rmIfExist(genoFile);
                 return null;
             }
+
+            //decode in marker list
+            mv(genoFile, tmpGenoFile);
+            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), markerList, new File(genoFile), "/","\t"); //TODO- separator is always tab
+
         }
         else {
             String hdf5Extractor=pathToHDF5+"dumpdataset";
@@ -322,6 +359,10 @@ public class HDF5Interface {
                 rmIfExist(genoFile);
                 return null;
             }
+
+            //decode in dumpdataset
+            mv(genoFile, tmpGenoFile);
+            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(genoFile), "/","\t"); //TODO- separator is always tab
 
         }
         if(sampleList!=null){

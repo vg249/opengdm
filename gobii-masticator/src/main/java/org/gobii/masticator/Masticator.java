@@ -1,14 +1,14 @@
 package org.gobii.masticator;
 
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.gobii.masticator.aspects.AspectParser;
@@ -36,9 +36,8 @@ public class Masticator {
 
 		logger.info("Masticating {}", table);
 
-		TableReader reader = AspectMapper.map(fileAspect.getAspects().get(table)).build(file);
-
-		writer.write(String.join(reader.getDelimiter(), reader.getHeader()) + "\n");
+        TableReader reader = AspectMapper.map(fileAspect.getAspects().get(table)).build(file);
+        writer.write(String.join(reader.getDelimiter(), reader.getHeader()) + "\n");
 
 		for (ReaderResult read = reader.read(); ! (read instanceof End) ; read = reader.read()) {
 
@@ -56,6 +55,9 @@ public class Masticator {
 	private static final String ARG_ASPECT_FILE = "-a";
 	private static final String ARG_DATA_FILE = "-d";
 	private static final String ARG_OUTPUT_DIRECTORY = "-o";
+	private static final String ARG_CONNECTION_STRING = "-s";
+
+
 
 	public static void main(String[] args) throws Exception {
 
@@ -136,9 +138,39 @@ public class Masticator {
 		for (Thread t : threads) {
 			t.join();
 		}
+
+		if(argMap.containsKey(ARG_CONNECTION_STRING)){
+			logger.info("Running IFL");
+			for(String key:getTableKeys(argMap.get(ARG_ASPECT_FILE))){
+				String inputDir = outputDir.getAbsolutePath();
+				String inputFile = String.format("%s%sdigest.%s", outputDir.getAbsolutePath(), File.separator, key);
+
+				runIfl(argMap.get(ARG_CONNECTION_STRING),inputFile,inputDir,inputDir);
+			}
+		}
 	}
 
 	private static String usage() {
-		return "masticator -a {File|-} -d File -o Directory\n\t-a aspect\n\t-d data file\n\t-o output directory";
+		return "masticator -a {File|-} -d File -o Directory\n\t-a aspect\n\t-d data file\n\t-o output directory\n\t[-s connection string]";
+	}
+
+	private static List<String> getTableKeys(String inFile) throws IOException {
+		JsonElement aspectElement = JsonParser.parseString(slurp(inFile)).getAsJsonObject().get("aspects");
+		List<String> tableNames = new ArrayList<String>();
+		for (Map.Entry jsonObject : aspectElement.getAsJsonObject().entrySet()) {
+			String tableName = jsonObject.getKey().toString();
+			if(tableName.equals("matrix")){
+				continue; //Ignore Matrix from tables
+			}
+			tableNames.add(tableName);
+		}
+		return tableNames;
+	}
+
+	private static final String BASE_IFL_PATH="/data/gobii_bundle/loaders/postgres/gobii_ifl/gobii_ifl.py";
+	private static void runIfl(String connectionString, String inputFile, String inputDir, String outputDir) throws IOException {
+		//It's ugly, but it works
+		String iflExec = String.format(BASE_IFL_PATH+" -c %s -i %s -d %s -o %s", connectionString, inputFile, inputDir, outputDir);
+		Runtime.getRuntime().exec(iflExec);
 	}
 }

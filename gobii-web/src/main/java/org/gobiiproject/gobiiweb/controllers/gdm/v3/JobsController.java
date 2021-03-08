@@ -16,6 +16,7 @@ import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -108,41 +109,10 @@ public class JobsController {
             )
             .body(out -> {
                 ZipOutputStream zipOut = new ZipOutputStream(out);
-                zipFile(instructionFileDirectory, instructionFileDirectory.getName(), zipOut);
+                GobiiFileUtils.streamZipFile(instructionFileDirectory, instructionFileDirectory.getName(), zipOut);
                 zipOut.close();
             });
 
     }
- 
-    private static void zipFile(File file, String filename, ZipOutputStream zipOut) throws IOException {
-        if (file.isHidden()) {
-            return;
-        }
-
-        if (file.isDirectory()) {
-            if (filename.endsWith("/")) {
-                zipOut.putNextEntry(new ZipEntry(filename));
-                zipOut.closeEntry();
-            } else {
-                zipOut.putNextEntry((new ZipEntry(filename + "/")));
-                zipOut.closeEntry();
-            }
-            File[] children = file.listFiles();
-            for (File childFile: children) {
-                zipFile(childFile, filename + "/" + childFile.getName(), zipOut);
-            }
-            return;
-        }
-
-        FileInputStream fis = new FileInputStream(file);
-        ZipEntry zipEntry = new ZipEntry(filename);
-        zipOut.putNextEntry(zipEntry);
-
-        IOUtils.copy(fis, zipOut);
-        fis.close();
-        
-    }
-
-
 
 }

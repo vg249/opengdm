@@ -68,7 +68,6 @@ public class ContactDTO extends DTOBaseAuditable {
     private String organizationName;
 
     @GobiiEntityMap(paramName = "username", entity = Contact.class)
-    @JsonIgnore
     private String username;
 
     @GobiiEntityMap(paramName = "email", entity = Contact.class)

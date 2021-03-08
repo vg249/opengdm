@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>GOBII Server 2.2_2020-03-04</version>
+        <version>GOBII Server 2.2.3_2021-02-03</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>
@@ -433,28 +433,6 @@
             <version>5.3.6.Final</version>
         </dependency>
 
-        <!-- validator -->
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.0.2.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-            <version>6.0.2.Final</version>
-        </dependency>
-         <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>2.2.6</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
@@ -474,7 +452,7 @@
     </dependencies>
 
     <build>
-        <finalName>gobii-web</finalName>
+        <finalName>gdm</finalName>
 
         <resources>
             <resource>

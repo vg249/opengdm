@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public PagedResult<ProjectDTO> getProjects(Integer page,
                                                Integer pageSize,
-                                               String piContactId,
+                                               String piContactUserName,
                                                String cropType) throws Exception {
 
         log.debug("Getting projects list offset %d size %d", page, pageSize);
@@ -76,40 +76,10 @@ public class ProjectServiceImpl implements ProjectService {
                 CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(),
                 null);
 
-            // Get all pi contacts for given crop
-            List<ContactDTO> keycloakUsers = new ArrayList<>();
-            int keyCloakPage = 0;
-            while(keyCloakPage == 0 || keycloakUsers.size() == pageSize) {
-                keycloakUsers
-                    .addAll(
-                        keycloakService.getKeycloakUsers(cropType, "pi", keyCloakPage, pageSize));
-                keyCloakPage += 1;
-            }
-
-            Map<String, ContactDTO> mapUserNameKeycloakObject = new HashMap<>();
-            for(ContactDTO keyCloakUser: keycloakUsers) {
-                mapUserNameKeycloakObject.put(keyCloakUser.getUsername(), keyCloakUser);
-            }
-
-            // Get Pi Contact Id of local db for the same user name to filter
-            Integer piContactLocalDbId = null;
-            if(piContactId != null) {
-                ContactDTO contactDTO = keycloakService.getUser(piContactId);
-                Contact contact = contactDao.getContactByUsername(contactDTO.getUsername());
-                piContactLocalDbId = contact.getContactId();
-            }
-
-            List<Project> projects = projectDao.getProjects(page, pageSize, piContactLocalDbId);
+            List<Project> projects = projectDao.getProjects(page, pageSize, piContactUserName);
             projects.forEach(project -> {
                 ProjectDTO projectDTO = createProjectDTO(project, cvs);
-                // Set keycloak id as piconatct id
-                String userName = project.getContact().getUsername();
-                if(mapUserNameKeycloakObject.containsKey(userName)) {
-                    projectDTO.setPiContactId(
-                        mapUserNameKeycloakObject.get(userName).getPiContactId());
-                }
                 projectDTOs.add(projectDTO);
-
             });
 
             return PagedResult.createFrom(page, projectDTOs);
@@ -125,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDTO createProject(ProjectDTO request, String createdBy) throws Exception {
         // check if contact exists
-        Contact contact = this.loadContact(request.getPiContactId());
+        Contact contact = this.loadContact(request.getPiContactUserName());
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
@@ -158,8 +128,6 @@ public class ProjectServiceImpl implements ProjectService {
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         projectDTO.setProperties(propDTOs);
 
-        // Set the contact Id from request
-        projectDTO.setPiContactId(request.getPiContactId());
 
         return projectDTO;
 
@@ -216,14 +184,6 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDTO getProject(Integer projectId) throws Exception {
         Project project = this.loadProject(projectId);
         ProjectDTO projectDTO = this.createProjectDTO(project, null);
-        try {
-            ContactDTO keyCloakUser =
-                keycloakService.getUserByUserName(project.getContact().getUsername());
-            projectDTO.setPiContactId(keyCloakUser.getPiContactId());
-        }
-        catch (Exception e) {
-            projectDTO.setPiContactId(null);
-        }
         return projectDTO;
     }
 
@@ -275,7 +235,7 @@ public class ProjectServiceImpl implements ProjectService {
                        .orElseThrow(() -> new EntityDoesNotExistException.Project());
     }
 
-    private Contact loadContact(String contactId) throws Exception {
+    private Contact loadContact(String contactUserName) throws Exception {
         // commented it as only keycloak id will be used
         //if contactId is numeric
         //if (contactId.matches("\\d+")) {
@@ -286,7 +246,7 @@ public class ProjectServiceImpl implements ProjectService {
         //else this should be a uuid so load or create/return
         Contact contact;
         try {
-            ContactDTO keycloakUser = keycloakService.getUser(contactId);
+            ContactDTO keycloakUser = keycloakService.getUserByUserName(contactUserName);
             log.debug("Getting local user record for username: " + keycloakUser.getUsername());
             contact = contactDao.getContactByUsername(keycloakUser.getUsername());
             log.debug("Contact: " + contact);
