@@ -229,10 +229,19 @@ public class DaoTestSetUp {
             dataset.setType(datasetTypes
                 .get(random.nextInt(datasetTypes.size())));
             em.persist(dataset);
+
             createdDatasets.add(dataset);
 
         }
 
+        em.flush();
+
+        for(Dataset dataset : createdDatasets) {
+            DatasetStats datasetStats = new DatasetStats();
+            datasetStats.setDatasetId(dataset.getDatasetId());
+            datasetStats.setMarkerCount(100);
+            datasetStats.setDnarunCount(100);
+        }
     }
 
     public void createTestMapsets(int numOfMapsets) {
