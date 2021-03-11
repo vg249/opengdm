@@ -64,7 +64,7 @@ public class JobsController {
         @RequestParam(required=false, defaultValue="0") Integer page,
         @RequestParam(required=false, defaultValue="1000") Integer pageSize,
         @RequestParam(required=false, defaultValue="0") String username,
-        @RequestParam(required=false, defaultValue="true") boolean loadAndExtractOnly
+        @RequestParam(required=false, defaultValue="false") boolean loadAndExtractOnly
     ) throws GobiiException {
         Integer pageSizeToUse = ControllerUtils.getPageSize(pageSize);
         PagedResult<JobDTO> pagedResult = jobService.getJobsByUsername(
