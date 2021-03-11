@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
 public interface CvService {
 	CvDTO createCv(CvDTO request) throws Exception;

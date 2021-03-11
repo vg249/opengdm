@@ -3,13 +3,20 @@ package org.gobiiproject.gobiisampletrackingdao;
 import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
+import javax.print.attribute.standard.JobImpressionsSupported;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class JobDaoImpl implements JobDao {
@@ -21,6 +28,7 @@ public class JobDaoImpl implements JobDao {
 
     /**
      * Dao implementation to create a job entry
+     * 
      * @param job entity to create
      * @return Created job entity with generated id
      */
@@ -31,8 +39,7 @@ public class JobDaoImpl implements JobDao {
             em.flush();
             em.refresh(job, DaoUtils.getHints(em, "graph.job"));
             return job;
-        }
-        catch (PersistenceException pe) {
+        } catch (PersistenceException pe) {
             throw new GobiiDaoException("Unable to create job");
         }
     }
@@ -44,8 +51,7 @@ public class JobDaoImpl implements JobDao {
             em.flush();
             em.refresh(job, DaoUtils.getHints(em, "graph.job"));
             return job;
-        }
-        catch (PersistenceException pe) {
+        } catch (PersistenceException pe) {
             throw new GobiiDaoException("Unable to update job");
         }
     }
@@ -62,34 +68,21 @@ public class JobDaoImpl implements JobDao {
             jobRoot.fetch("status");
             criteriaQuery.where(criteriaBuilder.equal(jobRoot.get("jobName"), jobName));
 
-            job = em
-                .createQuery(criteriaQuery)
-                .getSingleResult();
-        }
-        catch (NonUniqueResultException nuQ) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.UNIQUE_KEY_VIOLATION,
-                "Multiple jobs for same name");
-        }
-        catch (NoResultException nRe) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                "Job not found");
-        }
-        catch (IllegalArgumentException e) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Invalid Request or system error");
+            job = em.createQuery(criteriaQuery).getSingleResult();
+        } catch (NonUniqueResultException nuQ) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNIQUE_KEY_VIOLATION,
+                    "Multiple jobs for same name");
+        } catch (NoResultException nRe) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Job not found");
+        } catch (IllegalArgumentException e) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid Request or system error");
         }
 
-        if(Objects.isNull(job)) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Entity does not exist");
+        if (Objects.isNull(job)) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Entity does not exist");
         }
         return job;
     }
@@ -98,25 +91,116 @@ public class JobDaoImpl implements JobDao {
     public Job getById(Integer jobId) throws GobiiDaoException {
         Job job;
         try {
-            job = em.find(
-                Job.class,
-                jobId,
-                DaoUtils.getHints(em, "graph.job"));
-        }
-        catch (IllegalArgumentException e) {
-           throw new GobiiDaoException(
-               GobiiStatusLevel.ERROR,
-               GobiiValidationStatusType.BAD_REQUEST,
-               "Invalid Request or system error");
+            job = em.find(Job.class, jobId, DaoUtils.getHints(em, "graph.job"));
+        } catch (IllegalArgumentException e) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid Request or system error");
         }
 
-        if(Objects.isNull(job)) {
-            throw new GobiiDaoException(
-                GobiiStatusLevel.ERROR,
-                GobiiValidationStatusType.BAD_REQUEST,
-                "Entity does not exist");
+        if (Objects.isNull(job)) {
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
+                    "Entity does not exist");
         }
         return job;
+    }
+
+    @Override
+    public List<Job> getJobs(Integer page, Integer pageSize, Integer contactId) {
+        return this.getJobs(page, pageSize, contactId, false);
+    }
+
+    @Override
+    public List<Job> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly) {
+
+        try {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
+
+            Root<Job> jobRoot = criteriaQuery.from(Job.class);
+            jobRoot.fetch("status");
+            jobRoot.fetch("type");
+            jobRoot.fetch("payloadType");
+            jobRoot.fetch("submittedBy");
+
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            if (contactId > 0) {
+                predicates.add(criteriaBuilder.equal(jobRoot.get("submittedBy"), contactId));
+            }
+
+            if (loadAndExtractOnly) {
+                In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
+                inClause.value("load");
+                inClause.value("extract");
+                predicates.add(inClause);
+            }
+
+            criteriaQuery.select(jobRoot).where(predicates.toArray(new Predicate[] {}));
+            List<Job> jobs;
+
+            if (pageSize == null || pageSize <= 0)
+                pageSize = 1000;
+            jobs = em.createQuery(criteriaQuery).setFirstResult(page * pageSize).setMaxResults(pageSize)
+                    .getResultList();
+
+            return jobs;
+        } catch (Exception e) {
+
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
+
+        }
+    }
+
+    @Override
+    public List<Job> getJobsByUsername(Integer page, Integer pageSize, String username,
+            boolean loadAndExtractOnly) {
+                try {
+                    CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+                    CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
+        
+                    Root<Job> jobRoot = criteriaQuery.from(Job.class);
+                    jobRoot.fetch("status");
+                    jobRoot.fetch("type");
+                    jobRoot.fetch("payloadType");
+                    jobRoot.fetch("submittedBy");
+                    
+        
+                    List<Predicate> predicates = new ArrayList<Predicate>();
+                    
+                    if (!LineUtils.isNullOrEmpty(username)) {
+                        predicates.add(
+                            criteriaBuilder.equal(jobRoot.get("submittedBy").get("username"), username)
+                        );
+                    }
+        
+                    if (loadAndExtractOnly) {
+                        In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
+                        inClause.value("load");
+                        inClause.value("extract");
+                        predicates.add(inClause);
+                    }
+                    
+                    criteriaQuery.select(jobRoot).where(predicates.toArray(new Predicate[]{}));
+                    List<Job> jobs;
+        
+                    if (pageSize == null || pageSize <= 0)
+                        pageSize = 1000;
+                    jobs = em.createQuery(criteriaQuery)
+                        .setFirstResult(page * pageSize)
+                        .setMaxResults(pageSize)
+                        .getResultList();
+        
+        
+                    return jobs;
+                } catch (Exception e) {
+        
+                    LOGGER.error(e.getMessage(), e);
+        
+                    throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
+        
+                }
     }
 
 
