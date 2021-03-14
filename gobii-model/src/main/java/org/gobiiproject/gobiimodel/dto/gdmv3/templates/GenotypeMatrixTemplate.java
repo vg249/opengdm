@@ -1,11 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3.templates;
 
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
 
 
 @Data
 public class GenotypeMatrixTemplate {
+
+    private boolean areLeftLabelsVariantLabels;
 
     // line number that indicates header line
     private Integer headerLineNumber;

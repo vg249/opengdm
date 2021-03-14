@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
+package org.gobiiproject.gobiiprocess.digester.v3digest;
 
 import java.io.BufferedWriter;
 import java.io.File;

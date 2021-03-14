@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
+package org.gobiiproject.gobiiprocess.digester.v3digest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.aspectsdigest;
+package org.gobiiproject.gobiiprocess.digester.v3digest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gobiiproject.gobiidomain.GobiiDomainException;

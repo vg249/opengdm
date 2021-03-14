@@ -63,11 +63,11 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.LoaderScripts;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
-import org.gobiiproject.gobiiprocess.digester.aspectsdigest.AspectDigestFactory;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiiprocess.digester.v3digest.AspectDigestFactory;
 import org.gobiiproject.gobiiprocess.services.MarkerGroupService;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
@@ -109,7 +109,7 @@ public class GobiiDigester {
     // or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
 
-    private static Boolean isAspectInstruction(LoaderInstruction loaderInstruction) {
+    private static Boolean isV3Instruction(String instructionFileContents) {
         return StringUtils.isNotEmpty(loaderInstruction.getInstructionType()) &&
             loaderInstruction.getInstructionType().equals("v3");
     }
@@ -180,6 +180,13 @@ public class GobiiDigester {
 
         // Get instruction file. instruction file could be either old format or new format.
         String instructionFile = getInstructionFile(args);
+        
+        String logFile = setLogger(configuration, instructionFile);
+
+        //Job Id is the 'name' part of the job file  /asd/de/name.json
+        String filename = new File(instructionFile).getName();
+        String jobName = filename.substring(0, filename.lastIndexOf('.'));
+        
         final String instructionFileContents = HelperFunctions.readFile(instructionFile);
 
         try {
@@ -191,11 +198,6 @@ public class GobiiDigester {
             throw new GobiiException(jE);
         }
 
-        String logFile = setLogger(configuration, instructionFile);
-
-        //Job Id is the 'name' part of the job file  /asd/de/name.json
-        String filename = new File(instructionFile).getName();
-        String jobName = filename.substring(0, filename.lastIndexOf('.'));
 
         // Process instruction file to create intermediate files.
         DigesterResult digestResult;
@@ -284,7 +286,9 @@ public class GobiiDigester {
         Map<String, File> loaderInstructionMap = new HashMap<>();
         List<String> loaderInstructionList = new ArrayList<>();
 
-        GobiiLoaderProcedure procedure = Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
+        GobiiLoaderProcedure procedure = 
+            Marshal.unmarshalGobiiLoaderProcedure(instructionFileContents);
+
         String cropType = procedure.getMetadata().getGobiiCropType();
         String dstFilePath = getDestinationFile(procedure, procedure.getInstructions().get(0));//Intermediate 'file
         String datasetType = procedure.getMetadata().getDatasetType().getName();
