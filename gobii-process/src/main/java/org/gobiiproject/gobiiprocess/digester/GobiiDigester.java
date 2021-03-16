@@ -990,6 +990,10 @@ public class GobiiDigester {
     }
 
     private static String getLogName(String destination, String cropName, String process) {
+        File destinationFile = new File(destination);
+        if(destinationFile.isFile()) {
+            destination = destinationFile.getParent();
+        }
         return destination + "/" + cropName + "_Process-" + process + ".log";
     }
 
