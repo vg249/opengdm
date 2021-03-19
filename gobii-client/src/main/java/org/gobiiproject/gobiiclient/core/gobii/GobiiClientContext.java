@@ -78,6 +78,9 @@ public final class GobiiClientContext {
     private static String sshOverrideHost = null;
     private static Integer sshOverridePort = null;
 
+
+    private static URL gobiiUrl;
+
     public static void setSshOverride(String sshOverrideHost, Integer sshOverridePort) throws Exception {
 
         if (null == sshOverrideHost) {
@@ -199,6 +202,7 @@ public final class GobiiClientContext {
                     URL url = null;
                     try {
                         url = new URL(gobiiURL);
+                        gobiiUrl = url;
                     } catch (Exception e) {
                         throw new Exception("Error retrieving server configuration due to invalid url: "
                                 + e.getMessage()
@@ -220,6 +224,7 @@ public final class GobiiClientContext {
                     .serverConfigs
                     .keySet());
         }
+        
 
         return gobiiClientContext;
     }
@@ -469,9 +474,12 @@ public final class GobiiClientContext {
                             GobiiControllerType.GOBII.getControllerPath());
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
+            
+            String httpScheme = gobiiUrl.getProtocol();
 
             this.httpCore = new HttpCore(this.getCurrentCropDomain(),
-                    this.getCurrentCropPort());
+                    this.getCurrentCropPort(),
+                    httpScheme);
 
 
             HttpMethodResult httpMethodResult = this.getHttp().authenticateWithUser(authUri, userName, password);
