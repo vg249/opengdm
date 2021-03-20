@@ -109,7 +109,7 @@ public class GobiiDigester {
     // or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
 
-    private static Boolean isV3Instruction(String instructionFileContents) {
+    private static Boolean isV3Instruction(LoaderInstruction loaderInstruction) {
         return StringUtils.isNotEmpty(loaderInstruction.getInstructionType()) &&
             loaderInstruction.getInstructionType().equals("v3");
     }
@@ -201,7 +201,7 @@ public class GobiiDigester {
 
         // Process instruction file to create intermediate files.
         DigesterResult digestResult;
-        if(isAspectInstruction(loaderInstructions)) {
+        if(isV3Instruction(loaderInstructions)) {
             loaderInstructions.setJobName(jobName);
             digestResult =
                 new AspectDigestFactory().getDigest(loaderInstructions, configuration).digest();

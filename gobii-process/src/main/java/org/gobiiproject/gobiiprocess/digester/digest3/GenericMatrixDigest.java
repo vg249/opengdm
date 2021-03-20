@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.v3digest;
+package org.gobiiproject.gobiiprocess.digester.digest3;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaRunTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaSampleTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.GermplasmTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstructionV3;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTable;
@@ -41,7 +41,7 @@ import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class GenericMatrixDigest extends AspectDigest {
+public class GenericMatrixDigest extends Digest3 {
 
     
     private GenotypeUploadRequestDTO uploadRequest;
@@ -49,7 +49,7 @@ public class GenericMatrixDigest extends AspectDigest {
     private DatasetDao datasetDao;
     private Dataset dataset;
 
-    GenericMatrixDigest(LoaderInstruction loaderInstruction, 
+    GenericMatrixDigest(LoaderInstructionV3 loaderInstruction, 
                   ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
         this.uploadRequest = 
@@ -81,12 +81,7 @@ public class GenericMatrixDigest extends AspectDigest {
                 if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
                     continue;
                 }
-
-                // Get file header
-                FileHeader fileHeader = 
-                    getFileHeaderByIdentifier(fileToDigest, "");
             }
-
         }
         catch (Exception e) {
             log.error(e.getMessage());
