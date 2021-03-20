@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.gobii;
 
 import static org.junit.Assert.assertTrue;
+import java.util.List;
 
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.junit.Test;
@@ -14,6 +15,9 @@ public class GobiiClientContextTest {
         GobiiClientContext gobiiClientContext = 
             GobiiClientContext.getInstance(
                 "http://localhost:8282/gdm/crops/dev/", true);
-        assertTrue("Crop Type", gobiiClientContext.getCropTypeTypes().size() > 0);
+        //GobiiClientContext context = 
+        //    GobiiClientContext
+        //        .getInstance("https://gdm-extractor.irri.org/gobii-rice/", true); 
+        List<String> crops = gobiiClientContext.getCropTypeTypes();
     }
 }

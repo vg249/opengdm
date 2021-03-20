@@ -57,6 +57,7 @@ public class HttpCore {
     private String host = null;
     private Integer port = null;
     private boolean logJson = false;
+    private String scheme = null;
 
 
     public HttpCore(String host,
@@ -65,6 +66,16 @@ public class HttpCore {
         this.host = host;
         this.port = port;
     }
+    
+    public HttpCore(String host,
+                    Integer port,
+                    String scheme) {
+
+        this.host = host;
+        this.port = port;
+        this.scheme = scheme;
+    }
+
 
 
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
@@ -86,7 +97,10 @@ public class HttpCore {
     }
 
     URIBuilder getBaseBuilder() throws Exception {
-        return (new URIBuilder().setScheme("http")
+        if(scheme == null) {
+            scheme = "http";
+        }
+        return (new URIBuilder().setScheme(scheme)
                 .setHost(host)
                 .setPort(port));
     }
