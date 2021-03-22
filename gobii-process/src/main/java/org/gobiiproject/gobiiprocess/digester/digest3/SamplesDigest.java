@@ -54,7 +54,7 @@ public class SamplesDigest extends Digest3 {
      * @param configSettings    Congiguration settings of GDM
      * @throws GobiiException
      */
-    public SamplesDigest(LoaderInstructionV3 loaderInstruction,
+    public SamplesDigest(LoaderInstruction3 loaderInstruction,
                   ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
 

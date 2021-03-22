@@ -21,7 +21,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaRunTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaSampleTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.GermplasmTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstructionV3;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTable;
@@ -49,8 +49,8 @@ public class GenericMatrixDigest extends Digest3 {
     private DatasetDao datasetDao;
     private Dataset dataset;
 
-    GenericMatrixDigest(LoaderInstructionV3 loaderInstruction, 
-                  ConfigSettings configSettings) throws GobiiException {
+    GenericMatrixDigest(LoaderInstruction3 loaderInstruction, 
+                        ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
         this.uploadRequest = 
             mapper.convertValue(loaderInstruction.getUserRequest(), 

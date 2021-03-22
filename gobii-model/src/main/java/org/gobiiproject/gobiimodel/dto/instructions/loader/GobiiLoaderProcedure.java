@@ -8,7 +8,7 @@ public class GobiiLoaderProcedure {
 	private GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
 	private List<GobiiLoaderInstruction> instructions = new LinkedList<>();
 
-	private String instructionType = "v1";
+	private String jobName;
 
 	public GobiiLoaderMetadata getMetadata() {
 		return metadata;
@@ -26,12 +26,12 @@ public class GobiiLoaderProcedure {
 		this.instructions = instructions;
 	}
 
-	public String getInstructionString() {
-		return this.instructionType;
+	public String getJobName() {
+		return this.jobName;
 	}
 
-	public void setInstructionType(String instructionType) {
-		this.instructionType = instructionType;
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
 	}
 
 }

@@ -1,61 +1,50 @@
 package org.gobiiproject.gobiiprocess.digester;
 
+import java.io.File;
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstructionV3;
-import org.gobiiproject.gobiiprocess.digester.digest3.Digest3;
-import org.gobiiproject.gobiiprocess.digester.digest3.HapmapsDigest;
-import org.gobiiproject.gobiiprocess.digester.digest3.InterteksDigest;
-import org.gobiiproject.gobiiprocess.digester.digest3.MarkersDigest;
-import org.gobiiproject.gobiiprocess.digester.digest3.SamplesDigest;
-import org.gobiiproject.gobiiprocess.digester.digest3.VcfDigest;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiiprocess.digester.digest1.Digest1;
+import org.gobiiproject.gobiiprocess.digester.digest3.DigestFactory3;
 
 public class DigestFactory {
 
-    public Digest getDigest(String loaderInstructionContents,
-                             ConfigSettings configSettings) throws GobiiException {
+    public Digest getDigest(File instructionFile,
+                            ConfigSettings configSettings) throws GobiiException {
 
         ObjectMapper mapper = new ObjectMapper();
         
-        LoaderInstructionV3 loaderInstruction;
-
+        // Try to map to loader instruction v3, if there is an exception, try to map it to v1
+        LoaderInstruction3 loaderInstruction3;
         try {
-            loaderInstruction = mapper.readValue(
-                loaderInstructionContents,
-                LoaderInstructionV3.class);
+            loaderInstruction3 = mapper.readValue(instructionFile,
+                                                                 LoaderInstruction3.class);
         }
         catch(IOException e) {
-            throw new GobiiException(e);
+            throw new GobiiException("Unable to process instruction file");
         }
-        
-        switch (loaderInstruction.getLoadType()) {
-            case "SAMPLES":
-                return new SamplesDigest(loaderInstruction, configSettings);
-            case "MARKER":
-                return new MarkersDigest(loaderInstruction, configSettings);
-            case "MATRIX":
-                GenotypeUploadRequestDTO uploadRequest = mapper.convertValue(
-                    loaderInstruction.getUserRequest(), 
-                    GenotypeUploadRequestDTO.class);                    
-                switch(uploadRequest.getFileType()) {
-                    case HAPMAP:
-                        return new HapmapsDigest(loaderInstruction, configSettings);
-                    case VCF:
-                        return new VcfDigest(loaderInstruction, configSettings);
-                    case INTERTEK:
-                        return new InterteksDigest(loaderInstruction, configSettings);
-                    default:
-                        throw new GobiiException("Invalid loader instruction");
-                }
-            default:
-                throw new GobiiException("Invalid loader instruction");
+        if(loaderInstruction3.getInstructionType() != null &&
+            loaderInstruction3.getInstructionType() == "v3") {
+            return new DigestFactory3().getDigest(loaderInstruction3, configSettings);
+        }
+        else {
+            try {
+                GobiiLoaderProcedure loaderProcedure = 
+                    mapper.readValue(instructionFile, GobiiLoaderProcedure.class);
+                String instructionFileName = instructionFile.getName();
+                String jobName = instructionFileName
+                    .substring(0, instructionFileName.lastIndexOf('.'));
+                loaderProcedure.setJobName(jobName);
+                return (new Digest1(loaderProcedure, configSettings)); 
+            }
+            catch(IOException e2) {
+                throw new GobiiException("Invalid Instruction file");
+            }
         }
     }
 }

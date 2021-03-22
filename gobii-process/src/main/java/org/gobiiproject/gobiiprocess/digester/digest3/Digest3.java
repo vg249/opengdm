@@ -44,7 +44,7 @@ public abstract class Digest3 implements Digest {
     
     private final int maxLinesToLookForHeader = 1000;
 
-    LoaderInstructionV3 loaderInstruction;
+    LoaderInstruction3 loaderInstruction;
     GobiiCropConfig cropConfig;
     JobStatus jobStatus;
 
@@ -68,7 +68,7 @@ public abstract class Digest3 implements Digest {
      * @throws GobiiException when unable to read crop configuration
      * or get job entity for given name.
      */
-    Digest3(LoaderInstructionV3 loaderInstruction,
+    Digest3(LoaderInstruction3 loaderInstruction,
                  ConfigSettings configSettings) throws GobiiException {
         this.loaderInstruction = loaderInstruction;
         SpringContextLoaderSingleton.init(loaderInstruction.getCropType(),

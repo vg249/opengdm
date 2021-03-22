@@ -3,7 +3,6 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
 
 import lombok.Data;
 
@@ -13,11 +12,10 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class LoaderInstructionV3 extends LoaderInstruction {
+public class LoaderInstruction3 {
 
-    public LoaderInstructionV3() {
-        this.setInstructionType("v3");
-    }
+    @NotNull(message = "Required Instruction type")
+    private String instructionType;
 
     @NotNull(message = "Required Crop Type")
     private String cropType;

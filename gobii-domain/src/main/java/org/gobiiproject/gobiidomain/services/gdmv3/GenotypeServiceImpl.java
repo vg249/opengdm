@@ -4,7 +4,7 @@ import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
@@ -23,7 +23,7 @@ public class GenotypeServiceImpl implements GenotypeService {
     public JobDTO loadGenotypes(GenotypeUploadRequestDTO genotypesUploadRequest,
                                 String cropType) throws GobiiException {
 
-        LoaderInstruction loaderInstruction = new LoaderInstruction();
+        LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
         
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setCropType(cropType);

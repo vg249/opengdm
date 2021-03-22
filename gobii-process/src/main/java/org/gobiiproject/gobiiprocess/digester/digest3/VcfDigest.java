@@ -23,7 +23,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaRunTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaSampleTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.GermplasmTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstructionV3;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
@@ -75,7 +75,7 @@ public class VcfDigest extends Digest3 {
     private DatasetDao datasetDao;
     private Dataset dataset;
 
-    public VcfDigest(LoaderInstructionV3 loaderInstruction, 
+    public VcfDigest(LoaderInstruction3 loaderInstruction, 
               ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
         this.uploadRequest = 

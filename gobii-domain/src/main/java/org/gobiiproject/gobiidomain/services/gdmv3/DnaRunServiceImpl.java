@@ -63,7 +63,7 @@ public class DnaRunServiceImpl implements DnaRunService {
                               String cropType) throws GobiiException {
 
 
-        LoaderInstruction loaderInstruction = new LoaderInstruction();
+        LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 

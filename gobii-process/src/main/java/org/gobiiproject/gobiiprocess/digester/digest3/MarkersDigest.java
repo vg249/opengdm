@@ -18,7 +18,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LinkageGroupTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstructionV3;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerGroupTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerLinkageGroupTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
@@ -55,8 +55,8 @@ public class MarkersDigest extends Digest3 {
     final Map<String, CvGroupTerm> propertyFieldsCvGroupMap = Map.of(
         "markerProperties", CvGroupTerm.CVGROUP_MARKER_PROP);
 
-    public MarkersDigest(LoaderInstructionV3 loaderInstruction,
-                  ConfigSettings configSettings) throws GobiiException {
+    public MarkersDigest(LoaderInstruction3 loaderInstruction,
+                         ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
         this.platformDao = SpringContextLoaderSingleton.getInstance().getBean(PlatformDao.class);
         this.mapsetDao = SpringContextLoaderSingleton.getInstance().getBean(MapsetDao.class);

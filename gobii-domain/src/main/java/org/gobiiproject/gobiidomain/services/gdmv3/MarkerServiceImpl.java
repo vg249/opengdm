@@ -50,7 +50,7 @@ public class MarkerServiceImpl implements MarkerService {
     public JobDTO loadMarkerData(MarkerUploadRequestDTO markerUploadRequest,
                                  String cropType) throws GobiiException {
 
-        LoaderInstruction loaderInstruction = new LoaderInstruction();
+        LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
         loaderInstruction.setLoadType(loadType);
 
         loaderInstruction.setCropType(cropType);

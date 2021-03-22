@@ -1,21 +1,21 @@
-package org.gobiiproject.gobiiprocess.digester.v3digest;
+package org.gobiiproject.gobiiprocess.digester.digest3;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 
-public class AspectDigestFactory {
+public class DigestFactory3 {
 
-    public AspectDigest getDigest(LoaderInstruction loaderInstruction,
-                                  ConfigSettings configSettings) {
+    public Digest3 getDigest(LoaderInstruction3 loaderInstruction,
+                             ConfigSettings configSettings) {
         switch (loaderInstruction.getLoadType()) {
             case "SAMPLES":
                 return new SamplesDigest(loaderInstruction, configSettings);
             case "MARKER":
                 return new MarkersDigest(loaderInstruction, configSettings);
             case "MATRIX":
-                GenotypeUploadRequestDTO uploadRequest = AspectDigest.mapper.convertValue(
+                GenotypeUploadRequestDTO uploadRequest = Digest3.mapper.convertValue(
                     loaderInstruction.getUserRequest(), 
                     GenotypeUploadRequestDTO.class);                    
                 switch(uploadRequest.getFileType()) {
