@@ -78,9 +78,9 @@ public class JobsController {
 
 
     @GetMapping(value="/jobs/{jobName}/files", produces="application/zip")
-    public ResponseEntity<StreamingResponseBody> zipFiles(@PathVariable String jobName) throws Exception {
+    public ResponseEntity<StreamingResponseBody> zipFiles(@PathVariable Integer jobId) throws Exception {
         String cropType = CropRequestAnalyzer.getGobiiCropType();
-        File instructionFileDirectory = jobService.getJobStatusDirectory(cropType, jobName);
+        File instructionFileDirectory = jobService.getJobStatusDirectory(cropType, jobId);
         if (instructionFileDirectory == null ) {
             throw new GobiiException("Job Directory not found.");
         }
@@ -88,7 +88,7 @@ public class JobsController {
         return ResponseEntity.ok()
             .header(
                 "Content-Disposition",
-                String.format("attachment; filename=\"%s\"", jobName + ".zip")
+                String.format("attachment; filename=\"%s\"", jobId + ".zip")
             )
             .body(out -> {
                 ZipOutputStream zipOut = new ZipOutputStream(out);
