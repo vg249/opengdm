@@ -120,8 +120,8 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public File getJobStatusDirectory(String cropType, String jobName) throws Exception {
-        Job job = jobDao.getByName(jobName);
+    public File getJobStatusDirectory(String cropType, Integer jobId) throws Exception {
+        Job job = jobDao.getById(jobId);
         if (job == null) {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Job not found.");
         }
