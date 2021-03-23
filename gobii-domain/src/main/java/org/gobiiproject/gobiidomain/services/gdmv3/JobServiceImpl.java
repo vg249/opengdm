@@ -149,8 +149,8 @@ public class JobServiceImpl implements JobService {
         }
 
         String path = configSettings.getProcessingPath(cropType, dir);
-        log.debug("Path for job is " + path + "/" + jobName);
-        return new File(path, jobName);
+        log.debug("Path for job is " + path + "/" + job.getJobName());
+        return new File(path, job.getJobName());
     }
 
     @Override

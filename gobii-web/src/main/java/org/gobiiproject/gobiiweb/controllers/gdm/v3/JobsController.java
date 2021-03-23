@@ -77,7 +77,7 @@ public class JobsController {
 
 
 
-    @GetMapping(value="/jobs/{jobName}/files", produces="application/zip")
+    @GetMapping(value="/jobs/{jobId}/files", produces="application/zip")
     public ResponseEntity<StreamingResponseBody> zipFiles(@PathVariable Integer jobId) throws Exception {
         String cropType = CropRequestAnalyzer.getGobiiCropType();
         File instructionFileDirectory = jobService.getJobStatusDirectory(cropType, jobId);

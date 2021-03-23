@@ -84,9 +84,9 @@ public class JobsControllerTest {
         PowerMockito.mockStatic(CropRequestAnalyzer.class);
         when(CropRequestAnalyzer.getGobiiCropType()).thenReturn("dev");
 
-        when(jobService.getJobStatusDirectory("dev", "test_job")).thenReturn(tempDir);
+        when(jobService.getJobStatusDirectory("dev", 4)).thenReturn(tempDir);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/jobs/test_job/files").contextPath("/gdm"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/jobs/4/files").contextPath("/gdm"))
                 .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
 
         
