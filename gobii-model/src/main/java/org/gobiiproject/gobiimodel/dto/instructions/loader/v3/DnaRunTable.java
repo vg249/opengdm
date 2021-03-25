@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 
-import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @GobiiAspectTable(name = "dnarun")
+@Data
 public class DnaRunTable implements Table {
 
     @JsonProperty("project_id")
@@ -17,84 +18,20 @@ public class DnaRunTable implements Table {
     private String experimentId;
 
     @JsonProperty("experiment_name")
-    private Aspect experimentName;
+    private CoordinatesAspect experimentName;
 
     @JsonProperty("status")
     private String status;
 
     @JsonProperty("dnasample_name")
-    private Aspect dnaSampleName;
+    private CoordinatesAspect dnaSampleName;
 
     @JsonProperty("num")
     private Aspect dnaSampleNum;
 
     @JsonProperty("name")
-    private Aspect dnaRunName;
+    private CoordinatesAspect dnaRunName;
 
     @JsonProperty("props")
     private JsonAspect dnaRunProperties;
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getExperimentId() {
-        return experimentId;
-    }
-
-    public void setExperimentId(String experimentId) {
-        this.experimentId = experimentId;
-    }
-
-    public Aspect getExperimentName() {
-        return experimentName;
-    }
-
-    public void setExperimentName(Aspect experimentName) {
-        this.experimentName = experimentName;
-    }
-
-    public JsonAspect getDnaRunProperties() {
-        return dnaRunProperties;
-    }
-
-    public void setDnaRunProperties(JsonAspect dnaRunProperties) {
-        this.dnaRunProperties = dnaRunProperties;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Aspect getDnaSampleName() {
-        return dnaSampleName;
-    }
-
-    public void setDnaSampleName(Aspect dnaSampleName) {
-        this.dnaSampleName = dnaSampleName;
-    }
-
-    public Aspect getDnaSampleNum() {
-        return dnaSampleNum;
-    }
-
-    public void setDnaSampleNum(Aspect dnaSampleNum) {
-        this.dnaSampleNum = dnaSampleNum;
-    }
-
-    public Aspect getDnaRunName() {
-        return dnaRunName;
-    }
-
-    public void setDnaRunName(Aspect dnaRunName) {
-        this.dnaRunName = dnaRunName;
-    }
 }

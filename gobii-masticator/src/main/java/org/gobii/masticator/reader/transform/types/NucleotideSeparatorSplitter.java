@@ -43,6 +43,9 @@ public class NucleotideSeparatorSplitter {
         } catch (IOException e) {
             throw new RuntimeException("Unable to access missingIndicators.txt",e);
         }
+        this.nucleotideCount = nucleotideCount;
+        this.missingSegmentsFromFile = new HashSet<String>(missingFileElements);
+        this.unknownSegment = StringUtils.repeat(UNKNOWN_ALLELE,nucleotideCount);
     }
 
         public String process(String element) {

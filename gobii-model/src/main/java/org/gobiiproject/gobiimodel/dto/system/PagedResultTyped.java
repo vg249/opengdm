@@ -1,8 +1,5 @@
 package org.gobiiproject.gobiimodel.dto.system;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @param <T>
  */

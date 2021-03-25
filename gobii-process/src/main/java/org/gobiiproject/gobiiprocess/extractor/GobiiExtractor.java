@@ -21,7 +21,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -67,8 +66,8 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
-import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
 import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.*;
@@ -205,7 +204,7 @@ public class GobiiExtractor {
 			String crop = inst.getGobiiCropType();
 			String extractType = "";
 			if (crop == null) crop = divineCrop(instructionFile);
-            GobiiProcessContextSingleton.init(crop, configuration);
+            SpringContextLoaderSingleton.init(crop, configuration);
             try {
                 jobStatus = new JobStatus(jobFileName);
             } catch (Exception e) {

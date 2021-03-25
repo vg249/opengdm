@@ -15,17 +15,17 @@ public class LinkageGroupTable implements Table {
     private String mapId;
 
     @JsonProperty("map_name")
-    private Aspect mapName;
+    private CoordinatesAspect mapName;
 
     @NotNull(message = "linkage group name is required")
     @JsonProperty("name")
-    private Aspect linkageGroupName;
+    private CoordinatesAspect linkageGroupName;
 
     @JsonProperty("start")
-    private Aspect linkageGroupStart;
+    private CoordinatesAspect linkageGroupStart;
 
     @JsonProperty("stop")
-    private Aspect linkageGroupStop;
+    private CoordinatesAspect linkageGroupStop;
 
     public String getMapId() {
         return mapId;
@@ -35,7 +35,7 @@ public class LinkageGroupTable implements Table {
         this.mapId = mapId;
     }
 
-    public Aspect getLinkageGroupName() {
+    public CoordinatesAspect getLinkageGroupName() {
         return linkageGroupName;
     }
 
@@ -43,31 +43,31 @@ public class LinkageGroupTable implements Table {
         this.linkageGroupName = linkageGroupName;
     }
 
-    public Aspect getMapName() {
+    public CoordinatesAspect getMapName() {
         return mapName;
     }
 
-    public void setMapName(Aspect mapName) {
+    public void setMapName(CoordinatesAspect mapName) {
         this.mapName = mapName;
     }
 
-    public void setLinkageGroupName(Aspect linkageGroupName) {
+    public void setLinkageGroupName(CoordinatesAspect linkageGroupName) {
         this.linkageGroupName = linkageGroupName;
     }
 
-    public Aspect getLinkageGroupStart() {
+    public CoordinatesAspect getLinkageGroupStart() {
         return linkageGroupStart;
     }
 
-    public void setLinkageGroupStart(Aspect linkageGroupStart) {
+    public void setLinkageGroupStart(CoordinatesAspect linkageGroupStart) {
         this.linkageGroupStart = linkageGroupStart;
     }
 
-    public Aspect getLinkageGroupStop() {
+    public CoordinatesAspect getLinkageGroupStop() {
         return linkageGroupStop;
     }
 
-    public void setLinkageGroupStop(Aspect linkageGroupStop) {
+    public void setLinkageGroupStop(CoordinatesAspect linkageGroupStop) {
         this.linkageGroupStop = linkageGroupStop;
     }
 }

@@ -70,7 +70,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
          // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
-        organization.setStatus(cv); //TODO:  use status cv?
+        organization.setStatus(cv);
 
         //audit
         Contact creator = contactDao.getContactByUsername(createdBy);

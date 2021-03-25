@@ -62,6 +62,15 @@ public class AspectParser {
 						JsonObject coordinates = arr.get(1).getAsJsonObject();
 						return new ColumnAspect(coordinates.get("row").getAsInt(),
 								                    coordinates.get("column").getAsInt());
+					} else if ("ARRAYCOLUMN".equals(aspectType)) {
+						JsonObject coordinates = arr.get(1).getAsJsonObject();
+						String separator = ",";
+						if(arr.size() > 2) {
+							separator = arr.get(2).getAsString();
+						} 
+						return new ArrayColumnAspect(coordinates.get("row").getAsInt(),
+								                    coordinates.get("column").getAsInt(),
+													separator);
 					} else if ("ROW".equals(aspectType)) {
 						JsonObject coordinates = arr.get(1).getAsJsonObject();
 						return new RowAspect(coordinates.get("row").getAsInt(),

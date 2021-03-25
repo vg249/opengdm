@@ -1,18 +1,14 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
-import org.apache.commons.io.FilenameUtils;
+import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypesUploadRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixLoaderInstruction;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.File;
-import java.io.InputStream;
 
 public class GenotypeServiceImpl implements GenotypeService {
 
@@ -24,20 +20,28 @@ public class GenotypeServiceImpl implements GenotypeService {
     @Autowired
     private JobService jobService;
 
-    public JobDTO loadGenotypes(InputStream inputFileStream,
-                                String fileOriginalName,
-                                GenotypesUploadRequestDTO genotypesUploadRequest,
+    public JobDTO loadGenotypes(GenotypeUploadRequestDTO genotypesUploadRequest,
                                 String cropType) throws GobiiException {
 
         LoaderInstruction loaderInstruction = new LoaderInstruction();
+        
         loaderInstruction.setLoadType(loadType);
+        loaderInstruction.setCropType(cropType);
 
         // Get user submitting the load
-        String userName = ContactService.getCurrentUser();
+        String userName = ContactService.getCurrentUserName();
         Contact createdBy = contactDao.getContactByUsername(userName);
 
         // Set contact email in loader instruction
         loaderInstruction.setContactEmail(createdBy.getEmail());
+        
+        // Check if input files are found
+        if(genotypesUploadRequest.getInputFiles().size() == 0) {
+            throw new InvalidException("request: no input files.");
+        }
+
+        // Check whether input file paths are valid
+        Utils.checkIfInputFilesAreValid(genotypesUploadRequest.getInputFiles());
 
         // Get a new Job object for samples loading
         JobDTO jobDTO = new JobDTO();
@@ -46,22 +50,11 @@ public class GenotypeServiceImpl implements GenotypeService {
 
         String jobName = job.getJobName();
 
-        //Set Input file
-        File genotypeFile =
-            Utils.writeInputFile(inputFileStream, fileOriginalName, jobName, cropType);
-        loaderInstruction.setInputFile(genotypeFile.getAbsolutePath());
-
         //Set output dir
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);
         loaderInstruction.setOutputDir(outputFilesDir);
 
-        MatrixLoaderInstruction matrixLoaderInstruction = new MatrixLoaderInstruction();
-
-        // File type. vcf, hapmap, intertek or miscelleneous
-        matrixLoaderInstruction.setFileType(genotypesUploadRequest.getFileType());
-        matrixLoaderInstruction.setDataFormat(genotypesUploadRequest.getDataFormat());
-
-        loaderInstruction.setMatrix(matrixLoaderInstruction);
+        loaderInstruction.setUserRequest(genotypesUploadRequest);
 
         // Write instruction file
         Utils.writeInstructionFile(loaderInstruction, jobName, cropType);

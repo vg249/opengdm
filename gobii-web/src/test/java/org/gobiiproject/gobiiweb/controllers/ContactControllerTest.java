@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
@@ -40,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles("projectsController-test")
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*", "com.sun.org.apache.xalan.*"})
 @PrepareForTest(CropRequestAnalyzer.class)
 @ContextConfiguration(classes = GOBIIControllerV3TestConfiguration.class
 // locations = { "classpath:/spring/application-config.xml" }
@@ -91,7 +93,7 @@ public class ContactControllerTest {
         // use the spy
         // doReturn("dev").when(gobiiControllerV3).getCropType();
 
-        when(contactService.getUsers("dev", Roles.PI, 0, 1000)).thenReturn(mockPayload);
+        when(contactService.getUsers("dev", Roles.PI, 0, 1000, null)).thenReturn(mockPayload);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/contacts").contextPath("/gdm"))
                 .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk())
@@ -100,6 +102,6 @@ public class ContactControllerTest {
                 .andExpect(jsonPath("$.metadata.pagination.pageSize").value(1))
                 .andExpect(jsonPath("$.result.data[0].piContactId").value(mockItem.getPiContactId()))
                 .andExpect(jsonPath("$.result.data[0].piContactFirstName").value(mockItem.getPiContactFirstName()));
-        verify(contactService, times(1)).getUsers("dev", Roles.PI, 0, 1000);
+        verify(contactService, times(1)).getUsers("dev", Roles.PI, 0, 1000, null);
     }
 }

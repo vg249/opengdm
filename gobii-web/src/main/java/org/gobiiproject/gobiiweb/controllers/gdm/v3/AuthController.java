@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api()
 @CrossOrigin
 @Slf4j
-public class GOBIIControllerV3  {
+public class AuthController {
     
 
     @Autowired

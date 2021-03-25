@@ -471,6 +471,9 @@
     <!-- gdm v3 genotypes service -->
     <bean id="genotypeServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.GenotypeServiceImpl"/>
 
+    <!-- gdm v3 files service -->
+    <bean id="fileServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.FileServiceImpl"/>
+
     <!-- gdm v3 job service -->
     <bean id="jobService" class="org.gobiiproject.gobiidomain.services.gdmv3.JobServiceImpl"></bean>
 

@@ -14,7 +14,7 @@ public interface ProjectService{
     ProjectDTO getProject(Integer projectId) throws Exception;
     PagedResult<ProjectDTO>  getProjects(Integer page,
                                          Integer pageSize,
-                                         Integer piContactId,
+                                         String piContactId,
                                          String cropType) throws Exception;
     ProjectDTO createProject(ProjectDTO request, String createdBy) throws Exception;
     ProjectDTO patchProject(Integer projectId, ProjectDTO request, String editedBy) throws Exception;

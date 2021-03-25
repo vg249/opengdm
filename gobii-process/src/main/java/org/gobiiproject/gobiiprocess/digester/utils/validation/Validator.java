@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
+import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
@@ -136,7 +136,7 @@ class Validator {
     private List<Failure> validateMatrixSizeColumns(String fileName, List<ConditionUnit> conditions) {
         List<Failure> failureList = new ArrayList<>();
 
-        Boolean isMarkerFast= GobiiFileReader.isMarkerFast;//AUTHORS NOTE- this check will never run in stand-alone mode
+        Boolean isMarkerFast= GobiiDigester.isMarkerFast;//AUTHORS NOTE- this check will never run in stand-alone mode
         if(isMarkerFast==null)return failureList;
         List<String> requiredMatrixMarkerSizeColumns = new ArrayList<>();
         List<String> requiredMatrixSampleSizeColumns = new ArrayList<>();

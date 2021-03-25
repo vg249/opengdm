@@ -16,26 +16,26 @@ public class MarkerLinkageGroupTable implements Table {
 
     @JsonProperty("marker_name")
     @NotNull(message = "marker name is required")
-    private Aspect markerName;
+    private CoordinatesAspect markerName;
 
     @JsonProperty("platform_name")
-    private Aspect platformName;
+    private CoordinatesAspect platformName;
 
     @JsonProperty("linkage_group_name")
     @NotNull(message = "linkage group name is required")
-    private Aspect linkageGroupName;
+    private CoordinatesAspect linkageGroupName;
 
     @JsonProperty("map_id")
     private String mapId;
 
     @JsonProperty("map_name")
-    private Aspect mapName;
+    private CoordinatesAspect mapName;
 
     @JsonProperty("start")
-    private Aspect markerStart;
+    private CoordinatesAspect markerStart;
 
     @JsonProperty("stop")
-    private Aspect markerStop;
+    private CoordinatesAspect markerEnd;
 
     public String getPlatformId() {
         return platformId;
@@ -45,27 +45,27 @@ public class MarkerLinkageGroupTable implements Table {
         this.platformId = platformId;
     }
 
-    public Aspect getMarkerName() {
+    public CoordinatesAspect getMarkerName() {
         return markerName;
     }
 
-    public void setMarkerName(Aspect markerName) {
+    public void setMarkerName(CoordinatesAspect markerName) {
         this.markerName = markerName;
     }
 
-    public Aspect getPlatformName() {
+    public CoordinatesAspect getPlatformName() {
         return platformName;
     }
 
-    public void setPlatformName(Aspect platformName) {
+    public void setPlatformName(CoordinatesAspect platformName) {
         this.platformName = platformName;
     }
 
-    public Aspect getLinkageGroupName() {
+    public CoordinatesAspect getLinkageGroupName() {
         return linkageGroupName;
     }
 
-    public void setLinkageGroupName(Aspect linkageGroupName) {
+    public void setLinkageGroupName(CoordinatesAspect linkageGroupName) {
         this.linkageGroupName = linkageGroupName;
     }
 
@@ -77,27 +77,27 @@ public class MarkerLinkageGroupTable implements Table {
         this.mapId = mapId;
     }
 
-    public Aspect getMapName() {
+    public CoordinatesAspect getMapName() {
         return mapName;
     }
 
-    public void setMapName(Aspect mapName) {
+    public void setMapName(CoordinatesAspect mapName) {
         this.mapName = mapName;
     }
 
-    public Aspect getMarkerStart() {
+    public CoordinatesAspect getMarkerStart() {
         return markerStart;
     }
 
-    public void setMarkerStart(Aspect markerStart) {
+    public void setMarkerStart(CoordinatesAspect markerStart) {
         this.markerStart = markerStart;
     }
 
-    public Aspect getMarkerStop() {
-        return markerStop;
+    public CoordinatesAspect getMarkerEnd() {
+        return markerEnd;
     }
 
-    public void setMarkerStop(Aspect markerStop) {
-        this.markerStop = markerStop;
+    public void setMarkerEnd(CoordinatesAspect markerEnd) {
+        this.markerEnd = markerEnd;
     }
 }

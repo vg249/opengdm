@@ -5,11 +5,8 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiiprocess.JobStatus;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.util.HashMap;
@@ -27,8 +24,8 @@ public class ConfigSupplement {
      * @throws Exception
      */
     public void readConfigFile() throws Exception{
-        configSettings = GobiiProcessContextSingleton.getConfigSettings();
-        String cropType = GobiiProcessContextSingleton.getCropType();
+        configSettings = SpringContextLoaderSingleton.getConfigSettings();
+        String cropType = SpringContextLoaderSingleton.getCropType();
         if (configSettings == null || cropType == null) {
             String message = "The the environment does not define the FQPN of " +
                     "configuration in environment variable";

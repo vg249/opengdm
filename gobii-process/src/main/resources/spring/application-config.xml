@@ -18,9 +18,11 @@
     <context:annotation-config/>
 
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
-    <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
+    <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
+    <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
     <bean id="platformDao" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
     <bean id="experimentDao" class="org.gobiiproject.gobiisampletrackingdao.ExperimentDaoImpl"/>
+    <bean id="projectDao" class="org.gobiiproject.gobiisampletrackingdao.ProjectDaoImpl"/>
     <bean id="mapsetDao" class="org.gobiiproject.gobiisampletrackingdao.MapsetDaoImpl"/>
     <bean id="dnaRunDao" class="org.gobiiproject.gobiisampletrackingdao.DnaRunDaoImpl"/>
     <bean id="dnaSampleDao" class="org.gobiiproject.gobiisampletrackingdao.DnaSampleDaoImpl"/>
@@ -30,8 +32,11 @@
     <bean id="markerGroupDao" class="org.gobiiproject.gobiisampletrackingdao.MarkerGroupDaoImpl"/>
     <bean id="referenceDao" class="org.gobiiproject.gobiisampletrackingdao.ReferenceDaoImpl"/>
     <bean id="jobDao" class="org.gobiiproject.gobiisampletrackingdao.JobDaoImpl"/>
+    <bean id="loaderTemplateDao" class="org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDaoImpl"/>
     <bean id="jobService" class="org.gobiiproject.gobiiprocess.services.JobServiceImpl"/>
     <bean id="markerGroupService" class="org.gobiiproject.gobiiprocess.services.MarkerGroupServiceImpl"/>
+    <bean id="datasetService" class="org.gobiiproject.gobiiprocess.services.DatasetServiceImpl"/>
+
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
 
@@ -53,7 +58,6 @@
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">org.gobiiproject.gobiimodel.entity.pgsql.GobiiPostgresSQLDialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.query.in_clause_parameter_padding">true</prop>
             </props>
         </property>

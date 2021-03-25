@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonFormat(shape=JsonFormat.Shape.ARRAY)
 @JsonPropertyOrder({"aspectType", "columnCoordinates"})
-public class ColumnAspect  extends Aspect {
+public class ColumnAspect  extends CoordinatesAspect {
 
     public final String aspectType = "COLUMN";
 

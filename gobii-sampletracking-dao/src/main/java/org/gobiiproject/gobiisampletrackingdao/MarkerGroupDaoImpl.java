@@ -8,11 +8,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.MarkerGroup;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 
 @Slf4j
 public class MarkerGroupDaoImpl implements MarkerGroupDao {
@@ -34,19 +37,42 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
         List<MarkerGroup> markerGroups = new ArrayList<>();
   
         try {
+
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-            CriteriaQuery<MarkerGroup> criteriaQuery = criteriaBuilder.createQuery(MarkerGroup.class);
+            CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
   
             Root<MarkerGroup> root = criteriaQuery.from(MarkerGroup.class);
-       
-            criteriaQuery.select(root);
+            criteriaQuery
+                .multiselect(
+                    root.get("markerGroupId"),
+                    root.get("name"),
+                    root.get("code"),
+                    root.get("germplasmGroup"),
+                    root.get("status"));
   
-            markerGroups = em.createQuery(criteriaQuery).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+            List<Object[]> resultList = em
+                .createQuery(criteriaQuery)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+
+            resultList.stream().forEach(result -> {
+                MarkerGroup markerGroup = new MarkerGroup();
+                markerGroup.setMarkerGroupId((Integer) result[0]);
+                markerGroup.setName((String) result[1]);
+                markerGroup.setCode((String) result[2]);
+                markerGroup.setGermplasmGroup((String) result[3]);
+                markerGroup.setStatus((Cv) result[4]);
+                markerGroups.add(markerGroup);
+            });
+
         } catch (Exception e) {
           log.error(e.getMessage(), e);
   
-          throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
-                  e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+          throw new GobiiDaoException(
+              GobiiStatusLevel.ERROR,
+              GobiiValidationStatusType.UNKNOWN,
+              e.getMessage() + " Cause Message: " + e.getCause().getMessage());
   
         }
         return markerGroups;  

@@ -15,6 +15,10 @@ import java.util.Map;
 
 @Data
 public class MarkerTemplateDTO {
+    
+    private Integer headerLineNumber = 1;
+
+    private String fileSeparator = "\t";
 
     @GobiiAspectMaps(maps = {
         @GobiiAspectMap(aspectTable = MarkerTable.class),

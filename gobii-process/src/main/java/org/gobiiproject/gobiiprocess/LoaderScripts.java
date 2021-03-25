@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class LoaderScripts {
@@ -30,5 +31,10 @@ public class LoaderScripts {
 
     public String getLgDuplicatesScript() {
         return Paths.get(getPath(), "LGduplicates.py").toString();
+    }
+
+    public String getPathToHdf5Files(String cropType) {
+        Path cropPath = Paths.get(rootDir + "crops/" + cropType.toLowerCase());
+        return cropPath.toString() + "/hdf5/";
     }
 }

@@ -8,7 +8,7 @@ import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.services.JobService;
-import org.gobiiproject.gobiiprocess.spring.GobiiProcessContextSingleton;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
 
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
@@ -36,7 +36,7 @@ public class JobStatus {
 	));
 
     public JobStatus(String jobName) throws GobiiDaoException {
-        this.jobService = GobiiProcessContextSingleton
+        this.jobService = SpringContextLoaderSingleton
             .getInstance()
             .getBean(JobService.class);
         this.job = jobService.getByName(jobName);
@@ -53,6 +53,7 @@ public class JobStatus {
     	    this.job.setMessage(message);
     	    Cv newStatus = new Cv();
     	    newStatus.setTerm(status);
+    	    job.setStatus(newStatus);
     	    this.jobService.update(job);
     	} catch (Exception e) {
     	    logError("Digester", "Exception while referencing Job table", e);
