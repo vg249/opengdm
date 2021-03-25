@@ -110,6 +110,14 @@ public class ConfigSupplement {
     @Bean(name="keycloakConfig")
     public KeycloakConfig keycloakConfig() {
         return this.configSettings.getKeycloakConfig();
+
+        
     }
+
+    @Bean(name="configSettings")
+    public ConfigSettings configSettings() {
+        return this.configSettings;
+    }
+
 
 }
