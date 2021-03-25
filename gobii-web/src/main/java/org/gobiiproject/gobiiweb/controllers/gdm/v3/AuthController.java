@@ -14,14 +14,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiidomain.services.gdmv3.KeycloakService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,14 +38,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
 @RestController
-@RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII_V3)
 @Api()
 @CrossOrigin
 @Slf4j
 public class AuthController {
     
 
-
+    @Autowired
+    KeycloakService keycloakService;
     /**
      * Authentication Endpoint
      * Mimicking same logic used in v1
@@ -47,7 +53,7 @@ public class AuthController {
      * @param response - Response with Headers values filled in TokenFilter
      * @return
      */
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @RequestMapping(value = GobiiControllerType.SERVICE_PATH_GOBII_V3 +  "/auth", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<HeaderAuth> authenticate(HttpServletRequest request,
                                        HttpServletResponse response) {
@@ -77,6 +83,17 @@ public class AuthController {
         }
 
 
+    }
+
+    /**
+     * List admin contacts
+     */
+    @GetMapping("/contacts/admin")
+    @ResponseBody
+    public ResponseEntity<BrApiMasterListPayload<ContactDTO>> getAdminContacts() throws Exception {
+        PagedResult<ContactDTO> pagedResult = PagedResult.createFrom(1, keycloakService.getKeycloakRealmAdmin());
+        BrApiMasterListPayload<ContactDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
+        return ResponseEntity.ok(payload);
     }
 
 }

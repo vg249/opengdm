@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
@@ -200,4 +201,21 @@ public class KeycloakServiceImpl implements KeycloakService {
 
 		return tokenInfo;
 	}
+
+    @Override
+    public List<ContactDTO> getKeycloakRealmAdmin() throws Exception {
+        Keycloak keycloak = this.getKeycloakAdminClient();
+        Set<UserRepresentation> users =
+            keycloak
+                .realm(keycloakConfig.getRealm())
+                .roles()
+                .get("ADMIN")
+                .getRoleUserMembers();
+        List<ContactDTO> contacts = new ArrayList<>();
+        for (UserRepresentation rep: users) {
+            contacts.add( this.getContactDTO(rep));
+        }
+
+        return contacts;
+    }
 }
