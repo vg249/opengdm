@@ -93,10 +93,7 @@ public class JobsController {
         
         if (instructionFileDirectory == null || 
             !jobFilesDirectoryName.equals(instructionFileDirectory.getName())) {
-                throw new GobiiException(
-                    GobiiStatusLevel.ERROR, 
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "File not found");
+            return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok()
