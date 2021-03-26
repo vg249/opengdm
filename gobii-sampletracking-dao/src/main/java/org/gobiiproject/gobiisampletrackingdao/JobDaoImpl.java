@@ -151,7 +151,7 @@ public class JobDaoImpl implements JobDao {
             criteriaQuery
                 .select(jobRoot)
                 .where(predicates.toArray(new Predicate[] {}))
-                .orderBy(criteriaBuilder.desc(jobRoot.get("submittedBy")));
+                .orderBy(criteriaBuilder.desc(jobRoot.get("submittedDate")));
 
             if (pageSize == null || pageSize <= 0)
                 pageSize = 1000;

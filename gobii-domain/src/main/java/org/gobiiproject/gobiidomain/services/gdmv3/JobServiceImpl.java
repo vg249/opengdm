@@ -193,14 +193,15 @@ public class JobServiceImpl implements JobService {
                                        boolean getExtractJobs, String cropType) {
 
             List<JobType> jobTypes = new ArrayList<>();
+            
+            if(getLoadJobs) {
+                jobTypes.add(JobType.CV_JOBTYPE_LOAD);
+            }
 
             if(getExtractJobs) {
                 jobTypes.add(JobType.CV_JOBTYPE_EXTRACT);
             }
 
-            if(getExtractJobs) {
-                jobTypes.add(JobType.CV_JOBTYPE_LOAD);
-            }
             
             List<Job> jobs = jobDao.getJobs(
                 page, pageSizeToUse, 
