@@ -133,10 +133,7 @@ public class JobServiceImpl implements JobService {
     
     private File getJobStatusDirectory(String cropType, Job job) throws GobiiException {
         if (job == null) {
-            throw new GobiiException(
-                GobiiStatusLevel.ERROR, 
-                GobiiValidationStatusType.BAD_REQUEST, 
-                "Job not found.");
+            return null;
         }
 
         JobProgressStatusType status =  
@@ -192,13 +189,23 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public PagedResult<JobDTO> getJobs(Integer page, Integer pageSizeToUse, 
-                                       String username, boolean filterLoadJobs,
-                                       boolean filterExtractJobs, String cropType) {
+                                       String username, boolean getLoadJobs,
+                                       boolean getExtractJobs, String cropType) {
+
+            List<JobType> jobTypes = new ArrayList<>();
+
+            if(getExtractJobs) {
+                jobTypes.add(JobType.CV_JOBTYPE_EXTRACT);
+            }
+
+            if(getExtractJobs) {
+                jobTypes.add(JobType.CV_JOBTYPE_LOAD);
+            }
             
             List<Job> jobs = jobDao.getJobs(
                 page, pageSizeToUse, 
                 null, username,
-                filterLoadJobs, filterExtractJobs);
+                jobTypes);
 
             List<JobDTO> jobDTOs = new ArrayList<>();
 

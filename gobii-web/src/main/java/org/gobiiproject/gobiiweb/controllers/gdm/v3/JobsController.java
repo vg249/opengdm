@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -60,15 +61,15 @@ public class JobsController {
         @RequestParam(required=false, defaultValue="0") Integer page,
         @RequestParam(required=false, defaultValue="1000") Integer pageSize,
         @RequestParam(required=false, defaultValue="") String username,
-        @RequestParam(required=false, defaultValue="false") boolean filterLoadJobs,
-        @RequestParam(required=false, defaultValue="false") boolean filterExtractJobs,
+        @RequestParam(required=false, defaultValue="false") boolean getLoadJobs,
+        @RequestParam(required=false, defaultValue="false") boolean getExtractorJobs,
         @PathVariable String cropType
     ) throws GobiiException {
         Integer pageSizeToUse = ControllerUtils.getPageSize(pageSize);
         PagedResult<JobDTO> pagedResult = jobService.getJobs(
             page, pageSizeToUse, 
-            username, filterLoadJobs, 
-            filterExtractJobs, cropType
+            username, getLoadJobs, 
+            getExtractorJobs, cropType
         );
 
         BrApiMasterListPayload<JobDTO> payload = ControllerUtils.getMasterListPayload(pagedResult);
@@ -77,17 +78,19 @@ public class JobsController {
 
 
 
-    @GetMapping(value="/jobs/{jobId}/files/{fileName:\\w+}.zip", produces="application/zip")
+    @GetMapping(
+        value="/jobs/{jobId}/files/{jobFilesDirectoryName:[\\w]+}.zip", 
+        produces="application/zip")
     public ResponseEntity<StreamingResponseBody> zipFiles(
         @PathVariable Integer jobId,
-        @PathVariable String fileName,
+        @PathVariable String jobFilesDirectoryName,
         @PathVariable String cropType) throws Exception {
-
 
         File instructionFileDirectory = jobService.getJobStatusDirectory(cropType, jobId);
         
-        if (instructionFileDirectory == null ) {
-            throw new GobiiException("Job Directory not found.");
+        if (instructionFileDirectory == null || 
+            !jobFilesDirectoryName.equals(instructionFileDirectory.getName())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
         return ResponseEntity.ok()

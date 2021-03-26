@@ -13,8 +13,8 @@ public interface JobService {
     JobDTO createLoaderJob(JobDTO jobDTO) throws GobiiException;
     PagedResult<JobDTO> getJobs(
         Integer page, Integer pageSizeToUse, 
-        String username, boolean loadJobsOnly, 
-        boolean extractJobsOnly, String cropType
+        String username, boolean getLoadJobs, 
+        boolean getExtractJobs, String cropType
     );
 	File getJobStatusDirectory(String cropType, Integer jobId) throws Exception;
 }

@@ -2,6 +2,7 @@ package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.entity.Job;
 
 public interface JobDao {
@@ -13,6 +14,6 @@ public interface JobDao {
 	List<Job> getJobs(
         Integer page, Integer pageSizeToUse, 
         Integer contactId, String username,
-        boolean filterLoadJobs, boolean filterExtractJobs
+        List<JobType> jobTypes
     );
 }

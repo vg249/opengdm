@@ -5,12 +5,15 @@ import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.hibernate.NullPrecedence;
+import org.hibernate.criterion.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.CriteriaBuilder.In;
@@ -98,8 +101,10 @@ public class JobDaoImpl implements JobDao {
         }
 
         if (Objects.isNull(job)) {
-            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Entity does not exist");
+            throw new GobiiDaoException(
+                GobiiStatusLevel.ERROR, 
+                GobiiValidationStatusType.BAD_REQUEST,
+                "Entity does not exist");
         }
         return job;
     }
@@ -108,7 +113,7 @@ public class JobDaoImpl implements JobDao {
     public List<Job> getJobs(
         Integer page, Integer pageSize, 
         Integer contactId, String username,
-        boolean filterLoadJobs, boolean filterExtractJobs) {
+        List<JobType> jobTypes) {
            
         List<Job> jobs = new ArrayList<>();
 
@@ -134,20 +139,19 @@ public class JobDaoImpl implements JobDao {
                 );
             }
             
-            In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
+            if(jobTypes != null && jobTypes.size() > 0) {
+                In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
 
-            if(filterExtractJobs || filterLoadJobs) {
-                if (filterLoadJobs) {
-                    inClause.value(JobType.CV_JOBTYPE_LOAD.getCvName());
-                }
-
-                if(filterExtractJobs) {
-                    inClause.value(JobType.CV_JOBTYPE_EXTRACT.getCvName());
+                for(JobType jobType : jobTypes) {
+                    inClause.value(jobType.getCvName());
                 }
                 predicates.add(inClause);
             }
             
-            criteriaQuery.select(jobRoot).where(predicates.toArray(new Predicate[] {}));
+            criteriaQuery
+                .select(jobRoot)
+                .where(predicates.toArray(new Predicate[] {}))
+                .orderBy(criteriaBuilder.desc(jobRoot.get("submittedBy")));
 
             if (pageSize == null || pageSize <= 0)
                 pageSize = 1000;
