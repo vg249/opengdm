@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.LoaderTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.templates.GenotypeMatrixTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -58,6 +59,14 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
         return addLoaderTemplate(
             loaderTemplateDTO,
             GobiiLoaderPayloadTypes.SAMPLES);
+    }
+    
+    @Override
+    public LoaderTemplateDTO addGenotypeTemplate(LoaderTemplateDTO loaderTemplateDTO
+    ) throws Exception {
+        return addLoaderTemplate(
+            loaderTemplateDTO,
+            GobiiLoaderPayloadTypes.MATRIX);
     }
 
     private LoaderTemplateDTO addLoaderTemplate(LoaderTemplateDTO loaderTemplateDTO,
@@ -115,6 +124,21 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
     ) throws GobiiException {
         return getLoaderTemplates(pageSize, pageNum, GobiiLoaderPayloadTypes.SAMPLES);
     }
+    
+    /**
+     * Get the list for matrix loader template.
+     * @param pageSize  page size
+     * @param pageNum   page num to fetch
+     * @return  list of dnarun loader templates
+     * @throws GobiiException
+     */
+    @Override
+    public PagedResult<LoaderTemplateDTO> getGenotypeTemplates(Integer pageSize,
+                                                               Integer pageNum
+    ) throws GobiiException {
+        return getLoaderTemplates(pageSize, pageNum, GobiiLoaderPayloadTypes.MATRIX);
+    }
+
 
     private PagedResult<LoaderTemplateDTO>
     getLoaderTemplates(Integer pageSize,
@@ -168,6 +192,15 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
                 .put(markerProperty.getTerm(), new ArrayList<>());
         }
         return markerTemplateDTO;
+    }
+   
+    /**
+     * @return an empty genotype template {@link MarkerTemplateDTO}
+     * @throws GobiiException
+     */
+    @Override
+    public GenotypeMatrixTemplateDTO getEmptyGenotypeTemplate() throws GobiiException {
+        return new GenotypeMatrixTemplateDTO();
     }
 
     /**

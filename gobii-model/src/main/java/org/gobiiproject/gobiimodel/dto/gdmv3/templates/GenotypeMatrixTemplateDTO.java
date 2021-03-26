@@ -4,10 +4,10 @@ import lombok.Data;
 
 
 @Data
-public class GenotypeMatrixTemplate {
+public class GenotypeMatrixTemplateDTO {
 
-    private boolean areLeftLabelsVariantLabels;
-
+    private boolean areLeftLabelsVariantLabels = true;
+    
     // line number that indicates header line
     private Integer headerLineNumber;
 
@@ -15,13 +15,16 @@ public class GenotypeMatrixTemplate {
     // String that distinctively identifies header line.
     private String headerStartsWith;
 
-    // tells if marker is on left or on top
-    private boolean markerAsLeftLabel = true;
+    private Integer leftLabelIdHeaderPosition;
 
     // name of the column which is left side label for matrix.
-    private String leftLabelColumnName;
+    private String leftLabelIdHeaderColumnName;
+
+    private Integer topLabelIdHeaderStartPosition;
+
+    private String topLabelIdHeaderColumnName;
 
     // file values separator. tab is default separator
-    private String separator = "\t";
+    private String fileSeparator = "\t";
 
 }
