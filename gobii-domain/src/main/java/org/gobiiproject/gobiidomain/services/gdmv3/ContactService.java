@@ -22,7 +22,7 @@ public interface ContactService {
                                      String role, 
                                      Integer page, 
                                      Integer pageSize,
-                                     String userName) throws GobiiException;
+                                     String userName) throws Exception;
     
     ContactDTO addContact(String preferredUsername, String givenName, String familyName, String email, String organization, String createdBy) throws Exception;
 

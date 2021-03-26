@@ -37,7 +37,8 @@ public class JobDTO {
     @GobiiEntityMap(paramName="submittedDate", base = true)
     private Date submittedDate;
 
-    @GobiiEntityMap(paramName="submittedBy.username", entity = Job.class, deep = true)
-    private String submittedBy;
+    private ContactDTO submittedBy;
+
+    private String jobFilesDownloadUrl;
 
 }

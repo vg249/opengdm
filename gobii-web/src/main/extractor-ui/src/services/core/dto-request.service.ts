@@ -100,8 +100,7 @@ export class DtoRequestService<T> {
                     }
                 },
                 json => {
-                    console.log("Got error " + json);
-                    console.log("Got " + json._body);
+                    console.log("Got error " + JSON.stringify(json));
                     let obj = JSON.parse(json._body)
                     let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
                     observer.error(payloadResponse.header);

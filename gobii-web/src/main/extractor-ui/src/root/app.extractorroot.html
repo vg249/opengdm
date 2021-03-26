@@ -24,6 +24,24 @@
                         <a href="javascript: void(0)" (click)="logout()">Go to login page.</a>
                     </div> 
             </p-dialog>
+
+            <p-dialog header="System Message"
+                    modal="modal"
+                    visible="true"
+                    [contentStyle]="{'width': '400px'}"
+                    *ngIf="isCropsOk() === false"
+                    >
+                    <div class="panel-body" style="text-align:center">
+                        Please contact below Admin to get access: <br/>
+                        <table style="margin-left:auto;margin-right:auto">
+                            <tr *ngFor="let admin of admins">
+                                <td>{{admin.firstName}} {{admin.lastName}} &lt;<a href="mailto:{{admin.email}}">{{admin.email}}</a>&gt;</td>
+                            </tr>
+
+                        </table> 
+                        <a href="javascript: void(0)" (click)="logout()">Go to login page.</a>
+                    </div> 
+            </p-dialog>
             <div class="card-body container-fluid" *ngIf="isProfileOk() === true">
                 <div class="row">
                     <div  style="margin-left: 15px;margin-top:20px;margin-bottom:20px;display:flex;align-items:center">

@@ -31,6 +31,7 @@ import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import * as fromRoot from '../store/reducers';
 import { Router } from '@angular/router';
+import { DtoRequestItemAdmins } from "src/services/app/dto-request-item-admins";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -51,6 +52,8 @@ export class ExtractorRoot implements OnInit {
 
     //
     public profileOk: boolean = null;
+    public cropsOk: boolean = null;
+    public admins: Contact[] = [];
 
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -82,6 +85,7 @@ export class ExtractorRoot implements OnInit {
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _dtoRequestServiceCrops: DtoRequestService2<Crop[]>,
+                private _dtoRequestServiceAdminContacts: DtoRequestService2<Contact[]>,
                 private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
@@ -110,6 +114,7 @@ export class ExtractorRoot implements OnInit {
     public currentStatusMessage: string = null;
     public displayEmailUpdateDialog: boolean = false;
 
+
     showMessagesDialog() {
         this.display = true;
 
@@ -128,14 +133,31 @@ export class ExtractorRoot implements OnInit {
     public serverConfigList: ServerConfig[];
     public currentStatus: string;
 
+    private initializeAdminContacts() {
+        let scope$ = this;
+        console.log("Initializing admin contacts....");
+        this._dtoRequestServiceAdminContacts.get(new DtoRequestItemAdmins()).subscribe(
+            admins => {
+                this.admins = admins;
+                this.initializeCropType();
+            }
+        )
+    } 
+
     private initializeCropType() {
         let scope$ = this;
+        console.log("Initializing crops...");
         this._dtoRequestServiceCrops.get(new DtoRequestItemCrops()).subscribe(crops => {
-            if (crops) {
+            let authorizedCrops = crops.filter( crop => crop.userAuthorized);
+
+            if (authorizedCrops.length) {
+                this.cropsOk = true;
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.store.dispatch(new fileItemAction.SetCurrentCropAction(crops[0].cropType));
                 this.fileItemService.loadCrops(GobiiExtractFilterType.UNKNOWN, crops, 0);
                 scope$.initializeServerConfigs();   
+            } else {
+                this.cropsOk = false;
             }
         })
     }
@@ -460,7 +482,8 @@ export class ExtractorRoot implements OnInit {
                 if (profile.email) {
                     this._authenticationService.setProfile(profile);
                     this.profileOk = true;
-                    this.initializeCropType();
+                    this.initializeAdminContacts(); //TODO should probably chain these two
+                    // this.initializeCropType(); moved to inside initializeAdminContacts
                 } else {
                     this.profileOk = false;
                 }
@@ -473,6 +496,10 @@ export class ExtractorRoot implements OnInit {
 
     public isProfileOk() {
         return this.profileOk;
+    }
+
+    public isCropsOk() {
+        return this.cropsOk;
     }
 
     public logout() {
