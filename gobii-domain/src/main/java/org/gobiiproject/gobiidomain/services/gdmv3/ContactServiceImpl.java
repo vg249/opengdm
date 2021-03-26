@@ -133,7 +133,7 @@ public class ContactServiceImpl implements ContactService {
                                             String role, 
                                             Integer page, 
                                             Integer pageSize,
-                                            String userName) throws GobiiException {
+                                            String userName) throws Exception {
             List<ContactDTO> contactDTOs = new ArrayList<>();
 
             // If user name filter is provided dont have to fetch all
@@ -146,6 +146,9 @@ public class ContactServiceImpl implements ContactService {
             }
             return PagedResult.createFrom(page, contactDTOs);
     }
+
+
+    
   
 
 }
