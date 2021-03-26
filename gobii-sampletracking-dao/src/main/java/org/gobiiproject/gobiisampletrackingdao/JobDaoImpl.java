@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -13,7 +14,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.CriteriaBuilder.In;
-import javax.print.attribute.standard.JobImpressionsSupported;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,12 +105,12 @@ public class JobDaoImpl implements JobDao {
     }
 
     @Override
-    public List<Job> getJobs(Integer page, Integer pageSize, Integer contactId) {
-        return this.getJobs(page, pageSize, contactId, false);
-    }
-
-    @Override
-    public List<Job> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly) {
+    public List<Job> getJobs(
+        Integer page, Integer pageSize, 
+        Integer contactId, String username,
+        boolean filterLoadJobs, boolean filterExtractJobs) {
+           
+        List<Job> jobs = new ArrayList<>();
 
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -124,24 +124,38 @@ public class JobDaoImpl implements JobDao {
 
             List<Predicate> predicates = new ArrayList<Predicate>();
 
-            if (contactId > 0) {
+            if (contactId != null && contactId > 0) {
                 predicates.add(criteriaBuilder.equal(jobRoot.get("submittedBy"), contactId));
             }
+            
+            if (!LineUtils.isNullOrEmpty(username)) {
+                predicates.add(
+                    criteriaBuilder.equal(jobRoot.get("submittedBy").get("username"), username)
+                );
+            }
+            
+            In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
 
-            if (loadAndExtractOnly) {
-                In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
-                inClause.value("load");
-                inClause.value("extract");
+            if(filterExtractJobs || filterLoadJobs) {
+                if (filterLoadJobs) {
+                    inClause.value(JobType.CV_JOBTYPE_LOAD.getCvName());
+                }
+
+                if(filterExtractJobs) {
+                    inClause.value(JobType.CV_JOBTYPE_EXTRACT.getCvName());
+                }
                 predicates.add(inClause);
             }
-
+            
             criteriaQuery.select(jobRoot).where(predicates.toArray(new Predicate[] {}));
-            List<Job> jobs;
 
             if (pageSize == null || pageSize <= 0)
                 pageSize = 1000;
-            jobs = em.createQuery(criteriaQuery).setFirstResult(page * pageSize).setMaxResults(pageSize)
-                    .getResultList();
+            jobs = em
+                .createQuery(criteriaQuery)
+                .setFirstResult(page * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
 
             return jobs;
         } catch (Exception e) {
@@ -152,56 +166,4 @@ public class JobDaoImpl implements JobDao {
 
         }
     }
-
-    @Override
-    public List<Job> getJobsByUsername(Integer page, Integer pageSize, String username,
-            boolean loadAndExtractOnly) {
-                try {
-                    CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-                    CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
-        
-                    Root<Job> jobRoot = criteriaQuery.from(Job.class);
-                    jobRoot.fetch("status");
-                    jobRoot.fetch("type");
-                    jobRoot.fetch("payloadType");
-                    jobRoot.fetch("submittedBy");
-                    
-        
-                    List<Predicate> predicates = new ArrayList<Predicate>();
-                    
-                    if (!LineUtils.isNullOrEmpty(username)) {
-                        predicates.add(
-                            criteriaBuilder.equal(jobRoot.get("submittedBy").get("username"), username)
-                        );
-                    }
-        
-                    if (loadAndExtractOnly) {
-                        In<String> inClause = criteriaBuilder.in(jobRoot.get("type").get("term"));
-                        inClause.value("load");
-                        inClause.value("extract");
-                        predicates.add(inClause);
-                    }
-                    
-                    criteriaQuery.select(jobRoot).where(predicates.toArray(new Predicate[]{}));
-                    List<Job> jobs;
-        
-                    if (pageSize == null || pageSize <= 0)
-                        pageSize = 1000;
-                    jobs = em.createQuery(criteriaQuery)
-                        .setFirstResult(page * pageSize)
-                        .setMaxResults(pageSize)
-                        .getResultList();
-        
-        
-                    return jobs;
-                } catch (Exception e) {
-        
-                    LOGGER.error(e.getMessage(), e);
-        
-                    throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN, e.getMessage());
-        
-                }
-    }
-
-
 }

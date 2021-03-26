@@ -10,7 +10,9 @@ public interface JobDao {
     Job update(Job job) throws GobiiDaoException;
     Job getById(Integer jobId);
     Job getByName(String jobName) throws GobiiDaoException;
-	List<Job> getJobs(Integer page, Integer pageSize, Integer contactId);
-	List<Job> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly);
-	List<Job> getJobsByUsername(Integer page, Integer pageSizeToUse, String username, boolean loadAndExtractOnly);
+	List<Job> getJobs(
+        Integer page, Integer pageSizeToUse, 
+        Integer contactId, String username,
+        boolean filterLoadJobs, boolean filterExtractJobs
+    );
 }

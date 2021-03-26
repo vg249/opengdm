@@ -2,12 +2,12 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
-import org.gobiiproject.gobiidomain.services.FilesService;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -24,9 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j;
 
 import java.util.Date;
-import java.util.UUID;
 import java.util.List;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 @Transactional
@@ -41,6 +41,8 @@ public class JobServiceImpl implements JobService {
     public static final String IN_PROGRESS = "in_progress";
     public static final String PENDING = "pending";
 
+    private String jobFilesDownloadUrlFormat = "/jobs/{0}/files/{1}.zip";
+
     @Autowired
     private JobDao jobDao;
 
@@ -54,10 +56,26 @@ public class JobServiceImpl implements JobService {
     private ConfigSettings configSettings;
 
     @Override
-    public JobDTO getJobById(Integer jobId) throws GobiiException {
-        JobDTO jobDTO = new JobDTO();
+    public JobDTO getJobById(Integer jobId, String cropType) throws GobiiException {
         Job job = jobDao.getById(jobId);
+        return mapJobDTO(job, cropType);
+    }
+
+    private JobDTO mapJobDTO(Job job, String cropType) throws GobiiException {
+        JobDTO jobDTO = new JobDTO();
         ModelMapper.mapEntityToDto(job, jobDTO);
+
+        // Set Submitted by entity
+        ContactDTO submittedBy = new ContactDTO();
+        jobDTO.setSubmittedBy(submittedBy);
+        ModelMapper.mapEntityToDto(job.getSubmittedBy(), submittedBy);
+     
+        if(getJobStatusDirectory(cropType, job) != null) { 
+            String jobFilesDownloadUrl = 
+                MessageFormat.format(jobFilesDownloadUrlFormat, job.getJobId(), job.getJobName()); 
+            jobDTO.setJobFilesDownloadUrl(jobFilesDownloadUrl);
+        }
+        
         return jobDTO;
     }
 
@@ -106,77 +124,88 @@ public class JobServiceImpl implements JobService {
 
     }
 
-    @Override
-    public PagedResult<JobDTO> getJobs(Integer page, Integer pageSize, Integer contactId, boolean loadAndExtractOnly) {
-        List<Job> jobs = jobDao.getJobs(page, pageSize, contactId, loadAndExtractOnly);
-        List<JobDTO> jobDTOs = new ArrayList<>();
-        jobs.forEach(job -> {
-            JobDTO jobDTO = new JobDTO();
-            ModelMapper.mapEntityToDto(job, jobDTO);
-            jobDTOs.add(jobDTO);
-        });
-
-        return PagedResult.createFrom(page, jobDTOs);
-    }
 
     @Override
-    public File getJobStatusDirectory(String cropType, Integer jobId) throws Exception {
+    public File getJobStatusDirectory(String cropType, Integer jobId) throws GobiiException {
         Job job = jobDao.getById(jobId);
+        return getJobStatusDirectory(cropType, job);
+    }
+    
+    private File getJobStatusDirectory(String cropType, Job job) throws GobiiException {
         if (job == null) {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Job not found.");
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR, 
+                GobiiValidationStatusType.BAD_REQUEST, 
+                "Job not found.");
         }
 
-        String status =  job.getStatus().getTerm();
+        JobProgressStatusType status =  
+            JobProgressStatusType.byValue(job.getStatus().getTerm());
+        
+        if(status == null) {
+            return null;
+        }
+
         String type = job.getType().getTerm();
 
         GobiiFileProcessDir dir = null;
         if (type.equals(EXTRACT)) {
             switch (status) {
-                case COMPLETED:
-                case FAILED: dir = GobiiFileProcessDir.EXTRACTOR_DONE; break;
-                case IN_PROGRESS: dir = GobiiFileProcessDir.EXTRACTOR_INPROGRESS; break;
-                default: dir = GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS; break;
+                case CV_PROGRESSSTATUS_COMPLETED: 
+                    dir = GobiiFileProcessDir.EXTRACTOR_OUTPUT; break;
+                default:
+                    dir = null; break; 
             }
         } else if (type.equals(LOAD)) {
             switch(status) {
-                case COMPLETED:
-                case FAILED: dir = GobiiFileProcessDir.LOADER_DONE; break;
-                case IN_PROGRESS: dir = GobiiFileProcessDir.LOADER_INPROGRESS_FILES; break;
-                default: dir = GobiiFileProcessDir.LOADER_INSTRUCTIONS;
+                case CV_PROGRESSSTATUS_COMPLETED: 
+                case CV_PROGRESSSTATUS_FAILED: 
+                    dir = GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES; break;
+                default: 
+                    dir = null; break; 
             }
         } else {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Job type not supported");
+            throw new GobiiException(GobiiStatusLevel.ERROR, 
+                                     GobiiValidationStatusType.BAD_REQUEST, 
+                                     "Job type not supported");
         }
 
-        String path = configSettings.getProcessingPath(cropType, dir);
-        log.debug("Path for job is " + path + "/" + job.getJobName());
-        return new File(path, job.getJobName());
+        if (dir == null) return null;
+
+        try {
+            String path = configSettings.getProcessingPath(cropType, dir);
+            log.debug("Path for job is " + path + "/" + job.getJobName());
+            File jobFileDirectory  = new File(path, job.getJobName());
+            if(jobFileDirectory.isDirectory()) {
+                return jobFileDirectory;
+            }
+        }
+        catch(Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, 
+                                     GobiiValidationStatusType.UNKNOWN, 
+                                     "Error in GDM file system configuration. " +
+                                     "Contact administrator");
+        }
+
+        return null;
     }
 
     @Override
-    public PagedResult<JobDTO> getJobs(Integer page, Integer pageSizeToUse, Integer contactId) {
-        return this.getJobs(page, pageSizeToUse, contactId, false);
-    }
+    public PagedResult<JobDTO> getJobs(Integer page, Integer pageSizeToUse, 
+                                       String username, boolean filterLoadJobs,
+                                       boolean filterExtractJobs, String cropType) {
+            
+            List<Job> jobs = jobDao.getJobs(
+                page, pageSizeToUse, 
+                null, username,
+                filterLoadJobs, filterExtractJobs);
 
-    @Override
-    public PagedResult<JobDTO> getJobsByUsername(Integer page, Integer pageSizeToUse, String username) {
-        return this.getJobsByUsername(page, pageSizeToUse, username, false);
-    }
+            List<JobDTO> jobDTOs = new ArrayList<>();
 
-    @Override
-    public PagedResult<JobDTO> getJobsByUsername(Integer page, Integer pageSizeToUse, String username,
-            boolean loadAndExtractOnly) {
-                List<Job> jobs = jobDao.getJobsByUsername(page, pageSizeToUse, username, loadAndExtractOnly);
-                List<JobDTO> jobDTOs = new ArrayList<>();
-                jobs.forEach(job -> {
-                    JobDTO jobDTO = new JobDTO();
-                    ModelMapper.mapEntityToDto(job, jobDTO);
-                    jobDTOs.add(jobDTO);
-                });
-        
-                return PagedResult.createFrom(page, jobDTOs);
+            jobs.forEach(job -> {
+                jobDTOs.add(mapJobDTO(job, cropType));
+            });
+            return PagedResult.createFrom(page, jobDTOs);
     }
-
-    
 
 }
