@@ -10,8 +10,11 @@ import org.gobiiproject.gobiidomain.services.gdmv3.JobService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
+import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -90,7 +93,10 @@ public class JobsController {
         
         if (instructionFileDirectory == null || 
             !jobFilesDirectoryName.equals(instructionFileDirectory.getName())) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                throw new GobiiException(
+                    GobiiStatusLevel.ERROR, 
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "File not found");
         }
 
         return ResponseEntity.ok()
