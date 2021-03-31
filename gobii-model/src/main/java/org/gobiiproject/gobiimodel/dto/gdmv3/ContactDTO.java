@@ -75,7 +75,6 @@ public class ContactDTO extends DTOBaseAuditable {
     private String email;
 
     @Getter(AccessLevel.NONE)
-    @JsonIgnore
     private String piContactId;
 
     @JsonProperty
