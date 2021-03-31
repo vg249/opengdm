@@ -146,6 +146,9 @@ public class AnalysisServiceImpl implements AnalysisService {
             Reference reference = this.loadReference(analysisDTO.getReferenceId());
             analysis.setReference(reference);
         }
+        else if(analysisDTO.getReferenceId() == 0) {
+            analysis.setReference(null);
+        }
 
         if (analysisDTO.getAnalysisTypeId() != null) {
             // Get analysis type
