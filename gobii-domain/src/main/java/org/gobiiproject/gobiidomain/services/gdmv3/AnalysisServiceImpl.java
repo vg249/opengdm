@@ -141,7 +141,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public AnalysisDTO updateAnalysis(Integer analysisId, AnalysisDTO analysisDTO, String updatedBy) throws Exception {
         Analysis analysis = this.loadAnalysis(analysisId);
 
-        if (analysisDTO.getReferenceId() != null) {
+        if (analysisDTO.getReferenceId() != null && analysisDTO.getReferenceId() > 0) {
             //check if the reference exists
             Reference reference = this.loadReference(analysisDTO.getReferenceId());
             analysis.setReference(reference);
