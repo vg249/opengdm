@@ -101,7 +101,7 @@ public class AnalysisDaoImpl implements AnalysisDao {
             Root<Analysis> root = criteriaQuery.from(Analysis.class);
 
             // root.fetch("reference");
-            root.join("reference", JoinType.LEFT);
+            root.fetch("reference", JoinType.LEFT);
             root.fetch("type");
             root.fetch("status");
             criteriaQuery.select(root);
