@@ -95,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDTO createProject(ProjectDTO request, String createdBy) throws Exception {
         // check if contact exists
-        Contact contact = this.loadContact(request.getPiContactUserName());
+        Contact contact = this.loadContact(request.getPiContactId());
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
