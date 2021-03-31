@@ -46,6 +46,7 @@ public class GenotypeServiceImpl implements GenotypeService {
         // Get a new Job object for samples loading
         JobDTO jobDTO = new JobDTO();
         jobDTO.setPayload(GobiiLoaderPayloadTypes.MATRIX.getTerm());
+        jobDTO.setJobMessage("Submitted genotype matrix load job.");
         JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();

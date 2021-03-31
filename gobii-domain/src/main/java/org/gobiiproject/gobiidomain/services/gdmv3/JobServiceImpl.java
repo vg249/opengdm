@@ -94,7 +94,7 @@ public class JobServiceImpl implements JobService {
             job.setJobName(jobName);
         }
 
-        job.setMessage("Submitted marker upload job");
+        job.setMessage(jobDTO.getJobMessage());
 
         // Set current user as job submitter
         Contact submittedBy = contactDao.getContactByUsername(ContactService.getCurrentUserName());

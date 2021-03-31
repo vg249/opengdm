@@ -108,6 +108,7 @@ public class DnaRunServiceImpl implements DnaRunService {
         // After all validations are done, get a new Job object for samples loading
         JobDTO jobDTO = new JobDTO();
         jobDTO.setPayload(GobiiLoaderPayloadTypes.SAMPLES.getTerm());
+        jobDTO.setJobMessage("Submitted dnarun load job.");
         JobDTO job = jobService.createLoaderJob(jobDTO);
         String jobName = job.getJobName();
         

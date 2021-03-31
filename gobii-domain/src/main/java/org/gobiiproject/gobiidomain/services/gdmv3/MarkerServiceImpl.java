@@ -89,6 +89,7 @@ public class MarkerServiceImpl implements MarkerService {
         // Create loader job after validating user input.
         JobDTO jobDTO = new JobDTO();
         jobDTO.setPayload(GobiiLoaderPayloadTypes.MARKERS.getTerm());
+        jobDTO.setJobMessage("Submitted marker load job.");
         JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();
