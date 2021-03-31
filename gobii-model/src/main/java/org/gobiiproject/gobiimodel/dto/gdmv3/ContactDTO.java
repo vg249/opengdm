@@ -75,6 +75,7 @@ public class ContactDTO extends DTOBaseAuditable {
     private String email;
 
     @Getter(AccessLevel.NONE)
+    @JsonIgnore
     private String piContactId;
 
     @JsonProperty
@@ -84,7 +85,7 @@ public class ContactDTO extends DTOBaseAuditable {
 
 
     public String getPiContactId() {
-        return Optional.ofNullable(contactId)
+        return Optional.ofNullable(username)
                     .map(v -> v.toString())
                     .orElse(piContactId);
     }
