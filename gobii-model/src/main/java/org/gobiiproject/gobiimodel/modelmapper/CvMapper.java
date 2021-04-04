@@ -140,7 +140,9 @@ public class CvMapper {
         if (dtoList == null) return map;
 
         dtoList.forEach((item) -> {
-            map.put(item.getPropertyId().toString(), item.getPropertyValue());
+            if(item.getPropertyId() != null) {
+                map.put(item.getPropertyId().toString(), item.getPropertyValue());
+            }
         });
         return map;
     }

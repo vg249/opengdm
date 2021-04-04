@@ -210,6 +210,50 @@ public class MarkerDaoTest {
     }
 
     @Test
+    public void testQueryByNamesAndPlatformId() {
+
+        Integer testPlatformId =
+            daoTestSetUp
+                .getCreatedMarkers()
+                .get(random.nextInt(daoTestSetUp.getCreatedMarkers().size() -  1))
+                .getPlatform()
+                .getPlatformId();
+
+        Set<String> testMarkerNames = new HashSet<>();
+
+        Set<Integer> expectedMarkerIds = new HashSet<>();
+
+        for(Marker marker : daoTestSetUp.getCreatedMarkers()) {
+            if(marker.getPlatform().getPlatformId() == testPlatformId) {
+                expectedMarkerIds.add(marker.getMarkerId());
+            }
+            testMarkerNames.add(marker.getMarkerName());
+        }
+
+
+        List<Marker> markers = markerDao.queryMarkersByNamesAndPlatformId(
+            testMarkerNames,
+            testPlatformId,
+            testPageSize,
+            0);
+
+        assertTrue("query markers by names and platform id failed",
+            markers.size() == expectedMarkerIds.size());
+
+        Set<Integer> resultMarkerIds = new HashSet<>();
+        for(Marker marker : markers) {
+            resultMarkerIds.add(marker.getMarkerId());
+        }
+
+        resultMarkerIds.removeAll(expectedMarkerIds);
+
+        assertTrue("query markers by names and platform id failed",
+            resultMarkerIds.size() == 0);
+
+
+    }
+
+    @Test
     public void testGetMarkersByMarkerNamesAndDatasetIds() {
 
 

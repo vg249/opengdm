@@ -159,68 +159,6 @@ public class BRAPIIControllerV1 {
 
 
     /**
-     * List all BrApi compliant web services in GDM system
-     *
-     * @param request - request object
-     * @return Json object with list of brapi calls in GDM
-     * @throws Exception
-     */
-    //@RequestMapping(value = "/calls",
-    //        method = RequestMethod.GET,
-    //        produces = "application/json")
-    //@ApiOperation(
-    //        value = "Get ServerInfo",
-    //        notes = "List of all calls",
-    //        tags = {"ServerInfo"},
-    //        extensions = {
-    //                @Extension(properties = {
-    //                        @ExtensionProperty(name="summary", value="ServerInfo"),
-    //                })
-    //        }
-    //)
-    //@ApiResponses(
-    //        value = {
-    //                @ApiResponse(code = 200, message = "Successful",
-    //                        response = BrapiResponseMapCalls.class
-    //                )
-    //        }
-    //)
-    //@ResponseBody
-    //public ResponseEntity<BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls>> getCalls(
-    //        HttpServletRequest request) throws Exception {
-
-    //    BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
-    //            new BrapiResponseEnvelopeMasterDetail<>();
-    //    try {
-
-    //        BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
-
-    //        BrapiResponseCalls brapiResponseCalls = brapiResponseMapCalls.getBrapiResponseCalls();
-
-    //        brapiResponseEnvelopeMasterDetail.setResult(brapiResponseCalls);
-
-    //    } catch (GobiiException e) {
-
-    //        String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
-    //        brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
-
-    //    } catch (Exception e) {
-
-    //        String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
-    //        brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
-
-    //    }
-
-    //    return ResponseEntity.ok(brapiResponseEnvelopeMasterDetail);
-
-    //}
-
-
-
-
-    /**
      * BrAPI v1.1 endpoint for searching studies
      * @param studiesRequestBody
      * @return

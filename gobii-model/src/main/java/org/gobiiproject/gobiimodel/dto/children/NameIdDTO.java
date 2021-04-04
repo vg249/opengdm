@@ -2,15 +2,24 @@ package org.gobiiproject.gobiimodel.dto.children;
 
 import java.util.Date;
 import java.util.HashMap;
+
+import lombok.NoArgsConstructor;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 /**
  * Created by Phil on 4/8/2016.
  */
+@NoArgsConstructor
 public class NameIdDTO extends DTOBase implements Comparable<NameIdDTO>{
 
     private HashMap<String, Object> parameters = new HashMap<>();
+
+
+    public NameIdDTO(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     // entityLastModified is necessary because this class doe snot correspond to a
     // specific entity, and so it should not derive from DTOBaseAuditable

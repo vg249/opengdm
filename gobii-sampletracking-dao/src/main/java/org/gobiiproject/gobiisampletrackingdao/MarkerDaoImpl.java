@@ -9,13 +9,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
@@ -39,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@SuppressWarnings("unchecked")
 public class MarkerDaoImpl implements MarkerDao {
 
     Logger LOGGER = LoggerFactory.getLogger(MarkerDaoImpl.class);
@@ -212,10 +207,14 @@ public class MarkerDaoImpl implements MarkerDao {
      * @return List of marker entity.
      */
     @Override
-    public List<Marker> getMarkersByMap(Integer pageSize, Integer rowOffset,
-                                        Integer mapsetId, String mapsetName,
-                                        Integer linkageGroupId, String linkageGroupName,
-                                        BigDecimal minPosition, BigDecimal maxPosition,
+    public List<Marker> getMarkersByMap(Integer pageSize,
+                                        Integer rowOffset,
+                                        Integer mapsetId,
+                                        String mapsetName,
+                                        Integer linkageGroupId,
+                                        String linkageGroupName,
+                                        BigDecimal minPosition,
+                                        BigDecimal maxPosition,
                                         Integer datasetId) {
 
         String queryString = "SELECT {marker.*} FROM marker AS marker " +
@@ -286,7 +285,6 @@ public class MarkerDaoImpl implements MarkerDao {
                Integer markerIdCursor) throws GobiiException {
 
         List<Marker> markers;
-
         List<Predicate> predicates = new ArrayList<>();
 
         String[] datasetIdsArray = new String[] {};
@@ -318,9 +316,12 @@ public class MarkerDaoImpl implements MarkerDao {
                 ParameterExpression datasetIdsExp = cb.parameter(
                         String[].class,
                         "datasetIds");
-
-                Expression<Boolean> datasetIdExists = cb.function("JSONB_EXISTS_ANY", Boolean.class,
-                        root.get("datasetMarkerIdx"), datasetIdsExp);
+                Expression<Boolean> datasetIdExists =
+                    cb.function(
+                        "JSONB_EXISTS_ANY",
+                        Boolean.class,
+                        root.get("datasetMarkerIdx"),
+                        datasetIdsExp);
 
                 predicates.add(cb.isTrue(datasetIdExists));
 
@@ -337,25 +338,20 @@ public class MarkerDaoImpl implements MarkerDao {
 
             if(!CollectionUtils.isEmpty(datasetIds)) {
                 query
-                        .unwrap(org.hibernate.query.Query.class)
-                        .setParameter(
-                                "datasetIds", datasetIdsArray,
-                                StringArrayType.INSTANCE);
+                    .unwrap(org.hibernate.query.Query.class)
+                    .setParameter(
+                        "datasetIds",
+                        datasetIdsArray,
+                        StringArrayType.INSTANCE);
             }
-
             if(!IntegerUtils.isNullOrZero(pageSize)) {
                 query.setMaxResults(pageSize);
             }
-
-            markers = query
-                    .getResultList();
-
+            markers = query.getResultList();
             return markers;
-
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-
             throw new GobiiDaoException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.UNKNOWN,
                     e.getMessage() + " Cause Message: " + e.getCause().getMessage());
@@ -386,7 +382,7 @@ public class MarkerDaoImpl implements MarkerDao {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     public List<Marker> getMarkersByPlatformMarkerNameTuples(List<List<String>> markerTuples) {
-        List<Marker> markers = new ArrayList<>();
+        List<Marker> markers;
         List<Predicate> predicates = new ArrayList<>();
   
         try {
@@ -420,5 +416,102 @@ public class MarkerDaoImpl implements MarkerDao {
         }
         return markers;
     }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public List<Marker> getMarkersByPlatformIdMarkerNameTuples(List<List<String>> markerTuples) {
+        List<Marker> markers;
+        List<Predicate> predicates = new ArrayList<>();
+
+        try {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<Marker> criteriaQuery = criteriaBuilder.createQuery(Marker.class);
+
+            Root<Marker> root = criteriaQuery.from(Marker.class);
+
+            root.fetch("platform", JoinType.LEFT);
+
+            for (List<String> markerTuple: markerTuples) {
+                Integer platformId = Integer.parseInt(markerTuple.get(0));
+                predicates.add(
+                    criteriaBuilder.and(
+                        criteriaBuilder
+                            .equal(root.get("platform").get("platformId"), platformId),
+                        criteriaBuilder.equal(root.get("markerName"), markerTuple.get(1))
+                    )
+                );
+            }
+
+            Predicate combinedPredicates = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+            criteriaQuery.select(root);
+            criteriaQuery.where(combinedPredicates);
+
+            markers = em.createQuery(criteriaQuery).getResultList();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+        return markers;
+    }
+
+
+    @Override
+    public List<Marker> queryMarkersByNamesAndPlatformId(Set<String> markerNames,
+                                                         Integer platformId,
+                                                         Integer pageSize,
+                                                         Integer rowOffset
+    ) throws GobiiDaoException {
+        List<Marker> markers;
+        List<Predicate> predicates = new ArrayList<>();
+
+        try {
+
+            Objects.requireNonNull(pageSize, "pageSize: Required non null");
+            Objects.requireNonNull(rowOffset, "rowOffset: Required non null");
+
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Marker> criteria = cb.createQuery(Marker.class);
+
+            Root<Marker> root = criteria.from(Marker.class);
+            criteria.select(root);
+
+            if(!CollectionUtils.isEmpty(markerNames)) {
+                predicates.add(root.get("markerName").in(markerNames));
+            }
+
+            if(!IntegerUtils.isNullOrZero(platformId)) {
+                Join<Object, Object> platformJoin = root.join("platform");
+                predicates.add(cb.equal(platformJoin.get("platformId"), platformId));
+            }
+
+            criteria.where(predicates.toArray(new Predicate[]{}));
+            criteria.orderBy(cb.asc(root.get("markerId")));
+
+            TypedQuery query = em.createQuery(criteria);
+
+
+            markers = query
+                .setMaxResults(pageSize)
+                .setFirstResult(rowOffset)
+                .getResultList();
+
+            return markers;
+
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+            throw new GobiiDaoException(GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                e.getMessage() + " Cause Message: " + e.getCause().getMessage());
+
+        }
+
+    }
+
 
 }

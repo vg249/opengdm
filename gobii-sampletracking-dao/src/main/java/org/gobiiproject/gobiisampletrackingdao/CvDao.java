@@ -24,5 +24,5 @@ public interface CvDao {
     Cv getModifiedStatus();
 	Cv updateCv(Cv cv);
 	void deleteCv(Cv cv) throws Exception;
-	List<CvGroup> getCvGroups(Integer pageSize, Integer offset);
+	List<CvGroup> getCvGroups(Integer pageSize, Integer offset, GobiiCvGroupType type);
 }

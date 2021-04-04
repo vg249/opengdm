@@ -39,5 +39,11 @@ public interface MarkerDao {
     List<Marker> getMarkersByMarkerNames(Set<String> markerNames);
 
 	List<Marker> getMarkersByPlatformMarkerNameTuples(List<List<String>> markerTuples);
+    List<Marker> getMarkersByPlatformIdMarkerNameTuples(List<List<String>> markerTuples);
+
+	List<Marker> queryMarkersByNamesAndPlatformId(Set<String> markerNames,
+                                                  Integer platformId,
+                                                  Integer pageSize,
+                                                  Integer rowOffset) throws GobiiDaoException;
 
 }

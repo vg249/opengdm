@@ -71,9 +71,10 @@ public class DtoRequestAuthenticationTest {
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
 
+        String currentGobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         String url = RestResourceId.GOBII_ANALYSIS.getRequestUrl(GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot(),
-                GobiiControllerType.GOBII.getControllerPath());
+                GobiiControllerType.GOBII.getControllerPath(), currentGobiiCropType);
 
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
@@ -108,7 +109,7 @@ public class DtoRequestAuthenticationTest {
             String cropIdOne = gobiiCropConfigOne.getGobiiCropType();
             String cropContextRootOne = gobiiCropConfigOne.getServer(ServerType.GOBII_WEB).getContextPath();
             Integer cropPortOne = gobiiCropConfigOne.getServer(ServerType.GOBII_WEB).getPort();
-            GobiiUriFactory gobiiUriFactoryServerOne = new GobiiUriFactory(cropContextRootOne);
+            GobiiUriFactory gobiiUriFactoryServerOne = new GobiiUriFactory(cropContextRootOne, cropIdOne);
             RestUri restUriContactServerOne = gobiiUriFactoryServerOne
                     .resourceByUriIdParam(RestResourceId.GOBII_CONTACTS);
 
@@ -117,7 +118,7 @@ public class DtoRequestAuthenticationTest {
             String cropIdTwo = gobiiCropConfigTwo.getGobiiCropType();
             String cropContextRootTwo = gobiiCropConfigTwo.getServer(ServerType.GOBII_WEB).getContextPath();
             Integer cropPortTwo = gobiiCropConfigTwo.getServer(ServerType.GOBII_WEB).getPort();
-            GobiiUriFactory gobiiUriFactoryServeTwo = new GobiiUriFactory(cropContextRootTwo);
+            GobiiUriFactory gobiiUriFactoryServeTwo = new GobiiUriFactory(cropContextRootTwo, cropIdTwo);
             RestUri restUriContactServerTwo = gobiiUriFactoryServeTwo
                     .resourceByUriIdParam(RestResourceId.GOBII_CONTACTS);
 

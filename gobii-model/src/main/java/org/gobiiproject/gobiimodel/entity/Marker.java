@@ -1,15 +1,24 @@
 package org.gobiiproject.gobiimodel.entity;
 
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.JsonbConverter;
-import org.gobiiproject.gobiimodel.entity.JpaConverters.StringArrayConverter;
+
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-
-import javax.persistence.*;
 
 /**
  * Model for Marker Entity.

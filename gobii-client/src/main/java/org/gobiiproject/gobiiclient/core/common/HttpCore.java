@@ -33,6 +33,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiibrapi.types.BRAPIHttpHeaderNames;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -109,7 +110,7 @@ public class HttpCore {
         URI returnVal;
 
         URIBuilder baseBuilder = getBaseBuilder()
-                .setPath(restUri.makeUrlPath());
+                .setPath(restUri.makeUrlPath(""));
 
         for (ResourceParam currentParam : restUri.getRequestParams()) {
             baseBuilder.addParameter(currentParam.getName(), currentParam.getValue());
@@ -360,7 +361,7 @@ public class HttpCore {
 
         if (logJson) {
 
-            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath());
+            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath(""));
 
             if (!LineUtils.isNullOrEmpty(body)) {
 

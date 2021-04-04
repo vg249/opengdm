@@ -32,7 +32,7 @@ import javax.validation.Valid;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v2/search/callsets")
+@RequestMapping("/crops/{cropType}/brapi/v2/search/callsets")
 @CrossOrigin
 @Api
 @Slf4j

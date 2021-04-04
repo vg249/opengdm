@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v2/maps")
+@RequestMapping("/crops/{cropType}/brapi/v2/maps")
 @CrossOrigin
 @Api
 @Slf4j

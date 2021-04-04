@@ -31,9 +31,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * in this project and returns appropriate HTTP response.
  */
 @ControllerAdvice(assignableTypes = {
-        BRAPIIControllerV1.class,
-        GOBIIControllerV3.class
-}, basePackages = "org.gobiiproject.gobiiweb.controllers.brapi.v2")
+        BRAPIIControllerV1.class
+}, basePackages = {"org.gobiiproject.gobiiweb.controllers.brapi.v2", "org.gobiiproject.gobiiweb.controllers.gdm.v3"})
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
@@ -177,7 +176,7 @@ public class GlobalControllerExceptionHandler {
         ErrorPayload errorPayload = new ErrorPayload();
         if (pe.getMessage().contains("ConstraintViolation")) {
             errorPayload.setError("Entity already exists");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload);
         }
 
         errorPayload.setError(pe.getMessage());

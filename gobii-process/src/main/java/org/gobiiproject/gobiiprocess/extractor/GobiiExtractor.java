@@ -1175,7 +1175,7 @@ public class GobiiExtractor {
             }
 
             String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, cropName);
 
             RestUri mapUri = gobiiUriFactory
                     .resourceByUriIdParam(RestResourceId.GOBII_MAPSET);

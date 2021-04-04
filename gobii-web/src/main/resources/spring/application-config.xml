@@ -5,7 +5,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:cache="http://www.springframework.org/schema/cache"
        xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -14,7 +15,13 @@
     http://www.springframework.org/schema/tx 		
     http://www.springframework.org/schema/tx/spring-tx.xsd
 	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+	http://www.springframework.org/schema/security/spring-security-4.2.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task.xsd">
 
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -27,6 +34,7 @@
         implementions of interfaces as system needs evolve -->
     <context:annotation-config/>
     <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
+    <!-- <context:component-scan base-package="org.gobiiproject.gobidomain.security"/> -->
     <context:component-scan base-package="org.gobiiproject.gobiidomain.security"/>
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
@@ -64,7 +72,7 @@
 
     <!-- ******************** ****************************************** -->
     <!-- ******************** explicitly defined beans **************** -->
-
+    
     <!-- **** Security Beans *************************************** -->
     <bean id="UserDao"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.UserDaoImpl"/>
@@ -75,6 +83,9 @@
           class="org.gobiiproject.gobiidomain.services.impl.ProjectServiceImpl"/>
     <bean id="propertiesService"
           class="org.gobiiproject.gobiidomain.services.impl.PropertiesServiceImpl"/>
+
+    <!-- Keycloak Service Bean-->
+    <bean id="keycloakService" class="org.gobiiproject.gobiidomain.services.gdmv3.KeycloakServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
@@ -262,6 +273,8 @@
     <bean id="nameIdListService"
           class="org.gobiiproject.gobiidomain.services.impl.NameIdListServiceImpl"/>
 
+    <bean id="cropService" class="org.gobiiproject.gobiidomain.services.gdmv3.CropServiceImpl"/>
+
     <!-- **** Loader File Beans *************************************** -->
 
     <bean id="filesService"
@@ -444,6 +457,26 @@
     <!-- **** New Protocol Dao -->
     <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
 
+    <!-- **** New Job Dao -->
+    <bean id="jobDao" class="org.gobiiproject.gobiisampletrackingdao.JobDaoImpl"/>
+
+    <bean id="loaderTemplateDao" class="org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDaoImpl"/>
+
+    <!-- gdm v3 marker service -->
+    <bean id="markerServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.MarkerServiceImpl"/>
+
+    <!-- gdm v3 dnaRun service -->
+    <bean id="dnaRunServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.DnaRunServiceImpl"/>
+
+    <!-- gdm v3 genotypes service -->
+    <bean id="genotypeServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.GenotypeServiceImpl"/>
+
+    <!-- gdm v3 files service -->
+    <bean id="fileServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.FileServiceImpl"/>
+
+    <!-- gdm v3 job service -->
+    <bean id="jobService" class="org.gobiiproject.gobiidomain.services.gdmv3.JobServiceImpl"></bean>
+
      <!-- gdm v3 platform service -->
     <bean id="platformServiceV3" class="org.gobiiproject.gobiidomain.services.gdmv3.PlatformServiceImpl"/>
     <bean id="platformDaoV3" class="org.gobiiproject.gobiisampletrackingdao.PlatformDaoImpl"/>
@@ -453,6 +486,8 @@
     <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapManifestImpl"/>
     <bean id="ManifestService" class="org.gobiiproject.gobiidomain.services.impl.ManifestServiceImpl"/>
 
+    <!-- gdm v3 loader template service -->
+    <bean id ="loaderTemplateService" class="org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateServiceImpl"></bean>
 
     <!-- **** Organization Beans *************************************** -->
     <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>
@@ -1150,8 +1185,8 @@
 
     <!-- *********************************************** SECURITY CONFIGURATION
         *********************************************** -->
-    <security:global-method-security
-            secured-annotations="enabled" pre-post-annotations="enabled"/>
+    <!-- <security:global-method-security
+            secured-annotations="enabled" pre-post-annotations="enabled"/> -->
 
 
     <bean id="multipartResolver"

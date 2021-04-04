@@ -96,12 +96,12 @@ public class ExperimentDTO extends DTOBaseAuditable {
 
     
     @GobiiEntityMap(paramName="experimentStats.datasetCount", entity=Experiment.class, deep=true)
-    private Integer datasetCount;
+    private Integer datasetCount = 0;
 
     @GobiiEntityMap(paramName="experimentStats.markerCount", entity=Experiment.class, deep=true)
-    private Integer markerCount;
+    private Integer markerCount = 0;
 
     @GobiiEntityMap(paramName="experimentStats.dnarunCount", entity=Experiment.class, deep=true)
-    private Integer dnaRunCount;
+    private Integer dnaRunCount = 0;
 
 }

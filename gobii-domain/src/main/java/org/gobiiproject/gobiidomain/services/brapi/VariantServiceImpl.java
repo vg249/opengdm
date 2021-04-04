@@ -230,7 +230,11 @@ public class VariantServiceImpl implements VariantService {
                         genotypesSearchQuery.getGermplasmDbIds(),
                         genotypesSearchQuery.getGermplasmNames(),
                         genotypesSearchQuery.getVariantSetDbIds(),
-                        dnaRunBinSize, cursors.dnaRunBinCursor, null, false);
+                        null,
+                        dnaRunBinSize,
+                        cursors.dnaRunBinCursor,
+                        null,
+                        false);
 
                     if(dnaRuns.size() == 0) {
                         break;

@@ -36,21 +36,6 @@ public class CvServiceImpl implements CvService {
     @Override
     public CvDTO createCv(CvDTO request) throws Exception {
         Cv cv = new Cv();
-        // check the properties first if the propertyId exists and it is a property
-        if (this.checkPropertiesExist(request.getProperties())) {
-            Map<String, String> propsMap = new HashMap<>();
-            for (int i = 0; i < request.getProperties().size(); i++) {
-                CvPropertyDTO cvPropDTO = request.getProperties().get(i);
-                Cv propCv = cvDao.getCvByCvId(cvPropDTO.getPropertyId());
-                if (this.checkInvalidPropCv(propCv)) {
-                    throw new InvalidException(String.format("cv property (Id %d)", cvPropDTO.getPropertyId()));
-                }
-                propsMap.put(cvPropDTO.getPropertyId().toString(), cvPropDTO.getPropertyValue());
-
-            }
-            cv.setProperties(propsMap);
-        }
-
         // check cvGroup Id
         CvGroup cvGroup = this.loadCvGroup(request.getCvGroupId());
         cv.setCvGroup(cvGroup);
@@ -69,7 +54,6 @@ public class CvServiceImpl implements CvService {
 
         // set status
         resultDTO.setCvStatus(newStatus.getTerm());
-        resultDTO.setProperties(this.convertToListDTO(resultDTO.getPropertiesMap()));
 
         return resultDTO;
     }
@@ -102,37 +86,6 @@ public class CvServiceImpl implements CvService {
             updated = true;
         }
 
-        // check if change of properties
-        if (this.checkPropertiesExist(request.getProperties())) {
-            Map<String, String> properties = new HashMap<>();
-            if (cv.getProperties() != null)
-                properties = cv.getProperties();
-            
-            for (int i = 0; i < request.getProperties().size(); i++) {
-                CvPropertyDTO cvPropertyDTO = request.getProperties().get(i);
-                // check if id does exist and correct group
-                Cv propertyCv = cvDao.getCvByCvId(cvPropertyDTO.getPropertyId());
-                if (this.checkInvalidPropCv(propertyCv)) {
-                    throw new InvalidException("cv group");
-                }
-                // check which operation is being done
-                boolean existingProperty = this.isExistingProperty(properties, cvPropertyDTO);
-                if (existingProperty) {
-                    // check if delete or update value
-                    if (cvPropertyDTO.getPropertyValue() == null) {
-                        properties.remove(cvPropertyDTO.getPropertyId().toString());
-                    } else {
-                        properties.put(cvPropertyDTO.getPropertyId().toString(), cvPropertyDTO.getPropertyValue());
-                    }
-                } else {
-                    if (cvPropertyDTO.getPropertyValue() != null) {
-                        properties.put(cvPropertyDTO.getPropertyId().toString(), cvPropertyDTO.getPropertyValue());
-                    }
-                }
-            }
-            cv.setProperties(properties);
-            updated = true;
-        }
 
         Cv updatedCv = cv;
         if (updated) {
@@ -144,31 +97,17 @@ public class CvServiceImpl implements CvService {
         CvDTO updatedCvDTO = new CvDTO();
 
         ModelMapper.mapEntityToDto(updatedCv, updatedCvDTO);
-        updatedCvDTO.setProperties(this.convertToListDTO(updatedCvDTO.getPropertiesMap()));
 
         return updatedCvDTO;
     }
 
-    private List<CvPropertyDTO> convertToListDTO(Map<String, String> propertiesMap) {
-        List<Cv> cvs = cvDao.getCvListByCvGroup(
-                CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), null);
-        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, propertiesMap);
-        return propDTOs;
-    }
-
-    private List<CvPropertyDTO> convertToListDTO(List<Cv> cvs, Map<String, String> propertiesMap) {
-        List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, propertiesMap);
-        return propDTOs;
-    }
-
-    private boolean isExistingProperty(Map<String, String> properties, CvPropertyDTO cvPropertyDTO) {
-        return properties.get(cvPropertyDTO.getPropertyId().toString()) != null;
-    }
-
     @Transactional
     @Override
-    public PagedResult<CvDTO> getCvs(Integer page, Integer pageSize, String cvGroupName, String cvGroupType)
-            throws Exception {
+    public PagedResult<CvDTO> getCvs(Integer page,
+                                     Integer pageSize,
+                                     String cvGroupName,
+                                     String cvGroupType
+    ) throws Exception {
         GobiiCvGroupType groupType = null;
         if (!LineUtils.isNullOrEmpty(cvGroupType)) {
             groupType = this.getCvGroupType(cvGroupType.toLowerCase());   
@@ -179,12 +118,9 @@ public class CvServiceImpl implements CvService {
 
         Cv newStatus = cvDao.getNewStatus();
         Cv modStatus = cvDao.getModifiedStatus();
-        List<Cv> cvProps = cvDao.getCvListByCvGroup(
-                CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), null);
         cvs.forEach(cv -> {
             CvDTO cvDTO = new CvDTO();
             ModelMapper.mapEntityToDto(cv, cvDTO);
-            cvDTO.setProperties(this.convertToListDTO(cvProps, cvDTO.getPropertiesMap()));
 
             if (cvDTO.getStatus() == newStatus.getCvId()) {
                 cvDTO.setCvStatus(newStatus.getTerm());
@@ -210,52 +146,12 @@ public class CvServiceImpl implements CvService {
         // get status cv
         Cv statusCv = cvDao.getCvByCvId(cv.getStatus());
 
-        cvDTO.setProperties(this.convertToListDTO(cvDTO.getPropertiesMap()));
         cvDTO.setCvStatus(statusCv.getTerm());
 
         return cvDTO;
     }
 
-    @Transactional
-    @Override
-    public PagedResult<CvPropertyDTO> getCvProperties(Integer page, Integer pageSize) {
-        List<Cv> cvProps = cvDao.getCvs(null,
-                CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(), null, page, pageSize);
 
-        List<CvPropertyDTO> cvPropDTOs = new ArrayList<>();
-
-        cvProps.forEach(cv -> {
-            CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
-            ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
-            cvPropDTOs.add(cvPropertyDTO);
-        });
-
-        return PagedResult.createFrom(page, cvPropDTOs);
-    }
-
-    @Transactional
-    @Override
-    public CvPropertyDTO addCvProperty(CvPropertyDTO request) {
-        Cv cv = new Cv();
-        cv.setTerm(request.getPropertyName());
-        cv.setDefinition(request.getPropertyDescription());
-
-        // set the group
-        CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
-                CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName(),
-                GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId());
-
-        cv.setCvGroup(cvGroup);
-        cv.setRank(0);
-        cv.setStatus(cvDao.getNewStatus().getCvId());
-
-        cvDao.createCv(cv);
-
-        CvPropertyDTO cvPropertyDTO = new CvPropertyDTO();
-        ModelMapper.mapEntityToDto(cv, cvPropertyDTO);
-
-        return cvPropertyDTO;
-    }
 
     @Transactional
     @Override
@@ -282,9 +178,20 @@ public class CvServiceImpl implements CvService {
 
     @Override
     @Transactional
-    public PagedResult<CvGroupDTO> getCvGroups(Integer page, Integer pageSize) {
+    public PagedResult<CvGroupDTO> getCvGroups(Integer page,
+                                               Integer pageSize,
+                                               String cvGroupTypeName) {
         Integer offset = page * pageSize;
-        List<CvGroup> cvGroups = cvDao.getCvGroups(pageSize, offset);
+        GobiiCvGroupType cvGroupType;
+
+        if(cvGroupTypeName != null) {
+            cvGroupType = this.getCvGroupType(cvGroupTypeName.toLowerCase());
+        }
+        else {
+            cvGroupType = GobiiCvGroupType.GROUP_TYPE_UNKNOWN;
+        }
+
+        List<CvGroup> cvGroups = cvDao.getCvGroups(pageSize, offset, cvGroupType);
 
         List<CvGroupDTO> cvGroupDTOs = new ArrayList<>();
         cvGroups.forEach(group -> {
@@ -312,14 +219,6 @@ public class CvServiceImpl implements CvService {
         return Optional.ofNullable(props).map(v -> v.size()).orElse(0) > 0;
     }
 
-    private boolean checkInvalidPropCv(Cv cv) {
-        return !Optional.ofNullable(cv)
-                        .map(v -> 
-                            Optional.ofNullable(v.getCvGroup()).map(x -> x.getCvGroupName() ).orElse("")
-                        )
-                        .orElse("")
-                        .equals(CvGroupTerm.CVGROUP_CV_PROP.getCvGroupName());
-    }
 
     private GobiiCvGroupType getCvGroupType(String cvGroupType) {
         if (cvGroupType.equals("system_defined") || cvGroupType.equals("1")) return GobiiCvGroupType.GROUP_TYPE_SYSTEM;

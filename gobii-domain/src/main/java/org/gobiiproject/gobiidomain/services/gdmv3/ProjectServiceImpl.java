@@ -1,5 +1,5 @@
 /**
- * GobiiProjectServiceImpl.java
+ * ProjectServiceImpl.java
  * 
  * Project Service for V3 API.
  * 
@@ -8,11 +8,7 @@
  */
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
@@ -23,15 +19,18 @@ import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityExcep
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
+import org.gobiiproject.gobiimodel.entity.Organization;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.modelmapper.CvMapper;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
+import org.gobiiproject.gobiisampletrackingdao.OrganizationDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,21 +50,36 @@ public class ProjectServiceImpl implements ProjectService {
     private ContactDao contactDao;
 
     @Autowired
+    private OrganizationDao organizationDao;
+
+    @Autowired
     private PropertiesService propertiesService;
+
+    @Autowired
+    private KeycloakService keycloakService;
 
     @Transactional
     @Override
-    public PagedResult<ProjectDTO> getProjects(Integer page, Integer pageSize, Integer piContactId) throws Exception {
+    public PagedResult<ProjectDTO> getProjects(Integer page,
+                                               Integer pageSize,
+                                               String piContactUserName,
+                                               String cropType) throws Exception {
+
         log.debug("Getting projects list offset %d size %d", page, pageSize);
         // get Cvs
         try {
             Objects.requireNonNull(pageSize);
             Objects.requireNonNull(page);
             List<ProjectDTO> projectDTOs = new java.util.ArrayList<>();
-            List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
-            List<Project> projects = projectDao.getProjects(page, pageSize, piContactId);
+
+            List<Cv> cvs = cvDao.getCvListByCvGroup(
+                CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(),
+                null);
+
+            List<Project> projects = projectDao.getProjects(page, pageSize, piContactUserName);
             projects.forEach(project -> {
-                projectDTOs.add( createProjectDTO(project, cvs) );
+                ProjectDTO projectDTO = createProjectDTO(project, cvs);
+                projectDTOs.add(projectDTO);
             });
 
             return PagedResult.createFrom(page, projectDTOs);
@@ -85,7 +99,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
-        log.debug("Cv " + cv.getTerm());
 
         Project project = new Project();
         project.setContact(contact);
@@ -96,25 +109,26 @@ public class ProjectServiceImpl implements ProjectService {
         //Project properties
         List<CvPropertyDTO> nullFiltered = new ArrayList<>();
         request.getProperties().forEach(cvItem -> {
-            if (cvItem.getPropertyValue() != null) {
+            if (cvItem.getPropertyValue() != null && cvItem.getPropertyId() != null) {
                 nullFiltered.add(cvItem);
             }
         });
         java.util.Map<String, String> props = CvMapper.mapCvIdToCvTerms(nullFiltered);
         project.setProperties(props);
         // audit items
-        Contact creator = contactDao.getContactByUsername(createdBy);
-        project.setCreatedBy(Optional.ofNullable(creator).map(v->v.getContactId()).orElse(null));
-        project.setCreatedDate(new java.util.Date());
+        contactDao.stampCreated(project, createdBy);
         projectDao.createProject(project);
 
         ProjectDTO projectDTO = new ProjectDTO();
         ModelMapper.mapEntityToDto(project, projectDTO);
 
         //transform Cv
-        List<Cv> cvs = cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
+        List<Cv> cvs = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null);
         List<CvPropertyDTO> propDTOs = CvMapper.listCvIdToCvTerms(cvs, project.getProperties());
         projectDTO.setProperties(propDTOs);
+
+
         return projectDTO;
 
     }
@@ -143,11 +157,7 @@ public class ProjectServiceImpl implements ProjectService {
             this.updateProjectDescription(project, request.getProjectDescription());
         }
        
-        
-        //audit items first
-        Contact editor = contactDao.getContactByUsername(editedBy);
-        project.setModifiedBy(Optional.ofNullable(editor).map(v->v.getContactId()).orElse(null));
-        project.setModifiedDate(new java.util.Date());
+        contactDao.stampModified(project, editedBy);
         
         List<CvPropertyDTO> propList = request.getProperties();
         //update props if request props is not empty list
@@ -208,11 +218,10 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProjectName(value);
     }
 
-    private void updateContact(Project project, Integer value) throws NumberFormatException, Exception {
-        Contact contact = contactDao.getContact(value);
-        project.setContact( Optional.ofNullable(contact)
-                                    .orElseThrow(()-> new UnknownEntityException.Contact()) );
-    }
+    // private void updateContact(Project project, String value) throws NumberFormatException, Exception {
+    //     Contact contact = this.loadContact(value);
+    //     project.setContact(contact);
+    // }
 
     @Transactional
     @Override
@@ -226,8 +235,66 @@ public class ProjectServiceImpl implements ProjectService {
                        .orElseThrow(() -> new EntityDoesNotExistException.Project());
     }
 
-    private Contact loadContact(Integer contactId) throws Exception {
-        return Optional.ofNullable(contactDao.getContact(contactId))
-                       .orElseThrow(() -> new UnknownEntityException.Contact());
+    private Contact loadContact(String contactUserName) throws Exception {
+        // commented it as only keycloak id will be used
+        //if contactId is numeric
+        //if (contactId.matches("\\d+")) {
+        //    return Optional.ofNullable(contactDao.getContact(Integer.parseInt(contactId)))
+        //                .orElseThrow(() -> new UnknownEntityException.Contact());
+        //}
+
+        //else this should be a uuid so load or create/return
+        Contact contact;
+        try {
+            ContactDTO keycloakUser = keycloakService.getUserByUserName(contactUserName);
+            log.debug("Getting local user record for username: " + keycloakUser.getUsername());
+            contact = contactDao.getContactByUsername(keycloakUser.getUsername());
+            log.debug("Contact: " + contact);
+            return Optional
+                .ofNullable(contact)
+                .orElseGet(
+                    () -> this.createNewContact(keycloakUser)
+                );
+        }
+        catch (Exception e) {
+            throw new UnknownEntityException.Contact();
+        }
     }
+
+    @lombok.Generated //ignore catch coverage
+    private Contact createNewContact(ContactDTO user) {
+        Organization organization = Optional.ofNullable(organizationDao.getOrganizationByName(user.getOrganizationName()))
+                                    .orElseGet(() -> this.createOrganization(user.getOrganizationName()));
+        try {
+            Contact contact = new Contact();
+            contact.setUsername(user.getUsername());
+            contact.setEmail(user.getEmail());
+            contact.setFirstName(user.getPiContactFirstName());
+            contact.setLastName(user.getPiContactLastName());
+            contact.setCode(String.format("keycloak_user_%s", user.getUsername()));
+            contact.setOrganization(organization);
+            contactDao.stampCreated(contact, null);
+            contactDao.addContact(contact);
+            return contact;
+        } catch (Exception e) {
+            log.error("Error creating new Contact", e);
+            return null;
+        }
+        
+    }
+
+    @lombok.Generated //ignore catch coverage
+    private Organization createOrganization(String name)  {
+        try {
+            Organization organization = new Organization();
+            organization.setName(name);
+            contactDao.stampCreated(organization, null);
+            return organization;
+        } catch (Exception e) {
+            log.error("Error creating new organization", e);
+            return null;
+        }
+    }
+
+    
 }

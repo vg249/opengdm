@@ -378,7 +378,8 @@ public class GobiiFileReader {
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
 
-        GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot);
+        GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot, 
+            gobiiCropConfig.getGobiiCropType());
         guf.resourceColl(RestResourceId.GOBII_CALLS);
 
         String user = configuration.getLdapUserForBackendProcs();
@@ -598,7 +599,7 @@ public class GobiiFileReader {
             return;
         }
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, crop);
         PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO, ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
                 .resourceColl(RestResourceId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS));
@@ -805,7 +806,7 @@ public class GobiiFileReader {
             }
 
             String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, cropName);
 
             RestUri projectsUri = gobiiUriFactory
                     .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);

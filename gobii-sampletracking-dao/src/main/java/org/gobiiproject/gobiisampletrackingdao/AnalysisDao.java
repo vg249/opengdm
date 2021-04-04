@@ -14,6 +14,8 @@ public interface AnalysisDao {
      */
     List<Analysis> getAnalysesByAnalysisIds(Set<Integer> analysisIds);
 
+    List<Analysis> getAnalysesByAnalysisNames(Set<String> analysisNames) throws GobiiDaoException;
+
 	List<Analysis> getAnalyses(Integer offset, Integer pageSize);
 
     Analysis createAnalysis(Analysis analysis) throws Exception;

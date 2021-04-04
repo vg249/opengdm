@@ -122,6 +122,9 @@ class ConfigValues {
 
     }};
 
+    @Element(required = true)
+    private KeycloakConfig keycloakConfig = new KeycloakConfig();
+
     private String currentGobiiCropType;
 
     @Element(required = false)
@@ -682,4 +685,12 @@ class ConfigValues {
     public void setEmailSvrFrom(String emailSvrFrom){
         this.emailSvrFrom = emailSvrFrom;
     }
+
+	public KeycloakConfig getKeycloakConfig() {
+		return this.keycloakConfig;
+	}
+
+	public void setKeycloakConfig(KeycloakConfig config) {
+        this.setKeycloakConfig(config);
+	}
 }

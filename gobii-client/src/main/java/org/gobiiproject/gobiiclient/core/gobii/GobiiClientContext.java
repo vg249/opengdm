@@ -78,9 +78,6 @@ public final class GobiiClientContext {
     private static String sshOverrideHost = null;
     private static Integer sshOverridePort = null;
 
-
-    private static URL gobiiUrl;
-
     public static void setSshOverride(String sshOverrideHost, Integer sshOverridePort) throws Exception {
 
         if (null == sshOverrideHost) {
@@ -202,7 +199,6 @@ public final class GobiiClientContext {
                     URL url = null;
                     try {
                         url = new URL(gobiiURL);
-                        gobiiUrl = url;
                     } catch (Exception e) {
                         throw new Exception("Error retrieving server configuration due to invalid url: "
                                 + e.getMessage()
@@ -224,7 +220,6 @@ public final class GobiiClientContext {
                     .serverConfigs
                     .keySet());
         }
-        
 
         return gobiiClientContext;
     }
@@ -236,7 +231,6 @@ public final class GobiiClientContext {
         String host = url.getHost();
         String context = url.getPath();
         Integer port = url.getPort();
-        String scheme = url.getProtocol();
 
 
         if (LineUtils.isNullOrEmpty(host)) {
@@ -248,15 +242,15 @@ public final class GobiiClientContext {
         }
 
         if (port <= 0) {
-            port = url.getDefaultPort();
+            throw new Exception("The specified URL does not contain a valid port id: " + url.toString());
         }
 
         // The /configsettings resource does not require authentication
         // this should be the only case in which we don't provide a crop ID
-        HttpCore httpCore = new HttpCore(host, port, scheme);
-        String settingsPath = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath());
+        HttpCore httpCore = new HttpCore(host, port);
+        String settingsPath = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath(), cropId);
 
-        RestUri configSettingsUri = new GobiiUriFactory(null).RestUriFromUri(settingsPath);
+        RestUri configSettingsUri = new GobiiUriFactory(null, cropId).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri);
 
         GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
@@ -350,13 +344,14 @@ public final class GobiiClientContext {
     public GobiiUriFactory getUriFactory() throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
-        return new GobiiUriFactory(contextPath);
+        String cropType = this.getServerConfig().getGobiiCropType();
+        return new GobiiUriFactory(contextPath, cropId);
     }
 
     public GobiiUriFactory getUriFactory(GobiiControllerType gobiiControllerType) throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
-        return new GobiiUriFactory(contextPath, gobiiControllerType);
+        return new GobiiUriFactory(contextPath, gobiiControllerType, cropId);
     }
 
 
@@ -471,15 +466,12 @@ public final class GobiiClientContext {
         try {
             String authUrl = RestResourceId.GOBII_AUTH
                     .getRequestUrl(this.getCurrentCropContextRoot(),
-                            GobiiControllerType.GOBII.getControllerPath());
+                            GobiiControllerType.GOBII.getControllerPath(), cropId);
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
-            
-            String httpScheme = gobiiUrl.getProtocol();
 
             this.httpCore = new HttpCore(this.getCurrentCropDomain(),
-                    this.getCurrentCropPort(),
-                    httpScheme);
+                    this.getCurrentCropPort());
 
 
             HttpMethodResult httpMethodResult = this.getHttp().authenticateWithUser(authUri, userName, password);

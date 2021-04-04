@@ -38,7 +38,6 @@ public class PropertiesServiceImpl implements PropertiesService {
 
     @Override
     public PagedResult<CvPropertyDTO> getProperties(Integer page, Integer pageSize, CvGroupTerm cvGroupTerm) throws Exception {
-        PagedResult<CvPropertyDTO> pagedResult;
 
         try {
             Objects.requireNonNull(pageSize);
