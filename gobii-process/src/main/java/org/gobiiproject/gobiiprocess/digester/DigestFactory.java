@@ -29,7 +29,7 @@ public class DigestFactory {
             throw new GobiiException("Unable to process instruction file");
         }
         if(loaderInstruction3.getInstructionType() != null &&
-            loaderInstruction3.getInstructionType() == "v3") {
+            loaderInstruction3.getInstructionType().equals("v3")) {
             return new DigestFactory3().getDigest(loaderInstruction3, configSettings);
         }
         else {
