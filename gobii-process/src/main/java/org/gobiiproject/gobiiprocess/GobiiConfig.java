@@ -22,6 +22,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.KeycloakConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
@@ -38,7 +39,6 @@ import org.w3c.dom.NodeList;
  * Created by Phil on 6/24/2016.
  */
 public class GobiiConfig {
-
     private static String NAME_COMMAND = "GobiiConfig";
     private static String TOMCAT_BASE_DIR = "wbase";
     private static String CONFIG_BASE_URL = "wurl";
@@ -57,7 +57,6 @@ public class GobiiConfig {
     private static String CONFIG_GLOBAL_FILESYS_LOG = "gL";
     private static String CONFIG_GLOBAL_PROVIDES_BACKEND = "gB";
 
-
     private static String CONFIG_SVR_GLOBAL_EMAIL = "stE"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_EMAIL_TYPE = "stT"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE = "stH"; // does not require -c
@@ -67,7 +66,6 @@ public class GobiiConfig {
     private static String CONFIG_SVR_CROP_WEB = "stW";
     private static String CONFIG_SVR_CROP_POSTGRES = "stP";
     private static String CONFIG_SVR_CROP_COMPUTE = "stC";
-
 
     private static String CONFIG_SVR_GLOBAL_AUTH_TYPE = "auT";
     private static String CONFIG_SVR_GLOBAL_LDAP_UDN = "ldUDN";
@@ -94,7 +92,6 @@ public class GobiiConfig {
     private static String CONFIG_TST_GLOBAL_DOWNLOAD_DIR = "dldr";
     private static String CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT = "gtat";
 
-
     private static String CONFIG_CROP_ID = "c";
 
     private static String CONFIG_SVR_OPTIONS_HOST = "soH";
@@ -103,7 +100,6 @@ public class GobiiConfig {
     private static String CONFIG_SVR_OPTIONS_USER_NAME = "soU";
     private static String CONFIG_SVR_OPTIONS_PASSWORD = "soP";
     private static String CONFIG_SVR_OPTIONS_ACTIVE = "soA";
-
 
     private static String SVR_KDC = "ksvr";
     private static String SVO_OWNC = "ownc";
@@ -114,6 +110,14 @@ public class GobiiConfig {
     private static String SVR_KDC_RESOURCE_PURGE = "krscPRG";
     private static String SVR_KDC_STATUS_CHECK_INTERVAL_SECS = "kstTRS";
     private static String SVR_KDC_STATUS_CHECK_MAX_TIME_MINS = "kstTRM";
+
+    private static String SVR_KC = "kcsvr";
+    private static String KEYCLOAK_REALM = "kcRealm";
+    private static String KEYCLOAK_RESOURCE = "kcResource";
+    private static String KEYCLOAK_AUTH_SERVER_URL = "kcURL";
+    private static String KEYCLOAK_ADMIN_USERNAME = "kcAdminuser";
+    private static String KEYCLOAK_ADMIN_PASSWORD = "kcAdminpass";
+    private static String KEYCLOAK_EXTRACTOR_UI_CLIENT = "kcExtractor";
 
 
     // we don't actually use the default crop any more, but for now we need to
@@ -296,163 +300,135 @@ public class GobiiConfig {
             setOption(options, SVR_KDC_STATUS_CHECK_INTERVAL_SECS, true, "Status check interval for KDC jobs in seconds", "KDC status check interval");
             setOption(options, SVR_KDC_STATUS_CHECK_MAX_TIME_MINS, true, "Total time to wait for KDC job completion in minutes", "KDC job wait threshold");
 
+            setOption(options, SVR_KC, false, "Keycloak server to add or modify; must be accompanied by a server options and KC options", "Keycloak Server options");
+            setOption(options, KEYCLOAK_REALM, false, "Realm name within Keycloak", "Keycloak realm");
+            setOption(options, KEYCLOAK_RESOURCE, false, "IDK what this is", "Keycloak resource?");
+            setOption(options, KEYCLOAK_AUTH_SERVER_URL, false, "URL to the Keycloak auth server", "Keycloak auth server URL");
+            setOption(options, KEYCLOAK_ADMIN_USERNAME, false, "Username for the Keycloak admin user", "Keycloak admin username");
+            setOption(options, KEYCLOAK_ADMIN_PASSWORD, false, "Password for the Keycloak admin user", "Keycloak admin password");
+            setOption(options, KEYCLOAK_EXTRACTOR_UI_CLIENT, false, "Extractor UI client for Keycloak connection", "Extractor UI client");
 
             // we don't actually use this value any more; it shold be removed when there is time to
             // change the deploy scripts
             setOption(options, CONFIG_GLOBAL_DEFAULT_CROP, true, "Default crop (global)", "crop id");
 
-
             // parse our commandline
             CommandLineParser parser = new DefaultParser();
             CommandLine commandLine = parser.parse(options, args);
-
-            HelpFormatter helpFormatter = new HelpFormatter();
 
             if (commandLine.hasOption(TOMCAT_BASE_DIR)) {
 
                 String tomcatBaseDirectory = commandLine.getOptionValue(TOMCAT_BASE_DIR);
                 File tomcatDirectory = new File(tomcatBaseDirectory);
 
-                if (tomcatDirectory.exists()) {
-
-                    String configFileServerFqpn = tomcatBaseDirectory + "/conf/server.xml";
-
-                    File configFileServer = new File(configFileServerFqpn);
-                    if (configFileServer.exists()) {
-
-                        GobiiConfig.printSeparator();
-                        GobiiConfig.printField("Configuration Mode", "From tomcat server configuration");
-                        GobiiConfig.printField("Tomcat file found", configFileServerFqpn);
-
-
-                        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                        Document documentServer = documentBuilder.parse(new FileInputStream(configFileServer));
-
-
-                        XPath xPathPropsLoc = XPathFactory.newInstance().newXPath();
-                        NodeList nodesServer = (NodeList) xPathPropsLoc.evaluate("//Server/GlobalNamingResources/Environment[@name='gobiipropsloc']",
-                                documentServer.getDocumentElement(), XPathConstants.NODESET);
-
-                        Element locationElement = (Element) nodesServer.item(0);
-
-                        if (null != locationElement) {
-
-                            GobiiConfig.printField("Server configuration", "Proper node found");
-
-                            String propertiesFileFqpn = locationElement.getAttribute("value");
-                            File propertiesFile = new File(propertiesFileFqpn);
-                            if (propertiesFile.exists()) {
-
-                                GobiiConfig.printField("Local properties file", propertiesFileFqpn);
-
-                                ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
-
-                                String configServerUrl = "http://"
-                                        + configSettings.getCurrentCropConfig().getServer(ServerType.GOBII_WEB).getHost()
-                                        + ":"
-                                        + configSettings.getCurrentCropConfig().getServer(ServerType.GOBII_WEB).getPort().toString()
-                                        + "/"
-                                        + configSettings.getCurrentCropConfig().getServer(ServerType.GOBII_WEB).getContextPath();
-
-                                String configFileContextFqpn = tomcatBaseDirectory + "/conf/context.xml";
-                                File configFileContext = new File(configFileContextFqpn);
-                                if (configFileContext.exists()) {
-
-                                    GobiiConfig.printField("Tomcat file found", configFileContextFqpn);
-
-
-                                    Document documentContext = documentBuilder.parse(new FileInputStream(configFileContext));
-                                    XPath xPath = XPathFactory.newInstance().newXPath();
-                                    NodeList nodesContext = (NodeList) xPath.evaluate("//Context/ResourceLink[@name='gobiipropsloc']",
-                                            documentContext.getDocumentElement(), XPathConstants.NODESET);
-
-                                    Element locationElementForLink = (Element) nodesContext.item(0);
-
-                                    if (null != locationElementForLink) {
-                                        GobiiConfig.printField("Context configuration", "Proper node found");
-                                    } else {
-                                        System.err.print("The configuration in server.xml does not define ResourceLink to the properties file: " + configFileServerFqpn);
-                                    }
-
-                                    GobiiClientContext gobiiClientContext = configClientContext(configServerUrl);
-
-
-                                    if (GobiiConfig.showServerInfo(gobiiClientContext)) {
-                                        exitCode = 0;
-                                    }
-
-
-                                } else {
-                                    System.err.println("Cannot find config file: : " + configFileContextFqpn);
-
-                                }
-
-                            } else {
-                                System.err.println("The property file specified in "
-                                        + configFileServerFqpn
-                                        + " does not exist: "
-                                        + propertiesFileFqpn);
-                            }
-
-                        } else {
-                            System.err.println("The configuration does not define the properties file location: " + configFileServerFqpn);
-                        }
-
-                    } else {
-                        System.err.println("Cannot find config file: : " + configFileServerFqpn);
-                    }
-
-                } else {
+                if (!tomcatDirectory.exists()) {
                     System.err.println("Specified tomcat base directory does not exist: " + tomcatBaseDirectory);
+                    throw new Exception();
+                }
+
+                String configFileServerFqpn = tomcatBaseDirectory + "/conf/server.xml";
+
+                File configFileServer = new File(configFileServerFqpn);
+
+                if (!configFileServer.exists()) {
+                    System.err.println("Cannot find config file: : " + configFileServerFqpn);
+                    throw new Exception();
+                }
+
+                GobiiConfig.printSeparator();
+                GobiiConfig.printField("Configuration Mode", "From tomcat server configuration");
+                GobiiConfig.printField("Tomcat file found", configFileServerFqpn);
+
+                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                Document documentServer = documentBuilder.parse(new FileInputStream(configFileServer));
+
+                XPath xPathPropsLoc = XPathFactory.newInstance().newXPath();
+                NodeList nodesServer = (NodeList) xPathPropsLoc.evaluate("//Server/GlobalNamingResources/Environment[@name='gobiipropsloc']",
+                        documentServer.getDocumentElement(), XPathConstants.NODESET);
+
+                Element locationElement = (Element) nodesServer.item(0);
+
+                if (null == locationElement) {
+                    System.err.println("The configuration does not define the properties file location: " + configFileServerFqpn);
+                    throw new Exception();
+                }
+
+                GobiiConfig.printField("Server configuration", "Proper node found");
+
+                String propertiesFileFqpn = locationElement.getAttribute("value");
+                File propertiesFile = new File(propertiesFileFqpn);
+                if (!propertiesFile.exists()) {
+                    System.err.println("The property file specified in "
+                            + configFileServerFqpn
+                            + " does not exist: "
+                            + propertiesFileFqpn);
+                    throw new Exception();
+                }
+
+                GobiiConfig.printField("Local properties file", propertiesFileFqpn);
+
+                ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
+
+                String configServerUrl = "http://"
+                        + configSettings.getCurrentCropConfig().getServer(ServerType.GOBII_WEB).getHost()
+                        + ":"
+                        + configSettings.getCurrentCropConfig().getServer(ServerType.GOBII_WEB).getPort().toString()
+                        + "/"
+                        + configSettings.getCurrentCropConfig().getServer(ServerType.GOBII_WEB).getContextPath();
+
+                String configFileContextFqpn = tomcatBaseDirectory + "/conf/context.xml";
+                File configFileContext = new File(configFileContextFqpn);
+
+                if (!configFileContext.exists()) {
+                    System.err.println("Cannot find config file: : " + configFileContextFqpn);
+                    throw new Exception();
+                }
+
+                GobiiConfig.printField("Tomcat file found", configFileContextFqpn);
+
+                Document documentContext = documentBuilder.parse(new FileInputStream(configFileContext));
+                XPath xPath = XPathFactory.newInstance().newXPath();
+                NodeList nodesContext = (NodeList) xPath.evaluate("//Context/ResourceLink[@name='gobiipropsloc']",
+                        documentContext.getDocumentElement(), XPathConstants.NODESET);
+
+                Element locationElementForLink = (Element) nodesContext.item(0);
+
+                if (null != locationElementForLink) {
+                    GobiiConfig.printField("Context configuration", "Proper node found");
+                } else {
+                    System.err.print("The configuration in server.xml does not define ResourceLink to the properties file: " + configFileServerFqpn);
+                }
+
+                if (GobiiConfig.showServerInfo(configClientContext(configServerUrl))) {
+                    exitCode = 0;
                 }
 
             } else if (commandLine.hasOption(CONFIG_BASE_URL)) {
-
-                String configUrl = commandLine.getOptionValue(CONFIG_BASE_URL);
-
                 GobiiConfig.printSeparator();
                 GobiiConfig.printField("Configuration Mode", "From url");
 
-                GobiiClientContext gobiiClientContext = configClientContext(configUrl);
-
-                if (GobiiConfig.showServerInfo(gobiiClientContext)) {
+                if (GobiiConfig.showServerInfo(configClientContext(commandLine.getOptionValue(CONFIG_BASE_URL)))) {
                     exitCode = 0;
                 }
 
-
-            } else if (commandLine.hasOption(CONFIG_MKDIRS)
-                    && commandLine.hasOption(PROP_FILE_FQPN)) {
-
-                String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
-
-
-                if (GobiiConfig.makeGobiiDirectories(propFileFqpn)) {
+            } else if (commandLine.hasOption(CONFIG_MKDIRS) && commandLine.hasOption(PROP_FILE_FQPN)) {
+                if (GobiiConfig.makeGobiiDirectories(commandLine.getOptionValue(PROP_FILE_FQPN))) {
                     exitCode = 0;
                 }
 
-
-            } else if (commandLine.hasOption(COPY_WARS)
-                    && commandLine.hasOption(PROP_FILE_FQPN)) {
-
-                String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
-                String warFileFqpn = commandLine.getOptionValue(COPY_WARS);
-
-
-                if (GobiiConfig.copyWars(propFileFqpn, warFileFqpn)) {
+            } else if (commandLine.hasOption(COPY_WARS) && commandLine.hasOption(PROP_FILE_FQPN)) {
+                if (GobiiConfig.copyWars(commandLine.getOptionValue(PROP_FILE_FQPN), commandLine.getOptionValue(COPY_WARS))) {
                     exitCode = 0;
                 }
 
-            } else if (commandLine.hasOption(PROP_FILE_PROPS_TO_XML)
-                    && commandLine.hasOption(PROP_FILE_FQPN)) {
+            } else if (commandLine.hasOption(PROP_FILE_PROPS_TO_XML) && commandLine.hasOption(PROP_FILE_FQPN)) {
 
                 String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
 
                 File propsFile = new File(propFileFqpn);
                 if (propsFile.exists() && !propsFile.isDirectory()) {
-
                     exitCode = 0;
-
                 } else {
                     System.err.println("Cannot find config file: : " + propFileFqpn);
                 }
@@ -468,7 +444,6 @@ public class GobiiConfig {
                 if (commandLine.hasOption(PROP_FILE_FQPN)
                         && (null != (propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN)))) {
 
-
                     if (setGobiiConfiguration(propFileFqpn, options, commandLine)) {
                         exitCode = 0;
                     }
@@ -477,16 +452,12 @@ public class GobiiConfig {
                     System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
                 }
 
-            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_DECRYPT)
-                    && commandLine.hasOption(PROP_FILE_FQPN)) {
-
+            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_DECRYPT) && commandLine.hasOption(PROP_FILE_FQPN)) {
                 if (setDecryptionFlag(options, commandLine.getOptionValue(PROP_FILE_FQPN), commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_DECRYPT))) {
                     exitCode = 0;
                 }
 
             } else if (commandLine.hasOption(VALIDATE_CONFIGURATION)) {
-
-
                 String propFileFqpn = null;
                 if (commandLine.hasOption(PROP_FILE_FQPN) &&
                         (null != (propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN)))) {
@@ -504,7 +475,7 @@ public class GobiiConfig {
                 ServerType serverType = ServerType.UNKNOWN;
                 if (commandLine.hasOption(SVR_KDC)) {
                     serverType = ServerType.KDC;
-                } else {
+                } else if (commandLine.hasOption(SVO_OWNC)) {
                     serverType = ServerType.OWN_CLOUD;
                 }
 
@@ -512,8 +483,12 @@ public class GobiiConfig {
                     exitCode = 0;
                 }
 
+            } else if (commandLine.hasOption(PROP_FILE_FQPN) && commandLine.hasOption(SVR_KC)) {
+                if (setKeyCloakOptions(options, commandLine)) {
+                    exitCode = 0;
+                }
             } else {
-                helpFormatter.printHelp(NAME_COMMAND, options);
+                new HelpFormatter().printHelp(NAME_COMMAND, options);
             }
 
         } catch (Exception e) {
@@ -526,6 +501,78 @@ public class GobiiConfig {
     }// main()
 
 
+    private static boolean setKeyCloakOptions(Options options, CommandLine commandLine) {
+        String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
+        ConfigSettings configSettings = getConfigSettings(propFileFqpn);
+        String value;
+        List<String> argsSet = new ArrayList<>();
+        List<String> valsSet = new ArrayList<>();
+
+
+        try {
+            KeycloakConfig config = configSettings.getKeycloakConfig();
+
+            if (commandLine.hasOption(KEYCLOAK_REALM)) {
+                value = commandLine.getOptionValue(KEYCLOAK_REALM);
+                config.setRealm(value);
+                argsSet.add(KEYCLOAK_REALM);
+                valsSet.add(value);
+            }
+
+            if (commandLine.hasOption(KEYCLOAK_RESOURCE)) {
+                value = commandLine.getOptionValue(KEYCLOAK_RESOURCE);
+                config.setResource(value);
+                argsSet.add(KEYCLOAK_RESOURCE);
+                valsSet.add(value);
+            }
+
+            if (commandLine.hasOption(KEYCLOAK_AUTH_SERVER_URL)) {
+                value = commandLine.getOptionValue(KEYCLOAK_AUTH_SERVER_URL);
+                config.setAuthServerUrl(value);
+                argsSet.add(KEYCLOAK_AUTH_SERVER_URL);
+                valsSet.add(value);
+            }
+
+            if (commandLine.hasOption(KEYCLOAK_ADMIN_USERNAME)) {
+                value = commandLine.getOptionValue(KEYCLOAK_ADMIN_USERNAME);
+                config.setAdminUsername(value);
+                argsSet.add(KEYCLOAK_ADMIN_USERNAME);
+                valsSet.add(value);
+            }
+
+            if (commandLine.hasOption(KEYCLOAK_ADMIN_PASSWORD)) {
+                value = commandLine.getOptionValue(KEYCLOAK_ADMIN_PASSWORD);
+                config.setAdminPassword(value);
+                argsSet.add(KEYCLOAK_ADMIN_PASSWORD);
+                valsSet.add(value);
+            }
+
+            if (commandLine.hasOption(KEYCLOAK_EXTRACTOR_UI_CLIENT)) {
+                value = commandLine.getOptionValue(KEYCLOAK_EXTRACTOR_UI_CLIENT);
+                config.setExtractorUIClient(value);
+                argsSet.add(KEYCLOAK_EXTRACTOR_UI_CLIENT);
+                valsSet.add(value);
+            }
+
+            writeConfigSettingsMessage(
+                options,
+                ServerType.KEY_CLOAK,
+                propFileFqpn,
+                argsSet,
+                valsSet,
+                null
+            );
+
+            configSettings.setKeycloakConfig(config);
+            configSettings.commit();
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+
+
     private static void writeConfigSettingsMessage(Options options,
                                                    ServerType serverType,
                                                    String configFileFqpn,
@@ -533,7 +580,7 @@ public class GobiiConfig {
                                                    List<String> configVals,
                                                    String cropId) throws Exception {
 
-        if (configArgs.size() != configArgs.size()) {
+        if (configArgs.size() != configVals.size()) {
             throw new Exception("The size of the options and values arrays do not match");
         }
 
@@ -564,10 +611,8 @@ public class GobiiConfig {
         ConfigSettings returnVal = null;
 
         try {
-
             File file = new File(propFileFqpn);
             if (file.exists()) {
-
                 returnVal = ConfigSettings.read(propFileFqpn);
             } else {
                 returnVal = ConfigSettings.makeNew(propFileFqpn);
@@ -1765,4 +1810,5 @@ public class GobiiConfig {
         return returnVal;
 
     }
+
 }
