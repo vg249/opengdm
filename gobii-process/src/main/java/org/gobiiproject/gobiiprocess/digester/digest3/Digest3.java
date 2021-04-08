@@ -69,7 +69,7 @@ public abstract class Digest3 implements Digest {
      * or get job entity for given name.
      */
     Digest3(LoaderInstruction3 loaderInstruction,
-                 ConfigSettings configSettings) throws GobiiException {
+            ConfigSettings configSettings) throws GobiiException {
         this.loaderInstruction = loaderInstruction;
         SpringContextLoaderSingleton.init(loaderInstruction.getCropType(),
             configSettings);

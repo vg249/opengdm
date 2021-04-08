@@ -41,21 +41,14 @@ import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class GenericMatrixDigest extends Digest3 {
+public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
     
     private GenotypeUploadRequestDTO uploadRequest;
 
-    private DatasetDao datasetDao;
-    private Dataset dataset;
-
     GenericMatrixDigest(LoaderInstruction3 loaderInstruction, 
                         ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
-        this.uploadRequest = 
-            mapper.convertValue(loaderInstruction.getUserRequest(), 
-                                GenotypeUploadRequestDTO.class);                    
-        this.datasetDao = SpringContextLoaderSingleton.getInstance().getBean(DatasetDao.class);
     }
 
  
@@ -104,7 +97,7 @@ public class GenericMatrixDigest extends Digest3 {
                 .setLoadType(loaderInstruction.getLoadType())
                 .setLoaderInstructionsMap(intermediateDigestFileMap)
                 .setLoaderInstructionsList(loadOrder)
-                .setDatasetType(uploadRequest.getDataType())
+                .setDatasetType(getDataType())
                 .setJobStatusObject(jobStatus)
                 .setDatasetId(getDataset().getDatasetId())
                 .setJobName(loaderInstruction.getJobName())
@@ -112,20 +105,6 @@ public class GenericMatrixDigest extends Digest3 {
                 .build();
 
         return digesterResult;
-    }
-
-    private Dataset getDataset() {
-       if(dataset == null) {
-            Integer datasetId;
-            try {
-                datasetId = Integer.parseInt(uploadRequest.getDatasetId());
-            }
-            catch(NumberFormatException e) {
-                throw new GobiiException("Invalid dataset id");
-            }
-            dataset = datasetDao.getDataset(datasetId);
-        }
-        return dataset;
     }
 
 }
