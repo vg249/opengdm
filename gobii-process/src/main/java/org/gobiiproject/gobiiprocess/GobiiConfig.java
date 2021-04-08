@@ -115,8 +115,8 @@ public class GobiiConfig {
     private static String KEYCLOAK_REALM = "kcRealm";
     private static String KEYCLOAK_RESOURCE = "kcResource";
     private static String KEYCLOAK_AUTH_SERVER_URL = "kcURL";
-    private static String KEYCLOAK_ADMIN_USERNAME = "kcAdminuser";
-    private static String KEYCLOAK_ADMIN_PASSWORD = "kcAdminpass";
+    private static String KEYCLOAK_ADMIN_USERNAME = "kcAdminUser";
+    private static String KEYCLOAK_ADMIN_PASSWORD = "kcAdminPass";
     private static String KEYCLOAK_EXTRACTOR_UI_CLIENT = "kcExtractor";
 
 
@@ -302,11 +302,11 @@ public class GobiiConfig {
 
             setOption(options, SVR_KC, false, "Keycloak server to add or modify; must be accompanied by a server options and KC options", "Keycloak Server options");
             setOption(options, KEYCLOAK_REALM, false, "Realm name within Keycloak", "Keycloak realm");
-            setOption(options, KEYCLOAK_RESOURCE, false, "IDK what this is", "Keycloak resource?");
+            setOption(options, KEYCLOAK_RESOURCE, false, "Name of the client created for webservices within Keycloak", "Keycloak resource");
             setOption(options, KEYCLOAK_AUTH_SERVER_URL, false, "URL to the Keycloak auth server", "Keycloak auth server URL");
             setOption(options, KEYCLOAK_ADMIN_USERNAME, false, "Username for the Keycloak admin user", "Keycloak admin username");
             setOption(options, KEYCLOAK_ADMIN_PASSWORD, false, "Password for the Keycloak admin user", "Keycloak admin password");
-            setOption(options, KEYCLOAK_EXTRACTOR_UI_CLIENT, false, "Extractor UI client for Keycloak connection", "Extractor UI client");
+            setOption(options, KEYCLOAK_EXTRACTOR_UI_CLIENT, false, "Name of the client created for ExtractorUI within Keycloak", "ExtractorUI client");
 
             // we don't actually use this value any more; it shold be removed when there is time to
             // change the deploy scripts
@@ -349,7 +349,7 @@ public class GobiiConfig {
 
                 Element locationElement = (Element) nodesServer.item(0);
 
-                if (null == locationElement) {
+                if (locationElement == null) {
                     System.err.println("The configuration does not define the properties file location: " + configFileServerFqpn);
                     throw new Exception();
                 }
