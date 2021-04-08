@@ -19,7 +19,7 @@ public class GenotypeUploadRequestDTO {
     @NotNull(message = "Required mapId")
     private String mapId;
 
-    @NotEmpty(message = "Required fileType")
+    @NotNull(message = "Required fileType")
     private GobiiFileType fileType;
 
     @NotEmpty(message = "Required input file paths")
