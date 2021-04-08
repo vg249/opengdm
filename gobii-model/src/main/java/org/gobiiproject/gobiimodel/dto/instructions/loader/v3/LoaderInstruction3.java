@@ -14,8 +14,8 @@ import java.util.Map;
 @Data
 public class LoaderInstruction3 {
 
-    @NotNull(message = "Required Instruction type")
-    private String instructionType;
+
+    private final String instructionType = "v3";
 
     @NotNull(message = "Required Crop Type")
     private String cropType;
