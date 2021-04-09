@@ -301,12 +301,12 @@ public class GobiiConfig {
             setOption(options, SVR_KDC_STATUS_CHECK_MAX_TIME_MINS, true, "Total time to wait for KDC job completion in minutes", "KDC job wait threshold");
 
             setOption(options, SVR_KC, false, "Keycloak server to add or modify; must be accompanied by a server options and KC options", "Keycloak Server options");
-            setOption(options, KEYCLOAK_REALM, false, "Realm name within Keycloak", "Keycloak realm");
-            setOption(options, KEYCLOAK_RESOURCE, false, "Name of the client created for webservices within Keycloak", "Keycloak resource");
-            setOption(options, KEYCLOAK_AUTH_SERVER_URL, false, "URL to the Keycloak auth server", "Keycloak auth server URL");
-            setOption(options, KEYCLOAK_ADMIN_USERNAME, false, "Username for the Keycloak admin user", "Keycloak admin username");
-            setOption(options, KEYCLOAK_ADMIN_PASSWORD, false, "Password for the Keycloak admin user", "Keycloak admin password");
-            setOption(options, KEYCLOAK_EXTRACTOR_UI_CLIENT, false, "Name of the client created for ExtractorUI within Keycloak", "ExtractorUI client");
+            setOption(options, KEYCLOAK_REALM, true, "Realm name within Keycloak", "Keycloak realm");
+            setOption(options, KEYCLOAK_RESOURCE, true, "Name of the client created for webservices within Keycloak", "Keycloak resource");
+            setOption(options, KEYCLOAK_AUTH_SERVER_URL, true, "URL to the Keycloak auth server", "Keycloak auth server URL");
+            setOption(options, KEYCLOAK_ADMIN_USERNAME, true, "Username for the Keycloak admin user", "Keycloak admin username");
+            setOption(options, KEYCLOAK_ADMIN_PASSWORD, true, "Password for the Keycloak admin user", "Keycloak admin password");
+            setOption(options, KEYCLOAK_EXTRACTOR_UI_CLIENT, true, "Name of the client created for ExtractorUI within Keycloak", "ExtractorUI client");
 
             // we don't actually use this value any more; it shold be removed when there is time to
             // change the deploy scripts
@@ -469,7 +469,7 @@ public class GobiiConfig {
                     System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
                 }
 
-            } else if ((commandLine.hasOption(SVR_KDC) || commandLine.hasOption(SVO_OWNC))
+            } else if ((commandLine.hasOption(SVR_KDC) || commandLine.hasOption(SVO_OWNC) || commandLine.hasOption(SVR_KC))
                     && commandLine.hasOption(PROP_FILE_FQPN)) {
 
                 ServerType serverType = ServerType.UNKNOWN;
@@ -477,16 +477,14 @@ public class GobiiConfig {
                     serverType = ServerType.KDC;
                 } else if (commandLine.hasOption(SVO_OWNC)) {
                     serverType = ServerType.OWN_CLOUD;
+                } else if (commandLine.hasOption(SVR_KC)) {
+                    serverType = ServerType.KEY_CLOAK;
                 }
 
                 if (setGlobalServerOptions(serverType, options, commandLine)) {
                     exitCode = 0;
                 }
 
-            } else if (commandLine.hasOption(PROP_FILE_FQPN) && commandLine.hasOption(SVR_KC)) {
-                if (setKeyCloakOptions(options, commandLine)) {
-                    exitCode = 0;
-                }
             } else {
                 new HelpFormatter().printHelp(NAME_COMMAND, options);
             }
@@ -499,78 +497,6 @@ public class GobiiConfig {
         System.exit(exitCode);
 
     }// main()
-
-
-    private static boolean setKeyCloakOptions(Options options, CommandLine commandLine) {
-        String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
-        ConfigSettings configSettings = getConfigSettings(propFileFqpn);
-        String value;
-        List<String> argsSet = new ArrayList<>();
-        List<String> valsSet = new ArrayList<>();
-
-
-        try {
-            KeycloakConfig config = configSettings.getKeycloakConfig();
-
-            if (commandLine.hasOption(KEYCLOAK_REALM)) {
-                value = commandLine.getOptionValue(KEYCLOAK_REALM);
-                config.setRealm(value);
-                argsSet.add(KEYCLOAK_REALM);
-                valsSet.add(value);
-            }
-
-            if (commandLine.hasOption(KEYCLOAK_RESOURCE)) {
-                value = commandLine.getOptionValue(KEYCLOAK_RESOURCE);
-                config.setResource(value);
-                argsSet.add(KEYCLOAK_RESOURCE);
-                valsSet.add(value);
-            }
-
-            if (commandLine.hasOption(KEYCLOAK_AUTH_SERVER_URL)) {
-                value = commandLine.getOptionValue(KEYCLOAK_AUTH_SERVER_URL);
-                config.setAuthServerUrl(value);
-                argsSet.add(KEYCLOAK_AUTH_SERVER_URL);
-                valsSet.add(value);
-            }
-
-            if (commandLine.hasOption(KEYCLOAK_ADMIN_USERNAME)) {
-                value = commandLine.getOptionValue(KEYCLOAK_ADMIN_USERNAME);
-                config.setAdminUsername(value);
-                argsSet.add(KEYCLOAK_ADMIN_USERNAME);
-                valsSet.add(value);
-            }
-
-            if (commandLine.hasOption(KEYCLOAK_ADMIN_PASSWORD)) {
-                value = commandLine.getOptionValue(KEYCLOAK_ADMIN_PASSWORD);
-                config.setAdminPassword(value);
-                argsSet.add(KEYCLOAK_ADMIN_PASSWORD);
-                valsSet.add(value);
-            }
-
-            if (commandLine.hasOption(KEYCLOAK_EXTRACTOR_UI_CLIENT)) {
-                value = commandLine.getOptionValue(KEYCLOAK_EXTRACTOR_UI_CLIENT);
-                config.setExtractorUIClient(value);
-                argsSet.add(KEYCLOAK_EXTRACTOR_UI_CLIENT);
-                valsSet.add(value);
-            }
-
-            writeConfigSettingsMessage(
-                options,
-                ServerType.KEY_CLOAK,
-                propFileFqpn,
-                argsSet,
-                valsSet,
-                null
-            );
-
-            configSettings.setKeycloakConfig(config);
-            configSettings.commit();
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
-    }
 
 
     private static void writeConfigSettingsMessage(Options options,
@@ -781,8 +707,8 @@ public class GobiiConfig {
                     valsSet.add(statusWaitThresholdMinutes.toString());
                     configSettings.getGlobalServer(ServerType.KDC).setMaxStatusCheckMins(statusWaitThresholdMinutes);
                 }
-
             }
+
             if(serverType.equals(ServerType.OWN_CLOUD)){
                 if(commandLine.hasOption(SVR_OWNC_ERR)){
                     String errorPath = commandLine.getOptionValue(SVR_OWNC_ERR);
@@ -792,6 +718,54 @@ public class GobiiConfig {
                 }
             }
 
+            if (serverType.equals(ServerType.KEY_CLOAK)) {
+                KeycloakConfig config = configSettings.getKeycloakConfig();
+                String value;
+
+                if (commandLine.hasOption(KEYCLOAK_REALM)) {
+                    value = commandLine.getOptionValue(KEYCLOAK_REALM);
+                    System.out.println(value);
+                    config.setRealm(value);
+                    argsSet.add(KEYCLOAK_REALM);
+                    valsSet.add(value);
+                }
+
+                if (commandLine.hasOption(KEYCLOAK_RESOURCE)) {
+                    value = commandLine.getOptionValue(KEYCLOAK_RESOURCE);
+                    config.setResource(value);
+                    argsSet.add(KEYCLOAK_RESOURCE);
+                    valsSet.add(value);
+                }
+
+                if (commandLine.hasOption(KEYCLOAK_AUTH_SERVER_URL)) {
+                    value = commandLine.getOptionValue(KEYCLOAK_AUTH_SERVER_URL);
+                    config.setAuthServerUrl(value);
+                    argsSet.add(KEYCLOAK_AUTH_SERVER_URL);
+                    valsSet.add(value);
+                }
+
+                if (commandLine.hasOption(KEYCLOAK_ADMIN_USERNAME)) {
+                    value = commandLine.getOptionValue(KEYCLOAK_ADMIN_USERNAME);
+                    config.setAdminUsername(value);
+                    argsSet.add(KEYCLOAK_ADMIN_USERNAME);
+                    valsSet.add(value);
+                }
+
+                if (commandLine.hasOption(KEYCLOAK_ADMIN_PASSWORD)) {
+                    value = commandLine.getOptionValue(KEYCLOAK_ADMIN_PASSWORD);
+                    config.setAdminPassword(value);
+                    argsSet.add(KEYCLOAK_ADMIN_PASSWORD);
+                    valsSet.add(value);
+                }
+
+                if (commandLine.hasOption(KEYCLOAK_EXTRACTOR_UI_CLIENT)) {
+                    value = commandLine.getOptionValue(KEYCLOAK_EXTRACTOR_UI_CLIENT);
+                    config.setExtractorUIClient(value);
+                    argsSet.add(KEYCLOAK_EXTRACTOR_UI_CLIENT);
+                    valsSet.add(value);
+                }
+                configSettings.setKeycloakConfig(config);
+            }
 
             writeConfigSettingsMessage(options,
                     serverType,
@@ -834,9 +808,8 @@ public class GobiiConfig {
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_ROOT),
                         Arrays.asList(fileSysRoot),
                         null);
-
-
             }
+
             else if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_HDF5)) {
                 String fileSysHDF5 = commandLine.getOptionValue(CONFIG_GLOBAL_FILESYS_HDF5);
                 configSettings.setFileSystemHDF5(fileSysHDF5);
@@ -848,8 +821,8 @@ public class GobiiConfig {
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_HDF5),
                         Arrays.asList(fileSysHDF5),
                         null);
-
             }
+
             else if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_LOG)) {
                 String fileSysLog = commandLine.getOptionValue(CONFIG_GLOBAL_FILESYS_LOG);
                 configSettings.setFileSystemLog(fileSysLog);
@@ -861,8 +834,9 @@ public class GobiiConfig {
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_LOG),
                         Arrays.asList(fileSysLog),
                         null);
+            }
 
-            } else if (commandLine.hasOption(CONFIG_GLOBAL_PROVIDES_BACKEND)) {
+            else if (commandLine.hasOption(CONFIG_GLOBAL_PROVIDES_BACKEND)) {
                 String flagAsString = commandLine.getOptionValue(CONFIG_GLOBAL_PROVIDES_BACKEND);
                 boolean flag = flagAsString.equalsIgnoreCase("true");
 
@@ -1104,7 +1078,6 @@ public class GobiiConfig {
                     valsSet.add(ldapRunAsPassword);
                 }
 
-
                 if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI)) {
                     ldapAuthenticateBrapi = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI)
                             .toLowerCase()
@@ -1135,7 +1108,6 @@ public class GobiiConfig {
 
                 List<String> argsSet = new ArrayList<>();
                 List<String> valsSet = new ArrayList<>();
-
 
                 String svrHost = null;
                 String svrUserName = null;
