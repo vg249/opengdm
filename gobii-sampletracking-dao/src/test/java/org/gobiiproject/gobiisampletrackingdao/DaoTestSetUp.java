@@ -130,7 +130,7 @@ public class DaoTestSetUp {
             Protocol protocol = new Protocol();
 
             protocol.setName(RandomStringUtils.random(7, true, true));
-            protocol.setDescription(RandomStringUtils.random(7));
+            protocol.setDescription(RandomStringUtils.random(16, true, true));
             protocol.setPlatform(createdPlatforms.get(random.nextInt(createdPlatforms.size())));
 
             em.persist(protocol);
@@ -231,6 +231,12 @@ public class DaoTestSetUp {
                 .get(random.nextInt(createdExperiments.size())));
             dataset.setType(datasetTypes
                 .get(random.nextInt(datasetTypes.size())));
+
+            DatasetStats datasetStats = new DatasetStats();
+            datasetStats.setDataset(dataset);
+            datasetStats.setMarkerCount(10);
+            datasetStats.setMarkerCount(10);
+            em.persist(datasetStats); 
             em.persist(dataset);
 
             createdDatasets.add(dataset);
