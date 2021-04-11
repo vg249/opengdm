@@ -146,7 +146,12 @@ public enum RestResourceId {
 
         returnVal += this.getResourcePath();
 
-        return returnVal.replace("{cropType}", cropType);
+        if(!LineUtils.isNullOrEmpty(cropType)) {
+            returnVal = returnVal.replace("{cropType}", cropType);
+
+        }
+
+        return returnVal;
     }
 
 }
