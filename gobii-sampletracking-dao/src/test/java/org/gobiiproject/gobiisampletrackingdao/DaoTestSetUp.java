@@ -228,6 +228,14 @@ public class DaoTestSetUp {
                 .get(random.nextInt(createdExperiments.size())));
             dataset.setType(datasetTypes
                 .get(random.nextInt(datasetTypes.size())));
+                
+            DatasetStats datasetStats = new DatasetStats();
+            datasetStats.setDataset(dataset);
+            datasetStats.setMarkerCount(10);
+            datasetStats.setMarkerCount(10);
+            em.persist(datasetStats); 
+            em.persist(dataset);
+
             em.persist(dataset);
 
             createdDatasets.add(dataset);
