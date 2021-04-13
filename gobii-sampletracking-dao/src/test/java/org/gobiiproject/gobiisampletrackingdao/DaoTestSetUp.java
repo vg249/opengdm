@@ -22,7 +22,6 @@ public class DaoTestSetUp {
     public DaoTestSetUp(EntityManager em, CvDao cvDao) {
         this.em = em;
         this.cvDao = cvDao;
-
     }
 
     final int testPageSize = 10;
