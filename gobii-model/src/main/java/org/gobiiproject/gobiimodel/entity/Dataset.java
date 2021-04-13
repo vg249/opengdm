@@ -25,6 +25,7 @@ import lombok.EqualsAndHashCode;
     attributeNodes = {
         @NamedAttributeNode(value = "experiment", subgraph = "graph.dataset.experiment"),
         @NamedAttributeNode(value = "callingAnalysis"),
+        @NamedAttributeNode(value = "status"),
         @NamedAttributeNode(value = "type")
     },
     subgraphs = {

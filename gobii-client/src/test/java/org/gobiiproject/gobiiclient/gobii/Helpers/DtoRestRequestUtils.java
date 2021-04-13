@@ -55,9 +55,9 @@ public class DtoRestRequestUtils<T extends DTOBase> {
             String message = "Request for collection of "
                     + dtoType.getClass()
                     + " with request "
-                    + restUri.makeUrlPath()
+                    + restUri.makeUrlPath("")
                     + " did not succeded with URI "
-                    + restUri.makeUrlPath()
+                    + restUri.makeUrlPath("")
                     + ": ";
 
             for (HeaderStatusMessage headerStatusMessage : returnVal.getHeader().getStatus().getStatusMessages()) {
@@ -78,8 +78,10 @@ public class DtoRestRequestUtils<T extends DTOBase> {
 
             if (gotNullResult) {
 
-                String message = "When the collection " + dtoType.getClass()
-                        + " with request " + restUri.makeUrlPath()
+                String message = "When the collection "
+                        + dtoType.getClass()
+                        + " with request "
+                        + restUri.makeUrlPath("")
                         + " has no results, it should return an empty list!!!";
 
                 throw (new Exception(message));

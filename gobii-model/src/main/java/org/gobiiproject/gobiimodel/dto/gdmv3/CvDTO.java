@@ -63,8 +63,6 @@ public class CvDTO {
     //map this outside of the mapper
     private String cvStatus;
 
-    private java.util.List<CvPropertyDTO> properties;
-
     //determine from cvGroupTypeInt
     @JsonProperty("cvGroupType")
     public String getCvGroupType() {

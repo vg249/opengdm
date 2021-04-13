@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.transaction.Transactional;
+
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
@@ -19,8 +21,6 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaSampleDao;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
 
 @Transactional
 public class SamplesServiceImpl implements SamplesService {

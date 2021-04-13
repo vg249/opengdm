@@ -15,5 +15,13 @@ public interface MarkerGroupDao {
 	MarkerGroup updateMarkerGroup(MarkerGroup markerGroup);
 
 	void deleteMarkerGroup(MarkerGroup markerGroup) throws Exception;
-    
+
+	Long uploadMarkerGroupsFromFile(String filePath) throws GobiiDaoException;
+
+	Long mapMarkerIdsForMarkerNamesAndPlatformIds(String filePath,
+                                                  String outputFilePath) throws GobiiDaoException;
+
+	Long mapMarkerIdsForMarkerNamesAndPlatformNames(String filePath,
+                                                    String outputFilePath) throws GobiiDaoException;
+
 }

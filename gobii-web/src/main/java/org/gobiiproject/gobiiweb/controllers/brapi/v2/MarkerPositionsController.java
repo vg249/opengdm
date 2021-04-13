@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v2/markerpositions")
+@RequestMapping("/crops/{cropType}/brapi/v2/markerpositions")
 @CrossOrigin
 @Api
 @Slf4j

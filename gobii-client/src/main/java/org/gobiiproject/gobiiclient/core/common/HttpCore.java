@@ -33,6 +33,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiibrapi.types.BRAPIHttpHeaderNames;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -109,7 +110,7 @@ public class HttpCore {
         URI returnVal;
 
         URIBuilder baseBuilder = getBaseBuilder()
-                .setPath(restUri.makeUrlPath());
+                .setPath(restUri.makeUrlPath(""));
 
         for (ResourceParam currentParam : restUri.getRequestParams()) {
             baseBuilder.addParameter(currentParam.getName(), currentParam.getValue());
@@ -235,9 +236,16 @@ public class HttpCore {
         httpMethodResult.setFileName(destinationFqpn);
 
     }
-
+    
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
                                               RestUri restUri) throws Exception {
+        return submitHttpMethod(httpRequestBase, restUri, false);
+    }
+
+    
+    private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
+                                              RestUri restUri,
+                                              boolean anonymous) throws Exception {
 
         HttpMethodResult returnVal = null;
 
@@ -247,8 +255,9 @@ public class HttpCore {
         URI uri = makeUri(restUri);
         httpRequestBase.setURI(uri);
 
-
-        this.setTokenHeader(httpRequestBase);
+        if(!anonymous) {
+            this.setTokenHeader(httpRequestBase);
+        }
         httpResponse = submitUriRequest(httpRequestBase, restUri.getHttpHeaders());
         returnVal = new HttpMethodResult(httpResponse);
         returnVal.setUri(uri);
@@ -360,7 +369,7 @@ public class HttpCore {
 
         if (logJson) {
 
-            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath());
+            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath(""));
 
             if (!LineUtils.isNullOrEmpty(body)) {
 
@@ -382,13 +391,18 @@ public class HttpCore {
 
     }
 
-    public HttpMethodResult get(RestUri restUri) throws Exception {
+    public HttpMethodResult get(RestUri restUri, boolean anonymous) throws Exception {
 
-        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri);
+        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri, anonymous);
         this.logRequest(RestMethodType.GET, restUri, null, returnVal);
         return returnVal;
 
     }
+    
+    public HttpMethodResult get(RestUri restUri) throws Exception {
+        return get(restUri, false);
+    }
+
 
     public HttpMethodResult post(RestUri restUri,
                                  String body) throws Exception {

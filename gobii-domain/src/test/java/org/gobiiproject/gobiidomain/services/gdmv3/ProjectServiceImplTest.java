@@ -9,6 +9,7 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +25,7 @@ import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityExcep
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -57,6 +59,9 @@ public class ProjectServiceImplTest {
     private ContactDao contactDao;
 
     @Mock
+    private KeycloakService keycloakService;
+
+    @Mock
     private PropertiesService propertiesService;
 
     @InjectMocks
@@ -79,10 +84,21 @@ public class ProjectServiceImplTest {
         List<Project> daoReturn = new java.util.ArrayList<>();
         Project mockEntity = new Project();
         mockEntity.setProjectName("PName");
+        mockEntity.setContact(new Contact());
+        mockEntity.getContact().setUsername("test");
         daoReturn.add(mockEntity);
         when(projectDao.getProjects(0, 1000, null)).thenReturn(daoReturn);
 
-        PagedResult<ProjectDTO> payload = v3ProjectServiceImpl.getProjects(0, 1000, null);
+        //Mock Keycloak contact
+        ContactDTO mockContactDto = new ContactDTO();
+        mockContactDto.setUsername("test");
+        mockContactDto.setPiContactId("pIConTActId");
+        List<ContactDTO> mockPis = new ArrayList<>();
+        mockPis.add(mockContactDto);
+        when(keycloakService.getKeycloakUsers("test-crop", "pi", 0, 1000))
+            .thenReturn(mockPis);
+
+        PagedResult<ProjectDTO> payload = v3ProjectServiceImpl.getProjects(0, 1000, null, "test-crop");
         assert payload.getResult().size() == 1;
         assert payload.getCurrentPageNum() == 0;
         assert payload.getCurrentPageSize() == 1;
@@ -94,12 +110,12 @@ public class ProjectServiceImplTest {
     public void testGetProjectsException() throws Exception {
         when(cvDao.getCvListByCvGroup(CvGroupTerm.CVGROUP_PROJECT_PROP.getCvGroupName(), null))
                 .thenThrow(new GobiiException("test-exc"));
-        v3ProjectServiceImpl.getProjects(0, 1000, null);
+        v3ProjectServiceImpl.getProjects(0, 1000, null, "test-crop");
     }
 
     @Test(expected = GobiiDomainException.class)
     public void testGetProjectsNotOk2() throws Exception {
-        v3ProjectServiceImpl.getProjects(null, null, null);
+        v3ProjectServiceImpl.getProjects(null, null, null, "test-crop");
     }
 
     @Test
@@ -109,7 +125,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId(111);
+        request.setPiContactUserName("piContactUserName");
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO nullValued = new CvPropertyDTO();
@@ -121,7 +137,10 @@ public class ProjectServiceImplTest {
         Contact mockContact = new Contact();
         mockContact.setContactId(111);
 
-        when(contactDao.getContact(111)).thenReturn(mockContact);
+        ContactDTO mockKeycloakUser = new ContactDTO();
+        mockKeycloakUser.setUsername("pIConTactId");
+        when(keycloakService.getUser("pIConTactId")).thenReturn(mockKeycloakUser);
+        when(contactDao.getContactByUsername("pIConTactId")).thenReturn(mockContact);
 
         Cv mockNewStat = new Cv();
 
@@ -148,7 +167,7 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId(111);
+        request.setPiContactUserName("pIConTactName");
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO valued = new CvPropertyDTO();
@@ -160,7 +179,10 @@ public class ProjectServiceImplTest {
         Contact mockContact = new Contact();
         mockContact.setContactId(111);
 
-        when(contactDao.getContact(111)).thenReturn(mockContact);
+        ContactDTO mockKeycloakUser = new ContactDTO();
+        mockKeycloakUser.setUsername("pIConTactId");
+        when(keycloakService.getUser("pIConTactId")).thenReturn(mockKeycloakUser);
+        when(contactDao.getContactByUsername("pIConTactId")).thenReturn(mockContact);
 
         Cv mockNewStat = new Cv();
 
@@ -182,18 +204,19 @@ public class ProjectServiceImplTest {
 
     }
 
-    @Test(expected = UnknownEntityException.class)
-    public void testCreateContactNotFound() throws Exception {
-        when(contactDao.getContact(13)).thenThrow(new UnknownEntityException.Contact());
+    // Will not be loading contacts by db contact id anymore
+    //@Test(expected = UnknownEntityException.class)
+    //public void testCreateContactNotFound() throws Exception {
+    //    when(contactDao.getContact(13)).thenThrow(new UnknownEntityException.Contact());
 
-        ProjectDTO request = new ProjectDTO();
-        String projectName = RandomStringUtils.random(10);
-        request.setProjectName(projectName);
-        request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactId(111);
+    //    ProjectDTO request = new ProjectDTO();
+    //    String projectName = RandomStringUtils.random(10);
+    //    request.setProjectName(projectName);
+    //    request.setProjectDescription(RandomStringUtils.random(20));
+    //    request.setPiContactId("pIConTactId");
 
-        v3ProjectServiceImpl.createProject(request, "test-user");
-    }
+    //    v3ProjectServiceImpl.createProject(request, "test-user");
+    //}
 
     @Test
     public void testPatchProjectOk() throws Exception {
@@ -346,10 +369,13 @@ public class ProjectServiceImplTest {
         mockModifiedStatus.setTerm("modified");
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId(333);
+        request.setPiContactUserName("pIConTactName");
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
-        when(contactDao.getContact(333)).thenReturn(mockContact);
+        ContactDTO mockKeycloakUser = new ContactDTO();
+        mockKeycloakUser.setUsername("pIConTactId");
+        when(keycloakService.getUser("pIConTactId")).thenReturn(mockKeycloakUser);
+        when(contactDao.getContactByUsername("pIConTactId")).thenReturn(mockContact);
         when(contactDao.getContactByUsername("test-editor")).thenReturn(mockEditor);
         when(cvDao.getModifiedStatus()).thenReturn(mockModifiedStatus);
         when(projectDao.patchProject(any(Project.class))).thenReturn(new Project());
@@ -378,10 +404,13 @@ public class ProjectServiceImplTest {
         mockProject.setContact(mockContact);
 
         ProjectDTO request = new ProjectDTO();
-        request.setPiContactId(555);
+        request.setPiContactUserName("pIConTactName");
 
         when(projectDao.getProject(123)).thenReturn(mockProject);
-        when(contactDao.getContact(555)).thenReturn(null);
+        ContactDTO mockKeycloakUser = new ContactDTO();
+        mockKeycloakUser.setUsername("pIConTactId");
+        when(keycloakService.getUser("pIConTactId")).thenReturn(mockKeycloakUser);
+        when(contactDao.getContactByUsername("pIConTactId")).thenReturn(mockContact);
 
         v3ProjectServiceImpl.patchProject(123, request, "test-editor");
         verify(projectDao, times(0)).patchProject(any(Project.class));

@@ -62,6 +62,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional
     @Override
     public OrganizationDTO createOrganization(OrganizationDTO request, String createdBy) throws Exception {
+        log.debug("Creating new organization entry: %s", request.getOrganizationName());
         Organization organization = new Organization();
         organization.setName(request.getOrganizationName());
         organization.setAddress(request.getOrganizationAddress());
@@ -69,7 +70,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
          // Get the Cv for status, new row
         Cv cv = cvDao.getNewStatus();
-        organization.setStatus(cv); //TODO:  use status cv?
+        organization.setStatus(cv);
 
         //audit
         Contact creator = contactDao.getContactByUsername(createdBy);

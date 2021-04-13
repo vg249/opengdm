@@ -2,10 +2,14 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -69,6 +73,7 @@ public class DatasetServiceImpl implements DatasetService {
 	@Override
 	public DatasetDTO createDataset(DatasetRequestDTO request, String user) throws Exception {
 		//check if the experiment exists
+		log.debug("Creating new dataset");
 		Experiment experiment = experimentDao.getExperiment(request.getExperimentId());
 		if (
 			experiment == null
@@ -150,26 +155,35 @@ public class DatasetServiceImpl implements DatasetService {
 	public PagedResult<DatasetDTO> getDatasets(Integer page, Integer pageSize, Integer experimentId,
 			Integer datasetTypeId)  throws Exception {
 		Integer rowOffset = page * pageSize;
-		List<Dataset> datasets = datasetDao.getDatasets(pageSize, rowOffset, null, null,  datasetTypeId, experimentId, null);
+		List<Object[]> tupleList = datasetDao.getDatasetWithAnalysesAndStats(pageSize, rowOffset, null, null,  datasetTypeId, experimentId, null);
 
-		List<DatasetDTO> datasetDTOs = new java.util.ArrayList<>();
-
-		for (int i = 0; i < datasets.size(); i++) {
+		HashMap<Integer, DatasetDTO> datasetMap = new LinkedHashMap<>();
 		
-			DatasetDTO datasetDTO = new DatasetDTO();
-			ModelMapper.mapEntityToDto(datasets.get(i), datasetDTO);
-			
-			//convert
-			List<AnalysisDTO> analysesDTOs = this.getAnalysisDTOs(
-				this.checkAndGetAnalysesFromIds(
-					datasets.get(i).getAnalyses()
-				)
-			);
-		
+		for (Object[] tuple: tupleList) {
 
-			datasetDTO.setAnalyses(analysesDTOs);
-			datasetDTOs.add(datasetDTO);
+			AnalysisDTO analysisDTO = new AnalysisDTO();
+
+			Dataset dataset  = (Dataset) tuple[0];
+			Analysis analysis = (Analysis) tuple[1];
+
+			if (analysis != null) ModelMapper.mapEntityToDto(analysis, analysisDTO);
+
+			if (datasetMap.containsKey(dataset.getDatasetId()) && analysis != null) {
+				datasetMap.get(dataset.getDatasetId()).getAnalyses().add(analysisDTO);
+			} else {
+				DatasetDTO datasetDTO = new DatasetDTO();
+				ModelMapper.mapEntityToDto(dataset, datasetDTO);
+
+				if (analysis != null) {
+					List<AnalysisDTO> analyses = new ArrayList<>();
+					analyses.add(analysisDTO);
+					datasetDTO.setAnalyses(analyses);
+				}
+				datasetMap.put(dataset.getDatasetId(), datasetDTO);
+			}
 		}
+
+		List<DatasetDTO> datasetDTOs = datasetMap.values().stream().collect(Collectors.toList());
 
 		return PagedResult.createFrom(page, datasetDTOs);
 	}
@@ -354,14 +368,19 @@ public class DatasetServiceImpl implements DatasetService {
 
 	@Transactional
 	@Override
-	public CvTypeDTO createDatasetType(String datasetTypeName, String datasetTypeDescription, String user) {     
+	public CvTypeDTO createDatasetType(String datasetTypeName,
+                                       String datasetTypeDescription,
+                                       String user) {
         CvGroup cvGroup = cvDao.getCvGroupByNameAndType(
             CvGroupTerm.CVGROUP_DATASET_TYPE.getCvGroupName(),
             2 //TODO:  this is custom type
         );
-        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Analysis Type");
+        if (cvGroup == null) throw new GobiiDaoException("Missing CvGroup for Dataset Type");
 
         Cv cv = new Cv();
+
+        cv.setTerm(datasetTypeName);
+
         cv.setCvGroup(cvGroup);
 		cv.setTerm(datasetTypeName);
 		

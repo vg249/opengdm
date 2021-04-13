@@ -1,13 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.gdmv3;
 
 import static org.gobiiproject.gobiimodel.utils.LineUtils.isNullOrEmpty;
+
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,14 +35,11 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @Override
     public Integer getId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void setId(Integer id) {
-        // TODO Auto-generated method stub
-
     }
 
     public ProjectDTO() {
@@ -64,11 +60,11 @@ public class ProjectDTO extends DTOBaseAuditable {
     @GobiiEntityMap(paramName="projectDescription", entity = Project.class)
     private String projectDescription;
 
-    @GobiiEntityMap(paramName="contact.contactId", entity = Project.class, deep=true)
-    @NotNull(groups = {ProjectDTO.Create.class})
-    @Null(groups = {ProjectDTO.Update.class})
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Integer piContactId;
+    @GobiiEntityMap(paramName="contact.username", entity = Project.class, deep=true)
+    private String piContactUserName;
+    
+    @GobiiEntityMap(paramName="contact.username", entity = Project.class, deep=true)
+    private String piContactId;
 
     @GobiiEntityMap(paramName="contact.lastName", entity = Project.class, deep=true)
     @JsonIgnore
@@ -79,16 +75,16 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String piContactFirstName;
 
     @GobiiEntityMap(paramName="projectStats.experimentCount", entity=Project.class, deep=true)
-    private Integer experimentCount;
+    private Integer experimentCount = 0;
 
     @GobiiEntityMap(paramName="projectStats.datasetCount", entity=Project.class, deep=true)
-    private Integer datasetCount;
+    private Integer datasetCount = 0;
 
     @GobiiEntityMap(paramName="projectStats.markerCount", entity=Project.class, deep=true)
-    private Integer markerCount;
+    private Integer markerCount = 0;
 
     @GobiiEntityMap(paramName="projectStats.dnarunCount", entity=Project.class, deep=true)
-    private Integer dnaRunCount;
+    private Integer dnaRunCount = 0;
 
     @Valid
     private List<CvPropertyDTO> properties = new java.util.ArrayList<>();

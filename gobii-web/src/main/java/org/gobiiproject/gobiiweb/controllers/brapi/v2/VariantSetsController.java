@@ -43,7 +43,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v2/variantsets")
+@RequestMapping("/crops/{cropType}/brapi/v2/variantsets")
 @CrossOrigin
 @Api
 @Slf4j

@@ -145,7 +145,7 @@ public class CallSetServiceImpl implements CallSetService {
             callSetsSearchQuery.getSampleDbIds(), callSetsSearchQuery.getSampleNames(),
             callSetsSearchQuery.getSamplePUIs(), callSetsSearchQuery.getGermplasmPUIs(),
             callSetsSearchQuery.getGermplasmDbIds(), callSetsSearchQuery.getGermplasmNames(),
-            callSetsSearchQuery.getVariantSetDbIds(), pageSize,
+            callSetsSearchQuery.getVariantSetDbIds(), null, pageSize,
             null, rowOffset, true);
 
         callSets = mapDnaRunsToCallSetDtos(dnaRuns);
@@ -231,7 +231,10 @@ public class CallSetServiceImpl implements CallSetService {
                 genotypesSearchQuery.getSampleDbIds(), genotypesSearchQuery.getSampleNames(),
                 genotypesSearchQuery.getSamplePUIs(), genotypesSearchQuery.getGermplasmPUIs(),
                 genotypesSearchQuery.getGermplasmDbIds(), genotypesSearchQuery.getGermplasmNames(),
-                cursors.dnaRunDatasetIds, remainingPageSize, cursors.dnaRunIdCursor, null, true);
+                cursors.dnaRunDatasetIds,
+                null,
+                remainingPageSize,
+                cursors.dnaRunIdCursor, null, true);
 
             if(dnaRuns.size() > 0) {
                 cursors.dnaRunIdCursor = dnaRuns.get(dnaRuns.size() - 1).getDnaRunId();

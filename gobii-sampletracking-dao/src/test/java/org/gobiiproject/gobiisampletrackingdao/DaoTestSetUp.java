@@ -1,11 +1,13 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.entity.*;
+import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 
 import javax.persistence.EntityManager;
@@ -44,6 +46,7 @@ public class DaoTestSetUp {
     private List<MarkerLinkageGroup> createdMarkerLinkageGroups = new ArrayList<>();
     private List<VendorProtocol> createdVendorProtocols = new ArrayList<>();
     private List<Organization> createdOrganizations = new ArrayList<>();
+    private List<LoaderTemplate> createdLoaderTemplates = new ArrayList<>();
 
     public void createTestContacts(int numOfContacts) {
         for(int i = 0; i < numOfContacts; i++) {
@@ -126,7 +129,7 @@ public class DaoTestSetUp {
             Protocol protocol = new Protocol();
 
             protocol.setName(RandomStringUtils.random(7, true, true));
-            protocol.setDescription(RandomStringUtils.random(7));
+            protocol.setDescription(RandomStringUtils.random(16, true, true));
             protocol.setPlatform(createdPlatforms.get(random.nextInt(createdPlatforms.size())));
 
             em.persist(protocol);
@@ -227,14 +230,13 @@ public class DaoTestSetUp {
                 .get(random.nextInt(createdExperiments.size())));
             dataset.setType(datasetTypes
                 .get(random.nextInt(datasetTypes.size())));
-                
+            
             DatasetStats datasetStats = new DatasetStats();
             datasetStats.setDataset(dataset);
             datasetStats.setMarkerCount(10);
             datasetStats.setMarkerCount(10);
             em.persist(datasetStats); 
-            em.persist(dataset);
-
+            
             em.persist(dataset);
 
             createdDatasets.add(dataset);
@@ -298,6 +300,7 @@ public class DaoTestSetUp {
             createdLinkageGroups.add(linkageGroup);
         }
     }
+
 
     public void createTestDnaRuns(int numOfDnaRuns) {
 
@@ -457,6 +460,34 @@ public class DaoTestSetUp {
         }
     }
 
+    public void createTestLoaderTemplates(int numLoaderTemplates) {
+        List<Cv> payloadTypes = cvDao.getCvListByCvGroup(
+            CvGroupTerm.CVGROUP_PAYLOADTYPE.getCvGroupName(),
+            GobiiCvGroupType.GROUP_TYPE_SYSTEM);
+        if(createdContacts.size() == 0) {
+            createTestContacts((int) Math.ceil((double) numLoaderTemplates/2));
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode template =  mapper.createObjectNode();
+
+        for(int i = 0; i < numLoaderTemplates; i++) {
+            LoaderTemplate loaderTemplate = new LoaderTemplate();
+            loaderTemplate.setTemplateName(RandomStringUtils.random(7, true, true));
+            loaderTemplate
+                .setCreatedBy(createdContacts.get(random.nextInt(createdContacts.size())));
+            loaderTemplate
+                .setModifiedBy(createdContacts.get(random.nextInt(createdContacts.size())));
+            loaderTemplate.setCreatedDate(new Date());
+            loaderTemplate.setModifiedDate(new Date());
+            loaderTemplate.setTemplateType(
+                payloadTypes.get(random.nextInt(payloadTypes.size())));
+            loaderTemplate.setTemplate(template);
+            em.persist(loaderTemplate);
+            createdLoaderTemplates.add(loaderTemplate);
+        }
+
+    }
+
     public List<DnaRun> getCreatedDnaRuns() {
         return createdDnaRuns;
     }
@@ -567,5 +598,29 @@ public class DaoTestSetUp {
 
     public void setCreatedMarkers(List<Marker> createdMarkers) {
         this.createdMarkers = createdMarkers;
+    }
+
+    public List<VendorProtocol> getCreatedVendorProtocols() {
+        return createdVendorProtocols;
+    }
+
+    public void setCreatedVendorProtocols(List<VendorProtocol> createdVendorProtocols) {
+        this.createdVendorProtocols = createdVendorProtocols;
+    }
+
+    public List<Organization> getCreatedOrganizations() {
+        return createdOrganizations;
+    }
+
+    public void setCreatedOrganizations(List<Organization> createdOrganizations) {
+        this.createdOrganizations = createdOrganizations;
+    }
+
+    public List<LoaderTemplate> getCreatedLoaderTemplates() {
+        return createdLoaderTemplates;
+    }
+
+    public void setCreatedLoaderTemplates(List<LoaderTemplate> createdLoaderTemplates) {
+        this.createdLoaderTemplates = createdLoaderTemplates;
     }
 }

@@ -101,10 +101,10 @@ public class ProjectDaoImplTest {
         List<Project> createdProjects = daoTestSetup.getCreatedProjects();
 
         //get the first element and find out who it's contact is and use that for this test
-        Integer target = createdProjects.get(0).getPiContactId();
+        String target = createdProjects.get(0).getContact().getUsername();
         Integer targetCount = 0;
         for (int i = 0; i < createdProjects.size(); i++) {
-            if (createdProjects.get(i).getPiContactId() == target) targetCount++;
+            if (createdProjects.get(i).getContact().getUsername() == target) targetCount++;
         }
         
         //call with target contact

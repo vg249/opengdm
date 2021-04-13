@@ -41,10 +41,10 @@ public class ProjectDaoImpl implements ProjectDao {
     final int defaultPageSize = 1000;
 
     @Override
-    public List<Project> getProjects(Integer pageNum, Integer pageSize, Integer piContactId) {
+    public List<Project> getProjects(Integer pageNum, Integer pageSize, String piContactUserName) {
         log.debug("DAO getting projects");
         List<Project> projects = new ArrayList<>();
-        Integer contactId = (Optional.ofNullable(piContactId)).orElse(0);
+        piContactUserName = (Optional.ofNullable(piContactUserName)).orElse("");
 
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -53,11 +53,11 @@ public class ProjectDaoImpl implements ProjectDao {
             Root<Project> projectRoot = criteriaQuery.from(Project.class);
             projectRoot.fetch("contact");
             criteriaQuery.select(projectRoot);
-            if (contactId > 0) {
+            if (!piContactUserName.isBlank()) {
                 criteriaQuery.where(
                     criteriaBuilder.equal(
-                        projectRoot.get("contact"),
-                        contactId
+                        projectRoot.get("contact").get("username"),
+                        piContactUserName
                     )
                 );
             }
@@ -103,8 +103,16 @@ public class ProjectDaoImpl implements ProjectDao {
     @Override
     public Project getProject(Integer projectId) {
         log.info("Getting project %d", projectId );
-        Project project = em.find(Project.class, projectId, getContactHints());
-        return project;
+        try {
+            Project project = em.find(Project.class, projectId, getContactHints());
+            return project;
+        }
+        catch (IllegalArgumentException e) {
+            throw new GobiiException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.UNKNOWN,
+                "Unable tp fetch project");
+        }
     }
 
     private Map<String, Object> getContactHints() {
