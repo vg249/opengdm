@@ -476,7 +476,12 @@ public final class GobiiClientContext {
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
             
-            String httpScheme = gobiiUrl.getProtocol();
+            String httpScheme = "http";
+        
+            if(gobiiUrl != null) {
+                httpScheme = gobiiUrl.getProtocol();
+            }
+            
 
             this.httpCore = new HttpCore(this.getCurrentCropDomain(),
                     this.getCurrentCropPort(),
