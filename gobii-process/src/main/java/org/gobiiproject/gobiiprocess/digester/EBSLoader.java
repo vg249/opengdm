@@ -68,7 +68,7 @@ public class EBSLoader {
 
         //Map aspects
         ObjectMapper objectMapper = new ObjectMapper();
-        File aspectFile = new File("sourcefile");
+        File aspectFile = new File(loader.pathRoot + loader.aspectFilePath);
         FileAspect baseAspect = AspectParser.parse(Util.slurp(aspectFile));
 
 
@@ -113,8 +113,14 @@ public class EBSLoader {
 
         //IFL load intermediates
 
+        boolean hasMatrix=false;
         for(TableAspect table : baseAspect.getAspects().values()){
-            boolean success = loader.runIFL(intermediateDirectory, table.getTable(), outputDirectory);
+            String tableName = table.getTable();
+            if(tableName.equals("matrix")){
+                hasMatrix = true;
+                continue;//don't process the matrix
+            }
+            boolean success = loader.runIFL(intermediateDirectory, tableName, outputDirectory);
             if(!success){
                 System.err.println("Error in Intermediate File Load " + table.getTable());
                 errorCode=5;
@@ -126,6 +132,10 @@ public class EBSLoader {
                 new TypeReference<Map<String,Object>>(){});
         jsonMap.get("aspects");
          */
+
+        if(hasMatrix){
+            //todo - load matrix
+        }
 
 
 
@@ -195,6 +205,7 @@ public class EBSLoader {
     private String[] parseOpts(String[] args){
         Options o = new Options()
                 .addOption("pr", "pathRoot", true, "Fully qualified path to gobii bundle root")
+                .addOption("a", "aspect", true, "Aspect file path or name")
                 .addOption("crop", "cropName", true, "Name of crop being loaded (and paths to place output)")
                 .addOption("dbh", "dbHost", true, "Database hostname")
                 .addOption("dbp", "dPort", true, "Database port")
@@ -202,7 +213,7 @@ public class EBSLoader {
                 .addOption("dbpw", "dbPassword", true, "Database password")
                 .addOption("bd", "baseDir", true, "Fully qualified path to intermediate and output base directories")
                 .addOption("v", "verbose", false, "Enable verbose console output")
-                .addOption("i", "inputFile", false, "input file path")
+                .addOption("i", "inputFile", true, "input file path")
                 .addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
 
 
@@ -210,6 +221,7 @@ public class EBSLoader {
         try {
             CommandLine cli = parser.parse(o, args);
             if (cli.hasOption("pathRoot")) pathRoot=cli.getOptionValue("pathRoot");
+            if (cli.hasOption("aspect")) aspectFilePath=cli.getOptionValue("aspect");
             if (cli.hasOption("verbose")) verbose=true;
             if (cli.hasOption("dbHost")) dbHost = cli.getOptionValue("dbHost");
             if (cli.hasOption("dbPort")) dbPort = cli.getOptionValue("dbPort");
@@ -220,10 +232,13 @@ public class EBSLoader {
             if (cli.hasOption("inputFile")) inputFile=cli.getOptionValue("inputFile");
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
+            if(inputFile == null || dbPass == null){
+                throw new ParseException("No required ops specified");
+            }
 
         } catch (org.apache.commons.cli.ParseException exp) {
-            new HelpFormatter().printHelp("java -jar EBSLoader.jar ", "Also accepts input file directly after arguments\n" +
-                    "Example: java -jar EBSLoader.jar -pw secretP@ssword -v -h crops/dev/hdf5/ -a intertekLD crops/dev/files/filea.txt", o, null, true);
+            new HelpFormatter().printHelp("java -jar EBSLoader.jar ", "" +
+                    "Example: java -jar EBSLoader.jar -pw secretP@ssword -v -h crops/dev/hdf5/ -a intertekLD -i crops/dev/files/filea.txt", o, null, true);
             System.exit(2);
         }
 
