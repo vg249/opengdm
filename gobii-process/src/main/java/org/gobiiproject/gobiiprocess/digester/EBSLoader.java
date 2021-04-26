@@ -41,8 +41,8 @@ public class EBSLoader {
     private String cropName="dev";
     private String dbHost="gobii-db";
     private String dbPort="5432";
-    private String dbUser="gobii";
-    private String dbName="dev";
+    private String dbUser="appuser";
+    private String dbName="gobii_dev";
     private String hdf5Path = "crops/dev/hdf5/";
     private boolean verbose = false;
     private String aspectFilePath="core/intertek.json";
@@ -87,7 +87,6 @@ public class EBSLoader {
             errorCode = 4;
             System.exit(errorCode);
         }
-        loader.addMD5(md5Sum);
 
 
         //create intermediates
@@ -144,6 +143,7 @@ public class EBSLoader {
         if(loader.verbose){
             System.out.println("Data successfully loaded to " + loader.dbHost+"/"+loader.dbName);
         }
+        loader.addMD5(md5Sum);
     }
 
     private String createIntermediateFolder(){
@@ -212,6 +212,7 @@ public class EBSLoader {
                 .addOption("dbp", "dPort", true, "Database port")
                 .addOption("dbu", "dbUser", true, "Database username")
                 .addOption("dbpw", "dbPassword", true, "Database password")
+                .addOption("dbn", "dbName", true, "Database to connect to's name")
                 .addOption("bd", "baseDir", true, "Fully qualified path to intermediate and output base directories")
                 .addOption("v", "verbose", false, "Enable verbose console output")
                 .addOption("i", "inputFile", true, "input file path")
@@ -227,6 +228,7 @@ public class EBSLoader {
             if (cli.hasOption("dbHost")) dbHost = cli.getOptionValue("dbHost");
             if (cli.hasOption("dbPort")) dbPort = cli.getOptionValue("dbPort");
             if (cli.hasOption("dbUser")) dbUser = cli.getOptionValue("dbUser");
+            if (cli.hasOption("dbName")) dbName = cli.getOptionValue("dbName");
             if (cli.hasOption("dbPassword")) dbPass = cli.getOptionValue("dbPassword");
             if (cli.hasOption("baseDir")) baseDirectory = cli.getOptionValue("baseDir");
             if (cli.hasOption("hdfFiles")) hdf5Path=cli.getOptionValue("hdfFiles");
@@ -300,7 +302,7 @@ public class EBSLoader {
 
     //Building commands
     private String iflCommand(String intermediatePath, String ifName, String outputPath){
-        return IFLPath+ "-v -c "+ pgURL()+" -i " +intermediatePath+"/digest."+ifName+" -o "+outputPath;
+        return pathRoot + IFLPath+ " -v -c "+ pgURL()+" -i " +intermediatePath+"/digest."+ifName+" -o "+outputPath;
     }
     private String masticatorCommand(String aspectPath, String dataPath, String intermediatePath){
         return "java -jar Masticator.jar -a "+aspectPath+" -d "+dataPath+" -o "+ intermediatePath;

@@ -6,10 +6,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -581,9 +578,12 @@ class ValidationUtil {
             }
             if (typeName.equalsIgnoreCase(ValidationConstants.CV)) {
                 //processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList);
-                processNameList(fieldNameList, typeName,fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList, dbConnectionString);
+                processCVList(fieldNameList, typeName,fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList, dbConnectionString);
             }
             else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
+                if(fieldToCompare.equals("reference_name")){// Don't want to fix the settings for this one.
+                    fieldToCompare = "name";
+                }
                 processNameList(fieldNameList, typeName,fieldToCompare, FailureTypes.UNDEFINED_REFERENCE_VALUE, failureList, dbConnectionString);
             }
             else{
@@ -602,11 +602,17 @@ class ValidationUtil {
         //Which returns:
         //| X |
         //| Y |
-        String jdbcConnector = "jdbc:" + dbConnectionString;
+        //postgres://
+        String user = dbConnectionString.substring(13,dbConnectionString.indexOf(':',13));
+        String password = dbConnectionString.substring(1+dbConnectionString.indexOf(':',13), dbConnectionString.indexOf("@",13));
+        String jdbcConnector = "jdbc:postgresql://" + dbConnectionString.substring(1+dbConnectionString.indexOf('@'));
         Connection conn = null;
         List<String> names = new ArrayList<String>();
         try {
-            conn = DriverManager.getConnection(jdbcConnector);
+            System.out.println("Connector: " + jdbcConnector);
+            System.out.println("User: " + user);
+            System.out.println("Password: " + password);
+            conn = DriverManager.getConnection(jdbcConnector,user, password);
 
             Statement statement = conn.createStatement();
             String fieldNameListAsString = fieldNameList.stream().collect(Collectors.joining("','", "('", "')"));
@@ -615,10 +621,17 @@ class ValidationUtil {
             while (results.next()) {
                 names.add(results.getString(1));//First column, one based integer system
             }
+            conn.close();
         } catch (Exception e) {
             Failure f = new Failure();
-            f.reason = FailureTypes.DATABASE_ERROR + " in Database Lookup";
+            System.err.println(e); //Todo - remove
+            f.reason = failureType + " in Database Lookup";
             failureList.add(f);
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                //ignore
+            }
             return;
         }
         List<String> namesNotInDB = new LinkedList(fieldNameList);
@@ -630,6 +643,70 @@ class ValidationUtil {
             failureList.add(missingEntityFailure);
         }
     }
+
+    private static void processCVList(Set<String> fieldNameList, String typeName, String fieldToCompare,  String failureType, List<Failure> failureList, String dbConnectionString) {
+
+        String cvTerm = null;
+        switch( fieldToCompare){
+            case "species_name":
+                cvTerm = "germplasm_species";
+                break;
+            case "type_name":
+                cvTerm =  "germplasm_type";
+                break;
+            case "strand_name":
+                cvTerm = "marker_strand";
+                break;
+            default:break;
+        }
+
+        if(cvTerm == null){
+            System.err.println("Invalid cv type: " + fieldToCompare);
+        }
+//        String jdbcConnector = "jdbc:" + dbConnectionString;
+        String user = dbConnectionString.substring(13,dbConnectionString.indexOf(':',13));
+        String password = dbConnectionString.substring(1+dbConnectionString.indexOf(':',13), dbConnectionString.indexOf("@",13));
+        String jdbcConnector = "jdbc:postgresql://" + dbConnectionString.substring(1+dbConnectionString.indexOf('@'));
+
+        Connection conn = null;
+        List<String> names = new ArrayList<String>();
+        try {
+            System.out.println("Connector: " + jdbcConnector);
+            System.out.println("User: " + user);
+            System.out.println("Password: " + password);
+            conn = DriverManager.getConnection(jdbcConnector,user, password);
+
+            Statement statement = conn.createStatement();
+            String fieldNameListAsString = fieldNameList.stream().collect(Collectors.joining("','", "('", "')"));
+            String cvTermAsList = "('"+cvTerm + "')";
+            ResultSet results = statement.executeQuery("SELECT term from cv join cvgroup ON cv.cvgroup_id = cvgroup.cvgroup_id WHERE term in " + fieldNameListAsString + " and cvgroup.name in " + cvTermAsList);
+
+            while (results.next()) {
+                names.add(results.getString(1));//First column, one based integer system
+            }
+            conn.close();
+        } catch (Exception e) {
+            Failure f = new Failure();
+            System.err.println(e); //Todo - remove
+            f.reason = failureType + " in Database Lookup";
+            failureList.add(f);
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                //don't care
+            }
+            return;
+        }
+        List<String> namesNotInDB = new LinkedList<String>(fieldNameList);
+        namesNotInDB.removeAll(names);
+        if (!namesNotInDB.isEmpty()) {
+            Failure missingEntityFailure = new Failure();
+            missingEntityFailure.reason = failureType;
+            missingEntityFailure.values = namesNotInDB;
+            failureList.add(missingEntityFailure);
+        }
+    }
+
 
 
     private static void validateDNASampleNameAndNum(String fileName, ConditionUnit condition, List<Failure> failureList, GobiiCropConfig cropConfig) throws MaximumErrorsValidationException {
