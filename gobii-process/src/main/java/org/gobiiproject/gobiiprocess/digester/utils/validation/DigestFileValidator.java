@@ -127,27 +127,19 @@ public class DigestFileValidator {
             ValidationResult validationResult = new ValidationResult();
             validationResult.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
             List<Failure> failures = new ArrayList<>();
-            if (loginToServer(url, username, password, null, failures)) {
-                try {
-                    List<ValidationResult> validationResultList = doValidations(validations, dbConnectionString, orientation);
-                    writer.write(validationResultList);
-                } catch (Exception e) {
-                    validationResult.status = ValidationConstants.FAILURE;
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.VALIDATION_ERROR;
-                    failure.values.add(e.getMessage());
-                    validationResult.failures.add(failure);
-                    List<ValidationResult> validationResultList = new ArrayList<>();
-                    validationResultList.add(validationResult);
-                    writer.write(validationResultList);
-                    Logger.logError("DigestFileValidator",e);
-                }
-            } else {
+            try {
+                List<ValidationResult> validationResultList = doValidations(validations, dbConnectionString, orientation);
+                writer.write(validationResultList);
+            } catch (Exception e) {
                 validationResult.status = ValidationConstants.FAILURE;
-                validationResult.failures.addAll(failures);
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.VALIDATION_ERROR;
+                failure.values.add(e.getMessage());
+                validationResult.failures.add(failure);
                 List<ValidationResult> validationResultList = new ArrayList<>();
                 validationResultList.add(validationResult);
                 writer.write(validationResultList);
+                Logger.logError("DigestFileValidator",e);
             }
             writer.close();
         } catch (IOException e) {

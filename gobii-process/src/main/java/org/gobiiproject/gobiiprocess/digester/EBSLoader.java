@@ -10,6 +10,7 @@ import org.gobii.masticator.aspects.FileAspect;
 import org.gobii.masticator.aspects.TableAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationConstants;
 import org.gobiiproject.gobiimodel.dto.instructions.validation.ValidationResult;
+import org.gobiiproject.gobiimodel.dto.instructions.validation.errorMessage.Failure;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
@@ -336,6 +337,9 @@ public class EBSLoader {
         for(ValidationResult status : validationResults){
             if(status.status.equalsIgnoreCase(ValidationConstants.FAILURE)){
                 hasAnyFailedStatuses=true;
+                for(Failure f : status.failures){
+                    System.out.println(f.reason + " " + f.columnName.get(0) + " " + f.values.get(0));
+                }
             }
         }
 
