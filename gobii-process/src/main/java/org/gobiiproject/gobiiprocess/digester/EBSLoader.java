@@ -338,7 +338,7 @@ public class EBSLoader {
             if(status.status.equalsIgnoreCase(ValidationConstants.FAILURE)){
                 hasAnyFailedStatuses=true;
                 for(Failure f : status.failures){
-                    System.out.println(f.reason + " " + f.columnName.get(0) + " " + f.values.get(0));
+                    System.out.println(f.reason + " " + (f.columnName!=null&&f.columnName.size()>0?f.columnName.get(0):"") + " " + (f.values!=null && f.values.size()>0?f.values.get(0)));
                 }
             }
         }
