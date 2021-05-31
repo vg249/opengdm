@@ -43,13 +43,20 @@ public class Digest1 implements Digest {
     private ConfigSettings configuration;
 
     private LoaderScripts loaderScripts;
+    private JobStatus jobStatus;
     
     private final ProcessMessage pm = new ProcessMessage();
+
     
     public Digest1(GobiiLoaderProcedure loaderProcedure, ConfigSettings configuration) {
         this.procedure = loaderProcedure;
         this.configuration = configuration;
         this.loaderScripts = new LoaderScripts(configuration.getFileSystemRoot());
+        jobStatus = getJobStatus(procedure.getJobName());
+    }
+
+    public JobStatus getJobStatus() {
+        return this.jobStatus;
     }
 
     public DigesterResult digest() throws GobiiException {
@@ -285,7 +292,6 @@ public class Digest1 implements Digest {
                 .setLoaderInstructionsMap(loaderInstructionMap)
                 .setLoaderInstructionsList(loaderInstructionList)
                 .setDatasetType(datasetType)
-                .setJobStatusObject(jobStatus)
                 .setDatasetId(dataSetId)
                 .setJobName(procedure.getJobName())
                 .setContactEmail(procedure.getMetadata().getContactEmail())

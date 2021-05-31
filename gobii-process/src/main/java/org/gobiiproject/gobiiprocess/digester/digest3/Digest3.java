@@ -90,6 +90,9 @@ public abstract class Digest3 implements Digest {
 
     abstract public DigesterResult digest();
 
+    public JobStatus getJobStatus() {
+        return jobStatus;
+    }
 
     /**
      * Masticator is the module. process the refactored instruction file.

@@ -10,11 +10,13 @@ import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
+import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 
 public abstract class GenotypeMatrixDigest extends Digest3 {
    
     
     protected DatasetDao datasetDao;
+    protected ExperimentDao experimentDao;
     protected GenotypeUploadRequestDTO uploadRequest;
     protected Dataset dataset;
     protected Experiment experiment;
@@ -28,6 +30,7 @@ public abstract class GenotypeMatrixDigest extends Digest3 {
             mapper.convertValue(loaderInstruction.getUserRequest(), 
                                 GenotypeUploadRequestDTO.class);                    
         this.datasetDao = SpringContextLoaderSingleton.getInstance().getBean(DatasetDao.class);
+        this.experimentDao = SpringContextLoaderSingleton.getInstance().getBean(ExperimentDao.class);
         if(uploadRequest.getDatasetId() == null) {
             throw new GobiiException("Required Dataset Id");
         }
@@ -35,7 +38,7 @@ public abstract class GenotypeMatrixDigest extends Digest3 {
 
     abstract public DigesterResult digest();
     
-    protected Dataset getDataset() {
+    protected Dataset getDataset() throws GobiiException {
        if(dataset == null) {
            Integer datasetId;
            try {
@@ -49,8 +52,11 @@ public abstract class GenotypeMatrixDigest extends Digest3 {
         return dataset;
     }
 
-    protected Experiment getExperiment() {
-        return getDataset().getExperiment();
+    protected Experiment getExperiment() throws GobiiException {
+        if (experiment == null) {
+            experiment = experimentDao.getExperiment(getDataset().getExperiment().getExperimentId());
+        }
+        return experiment;
     }
 
     protected Platform getPlatform() {
@@ -58,6 +64,10 @@ public abstract class GenotypeMatrixDigest extends Digest3 {
     }
 
     protected String getDataType() {
+        // Type is not a required property.
+        if(getDataset().getType() == null) {
+            return null;
+        }
         return getDataset().getType().getTerm();
     }
 

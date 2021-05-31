@@ -186,16 +186,28 @@ public class GobiiDigester {
         
         String logFile = setLogger(configuration, instructionFile.getAbsolutePath());
 
-        DigesterResult digestResult = new DigestFactory()
-            .getDigest(instructionFile, configuration)
-            .digest();
-
+        Digest digest = new DigestFactory().getDigest(instructionFile, configuration);
+        
         // Job status object for instruction file
-        JobStatus jobStatus = (JobStatus) digestResult.getJobStatusObject();
+        JobStatus jobStatus = digest.getJobStatus();
+
+        if(jobStatus == null) {
+            Logger.logError("Instruction Digest", "Unable to find the Job");
+            System.exit(2);
+        }
+
+        DigesterResult digestResult;
+        try {
+            digestResult = digest.digest();
+        }
+        catch (GobiiException gE) {
+            jobStatus.setError(gE.getMessage());
+            Logger.logError("Instruction Digest", gE.getMessage());
+            throw gE;
+        }
 
         // Validate Intermediate digest files.
         validateData(digestResult);
-
 
         // Load meta data if instruction file processing and validation is successful.
         boolean metaDataLoaded = false;
@@ -209,8 +221,6 @@ public class GobiiDigester {
             Logger.logWarning("Digester", "Aborted - Unsuccessfully Generated Files");
             jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
         }
-
-        
 
         // Load genotype matrix
         boolean dataLoaded = metaDataLoaded;

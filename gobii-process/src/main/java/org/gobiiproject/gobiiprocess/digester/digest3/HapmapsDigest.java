@@ -11,7 +11,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
@@ -64,8 +63,6 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
                "markerPositionStart", "pos",
                "markerPositionStop", "pos");
 
-    private GenotypeUploadRequestDTO uploadRequest;
-
     public HapmapsDigest(LoaderInstruction3 loaderInstruction, 
                          ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
@@ -81,11 +78,12 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
         Map<String, Table> aspects = new HashMap<>();
                 
 
-        filesToDigest = getFilesToDigest(uploadRequest.getInputFiles());
+        filesToDigest = getFilesToDigest(this.uploadRequest.getInputFiles());
 
         // To keep track of files having uniform dnarun names columsn across files
         String[] previousFileHeaders = {};
 
+        
         String dataType = getDataType();
 
         // Digested files are merged for each table.
@@ -213,7 +211,6 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
                 .setLoaderInstructionsMap(intermediateDigestFileMap)
                 .setLoaderInstructionsList(loadOrder)
                 .setDatasetType(dataType)
-                .setJobStatusObject(jobStatus)
                 .setDatasetId(getDataset().getDatasetId())
                 .setJobName(loaderInstruction.getJobName())
                 .setContactEmail(loaderInstruction.getContactEmail())
