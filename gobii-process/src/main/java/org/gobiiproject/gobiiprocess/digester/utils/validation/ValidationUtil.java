@@ -609,10 +609,7 @@ class ValidationUtil {
         Connection conn = null;
         List<String> names = new ArrayList<String>();
         try {
-            System.out.println("Connector: " + jdbcConnector);
-            System.out.println("User: " + user);
-            System.out.println("Password: " + password);
-            conn = DriverManager.getConnection(jdbcConnector,user, password);
+           conn = DriverManager.getConnection(jdbcConnector,user, password);
 
             Statement statement = conn.createStatement();
             String fieldNameListAsString = fieldNameList.stream().collect(Collectors.joining("','", "('", "')"));
@@ -624,7 +621,6 @@ class ValidationUtil {
             conn.close();
         } catch (Exception e) {
             Failure f = new Failure();
-            System.err.println(e); //Todo - remove
             f.reason = failureType + " in Database Lookup";
             failureList.add(f);
             try {
@@ -663,7 +659,7 @@ class ValidationUtil {
         if(cvTerm == null){
             System.err.println("Invalid cv type: " + fieldToCompare);
         }
-//        String jdbcConnector = "jdbc:" + dbConnectionString;
+
         String user = dbConnectionString.substring(13,dbConnectionString.indexOf(':',13));
         String password = dbConnectionString.substring(1+dbConnectionString.indexOf(':',13), dbConnectionString.indexOf("@",13));
         String jdbcConnector = "jdbc:postgresql://" + dbConnectionString.substring(1+dbConnectionString.indexOf('@'));
@@ -671,9 +667,6 @@ class ValidationUtil {
         Connection conn = null;
         List<String> names = new ArrayList<String>();
         try {
-            System.out.println("Connector: " + jdbcConnector);
-            System.out.println("User: " + user);
-            System.out.println("Password: " + password);
             conn = DriverManager.getConnection(jdbcConnector,user, password);
 
             Statement statement = conn.createStatement();
@@ -687,7 +680,6 @@ class ValidationUtil {
             conn.close();
         } catch (Exception e) {
             Failure f = new Failure();
-            System.err.println(e); //Todo - remove
             f.reason = failureType + " in Database Lookup";
             failureList.add(f);
             try {

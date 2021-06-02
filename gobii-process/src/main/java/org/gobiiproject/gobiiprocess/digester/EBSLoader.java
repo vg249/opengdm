@@ -20,6 +20,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,12 @@ public class EBSLoader {
 
     private String md5File = "core/md5List.txt";
 
+    private enum InputEntity{
+        Project, Platform, Experiment, Dataset, Germplasm_Species, Germplasm_Type
+    }
+
+    private HashMap<InputEntity, String> inputEntityValues = new HashMap<InputEntity, String>();
+
 
 
     //Defaultless items
@@ -68,7 +75,6 @@ public class EBSLoader {
         String[] remainingArgs = loader.parseOpts(args);
 
         //Map aspects
-        ObjectMapper objectMapper = new ObjectMapper();
         File aspectFile = new File(loader.pathRoot + loader.aspectFilePath);
         FileAspect baseAspect = AspectParser.parse(Util.slurp(aspectFile));
 
@@ -100,7 +106,6 @@ public class EBSLoader {
         try {
             boolean hasErrors = loader.validateMetadata(intermediateDirectory, validationFile, DatasetOrientationType.MARKER_FAST);//TODO - choose orientation correctly
             if(hasErrors){
-                System.err.println("Errors logged");
                 errorCode = 2;
                 System.exit(errorCode);
 
@@ -127,11 +132,6 @@ public class EBSLoader {
                 System.exit(errorCode);
             }
         }
-        /*
-         Map<String, Object> jsonMap = objectMapper.readValue(aspectFile,
-                new TypeReference<Map<String,Object>>(){});
-        jsonMap.get("aspects");
-         */
 
         if(hasMatrix){
             //todo - load matrix
@@ -218,6 +218,13 @@ public class EBSLoader {
                 .addOption("i", "inputFile", true, "input file path")
                 .addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
 
+        addEntityOption("dst", InputEntity.Dataset,o);
+        addEntityOption("exp", InputEntity.Experiment,o);
+        addEntityOption("grs", InputEntity.Germplasm_Species,o);
+        addEntityOption("grt", InputEntity.Germplasm_Type,o);
+        addEntityOption("pltfm", InputEntity.Platform,o);
+        addEntityOption("prjct", InputEntity.Project,o);
+
 
         CommandLineParser parser = new DefaultParser();
         try {
@@ -233,6 +240,12 @@ public class EBSLoader {
             if (cli.hasOption("baseDir")) baseDirectory = cli.getOptionValue("baseDir");
             if (cli.hasOption("hdfFiles")) hdf5Path=cli.getOptionValue("hdfFiles");
             if (cli.hasOption("inputFile")) inputFile=cli.getOptionValue("inputFile");
+
+            for(InputEntity entity: InputEntity.values()){
+                if(cli.hasOption(entity.toString())){
+                    inputEntityValues.put(entity, cli.getOptionValue(entity.toString()));
+                }
+            }
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
             if(inputFile == null || dbPass == null){
@@ -246,6 +259,10 @@ public class EBSLoader {
         }
 
         return args;
+    }
+
+    private static void addEntityOption(String shortOpt,  InputEntity entity, Options o){
+        o.addOption(shortOpt, entity.toString(),true, entity.toString() + " name to use for loading. Will create a new shell entity if no entity of this name exists");
     }
 
 
