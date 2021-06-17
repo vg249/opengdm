@@ -42,14 +42,14 @@ public class FileServiceImpl implements FilesService {
 
             ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructions.getStatus(cropType, jobId);
             if (extractorInstructionFilesDTO
-                    .getGobiiExtractorInstructions().size() > 0
+                    .getProcedure().getInstructions().size() > 0
                     && extractorInstructionFilesDTO
-                    .getGobiiExtractorInstructions()
+                    .getProcedure().getInstructions()
                     .get(0)
                     .getDataSetExtracts().size() > 0) {
 
                 GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTO
-                        .getGobiiExtractorInstructions()
+                        .getProcedure().getInstructions()
                         .get(0)
                         .getDataSetExtracts()
                         .get(0);

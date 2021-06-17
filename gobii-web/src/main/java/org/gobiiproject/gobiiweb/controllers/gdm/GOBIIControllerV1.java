@@ -3780,7 +3780,27 @@ public class GOBIIControllerV1 {
                     platformDTO, cropType());
 
         } catch (GobiiException e) {
+
             returnVal.getHeader().getStatus().addException(e);
+
+            /*
+               Almost all the v1 controllers methods have the same issue.
+               Since, GDM-509 concerns only for platforms, fixing only that.
+               TODO: this is being corrected in v3. But, in case,
+                v1 is continued to be used irrespective of v3,
+                this have to be corrected for all v1 controller methods with
+                a new GSD ticket.
+             */
+            if(e.getGobiiValidationStatusType()
+                    == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST) {
+
+                ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                        response,
+                        HttpStatus.CREATED,
+                        HttpStatus.NOT_FOUND);
+                return  returnVal;
+            }
+
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }

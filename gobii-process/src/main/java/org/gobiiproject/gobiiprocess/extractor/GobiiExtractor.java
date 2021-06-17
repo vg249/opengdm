@@ -46,6 +46,7 @@ import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractProcedure;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -159,7 +160,6 @@ public class GobiiExtractor {
 			Scanner s = new Scanner(System.in);
 			System.out.println("Enter Extractor Instruction File Location:");
 			instructionFile = s.nextLine();
-			if (instructionFile.equals("")) instructionFile = "scripts//jdl232_01_pretty.json";
 			s.close();
 		} else {
 			instructionFile = args[0];
@@ -168,8 +168,8 @@ public class GobiiExtractor {
 		Logger.logInfo("Extractor", "Beginning extract of " + instructionFile);
 		SimpleTimer.start("Extract");
 
-		List<GobiiExtractorInstruction> list = parseExtractorInstructionFile(instructionFile);
-		if (list == null || list.isEmpty()) {
+		GobiiExtractProcedure procedure = parseExtractorInstructionFile(instructionFile);
+		if (procedure == null || procedure.getInstructions().isEmpty()) {
 			Logger.logError("Extractor", "No instruction for file " + instructionFile);
 			return;
 		}
@@ -190,27 +190,21 @@ public class GobiiExtractor {
 			return;
 		}
 
-		GobiiExtractorInstruction firstExtractInstruction=list.get(0);
-		String firstCrop = firstExtractInstruction.getGobiiCropType();
-		String firstContactEmail = firstExtractInstruction.getContactEmail();
-		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
-        JobStatus jobStatus = null;
+		String crop = procedure.getMetadata().getGobiiCropType();
 
-        //Job Id is the 'name' part of the job file  /asd/de/name.json
+		//Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename = new File(instructionFile).getName();
 		String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
+		JobStatus jobStatus = null;
+		try {
+			jobStatus = new JobStatus(configuration, crop, jobFileName);
+		} catch (Exception e) {
+			Logger.logError("GobiiFileReader", "Error Checking Status", e);
+		}
+		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 
-		for (GobiiExtractorInstruction inst : list) {
-			String crop = inst.getGobiiCropType();
+		for (GobiiExtractorInstruction inst : procedure.getInstructions()) {
 			String extractType = "";
-			if (crop == null) crop = divineCrop(instructionFile);
-            SpringContextLoaderSingleton.init(crop, configuration);
-            try {
-                jobStatus = new JobStatus(jobFileName);
-            } catch (Exception e) {
-                Logger.logError("GobiiFileReader", "Error Checking Status", e);
-            }
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
@@ -246,7 +240,7 @@ public class GobiiExtractor {
 				jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(), "Extracting Metadata");
 				for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
 					String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
-					String jobUser = inst.getContactEmail();
+					String jobUser = procedure.getMetadata().getContactEmail();
 					pm = new ProcessMessage();
 					pm.setUser(jobUser);
 
@@ -263,7 +257,7 @@ public class GobiiExtractor {
 					String sampleFile = extractDir + "sample.file";
 					String projectFile = extractDir + "project.file";
 					String extractSummaryFile = extractDir + "summary.file";
-					if (inst.isQcCheck()) {//FIXES ERROR - KDC EXPECTS PROJECT SUMMARY IN SUMMARY.FILE
+					if (procedure.getMetadata().isQcCheck()) {//FIXES ERROR - KDC EXPECTS PROJECT SUMMARY IN SUMMARY.FILE
 						projectFile = extractDir + "summary.file"; //HACK, NEED FIX AND REMOVE LATER FOR CONSISTENCY
 						extractSummaryFile = extractDir + "project_summary.file";
 					}
@@ -460,11 +454,11 @@ public class GobiiExtractor {
 
 					ExtractSummaryWriter esw = new ExtractSummaryWriter();
 
-					pm.addCriteria("Crop", inst.getGobiiCropType());
-					pm.addCriteria("Email", inst.getContactEmail());
+					pm.addCriteria("Crop", crop);
+					pm.addCriteria("Email", procedure.getMetadata().getContactEmail());
 					pm.addCriteria("Job ID", jobFileName);
 					esw.addItem("Job ID", jobFileName);
-					esw.addItem("Submit as", inst.getContactEmail());
+					esw.addItem("Submit as", procedure.getMetadata().getContactEmail());
 					esw.addItem("Format", formatName);
 					if (!mapName.equals(defaultMapName)) {
 						esw.addItem("Mapset", mapName);
@@ -497,7 +491,6 @@ public class GobiiExtractor {
 					if ((extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) || (filterType == BY_MARKER && markerListFileLocation != null)) {
 						pm.addCriteria("Marker List", markerListFileLocation);
 						esw.addItem("Marker List", markerListFileLocation);
-
 					}
 
 					//Marker groups (spelled out, unlike marker and sample files)
@@ -526,7 +519,7 @@ public class GobiiExtractor {
 					}
 
 					//Note - link to place where it *will* be if there are no errors. Sadly, we won't know if it's right until we've sent all the emails already
-					String finalIFPath= configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE) + FilenameUtils.getName(instructionFile);
+					String finalIFPath= configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE) + FilenameUtils.getName(instructionFile);
 					pm.addPath("Instruction File", finalIFPath , true, configuration, false);
 					pm.addFolderPath("Output Directory", extractDir, configuration);
 					pm.addPath("Error Log", logFile, true, configuration, false);
@@ -654,30 +647,30 @@ public class GobiiExtractor {
 		            Logger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
 					/*Perform QC if the instruction is QC-based AND we are a successful extract*/
-					if (inst.isQcCheck()) {
+					if (procedure.getMetadata().isQcCheck()) {
 						if (overallSuccess) {//QC - Subsection #1 of 1
 							Logger.logInfo("Extractor", "qcCheck detected");
 							Logger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
 							jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
-							performQC(configuration, inst, crop, datasetName, datasetId, extractDir, mailInterface, extractType);
+							performQC(configuration, procedure, inst, crop, datasetName, datasetId, extractDir, mailInterface, extractType);
 							jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "QC Job Complete");
 						}
 					}
 					if (pm.getBody() == null) { //Make sure the PM body is set before we send it
 						pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
 					}
-					if (!inst.isQcCheck()) mailInterface.send(pm);//If it is QC - QC should send any success or failure emails.
+					if (!procedure.getMetadata().isQcCheck()) mailInterface.send(pm);//If it is QC - QC should send any success or failure emails.
 				}
 
 			} catch (Exception e) {
-				handleCriticalException(configuration, jobStatus, inst.getContactEmail(), e);
+				handleCriticalException(configuration, jobStatus, procedure.getMetadata().getContactEmail(), e);
 			}
 		}
 		try {
-			String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE));
+			String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 		}
 		catch(Exception e){
-			handleCriticalException(configuration, jobStatus, firstContactEmail, e);
+			handleCriticalException(configuration, jobStatus, procedure.getMetadata().getContactEmail(), e);
 		}
 	}
 
@@ -760,7 +753,7 @@ public class GobiiExtractor {
      * @param extractType   type of extract being performed
      * @throws Exception when an exception has occurred (all of them)
      */
-    private void performQC(ConfigSettings configSettings, GobiiExtractorInstruction inst, String crop, String datasetName, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
+    private void performQC(ConfigSettings configSettings, GobiiExtractProcedure procedure, GobiiExtractorInstruction inst, String crop, String datasetName, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
         if (configSettings.getGlobalServer(ServerType.KDC).getHost() == null) {
             Logger.logInfo("QC", "Unable to continue QC with the KDC host name being null");
             return;
@@ -826,7 +819,7 @@ public class GobiiExtractor {
                     Long qcJobID = jsonPayload.get("jobId").getAsLong();
                     Logger.logInfo("QC", "New QC job id: " + qcJobID);
                     ProcessMessage qcStartPm = new ProcessMessage();
-                    qcStartPm.setUser(inst.getContactEmail());
+                    qcStartPm.setUser(procedure.getMetadata().getContactEmail());
                     qcStartPm.setSubject("new QC Job #" + qcJobID);
                     qcStartPm.addIdentifier("QC Job Identifier", "", String.valueOf(qcJobID));
                     qcStartPm.addIdentifier("Dataset Identifier", datasetName, String.valueOf(datasetId));
@@ -872,7 +865,7 @@ public class GobiiExtractor {
 
 
                     ProcessMessage qcStatusPm = new ProcessMessage();
-                    qcStatusPm.setUser(inst.getContactEmail());
+                    qcStatusPm.setUser(procedure.getMetadata().getContactEmail());
                     qcStatusPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
                     qcStatusPm.addIdentifier("QC Job Identifier", "", String.valueOf(qcJobID));
                     qcStatusPm.addIdentifier("Dataset Identifier", datasetName, String.valueOf(datasetId));
@@ -985,17 +978,17 @@ public class GobiiExtractor {
      * @return List of Extractor Instructions to work on
      */
     //Interesting fact, there are no global settings of any kind, each instruction is an island
-    public List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename) {
+    public GobiiExtractProcedure parseExtractorInstructionFile(String filename) {
         ObjectMapper objectMapper = new ObjectMapper();
-        GobiiExtractorInstruction[] file = null;
+        GobiiExtractProcedure file = null;
 
         try {
-            file = objectMapper.readValue(new FileInputStream(filename), GobiiExtractorInstruction[].class);
+            file = objectMapper.readValue(new FileInputStream(filename), GobiiExtractProcedure.class);
         } catch (Exception e) {
             Logger.logError("Extractor", "ObjectMapper could not read instructions", e);
         }
         if (file == null) return null;
-        return Arrays.asList(file);
+        return file;
     }
 
     /**

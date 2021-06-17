@@ -2,11 +2,10 @@ package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
-/**
- * Created by Phil on 4/8/2016.
- */
+@Data
 public class ExtractorInstructionFilesDTO extends DTOBase {
 
 
@@ -22,31 +21,8 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
         ;
     }
 
-    private List<GobiiExtractorInstruction>  gobiiExtractorInstructions = new ArrayList<>();
+
     private String instructionFileName = null;
-
-    public List<GobiiExtractorInstruction> getGobiiExtractorInstructions() {
-        return gobiiExtractorInstructions;
-    }
-
-    public void setGobiiExtractorInstructions(List<GobiiExtractorInstruction> gobiiExtractorInstructions) {
-        this.gobiiExtractorInstructions = gobiiExtractorInstructions;
-    }
-
-    public String getInstructionFileName() {
-        return instructionFileName;
-    }
-
-    public void setInstructionFileName(String instructionFileName) {
-        this.instructionFileName = instructionFileName;
-    }
-
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
+    private GobiiExtractProcedure procedure = new GobiiExtractProcedure();
 
 }

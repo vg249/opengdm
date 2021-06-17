@@ -187,6 +187,55 @@
                         <source>9</source>
                         <target>9</target>
                     </configuration>
+                        <id>make-ebs-loader</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+
+                    <!--User Authentication Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>UserAuthentication</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.UserAuthentication</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-userauthentication</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+                    <!--gobii digest validation -->
+                    <execution>
+                        <configuration>
+                            <finalName>digestValidator</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-digestValidator</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+
+                </executions>
                 </plugin>
             </plugins>
     </build>
