@@ -118,6 +118,8 @@ public class DnaRunServiceImpl implements DnaRunService {
 
         loaderInstruction.setUserRequest(dnaRunUploadRequest);
 
+        loaderInstruction.setJobName(jobName);
+
         // Write instruction file
         Utils.writeInstructionFile(loaderInstruction, jobName, cropType);
 
