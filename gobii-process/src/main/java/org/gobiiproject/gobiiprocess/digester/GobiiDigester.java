@@ -215,6 +215,7 @@ public class GobiiDigester {
             metaDataLoaded = loadMetaData(digestResult, jobStatus);
             if (!metaDataLoaded) {
                 Logger.logError("FileReader", "No new data was uploaded.");
+                jobStatus.setError("No new data was uploaded.");
             }
         }
         else {

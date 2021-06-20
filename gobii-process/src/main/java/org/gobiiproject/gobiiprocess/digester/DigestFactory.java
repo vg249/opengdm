@@ -22,8 +22,7 @@ public class DigestFactory {
         // Try to map to loader instruction v3, if there is an exception, try to map it to v1
         LoaderInstruction3 loaderInstruction3;
         try {
-            loaderInstruction3 = mapper.readValue(instructionFile,
-                                                                 LoaderInstruction3.class);
+            loaderInstruction3 = mapper.readValue(instructionFile, LoaderInstruction3.class);
         }
         catch(IOException e) {
             throw new GobiiException("Unable to process instruction file");
