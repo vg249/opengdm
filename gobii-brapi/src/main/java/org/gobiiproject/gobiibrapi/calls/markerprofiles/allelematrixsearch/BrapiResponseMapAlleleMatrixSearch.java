@@ -65,8 +65,8 @@ public class BrapiResponseMapAlleleMatrixSearch {
         GobiiExtractorInstruction gobiiExtractorInstruction = new GobiiExtractorInstruction();
 
         gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
-        extractorInstructionFilesDTO.getProcedure().getMetadata().setContactId(1);
-        extractorInstructionFilesDTO.getProcedure().getInstructions().add(gobiiExtractorInstruction);
+        gobiiExtractorInstruction.setContactId(1);
+        extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
 
         String jobId = DateUtils.makeDateIdString();
         extractorInstructionFilesDTO.setInstructionFileName(jobId);
@@ -132,12 +132,12 @@ public class BrapiResponseMapAlleleMatrixSearch {
         String brapiAsynchStatus = null;
 
         if ((extractorInstructionFilesDTONew
-                .getProcedure().getInstructions().size() > 0) &&
+                .getGobiiExtractorInstructions().size() > 0) &&
                 (extractorInstructionFilesDTONew
-                        .getProcedure().getInstructions().get(0).getDataSetExtracts().size() > 0)) {
+                        .getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
 
             GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTONew
-                    .getProcedure().getInstructions()
+                    .getGobiiExtractorInstructions()
                     .get(0)
                     .getDataSetExtracts()
                     .get(0);
@@ -148,7 +148,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
             brapiAsynchStatus =  getBrapiJobStatus(jobProgressStatus);
 
             if (brapiAsynchStatus != null && brapiAsynchStatus.equals("FAILED")) {
-                throw new GobiiException("");
+                throw new GobiiException(gobiiDataSetExtract.getLogMessage());
             }
         }
 
@@ -204,18 +204,18 @@ public class BrapiResponseMapAlleleMatrixSearch {
                 .getStatus(crop, jobId);
 
         if ((extractorInstructionFilesDTONew
-                .getProcedure().getInstructions().size() > 0) &&
+                .getGobiiExtractorInstructions().size() > 0) &&
                 (extractorInstructionFilesDTONew
-                        .getProcedure().getInstructions().get(0).getDataSetExtracts().size() > 0)) {
+                        .getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
 
             GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTONew
-                    .getProcedure().getInstructions()
+                    .getGobiiExtractorInstructions()
                     .get(0)
                     .getDataSetExtracts()
                     .get(0);
 
-            if ((extractorInstructionFilesDTONew.getProcedure().getInstructions().size() > 0) &&
-                    (extractorInstructionFilesDTONew.getProcedure().getInstructions().get(0).getDataSetExtracts().size() > 0)) {
+            if ((extractorInstructionFilesDTONew.getGobiiExtractorInstructions().size() > 0) &&
+                    (extractorInstructionFilesDTONew.getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
 
                     if (gobiiDataSetExtract.getExtractedFiles().size() > 0) {
 
