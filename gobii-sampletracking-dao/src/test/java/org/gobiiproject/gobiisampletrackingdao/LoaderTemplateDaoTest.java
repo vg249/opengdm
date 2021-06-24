@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(locations = { "classpath:/spring/test-config.xml" })
 @Transactional
 @Slf4j
+@Ignore
 public class LoaderTemplateDaoTest {
     @PersistenceContext
     protected EntityManager em;

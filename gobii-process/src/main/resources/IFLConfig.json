@@ -7,6 +7,13 @@
      ],
      "requiredFields": {}
   },
+  "SAMPLES" : {
+    "loadOrder" : [
+       "germplasm",
+       "dnasample",
+       "dnarun"
+     ]
+  },
   "MATRIX": {
     "loadOrder" : [
        "marker",

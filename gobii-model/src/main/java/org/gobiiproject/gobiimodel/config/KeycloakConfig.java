@@ -15,17 +15,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class KeycloakConfig {
-    
-    @Element(required = true)
+
+    @Element(required = false)
     private String realm;
 
-    @Element(required = true)
+    @Element(required = false)
     private String resource;
-    
+
     @Element(required = false)
     private boolean bearerOnly = false;
 
-    @Element(required = true)
+    @Element(required = false)
     private String authServerUrl;
 
     @Element(required = false)
@@ -138,13 +138,13 @@ public class KeycloakConfig {
     private boolean verifyTokenAudience = false;
 
     //admin username & password
-    @Element(required = true)
+    @Element(required = false)
     private String adminUsername;
 
-    @Element(required = true)
+    @Element(required = false)
     private String adminPassword;
-    
+
     //Added for extractor UI config
-    @Element(required = true)
+    @Element(required = false)
     private String extractorUIClient;
 }

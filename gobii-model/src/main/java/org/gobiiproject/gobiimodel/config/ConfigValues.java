@@ -84,6 +84,18 @@ class ConfigValues {
                         false,
                         null)
         );
+
+        this.globalServersByServerType.put(ServerType.KEY_CLOAK,
+        new ServerConfig(ServerType.KEY_CLOAK,
+                "",
+                "",
+                null,
+                true,
+                "",
+                "",
+                false,
+                null)
+        );
     } // ctor
 
     @Element(required = false)
@@ -691,6 +703,6 @@ class ConfigValues {
 	}
 
 	public void setKeycloakConfig(KeycloakConfig config) {
-        this.setKeycloakConfig(config);
+        this.keycloakConfig = config;
 	}
 }
