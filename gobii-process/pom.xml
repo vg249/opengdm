@@ -146,6 +146,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.4</version>
                     <executions>
                         <execution>
                             <goals>
@@ -178,6 +179,34 @@
                                 </filters>
                             </configuration>
                         </execution>
+
+                        <!-- Separate Execution for EBSLoader. I don't really know what I'm doing, but hey, it's software. Cut twice, then eyeball it-->
+                        <execution>
+                            <id>EbsExecution</id>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <finalName>EbsLoader</finalName>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                                <transformers>
+                                    <transformer implementation=
+                                                         "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>org.gobiiproject.gobiiprocess.digester.EBSLoader</mainClass>
+                                    </transformer>
+                                </transformers>
+                                <filters>
+                                    <filter>
+                                        <artifact>*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
                 <plugin>
@@ -187,56 +216,7 @@
                         <source>9</source>
                         <target>9</target>
                     </configuration>
-                        <id>make-ebs-loader</id>
-                        <!-- bind to the packaging phase -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-
-                    <!--User Authentication Execution-->
-                    <execution>
-                        <configuration>
-                            <finalName>UserAuthentication</finalName>
-                            <archive>
-                                <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.UserAuthentication</mainClass>
-                                </manifest>
-                            </archive>
-                        </configuration>
-                        <id>make-userauthentication</id>
-                        <!-- bind to the packaging phase -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-
-                    </execution>
-
-                    <!--gobii digest validation -->
-                    <execution>
-                        <configuration>
-                            <finalName>digestValidator</finalName>
-                            <!-- MainClass in mainfest make a executable jar -->
-                            <archive>
-                                <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator</mainClass>
-                                </manifest>
-                            </archive>
-                        </configuration>
-                        <id>make-digestValidator</id>
-                        <!-- bind to the packaging phase -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-
-                    </execution>
-
-
-                </executions>
-                </plugin>
+                   </plugin>
             </plugins>
     </build>
 </project>
