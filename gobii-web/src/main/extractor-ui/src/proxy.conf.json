@@ -1,18 +1,18 @@
 {
   "/gdm/config/*": {
-    "target": "http://cbsugobiixvm10.biohpc.cornell.edu:8081/",
+    "target": "http://GDM-INSTANCE:8081/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/gdm/contacts/*": {
-    "target": "http://cbsugobiixvm10.biohpc.cornell.edu:8081/",
+    "target": "http://GDM-INSTANCE:8081/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/gdm/crops/*": {
-    "target": "http://cbsugobiixvm10.biohpc.cornell.edu:8081/",
+    "target": "http://GDM-INSTANCE:8081/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
