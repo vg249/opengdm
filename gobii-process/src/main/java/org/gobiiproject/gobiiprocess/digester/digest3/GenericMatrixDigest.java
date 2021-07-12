@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.digest3;
 
+import static org.mockito.ArgumentMatchers.booleanThat;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.templates.GenotypeMatrixTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
@@ -45,10 +48,13 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
     
     private GenotypeUploadRequestDTO uploadRequest;
+    private GenotypeMatrixTemplateDTO matrixTemplate;
 
     GenericMatrixDigest(LoaderInstruction3 loaderInstruction, 
                         ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
+        this.matrixTemplate = (GenotypeMatrixTemplateDTO) getLoaderTemplate(
+            uploadRequest.getGenotypeTemplateId(), GenotypeMatrixTemplateDTO.class);
     }
 
  
@@ -64,15 +70,54 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
             filesToDigest = getFilesToDigest(uploadRequest.getInputFiles());
 
-            // To keep track of files having uniform dnarun names columsn across files
-            String[] previousFileHeaders = {};
-
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
-
                 // Ignore non text file
                 if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
                     continue;
+                }
+
+                FileHeader fileHeader;
+                if(this.matrixTemplate.getHeaderLineNumber() != null) {
+                    fileHeader = this.getFileHeaderByLineNumber(
+                        fileToDigest, this.matrixTemplate.getHeaderLineNumber());
+                }
+                else if(this.matrixTemplate.getHeaderStartsWith() != null) {
+                    fileHeader = this.getFileHeaderByIdentifier(
+                        fileToDigest, this.matrixTemplate.getHeaderStartsWith());
+                }
+                else {
+                    throw new GobiiException("Invalid header identifier");
+                }
+                
+                if(this.matrixTemplate.isAreLeftLabelsVariantLabels()) {
+                    String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
+                    boolean isDnaRunIdColumnOriented = true;
+                    if(this.matrixTemplate.isAreLeftLabelsVariantLabels()) {
+                        isDnaRunIdColumnOriented = false;
+                    }
+                    aspects.put(
+                        datasetDnaRunTableName, 
+                        this.getDatasetDnaRunTable(
+                            fileHeader.getHeaders(),
+                            this.matrixTemplate.getHeaderLineNumber(), 
+                            this.matrixTemplate.getLeftLabelIdHeaderPosition(),
+                            this.matrixTemplate.getLeftLabelIdHeaderColumnName(),
+                            1,
+                            this.matrixTemplate.isAreLeftLabelsVariantLabels()));
+                }
+                else {
+                    String datasetMarkerTableName = AspectUtils.getTableName(DatasetMarkerTable.class);
+                    aspects.put(
+                        datasetMarkerTableName, 
+                        this.getDatasetMarkerTable(
+                            fileHeader.getHeaders(),
+                            this.matrixTemplate.getHeaderLineNumber(), 
+                            this.matrixTemplate.getLeftLabelIdHeaderPosition(),
+                            this.matrixTemplate.getLeftLabelIdHeaderColumnName(),
+                            1,
+                            this.matrixTemplate.isAreLeftLabelsVariantLabels()));
+
                 }
             }
         }
@@ -106,5 +151,7 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
         return digesterResult;
     }
+
+
 
 }
