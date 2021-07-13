@@ -117,6 +117,26 @@ public class GobiiFileUtils {
         }
         return file;
     }
+    
+    /**
+     * Used in GDM V3 JobsController for streaming job files zip format to the client.
+     * @param file
+     * @param filename
+     * @param zipOut
+     * @throws IOException
+     */
+    public static void streamZipFiles(List<File> files, String filename, ZipOutputStream zipOut) throws IOException {
+        Integer jobDirectoryIndex = 1;
+        for(File file : files) {
+            String childDirName = filename + "/" + jobDirectoryIndex.toString();
+            if(jobDirectoryIndex == 1) {
+                zipOut.putNextEntry(new ZipEntry(filename + "/"));
+                zipOut.closeEntry();
+            }
+            GobiiFileUtils.streamZipFile(file, childDirName, zipOut);
+            jobDirectoryIndex++;
+        }
+    }
 
     /**
      * Used in GDM V3 JobsController for streaming job files zip format to the client.
