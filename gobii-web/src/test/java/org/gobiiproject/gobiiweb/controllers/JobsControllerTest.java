@@ -33,7 +33,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 @ActiveProfiles("projectsController-test")

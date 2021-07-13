@@ -3,7 +3,6 @@ package org.gobiiproject.gobiimodel.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.gobiiproject.gobiimodel.config.GobiiException;
