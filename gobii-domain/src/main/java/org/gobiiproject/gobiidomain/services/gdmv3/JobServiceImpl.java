@@ -9,6 +9,8 @@ import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
@@ -25,7 +27,11 @@ import lombok.extern.log4j.Log4j;
 
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -69,8 +75,9 @@ public class JobServiceImpl implements JobService {
         ContactDTO submittedBy = new ContactDTO();
         jobDTO.setSubmittedBy(submittedBy);
         ModelMapper.mapEntityToDto(job.getSubmittedBy(), submittedBy);
-     
-        if(getJobStatusDirectory(cropType, job) != null) { 
+        
+        List<File> jobOutputDirectories = getJobOutputDirectories(cropType, job);
+        if(jobOutputDirectories != null && jobOutputDirectories.size() > 0) { 
             String jobFilesDownloadUrl = 
                 MessageFormat.format(jobFilesDownloadUrlFormat, job.getJobId(), job.getJobName()); 
             jobDTO.setJobFilesDownloadUrl(jobFilesDownloadUrl);
@@ -126,21 +133,24 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
-    public File getJobStatusDirectory(String cropType, Integer jobId) throws GobiiException {
+    public List<File> getJobOutputDirectories(String cropType, Integer jobId) throws GobiiException {
         Job job = jobDao.getById(jobId);
-        return getJobStatusDirectory(cropType, job);
+        return getJobOutputDirectories(cropType, job);
     }
     
-    private File getJobStatusDirectory(String cropType, Job job) throws GobiiException {
+    private List<File> getJobOutputDirectories(String cropType, Job job) throws GobiiException {
+
+
+        List<File> jobStatusDirectories = new ArrayList<>();
+
         if (job == null) {
-            return null;
+            return jobStatusDirectories;
         }
 
-        JobProgressStatusType status =  
-            JobProgressStatusType.byValue(job.getStatus().getTerm());
+        JobProgressStatusType status = JobProgressStatusType.byValue(job.getStatus().getTerm());
         
         if(status == null) {
-            return null;
+            return jobStatusDirectories;
         }
 
         String type = job.getType().getTerm();
@@ -149,10 +159,12 @@ public class JobServiceImpl implements JobService {
         if (type.equals(EXTRACT)) {
             switch (status) {
                 case CV_PROGRESSSTATUS_COMPLETED: 
-                    dir = GobiiFileProcessDir.EXTRACTOR_OUTPUT; break;
+                    dir = GobiiFileProcessDir.EXTRACTOR_DONE; break;
                 default:
                     dir = null; break; 
             }
+            if (dir == null) return jobStatusDirectories;
+            return getExtractJobFiles(job.getJobName(), dir, cropType);
         } else if (type.equals(LOAD)) {
             switch(status) {
                 case CV_PROGRESSSTATUS_COMPLETED: 
@@ -161,20 +173,67 @@ public class JobServiceImpl implements JobService {
                 default: 
                     dir = null; break; 
             }
+
+            if (dir == null) return jobStatusDirectories;
+
+            return getLoaderJobFiles(job.getJobName(), dir, cropType);
+
         } else {
             throw new GobiiException(GobiiStatusLevel.ERROR, 
                                      GobiiValidationStatusType.BAD_REQUEST, 
                                      "Job type not supported");
         }
+    }
 
-        if (dir == null) return null;
+
+    private List<File> getLoaderJobFiles(String jobName, GobiiFileProcessDir dir, String cropType) throws GobiiException {
+        List<File> loaderJobFiles = new ArrayList<>();
+        try {
+            String path = configSettings.getProcessingPath(cropType, dir);
+            log.debug("Path for job is " + path + "/" + jobName);
+            File jobFileDirectory  = new File(path, jobName);
+            if(jobFileDirectory.isDirectory()) {
+                loaderJobFiles.add(jobFileDirectory);
+            }
+        }
+        catch(Exception e) {
+            throw new GobiiException(GobiiStatusLevel.ERROR, 
+                                     GobiiValidationStatusType.UNKNOWN, 
+                                     "Error in GDM file system configuration. " +
+                                     "Contact administrator");
+        }
+        return loaderJobFiles;
+    }
+
+    private List<File> getExtractJobFiles(
+        String jobName, GobiiFileProcessDir dir, String cropType) throws GobiiException {
+        
+        List<File> extractJobFiles = new ArrayList<>();
 
         try {
             String path = configSettings.getProcessingPath(cropType, dir);
-            log.debug("Path for job is " + path + "/" + job.getJobName());
-            File jobFileDirectory  = new File(path, job.getJobName());
-            if(jobFileDirectory.isDirectory()) {
-                return jobFileDirectory;
+            String extractInstructionFileName = jobName + ".json";
+            log.debug("Path for job is " + path + "/" + extractInstructionFileName);
+            File jobInstructionFile  = new File(path, extractInstructionFileName);
+            
+            if (jobInstructionFile.exists()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                GobiiExtractorInstruction[] extractorInstructions = 
+                    objectMapper.readValue(new FileInputStream(jobInstructionFile), GobiiExtractorInstruction[].class);
+                    
+                for(GobiiExtractorInstruction extractorInstruction : extractorInstructions) {
+
+                    for(GobiiDataSetExtract dataSetExtract : extractorInstruction.getDataSetExtracts()) {
+                        if(dataSetExtract.getExtractDestinationDirectory() != null  
+                           && !dataSetExtract.getExtractDestinationDirectory().isBlank()) {
+                               File extractOutputDir = new File(dataSetExtract.getExtractDestinationDirectory());
+                               if(extractOutputDir.isDirectory()) {
+                                   extractJobFiles.add(extractOutputDir);
+                               }
+                        }
+                    }
+                }
+
             }
         }
         catch(Exception e) {
@@ -184,7 +243,8 @@ public class JobServiceImpl implements JobService {
                                      "Contact administrator");
         }
 
-        return null;
+        return extractJobFiles;
+
     }
 
     @Override

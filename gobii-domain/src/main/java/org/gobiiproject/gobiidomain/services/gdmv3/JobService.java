@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import java.io.File;
+import java.util.List;
 
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -16,5 +17,5 @@ public interface JobService {
         String username, boolean getLoadJobs, 
         boolean getExtractJobs, String cropType
     );
-	File getJobStatusDirectory(String cropType, Integer jobId) throws Exception;
+	List<File> getJobOutputDirectories(String cropType, Integer jobId) throws Exception;
 }
