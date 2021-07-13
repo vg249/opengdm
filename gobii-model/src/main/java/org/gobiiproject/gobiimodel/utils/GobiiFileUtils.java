@@ -119,7 +119,7 @@ public class GobiiFileUtils {
     
     /**
      * Used in GDM V3 JobsController for streaming job files zip format to the client.
-     * @param file
+     * @param files
      * @param filename
      * @param zipOut
      * @throws IOException

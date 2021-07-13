@@ -218,19 +218,8 @@ public class JobServiceImpl implements JobService {
             
             if (jobInstructionFile.exists()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                GobiiExtractorInstruction[] extractorInstructions = null;
-
-                try {
-                    extractorInstructions = 
-                        objectMapper.readValue(
-                            new FileInputStream(jobInstructionFile), 
-                            GobiiExtractorInstruction[].class);
-                } catch (Exception e) {
-                    throw new GobiiException(GobiiStatusLevel.ERROR, 
-                                             GobiiValidationStatusType.UNKNOWN, 
-                                             "Error in GDM file system configuration. " +
-                                             "Contact administrator");
-                }
+                GobiiExtractorInstruction[] extractorInstructions = 
+                    objectMapper.readValue(new FileInputStream(jobInstructionFile), GobiiExtractorInstruction[].class);
                     
                 for(GobiiExtractorInstruction extractorInstruction : extractorInstructions) {
 
