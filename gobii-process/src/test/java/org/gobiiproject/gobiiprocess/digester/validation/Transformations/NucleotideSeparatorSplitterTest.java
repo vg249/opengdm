@@ -21,7 +21,7 @@ public class NucleotideSeparatorSplitterTest {
 
     static boolean runnerHadError = false;
     static List<String> runnerErrorMessage = new ArrayList<String>();
-    Set<String> normalMissingSegments = Stream.of("?","uncallable","unc").collect(Collectors.toSet());
+    Set<String> normalMissingSegments = Stream.of("?","uncallable","unc", "unused").collect(Collectors.toSet());
     NucleotideSeparatorSplitter nss = new NucleotideSeparatorSplitter(4,normalMissingSegments);
 
     /**
@@ -187,8 +187,8 @@ public class NucleotideSeparatorSplitterTest {
 
     @Test
     public void testAllUnknownElementsCase(){
-        List<String> input = Arrays.asList("?","?","Uncallable","uNcAlLAblE","UNC");
-        List<String> expectedOutput = Arrays.asList("N/N/N/N","N/N/N/N","N/N/N/N","N/N/N/N","N/N/N/N");
+        List<String> input = Arrays.asList("?","?","Uncallable","uNcAlLAblE","UNC", "Unused");
+        List<String> expectedOutput = Arrays.asList("N/N/N/N", "N/N/N/N", "N/N/N/N", "N/N/N/N", "N/N/N/N", "N/N/N/N");
 
         List<String> output = runSplitter(input);
         noErrorsExpected();

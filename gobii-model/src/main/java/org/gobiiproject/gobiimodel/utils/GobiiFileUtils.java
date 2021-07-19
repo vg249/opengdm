@@ -3,7 +3,6 @@ package org.gobiiproject.gobiimodel.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -116,6 +115,26 @@ public class GobiiFileUtils {
             }
         }
         return file;
+    }
+    
+    /**
+     * Used in GDM V3 JobsController for streaming job files zip format to the client.
+     * @param files
+     * @param filename
+     * @param zipOut
+     * @throws IOException
+     */
+    public static void streamZipFiles(List<File> files, String filename, ZipOutputStream zipOut) throws IOException {
+        Integer jobDirectoryIndex = 1;
+        for(File file : files) {
+            String childDirName = filename + "/" + jobDirectoryIndex.toString();
+            if(jobDirectoryIndex == 1) {
+                zipOut.putNextEntry(new ZipEntry(filename + "/"));
+                zipOut.closeEntry();
+            }
+            GobiiFileUtils.streamZipFile(file, childDirName, zipOut);
+            jobDirectoryIndex++;
+        }
     }
 
     /**
