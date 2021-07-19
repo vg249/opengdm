@@ -28,7 +28,6 @@ import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.entity.Platform;
 import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
-import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.gobiiproject.gobiimodel.validators.FieldValidator;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
@@ -80,10 +79,6 @@ public class MarkersDigest extends Digest3 {
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
 
-                // Ignore non text file
-                if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
-                    continue;
-                }
 
                 Map<String, Table> aspects = getAspects(fileToDigest);
 
@@ -104,10 +99,7 @@ public class MarkersDigest extends Digest3 {
         }
 
         // Get the load order from ifl config
-        List<String> loadOrder = getLoadOrder();
-        if(loadOrder == null || loadOrder.size() <= 0) {
-            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-        }
+        List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
                 .Builder()

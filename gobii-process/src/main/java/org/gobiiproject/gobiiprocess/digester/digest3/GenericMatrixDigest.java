@@ -1,45 +1,21 @@
 package org.gobiiproject.gobiiprocess.digester.digest3;
 
-import static org.mockito.ArgumentMatchers.booleanThat;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.GenotypeMatrixTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetDnaRunTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetMarkerTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaRunTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaSampleTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.GermplasmTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixAspect;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformAspect;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiimodel.entity.Dataset;
-import org.gobiiproject.gobiimodel.entity.Experiment;
-import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
-import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
-import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
-import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
     
-    private GenotypeUploadRequestDTO uploadRequest;
     private GenotypeMatrixTemplateDTO matrixTemplate;
 
     GenericMatrixDigest(LoaderInstruction3 loaderInstruction, 
@@ -72,10 +47,6 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
-                // Ignore non text file
-                if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
-                    continue;
-                }
 
                 FileHeader fileHeader;
                 if(this.matrixTemplate.getHeaderLineNumber() != null) {
@@ -127,10 +98,7 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
         }
         
         // Get the load order from ifl config
-        List<String> loadOrder = getLoadOrder();
-        if(loadOrder == null || loadOrder.size() <= 0) {
-            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-        }
+        List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
                 .Builder()
@@ -153,5 +121,15 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
     }
 
 
+    private Map<String, File> processVariantAsLeftLabel() throws GobiiException {
+        Map<String, File> intermediateDigestFileMap = new HashMap<>();
+        return intermediateDigestFileMap;
+    }
+
+
+    private Map<String, File> processVarinatAsTopLabel() throws GobiiException {
+        Map<String, File> intermediateDigestFileMap = new HashMap<>();
+        return intermediateDigestFileMap;
+    }
 
 }

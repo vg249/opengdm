@@ -1,6 +1,13 @@
 package org.gobiiproject.gobiiprocess.digester.digest3;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -9,7 +16,13 @@ import org.gobiiproject.gobiimodel.dto.gdmv3.DnaRunUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaRunTable;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DnaSampleTable;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.GermplasmTable;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
@@ -17,14 +30,12 @@ import org.gobiiproject.gobiimodel.modelmapper.AspectMapper;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
-import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 
-import java.io.File;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SamplesDigest extends Digest3 {
@@ -94,11 +105,6 @@ public class SamplesDigest extends Digest3 {
             // Digested files are merged for each table.
             for(File fileToDigest : filesToDigest) {
 
-                // Ignore non text file
-                if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
-                    continue;
-                }
-
                 Map<String, Table> aspects = getAspects(fileToDigest);
 
                 // Masticate and set the output.
@@ -117,10 +123,7 @@ public class SamplesDigest extends Digest3 {
         }
 
         // Get the load order from ifl config
-        List<String> loadOrder = getLoadOrder();
-        if(loadOrder == null || loadOrder.size() <= 0) {
-            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-        }
+        List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
                 .Builder()

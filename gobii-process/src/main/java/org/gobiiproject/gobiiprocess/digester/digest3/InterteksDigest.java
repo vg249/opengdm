@@ -69,11 +69,6 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         // Digested files are merged for each table.
         for(File fileToDigest : filesToDigest) {
 
-            // Ignore non text file
-            if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
-                continue;
-            }
-
             // Get file header
             FileHeader fileHeader = 
                 getFileHeaderByIdentifier(fileToDigest, headerIdentifier);
@@ -158,10 +153,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         }
         
         // Get the load order from ifl config
-        List<String> loadOrder = getLoadOrder();
-        if(loadOrder == null || loadOrder.size() <= 0) {
-            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-        }
+        List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         // Transpose matrix as Intertek is Sample fast
         String transposeOutputFilePath = 

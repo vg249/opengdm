@@ -1,5 +1,17 @@
 package org.gobiiproject.gobiiprocess.digester.digest3;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
@@ -15,7 +27,12 @@ import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectMaps;
 import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ColumnAspect;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.JsonAspect;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
@@ -28,12 +45,6 @@ import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
 
 @Slf4j
 public abstract class Digest3 implements Digest {
@@ -297,6 +308,19 @@ public abstract class Digest3 implements Digest {
         return loaderInstructionList;
     }
 
+    protected List<String> getLoadOrder(Set<String> alternateValues) throws GobiiException {
+
+        // Get the load order from ifl config
+        List<String> loadOrder = getLoadOrder();
+
+        // If config not found return alternate values.
+        if(loadOrder == null || loadOrder.size() <= 0) {
+            loadOrder = new ArrayList<>(alternateValues);
+        }
+
+        return loadOrder;
+    }
+
     /**
      * @param propertyFieldNames
      * @return
@@ -366,18 +390,32 @@ public abstract class Digest3 implements Digest {
                 if(inputFile.isDirectory()) {
                     File[] filesArray = inputFile.listFiles();
                     if(filesArray != null) {
-                        filesToDigest.addAll(Arrays.asList(filesArray));
+                        for(File fileToDigest : filesArray) {
+                            if(GobiiFileUtils.isFileTextFile(fileToDigest)) {
+                                filesToDigest.add(fileToDigest);
+                            }
+                        }
                     }
                 }
-                else if(inputFile.getName().endsWith(GobiiFileUtils.TAR_GUNZIP_EXTENSION) &&
-                    inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
-                    filesToDigest = GobiiFileUtils.extractTarGunZipFile(inputFile);
+                else if(inputFile.getName().endsWith(GobiiFileUtils.TAR_GUNZIP_EXTENSION)) {
+                    List<File> extractedFiles = GobiiFileUtils.extractTarGunZipFile(inputFile);
+                    for(File fileToDigest : extractedFiles) {
+                        if(GobiiFileUtils.isFileTextFile(fileToDigest)) {
+                            filesToDigest.add(fileToDigest);
+                        }
+                    }
                 }
                 else if(inputFile.getName().endsWith(GobiiFileUtils.GUNZIP_EXTENSION)) {
-                    filesToDigest.add(GobiiFileUtils.extractGunZipFile(inputFile));
+                    File extractedFile = GobiiFileUtils.extractGunZipFile(inputFile);
+                    if(GobiiFileUtils.isFileTextFile(extractedFile)) {
+                        filesToDigest.add(extractedFile);
+                    }
+
                 }
                 else {
-                    filesToDigest.add(inputFile);
+                    if(GobiiFileUtils.isFileTextFile(inputFile)) {
+                        filesToDigest.add(inputFile);
+                    }
                 }
             }
             else {
@@ -386,6 +424,7 @@ public abstract class Digest3 implements Digest {
         }
         return filesToDigest;
     }
+
 
     protected void setPropertyAspect(Map<String, Object> aspectValues,
                                    ColumnAspect columnAspect,

@@ -29,13 +29,11 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 import org.gobiiproject.gobiiprocess.vcfinterface.HTSInterface;
-import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -96,11 +94,6 @@ public class VcfDigest extends GenotypeMatrixDigest {
 
         // Digested files are merged for each table.
         for(File fileToDigest : filesToDigest) {
-
-            // Ignore non text file
-            if(!GobiiFileUtils.isFileTextFile(fileToDigest)) {
-                continue;
-            }
 
             // Get file header
             FileHeader fileHeader = 
@@ -204,10 +197,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         }
         
         // Get the load order from ifl config
-        List<String> loadOrder = getLoadOrder();
-        if(loadOrder == null || loadOrder.size() <= 0) {
-            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-        }
+        List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
                 .Builder()
