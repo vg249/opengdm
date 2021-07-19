@@ -4,6 +4,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.io.Files;
 
@@ -84,7 +86,10 @@ public class JobsControllerTest {
         PowerMockito.mockStatic(CropRequestAnalyzer.class);
         when(CropRequestAnalyzer.getGobiiCropType()).thenReturn("dev");
 
-        when(jobService.getJobStatusDirectory("dev", 4)).thenReturn(tempDir);
+        List<File> testFiles = new ArrayList<>();
+        testFiles.add(tempDir);
+
+        when(jobService.getJobOutputDirectories("dev", 4)).thenReturn(testFiles);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gdm/crops/dev/gobii/v3/jobs/4/files").contextPath("/gdm"))
                 .andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
