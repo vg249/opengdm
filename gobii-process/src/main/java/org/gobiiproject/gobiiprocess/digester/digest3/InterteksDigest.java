@@ -158,10 +158,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         }
         
         // Get the load order from ifl config
-        List<String> loadOrder = getLoadOrder();
-        if(loadOrder == null || loadOrder.size() <= 0) {
-            loadOrder = new ArrayList<>(intermediateDigestFileMap.keySet());
-        }
+        List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         // Transpose matrix as Intertek is Sample fast
         String transposeOutputFilePath = 
