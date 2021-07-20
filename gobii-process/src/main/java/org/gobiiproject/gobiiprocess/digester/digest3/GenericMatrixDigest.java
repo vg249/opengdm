@@ -121,8 +121,15 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
     }
 
 
-    private Map<String, File> processVariantAsLeftLabel() throws GobiiException {
+    private Map<String, File> processVariantAsLeftLabel(List<File> filesToDigest) throws GobiiException {
+
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
+
+        // Digested files are merged for each table.
+        for(File fileToDigest : filesToDigest) {
+        }
+
+
         return intermediateDigestFileMap;
     }
 
