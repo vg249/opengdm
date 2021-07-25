@@ -80,7 +80,7 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
 
         filesToDigest = getFilesToDigest(this.uploadRequest.getInputFiles());
 
-        // To keep track of files having uniform dnarun names columsn across files
+        // To keep track of files having uniform dnarun names columns across files
         String[] previousFileHeaders = {};
 
         
@@ -132,7 +132,8 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
 
             }
             else if(!Arrays.equals(fileHeader.getHeaders(), previousFileHeaders)) {
-                throw new GobiiException("Files dont have same columns.");
+                String errorMessage = "Files dont have same columns";
+                log.error(errorMessage, new GobiiException(errorMessage));
             }
 
             // Set dataset_marker table aspect               

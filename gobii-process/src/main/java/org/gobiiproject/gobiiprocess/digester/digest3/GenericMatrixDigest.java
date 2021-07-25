@@ -11,10 +11,12 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.GenotypeMatrixTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetDnaRunTable;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.DatasetMarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.FileHeader;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
+import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,51 +48,6 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
             filesToDigest = getFilesToDigest(uploadRequest.getInputFiles());
 
             // Digested files are merged for each table.
-            for(File fileToDigest : filesToDigest) {
-
-                FileHeader fileHeader;
-                if(this.matrixTemplate.getHeaderLineNumber() != null) {
-                    fileHeader = this.getFileHeaderByLineNumber(
-                        fileToDigest, this.matrixTemplate.getHeaderLineNumber());
-                }
-                else if(this.matrixTemplate.getHeaderStartsWith() != null) {
-                    fileHeader = this.getFileHeaderByIdentifier(
-                        fileToDigest, this.matrixTemplate.getHeaderStartsWith());
-                }
-                else {
-                    throw new GobiiException("Invalid header identifier");
-                }
-                
-                if(this.matrixTemplate.isAreLeftLabelsVariantLabels()) {
-                    String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
-                    boolean isDnaRunIdColumnOriented = true;
-                    if(this.matrixTemplate.isAreLeftLabelsVariantLabels()) {
-                        isDnaRunIdColumnOriented = false;
-                    }
-                    aspects.put(
-                        datasetDnaRunTableName, 
-                        this.getDatasetDnaRunTable(
-                            fileHeader.getHeaders(),
-                            this.matrixTemplate.getHeaderLineNumber(), 
-                            this.matrixTemplate.getLeftLabelIdHeaderPosition(),
-                            this.matrixTemplate.getLeftLabelIdHeaderColumnName(),
-                            1,
-                            this.matrixTemplate.isAreLeftLabelsVariantLabels()));
-                }
-                else {
-                    String datasetMarkerTableName = AspectUtils.getTableName(DatasetMarkerTable.class);
-                    aspects.put(
-                        datasetMarkerTableName, 
-                        this.getDatasetMarkerTable(
-                            fileHeader.getHeaders(),
-                            this.matrixTemplate.getHeaderLineNumber(), 
-                            this.matrixTemplate.getLeftLabelIdHeaderPosition(),
-                            this.matrixTemplate.getLeftLabelIdHeaderColumnName(),
-                            1,
-                            this.matrixTemplate.isAreLeftLabelsVariantLabels()));
-
-                }
-            }
         }
         catch (Exception e) {
             log.error(e.getMessage());
@@ -124,12 +81,25 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
     private Map<String, File> processVariantAsLeftLabel(List<File> filesToDigest) throws GobiiException {
 
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
-
-        // Digested files are merged for each table.
+        Map<String, Table> aspects = new HashMap<>();
+        
+        // To keep track of files having uniform dnarun names columns across files
+        String[] previousFileHeaders = {};
+        
         for(File fileToDigest : filesToDigest) {
+
+            FileHeader fileHeader = getFileHeader(fileToDigest);
+            
+            if(previousFileHeaders.length == 0) {
+                previousFileHeaders = fileHeader.getHeaders();
+                
+                // Set Dna run aspect only once as dnarun names will be same across 
+                // all the files.
+                String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
+                aspects.put(datasetDnaRunTableName, getDatasetDnaRunTable(fileHeader));
+            }
+            
         }
-
-
         return intermediateDigestFileMap;
     }
 
@@ -137,6 +107,56 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
     private Map<String, File> processVarinatAsTopLabel() throws GobiiException {
         Map<String, File> intermediateDigestFileMap = new HashMap<>();
         return intermediateDigestFileMap;
+    }
+
+    private FileHeader getFileHeader(File fileToDigest) throws GobiiException {
+        
+        FileHeader fileHeader;
+
+        if(this.matrixTemplate.getHeaderLineNumber() != null) {
+            fileHeader = this.getFileHeaderByLineNumber(
+                fileToDigest, this.matrixTemplate.getHeaderLineNumber());
+        }
+        else if(this.matrixTemplate.getHeaderStartsWith() != null) {
+            fileHeader = this.getFileHeaderByIdentifier(
+                fileToDigest, this.matrixTemplate.getHeaderStartsWith());
+        }
+        else {
+            throw new GobiiException("Invalid header identifier");
+        }
+        return fileHeader;
+    }
+    
+    private DatasetDnaRunTable getDatasetDnaRunTable(FileHeader fileHeader) throws GobiiException {
+        
+       DatasetDnaRunTable datasetDnaRunTable = new DatasetDnaRunTable();
+        
+       datasetDnaRunTable.setDatasetId(uploadRequest.getDatasetId());
+
+       // Get Experiment id
+       Experiment experiment = getExperiment();
+       datasetDnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+       
+       datasetDnaRunTable.setPlatformId(getPlatform().getPlatformId().toString());
+
+       // Dnarun names starts after required columns in the file
+       Integer dnaRunNamesStartIndex = this.matrixTemplate.getTopLabelIdHeaderStartPosition();
+       if(dnaRunNamesStartIndex == null || dnaRunNamesStartIndex < 0) {
+           dnaRunNamesStartIndex = fileHeader.getHeaderColumnIndex(this.matrixTemplate.getTopLabelIdHeaderColumnName());
+       }
+       if(dnaRunNamesStartIndex != null && dnaRunNamesStartIndex > 0) {
+           RowAspect dnaRunNameRow = new RowAspect(fileHeader.getHeaderLineNumber(), dnaRunNamesStartIndex);
+           datasetDnaRunTable.setDnaRunName(dnaRunNameRow);
+       }
+       else {
+           throw new GobiiException("Invalid file header dnarun name start position");
+       }
+        
+       // Set Range aspect for hdf5 index                   
+       datasetDnaRunTable.setDatasetDnaRunIdx(new RangeAspect(1));
+       
+       return datasetDnaRunTable;
+
     }
 
 }

@@ -228,11 +228,9 @@ public class SamplesDigest extends Digest3 {
             dnaRunTable.setExperimentId(experiment.getExperimentId().toString());
         }
 
-        boolean dnaRunMapped =
-            AspectMapper.mapTemplateToAspects(dnaRunTemplate, dnaRunTable, aspectValues);
+        boolean dnaRunMapped = AspectMapper.mapTemplateToAspects(dnaRunTemplate, dnaRunTable, aspectValues);
 
-        boolean dnaSampleMapped =
-            AspectMapper.mapTemplateToAspects(dnaRunTemplate, dnaSampleTable, aspectValues);
+        boolean dnaSampleMapped = AspectMapper.mapTemplateToAspects(dnaRunTemplate, dnaSampleTable, aspectValues);
 
         boolean germplasmMapped =
             AspectMapper.mapTemplateToAspects(dnaRunTemplate, germplasmTable, aspectValues);
