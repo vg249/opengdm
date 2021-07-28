@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Helper class for Jackson Json serializer for Date objects.
- * Serializes Date String as following yyyy-MM-dd'T'hh:mm:ss.
- * Sets time zone as UTC.
+ * Sets time zone as UTC and
+ * Serializes Timestamp as Date String in "yyyy-MM-dd'T'HH:mm:ssZ" format.
  */
 @SuppressWarnings("serial")
 public class UtcDateSerializer extends StdSerializer<Date> {
