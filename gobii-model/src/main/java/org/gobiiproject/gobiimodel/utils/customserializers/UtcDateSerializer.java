@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 public class UtcDateSerializer extends StdSerializer<Date> {
 
     private SimpleDateFormat formatter = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss");
+            "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     public UtcDateSerializer() {
         this(null);
