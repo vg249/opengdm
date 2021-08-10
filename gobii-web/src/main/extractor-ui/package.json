@@ -37,7 +37,6 @@
     "jsdom": "^16.3.0",
     "keycloak-angular": "^7.3.1",
     "keycloak-js": "^10.0.2",
-    "ng2-file-upload": "^1.4.0",
     "ngx-bootstrap": "^5.6.1",
     "popper.js": "^1.16.1",
     "primeicons": "^4.0.0",
@@ -58,7 +57,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
-    "jasmine-core": "~3.5.0",
+    "jasmine-core": "~3.7.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.0.0",
     "karma-chrome-launcher": "~3.1.0",
@@ -68,6 +67,6 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "^3.7.5"
+    "typescript": "3.7.x"
   }
 }
