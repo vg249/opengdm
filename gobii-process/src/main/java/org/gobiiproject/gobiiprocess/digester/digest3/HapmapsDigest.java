@@ -109,6 +109,7 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
                 }
 
                 previousFileHeaders = fileHeader.getHeaders();
+                
                 // Set Dna run aspect only once as dnarun names will be same across 
                 // all the files.
                 String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
@@ -116,15 +117,18 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
 
                 if(uploadRequest.isLoadDnaRunNamesAsSamplesAndGermplasms()) {
 
+                    // Add aspect for danrun table
                     String dnaRunTableName = AspectUtils.getTableName(DnaRunTable.class);                         
-                    String dnaSampleTableName = AspectUtils.getTableName(DnaSampleTable.class);
-                    String germplasmTableName = AspectUtils.getTableName(GermplasmTable.class);
                     DnaRunTable dnaRunTable = getDnaRunTable(fileHeader.getHeaderLineNumber());
                     aspects.put(dnaRunTableName, dnaRunTable);
-
+                    
+                    // Add aspect for dnasample tale
+                    String dnaSampleTableName = AspectUtils.getTableName(DnaSampleTable.class);
                     DnaSampleTable dnaSampleTable = getDnaSampleTable(fileHeader.getHeaderLineNumber()) ;
                     aspects.put(dnaSampleTableName, dnaSampleTable);
-
+                    
+                    // Add aspect for germplasm table
+                    String germplasmTableName = AspectUtils.getTableName(GermplasmTable.class);
                     GermplasmTable germplasmTable = getGermplasmTable(fileHeader.getHeaderLineNumber()); 
                     aspects.put(germplasmTableName, germplasmTable);
 
