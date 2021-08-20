@@ -180,25 +180,6 @@
                             </configuration>
                         </execution>
                         
-                        <!--gobii config check Execution-->
-                        <execution>
-                            <configuration>
-                                <finalName>gobiiconfig</finalName>
-                                <!-- MainClass in mainfest make a executable jar -->
-                                <archive>
-                                    <manifest>
-                                        <mainClass>org.gobiiproject.gobiiprocess.GobiiConfig</mainClass>
-                                    </manifest>
-                                </archive>
-                            </configuration>
-                            <id>make-assembly</id>
-                            <!-- bind to the packaging phase -->
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-
-                        </execution>
 
 
                         <!--Extractor Execution-->
@@ -235,26 +216,6 @@
                             </configuration>
                         </execution>
 
-
-                        <!--gobii digest validation -->
-                        <execution>
-                            <configuration>
-                                <finalName>digestValidator</finalName>
-                                <!-- MainClass in mainfest make a executable jar -->
-                                <archive>
-                                    <manifest>
-                                        <mainClass>org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator</mainClass>
-                                    </manifest>
-                                </archive>
-                            </configuration>
-                            <id>make-digestValidator</id>
-                            <!-- bind to the packaging phase -->
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-
-                        </execution>
 
                     </executions>
                 </plugin>
