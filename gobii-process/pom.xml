@@ -148,6 +148,7 @@
                     <artifactId>maven-shade-plugin</artifactId>
                     <executions>
                         <execution>
+                            <id>make-digestor</id>
                             <goals>
                                 <goal>shade</goal>
                             </goals>
@@ -178,6 +179,83 @@
                                 </filters>
                             </configuration>
                         </execution>
+                        
+                        <!--gobii config check Execution-->
+                        <execution>
+                            <configuration>
+                                <finalName>gobiiconfig</finalName>
+                                <!-- MainClass in mainfest make a executable jar -->
+                                <archive>
+                                    <manifest>
+                                        <mainClass>org.gobiiproject.gobiiprocess.GobiiConfig</mainClass>
+                                    </manifest>
+                                </archive>
+                            </configuration>
+                            <id>make-assembly</id>
+                            <!-- bind to the packaging phase -->
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+
+                        </execution>
+
+
+                        <!--Extractor Execution-->
+                        <execution>
+                            <id>make-extractor</id>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <finalName>Extractor</finalName>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                                <transformers>
+                                    <transformer implementation=
+                                                         "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>org.gobiiproject.gobiiprocess.extractor.GobiiExtractor</mainClass>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>META-INF/spring.handlers</resource>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>META-INF/spring.schemas</resource>
+                                    </transformer>
+                                </transformers>
+                                <filters>
+                                    <filter>
+                                        <artifact>*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                            </configuration>
+                        </execution>
+
+
+                        <!--gobii digest validation -->
+                        <execution>
+                            <configuration>
+                                <finalName>digestValidator</finalName>
+                                <!-- MainClass in mainfest make a executable jar -->
+                                <archive>
+                                    <manifest>
+                                        <mainClass>org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator</mainClass>
+                                    </manifest>
+                                </archive>
+                            </configuration>
+                            <id>make-digestValidator</id>
+                            <!-- bind to the packaging phase -->
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+
+                        </execution>
+
                     </executions>
                 </plugin>
                 <plugin>
