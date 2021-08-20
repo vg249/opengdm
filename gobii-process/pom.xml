@@ -219,6 +219,66 @@
 
                     </executions>
                 </plugin>
+                  <!-- Maven Assembly Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <!-- get all project dependencies -->
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+
+                </configuration>
+                <executions>
+
+
+                    <!--gobii config check Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>gobiiconfig</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.GobiiConfig</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+
+                    <!--gobii digest validation -->
+                    <execution>
+                        <configuration>
+                            <finalName>digestValidator</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-digestValidator</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+
+                </executions>
+            </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
