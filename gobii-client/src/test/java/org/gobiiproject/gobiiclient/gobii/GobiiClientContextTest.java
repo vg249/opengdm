@@ -1,16 +1,15 @@
 package org.gobiiproject.gobiiclient.gobii;
 
-import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.junit.Test;
+import org.junit.Ignore;
 
 public class GobiiClientContextTest {
     
     
 
-    @Test
+    @Ignore
     public void testGetInstance() throws Exception {
         GobiiClientContext gobiiClientContext = 
             GobiiClientContext.getInstance(
