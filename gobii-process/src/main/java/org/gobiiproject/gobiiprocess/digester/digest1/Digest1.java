@@ -51,6 +51,7 @@ public class Digest1 implements Digest {
     public Digest1(GobiiLoaderProcedure loaderProcedure, ConfigSettings configuration) {
         this.procedure = loaderProcedure;
         this.configuration = configuration;
+        SpringContextLoaderSingleton.init(loaderProcedure.getMetadata().getGobiiCropType(), configuration);
         this.loaderScripts = new LoaderScripts(configuration.getFileSystemRoot());
         jobStatus = getJobStatus(procedure.getJobName());
     }
@@ -75,7 +76,6 @@ public class Digest1 implements Digest {
         String loadTypeName = "";//No load type name if default
         if (loadType.equals(GobiiFileType.GENERIC)) loadTypeName = loadType.name();
         GobiiCropConfig gobiiCropConfig = getGobiiCropConfig(configuration, cropType);
-        SpringContextLoaderSingleton.init(cropType, configuration);
         JobStatus jobStatus = getJobStatus(procedure.getJobName());
         jobStatus.set(
             JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(),
@@ -130,7 +130,7 @@ public class Digest1 implements Digest {
         }
 
         Path cropPath = Paths.get(configuration.getFileSystemRoot() +
-            "crops/"
+            "/crops/"
             + procedure.getMetadata().getGobiiCropType().toLowerCase());
 
         if (!(Files.exists(cropPath) &&

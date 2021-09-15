@@ -15,11 +15,9 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.CvService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
-import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
-import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiiweb.security.CropAuth;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -100,7 +98,6 @@ public class CvsController {
         CvDTO cvDTO = cvService.getCv(cvId);
         BrApiMasterPayload<CvDTO> payload = ControllerUtils.getMasterPayload(cvDTO);
         return ResponseEntity.ok(payload);
-
     }
 
     @CropAuth(CURATOR)

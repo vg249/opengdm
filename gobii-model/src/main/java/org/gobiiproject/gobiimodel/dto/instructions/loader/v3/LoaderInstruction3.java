@@ -1,21 +1,20 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader.v3;
 
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class LoaderInstruction3 {
 
-
-    private final String instructionType = "v3";
+    private String instructionType;
 
     @NotNull(message = "Required Crop Type")
     private String cropType;

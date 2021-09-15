@@ -38,6 +38,7 @@ public class GenotypeServiceImpl implements GenotypeService {
 
         LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
         
+        loaderInstruction.setInstructionType("v3");
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setCropType(cropType);
 

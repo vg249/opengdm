@@ -1,19 +1,22 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.MarkerUploadRequestDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
-import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Mapset;
+import org.gobiiproject.gobiimodel.entity.Platform;
+import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
-import org.gobiiproject.gobiisampletrackingdao.*;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
+import org.gobiiproject.gobiisampletrackingdao.PlatformDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @SuppressWarnings("unchecked")
 @Transactional
@@ -51,8 +54,9 @@ public class MarkerServiceImpl implements MarkerService {
                                  String cropType) throws GobiiException {
 
         LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
+        
+        loaderInstruction.setInstructionType("v3");
         loaderInstruction.setLoadType(loadType);
-
         loaderInstruction.setCropType(cropType);
 
         // Verify platform Id

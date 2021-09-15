@@ -1,21 +1,31 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DnaRunUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.*;
-import org.gobiiproject.gobiimodel.entity.*;
-import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.Project;
+import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.IntegerUtils;
-import org.gobiiproject.gobiisampletrackingdao.*;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
+import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Transactional
 public class DnaRunServiceImpl implements DnaRunService {
@@ -64,6 +74,8 @@ public class DnaRunServiceImpl implements DnaRunService {
 
 
         LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
+        
+        loaderInstruction.setInstructionType("v3");
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setAspects(new HashMap<>());
 
