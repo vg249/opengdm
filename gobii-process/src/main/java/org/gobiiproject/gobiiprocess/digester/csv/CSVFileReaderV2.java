@@ -324,7 +324,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                                         tempFileBufferedWriter.flush();
                                         tempFileBufferedWriter.close();
                                         FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(procedure, procedure.getInstructions().get(0)));
-                                        return new RowColPair<Integer>(totalCols, rowNo);
+                                        Logger.logWarning("CSVFileReaderV2","Not processing HTS further due to excess # of issues");
+                                        return new RowColPair<Integer>(rowNo, totalCols);
                                     }
                                 }
                             }

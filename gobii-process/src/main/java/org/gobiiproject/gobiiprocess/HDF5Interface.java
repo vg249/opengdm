@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,26 +46,39 @@ public class HDF5Interface {
      * @param dataSetId ID of dataset to create
      * @param crop crop to create the dataset for
      * @param errorPath Place to store temporary files in case of needing temporary files
-     * @param variantFilename Name of the dataset (Only used to set the postgres name [probably a bug)
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
      */
-    public static boolean createHDF5FromDataset(ProcessMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) throws Exception {
+    public static boolean createHDF5FromDataset(ProcessMessage dm,
+                                                String dst,
+                                                ConfigSettings configuration,
+                                                Integer dataSetId,
+                                                String crop,
+                                                String errorPath,
+                                                File variantFile) throws Exception {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
-        String loadHDF5= getPathToHDF5() +"loadHDF5";
+        String loadHDF5= Paths.get(getPathToHDF5(), "loadHDF5").toString();
         dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
-        int size=8;
+        int size = 8;
         switch(dst.toUpperCase()){
-            case "NUCLEOTIDE_4_LETTER": size = 4; break;
+            case "NUCLEOTIDE_4_LETTER":
+                size = 4;
+                break;
             case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
-                size=2;break;
-            case "SSR_ALLELE_SIZE":size=8;break;
+                size=2;
+                break;
+            case "SSR_ALLELE_SIZE":
+                size=8;
+                break;
             case "CO_DOMINANT_NON_NUCLEOTIDE":
-            case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
+            case "DOMINANT_NON_NUCLEOTIDE":
+                size=1;
+                break;
             default:
-                logError("Digester","Unknown type "+dst.toString());return false;
+                logError("Digester","Unknown type "+dst.toString());
+                return false;
         }
         Logger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
 
@@ -76,7 +90,7 @@ public class HDF5Interface {
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
         || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
-            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),null,"\t");
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"","\t");
         }
 
 
@@ -90,7 +104,7 @@ public class HDF5Interface {
             return false;
         }
 
-        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFile.getName(), HDF5File);
         return true;
     }
 
