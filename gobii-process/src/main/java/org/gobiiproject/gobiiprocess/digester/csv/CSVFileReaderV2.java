@@ -328,8 +328,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                                         return new RowColPair<Integer>(rowNo, totalCols);
                                     }
                                 }
-                            }
                             rowNo++;
+                            }
                             totalRows = rowNo;
                     }
                     catch(TribbleException e){
