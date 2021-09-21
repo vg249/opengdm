@@ -256,8 +256,9 @@ public class HDF5AllelicEncoder {
         int j = 0;
 
         while(i<inputRow.length) {
-            byte[] segment = new byte[20];//Arbitrary Large Number
-            while ((i< inputRow.length) && (inputRow[i] != elementSeparatorAsByte)) {
+            int segLen = 300;
+            byte[] segment = new byte[segLen];//Arbitrary Large Number
+            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
                 segment[j++] = inputRow[i++];
             }
             i++;
