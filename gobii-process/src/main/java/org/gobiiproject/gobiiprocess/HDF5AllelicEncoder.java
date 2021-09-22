@@ -276,7 +276,11 @@ public class HDF5AllelicEncoder {
     static class RowTranslator {
         List<String> nonstandardAlleles = new ArrayList<String>();
         HashSet<String> nonstandardAlleleMap = new HashSet<String>();
-        HashSet<String> unencodedAlleles = new HashSet<String>(Arrays.asList("A", "C", "G", "T","N","0","1","2","+","-",".","?"," "));
+        HashSet<String> unencodedAlleles = new HashSet<String>(Arrays.asList(
+                "A", "C", "G", "T","N",
+                "0","1","2","3","4","5","6","7","8","9",
+                "+","-",".","?"," "));
+
 
         /**
          * Create a RowTranslator from an 'encoded translator' key line
