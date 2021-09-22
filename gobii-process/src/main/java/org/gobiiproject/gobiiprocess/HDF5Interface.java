@@ -88,13 +88,15 @@ public class HDF5Interface {
         String hdf5MapFile = HDF5File+".idl";
 
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
-        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
+        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")
+        || dst.toUpperCase().equals("IUPAC")
+        || dst.toUpperCase().equals("VCF")) {
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
             HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"","\t");
         }
 
 
-        boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+        boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+ matrixFilePath +" "+HDF5File,null,errorPath);
 
         rmIfExist(tempMatrixFilePath);
         if(!success){
