@@ -326,6 +326,7 @@ public class HDF5Interface {
      */
     private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList) {
         String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
+        String newGenoFile = genoFile+".enc";
 
         String HDF5File= getFileLoc(dataSetId);
         // %s <orientation> <HDF5 file> <output file>
@@ -348,7 +349,7 @@ public class HDF5Interface {
 
             //decode in marker list
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), markerList, new File(genoFile), "/","\t"); //TODO- separator is always tab
+            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), markerList, new File(newGenoFile), "/","\t"); //TODO- separator is always tab
 
         }
         else {
@@ -362,14 +363,13 @@ public class HDF5Interface {
 
             //decode in dumpdataset
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(genoFile), "/","\t"); //TODO- separator is always tab
-
+            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(newGenoFile), "/","\t"); //TODO- separator is always tab
         }
         if(sampleList!=null){
-            filterDirectional(genoFile,sampleList,markerFast);
+            filterDirectional(newGenoFile,sampleList,markerFast);
         }
         Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
-        return genoFile;
+        return newGenoFile;
     }
 
     private static String getFileLoc(Integer dataSetId) {
