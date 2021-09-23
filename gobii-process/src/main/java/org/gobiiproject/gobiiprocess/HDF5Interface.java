@@ -94,7 +94,7 @@ public class HDF5Interface {
         || dst.toUpperCase().equals("VCF")) {
             finalMatrixFilePath = matrixFilePath+".enc";
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
-            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(finalMatrixFilePath), new File(hdf5MapFile),"","\t");
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(finalMatrixFilePath), new File(hdf5MapFile),"/","\t");
         }
 
 
