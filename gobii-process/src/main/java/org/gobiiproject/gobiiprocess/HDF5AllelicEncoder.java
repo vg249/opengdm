@@ -397,7 +397,7 @@ public class HDF5AllelicEncoder {
                 currentRowTranslator = new RowTranslator(); //blank translator for no translation needed
             }
             outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
-
+            segmentNum++;
         }
         return outRow.toString();
     }
