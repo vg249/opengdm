@@ -112,6 +112,15 @@ public class HDF5AllelicEncoder {
      * @param alleleSeparator
      * @param elementSeparator
      */
+    public static void createDecodedFile(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator, boolean markerFast) {
+    if(markerFast){
+        createDecodedFile(encodedFilePath,lookupFilePath,decodedFilePath,alleleSeparator,elementSeparator);
+    }
+    else{
+        createDecodedFileSampleFast(encodedFilePath,lookupFilePath,decodedFilePath,alleleSeparator,elementSeparator);
+        }
+    }
+
     public static void createDecodedFile(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator){
 
         BufferedReader lookupFile = null;
@@ -160,6 +169,45 @@ public class HDF5AllelicEncoder {
         }
     }
 
+    public static void createDecodedFileSampleFast(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator){
+        BufferedReader lookupFile = null;
+        try {
+            lookupFile = new BufferedReader(new FileReader(lookupFilePath));
+        }catch(Exception e){
+            //no lookup file
+        }
+        HashMap<Integer,String> lookupLineList = new HashMap<Integer,String>(); //Line #, Alts string
+        if(lookupFile!=null){
+            String line;
+            try {
+                while ((line = lookupFile.readLine()) != null){
+                    Integer row = Integer.parseInt(line.split(Pattern.quote("\t"))[0]);
+                    lookupLineList.put(row,line);
+                }
+            } catch (IOException e) {
+                Logger.logWarning("HDF5AllelicEncoder","Unable to parse lookup file",e);
+            }
+        }
+
+
+        try(
+                FileInputStream encodedFile = new FileInputStream(encodedFilePath);
+                BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
+        ){
+            //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
+            byte[] inputLine;
+            int i = 0;
+            while((inputLine=getBytesTillNewline(encodedFile)) != null) {
+                decodedFile.write(decodeRowSampleFast(inputLine,lookupLineList,alleleSeparator,elementSeparator)); //bleugh
+                decodedFile.write(System.lineSeparator());
+                i++;
+            }
+        } catch (Exception e) {
+            Logger.logError("HDF5AllelicEncoder", "Error decoding encoded HDF5 file",e);
+        }
+    }
+
+
 
     //ReadLine for FIS. Eww, but I need the raw bytes.
     private static byte[] getBytesTillNewline(FileInputStream fis) throws IOException {
@@ -187,7 +235,15 @@ public class HDF5AllelicEncoder {
     //This one's slightly different, as we need to align the output with the input marker list. As each line is currently a marker, we
     // can assume that the lines correspond to the nth entries in the 'marker list', which should be a zero based list of increasing numbers
     //corresponding to rows in the translation table.
-    public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
+    public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator, boolean markerFast) {
+        if(markerFast) {
+            createDecodedFileFromList(encodedFilePath,lookupFilePath,posList,decodedFilePath, alleleSeparator,elementSeparator);
+        }
+        else{
+            createDecodedFileFromListSampleFast(encodedFilePath,lookupFilePath,posList,decodedFilePath, alleleSeparator,elementSeparator);
+        }
+    }
+        public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
         Iterator<String> posListIterator = Arrays.stream(posList.split(",")).iterator();
 
         BufferedReader lookupFile = null;
@@ -219,19 +275,11 @@ public class HDF5AllelicEncoder {
                         }
                     }
                 }
-
-                if(lookupLine != null && nextLookupLineRow == i){
-                    currentRowTranslator = new RowTranslator(lookupLine);
-                }
-                else{ //Even if there's nothing to translate, the row still needs to have separators applied, so it gets to go through the sausage factory... Less code paths, but could be optimized
-                    decodedFile.write(decodeRow(inputLine,null,alleleSeparator,elementSeparator));
-                }
-
-                if(currentRowTranslator != null) {
+                if(lookupLine != null && nextLookupLineRow == i) {
                     decodedFile.write(decodeRow(inputLine,lookupLine,alleleSeparator,elementSeparator));
                 }
-                else{ //If there's nothing in the row to translate, just copy over. Simple as that, save some time and effort
-                    decodedFile.write(new String(inputLine,StandardCharsets.UTF_8));
+                else{
+                    decodedFile.write(decodeRow(inputLine,null,alleleSeparator,elementSeparator));
                 }
                 decodedFile.write(System.lineSeparator());
             }
@@ -239,6 +287,47 @@ public class HDF5AllelicEncoder {
             Logger.logError("HDF5AllelicEncoder", "Error decoding encoded HDF5 file",e);
         }
     }
+
+    public static void createDecodedFileFromListSampleFast(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
+        BufferedReader lookupFile = null;
+        try {
+            lookupFile = new BufferedReader(new FileReader(lookupFilePath));
+        }catch(Exception e){
+            //no lookup file
+        }
+        HashMap<Integer,String> lookupLineList = new HashMap<Integer,String>(); //Line #, Alts string
+        if(lookupFile!=null){
+            String line;
+            try {
+                while ((line = lookupFile.readLine()) != null){
+                    Integer row = Integer.parseInt(line.split(Pattern.quote("\t"))[0]);
+                    lookupLineList.put(row,line);
+                }
+            } catch (IOException e) {
+                Logger.logWarning("HDF5AllelicEncoder","Unable to parse lookup file",e);
+            }
+        }
+
+
+
+
+        try(
+                FileInputStream encodedFile = new FileInputStream(encodedFilePath);
+                BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
+        ){
+            //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
+
+            byte[] inputLine;
+            while(((inputLine=getBytesTillNewline(encodedFile)) != null)) {
+                Iterator<Integer> posListIterator = Arrays.stream(posList.split(",")).map(Integer::parseInt).iterator();
+                decodedFile.write(decodeRowSFList(inputLine,lookupLineList,posListIterator,alleleSeparator,elementSeparator));
+                decodedFile.write(System.lineSeparator());
+            }
+        } catch (Exception e) {
+            Logger.logError("HDF5AllelicEncoder", "Error decoding encoded HDF5 file",e);
+        }
+    }
+
 
 
 
@@ -272,6 +361,92 @@ public class HDF5AllelicEncoder {
         }
         return outRow.toString();
     }
+
+    public static String decodeRowSampleFast(byte[] inputRow, HashMap<Integer,String> lookupLineList, String alleleSeparator, String elementSeparator) throws Exception{
+        StringBuilder outRow=new StringBuilder();
+
+        byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
+
+
+
+        boolean first=true;
+        int i = 0;
+
+        int j = 0;
+
+        int segmentNum=0;
+
+        while(i<inputRow.length) {
+            int segLen = 300;
+            byte[] segment = new byte[segLen];//Arbitrary Large Number
+            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
+                segment[j++] = inputRow[i++];
+            }
+            i++;
+            if(!first){
+                outRow.append(elementSeparator);
+            }
+            else{
+                first=false;
+            }
+            RowTranslator currentRowTranslator;
+            if(lookupLineList.containsKey(segmentNum)) {
+                currentRowTranslator = new RowTranslator(lookupLineList.get(segmentNum));
+            }
+            else{
+                currentRowTranslator = new RowTranslator(); //blank translator for no translation needed
+            }
+            outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
+
+        }
+        return outRow.toString();
+    }
+
+    public static String decodeRowSFList(byte[] inputRow, HashMap<Integer,String> lookupLineList,Iterator<Integer> posList, String alleleSeparator, String elementSeparator) throws Exception{
+        StringBuilder outRow=new StringBuilder();
+
+        byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
+
+
+
+        boolean first=true;
+        int i = 0;
+
+        int j = 0;
+
+        int segmentNum=0;
+
+        while(i<inputRow.length) {
+            int segLen = 300;
+            byte[] segment = new byte[segLen];//Arbitrary Large Number
+            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
+                segment[j++] = inputRow[i++];
+            }
+            i++;
+            if(!first){
+                outRow.append(elementSeparator);
+            }
+            else{
+                first=false;
+            }
+            RowTranslator currentRowTranslator;
+
+            try{
+                segmentNum = posList.next();
+            }catch(NoSuchElementException e){
+                segmentNum=-1;//Once we're out of segments, just default to no translation
+            }
+            if(lookupLineList.containsKey(segmentNum)) {
+                currentRowTranslator = new RowTranslator(lookupLineList.get(segmentNum));
+            }
+            else{
+                currentRowTranslator = new RowTranslator(); //blank translator for no translation needed
+            }
+            outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
+        }
+        return outRow.toString();
+    }
+
 
     static class RowTranslator {
         List<String> nonstandardAlleles = new ArrayList<String>();
