@@ -11,6 +11,8 @@ import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
 
 import java.io.*;
 import java.util.*;
@@ -18,12 +20,29 @@ import java.util.stream.Collectors;
 
 public class HTSInterface {
     public static void main(String[] args) throws IOException {
-        String filetoread="C:\\Users\\jdl232.RS-BTOM1YJDL232\\Downloads\\" +"notareal.vcf";
+        String filetoread="C:\\Users\\jdl232.RS-BTOM1YJDL232\\Downloads\\" +"test.vcf";
         if(args.length > 0){
             filetoread=args[0];
         }
         File f = new File( filetoread);
-        getAllVariantsFromFile(f);
+        //getAllVariantsFromFile(f);
+        setupVariantOnlyInputLine(f);
+        List<String> outLine = getVariantOnlyInputLine("/");
+        MatrixValidation matrixValidation = new MatrixValidation("VCF", "", "");
+
+        int rowNo=0;
+        int colNo=0;
+        while(outLine!=null){
+            List<String> outputRowList = new ArrayList<>();
+            ValidationResult validationResult = matrixValidation.validate(0, 0, outLine, outputRowList, true /*isVCF*/, false);
+            System.out.println("The number of columns is: " + validationResult.numRows);
+            colNo=validationResult.numRows;
+            System.out.println(String.join("\t", outputRowList));
+            outLine=getVariantOnlyInputLine("/");
+        rowNo++;
+        }
+        System.out.println("The number of rows is " + rowNo + " and the number of columns is " + colNo);
+
     }
     static void getAllVariantsFromFile(File f) throws IOException {
         FeatureCodec<VariantContext, LineIterator> codec = new VCFCodec();

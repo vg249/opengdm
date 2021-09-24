@@ -4,11 +4,14 @@ import htsjdk.variant.variantcontext.Allele;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter;
 
+import javax.xml.bind.annotation.XmlType;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Class designed to work with @HDF5Interface to encode and then decode insertions, deletions, and other non-standard or
@@ -24,13 +27,15 @@ public class HDF5AllelicEncoder {
      * @return A pair of values, the data entry, and the inner value of the lookup table entry
      */
     public static EncodedValues encodeRow(String inputRow, String alleleSeparator, String elementSeparator) throws Exception {
-        StringBuilder outRow=new StringBuilder();
+        List<Byte> outBytes = new LinkedList<Byte>();
+        //StringBuilder outRow=new StringBuilder();
         RowTranslator currentRowTranslator = new RowTranslator();
 
         boolean first=true;
         for(String element:inputRow.split(Pattern.quote(elementSeparator))){
             if(!first){
-                outRow.append(elementSeparator);
+                for(byte b: elementSeparator.getBytes())outBytes.add(b);
+                //outRow.append(elementSeparator);
             }
             else{
                 first=false;
@@ -39,15 +44,22 @@ public class HDF5AllelicEncoder {
             if(alleleSeparator == null){
                 alleleSeparator = NucleotideSeparatorSplitter.findSeparator(element);
             }
-            outRow.append(currentRowTranslator.getEncodedString(element,alleleSeparator,false));
+            for(byte b: currentRowTranslator.getEncodedString(element,alleleSeparator,false))outBytes.add(b);
+            //outRow.append(currentRowTranslator.getEncodedString(element,alleleSeparator,false));
         }
-        return new EncodedValues(outRow.toString(),currentRowTranslator.encodeRowTransform());
+
+        int outByteSize = outBytes.size();
+        byte[] outByteArr = new byte[outByteSize];
+        for(int i = 0; i < outByteSize;i++){
+            outByteArr[i]=outBytes.get(i);
+        }
+        return new EncodedValues(outByteArr,currentRowTranslator.encodeRowTransform());
     }
 
     static class EncodedValues{
-        public String encodedRow;
+        public byte[] encodedRow;
         public String lookupRow;
-        public EncodedValues(String encodedRow,String lookupRow){
+        public EncodedValues(byte[] encodedRow,String lookupRow){
             this.encodedRow=encodedRow;
             this.lookupRow=lookupRow;
         }
@@ -64,7 +76,8 @@ public class HDF5AllelicEncoder {
     public static void createEncodedFile(File originalFilePath, File encodedFilePath, File lookupFilePath, String alleleSeparator, String elementSeparator){
         try(BufferedReader input = new BufferedReader(new FileReader(originalFilePath));
             //In theory, this should prevent any encoding issues when sent to the raw HDF5 interface
-            OutputStreamWriter encodedFile = new OutputStreamWriter( new BufferedOutputStream(new FileOutputStream(encodedFilePath)),StandardCharsets.UTF_8);
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(encodedFilePath));
+            //OutputStreamWriter encodedFile = new OutputStreamWriter( new BufferedOutputStream(new FileOutputStream(encodedFilePath)));
             OutputStreamWriter lookupFile = new OutputStreamWriter( new BufferedOutputStream(new FileOutputStream(lookupFilePath)))){
 
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
@@ -73,8 +86,11 @@ public class HDF5AllelicEncoder {
             while((inputLine=input.readLine()) != null) {
                 EncodedValues ret = encodeRow(inputLine,alleleSeparator,elementSeparator);
 
-                encodedFile.write(ret.encodedRow);
-                encodedFile.write(System.lineSeparator());//Eww.
+
+                bos.write(ret.encodedRow);
+                bos.write('\n');
+                //encodedFile.write(ret.encodedRow);
+                //encodedFile.write(System.lineSeparator());//Eww.
 
                 //Lookup file is sparse, and may not exist if there are no entries at all
                 if(ret.lookupRow.length()>0) { //we have a row in the lookup table
@@ -96,6 +112,15 @@ public class HDF5AllelicEncoder {
      * @param alleleSeparator
      * @param elementSeparator
      */
+    public static void createDecodedFile(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator, boolean markerFast) {
+    if(markerFast){
+        createDecodedFile(encodedFilePath,lookupFilePath,decodedFilePath,alleleSeparator,elementSeparator);
+    }
+    else{
+        createDecodedFileSampleFast(encodedFilePath,lookupFilePath,decodedFilePath,alleleSeparator,elementSeparator);
+        }
+    }
+
     public static void createDecodedFile(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator){
 
         BufferedReader lookupFile = null;
@@ -105,17 +130,15 @@ public class HDF5AllelicEncoder {
             //no lookup file
         }
         try(
-                BufferedReader encodedFile = new BufferedReader(
-                        new InputStreamReader(new FileInputStream(encodedFilePath), StandardCharsets.UTF_8));
+                FileInputStream encodedFile = new FileInputStream(encodedFilePath);
                 BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
         ){
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
-
             String lookupLine=lookupFile!=null?lookupFile.readLine():null;
-            String inputLine;
+            byte[] inputLine;
             int i = 0;
             int nextLookupLineRow = lookupLine!=null?Integer.parseInt(lookupLine.split(Pattern.quote("\t"))[0]):-1;
-            while((inputLine=encodedFile.readLine()) != null) {
+            while((inputLine=getBytesTillNewline(encodedFile)) != null) {
                 RowTranslator currentRowTranslator = null;
                 //advance through the lookup line to find 'this' line if we're behind
                 if(lookupLine!=null && nextLookupLineRow<i){
@@ -146,10 +169,81 @@ public class HDF5AllelicEncoder {
         }
     }
 
+    public static void createDecodedFileSampleFast(File encodedFilePath, File lookupFilePath, File decodedFilePath, String alleleSeparator, String elementSeparator){
+        BufferedReader lookupFile = null;
+        try {
+            lookupFile = new BufferedReader(new FileReader(lookupFilePath));
+        }catch(Exception e){
+            //no lookup file
+        }
+        HashMap<Integer,String> lookupLineList = new HashMap<Integer,String>(); //Line #, Alts string
+        if(lookupFile!=null){
+            String line;
+            try {
+                while ((line = lookupFile.readLine()) != null){
+                    Integer row = Integer.parseInt(line.split(Pattern.quote("\t"))[0]);
+                    lookupLineList.put(row,line);
+                }
+            } catch (IOException e) {
+                Logger.logWarning("HDF5AllelicEncoder","Unable to parse lookup file",e);
+            }
+        }
+
+
+        try(
+                FileInputStream encodedFile = new FileInputStream(encodedFilePath);
+                BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
+        ){
+            //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
+            byte[] inputLine;
+            int i = 0;
+            while((inputLine=getBytesTillNewline(encodedFile)) != null) {
+                decodedFile.write(decodeRowSampleFast(inputLine,lookupLineList,alleleSeparator,elementSeparator)); //bleugh
+                decodedFile.write(System.lineSeparator());
+                i++;
+            }
+        } catch (Exception e) {
+            Logger.logError("HDF5AllelicEncoder", "Error decoding encoded HDF5 file",e);
+        }
+    }
+
+
+
+    //ReadLine for FIS. Eww, but I need the raw bytes.
+    private static byte[] getBytesTillNewline(FileInputStream fis) throws IOException {
+        byte newline = '\n';
+        List<Byte> assemblyList = new LinkedList<Byte>();
+        int nextByteI;
+        while(true) {
+            nextByteI=fis.read();
+            if (nextByteI == -1) {
+                //EOF
+                if (assemblyList.size() == 0) return null;
+            }
+            byte nextByte = (byte) nextByteI;
+            if (nextByteI == -1 || nextByte == newline) {
+                byte[] outArr = new byte[assemblyList.size()];
+                for (int i = 0; i < assemblyList.size(); i++) {
+                    outArr[i] = assemblyList.get(i);
+                }
+                return outArr;
+            }
+            assemblyList.add(nextByte);
+        }
+    }
+
     //This one's slightly different, as we need to align the output with the input marker list. As each line is currently a marker, we
     // can assume that the lines correspond to the nth entries in the 'marker list', which should be a zero based list of increasing numbers
     //corresponding to rows in the translation table.
-    public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
+    public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator, boolean markerFast) {
+        if(markerFast) {
+            createDecodedFileFromList(encodedFilePath,lookupFilePath,posList,decodedFilePath, alleleSeparator,elementSeparator);
+        }
+        else{
+            createDecodedFileFromListSampleFast(encodedFilePath,lookupFilePath,posList,decodedFilePath, alleleSeparator,elementSeparator);
+        }
+    }
+        public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
         Iterator<String> posListIterator = Arrays.stream(posList.split(",")).iterator();
 
         BufferedReader lookupFile = null;
@@ -159,15 +253,15 @@ public class HDF5AllelicEncoder {
             //no lookup file
         }
         try(
-                BufferedReader encodedFile = new BufferedReader( new FileReader(encodedFilePath));
+                FileInputStream encodedFile = new FileInputStream(encodedFilePath);
                 BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
         ){
             //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
 
             String lookupLine=lookupFile!=null?lookupFile.readLine():null;
-            String inputLine;
+            byte[] inputLine;
             int nextLookupLineRow = lookupLine!=null?Integer.parseInt(lookupLine.split(Pattern.quote("\t"))[0]):-1;
-            while((inputLine=encodedFile.readLine()) != null && posListIterator.hasNext()) {
+            while(((inputLine=getBytesTillNewline(encodedFile)) != null) && posListIterator.hasNext()) {
                 int i = Integer.parseInt(posListIterator.next());
                 RowTranslator currentRowTranslator = null;
                 //advance through the lookup line to find 'this' line if we're behind
@@ -181,20 +275,52 @@ public class HDF5AllelicEncoder {
                         }
                     }
                 }
-
-                if(lookupLine != null && nextLookupLineRow == i){
-                    currentRowTranslator = new RowTranslator(lookupLine);
-                }
-                else{ //Even if there's nothing to translate, the row still needs to have separators applied, so it gets to go through the sausage factory... Less code paths, but could be optimized
-                    decodedFile.write(decodeRow(inputLine,null,alleleSeparator,elementSeparator));
-                }
-
-                if(currentRowTranslator != null) {
+                if(lookupLine != null && nextLookupLineRow == i) {
                     decodedFile.write(decodeRow(inputLine,lookupLine,alleleSeparator,elementSeparator));
                 }
-                else{ //If there's nothing in the row to translate, just copy over. Simple as that, save some time and effort
-                    decodedFile.write(inputLine);
+                else{
+                    decodedFile.write(decodeRow(inputLine,null,alleleSeparator,elementSeparator));
                 }
+                decodedFile.write(System.lineSeparator());
+            }
+        } catch (Exception e) {
+            Logger.logError("HDF5AllelicEncoder", "Error decoding encoded HDF5 file",e);
+        }
+    }
+
+    public static void createDecodedFileFromListSampleFast(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
+        BufferedReader lookupFile = null;
+        try {
+            lookupFile = new BufferedReader(new FileReader(lookupFilePath));
+        }catch(Exception e){
+            //no lookup file
+        }
+        HashMap<Integer,String> lookupLineList = new HashMap<Integer,String>(); //Line #, Alts string
+        if(lookupFile!=null){
+            String line;
+            try {
+                while ((line = lookupFile.readLine()) != null){
+                    Integer row = Integer.parseInt(line.split(Pattern.quote("\t"))[0]);
+                    lookupLineList.put(row,line);
+                }
+            } catch (IOException e) {
+                Logger.logWarning("HDF5AllelicEncoder","Unable to parse lookup file",e);
+            }
+        }
+
+
+
+
+        try(
+                FileInputStream encodedFile = new FileInputStream(encodedFilePath);
+                BufferedWriter decodedFile = new BufferedWriter( new FileWriter(decodedFilePath));
+        ){
+            //Note - line by line parse doesn't seem to have too much of a performance impact, oddly enough. See: https://stackoverflow.com/questions/4716503/reading-a-plain-text-file-in-java/40597140#40597140
+
+            byte[] inputLine;
+            while(((inputLine=getBytesTillNewline(encodedFile)) != null)) {
+                Iterator<Integer> posListIterator = Arrays.stream(posList.split(",")).map(Integer::parseInt).iterator();
+                decodedFile.write(decodeRowSFList(inputLine,lookupLineList,posListIterator,alleleSeparator,elementSeparator));
                 decodedFile.write(System.lineSeparator());
             }
         } catch (Exception e) {
@@ -204,27 +330,132 @@ public class HDF5AllelicEncoder {
 
 
 
-    public static String decodeRow(String inputRow, String lookupRow, String alleleSeparator, String elementSeparator) throws Exception{
+
+    public static String decodeRow(byte[] inputRow, String lookupRow, String alleleSeparator, String elementSeparator) throws Exception{
         StringBuilder outRow=new StringBuilder();
         RowTranslator currentRowTranslator = new RowTranslator(lookupRow);
 
+        byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
+
+
+
         boolean first=true;
-        for(String element:inputRow.split(Pattern.quote(elementSeparator))){
+        int i = 0;
+
+        int j = 0;
+
+        while(i<inputRow.length) {
+            int segLen = 300;
+            byte[] segment = new byte[segLen];//Arbitrary Large Number
+            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
+                segment[j++] = inputRow[i++];
+            }
+            i++;
             if(!first){
                 outRow.append(elementSeparator);
             }
             else{
                 first=false;
             }
-            outRow.append(currentRowTranslator.getDecodedString(element,alleleSeparator));
+            outRow.append(currentRowTranslator.getDecodedString(segment,j,alleleSeparator));
         }
         return outRow.toString();
     }
 
+    public static String decodeRowSampleFast(byte[] inputRow, HashMap<Integer,String> lookupLineList, String alleleSeparator, String elementSeparator) throws Exception{
+        StringBuilder outRow=new StringBuilder();
+
+        byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
+
+
+
+        boolean first=true;
+        int i = 0;
+
+        int j = 0;
+
+        int segmentNum=0;
+
+        while(i<inputRow.length) {
+            int segLen = 300;
+            byte[] segment = new byte[segLen];//Arbitrary Large Number
+            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
+                segment[j++] = inputRow[i++];
+            }
+            i++;
+            if(!first){
+                outRow.append(elementSeparator);
+            }
+            else{
+                first=false;
+            }
+            RowTranslator currentRowTranslator;
+            if(lookupLineList.containsKey(segmentNum)) {
+                currentRowTranslator = new RowTranslator(lookupLineList.get(segmentNum));
+            }
+            else{
+                currentRowTranslator = new RowTranslator(); //blank translator for no translation needed
+            }
+            outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
+            segmentNum++;
+        }
+        return outRow.toString();
+    }
+
+    public static String decodeRowSFList(byte[] inputRow, HashMap<Integer,String> lookupLineList,Iterator<Integer> posList, String alleleSeparator, String elementSeparator) throws Exception{
+        StringBuilder outRow=new StringBuilder();
+
+        byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
+
+
+
+        boolean first=true;
+        int i = 0;
+
+        int j = 0;
+
+        int segmentNum=0;
+
+        while(i<inputRow.length) {
+            int segLen = 300;
+            byte[] segment = new byte[segLen];//Arbitrary Large Number
+            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
+                segment[j++] = inputRow[i++];
+            }
+            i++;
+            if(!first){
+                outRow.append(elementSeparator);
+            }
+            else{
+                first=false;
+            }
+            RowTranslator currentRowTranslator;
+
+            try{
+                segmentNum = posList.next();
+            }catch(NoSuchElementException e){
+                segmentNum=-1;//Once we're out of segments, just default to no translation
+            }
+            if(lookupLineList.containsKey(segmentNum)) {
+                currentRowTranslator = new RowTranslator(lookupLineList.get(segmentNum));
+            }
+            else{
+                currentRowTranslator = new RowTranslator(); //blank translator for no translation needed
+            }
+            outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
+        }
+        return outRow.toString();
+    }
+
+
     static class RowTranslator {
         List<String> nonstandardAlleles = new ArrayList<String>();
         HashSet<String> nonstandardAlleleMap = new HashSet<String>();
-        HashSet<String> unencodedAlleles = new HashSet<String>(Arrays.asList("A", "C", "G", "T","N","0","1","2","+","-",".","?"," "));
+        HashSet<String> unencodedAlleles = new HashSet<String>(Arrays.asList(
+                "A", "C", "G", "T","N",
+                "0","1","2","3","4","5","6","7","8","9",
+                "+","-",".","?"," "));
+
 
         /**
          * Create a RowTranslator from an 'encoded translator' key line
@@ -348,13 +579,13 @@ public class HDF5AllelicEncoder {
          * @param strict true if the RowTranslator should fail if given an unknown value
          * @return
          */
-        String getEncodedString(String input, String separator, boolean strict) throws Exception{
+        public byte[] getEncodedString(String input, String separator, boolean strict) throws Exception{
             String[] segments=input.split(Pattern.quote(separator));
-            String output="";//Not a stringbuilder as it's only 2, maybe 4 characters long. Schmiel the painter doesn't have far to go
-            for(String segment: segments){
-                output+=getEncodedAllele(segment,strict);
+            byte[] outputs = new byte[segments.length];
+            for(int i = 0; i < segments.length;i++){
+                outputs[i]=(byte)getEncodedAllele(segments[i],strict);
             }
-            return output;
+            return outputs;
         }
 
         /**
@@ -362,36 +593,38 @@ public class HDF5AllelicEncoder {
          *  For example, if   ‚ (131) A (41) is the input, (131) goes into the lookup table of ACCAT, and (41) A
          *  is in the unencoded alleles, it comes out A. Given a / separator, it becomes ACCAT/A
          *
-         * @param encodedString
          * @param separator
          * @return
          * @throws Exception
          */
-        String getDecodedString(String encodedString, String separator) throws Exception{
+        String getDecodedString(byte[] encodedBytes, int length, String separator) throws Exception{
             //Special override for this datatype
-            if(encodedString.length() == 8 && encodedString.matches("[0123456789]*")){
+            String encodedString = new String(encodedBytes, StandardCharsets.UTF_8);
+            if(length == 8 && encodedString.matches("[0123456789]*")){
                 return encodedString.substring(0,4) + separator + encodedString.substring(4,8);
             }
             StringBuilder out = new StringBuilder();
             boolean first=true;
-            for(char encodedAllele:encodedString.toCharArray()){
+            for(int i = 0; i < length; i++){
+                char encodedAllele = (char) encodedBytes[i];
+                if((encodedAllele== '\t') || (encodedAllele == ' ') || encodedAllele == 0){ //Yeah, sometimes it's 0?
+                    continue;
+                }
                 if(!first){
                     out.append(separator);
                 }else{
                     first=false;
                 }
-                out.append(getDecodedAllele(""+encodedAllele));
+                out.append(getDecodedAllele(encodedAllele));
             }
             return out.toString();
         }
 
-        String getDecodedAllele(String internalAllele) throws Exception{
-            if(internalAllele.length()>1) throw new Exception("More than one character in parse");
-            if(unencodedAlleles.contains(internalAllele)){
-                return internalAllele;
+        String getDecodedAllele(char internalChar) throws Exception{
+            String internalCharAsString=internalChar+"";
+            if(unencodedAlleles.contains(internalCharAsString)){
+                return internalCharAsString;
             }
-            char internalChar=internalAllele.charAt(0);
-
             int index;
             try {
                 index = decodeChar(internalChar);
@@ -399,8 +632,8 @@ public class HDF5AllelicEncoder {
             catch(Exception e){
                 //Throw a warning, but pass through the character on catastrophic decode failure. (Probably an unexpected unencoded value, not an encoded value at all.)
                 index = -1;
-                Logger.logWarning("HDF5AlleleEncoder","No character to decode to- '" + internalAllele + "'");
-                return internalAllele;
+                Logger.logWarning("HDF5AlleleEncoder","No character to decode to- '" + internalChar + "'" + " ("+(int)internalChar+")");
+                return internalChar+"";
             }
             if(index>=nonstandardAlleles.size()){
                 throw new Exception("Decoded character from h5 does not map (over translator length) " + index);
@@ -409,13 +642,13 @@ public class HDF5AllelicEncoder {
         }
     }
 
-    private static char encodeChar(int value){
+    static char encodeChar(int value){
         return (char)(value+129);
     }
 
-    private static int decodeChar(char value) throws Exception{
-        int intVal=(int)value;
+    static int decodeChar(char value) throws Exception{
+        int intVal=((int)value)&0xFF; //Cut it off at a byte, making it a ubyte, effectively
         if(intVal < 129) throw new Exception("Decoded character from h5 does not map (under 128)");
-        return ((int)value)-129;
+        return intVal-129;
     }
 }

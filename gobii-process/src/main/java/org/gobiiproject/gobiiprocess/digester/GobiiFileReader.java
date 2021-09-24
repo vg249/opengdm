@@ -474,7 +474,7 @@ public class GobiiFileReader {
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
                 jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
                 boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, procedure.getMetadata().getDatasetType().getName(),
-                        configuration, dataSetId, procedure.getMetadata().getGobiiCropType(), errorPath, variantFilename, variantFile);
+                        configuration, dataSetId, procedure.getMetadata().getGobiiCropType(), errorPath, variantFile);
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
             }
