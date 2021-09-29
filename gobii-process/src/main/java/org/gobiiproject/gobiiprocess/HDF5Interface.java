@@ -218,7 +218,7 @@ public class HDF5Interface {
                 String genoFile=null;
                 if(!hasSampleList || (sampleList!=null)) {
 
-                    genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList);
+                    genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList, positionList);
 
                     if(genoFile==null)return null;
                 }
@@ -309,7 +309,7 @@ public class HDF5Interface {
      * @return see getHDF5Genotype(boolean,String, Integer, String, String, String)
      */
     public static String getHDF5Genotype(boolean markerFast, String errorFile, Integer dataSetId, String tempFolder) {
-        return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null,null);
+        return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null,null, null);
     }
 
     /**
@@ -322,9 +322,10 @@ public class HDF5Interface {
      * @param tempFolder folder to store intermediate results
      * @param markerList nullable - determines what markers to extract. File containing a list of marker positions, comma separated
      * @param sampleList nullable - list of comma delimited samples to cut out
+     * @param positionList - contents of markerList file, newline delimited
      * @return file location of the dataset output.
      */
-    private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList) {
+    private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList, String positionList) {
         String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
         String newGenoFile = genoFile+".enc";
 
@@ -349,7 +350,7 @@ public class HDF5Interface {
 
             //decode in marker list
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), markerList, new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
+            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), positionList, new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
 
         }
         else {
