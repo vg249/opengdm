@@ -244,7 +244,7 @@ public class HDF5AllelicEncoder {
         }
     }
         public static void createDecodedFileFromList(File encodedFilePath, File lookupFilePath, String posList, File decodedFilePath, String alleleSeparator, String elementSeparator){
-        Iterator<String> posListIterator = Arrays.stream(posList.split("\n")).iterator();
+        Iterator<String> posListIterator = Arrays.stream(posList.split("\n")).map(String::trim).iterator();
 
         BufferedReader lookupFile = null;
         try {
@@ -316,7 +316,7 @@ public class HDF5AllelicEncoder {
 
             byte[] inputLine;
             while(((inputLine=getBytesTillNewline(encodedFile)) != null)) {
-                Iterator<Integer> posListIterator = Arrays.stream(posList.split("\n")).map(Integer::parseInt).iterator();
+                Iterator<Integer> posListIterator = Arrays.stream(posList.split("\n")).map(String::trim).map(Integer::parseInt).iterator();
                 decodedFile.write(decodeRowSFList(inputLine,lookupLineList,posListIterator,alleleSeparator,elementSeparator));
                 decodedFile.write(System.lineSeparator());
             }
