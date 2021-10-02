@@ -242,9 +242,8 @@ public class GobiiDigester {
                     JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),
                     "Processing QC Job");
                 sendQCExtract(configuration, digestResult.getCropType());
-            } else {
-                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
             }
+            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
         } else { //endIf(success)
             Logger.logWarning("Digester", "Unsuccessful Upload");
             jobStatus.setError("Unsuccessfully Uploaded Files");
