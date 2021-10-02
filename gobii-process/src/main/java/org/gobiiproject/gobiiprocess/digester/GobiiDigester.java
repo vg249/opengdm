@@ -218,7 +218,7 @@ public class GobiiDigester {
         boolean dataLoaded = metaDataLoaded;
         System.out.println("before");
         System.out.println(dataLoaded);
-        
+
         System.out.println(Logger.getAllErrors());
         if(metaDataLoaded && Logger.success() && digestResult.hasGenotypeMatrix()) {
             dataLoaded &= loadGenoypeMatrix(digestResult, jobStatus);
@@ -416,6 +416,8 @@ public class GobiiDigester {
 
         String variantFilename = "DS" + digesterResult.getDataset().getDatasetId().toString();
         File variantFile = digesterResult.getLoaderInstructionsMap().get(VARIANT_CALL_TABNAME);
+
+        System.out.println(variantFile);
 
         if (variantFile != null && digesterResult.getDataset().getDatasetId() == null) {
             logError("Digester", "Data Set ID is null for variant call");
