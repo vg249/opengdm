@@ -432,6 +432,8 @@ public class GobiiDigester {
                 variantFilename,
                 variantFile);
             rmIfExist(variantFile.getPath());
+            System.out.println("xxxxxxxxxxxx---hdf5Sucess");
+            System.out.println("hdf5Sucess");
         }
         return hdf5Success;
     }
