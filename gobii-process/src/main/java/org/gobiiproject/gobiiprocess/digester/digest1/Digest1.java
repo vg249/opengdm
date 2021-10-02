@@ -74,6 +74,7 @@ public class Digest1 implements Digest {
         List<String> loaderInstructionList = new ArrayList<>();
 
         boolean isMarkerFast;
+        Dataset dataset = null;
 
         String cropType = procedure.getMetadata().getGobiiCropType();
         String dstFilePath = getDestinationFile(procedure, procedure.getInstructions().get(0));//Intermediate 'file
@@ -94,10 +95,6 @@ public class Digest1 implements Digest {
 
         SimpleTimer.start("FileRead");
 
-        // Get Dataset
-        Integer dataSetId = procedure.getMetadata().getDataset().getId();
-        DatasetDao datasetDao = SpringContextLoaderSingleton.getInstance().getBean(DatasetDao.class);
-        Dataset dataset = datasetDao.getDataset(dataSetId);
 
         // Get Contact
         String contactEmail = procedure.getMetadata().getContactEmail();
@@ -264,6 +261,11 @@ public class Digest1 implements Digest {
                     dstFilePath,
                     procedure.getMetadata().getGobiiCropType(),
                     "Matrix_Processing"); //Temporary Error File Name
+                
+                // Get Dataset
+                Integer dataSetId = procedure.getMetadata().getDataset().getId();
+                DatasetDao datasetDao = SpringContextLoaderSingleton.getInstance().getBean(DatasetDao.class);
+                dataset = datasetDao.getDataset(dataSetId);
 
                 if (DatasetOrientationType.SAMPLE_FAST.equals(procedure.getMetadata().getDatasetOrientationType())) {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
