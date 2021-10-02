@@ -29,8 +29,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformTab
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiimodel.entity.Experiment;
-import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 
@@ -84,8 +82,6 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
         String[] previousFileHeaders = {};
 
         
-        String dataType = getDataType();
-
         // Digested files are merged for each table.
         for(File fileToDigest : filesToDigest) {
 
@@ -154,11 +150,11 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
             aspects.put(datasetMarkerTableName, datasetMarkerTable); 
 
             // Set Transform or normal matrix aspect based on data type
-            if(StringUtils.isNotEmpty(dataType) &&
-                dataTypeToTransformType.containsKey(dataType)) {
+            if(StringUtils.isNotEmpty(this.datasetType) &&
+                dataTypeToTransformType.containsKey(this.datasetType)) {
                 String matrixTableName = AspectUtils.getTableName(MatrixTransformTable.class);
                 aspects.put(matrixTableName, 
-                            getMatrixTransformTable(fileHeader.getHeaderLineNumber(), dataType));
+                            getMatrixTransformTable(fileHeader.getHeaderLineNumber(), this.datasetType));
             }
             else {
                 String matrixTableName = AspectUtils.getTableName(MatrixTable.class);
@@ -190,19 +186,15 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
         List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
-            .Builder()
+            .Builder(loaderInstruction, cropConfig)
             .setSuccess(true)
             .setSendQc(false)
-            .setCropType(loaderInstruction.getCropType())
-            .setCropConfig(cropConfig)
-            .setIntermediateFilePath(loaderInstruction.getOutputDir())
-            .setLoadType(loaderInstruction.getLoadType())
             .setLoaderInstructionsMap(intermediateDigestFileMap)
             .setLoaderInstructionsList(loadOrder)
-            .setDatasetType(dataType)
-            .setDatasetId(getDataset().getDatasetId())
-            .setJobName(loaderInstruction.getJobName())
-            .setContactEmail(loaderInstruction.getContactEmail())
+            .setDatasetType(this.datasetType)
+            .setDataset(this.dataset)
+            .setContact(this.contact)
+            .setJobStatusObject(jobStatus)
             .build();
 
         return digesterResult;
@@ -215,7 +207,7 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
 
         datasetMarkerTable.setDatasetId(uploadRequest.getDatasetId());
 
-        String platformId = getPlatform().getPlatformId().toString(); 
+        String platformId = this.platform.getPlatformId().toString(); 
         datasetMarkerTable.setPlatformId(platformId);
 
         // Set column aspect for marker name.
@@ -237,10 +229,9 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
        datasetDnaRunTable.setDatasetId(uploadRequest.getDatasetId());
 
        // Get Experiment id
-       Experiment experiment = getExperiment();
-       datasetDnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+       datasetDnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
        
-       datasetDnaRunTable.setPlatformId(getPlatform().getPlatformId().toString());
+       datasetDnaRunTable.setPlatformId(this.platform.getPlatformId().toString());
 
        // Dnarun names starts after required columns in the file
        RowAspect dnaRunNameRow = new RowAspect(headerLineNumber, hapMapRequiredColumns.length);
@@ -281,7 +272,7 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
         ColumnAspect markerNameColumn = new ColumnAspect(headerLineNumber+1, markerNameColumnIndex);
 
         markerTable.setMarkerName(markerNameColumn);
-        markerTable.setPlatformId(getPlatform().getPlatformId().toString());
+        markerTable.setPlatformId(this.platform.getPlatformId().toString());
         markerTable.setStatus(newStatus.getCvId().toString());
 
         return markerTable;
@@ -296,12 +287,10 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
         dnaRunTable.setDnaSampleNum(new RangeAspect(1));
 
         // Get Experiment id
-        Experiment experiment = getExperiment();
-        dnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+        dnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
 
         // Get Project Id
-        Project project = experiment.getProject();
-        dnaRunTable.setProjectId(project.getProjectId().toString());
+        dnaRunTable.setProjectId(this.experiment.getProject().getProjectId().toString());
        
         dnaRunTable.setStatus(newStatus.getCvId().toString());
         
@@ -318,8 +307,7 @@ public class HapmapsDigest extends GenotypeMatrixDigest {
         dnaSampleTable.setGermplasmExternalCode(dnaSampleNameRow);
         dnaSampleTable.setDnaSampleNum(new RangeAspect(1));
 
-        Project project = getExperiment().getProject();
-        dnaSampleTable.setProjectId(project.getProjectId().toString());
+        dnaSampleTable.setProjectId(this.experiment.getProject().getProjectId().toString());
 
         dnaSampleTable.setStatus(newStatus.getCvId().toString());            
 

@@ -126,21 +126,14 @@ public class SamplesDigest extends Digest3 {
         List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
-                .Builder()
-                .setSuccess(true)
-                .setSendQc(false)
-                .setCropType(loaderInstruction.getCropType())
-                .setCropConfig(cropConfig)
-                .setIntermediateFilePath(loaderInstruction.getOutputDir())
-                .setLoadType(loaderInstruction.getLoadType())
-                .setLoaderInstructionsMap(intermediateDigestFileMap)
-                .setLoaderInstructionsList(loadOrder)
-                .setDatasetType(null) // Dataset type is only required for matrix upload
-                .setJobStatusObject(jobStatus)
-                .setDatasetId(null)
-                .setJobName(loaderInstruction.getJobName())
-                .setContactEmail(loaderInstruction.getContactEmail())
-                .build();
+            .Builder(loaderInstruction, cropConfig)
+            .setSuccess(true)
+            .setSendQc(false)
+            .setLoaderInstructionsMap(intermediateDigestFileMap)
+            .setLoaderInstructionsList(loadOrder)
+            .setJobStatusObject(this.jobStatus)
+            .setContact(this.contact)
+            .build();
             
         return digesterResult;
     }

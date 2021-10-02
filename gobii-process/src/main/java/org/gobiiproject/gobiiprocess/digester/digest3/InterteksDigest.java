@@ -28,7 +28,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformTab
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.types.GobiiLoaderPayloadTypes;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
@@ -64,8 +63,6 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         // To keep track of hdf5 start index for markers
         int hdf5MarkerIndexStart = 1;
 
-        String dataType = getDataType();
-
         // Digested files are merged for each table.
         for(File fileToDigest : filesToDigest) {
 
@@ -76,25 +73,23 @@ public class InterteksDigest extends GenotypeMatrixDigest {
             // Set Dna run aspect only once as dnarun names will be same across 
             // all the files.
             if(hdf5MarkerIndexStart == 1) {
-                String datasetDnaRunTableName = 
-                    AspectUtils.getTableName(DatasetDnaRunTable.class);
+                String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
 
-                aspects.put(datasetDnaRunTableName, 
-                            getDatasetDnaRunTable(fileHeader.getHeaderLineNumber(), 1));
+                aspects.put(datasetDnaRunTableName, getDatasetDnaRunTable(fileHeader.getHeaderLineNumber(), 1));
 
                 if(uploadRequest.isLoadDnaRunNamesAsSamplesAndGermplasms()) {
+
                     String dnaRunTableName = AspectUtils.getTableName(DnaRunTable.class);                         
                     String dnaSampleTableName = AspectUtils.getTableName(DnaSampleTable.class);
                     String germplasmTableName = AspectUtils.getTableName(GermplasmTable.class);
                     DnaRunTable dnaRunTable = getDnaRunTable(fileHeader.getHeaderLineNumber());
+                    
                     aspects.put(dnaRunTableName, dnaRunTable);
 
-                    DnaSampleTable dnaSampleTable = 
-                       getDnaSampleTable(fileHeader.getHeaderLineNumber()) ;
+                    DnaSampleTable dnaSampleTable = getDnaSampleTable(fileHeader.getHeaderLineNumber()) ;
                     aspects.put(dnaSampleTableName, dnaSampleTable);
 
-                    GermplasmTable germplasmTable = 
-                        getGermplasmTable(fileHeader.getHeaderLineNumber()); 
+                    GermplasmTable germplasmTable = getGermplasmTable(fileHeader.getHeaderLineNumber()); 
                     aspects.put(germplasmTableName, germplasmTable);
                 }
 
@@ -108,12 +103,11 @@ public class InterteksDigest extends GenotypeMatrixDigest {
             aspects.put(datasetMarkerTableName, datasetMarkerTable); 
 
             // Set Transform or normal matrix aspect based on data type
-            if(StringUtils.isNotEmpty(dataType) &&
-                dataTypeToTransformType.containsKey(dataType)) {
+            if(StringUtils.isNotEmpty(this.datasetType) &&
+                dataTypeToTransformType.containsKey(this.datasetType)) {
                 String matrixTableName = AspectUtils.getTableName(MatrixTransformTable.class);
                 aspects.put(matrixTableName, 
-                            getMatrixTransformTable(fileHeader.getHeaderLineNumber(), 
-                                                    dataType));
+                    getMatrixTransformTable(fileHeader.getHeaderLineNumber(), this.datasetType));
             }
             else {
                 String matrixTableName = AspectUtils.getTableName(MatrixTable.class);
@@ -122,8 +116,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
 
             if(uploadRequest.isLoadMarkers()) {
                 String markerTableName = AspectUtils.getTableName(MarkerTable.class);
-                aspects
-                    .put(markerTableName, getMarkerTable(fileHeader.getHeaderLineNumber()));
+                aspects.put(markerTableName, getMarkerTable(fileHeader.getHeaderLineNumber()));
             }
 
             // Masticate and set the output.
@@ -156,35 +149,31 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         // Transpose matrix as Intertek is Sample fast
-        String transposeOutputFilePath = 
-            intermediateDigestFileMap.get("matrix").getAbsolutePath()+".transpose";
+        String transposeOutputFilePath = intermediateDigestFileMap.get("matrix").getAbsolutePath()+".transpose";
         TransposeMatrix.transposeMatrix(
             "tab", 
             intermediateDigestFileMap.get("matrix").getAbsolutePath(), 
             transposeOutputFilePath,
             loaderInstruction.getOutputDir());
+
         File transposedFile = new File(transposeOutputFilePath);
+        
         if(!transposedFile.exists()) {
             throw new GobiiException("Unable to transpose file for sample fast.");
         }
         intermediateDigestFileMap.put("matrix", transposedFile);
 
         DigesterResult digesterResult = new DigesterResult
-                .Builder()
-                .setSuccess(true)
-                .setSendQc(false)
-                .setCropType(loaderInstruction.getCropType())
-                .setCropConfig(cropConfig)
-                .setIntermediateFilePath(loaderInstruction.getOutputDir())
-                .setLoadType(loaderInstruction.getLoadType())
-                .setLoaderInstructionsMap(intermediateDigestFileMap)
-                .setLoaderInstructionsList(loadOrder)
-                .setDatasetType(dataType)
-                .setJobStatusObject(jobStatus)
-                .setDatasetId(getDataset().getDatasetId())
-                .setJobName(loaderInstruction.getJobName())
-                .setContactEmail(loaderInstruction.getContactEmail())
-                .build();
+            .Builder(loaderInstruction, cropConfig)
+            .setSuccess(true)
+            .setSendQc(false)
+            .setLoaderInstructionsMap(intermediateDigestFileMap)
+            .setLoaderInstructionsList(loadOrder)
+            .setDatasetType(this.datasetType)
+            .setJobStatusObject(this.jobStatus)
+            .setDataset(this.dataset)
+            .setContact(this.contact)
+            .build();
 
         return digesterResult;
     }
@@ -197,7 +186,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         DatasetMarkerTable datasetMarkerTable = new DatasetMarkerTable();
 
         datasetMarkerTable.setDatasetId(uploadRequest.getDatasetId());
-        datasetMarkerTable.setPlatformId(getPlatform().getPlatformId().toString());
+        datasetMarkerTable.setPlatformId(this.platform.getPlatformId().toString());
 
         // marker names starts from second column in header row
         RowAspect markerNameRow = new RowAspect(headerLineNumber, 1);
@@ -214,11 +203,11 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         
        DatasetDnaRunTable datasetDnaRunTable = new DatasetDnaRunTable();
         
-       datasetDnaRunTable.setDatasetId(getDataset().getDatasetId().toString());
-       datasetDnaRunTable.setPlatformId(getPlatform().getPlatformId().toString());
+       datasetDnaRunTable.setDatasetId(this.dataset.getDatasetId().toString());
+       datasetDnaRunTable.setPlatformId(this.platform.getPlatformId().toString());
 
        // Get Experiment id
-       datasetDnaRunTable.setExperimentId(getExperiment().getExperimentId().toString());
+       datasetDnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
 
        // Dnarun names is the first column
        ColumnAspect dnaRunNameColumn = new ColumnAspect(headerLineNumber +1, 0);
@@ -233,12 +222,15 @@ public class InterteksDigest extends GenotypeMatrixDigest {
 
     private MatrixTransformTable getMatrixTransformTable(int headerLineNumber, 
                                                          String dataType) {
+
         MatrixTransformTable matrixTable = new MatrixTransformTable();
+        
         MatrixTransformAspect matrixAspect = new MatrixTransformAspect(
             dataTypeToTransformType.get(dataType),
             headerLineNumber+1, 
             1);
         matrixTable.setMatrix(matrixAspect);
+
         return matrixTable;
     }
 
@@ -258,7 +250,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         RowAspect markerNameRow = new RowAspect(headerLineNumber, 1);
 
         markerTable.setMarkerName(markerNameRow);
-        markerTable.setPlatformId(getPlatform().getPlatformId().toString());
+        markerTable.setPlatformId(this.platform.getPlatformId().toString());
         markerTable.setStatus(newStatus.getCvId().toString());
 
         return markerTable;
@@ -276,8 +268,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         dnaRunTable.setDnaSampleNum(new RangeAspect(1));
 
         // Get Experiment id
-        Experiment experiment = getExperiment();
-        dnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+        dnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
 
         // Get Project Id
         Project project = experiment.getProject();
@@ -300,8 +291,7 @@ public class InterteksDigest extends GenotypeMatrixDigest {
         dnaSampleTable.setGermplasmExternalCode(dnaSampleNameColumn);
         dnaSampleTable.setDnaSampleNum(new RangeAspect(1));
 
-        Project project = getExperiment().getProject();
-        dnaSampleTable.setProjectId(project.getProjectId().toString());
+        dnaSampleTable.setProjectId(this.experiment.getProject().getProjectId().toString());
 
         dnaSampleTable.setStatus(newStatus.getCvId().toString());            
 

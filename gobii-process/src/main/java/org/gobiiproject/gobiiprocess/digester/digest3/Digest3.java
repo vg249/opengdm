@@ -33,6 +33,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.IflConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.JsonAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
+import org.gobiiproject.gobiimodel.entity.Contact;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.LoaderTemplate;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
@@ -41,6 +42,7 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.Digest;
 import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
 
@@ -68,6 +70,7 @@ public abstract class Digest3 implements Digest {
     );
 
 
+    protected Contact contact;
     protected CvDao cvDao;
     protected Cv newStatus;
 
@@ -79,11 +82,13 @@ public abstract class Digest3 implements Digest {
      * @throws GobiiException when unable to read crop configuration
      * or get job entity for given name.
      */
-    Digest3(LoaderInstruction3 loaderInstruction,
-            ConfigSettings configSettings) throws GobiiException {
+    Digest3(LoaderInstruction3 loaderInstruction, ConfigSettings configSettings) throws GobiiException {
+
         this.loaderInstruction = loaderInstruction;
-        SpringContextLoaderSingleton.init(loaderInstruction.getCropType(),
-            configSettings);
+        
+        // Initialise SpringContextLoader.
+        SpringContextLoaderSingleton.init(loaderInstruction.getCropType(), configSettings);
+
         try {
             this.cropConfig = configSettings.getCropConfig(loaderInstruction.getCropType());
         }
@@ -91,12 +96,17 @@ public abstract class Digest3 implements Digest {
             throw new GobiiException("Unable to read crop config");
         }
         this.jobStatus = new JobStatus(loaderInstruction.getJobName());
-        this.loaderTemplateDao =
-            SpringContextLoaderSingleton.getInstance().getBean(LoaderTemplateDao.class);
+        this.loaderTemplateDao =SpringContextLoaderSingleton.getInstance().getBean(LoaderTemplateDao.class);
+        
         this.cvDao = SpringContextLoaderSingleton.getInstance().getBean(CvDao.class);
         this.newStatus = cvDao.getNewStatus();
+        
         // creates new directtory or cleans one if already exists
         setupOutputDirectory();            
+        
+        // Get contact
+        ContactDao contactDao = SpringContextLoaderSingleton.getInstance().getBean(ContactDao.class);
+        this.contact = contactDao.getContactByEmail(loaderInstruction.getContactEmail());
     }
 
     abstract public DigesterResult digest();

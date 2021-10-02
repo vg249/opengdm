@@ -17,6 +17,7 @@
 
     <context:annotation-config/>
 
+    <bean id="contactDao" class="org.gobiiproject.gobiisampletrackingdao.ContactDaoImpl"/>
     <bean id="cvDao" class="org.gobiiproject.gobiisampletrackingdao.CvDaoImpl"/>
     <bean id="datasetDao" class="org.gobiiproject.gobiisampletrackingdao.DatasetDaoImpl"/>
     <bean id="protocolDao" class="org.gobiiproject.gobiisampletrackingdao.ProtocolDaoImpl"/>
@@ -39,7 +40,6 @@
 
 
     <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/>
-
 
     <context:component-scan base-package="org.gobiiproject.gobiiprocess.spring"/>
 

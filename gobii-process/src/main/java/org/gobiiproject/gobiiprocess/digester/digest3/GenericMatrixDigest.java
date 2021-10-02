@@ -25,7 +25,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MatrixTransformTab
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
 
@@ -69,21 +68,16 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
         List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
-                .Builder()
-                .setSuccess(true)
-                .setSendQc(false)
-                .setCropType(loaderInstruction.getCropType())
-                .setCropConfig(cropConfig)
-                .setIntermediateFilePath(loaderInstruction.getOutputDir())
-                .setLoadType(loaderInstruction.getLoadType())
-                .setLoaderInstructionsMap(intermediateDigestFileMap)
-                .setLoaderInstructionsList(loadOrder)
-                .setDatasetType(getDataType())
-                .setJobStatusObject(jobStatus)
-                .setDatasetId(getDataset().getDatasetId())
-                .setJobName(loaderInstruction.getJobName())
-                .setContactEmail(loaderInstruction.getContactEmail())
-                .build();
+            .Builder(loaderInstruction, cropConfig)
+            .setSuccess(true)
+            .setSendQc(false)
+            .setLoaderInstructionsMap(intermediateDigestFileMap)
+            .setLoaderInstructionsList(loadOrder)
+            .setDatasetType(this.datasetType)
+            .setJobStatusObject(jobStatus)
+            .setDataset(this.dataset)
+            .setContact(this.contact)
+            .build();
 
         return digesterResult;
     }
@@ -124,12 +118,11 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
             DatasetMarkerTable datasetMarkerTable = getDatasetMarkerTable(fileHeader, hdf5MarkerIndexStart);
             aspects.put(datasetMarkerTableName, datasetMarkerTable); 
             
-            String dataType = getDataType();
             // Set Transform or normal matrix aspect based on data type
-            if(StringUtils.isNotEmpty(dataType) &&
-                dataTypeToTransformType.containsKey(dataType)) {
+            if(StringUtils.isNotEmpty(this.datasetType) &&
+                dataTypeToTransformType.containsKey(this.datasetType)) {
                 String matrixTableName = AspectUtils.getTableName(MatrixTransformTable.class);
-                aspects.put(matrixTableName, getMatrixTransformTable(fileHeader, dataType));
+                aspects.put(matrixTableName, getMatrixTransformTable(fileHeader, this.datasetType));
             }
             else {
                 String matrixTableName = AspectUtils.getTableName(MatrixTable.class);
@@ -179,12 +172,11 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
             DatasetMarkerTable datasetMarkerTable = getDatasetMarkerTable(fileHeader, hdf5MarkerIndexStart);
             aspects.put(datasetMarkerTableName, datasetMarkerTable); 
             
-            String dataType = getDataType();
             String matrixTableName;
             // Set Transform or normal matrix aspect based on data type
-            if(StringUtils.isNotEmpty(dataType) && dataTypeToTransformType.containsKey(dataType)) {
+            if(StringUtils.isNotEmpty(this.datasetType) && dataTypeToTransformType.containsKey(this.datasetType)) {
                 matrixTableName = AspectUtils.getTableName(MatrixTransformTable.class);
-                aspects.put(matrixTableName, getMatrixTransformTable(fileHeader, dataType));
+                aspects.put(matrixTableName, getMatrixTransformTable(fileHeader, this.datasetType));
             }
             else {
                 matrixTableName = AspectUtils.getTableName(MatrixTable.class);
@@ -271,10 +263,9 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
         datasetDnaRunTable.setDatasetId(uploadRequest.getDatasetId());
 
         // Get Experiment id
-        Experiment experiment = getExperiment();
-        datasetDnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+        datasetDnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
        
-        datasetDnaRunTable.setPlatformId(getPlatform().getPlatformId().toString());
+        datasetDnaRunTable.setPlatformId(this.platform.getPlatformId().toString());
         Integer dnaRunNamesStartIndex;      
         if(this.matrixTemplate.isAreLeftLabelsVariantLabels()) {
             dnaRunNamesStartIndex = getStartPositionForTopLabels(fileHeader);
@@ -302,7 +293,7 @@ public class GenericMatrixDigest extends GenotypeMatrixDigest {
 
         datasetMarkerTable.setDatasetId(uploadRequest.getDatasetId());
 
-        String platformId = getPlatform().getPlatformId().toString(); 
+        String platformId = this.platform.getPlatformId().toString(); 
         datasetMarkerTable.setPlatformId(platformId);
 
         Integer markerNameStartIndex;

@@ -29,7 +29,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.MarkerTable;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RangeAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.RowAspect;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.Table;
-import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Project;
 import org.gobiiproject.gobiimodel.utils.AspectUtils;
 import org.gobiiproject.gobiimodel.utils.GobiiFileUtils;
@@ -96,33 +95,34 @@ public class VcfDigest extends GenotypeMatrixDigest {
         for(File fileToDigest : filesToDigest) {
 
             // Get file header
-            FileHeader fileHeader = 
-                getFileHeaderByIdentifier(fileToDigest, headerIdentifier);
+            FileHeader fileHeader = getFileHeaderByIdentifier(fileToDigest, headerIdentifier);
 
             // Make sure file header is valid hapmap header and dnarun names 
             // match dnarun names from previous file.
             if(previousFileHeaders.length == 0) {
+
                 if(!Arrays.equals(
-                        fileFormatRequiredColumns, 
-                        Arrays.copyOfRange(fileHeader.getHeaders(), 
-                                           0, 
-                                           fileFormatRequiredColumns.length))) {
+                    fileFormatRequiredColumns, 
+                    Arrays.copyOfRange(fileHeader.getHeaders(), 0, fileFormatRequiredColumns.length))
+                ) {
                     throw new GobiiException(String.format(
                         "Invalid hapmap file %s with header columns not matching " +
                         "required hapmap columns", fileToDigest.getAbsolutePath()));
                 }
+
                 if(fileHeader.getHeaders().length == fileFormatRequiredColumns.length) {
-                    throw new GobiiException(
-                        String.format("File %s does not have any samples", 
-                                      fileToDigest.getAbsolutePath()));
+                    String errorMessage = 
+                        String.format("File %s does not have any samples", fileToDigest.getAbsolutePath());
+                    throw new GobiiException(errorMessage);
                 }
+
                 previousFileHeaders = fileHeader.getHeaders();
+
                 // Set Dna run aspect only once as dnarun names will be same across 
                 // all the files.
-                String datasetDnaRunTableName = 
-                    AspectUtils.getTableName(DatasetDnaRunTable.class);
-                aspects.put(datasetDnaRunTableName, 
-                            getDatasetDnaRunTable(fileHeader.getHeaderLineNumber(), 1));
+                String datasetDnaRunTableName = AspectUtils.getTableName(DatasetDnaRunTable.class);
+
+                aspects.put(datasetDnaRunTableName, getDatasetDnaRunTable(fileHeader.getHeaderLineNumber(), 1));
 
                 if(uploadRequest.isLoadDnaRunNamesAsSamplesAndGermplasms()) {
                     String dnaRunTableName = AspectUtils.getTableName(DnaRunTable.class);                         
@@ -151,18 +151,19 @@ public class VcfDigest extends GenotypeMatrixDigest {
                     totalLinesWrittenForEachTable.get(datasetMarkerTableName) + 1;
             }
 
-            DatasetMarkerTable datasetMarkerTable = 
-                getDatasetMarkerTable(fileHeader.getHeaders(), 
-                                      fileHeader.getHeaderLineNumber(),
-                                      hdf5MarkerIndexStart);
+            DatasetMarkerTable datasetMarkerTable = getDatasetMarkerTable(
+                fileHeader.getHeaders(), 
+                fileHeader.getHeaderLineNumber(),
+                hdf5MarkerIndexStart);
             aspects.put(datasetMarkerTableName, datasetMarkerTable); 
 
             if(uploadRequest.isLoadMarkers()) {
+
                 String markerTableName = AspectUtils.getTableName(MarkerTable.class);
-                aspects
-                    .put(markerTableName, 
-                         getMarkerTable(fileHeader.getHeaders(), 
-                                        fileHeader.getHeaderLineNumber()));
+
+                aspects.put(
+                    markerTableName, 
+                    getMarkerTable(fileHeader.getHeaders(), fileHeader.getHeaderLineNumber()));
             }
 
 
@@ -200,42 +201,32 @@ public class VcfDigest extends GenotypeMatrixDigest {
         List<String> loadOrder = getLoadOrder(intermediateDigestFileMap.keySet());
 
         DigesterResult digesterResult = new DigesterResult
-                .Builder()
-                .setSuccess(true)
-                .setSendQc(false)
-                .setCropType(loaderInstruction.getCropType())
-                .setCropConfig(cropConfig)
-                .setIntermediateFilePath(loaderInstruction.getOutputDir())
-                .setLoadType(loaderInstruction.getLoadType())
-                .setLoaderInstructionsMap(intermediateDigestFileMap)
-                .setLoaderInstructionsList(loadOrder)
-                .setDatasetType(getDataType())
-                .setJobStatusObject(jobStatus)
-                .setDatasetId(getDataset().getDatasetId())
-                .setJobName(loaderInstruction.getJobName())
-                .setContactEmail(loaderInstruction.getContactEmail())
-                .build();
+            .Builder(loaderInstruction, cropConfig)
+            .setSuccess(true)
+            .setSendQc(false)
+            .setLoaderInstructionsMap(intermediateDigestFileMap)
+            .setLoaderInstructionsList(loadOrder)
+            .setDatasetType(this.datasetType)
+            .setJobStatusObject(this.jobStatus)
+            .setDataset(this.dataset)
+            .setContact(this.contact)
+            .build();
 
         return digesterResult;
     }
 
-    private DatasetMarkerTable getDatasetMarkerTable(
-        String[] headers, 
-        int headerLineNumber,
-        int hdf5Start) {
+    private DatasetMarkerTable getDatasetMarkerTable(String[] headers, int headerLineNumber, int hdf5Start) {
 
         DatasetMarkerTable datasetMarkerTable = new DatasetMarkerTable();
 
         datasetMarkerTable.setDatasetId(uploadRequest.getDatasetId());
-        datasetMarkerTable.setPlatformId(getPlatform().getPlatformId().toString());
+        datasetMarkerTable.setPlatformId(this.platform.getPlatformId().toString());
 
         // Set column aspect for marker name.
-        int markerNameColumnIndex = 
-            ArrayUtils.indexOf(headers, 
-                               aspectTableColumnsToHapmapColumns.get("markerName"));
+        int markerNameColumnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToHapmapColumns.get("markerName"));
+
         // data lines starts after header line
-        ColumnAspect markerNameColumn = 
-            new ColumnAspect(headerLineNumber+1, markerNameColumnIndex);
+        ColumnAspect markerNameColumn = new ColumnAspect(headerLineNumber+1, markerNameColumnIndex);
         datasetMarkerTable.setMarkerName(markerNameColumn);
         
         // Set range aspect for hdf5 index.
@@ -250,15 +241,13 @@ public class VcfDigest extends GenotypeMatrixDigest {
        DatasetDnaRunTable datasetDnaRunTable = new DatasetDnaRunTable();
         
        datasetDnaRunTable.setDatasetId(uploadRequest.getDatasetId());
-       datasetDnaRunTable.setPlatformId(getPlatform().getPlatformId().toString());
+       datasetDnaRunTable.setPlatformId(this.platform.getPlatformId().toString());
 
        // Get Experiment id
-       Experiment experiment = getExperiment();
-       datasetDnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+       datasetDnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
 
        // Dnarun names starts after required columns in the file
-       RowAspect dnaRunNameRow = new RowAspect(headerLineNumber, 
-                                               fileFormatRequiredColumns.length);
+       RowAspect dnaRunNameRow = new RowAspect(headerLineNumber, fileFormatRequiredColumns.length);
        datasetDnaRunTable.setDnaRunName(dnaRunNameRow);
         
        // Set Range aspect for hdf5 index                   
@@ -268,26 +257,25 @@ public class VcfDigest extends GenotypeMatrixDigest {
 
     }
 
-    private MarkerTable getMarkerTable(String[] headers, 
-                                       int headerLineNumber) throws GobiiException {
+    private MarkerTable getMarkerTable(String[] headers, int headerLineNumber) throws GobiiException {
 
         MarkerTable markerTable = new MarkerTable();
        
         
         // Set column aspect for marker name, ref and alt.
         for(String markerTableColumn : markerTableColumns) {
-            int columnIndex = 
-                ArrayUtils.indexOf(headers, 
-                                   aspectTableColumnsToHapmapColumns.get(markerTableColumn));
+            
+            int columnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToHapmapColumns.get(markerTableColumn));
+
             // data lines starts after header line
             Aspect columnAspect;
+            
             // Alts column is loaded as array
             if(markerTableColumn.equals(markerTableColumns[2])) {
                 columnAspect = new ArrayColumnAspect(headerLineNumber+1, columnIndex, ",");
             }  
             else {
-                columnAspect = 
-                    new ColumnAspect(headerLineNumber+1, columnIndex);
+                columnAspect = new ColumnAspect(headerLineNumber+1, columnIndex);
             }
             try {
                 AspectUtils.setField(markerTable, markerTableColumn, columnAspect);
@@ -297,8 +285,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
             }
         }
 
-
-        markerTable.setPlatformId(getPlatform().getPlatformId().toString());
+        markerTable.setPlatformId(this.platform.getPlatformId().toString());
         markerTable.setStatus(newStatus.getCvId().toString());
 
         return markerTable;
@@ -312,11 +299,10 @@ public class VcfDigest extends GenotypeMatrixDigest {
         dnaRunTable.setDnaSampleNum(new RangeAspect(1));
 
         // Get Experiment id
-        Experiment experiment = getExperiment();
-        dnaRunTable.setExperimentId(experiment.getExperimentId().toString());
+        dnaRunTable.setExperimentId(this.experiment.getExperimentId().toString());
 
         // Get Project Id
-        Project project = experiment.getProject();
+        Project project = this.experiment.getProject();
         dnaRunTable.setProjectId(project.getProjectId().toString());
        
         dnaRunTable.setStatus(newStatus.getCvId().toString());
@@ -334,7 +320,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         dnaSampleTable.setGermplasmExternalCode(dnaSampleNameRow);
         dnaSampleTable.setDnaSampleNum(new RangeAspect(1));
 
-        Project project = getExperiment().getProject();
+        Project project = this.experiment.getProject();
         dnaSampleTable.setProjectId(project.getProjectId().toString());
 
         dnaSampleTable.setStatus(newStatus.getCvId().toString());            

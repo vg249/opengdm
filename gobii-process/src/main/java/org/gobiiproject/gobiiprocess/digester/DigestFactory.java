@@ -33,11 +33,9 @@ public class DigestFactory {
         }
         else {
             try {
-                GobiiLoaderProcedure loaderProcedure = 
-                    mapper.readValue(instructionFile, GobiiLoaderProcedure.class);
+                GobiiLoaderProcedure loaderProcedure = mapper.readValue(instructionFile, GobiiLoaderProcedure.class);
                 String instructionFileName = instructionFile.getName();
-                String jobName = instructionFileName
-                    .substring(0, instructionFileName.lastIndexOf('.'));
+                String jobName = instructionFileName.substring(0, instructionFileName.lastIndexOf('.'));
                 loaderProcedure.setJobName(jobName);
                 return (new Digest1(loaderProcedure, configSettings)); 
             }

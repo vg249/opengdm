@@ -18,6 +18,9 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Dataset;
+import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.ServerType;
@@ -36,6 +39,9 @@ import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+import org.gobiiproject.gobiisampletrackingdao.ContactDao;
+import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
+import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
 
 public class Digest1 implements Digest {
    
@@ -87,7 +93,20 @@ public class Digest1 implements Digest {
 
 
         SimpleTimer.start("FileRead");
+
+        // Get Dataset
         Integer dataSetId = procedure.getMetadata().getDataset().getId();
+        DatasetDao datasetDao = SpringContextLoaderSingleton.getInstance().getBean(DatasetDao.class);
+        Dataset dataset = datasetDao.getDataset(dataSetId);
+
+        // Get Contact
+        String contactEmail = procedure.getMetadata().getContactEmail();
+        ContactDao contactDao = SpringContextLoaderSingleton.getInstance().getBean(ContactDao.class);
+        Contact contact = contactDao.getContactByEmail(contactEmail);
+
+        // Get Mapset
+        MapsetDao mapsetDao = SpringContextLoaderSingleton.getInstance().getBean(MapsetDao.class);
+        Mapset mapset = mapsetDao.getMapset(procedure.getMetadata().getMapset().getId());
 
         //Error logs go to a file based on crop (for human readability) and
         Logger.logInfo("Digester", "Beginning read of instruction file");
@@ -292,9 +311,9 @@ public class Digest1 implements Digest {
                 .setLoaderInstructionsMap(loaderInstructionMap)
                 .setLoaderInstructionsList(loaderInstructionList)
                 .setDatasetType(datasetType)
-                .setDatasetId(dataSetId)
+                .setDataset(dataset)
                 .setJobName(procedure.getJobName())
-                .setContactEmail(procedure.getMetadata().getContactEmail())
+                .setContact(contact)
                 .build();
 
         return digesterResult;
