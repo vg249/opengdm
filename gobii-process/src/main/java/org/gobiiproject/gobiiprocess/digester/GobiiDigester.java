@@ -216,10 +216,15 @@ public class GobiiDigester {
 
         // Load genotype matrix
         boolean dataLoaded = metaDataLoaded;
+        System.out.println("before");
+        System.out.println(dataLoaded);
+        
+        System.out.println(Logger.getAllErrors());
         if(metaDataLoaded && Logger.success() && digestResult.hasGenotypeMatrix()) {
             dataLoaded &= loadGenoypeMatrix(digestResult, jobStatus);
         }
 
+        System.out.println("after");
         System.out.println(dataLoaded);
         System.out.println(Logger.getAllErrors());
 
