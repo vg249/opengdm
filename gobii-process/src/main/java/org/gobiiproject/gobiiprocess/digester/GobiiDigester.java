@@ -237,12 +237,12 @@ public class GobiiDigester {
             }
 
             Logger.logInfo("Digester", "Successful Data Upload");
-            if (digestResult.isSendQc()) {
-                jobStatus.set(
-                    JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),
-                    "Processing QC Job");
-                sendQCExtract(configuration, digestResult.getCropType());
-            }
+            //if (digestResult.isSendQc()) {
+            //    jobStatus.set(
+            //        JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),
+            //        "Processing QC Job");
+            //    sendQCExtract(configuration, digestResult.getCropType());
+            //}
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
         } else { //endIf(success)
             Logger.logWarning("Digester", "Unsuccessful Upload");
@@ -415,8 +415,6 @@ public class GobiiDigester {
 
         String variantFilename = "DS" + digesterResult.getDataset().getDatasetId().toString();
         File variantFile = digesterResult.getLoaderInstructionsMap().get(VARIANT_CALL_TABNAME);
-
-        System.out.println(variantFile);
 
         if (variantFile != null && digesterResult.getDataset().getDatasetId() == null) {
             logError("Digester", "Data Set ID is null for variant call");
