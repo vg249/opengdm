@@ -1,17 +1,26 @@
 package org.gobiiproject.gobiiweb.controllers.brapi.v2;
 
+import java.math.BigDecimal;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
+
 import org.gobiiproject.gobiidomain.services.brapi.CallSetService;
 import org.gobiiproject.gobiidomain.services.brapi.GenotypeCallsService;
 import org.gobiiproject.gobiidomain.services.brapi.VariantService;
 import org.gobiiproject.gobiidomain.services.brapi.VariantSetsService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.brapi.*;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsMatrixResult;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsResult;
+import org.gobiiproject.gobiimodel.dto.brapi.VariantDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.VariantSetDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterPayload;
-import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiResult;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.ErrorPayload;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
@@ -26,15 +35,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Brapi REST endpoint for variantsets (datasets)
@@ -337,6 +355,66 @@ public class VariantSetsController {
             genotypeCallsPaged.getResult(),
             genotypeCallsPaged.getCurrentPageSize(),
             genotypeCallsPaged.getNextPageToken());
+
+        return ResponseEntity.ok(payload);
+    }
+    
+    @ApiOperation(
+        value = "Get Genotypes Matrix in VariantSet",
+        notes = "List of all the genotype calls in a given VariantSet",
+        tags = {"VariantSets"},
+        extensions = {
+            @Extension(properties = {
+                @ExtensionProperty(name="summary", value="List Genotypes in VariantSet")
+            })
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "",
+            response = SwaggerResponseModels.GenotypeCallsListResponse.class),
+        @ApiResponse(code = 400, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 401, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 404, message = "", response = ErrorPayload.class),
+        @ApiResponse(code = 500, message = "", response = ErrorPayload.class)
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+            name="Authorization", value="Authentication Token",
+            required=true, paramType = "header", dataType = "string")
+    })
+    @GetMapping(value="/{variantSetDbId:[\\d]+}/calls/matrix", produces = "application/json")
+    public @ResponseBody ResponseEntity<BrApiMasterPayload<GenotypeCallsMatrixResult>>
+    getCallsMatrixByVariantSetDbId(
+        @ApiParam(value = "ID of the VariantSet", required = true)
+            @PathVariable("variantSetDbId") Integer variantSetDbId,
+        @ApiParam(value = "Size of the page to be fetched. Default is 100000.")
+            @RequestParam(value = "pageSize", required = false,
+                defaultValue = "1000") Integer pageSize,
+        @ApiParam(value = "Data page number.")
+            @RequestParam(value = "page", required = false,
+                defaultValue = "0") Integer page,
+        @ApiParam(value = "Column bin size")
+            @RequestParam(value = "dim2PageSize", required = false,
+                defaultValue = "1000") Integer dim2PageSize,
+        @ApiParam(value = "Column bin number")
+            @RequestParam(value = "dim2Page", required = false,
+                defaultValue = "0") Integer dim2Page
+    ) throws GobiiException {
+
+        PagedResultTyped<GenotypeCallsMatrixResult> genotypeCallsPaged =
+            genotypeCallsService.getGenotypeCallsMatrix(
+                variantSetDbId,
+                pageSize,
+                page,
+                dim2PageSize,
+                dim2Page);
+
+        BrApiMasterPayload<GenotypeCallsMatrixResult> payload = new BrApiMasterPayload<>(
+            genotypeCallsPaged.getResult(),
+            genotypeCallsPaged.getCurrentPageSize(),
+            genotypeCallsPaged.getCurrentPageNum(),
+            genotypeCallsPaged.getCurrentDim2PageNum(),
+            genotypeCallsPaged.getCurrentDim2PageSize());
 
         return ResponseEntity.ok(payload);
     }

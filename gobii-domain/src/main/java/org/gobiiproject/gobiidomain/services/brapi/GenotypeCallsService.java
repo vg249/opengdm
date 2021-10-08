@@ -1,10 +1,12 @@
 package org.gobiiproject.gobiidomain.services.brapi;
 
-import org.gobiiproject.gobiidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.brapi.*;
-import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
-
 import java.math.BigDecimal;
+
+import org.gobiiproject.gobiidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsMatrixResult;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsResult;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 
 public interface GenotypeCallsService {
 
@@ -26,6 +28,13 @@ public interface GenotypeCallsService {
         BigDecimal maxPosition,
         Integer pageSize,
         String pageToken) throws GobiiDomainException;
+    
+    PagedResultTyped<GenotypeCallsMatrixResult> getGenotypeCallsMatrix(
+        Integer datasetId,
+        Integer pageSize, 
+        Integer page, 
+        Integer columnBin,
+        Integer columnBinSize) throws GobiiDomainException;
 
     PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByExtractQuery(
         GenotypeCallsSearchQueryDTO genotypesSearchQuery,

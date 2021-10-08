@@ -22,6 +22,17 @@ public class BrApiMasterPayload<T> {
         this.getMetadata().getPagination().setCurrentPage(currentPage);
 
     }
+    
+    public BrApiMasterPayload(T result, Integer pageSize, Integer currentPage, 
+        Integer dim2CurrentPage, Integer dim2PageSize) {
+
+        this.result = result;
+        this.getMetadata().getPagination().setPageSize(pageSize);
+        this.getMetadata().getPagination().setCurrentPage(currentPage);
+        this.getMetadata().getPagination().setDim2CurrentPage(dim2CurrentPage);
+        this.getMetadata().getPagination().setDim2PageSize(dim2PageSize);
+
+    }
 
     public BrApiMasterPayload(T result, Integer pageSize, String pageToken) {
 

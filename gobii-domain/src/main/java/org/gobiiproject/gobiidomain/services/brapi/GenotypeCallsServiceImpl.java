@@ -1,14 +1,37 @@
 package org.gobiiproject.gobiidomain.services.brapi;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.PageToken;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsMatrixResult;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsResult;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
+import org.gobiiproject.gobiimodel.dto.brapi.VariantDTO;
 import org.gobiiproject.gobiimodel.dto.system.GenotypesRunTimeCursors;
 import org.gobiiproject.gobiimodel.dto.system.Hdf5InterfaceResultDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
@@ -24,17 +47,14 @@ import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.gobiiproject.gobiisampletrackingdao.hdf5.HDF5Interface;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.transaction.Transactional;
-import java.io.*;
-import java.math.BigDecimal;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Transactional
 @Slf4j
 public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     final String unphasedSep = "/";
-    final String unknownChar = "N/N";
+    final String unknownChar = "N";
 
     @Autowired
     private DnaRunDao dnaRunDao = null;
@@ -212,6 +232,80 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     }
 
+    @Override
+    public PagedResultTyped<GenotypeCallsMatrixResult> getGenotypeCallsMatrix(
+        Integer datasetId,
+        Integer pageSize, 
+        Integer page, 
+        Integer dim2PageSize,
+        Integer dim2Page) throws GobiiDomainException {
+        
+        PagedResultTyped<GenotypeCallsMatrixResult> returnVal = new PagedResultTyped<>();
+
+        
+        //Result
+        List<CallSetDTO> callsets = new ArrayList<>();
+        List<VariantDTO> variants = new ArrayList<>();
+
+        List<DnaRun> dnaRuns = dnaRunDao.getDnaRunsByDatasetId(datasetId, dim2PageSize, dim2Page*dim2PageSize);
+        List<Marker> markers = markerDao.getMarkersByDatasetId(datasetId, pageSize, page*pageSize);
+
+        Map<String, List<String>> markerHdf5Index = new HashMap<>();
+        Map<String, List<String>> dnarunHdf5Index = new HashMap<>();
+       
+        // Map callsets
+        for (DnaRun dnaRun : dnaRuns) {
+            CallSetDTO callSetDTO = new CallSetDTO();
+            ModelMapper.mapEntityToDto(dnaRun, callSetDTO);
+            callsets.add(callSetDTO);
+
+            if(!dnarunHdf5Index.containsKey(datasetId.toString())) {
+                dnarunHdf5Index.put(datasetId.toString(), new ArrayList<>());
+            }
+
+            dnarunHdf5Index
+                .get(datasetId.toString())
+                .add(dnaRun.getDatasetDnaRunIdx().get(datasetId.toString()).textValue());
+        }
+
+        // Map variants
+        for(Marker marker : markers) {
+            VariantDTO variantDTO = new VariantDTO();
+            ModelMapper.mapEntityToDto(marker, variantDTO);
+            List<String> variantNames = new ArrayList<>();
+            variantNames.add(marker.getMarkerName());
+            variantDTO.setVariantNames(variantNames);
+            List<String> variantSetDbIds = new ArrayList<>();
+            variantSetDbIds.add(datasetId.toString());
+            variantDTO.setVariantSetDbIds(variantSetDbIds);
+            variants.add(variantDTO);
+
+            if(!markerHdf5Index.containsKey(datasetId.toString())) {
+                markerHdf5Index.put(datasetId.toString(), new ArrayList<>());
+            }
+
+            markerHdf5Index
+                .get(datasetId.toString())
+                .add(marker.getDatasetMarkerIdx().get(datasetId.toString()).textValue());
+        }
+            
+        String[][] genotypeMatrix = new String[0][0];
+        
+        if(variants.size() > 0 && callsets.size() > 0){
+            Hdf5InterfaceResultDTO extractResult = this.extractGenotypes(markerHdf5Index, dnarunHdf5Index);
+            genotypeMatrix = this.readGenotypesFromFile(extractResult, variants.size(), callsets.size());
+        }
+
+        GenotypeCallsMatrixResult matrixResult = new GenotypeCallsMatrixResult(
+            unphasedSep, null, unknownChar, genotypeMatrix, callsets, variants);
+
+        returnVal.setCurrentPageNum(page);
+        returnVal.setCurrentPageSize(pageSize);
+        returnVal.setCurrentDim2PageNum(dim2Page);
+        returnVal.setCurrentDim2PageSize(dim2PageSize);
+        returnVal.setResult(matrixResult);
+        return returnVal;
+    }
 
 
     /**
@@ -1178,7 +1272,53 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
     }
 
+    private String[][] readGenotypesFromFile (Hdf5InterfaceResultDTO  extractResult, Integer rows, Integer columns) {
 
+        String[][] genotypeMatrix = new String[rows][columns];
+        try {
+
+            File genotypCallsFile = new File(extractResult.getGenotypeFile());
+            FileInputStream fstream = new FileInputStream(genotypCallsFile);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+            int i = 0;
+            int j = 0;
+
+            int chrEach;
+
+            StringBuilder genotype = new StringBuilder();
+
+            while ((chrEach = br.read()) != -1) {
+                char genotypesChar = (char) chrEach;
+                if (genotypesChar == '\t' || genotypesChar == '\n') {
+                    genotypeMatrix[i][j] = genotype.toString();
+                    if(genotypesChar == '\n') {
+                        i++;
+                        j = 0;
+                    }
+                    else {
+                        j++;
+                    }
+                    genotype.setLength(0);
+                } 
+                else {
+                    genotype.append(genotypesChar);
+                }
+            }
+            br.close();
+            fstream.close();
+        }
+        catch (IOException e) {
+            log.error( "Gobii Extraction service failed to read from result file",e);
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR,
+                GobiiValidationStatusType.NONE,
+                "Genotypes Extraction failed. System Error.");
+        }
+
+        return genotypeMatrix;
+
+    }
 
     private Integer readGenotypesFromFile (List<GenotypeCallsDTO> returnVal,
                                            String genotypeMatrixFilePath,
