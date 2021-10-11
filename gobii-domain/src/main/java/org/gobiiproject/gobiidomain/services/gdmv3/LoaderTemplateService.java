@@ -11,6 +11,10 @@ public interface LoaderTemplateService {
     LoaderTemplateDTO addMarkerTemplate(LoaderTemplateDTO markerTemplate) throws Exception;
     LoaderTemplateDTO addDnaRunTemplate(LoaderTemplateDTO dnaRunTemplate) throws Exception;
     LoaderTemplateDTO addGenotypeTemplate(LoaderTemplateDTO genotypeTemplate) throws Exception;
+
+    LoaderTemplateDTO getMarkerTemplateById(Integer loaderTemplateId) throws GobiiException;
+    LoaderTemplateDTO getDnaRunTemplateById(Integer loaderTemplateId) throws GobiiException;
+    LoaderTemplateDTO getGenotypeTemplateById(Integer loaderTemplateId) throws GobiiException;
     PagedResult<LoaderTemplateDTO> getDnaRunTemplates(Integer pageSize,
                                                       Integer pageNum) throws GobiiException;
     PagedResult<LoaderTemplateDTO> getMarkerTemplates(Integer pageSize,

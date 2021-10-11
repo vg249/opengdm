@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiweb.controllers.gdm.v3;
 
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
+import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
+
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiidomain.services.gdmv3.LoaderTemplateService;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
@@ -18,9 +18,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import static org.gobiiproject.gobiimodel.config.Roles.CURATOR;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
 @Scope(value = "request")
 @Controller
@@ -88,6 +96,57 @@ public class LoaderTemplateController {
         BrApiMasterListPayload<LoaderTemplateDTO> payload =
             ControllerUtils.getMasterListPayload(loaderTemplateList);
         return ResponseEntity.ok(payload);
+    }
+    
+    /**
+     * List Loader template by id
+     * @return {@link org.gobiiproject.gobiimodel.entity.LoaderTemplate}
+     *
+     * @throws Exception
+     */
+    @GetMapping(value = "/loader-template/marker-templates/{loaderTemplateId}",
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>>
+    getMarkerTemplateById(
+        @PathVariable Integer loaderTemplateId
+    ) {
+        
+        LoaderTemplateDTO loaderTemplateDTO = loaderTemplateService.getMarkerTemplateById(loaderTemplateId);
+        if (loaderTemplateDTO == null) {
+            throw new NullPointerException("Loader template does not exist");
+        }
+        BrApiMasterPayload<LoaderTemplateDTO> result = ControllerUtils.getMasterPayload(loaderTemplateDTO);
+        return ResponseEntity.ok(result);
+    }
+    
+    @GetMapping(value = "/loader-template/dnarun-templates/{loaderTemplateId}",
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>>
+    getDnaRunTemplateById(
+        @PathVariable Integer loaderTemplateId
+    ) {
+        
+        LoaderTemplateDTO loaderTemplateDTO = loaderTemplateService.getDnaRunTemplateById(loaderTemplateId);
+        if (loaderTemplateDTO == null) {
+            throw new NullPointerException("Loader template does not exist");
+        }
+        BrApiMasterPayload<LoaderTemplateDTO> result = ControllerUtils.getMasterPayload(loaderTemplateDTO);
+        return ResponseEntity.ok(result);
+    }
+    
+    @GetMapping(value = "/loader-template/genotype-templates/{loaderTemplateId}",
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BrApiMasterPayload<LoaderTemplateDTO>>
+    getGenotypeTemplateById(
+        @PathVariable Integer loaderTemplateId
+    ) {
+        
+        LoaderTemplateDTO loaderTemplateDTO = loaderTemplateService.getGenotypeTemplateById(loaderTemplateId);
+        if (loaderTemplateDTO == null) {
+            throw new NullPointerException("Loader template does not exist");
+        }
+        BrApiMasterPayload<LoaderTemplateDTO> result = ControllerUtils.getMasterPayload(loaderTemplateDTO);
+        return ResponseEntity.ok(result);
     }
 
     /**
