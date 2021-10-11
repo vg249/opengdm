@@ -9,16 +9,20 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import javax.transaction.Transactional;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.entity.Analysis;
-import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -282,7 +286,7 @@ public class MarkerDaoImpl implements MarkerDao {
     public List<Marker>
     getMarkers(Set<Integer> markerIds, Set<String> markerNames,
                Set<String> datasetIds, Integer pageSize,
-               Integer markerIdCursor) throws GobiiException {
+               Integer markerIdCursor, Integer rowOffset) throws GobiiException {
 
         List<Marker> markers;
         List<Predicate> predicates = new ArrayList<>();
@@ -344,9 +348,15 @@ public class MarkerDaoImpl implements MarkerDao {
                         datasetIdsArray,
                         StringArrayType.INSTANCE);
             }
+            
             if(!IntegerUtils.isNullOrZero(pageSize)) {
                 query.setMaxResults(pageSize);
             }
+            
+            if(!IntegerUtils.isNullOrZero(rowOffset)) {
+                query.setFirstResult(rowOffset);
+            }
+            
             markers = query.getResultList();
             return markers;
         }
@@ -358,6 +368,15 @@ public class MarkerDaoImpl implements MarkerDao {
 
         }
     }
+    
+    @Override
+    public List<Marker>
+    getMarkers(Set<Integer> markerIds, Set<String> markerNames,
+               Set<String> datasetIds, Integer pageSize,
+               Integer markerIdCursor) throws GobiiException {
+        return getMarkers(markerIds, markerNames, datasetIds, pageSize, markerIdCursor, null);
+    }
+
 
     /**
      * Returns List of Marker Entities for given markerIds

@@ -1,14 +1,17 @@
 package org.gobiiproject.gobiiweb.controllers.brapi.v2;
 
-import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.gobiiproject.gobiidomain.services.brapi.CallSetService;
 import org.gobiiproject.gobiidomain.services.brapi.GenotypeCallsService;
 import org.gobiiproject.gobiidomain.services.brapi.SearchService;
 import org.gobiiproject.gobiidomain.services.brapi.VariantService;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.brapi.CallSetDTO;
-import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsResult;
+import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsMatrixResult;
 import org.gobiiproject.gobiimodel.dto.brapi.GenotypeCallsSearchQueryDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.VariantDTO;
 import org.gobiiproject.gobiimodel.dto.brapi.envelope.BrApiMasterListPayload;
@@ -25,10 +28,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Brapi REST endpoint for search genotype calls.
@@ -144,29 +161,31 @@ public class SearchGenotypesController extends SearchController {
             required=true, paramType = "header", dataType = "string")
     })
     @GetMapping(value = "/{searchResultDbId}", produces = "application/json")
-    public ResponseEntity<BrApiMasterPayload<GenotypeCallsResult>>
+    public ResponseEntity<BrApiMasterPayload<GenotypeCallsMatrixResult>>
     getGenotypeCallsBySearchQuery(
         @ApiParam(value = "Search Query Id for which genotypes need to be fetched.")
         @PathVariable String searchResultDbId,
-        @ApiParam(value = "Page Token to fetch a page. " +
-            "Value is $metadata.pagination.nextPageToken form previous page.")
-        @RequestParam(value = "pageToken", required = false) String pageToken,
-        @ApiParam(value = "Size of the page to be fetched. Default is 100000.")
-        @RequestParam(value = "pageSize", required = false,
-            defaultValue = BrapiDefaults.genotypesPageSize) Integer pageSize,
+        @ApiParam(value = "2d axis for page")
+        @RequestParam(value = "page", required = false) List<Integer> page,
+        @ApiParam(value = "2d axis for page size")
+        @RequestParam(value = "pageSize", required = false) List<Integer> pageSize,
         HttpServletRequest request) throws GobiiException {
 
+        if(page.size() != 2) {
+            throw new GobiiException("Invalid Page query");
+        }
 
-        PagedResultTyped<GenotypeCallsResult> pagedResult =
-            genotypeCallsService.getGenotypeCallsByExtractQuery(
-                getGenotypeCallsSearchQuery(request, searchResultDbId),
-                pageSize,
-                pageToken);
+        if(pageSize.size() != 2) {
+            throw new GobiiException("Invalid Page Size query");
+        }
 
-        BrApiMasterPayload<GenotypeCallsResult> payload = new BrApiMasterPayload<>(
-            pagedResult.getResult(),
-            pagedResult.getCurrentPageSize(),
-            pagedResult.getNextPageToken());
+        PagedResultTyped<GenotypeCallsMatrixResult> pagedResult = genotypeCallsService.getGenotypeCallsByExtractQuery(
+            getGenotypeCallsSearchQuery(request, searchResultDbId), pageSize.get(0), page.get(0),
+            pageSize.get(1), page.get(1)
+        );
+
+        BrApiMasterPayload<GenotypeCallsMatrixResult> payload = new BrApiMasterPayload<>(
+            pagedResult.getResult(), pagedResult.getCurrentPageSize(), pagedResult.getNextPageToken());
 
         return ResponseEntity.ok(payload);
     }

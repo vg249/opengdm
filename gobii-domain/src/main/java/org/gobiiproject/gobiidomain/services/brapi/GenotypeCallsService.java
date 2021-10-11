@@ -11,14 +11,12 @@ import org.gobiiproject.gobiimodel.dto.system.PagedResultTyped;
 public interface GenotypeCallsService {
 
     PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByCallSetId(
-        Integer callSetDbId,
-        Integer pageSize,
-        String pageToken) throws GobiiDomainException;
+        Integer callSetDbId, Integer pageSize, String pageToken
+    ) throws GobiiDomainException;
 
     PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantDbId(
-        Integer markerId,
-        Integer pageSize,
-        String pageToken) throws GobiiDomainException;
+        Integer markerId, Integer pageSize, String pageToken
+    ) throws GobiiDomainException;
 
     PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByVariantSetDbId(
         Integer datasetId,
@@ -36,10 +34,12 @@ public interface GenotypeCallsService {
         Integer columnBin,
         Integer columnBinSize) throws GobiiDomainException;
 
-    PagedResultTyped<GenotypeCallsResult> getGenotypeCallsByExtractQuery(
+    PagedResultTyped<GenotypeCallsMatrixResult> getGenotypeCallsByExtractQuery(
         GenotypeCallsSearchQueryDTO genotypesSearchQuery,
-        Integer pageSize,
-        String pageToken) throws GobiiDomainException;
+        Integer pageSize, 
+        Integer page, 
+        Integer columnBin,
+        Integer columnBinSize) throws GobiiDomainException;
 
 
 

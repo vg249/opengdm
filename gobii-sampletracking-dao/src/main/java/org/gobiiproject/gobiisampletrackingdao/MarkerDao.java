@@ -16,6 +16,12 @@ public interface MarkerDao {
                             Set<String> datasetIds,
                             Integer pageSize,
                             Integer markerIdCursor);
+    
+    List<Marker> getMarkers(Set<Integer> markerIds,
+                            Set<String> markerNames,
+                            Set<String> datasetIds,
+                            Integer pageSize,
+                            Integer markerIdCursor, Integer rowOffset);
 
     List<Marker> getMarkersByMap(Integer pageSize, Integer rowOffset,
                                  Integer mapsetId, String mapsetName,
