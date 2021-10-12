@@ -1,13 +1,10 @@
-# ExtractorUI
+# ExtractorUi
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.4.
 
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-`ng serve --base-href=/gdm/ --proxy-config src/proxy.conf.json` will allow you to run a development server that uses remote APIs.
-Edit `proxy.conf.json` to control what server your APIs are one.  Site will be at `http://localhost:4200/gdm`.
 
 ## Code scaffolding
 

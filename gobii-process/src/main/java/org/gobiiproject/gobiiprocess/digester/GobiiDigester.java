@@ -433,7 +433,6 @@ public class GobiiDigester {
                 digesterResult.getDataset().getDatasetId(),
                 digesterResult.getCropType(),
                 errorPath,
-                variantFilename,
                 variantFile);
             rmIfExist(variantFile.getPath());
             System.out.println("xxxxxxxxxxxx---hdf5Sucess");

@@ -1,38 +1,37 @@
 ////<reference path="../../../../../../typings/index.d.ts"/>
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { DtoRequestItemAdmins } from 'src/services/app/dto-request-item-admins';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { Observable } from "rxjs/Observable";
 import { DtoRequestItemCrops } from 'src/services/app/dto-request-item-crops';
-
-import { Contact } from '../model/contact';
+import { Contact } from "../model/contact";
 import { Crop } from '../model/crop';
-import { CvFilterType } from '../model/cv-filter-type';
-import { HeaderStatusMessage } from '../model/dto-header-status-message';
-import { FilterParamNames } from '../model/file-item-param-names';
-import { FileName } from '../model/file_name';
-import { GobiiFileItem } from '../model/gobii-file-item';
-import { ServerConfig } from '../model/server-config';
-import { EntitySubType, EntityType } from '../model/type-entity';
-import { GobiiExtractFormat } from '../model/type-extract-format';
-import { GobiiExtractFilterType } from '../model/type-extractor-filter';
-import { ExtractorItemType } from '../model/type-extractor-item';
-import { GobiiSampleListType } from '../model/type-extractor-sample-list';
-import { ProcessType } from '../model/type-process';
-import { StatusLevel } from '../model/type-status-level';
-import { ContactSearchType, DtoRequestItemContact } from '../services/app/dto-request-item-contact';
-import { DtoRequestItemServerConfigs } from '../services/app/dto-request-item-serverconfigs';
-import { AuthenticationService } from '../services/core/authentication.service';
-import { DtoRequestService } from '../services/core/dto-request.service';
+import { CvFilterType } from "../model/cv-filter-type";
+import { HeaderStatusMessage } from "../model/dto-header-status-message";
+import { FilterParamNames } from "../model/file-item-param-names";
+import { FileName } from "../model/file_name";
+import { GobiiFileItem } from "../model/gobii-file-item";
+import { ServerConfig } from "../model/server-config";
+import { EntitySubType, EntityType } from "../model/type-entity";
+import { GobiiExtractFormat } from "../model/type-extract-format";
+import { GobiiExtractFilterType } from "../model/type-extractor-filter";
+import { ExtractorItemType } from "../model/type-extractor-item";
+import { GobiiSampleListType } from "../model/type-extractor-sample-list";
+import { ProcessType } from "../model/type-process";
+import { StatusLevel } from "../model/type-status-level";
+import { ContactSearchType, DtoRequestItemContact } from "../services/app/dto-request-item-contact";
+import { DtoRequestItemServerConfigs } from "../services/app/dto-request-item-serverconfigs";
+import { AuthenticationService } from "../services/core/authentication.service";
+import { DtoRequestService } from "../services/core/dto-request.service";
 import { DtoRequestService2 } from '../services/core/dto-request.service2';
-import { FileItemService } from '../services/core/file-item-service';
-import { InstructionSubmissionService } from '../services/core/instruction-submission-service';
-import { TypeControl } from '../services/core/type-control';
-import { ViewIdGeneratorService } from '../services/core/view-id-generator-service';
+import { FileItemService } from "../services/core/file-item-service";
+import { InstructionSubmissionService } from "../services/core/instruction-submission-service";
+import { TypeControl } from "../services/core/type-control";
+import { ViewIdGeneratorService } from "../services/core/view-id-generator-service";
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import * as fromRoot from '../store/reducers';
+import { Router } from '@angular/router';
+import { DtoRequestItemAdmins } from "src/services/app/dto-request-item-admins";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -41,7 +40,8 @@ import * as fromRoot from '../store/reducers';
 @Component({
     selector: 'extractor-root',
     templateUrl: 'app.extractorroot.html'
-})
+}) 
+
 export class ExtractorRoot implements OnInit {
     title = 'Gobii Web';
 
@@ -49,6 +49,7 @@ export class ExtractorRoot implements OnInit {
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
     // ************************************************************************
+
     //
     public profileOk: boolean = null;
     public cropsOk: boolean = null;
@@ -109,9 +110,9 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-    public display = false;
+    public display: boolean = false;
     public currentStatusMessage: string = null;
-    public displayEmailUpdateDialog = false;
+    public displayEmailUpdateDialog: boolean = false;
 
 
     showMessagesDialog() {
@@ -141,7 +142,7 @@ export class ExtractorRoot implements OnInit {
                 this.initializeCropType();
             }
         )
-    }
+    } 
 
     private initializeCropType() {
         let scope$ = this;
@@ -154,7 +155,7 @@ export class ExtractorRoot implements OnInit {
                 this._authenticationService.setGobiiCropType(crops[0].cropType);
                 this.store.dispatch(new fileItemAction.SetCurrentCropAction(crops[0].cropType));
                 this.fileItemService.loadCrops(GobiiExtractFilterType.UNKNOWN, crops, 0);
-                scope$.initializeServerConfigs();
+                scope$.initializeServerConfigs();   
             } else {
                 this.cropsOk = false;
             }
@@ -166,7 +167,7 @@ export class ExtractorRoot implements OnInit {
 
         this._dtoRequestServiceServerConfigs.get(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
                 if (serverConfigs && (serverConfigs.length > 0)) {
-
+                
                     scope$.serverConfigList = serverConfigs;
 
                     let serverCrop: String =
@@ -184,7 +185,7 @@ export class ExtractorRoot implements OnInit {
                             )[0];
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
-
+                    
                     //scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
@@ -316,13 +317,13 @@ export class ExtractorRoot implements OnInit {
                     FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
                     null,
                     cropType);
-
+                
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.PROJECT_FILTER_OPTIONAL,
                     null,
                     cropType);
-
+            
 
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
@@ -488,7 +489,7 @@ export class ExtractorRoot implements OnInit {
                 }
             }
         )
-
+        
         //this.initializeServerConfigs();
     } // ngOnInit()
 
@@ -510,3 +511,4 @@ export class ExtractorRoot implements OnInit {
             )
     }
 }
+

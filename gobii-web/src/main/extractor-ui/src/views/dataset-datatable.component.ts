@@ -1,35 +1,35 @@
-import 'rxjs/add/operator/withLatestFrom';
-
-import { Component, Input, OnChanges, OnInit, SimpleChange, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { OverlayPanel } from 'primeng/overlaypanel';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import {Component, Input, OnChanges, OnInit, SimpleChange, ViewEncapsulation} from "@angular/core";
+import {Store} from "@ngrx/store";
+import * as fromRoot from '../store/reducers';
+import * as historyAction from '../store/actions/history-action';
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {FileItemService} from "../services/core/file-item-service";
+import {FilterParamNames} from "../model/file-item-param-names";
+import {Observable} from "rxjs/Observable";
+import {DataSet} from "../model/dataset";
+import {GobiiFileItem} from "../model/gobii-file-item";
+import * as fileAction from '../store/actions/fileitem-action';
+import {OverlayPanel} from "primeng/primeng";
+import {DtoRequestService} from "../services/core/dto-request.service";
+import {JsonToGfiDataset} from "../services/app/jsontogfi/json-to-gfi-dataset";
+import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {DtoRequestItemGfi} from "../services/app/dto-request-item-gfi";
+import {FilterParams} from "../model/filter-params";
+import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis";
+import {CvFilters, CvFilterType} from "../model/cv-filter-type";
+import {EntitySubType, EntityType} from "../model/type-entity";
+import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
+import {ExtractorItemType} from "../model/type-extractor-item";
+// import {TooltipModule} from "/primeng/primeng";
+import {PagedFileItemList} from "../model/payload/paged-item-list";
+import {Pagination} from "../model/payload/pagination";
+import {Subject} from "rxjs/Subject";
+import 'rxjs/add/operator/withLatestFrom'
+import {ExtractReadyPayloadFilter, JobTypeFilters, PayloadFilter} from "../store/actions/action-payload-filter";
+import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
+import {FileItem} from "ng2-file-upload";
 import { AuthenticationService } from 'src/services/core/authentication.service';
 
-import { CvFilters, CvFilterType } from '../model/cv-filter-type';
-import { DataSet } from '../model/dataset';
-import { FilterParamNames } from '../model/file-item-param-names';
-import { FilterParams } from '../model/filter-params';
-import { GobiiFileItem } from '../model/gobii-file-item';
-import { GobiiFileItemCompoundId } from '../model/gobii-file-item-compound-id';
-import { Pagination } from '../model/payload/pagination';
-import { EntitySubType, EntityType } from '../model/type-entity';
-import { GobiiExtractFilterType } from '../model/type-extractor-filter';
-import { ExtractorItemType } from '../model/type-extractor-item';
-import { DtoRequestItemGfi } from '../services/app/dto-request-item-gfi';
-import { JsonToGfiAnalysis } from '../services/app/jsontogfi/json-to-gfi-analysis';
-import { JsonToGfiDataset } from '../services/app/jsontogfi/json-to-gfi-dataset';
-import { DtoRequestService } from '../services/core/dto-request.service';
-import { FileItemService } from '../services/core/file-item-service';
-import { FilterParamsColl } from '../services/core/filter-params-coll';
-import { ViewIdGeneratorService } from '../services/core/view-id-generator-service';
-import { ExtractReadyPayloadFilter, JobTypeFilters } from '../store/actions/action-payload-filter';
-import * as fileAction from '../store/actions/fileitem-action';
-import * as historyAction from '../store/actions/history-action';
-import * as fromRoot from '../store/reducers';
-
-// import {TooltipModule} from "/primeng/primeng";
 @Component({
     selector: 'dataset-datatable',
     encapsulation: ViewEncapsulation.None,
@@ -304,6 +304,6 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
         }
 
 
-
+        
     }
 }

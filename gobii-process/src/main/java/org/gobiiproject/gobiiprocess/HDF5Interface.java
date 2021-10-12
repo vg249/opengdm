@@ -18,9 +18,8 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiiprocess.digester.GobiiDigester;
-import org.gobiiproject.gobiiprocess.services.DatasetService;
-import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
+import org.hibernate.internal.util.xml.ErrorLogger;
 
 import static java.util.stream.Collectors.toList;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
@@ -47,7 +46,6 @@ public class HDF5Interface {
      * @param dataSetId ID of dataset to create
      * @param crop crop to create the dataset for
      * @param errorPath Place to store temporary files in case of needing temporary files
-     * @param variantFilename Name of the dataset (Only used to set the postgres name [probably a bug)
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
      */
@@ -57,7 +55,6 @@ public class HDF5Interface {
                                                 Integer dataSetId,
                                                 String crop,
                                                 String errorPath,
-                                                String variantFilename,
                                                 File variantFile) throws Exception {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
@@ -89,15 +86,19 @@ public class HDF5Interface {
         String matrixFilePath = variantFile.getPath();
         String tempMatrixFilePath = matrixFilePath+".temp";
         String hdf5MapFile = HDF5File+".idl";
+        String finalMatrixFilePath = matrixFilePath;
 
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
-        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")) {
+        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")
+        || dst.toUpperCase().equals("IUPAC")
+        || dst.toUpperCase().equals("VCF")) {
+            finalMatrixFilePath = matrixFilePath+".enc";
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
-            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(matrixFilePath), new File(hdf5MapFile),"","\t");
+            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(finalMatrixFilePath), new File(hdf5MapFile),"/","\t");
         }
 
 
-        boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+        boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+ finalMatrixFilePath +" "+HDF5File,null,errorPath);
 
         rmIfExist(tempMatrixFilePath);
         if(!success){
@@ -106,9 +107,8 @@ public class HDF5Interface {
             rmIfExist(hdf5MapFile);
             return false;
         }
-        DatasetService datasetService = 
-            SpringContextLoaderSingleton.getInstance().getBean(DatasetService.class);
-        datasetService.update(dataSetId,variantFilename, HDF5File);
+
+        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFile.getName(), HDF5File);
         return true;
     }
 
@@ -218,7 +218,7 @@ public class HDF5Interface {
                 String genoFile=null;
                 if(!hasSampleList || (sampleList!=null)) {
 
-                    genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList);
+                    genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList, positionList);
 
                     if(genoFile==null)return null;
                 }
@@ -309,7 +309,7 @@ public class HDF5Interface {
      * @return see getHDF5Genotype(boolean,String, Integer, String, String, String)
      */
     public static String getHDF5Genotype(boolean markerFast, String errorFile, Integer dataSetId, String tempFolder) {
-        return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null,null);
+        return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null,null, null);
     }
 
     /**
@@ -322,10 +322,12 @@ public class HDF5Interface {
      * @param tempFolder folder to store intermediate results
      * @param markerList nullable - determines what markers to extract. File containing a list of marker positions, comma separated
      * @param sampleList nullable - list of comma delimited samples to cut out
+     * @param positionList - contents of markerList file, newline delimited
      * @return file location of the dataset output.
      */
-    private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList) {
+    private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList, String sampleList, String positionList) {
         String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
+        String newGenoFile = genoFile+".enc";
 
         String HDF5File= getFileLoc(dataSetId);
         // %s <orientation> <HDF5 file> <output file>
@@ -348,7 +350,7 @@ public class HDF5Interface {
 
             //decode in marker list
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), markerList, new File(genoFile), "/","\t"); //TODO- separator is always tab
+            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), positionList, new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
 
         }
         else {
@@ -362,14 +364,13 @@ public class HDF5Interface {
 
             //decode in dumpdataset
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(genoFile), "/","\t"); //TODO- separator is always tab
-
+            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
         }
         if(sampleList!=null){
-            filterDirectional(genoFile,sampleList,markerFast);
+            filterDirectional(newGenoFile,sampleList,markerFast);
         }
         Logger.logDebug("Extractor",(Logger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
-        return genoFile;
+        return newGenoFile;
     }
 
     private static String getFileLoc(Integer dataSetId) {

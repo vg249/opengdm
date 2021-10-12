@@ -78,7 +78,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
 
         return returnVal;
     }
-
+    
     public static copy(other: GobiiFileItem) {
         let returnVal: GobiiFileItem = new GobiiFileItem(
             null,
@@ -99,7 +99,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             false,
             0,
             false
-
+            
         );
         Object.assign(returnVal, other);
         return returnVal;

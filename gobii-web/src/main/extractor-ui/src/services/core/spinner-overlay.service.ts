@@ -1,9 +1,10 @@
-import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
+import { Injectable } from "@angular/core";
+import { OverlayRef, Overlay, OverlayPositionBuilder } from "@angular/cdk/overlay";
 import { ComponentPortal } from '@angular/cdk/portal';
-import { Injectable } from '@angular/core';
+import { SpinnerOverlayComponent } from 'src/views/spinner-overlay.component';
 import { defer, NEVER } from 'rxjs';
 import { finalize, share } from 'rxjs/operators';
-import { SpinnerOverlayComponent } from 'src/views/spinner-overlay.component';
+import { GalleriaThumbnails } from 'primeng';
 
 @Injectable({
     providedIn: 'root',
@@ -33,7 +34,7 @@ export class SpinnerOverlayService {
     }
 
     private hide(): void {
-
+        
         if (this.overlayRef) {
             this.overlayRef.detach();
             this.overlayRef = undefined;
