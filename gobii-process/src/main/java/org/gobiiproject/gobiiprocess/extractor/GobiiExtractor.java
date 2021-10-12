@@ -1,8 +1,15 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mvToFolder;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,6 +29,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -67,14 +79,6 @@ import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
-
-import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
-import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.*;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 /**
  * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
@@ -180,11 +184,11 @@ public class GobiiExtractor {
 			String instructionName = new File(instructionFile).getName();
 			instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
 			logFile = logDir + "/" + instructionName + ".log";
-			String oldLogFile = Logger.getLogFilepath();
-			Logger.logDebug("Error Logger", "Moving error log to " + logFile);
-			Logger.setLogFilepath(logFile);
+			//String oldLogFile = Logger.getLogFilepath();
+			//Logger.logDebug("Error Logger", "Moving error log to " + logFile);
+			//Logger.setLogFilepath(logFile);
 			Logger.logDebug("Error Logger", "Moved error log to " + logFile);
-			FileSystemInterface.rmIfExist(oldLogFile);
+			//FileSystemInterface.rmIfExist(oldLogFile);
 		} else {
 			Logger.logError("Extractor", "log directory is not defined in config file");
 			return;
