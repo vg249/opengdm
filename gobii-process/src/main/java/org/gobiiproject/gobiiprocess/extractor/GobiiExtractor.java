@@ -41,25 +41,19 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.HttpStatus;
-import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.dto.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.entity.Mapset;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -68,7 +62,6 @@ import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.SimpleTimer;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
@@ -79,6 +72,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
+import org.gobiiproject.gobiisampletrackingdao.MapsetDao;
 
 /**
  * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
@@ -456,7 +450,7 @@ public class GobiiExtractor {
 					//Clean some variables ahead of declaration
 					final String defaultMapName = "No Mapset info available";
 					String mapName = defaultMapName;
-					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration); //Get name from postgres
+					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId); //Get name from postgres
 					if (postgresName != null) mapName = postgresName;
 					GobiiSampleListType type = extract.getGobiiSampleListType();
 
@@ -1176,46 +1170,14 @@ public class GobiiExtractor {
      * Gets a map name from an ID
      *
      * @param mapId  ID of map, if null, returns null
-     * @param config Configuration master object
      * @return name, or null if error
      */
-    private String getMapNameFromId(Integer mapId, ConfigSettings config) {
-        String cropName = config.getCurrentGobiiCropType();
-        if (mapId == null) return null;
+    private String getMapNameFromId(Integer mapId) {
 
         try {
-            // set up authentication and so forth
-            // you'll need to get the current from the instruction file
-            GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
-            //context.setCurrentCropId(cropName);
-
-            if (LineUtils.isNullOrEmpty(context.getUserToken())) {
-                logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
-                return null;
-            }
-
-            String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot, cropName);
-
-            RestUri mapUri = gobiiUriFactory
-                    .resourceByUriIdParam(RestResourceId.GOBII_MAPSET);
-            mapUri.setParamValue("id", mapId.toString());
-            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(mapUri);
-            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                    .get(MapsetDTO.class);
-
-            MapsetDTO dataSetResponse;
-            if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                System.out.println();
-                logError("Extractor", "Map set response response errors");
-                for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
-                }
-                return null;
-            } else {
-                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
-            }
-            return dataSetResponse.getName();
+        	MapsetDao mapsetDao = SpringContextLoaderSingleton.getInstance().getBean(MapsetDao.class);
+        	Mapset mapset = mapsetDao.getMapset(mapId);
+			return mapset.getMapsetName();
 
         } catch (Exception e) {
             logError("Extractor", "Exception while referencing map sets in Postgresql", e);
