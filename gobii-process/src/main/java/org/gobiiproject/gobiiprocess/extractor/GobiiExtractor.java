@@ -1177,6 +1177,9 @@ public class GobiiExtractor {
         try {
         	MapsetDao mapsetDao = SpringContextLoaderSingleton.getInstance().getBean(MapsetDao.class);
         	Mapset mapset = mapsetDao.getMapset(mapId);
+			if(mapset == null) {
+				return null;
+			}
 			return mapset.getMapsetName();
 
         } catch (Exception e) {
