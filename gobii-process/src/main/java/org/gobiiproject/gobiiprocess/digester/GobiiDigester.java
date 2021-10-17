@@ -216,16 +216,12 @@ public class GobiiDigester {
 
         // Load genotype matrix
         boolean dataLoaded = metaDataLoaded;
-        System.out.println("before");
-        System.out.println(dataLoaded);
 
         System.out.println(Logger.getAllErrors());
         if(metaDataLoaded && Logger.success() && digestResult.hasGenotypeMatrix()) {
             dataLoaded &= loadGenoypeMatrix(digestResult, jobStatus);
         }
 
-        System.out.println("after");
-        System.out.println(dataLoaded);
         System.out.println(Logger.getAllErrors());
 
         // Send Qc
@@ -237,12 +233,12 @@ public class GobiiDigester {
             }
 
             Logger.logInfo("Digester", "Successful Data Upload");
-            //if (digestResult.isSendQc()) {
-            //    jobStatus.set(
-            //        JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),
-            //        "Processing QC Job");
-            //    sendQCExtract(configuration, digestResult.getCropType());
-            //}
+            if (digestResult.isSendQc()) {
+                jobStatus.set(
+                    JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),
+                    "Processing QC Job");
+                sendQCExtract(configuration, digestResult.getCropType());
+            }
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
         } else { //endIf(success)
             Logger.logWarning("Digester", "Unsuccessful Upload");
@@ -387,10 +383,7 @@ public class GobiiDigester {
                     if (!LoaderGlobalConfigs.isKeepAllIntermediates()) {
                         // And if 'delete intermediate files' is true,
                         // clean up all IFL files (we don't need them any more
-                        deleteIFLFiles(
-                            dstDir,
-                            tableName,
-                            !LoaderGlobalConfigs.isDeleteIntermediateFiles());
+                        deleteIFLFiles(dstDir, tableName, !LoaderGlobalConfigs.isDeleteIntermediateFiles());
                     }
 
                 }
@@ -407,11 +400,9 @@ public class GobiiDigester {
         boolean hdf5Success = false;
 
         //Load Monet/HDF5
-        String errorPath =
-            getLogName(
-                digesterResult.getIntermediateFilePath(),
-                digesterResult.getCropType(),
-                "Matrix_Upload");
+        String errorPath = getLogName(
+            digesterResult.getIntermediateFilePath(), digesterResult.getCropType(),
+            "Matrix_Upload");
 
         String variantFilename = "DS" + digesterResult.getDataset().getDatasetId().toString();
         File variantFile = digesterResult.getLoaderInstructionsMap().get(VARIANT_CALL_TABNAME);
@@ -421,9 +412,9 @@ public class GobiiDigester {
         }
         if ((variantFile != null) && digesterResult.getDataset().getDatasetId() != null) {
             //Create an HDF5 and a Monet
-            jobStatus
-                .set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
-                    "Matrix Upload");
+            jobStatus.set(
+                JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
+                "Matrix Upload");
             HDF5Interface.setPathToHDF5Files(
                 loaderScripts.getPathToHdf5Files(digesterResult.getCropType()));
             hdf5Success = HDF5Interface.createHDF5FromDataset(
@@ -435,8 +426,6 @@ public class GobiiDigester {
                 errorPath,
                 variantFile);
             rmIfExist(variantFile.getPath());
-            System.out.println("xxxxxxxxxxxx---hdf5Sucess");
-            System.out.println(hdf5Success);
         }
         return hdf5Success;
     }
