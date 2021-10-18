@@ -6,11 +6,11 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.DeleteException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityException;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
@@ -146,7 +146,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             Reference reference = this.loadReference(analysisDTO.getReferenceId());
             analysis.setReference(reference);
         }
-        else if(analysisDTO.getReferenceId() == 0) {
+        else if( analysisDTO.getReferenceId() != null && analysisDTO.getReferenceId() == 0) {
             analysis.setReference(null);
         }
 

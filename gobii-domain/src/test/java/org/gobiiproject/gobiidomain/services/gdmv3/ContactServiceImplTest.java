@@ -163,7 +163,7 @@ public class ContactServiceImplTest {
 
     @Test(expected = GobiiDomainException.class)
     public void testGetKeycloakUsersThrowException() throws Exception {
-        when(keycloakService.getKeycloakUsers("rice", Roles.PI, 0, 1000)).thenThrow(new Exception("foo"));
+        when(keycloakService.getKeycloakUsers("rice", Roles.PI, 0, 1000)).thenThrow(new GobiiDomainException("foo"));
         
         contactServiceImpl.getUsers("rice", Roles.PI, 0, 1000, null);
 

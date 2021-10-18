@@ -1,5 +1,10 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -9,14 +14,12 @@ import org.gobiiproject.gobiimodel.utils.URLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class CropServiceImpl implements CropService {
 
     Logger LOGGER = LoggerFactory.getLogger(CropServiceImpl.class);
 
     private ConfigSettings configSettings = new ConfigSettings();
+
 
     /**
      * Get all the crops defined in the system.

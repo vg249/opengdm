@@ -9,7 +9,6 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,6 @@ import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiidomain.services.PropertiesService;
-import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.children.CvPropertyDTO;
@@ -126,6 +124,7 @@ public class ProjectServiceImplTest {
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
         request.setPiContactUserName("piContactUserName");
+        request.setPiContactId("piContactId");
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO nullValued = new CvPropertyDTO();
@@ -138,9 +137,9 @@ public class ProjectServiceImplTest {
         mockContact.setContactId(111);
 
         ContactDTO mockKeycloakUser = new ContactDTO();
-        mockKeycloakUser.setUsername("pIConTactId");
-        when(keycloakService.getUser("pIConTactId")).thenReturn(mockKeycloakUser);
-        when(contactDao.getContactByUsername("pIConTactId")).thenReturn(mockContact);
+        mockKeycloakUser.setUsername("piContactId");
+        when(keycloakService.getUserByUserName("piContactId")).thenReturn(mockKeycloakUser);
+        when(contactDao.getContactByUsername("piContactId")).thenReturn(mockContact);
 
         Cv mockNewStat = new Cv();
 
@@ -167,7 +166,8 @@ public class ProjectServiceImplTest {
         String projectName = RandomStringUtils.random(10);
         request.setProjectName(projectName);
         request.setProjectDescription(RandomStringUtils.random(20));
-        request.setPiContactUserName("pIConTactName");
+        request.setPiContactId("pIConTactId");
+        request.setPiContactUserName("pIConTactId");
 
         List<CvPropertyDTO> props = new ArrayList<>();
         CvPropertyDTO valued = new CvPropertyDTO();
@@ -181,7 +181,7 @@ public class ProjectServiceImplTest {
 
         ContactDTO mockKeycloakUser = new ContactDTO();
         mockKeycloakUser.setUsername("pIConTactId");
-        when(keycloakService.getUser("pIConTactId")).thenReturn(mockKeycloakUser);
+        when(keycloakService.getUserByUserName("pIConTactId")).thenReturn(mockKeycloakUser);
         when(contactDao.getContactByUsername("pIConTactId")).thenReturn(mockContact);
 
         Cv mockNewStat = new Cv();
