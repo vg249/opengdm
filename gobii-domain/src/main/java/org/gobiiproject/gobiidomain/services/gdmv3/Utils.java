@@ -9,7 +9,7 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiAspectTable;
 import org.gobiiproject.gobiimodel.dto.gdmv3.FileDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -158,7 +158,7 @@ public class Utils {
         return outputFilesDir;
     }
 
-    static void writeInstructionFile(LoaderInstruction loaderInstruction,
+    static void writeInstructionFile(LoaderInstruction3 loaderInstruction,
                                      String jobName,
                                      String cropType) throws GobiiDomainException {
         try {

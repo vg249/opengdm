@@ -86,7 +86,7 @@ public class ContactServiceImpl implements ContactService {
 
         //detect email is still the same
         else  {
-            if (!contact.getEmail().equals(email)) {
+            if ( contact.getEmail() == null || !contact.getEmail().equals(email)) {
                 //update email
                 contact.setEmail(email);
                 contactDao.updateContact(contact);
@@ -133,7 +133,7 @@ public class ContactServiceImpl implements ContactService {
                                             String role, 
                                             Integer page, 
                                             Integer pageSize,
-                                            String userName) throws Exception {
+                                            String userName) throws GobiiDomainException {
             List<ContactDTO> contactDTOs = new ArrayList<>();
 
             // If user name filter is provided dont have to fetch all

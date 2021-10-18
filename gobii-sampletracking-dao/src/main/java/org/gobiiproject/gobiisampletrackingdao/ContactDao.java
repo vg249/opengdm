@@ -19,6 +19,7 @@ public interface ContactDao {
     List<Contact> getContacts(Integer page, Integer pageSize, Integer organizationId);
     Contact getContact(Integer contactId) throws Exception;
     Contact getContactByUsername(String username) throws GobiiDaoException;
+    Contact getContactByEmail(String email) throws GobiiDaoException;
     Contact addContact(Contact contact);
     Contact addContact(String username, String lastName, String firstName, String email, Organization organization, String createdBy) throws Exception;
 

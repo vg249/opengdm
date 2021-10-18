@@ -60,4 +60,7 @@ public class Platform extends BaseEntity{
     @JoinColumn(name = "status", referencedColumnName = "cv_id")
     private Cv status;
 
+    @OneToOne(mappedBy = "platform")
+    private PlatformStats platformStats;
+
 }

@@ -1,5 +1,13 @@
 package org.gobiiproject.gobiiprocess;
 
+import static java.util.stream.Collectors.toList;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logDebug;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,25 +16,23 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
+
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
-import org.hibernate.internal.util.xml.ErrorLogger;
-
-import static java.util.stream.Collectors.toList;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
-import static org.gobiiproject.gobiimodel.utils.error.Logger.*;
+import org.gobiiproject.gobiiprocess.services.DatasetService;
+import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 
 /**
  * A repository of methods designed to interface with HDF5 files, both in the creation and in the execution of 
@@ -108,7 +114,8 @@ public class HDF5Interface {
             return false;
         }
 
-        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFile.getName(), HDF5File);
+        DatasetService datasetService = SpringContextLoaderSingleton.getInstance().getBean(DatasetService.class);
+        datasetService.update(dataSetId, variantFile.getName(), HDF5File);
         return true;
     }
 

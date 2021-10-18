@@ -53,6 +53,7 @@
         <module>gobii-domain</module>
         <module>gobii-process</module>
         <module>gobii-web</module>
+        <module>gobii-masticator</module>
 
     </modules>
 

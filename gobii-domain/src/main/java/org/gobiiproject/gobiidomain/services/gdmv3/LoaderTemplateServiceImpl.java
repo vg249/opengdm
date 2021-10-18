@@ -1,13 +1,17 @@
 package org.gobiiproject.gobiidomain.services.gdmv3;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
 import org.gobiiproject.gobiidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
-import org.gobiiproject.gobiimodel.dto.gdmv3.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.LoaderTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.DnaRunTemplateDTO;
+import org.gobiiproject.gobiimodel.dto.gdmv3.templates.GenotypeMatrixTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.templates.MarkerTemplateDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedResult;
 import org.gobiiproject.gobiimodel.entity.Contact;
@@ -22,14 +26,7 @@ import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.LoaderTemplateDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.print.attribute.standard.PagesPerMinute;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 @Transactional
 public class LoaderTemplateServiceImpl implements LoaderTemplateService {
@@ -58,6 +55,14 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
         return addLoaderTemplate(
             loaderTemplateDTO,
             GobiiLoaderPayloadTypes.SAMPLES);
+    }
+    
+    @Override
+    public LoaderTemplateDTO addGenotypeTemplate(LoaderTemplateDTO loaderTemplateDTO
+    ) throws Exception {
+        return addLoaderTemplate(
+            loaderTemplateDTO,
+            GobiiLoaderPayloadTypes.MATRIX);
     }
 
     private LoaderTemplateDTO addLoaderTemplate(LoaderTemplateDTO loaderTemplateDTO,
@@ -115,6 +120,21 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
     ) throws GobiiException {
         return getLoaderTemplates(pageSize, pageNum, GobiiLoaderPayloadTypes.SAMPLES);
     }
+    
+    /**
+     * Get the list for matrix loader template.
+     * @param pageSize  page size
+     * @param pageNum   page num to fetch
+     * @return  list of dnarun loader templates
+     * @throws GobiiException
+     */
+    @Override
+    public PagedResult<LoaderTemplateDTO> getGenotypeTemplates(Integer pageSize,
+                                                               Integer pageNum
+    ) throws GobiiException {
+        return getLoaderTemplates(pageSize, pageNum, GobiiLoaderPayloadTypes.MATRIX);
+    }
+
 
     private PagedResult<LoaderTemplateDTO>
     getLoaderTemplates(Integer pageSize,
@@ -136,9 +156,7 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
                     gobiiLoaderPayloadType);
 
             for(LoaderTemplate loaderTemplate : loaderTemplates) {
-                LoaderTemplateDTO loaderTemplateDTO = new LoaderTemplateDTO();
-                ModelMapper.mapEntityToDto(loaderTemplate, loaderTemplateDTO);
-                loaderTemplateDTOs.add(loaderTemplateDTO);
+                loaderTemplateDTOs.add(this.createLoaderTemplateDTO(loaderTemplate));
             }
             return PagedResult.createFrom(pageNum, loaderTemplateDTOs);
         }
@@ -148,6 +166,36 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
                 GobiiValidationStatusType.BAD_REQUEST,
                 nE.getMessage());
         }
+    }
+
+    private LoaderTemplateDTO getLoaderTemplateById(
+        Integer loaderTemplateId, GobiiLoaderPayloadTypes loaderType
+    ) throws GobiiException {
+
+        LoaderTemplate loaderTemplate = loaderTemplateDao.getById(loaderTemplateId);
+        if (!loaderTemplate.getTemplateType().getTerm().equals(loaderType.getTerm())) {
+            throw new GobiiDomainException(
+                GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST, "Template not found");
+        }
+        return this.createLoaderTemplateDTO(loaderTemplate);
+    }
+    
+    public LoaderTemplateDTO getMarkerTemplateById(Integer loaderTemplateId) throws GobiiException {
+        return this.getLoaderTemplateById(loaderTemplateId, GobiiLoaderPayloadTypes.MARKERS);
+    }
+    
+    public LoaderTemplateDTO getDnaRunTemplateById(Integer loaderTemplateId) throws GobiiException {
+        return this.getLoaderTemplateById(loaderTemplateId, GobiiLoaderPayloadTypes.SAMPLES);
+    }
+    
+    public LoaderTemplateDTO getGenotypeTemplateById(Integer loaderTemplateId) throws GobiiException {
+        return this.getLoaderTemplateById(loaderTemplateId, GobiiLoaderPayloadTypes.MATRIX);
+    }
+
+    private LoaderTemplateDTO createLoaderTemplateDTO(LoaderTemplate loaderTemplate) {
+        LoaderTemplateDTO loaderTemplateDTO = new LoaderTemplateDTO();
+        ModelMapper.mapEntityToDto(loaderTemplate, loaderTemplateDTO);
+        return loaderTemplateDTO;
     }
 
     /**
@@ -168,6 +216,15 @@ public class LoaderTemplateServiceImpl implements LoaderTemplateService {
                 .put(markerProperty.getTerm(), new ArrayList<>());
         }
         return markerTemplateDTO;
+    }
+   
+    /**
+     * @return an empty genotype template {@link MarkerTemplateDTO}
+     * @throws GobiiException
+     */
+    @Override
+    public GenotypeMatrixTemplateDTO getEmptyGenotypeTemplate() throws GobiiException {
+        return new GenotypeMatrixTemplateDTO();
     }
 
     /**

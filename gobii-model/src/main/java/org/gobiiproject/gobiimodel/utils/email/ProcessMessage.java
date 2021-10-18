@@ -5,6 +5,7 @@ import java.io.File;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -259,22 +260,22 @@ public class ProcessMessage extends MailMessage {
 
 
         String pathLine = path;
-        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
-            String urlpath = null;
-            try {
-                urlpath = path.endsWith("/") ? OCLinkHandler.getOwncloudURL(path, config) : OCLinkHandler.getLink(path, config, publicUrl);
-            } catch (ConnectException e) {
-                Logger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
-                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
-            }
-            if (urlpath == null || urlpath.isEmpty()) {
-                //return normal path
-                Logger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
+        //if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
+        //    String urlpath = null;
+        //    try {
+        //        urlpath = path.endsWith("/") ? OCLinkHandler.getOwncloudURL(path, config) : OCLinkHandler.getLink(path, config, publicUrl);
+        //    } catch (ConnectException e) {
+        //        Logger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
+        //        //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
+        //    }
+        //    if (urlpath == null || urlpath.isEmpty()) {
+        //        //return normal path
+        //        Logger.logWarning("ProcessMessage", "Unable to generate URL link for " + path);
 
-            } else {
-                pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(urlpath);
-            }
-        }
+        //    } else {
+        //        pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(urlpath);
+        //    }
+        //}
     	if(new File(path).length() > 1){
     		paths.add(new HTMLTableEntity(type, pathLine, HelperFunctions.sizeToReadable(new File(path).length())));
     	}

@@ -67,7 +67,7 @@ public class HTSInterface {
     }
 
     static void writeVariantOnlyFile(File inFile, File outFile) throws Exception{
-        writeVariantOnlyFile(inFile,outFile,"/","\t");
+        writeVariantOnlyFile(inFile,outFile,"/","\t", false);
     }
 
 
@@ -93,14 +93,27 @@ public class HTSInterface {
         return ctr.next().getGenotypes().stream().map(x ->formattedAlleleString(x,variantSeparator)).collect(Collectors.toList());
     }
 
-   public static void writeVariantOnlyFile(File inFile, File outFile,String variantSeparator, String segmentSeparator) throws IOException, TribbleException {
+   public static void writeVariantOnlyFile(File inFile, 
+                                           File outFile, 
+                                           String variantSeparator, 
+                                           String segmentSeparator,
+                                           boolean append
+   ) throws IOException, TribbleException {
+
         FeatureCodec<VariantContext, LineIterator> codec = new VCFCodec();
         Index index = CountRecords.loadIndex(inFile, codec);
-        AbstractFeatureReader<VariantContext, LineIterator> reader = AbstractFeatureReader.getFeatureReader(inFile.getAbsolutePath(),codec, index);
+
+        AbstractFeatureReader<VariantContext, LineIterator> reader = 
+            AbstractFeatureReader.getFeatureReader(inFile.getAbsolutePath(),codec, index);
+
         CloseableTribbleIterator<VariantContext> ctr = reader.iterator();
-        FileOutputStream fos = new FileOutputStream(outFile,false);//Append=false, clobber existing file
+        
+        FileOutputStream fos = new FileOutputStream(outFile, append);
+
         BufferedOutputStream bos = new BufferedOutputStream(fos);
+        
         PrintWriter printWriter= new PrintWriter(bos);
+        
         boolean firstLine=true;
         for(VariantContext vc:ctr){
             if(firstLine){
@@ -117,10 +130,12 @@ public class HTSInterface {
                 else{
                     printWriter.print(segmentSeparator);
                 }
-                printWriter.print(formattedAlleleString(gc,variantSeparator));
+                printWriter.print(formattedAlleleString(gc, variantSeparator));
             }
         }
+
         printWriter.flush();
+
         printWriter.close();
     }
 

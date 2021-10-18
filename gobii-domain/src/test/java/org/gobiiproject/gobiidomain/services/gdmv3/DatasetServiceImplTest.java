@@ -11,9 +11,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityException;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
@@ -631,15 +631,23 @@ public class DatasetServiceImplTest {
     @Test
     public void testGetDatasets() throws Exception {
 
-        List<Dataset> mockDatasets = new ArrayList<>();
+        List<Object[]> mockResultTuples = new ArrayList<>();
 
         Dataset mockDataset1 = new Dataset();
         mockDataset1.setDatasetId(1);
         mockDataset1.setDatasetName("set1");
 
-        mockDatasets.add(mockDataset1);
+        Analysis mockAnalysis = new Analysis();
+        mockAnalysis.setAnalysisId(1);
+        mockAnalysis.setAnalysisName("test_analysis_1");
+       
+        Object[] mockResultTuple = {mockDataset1, mockAnalysis};
 
-        when(datasetDao.getDatasets(1000, 0, null, null, null, null, null)).thenReturn(mockDatasets);
+        mockResultTuples.add(mockResultTuple);
+
+        when(
+            datasetDao.getDatasetWithAnalysesAndStats(1000, 0, null, null, null, null, null)
+        ).thenReturn(mockResultTuples);
 
         PagedResult<DatasetDTO> result = datasetServiceImpl.getDatasets(0, 1000, null, null);
         assertTrue(result.getCurrentPageNum() == 0);

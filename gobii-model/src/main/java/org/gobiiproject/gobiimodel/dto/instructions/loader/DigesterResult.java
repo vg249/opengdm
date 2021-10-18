@@ -1,10 +1,14 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3;
+import org.gobiiproject.gobiimodel.entity.Contact;
+import org.gobiiproject.gobiimodel.entity.Dataset;
+import org.gobiiproject.gobiimodel.entity.Mapset;
 
 public class DigesterResult {
 
@@ -28,11 +32,13 @@ public class DigesterResult {
 
     private Object jobStatusObject;
 
-    private Integer datasetId;
-
+    private Dataset dataset;
+    
     private String jobName;
 
-    private String contactEmail;
+    private Contact contact;
+
+    private Mapset mapset;
 
     public DigesterResult(Builder builder) {
         this.success = builder.success;
@@ -45,9 +51,10 @@ public class DigesterResult {
         this.loaderInstructionsList = builder.loaderInstructionsList;
         this.datasetType = builder.datasetType;
         this.jobStatusObject = builder.jobStatusObject;
-        this.datasetId = builder.datasetId;
+        this.dataset = builder.dataset;
         this.jobName = builder.jobName;
-        this.contactEmail = builder.contactEmail;
+        this.contact = builder.contact;
+        this.mapset = builder.mapset;
     }
 
     public static class Builder {
@@ -71,11 +78,24 @@ public class DigesterResult {
 
         private Object jobStatusObject;
 
-        private Integer datasetId;
+        private Dataset dataset;
 
         private String jobName;
 
-        private String contactEmail;
+        private Contact contact;
+
+        private Mapset mapset;
+        
+        public Builder() {
+        }
+
+        public Builder(LoaderInstruction3 loaderInstruction3, GobiiCropConfig gobiiCropConfig) {
+            this.cropType = loaderInstruction3.getCropType();
+            this.cropConfig = gobiiCropConfig;
+            this.intermediateFilePath = loaderInstruction3.getOutputDir();
+            this.loadType = loaderInstruction3.getLoadType();
+            this.jobName = loaderInstruction3.getJobName();
+        }
 
         public Builder setSuccess(boolean success) {
             this.success = success;
@@ -127,8 +147,18 @@ public class DigesterResult {
             return this;
         }
         
-        public Builder setDatasetId(Integer datasetId) {
-            this.datasetId = datasetId;
+        public Builder setDataset(Dataset dataset) {
+            this.dataset = dataset;
+            return this;
+        }
+        
+        public Builder setContact(Contact contact) {
+            this.contact = contact;
+            return this;
+        }
+
+        public Builder setMapset(Mapset mapset) {
+            this.mapset = mapset;
             return this;
         }
 
@@ -137,11 +167,6 @@ public class DigesterResult {
             return this;
         }
         
-        public Builder setContactEmail(String contactEmail) {
-            this.contactEmail = contactEmail;
-            return this;
-        }
-
         public DigesterResult build() {
             return new DigesterResult(this);
         }
@@ -237,33 +262,41 @@ public class DigesterResult {
     }
 
     public boolean hasGenotypeMatrix() {
-        if(datasetId  != null) {
+        if(dataset  != null) {
             return true;
         }
         return false;
     }
 
-    public Integer getDatasetId() {
-        return datasetId;
+    public Dataset getDataset() {
+        return dataset;
     }
 
-    public void setDatasetId(Integer datasetId) {
-        this.datasetId = datasetId;
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
     }
 
     public String getJobName() {
         return jobName;
+    }
+    
+    public void setMapset(Mapset mapset) {
+        this.mapset = mapset;
+    }
+
+    public Mapset getMapset() {
+        return mapset;
     }
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
     }
 
-    public String getContactEmail() {
-        return contactEmail;
+    public Contact getContact() {
+        return contact;
     }
 
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
+    public void setContact(Contact contact) {
+        this.contact = contact;
     }
 }

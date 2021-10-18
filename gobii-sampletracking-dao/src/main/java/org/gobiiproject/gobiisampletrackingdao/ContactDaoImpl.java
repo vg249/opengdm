@@ -15,7 +15,6 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
@@ -42,8 +41,7 @@ public class ContactDaoImpl implements ContactDao {
         return em.find(Contact.class, id);
     }
 
-    @Override
-    public Contact getContactByUsername(String username) throws GobiiDaoException {
+    private Contact getContactByUniqueColumn(String columnName, String columnValue) throws GobiiDaoException {
         try {
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Contact> criteriaQuery = criteriaBuilder.createQuery(Contact.class);
@@ -51,11 +49,11 @@ public class ContactDaoImpl implements ContactDao {
             Root<Contact> contactRoot = criteriaQuery.from(Contact.class);
             contactRoot.fetch("organization", JoinType.LEFT);
             criteriaQuery.select(contactRoot);
-            criteriaQuery.where(criteriaBuilder.equal(contactRoot.get("username"), username));
+            criteriaQuery.where(criteriaBuilder.equal(contactRoot.get(columnName), columnValue));
             Contact result = em.createQuery(criteriaQuery).getSingleResult();
             return result;
         } catch (NoResultException nre) {
-            log.debug("No contact by username " + username);
+            log.debug("No contact  for "+ columnName +": " + columnValue);
             return null;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -63,6 +61,16 @@ public class ContactDaoImpl implements ContactDao {
                 e.getMessage() + " Cause Message: " + e.getCause().getMessage());
         }
 
+    }
+    
+    @Override
+    public Contact getContactByUsername(String username) throws GobiiDaoException {
+        return getContactByUniqueColumn("username", username);
+    }
+    
+    @Override
+    public Contact getContactByEmail(String email) throws GobiiDaoException {
+        return getContactByUniqueColumn("email", email);
     }
 
     @Override
