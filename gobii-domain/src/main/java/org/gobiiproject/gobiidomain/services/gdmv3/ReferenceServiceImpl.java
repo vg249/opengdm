@@ -1,6 +1,6 @@
 /**
  * ReferenceServiceImpl.java
- * 
+ *
  * @author Rodolfo N. Duldulao, Jr.
  */
 package org.gobiiproject.gobiidomain.services.gdmv3;
@@ -53,15 +53,13 @@ public class ReferenceServiceImpl implements ReferenceService {
     public ReferenceDTO createReference(ReferenceDTO request, String createdBy) throws Exception {
         Reference reference = new Reference();
 
-        reference.setReferenceName(request.getReferenceName());
-        reference.setVersion(request.getVersion());
-        
-        //not in spec : filePath and link
+        ModelMapper.mapDtoToEntity(request, reference);
+
         //audit
         Contact contact = contactDao.getContactByUsername(createdBy);
         reference.setCreatedBy(Optional.ofNullable(contact).map(v -> v.getContactId()).orElse(null));
         reference.setCreatedDate(new Date());
-        
+
         Reference createdReference = referenceDao.createReference(reference);
         ReferenceDTO referenceDTO = new ReferenceDTO();
 
@@ -76,7 +74,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         Reference reference = this.loadReference(referenceId);
         ReferenceDTO referenceDTO = new ReferenceDTO();
         ModelMapper.mapEntityToDto(reference, referenceDTO);
-        return referenceDTO;      
+        return referenceDTO;
     }
 
     private Reference loadReference(Integer referenceId) throws Exception {
@@ -92,7 +90,7 @@ public class ReferenceServiceImpl implements ReferenceService {
     @Override
     public ReferenceDTO updateReference(Integer referenceId, ReferenceDTO request, String updatedBy) throws Exception {
         Reference reference = this.loadReference(referenceId);
-        
+
         boolean updated = false;
         if (!LineUtils.isNullOrEmpty(request.getReferenceName())){
             reference.setReferenceName(request.getReferenceName());
@@ -104,13 +102,23 @@ public class ReferenceServiceImpl implements ReferenceService {
             updated = true;
         }
 
+        if (!LineUtils.isNullOrEmpty(request.getLink())) {
+            reference.setLink(request.getLink());
+            updated = true;
+        }
+
+        if (!LineUtils.isNullOrEmpty(request.getFilePath())) {
+            reference.setFilePath(request.getFilePath());
+            updated = true;
+        }
+
         if (updated) {
             Contact contact = contactDao.getContactByUsername(updatedBy);
             reference.setModifiedBy(Optional.ofNullable(contact).map(v -> v.getContactId()).orElse(null));
             reference.setModifiedDate(new Date());
 
             reference = referenceDao.updateReference(reference);
-            
+
         }
 
         ReferenceDTO referenceDTO = new ReferenceDTO();
@@ -130,5 +138,5 @@ public class ReferenceServiceImpl implements ReferenceService {
             throw new DeleteException();
         }
     }
-    
+
 }
