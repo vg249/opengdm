@@ -1,8 +1,8 @@
 /**
  * ReferenceDTO.java
- * 
+ *
  * DTO for reference data GDM v3.
- * 
+ *
  * @author Rodolfo N. Duldulao, Jr.
  */
 package org.gobiiproject.gobiimodel.dto.gdmv3;
@@ -61,10 +61,9 @@ public class ReferenceDTO extends DTOBaseAuditable {
     private String version;
 
     @GobiiEntityMap(paramName = "link", entity = Reference.class)
-    @JsonIgnore
-    @Null(groups={ReferenceDTO.Create.class, ReferenceDTO.Update.class})
-    private String referenceLink;
+    private String link;
 
-	
+    @GobiiEntityMap(paramName = "filePath", entity = Reference.class)
+    private String filePath;
 
 }

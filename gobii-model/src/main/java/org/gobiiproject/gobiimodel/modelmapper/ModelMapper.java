@@ -169,12 +169,25 @@ public class ModelMapper {
         }
     }
 
+    /**
+     * Map entity values from DTO, with option to not set fields with null values
+     * @param dtoInstance
+     * @param entityInstance
+     * @param ignoreNull
+     * @throws GobiiException
+     */
     public static void mapDtoToEntity(Object dtoInstance,
                                       Object entityInstance,
                                       boolean ignoreNull) throws  GobiiException {
         ModelMapper.mapper(entityInstance, dtoInstance, true, ignoreNull);
     }
 
+    /**
+     * Map entity values from DTO
+     * @param dtoInstance
+     * @param entityInstance
+     * @throws GobiiException
+     */
     public static void mapDtoToEntity(Object dtoInstance,
                                       Object entityInstance) throws  GobiiException {
         ModelMapper.mapper(entityInstance, dtoInstance, true, false);
