@@ -1455,7 +1455,6 @@ public class GobiiConfig {
                     returnVal = false;
                 }
 
-                List<String> contextPathList = new ArrayList<>();
                 for (GobiiCropConfig currentGobiiCropConfig : configSettings.getAllCropConfigs()) {
 
 
@@ -1470,27 +1469,18 @@ public class GobiiConfig {
                     if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getServer(ServerType.GOBII_WEB).getHost())) {
                         messages.add("The web server host for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
-
                     }
 
 
                     if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getServer(ServerType.GOBII_WEB).getContextPath())) {
                         messages.add("The web server context path for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
-                    } else {
-                        if (!contextPathList.contains(currentGobiiCropConfig.getServer(ServerType.GOBII_WEB).getContextPath())) {
-                            contextPathList.add(currentGobiiCropConfig.getServer(ServerType.GOBII_WEB).getContextPath());
-                        } else {
-                            messages.add("The context path for the crop occurs more than once -- context paths must be unique:" + currentGobiiCropConfig.getServer(ServerType.GOBII_WEB).getContextPath());
-                            returnVal = false;
-                        }
                     }
 
 
                     if (currentGobiiCropConfig.getServer(ServerType.GOBII_WEB).getPort() == null) {
                         messages.add("The web server port for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
-
                     }
 
                     ServerConfig postGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
@@ -1501,13 +1491,6 @@ public class GobiiConfig {
                         returnVal = returnVal && verifyDbConfig(postGresConfig);
                     }
 
-//                    ServerConfig computeNodeConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_COMPUTE);
-//                    if (computeNodeConfig == null) {
-//                        messages.add("The compute node for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
-//                        returnVal = false;
-//                    } else {
-//                        returnVal = returnVal && verifyDbConfig(computeNodeConfig);
-//                    }
                 }
 
 
@@ -1526,7 +1509,7 @@ public class GobiiConfig {
 
         return returnVal;
 
-    } //
+    }
 
 
     private static boolean verifyDbConfig(ServerConfig gobiiServerConfig) {
