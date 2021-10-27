@@ -441,12 +441,8 @@ public class GobiiExtractor {
 
 					Logger.logInfo("Extractor", "Executing MDEs");
 
-					if(verbose) {
-						tryExec(gobiiMDE,extractDir + "mdeOut", errorFile,extractDir+"MDEStdOut");
-					}
-					else {
-						tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
-					}
+					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
+
 					//Clean some variables ahead of declaration
 					final String defaultMapName = "No Mapset info available";
 					String mapName = defaultMapName;
