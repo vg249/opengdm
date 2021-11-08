@@ -73,6 +73,7 @@ import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExisten
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logWarning;
 
 /**
  * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
@@ -1205,16 +1206,15 @@ public class GobiiExtractor {
             MapsetDTO dataSetResponse;
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
                 System.out.println();
-                logError("Extractor", "Map set response response errors");
+                logWarning("Extractor", "Map set response response errors");
                 for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
+                    logWarning("HeaderError", currentStatusMesage.getMessage());
                 }
                 return null;
             } else {
                 dataSetResponse = resultEnvelope.getPayload().getData().get(0);
             }
             return dataSetResponse.getName();
-
         } catch (Exception e) {
             logError("Extractor", "Exception while referencing map sets in Postgresql", e);
             return null;
