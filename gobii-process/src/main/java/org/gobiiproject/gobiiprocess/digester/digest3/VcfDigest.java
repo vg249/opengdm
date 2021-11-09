@@ -54,7 +54,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         "FORMAT",
     };
 
-    private final Map<String, String> aspectTableColumnsToHapmapColumns = 
+    private final Map<String, String> aspectTableColumnsToVcfColumns = 
         Map.of("markerName", "ID",
                "markerRef", "REF",
                "markerAlt", "ALT",
@@ -104,7 +104,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
                 ) {
                     throw new GobiiException(String.format(
                         "Invalid vcf file %s with header columns not matching " +
-                        "required hapmap columns", fileToDigest.getAbsolutePath()));
+                        "required vcf columns", fileToDigest.getAbsolutePath()));
                 }
 
                 if(fileHeader.getHeaders().length == fileFormatRequiredColumns.length) {
@@ -220,7 +220,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         datasetMarkerTable.setPlatformId(this.platform.getPlatformId().toString());
 
         // Set column aspect for marker name.
-        int markerNameColumnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToHapmapColumns.get("markerName"));
+        int markerNameColumnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToVcfColumns.get("markerName"));
 
         // data lines starts after header line
         ColumnAspect markerNameColumn = new ColumnAspect(headerLineNumber+1, markerNameColumnIndex);
@@ -262,7 +262,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         // Set column aspect for marker name, ref and alt.
         for(String markerTableColumn : markerTableColumns) {
             
-            int columnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToHapmapColumns.get(markerTableColumn));
+            int columnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToVcfColumns.get(markerTableColumn));
 
             // data lines starts after header line
             Aspect columnAspect;
