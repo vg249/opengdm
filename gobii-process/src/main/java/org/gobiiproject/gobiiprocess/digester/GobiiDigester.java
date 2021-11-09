@@ -353,11 +353,13 @@ public class GobiiDigester {
 
                 if (counts.loadedData == 0) {
                     Logger.logDebug("FileReader", "No data loaded for table " + tableName);
+                    loadedData = false;
                 } else {
                     loadedData = true;
-
                 }
+                
                 if (counts.invalidData > 0 && !isVariableLengthTable(tableName)) {
+                    loadedData = false;
                     Logger.logWarning("FileReader", "Invalid data in table " + tableName);
                 } else {
 

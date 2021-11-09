@@ -8,6 +8,8 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.LoaderInstruction3
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.Experiment;
 import org.gobiiproject.gobiimodel.entity.Platform;
+import org.gobiiproject.gobiimodel.entity.Protocol;
+import org.gobiiproject.gobiimodel.entity.VendorProtocol;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 
@@ -47,7 +49,10 @@ public abstract class GenotypeMatrixDigest extends Digest3 {
         this.dataset = datasetDao.getDataset(datasetId);
         this.experiment = this.dataset.getExperiment();
         this.datasetType = this.dataset.getType().getTerm();
-        this.platform = this.experiment.getVendorProtocol().getProtocol().getPlatform();
+        VendorProtocol vendorProtocol = this.experiment.getVendorProtocol();
+        Protocol protocol = vendorProtocol.getProtocol();
+
+        this.platform = protocol.getPlatform();
         
     }
 

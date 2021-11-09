@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ArrayColumnAspect;
@@ -67,8 +66,6 @@ public class VcfDigest extends GenotypeMatrixDigest {
         "markerName", "markerRef", "markerAlt"
     };
 
-    private GenotypeUploadRequestDTO uploadRequest;
-
     public VcfDigest(LoaderInstruction3 loaderInstruction, 
               ConfigSettings configSettings) throws GobiiException {
         super(loaderInstruction, configSettings);
@@ -83,7 +80,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
 
         Map<String, Table> aspects = new HashMap<>();
 
-        filesToDigest = getFilesToDigest(uploadRequest.getInputFiles());
+        filesToDigest = getFilesToDigest(this.uploadRequest.getInputFiles());
 
         // To keep track of files having uniform dnarun names columsn across files
         String[] previousFileHeaders = {};
@@ -106,7 +103,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
                     Arrays.copyOfRange(fileHeader.getHeaders(), 0, fileFormatRequiredColumns.length))
                 ) {
                     throw new GobiiException(String.format(
-                        "Invalid hapmap file %s with header columns not matching " +
+                        "Invalid vcf file %s with header columns not matching " +
                         "required hapmap columns", fileToDigest.getAbsolutePath()));
                 }
 
