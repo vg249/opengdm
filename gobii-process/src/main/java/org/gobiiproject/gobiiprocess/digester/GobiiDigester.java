@@ -353,31 +353,23 @@ public class GobiiDigester {
 
                 if (counts.loadedData == 0) {
                     Logger.logDebug("FileReader", "No data loaded for table " + tableName);
-                    loadedData = false;
                 } else {
                     loadedData = true;
                 }
                 
                 if (counts.invalidData > 0 && !isVariableLengthTable(tableName)) {
-                    loadedData = false;
                     Logger.logWarning("FileReader", "Invalid data in table " + tableName);
                 } else {
-
                     // Load markergroup if aspect found
                     if(tableName.equals(MARKER_TABNAME) &&
-                       digesterResult
-                        .getLoaderInstructionsMap()
-                        .containsKey(MARKER_GROUP_TABNAME)) {
-
+                       digesterResult.getLoaderInstructionsMap().containsKey(MARKER_GROUP_TABNAME)) {
+                        
                         MarkerGroupService markerGroupService = SpringContextLoaderSingleton
                             .getInstance()
                             .getBean(MarkerGroupService.class);
 
-                        markerGroupService
-                            .addMarkerGroups(
-                                digesterResult
-                                    .getLoaderInstructionsMap()
-                                    .get(MARKER_GROUP_TABNAME));
+                        markerGroupService.addMarkerGroups(
+                            digesterResult.getLoaderInstructionsMap().get(MARKER_GROUP_TABNAME));
                     }
                     
                     //If there are no issues in the load,
