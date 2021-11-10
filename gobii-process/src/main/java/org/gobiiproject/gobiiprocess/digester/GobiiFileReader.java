@@ -367,6 +367,7 @@ public class GobiiFileReader {
         //Validation logic before loading any metadata
         String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
 
+        GobiiClientContext.resetConfiguration();
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, procedure.getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
@@ -602,6 +603,7 @@ public class GobiiFileReader {
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
         extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
         extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_" + DateUtils.makeDateIdString());
+        GobiiClientContext.resetConfiguration();//Reset conf on this, in case it's grown stale
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());

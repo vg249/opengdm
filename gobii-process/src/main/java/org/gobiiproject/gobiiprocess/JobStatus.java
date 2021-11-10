@@ -57,6 +57,7 @@ public class JobStatus {
 		this.jobName=jobName;
 		// set up authentication and so forth
 		// you'll need to get the current from the instruction file
+		GobiiClientContext.resetConfiguration(); // Get a new config every time we create this object, as the context can expire
 		GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
 		uriFactory = context.getUriFactory();
     }

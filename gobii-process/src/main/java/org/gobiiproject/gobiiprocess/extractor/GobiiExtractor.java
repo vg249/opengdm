@@ -1185,6 +1185,7 @@ public class GobiiExtractor {
         try {
             // set up authentication and so forth
             // you'll need to get the current from the instruction file
+			GobiiClientContext.resetConfiguration(); //Do not cache this in time insensitive jobs
             GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
             //context.setCurrentCropId(cropName);
 
