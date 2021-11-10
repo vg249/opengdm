@@ -807,6 +807,9 @@ public class GobiiFileReader {
         try {
             // set up authentication and so forth
             // you'll need to get the current from the instruction file
+
+            //And lets reset the global first, because the built-in cacheing is causing problems
+            GobiiClientContext.resetConfiguration();
             GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
 
             if (LineUtils.isNullOrEmpty(context.getUserToken())) {
