@@ -183,7 +183,10 @@ public class GobiiFileReader {
         String filename = new File(instructionFile).getName();
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
         JobStatus jobStatus = null;
-        jobStatus = initializeJobStatus(configuration, procedure, jobFileName);
+        String cropName = procedure.getMetadata().getGobiiCropType();
+        if(LineUtils.isNullOrEmpty(cropName)) cropName=divineCrop(instructionFile);
+
+        jobStatus = initializeJobStatus(configuration, cropName, jobFileName);
 
         pm.addIdentifier("Project", procedure.getMetadata().getProject());
         pm.addIdentifier("Platform", procedure.getMetadata().getPlatform());
@@ -421,7 +424,7 @@ public class GobiiFileReader {
         }
 
         if (success && Logger.success()) {
-            jobStatus=initializeJobStatus(configuration, procedure, jobFileName); //GSD-181 reinitialize job status as token may have expired during matrix data validation
+            jobStatus=initializeJobStatus(configuration, cropName, jobFileName); //GSD-181 reinitialize job status as token may have expired during matrix data validation
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
@@ -479,7 +482,7 @@ public class GobiiFileReader {
             }
             if (success && Logger.success()) {
                 Logger.logInfo("Digester", "Successful Data Upload");
-                jobStatus=initializeJobStatus(configuration, procedure, jobFileName); //GSD-181 reinitialize job status as token may have expired during matrix creation
+                jobStatus=initializeJobStatus(configuration, cropName, jobFileName); //GSD-181 reinitialize job status as token may have expired during matrix creation
                 if (sendQc) {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
                     sendQCExtract(configuration, procedure.getMetadata().getGobiiCropType());
@@ -505,10 +508,10 @@ public class GobiiFileReader {
 
     }
 
-    private static JobStatus initializeJobStatus(ConfigSettings configuration, GobiiLoaderProcedure procedure, String jobFileName) {
+    private static JobStatus initializeJobStatus(ConfigSettings configuration, String cropName, String jobFileName) {
         JobStatus jobStatus = null;
         try {
-            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobFileName);
+            jobStatus = new JobStatus(configuration, cropName, jobFileName);
         } catch (Exception e) {
             Logger.logError("GobiiFileReader", "Error Checking Status", e);
         }
