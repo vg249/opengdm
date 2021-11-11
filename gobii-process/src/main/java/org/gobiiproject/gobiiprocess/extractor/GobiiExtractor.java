@@ -426,7 +426,7 @@ public class GobiiExtractor {
 					//Clean some variables ahead of declaration
 					final String defaultMapName = "No Mapset info available";
 					String mapName = defaultMapName;
-					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration); //Get name from postgres
+					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration,firstCrop); //Get name from postgres
 					if (postgresName != null) mapName = postgresName;
 					GobiiSampleListType type = extract.getGobiiSampleListType();
 
@@ -1178,8 +1178,7 @@ public class GobiiExtractor {
      * @param config Configuration master object
      * @return name, or null if error
      */
-    private static String getMapNameFromId(Integer mapId, ConfigSettings config) {
-        String cropName = config.getCurrentGobiiCropType();
+    private static String getMapNameFromId(Integer mapId, ConfigSettings config, String cropName) {
         if (mapId == null) return null;
 
         try {
