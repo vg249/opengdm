@@ -1212,9 +1212,10 @@ public class GobiiExtractor {
                 }
                 return null;
             } else {
-                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
+				List<MapsetDTO> response = resultEnvelope.getPayload().getData();
+                dataSetResponse = response.isEmpty()?null:resultEnvelope.getPayload().getData().get(0);
             }
-            return dataSetResponse.getName();
+            return dataSetResponse!=null?dataSetResponse.getName():null;
         } catch (Exception e) {
             logError("Extractor", "Exception while referencing map sets in Postgresql", e);
             return null;
