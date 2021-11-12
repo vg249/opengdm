@@ -73,6 +73,7 @@ import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExisten
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.uppercaseFirstLetter;
 import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logWarning;
 
 /**
  * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
@@ -184,13 +185,8 @@ public class GobiiExtractor {
 	    //Job Id is the 'name' part of the job file  /asd/de/name.json
         String filename = new File(instructionFile).getName();
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-        JobStatus jobStatus = null;
-        try {
-            jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
-        } catch (Exception e) {
-            Logger.logError("GobiiFileReader", "Error Checking Status", e);
-        }
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
+		JobStatus jobStatus = initializeJobStatus(configuration, firstCrop, jobFileName);
+		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
 
         for (GobiiExtractorInstruction inst : list) {
         	String crop = inst.getGobiiCropType();
@@ -200,18 +196,19 @@ public class GobiiExtractor {
 	            Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 	            if (!(Files.exists(cropPath) &&
 			            Files.isDirectory(cropPath))) {
-		            Logger.logError("Extractor", "Unknown Crop Type: " + crop);
-		            return;
+					logAndUpdateStatus(jobStatus, "Unknown Crop Type: " + crop, JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED);
+					return;
 	            }
 	            GobiiCropConfig gobiiCropConfig;
 	            try {
 		            gobiiCropConfig = configuration.getCropConfig(crop);
 	            } catch (Exception e) {
-		            logError("Extractor", "Unknown exception getting crop", e);
+	            	logError("Extractor",e);//Print whole error, 'cause we probably have no idea on this one
+	            	logAndUpdateStatus(jobStatus,"Unknown exception getting crop" + e.getMessage(), JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED);
 		            return;
 	            }
 	            if (gobiiCropConfig == null) {
-		            logError("Extractor", "Unknown Crop Type: " + crop + " in the Configuration File");
+					logAndUpdateStatus(jobStatus,"Unknown Crop Type: " + crop + " in the Configuration File", JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED);
 		            return;
 	            }
 	            if (HDF5Interface.getPathToHDF5Files() == null)
@@ -251,8 +248,8 @@ public class GobiiExtractor {
 		            String chrLengthFile = markerFile + ".chr";
 		            Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
 		            if (!mdePath.toFile().isFile()) {
-			            Logger.logDebug("Extractor", mdePath + " does not exist!");
-			            return;
+						logAndUpdateStatus(jobStatus, mdePath + " does not exist!", JobProgressStatusType.CV_PROGRESSSTATUS_FAILED);
+						return;
 		            }
 
 		            String gobiiMDE;//Output of switch
@@ -424,16 +421,12 @@ public class GobiiExtractor {
 
 					Logger.logInfo("Extractor", "Executing MDEs");
 
-					if(verbose) {
-						tryExec(gobiiMDE,extractDir + "mdeOut", errorFile,extractDir+"MDEStdOut");
-					}
-					else {
-			            tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
-					}
+					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
+
 					//Clean some variables ahead of declaration
 					final String defaultMapName = "No Mapset info available";
 					String mapName = defaultMapName;
-					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration); //Get name from postgres
+					String postgresName = (mapId == null) ? null : getMapNameFromId(mapId, configuration,firstCrop); //Get name from postgres
 					if (postgresName != null) mapName = postgresName;
 					GobiiSampleListType type = extract.getGobiiSampleListType();
 
@@ -547,8 +540,10 @@ public class GobiiExtractor {
 				            Logger.logError("GobiiExtractor", "Unable to load HDF5 files", e);
 			            }
 
+			            jobStatus = initializeJobStatus(configuration, firstCrop, jobFileName); //Reinitialize as job status may have expired during matrix data creation
 
-			            //TODO - GSD-533 Dataset **name** is ssr_allele_size? WTF does this do and why is it here.
+
+						//TODO - GSD-533 Dataset **name** is ssr_allele_size? WTF does this do and why is it here.
 			            // Adding "/" back to the bi-allelic data made from HDF5
 			            if (datasetName != null) {
 				            if (datasetName.toLowerCase().equals("ssr_allele_size")) {
@@ -586,8 +581,8 @@ public class GobiiExtractor {
 					            	FlapjackTransformer.addFJQTLHeaderLine(markerGroupSummary,tempFolder,errorFile);
 								}
 					            getCounts(success, pm, markerFile, sampleFile);
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
-					            break;
+								updateFinalExtractStatus(success && Logger.success(), jobStatus);
+								break;
 				            case HAPMAP:
 					            String hapmapOutFile = extractDir + "Dataset.hmp.txt";
 					            HapmapTransformer hapmapTransformer = new HapmapTransformer();
@@ -595,10 +590,10 @@ public class GobiiExtractor {
 					            success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(), configuration, true);
 					            getCounts(success, pm, markerFile, sampleFile);
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
+								updateFinalExtractStatus(success && Logger.success(), jobStatus);
 					            break;
 				            case META_DATA:
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Extract");
+								updateFinalExtractStatus(success && Logger.success(), jobStatus);
 					            break;
 				            default:
 					            Logger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
@@ -659,6 +654,30 @@ public class GobiiExtractor {
 	        handleCriticalException(configuration, jobStatus, firstContactEmail, e);
         }
     }
+
+	private static void updateFinalExtractStatus(boolean success, JobStatus jobStatus) {
+		if(success) {
+			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed Successfully");
+		}
+		else{
+			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),"Extract Failed");
+		}
+	}
+
+	private static void logAndUpdateStatus(JobStatus jobStatus, String errReason, JobProgressStatusType progressStatusType) {
+		Logger.logError("Extractor", errReason);
+		jobStatus.set(progressStatusType.getCvName(), errReason);
+	}
+
+	private static JobStatus initializeJobStatus(ConfigSettings configuration, String firstCrop, String jobFileName) {
+		JobStatus jobStatus = null;
+		try {
+			jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
+		} catch (Exception e) {
+			Logger.logError("GobiiFileReader", "Error Checking Status", e);
+		}
+		return jobStatus;
+	}
 
 	/**
 	 * Does three things - writes a final log message, sends an emergency 'help I've fallen and can't get up' email message,
@@ -1159,13 +1178,13 @@ public class GobiiExtractor {
      * @param config Configuration master object
      * @return name, or null if error
      */
-    private static String getMapNameFromId(Integer mapId, ConfigSettings config) {
-        String cropName = config.getCurrentGobiiCropType();
+    private static String getMapNameFromId(Integer mapId, ConfigSettings config, String cropName) {
         if (mapId == null) return null;
 
         try {
             // set up authentication and so forth
             // you'll need to get the current from the instruction file
+			GobiiClientContext.resetConfiguration(); //Do not cache this in time insensitive jobs
             GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
             //context.setCurrentCropId(cropName);
 
@@ -1187,16 +1206,16 @@ public class GobiiExtractor {
             MapsetDTO dataSetResponse;
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
                 System.out.println();
-                logError("Extractor", "Map set response response errors");
+                logWarning("Extractor", "Map set response response errors");
                 for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
-                    logError("HeaderError", currentStatusMesage.getMessage());
+                    logWarning("HeaderError", currentStatusMesage.getMessage());
                 }
                 return null;
             } else {
-                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
+				List<MapsetDTO> response = resultEnvelope.getPayload().getData();
+                dataSetResponse = response.isEmpty()?null:resultEnvelope.getPayload().getData().get(0);
             }
-            return dataSetResponse.getName();
-
+            return dataSetResponse!=null?dataSetResponse.getName():null;
         } catch (Exception e) {
             logError("Extractor", "Exception while referencing map sets in Postgresql", e);
             return null;
@@ -1205,7 +1224,7 @@ public class GobiiExtractor {
 
 	/**
 	 * In place file uniqueness. First implementation is a simple sort -u
-	 * @param inputFile input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
+	 * @param inputFilePath input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
 	 */
 	private static void makeFileUnique(String inputFilePath, String errorFile){
     	String tempPath = inputFilePath+".tmp";

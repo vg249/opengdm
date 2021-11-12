@@ -69,14 +69,17 @@ class IUPACmatrixToBi implements RowProcessor{
                 char last = element.charAt(element.length() - 1);
                 // if ((first == '+' || first == '-') && (last == '+' || last == '-')) {// takes care of "+/+" or "+/-" or "-/-" cases
                 // Irrespective of the character, we need to add it to the outlist
-                outrow.add(first + "" + last);
+                outrow.add(first + OUTPUT_SEPARATOR + last);
             } else {
                 NucIupacCodes code = hash.get(element.toUpperCase());
                 if (code == null) {
                     matrixErrorUtil.setError("IUPACMatrixToBi Unknown IUPAC code " + element.toUpperCase() + "in line " + rowNo);
                     returnStatus = false;
-                } else
-                    outrow.add(code.getName());
+                } else {
+                    String outName = code.getName();//Always two characters
+                    String separatedString = outName.charAt(0) + OUTPUT_SEPARATOR + outName.charAt(1);
+                    outrow.add(separatedString);
+                }
             }
         }
         return returnStatus;

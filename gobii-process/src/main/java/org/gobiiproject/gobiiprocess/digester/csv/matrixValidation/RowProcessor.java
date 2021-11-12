@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface RowProcessor {
 
+	 static final String OUTPUT_SEPARATOR = "/";
 	/**
 	 * Processes a file row containing a series of values
 	 * @param rowNo indicator of the row number, used primarily in error handling.

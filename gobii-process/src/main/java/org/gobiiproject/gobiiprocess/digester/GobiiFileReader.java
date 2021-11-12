@@ -183,11 +183,10 @@ public class GobiiFileReader {
         String filename = new File(instructionFile).getName();
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
         JobStatus jobStatus = null;
-        try {
-            jobStatus = new JobStatus(configuration, procedure.getMetadata().getGobiiCropType(), jobFileName);
-        } catch (Exception e) {
-            Logger.logError("GobiiFileReader", "Error Checking Status", e);
-        }
+        String cropName = procedure.getMetadata().getGobiiCropType();
+        if(LineUtils.isNullOrEmpty(cropName)) cropName=divineCrop(instructionFile);
+
+        jobStatus = initializeJobStatus(configuration, cropName, jobFileName);
 
         pm.addIdentifier("Project", procedure.getMetadata().getProject());
         pm.addIdentifier("Platform", procedure.getMetadata().getPlatform());
@@ -371,6 +370,7 @@ public class GobiiFileReader {
         //Validation logic before loading any metadata
         String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
 
+        GobiiClientContext.resetConfiguration();
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, procedure.getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
@@ -422,7 +422,9 @@ public class GobiiFileReader {
                 }
             }
         }
+
         if (success && Logger.success()) {
+            jobStatus=initializeJobStatus(configuration, cropName, jobFileName); //GSD-181 reinitialize job status as token may have expired during matrix data validation
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(procedure.getMetadata(), procedure.getMetadata().getGobiiCropType(), "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
@@ -480,6 +482,7 @@ public class GobiiFileReader {
             }
             if (success && Logger.success()) {
                 Logger.logInfo("Digester", "Successful Data Upload");
+                jobStatus=initializeJobStatus(configuration, cropName, jobFileName); //GSD-181 reinitialize job status as token may have expired during matrix creation
                 if (sendQc) {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
                     sendQCExtract(configuration, procedure.getMetadata().getGobiiCropType());
@@ -503,6 +506,16 @@ public class GobiiFileReader {
                 procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
 
 
+    }
+
+    private static JobStatus initializeJobStatus(ConfigSettings configuration, String cropName, String jobFileName) {
+        JobStatus jobStatus = null;
+        try {
+            jobStatus = new JobStatus(configuration, cropName, jobFileName);
+        } catch (Exception e) {
+            Logger.logError("GobiiFileReader", "Error Checking Status", e);
+        }
+        return jobStatus;
     }
 
     /**
@@ -593,6 +606,7 @@ public class GobiiFileReader {
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
         extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
         extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_" + DateUtils.makeDateIdString());
+        GobiiClientContext.resetConfiguration();//Reset conf on this, in case it's grown stale
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             Logger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
@@ -798,6 +812,9 @@ public class GobiiFileReader {
         try {
             // set up authentication and so forth
             // you'll need to get the current from the instruction file
+
+            //And lets reset the global first, because the built-in cacheing is causing problems
+            GobiiClientContext.resetConfiguration();
             GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
 
             if (LineUtils.isNullOrEmpty(context.getUserToken())) {
