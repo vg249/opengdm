@@ -15,6 +15,8 @@ public interface DatasetService {
 
 	DatasetDTO updateDataset(Integer datasetId, DatasetRequestDTO request, String user) throws Exception;
 
+	void linkJobToDataset(Integer datasetId, Integer jobId) throws Exception;
+
 	void deleteDataset(Integer datasetId) throws Exception;
 
 	PagedResult<CvTypeDTO> getDatasetTypes(Integer page, Integer pageSize) throws Exception;

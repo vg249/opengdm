@@ -30,6 +30,9 @@ public class GenotypeServiceImpl implements GenotypeService {
     @Autowired
     private JobService jobService;
 
+    @Autowired
+    private DatasetService datasetService;
+
     public JobDTO loadGenotypes(GenotypeUploadRequestDTO genotypesUploadRequest,
                                 String cropType) throws GobiiException {
 
@@ -63,6 +66,14 @@ public class GenotypeServiceImpl implements GenotypeService {
         jobDTO.setJobMessage("Submitted genotype matrix load job.");
         JobDTO job = jobService.createLoaderJob(jobDTO);
 
+        Integer datasetId = Integer.parseInt(genotypesUploadRequest.getDatasetId());
+        try {
+            datasetService.linkJobToDataset(datasetId, job.getJobId());
+        }
+        catch(Exception e) {
+            throw new GobiiDomainException("Unable to link job to dataset");
+        }
+
         String jobName = job.getJobName();
 
         loaderInstruction.setJobName(jobName);
@@ -89,7 +100,8 @@ public class GenotypeServiceImpl implements GenotypeService {
         Set<ConstraintViolation<GenotypeUploadRequestDTO>> violations = 
             validator.validate(genotypeUploadRequest);
 
-
+        
+        // check for static validations
         if(violations.size() > 0) {
             String errorMessage = "";
 

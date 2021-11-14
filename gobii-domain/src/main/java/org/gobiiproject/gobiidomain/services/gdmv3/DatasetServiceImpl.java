@@ -2,7 +2,6 @@ package org.gobiiproject.gobiidomain.services.gdmv3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,11 +12,11 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.DeleteException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.EntityDoesNotExistException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.InvalidException;
 import org.gobiiproject.gobiidomain.services.gdmv3.exceptions.UnknownEntityException;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.CvTypeDTO;
@@ -31,6 +30,7 @@ import org.gobiiproject.gobiimodel.entity.CvGroup;
 import org.gobiiproject.gobiimodel.entity.Dataset;
 import org.gobiiproject.gobiimodel.entity.DnaRun;
 import org.gobiiproject.gobiimodel.entity.Experiment;
+import org.gobiiproject.gobiimodel.entity.Job;
 import org.gobiiproject.gobiimodel.entity.Marker;
 import org.gobiiproject.gobiimodel.modelmapper.ModelMapper;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -40,6 +40,7 @@ import org.gobiiproject.gobiisampletrackingdao.CvDao;
 import org.gobiiproject.gobiisampletrackingdao.DatasetDao;
 import org.gobiiproject.gobiisampletrackingdao.DnaRunDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
+import org.gobiiproject.gobiisampletrackingdao.JobDao;
 import org.gobiiproject.gobiisampletrackingdao.MarkerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -68,6 +69,9 @@ public class DatasetServiceImpl implements DatasetService {
 
 	@Autowired
 	private DnaRunDao dnaRunDao;
+	
+	@Autowired
+	private JobDao jobDao;
 	
 	@Transactional
 	@Override
@@ -248,6 +252,17 @@ public class DatasetServiceImpl implements DatasetService {
 
 		return datasetDTO;
 	}
+
+
+	@Transactional
+	@Override
+	public void linkJobToDataset(Integer datasetId, Integer jobId) throws Exception {
+		Dataset dataset = this.loadDataset(datasetId);
+		Job job = jobDao.getById(jobId);
+		dataset.setJob(job);
+		datasetDao.updateDataset(dataset);
+	}
+
 
 	@Transactional
 	@Override
