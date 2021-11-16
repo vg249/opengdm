@@ -93,16 +93,24 @@ public class Utils {
     }
 
 
+    /**
+     *
+     * @param inputFiles
+     * @throws GobiiException (InvalidException)
+     */
     static void checkIfInputFilesAreValid(List<FileDTO> inputFiles) throws GobiiException {
-        for(FileDTO fileDTO : inputFiles) {
+        if (inputFiles.isEmpty()) {
+            throw new InvalidException("request: no input files");
+        }
+
+        for (FileDTO fileDTO : inputFiles) {
             String filePath = fileDTO.getServerFilePath();
-            if(filePath != null && !filePath.isBlank()) {
+            if (filePath != null && !filePath.isBlank()) {
                 File inputFile = new File(filePath);
-                if(!inputFile.exists()) {
+                if (!inputFile.exists()) {
                     throw new InvalidException("request: input file path does not exist");
                 }
-            }
-            else {
+            } else {
                 throw new InvalidException("request: empty server file path");
             }
         }

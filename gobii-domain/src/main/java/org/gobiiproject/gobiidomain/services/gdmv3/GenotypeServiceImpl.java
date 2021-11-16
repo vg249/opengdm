@@ -33,11 +33,11 @@ public class GenotypeServiceImpl implements GenotypeService {
     public JobDTO loadGenotypes(GenotypeUploadRequestDTO genotypesUploadRequest,
                                 String cropType) throws GobiiException {
 
-   
+
         validateGenotypeUploadRequest(genotypesUploadRequest);
 
         LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
-        
+
         loaderInstruction.setInstructionType("v3");
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setCropType(cropType);
@@ -48,11 +48,6 @@ public class GenotypeServiceImpl implements GenotypeService {
 
         // Set contact email in loader instruction
         loaderInstruction.setContactEmail(createdBy.getEmail());
-        
-        // Check if input files are found
-        if(genotypesUploadRequest.getInputFiles().size() == 0) {
-            throw new InvalidException("request: no input files.");
-        }
 
         // Check whether input file paths are valid
         Utils.checkIfInputFilesAreValid(genotypesUploadRequest.getInputFiles());
@@ -86,7 +81,7 @@ public class GenotypeServiceImpl implements GenotypeService {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
 
-        Set<ConstraintViolation<GenotypeUploadRequestDTO>> violations = 
+        Set<ConstraintViolation<GenotypeUploadRequestDTO>> violations =
             validator.validate(genotypeUploadRequest);
 
 
@@ -101,7 +96,7 @@ public class GenotypeServiceImpl implements GenotypeService {
                 GobiiStatusLevel.ERROR,
                 GobiiValidationStatusType.BAD_REQUEST,
                 errorMessage
-            );        
+            );
         }
     }
 

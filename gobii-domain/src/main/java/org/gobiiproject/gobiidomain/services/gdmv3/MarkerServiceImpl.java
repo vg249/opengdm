@@ -54,7 +54,7 @@ public class MarkerServiceImpl implements MarkerService {
                                  String cropType) throws GobiiException {
 
         LoaderInstruction3 loaderInstruction = new LoaderInstruction3();
-        
+
         loaderInstruction.setInstructionType("v3");
         loaderInstruction.setLoadType(loadType);
         loaderInstruction.setCropType(cropType);
@@ -74,13 +74,8 @@ public class MarkerServiceImpl implements MarkerService {
                 throw new InvalidException("mapset");
             }
         }
-        
-        // Check if input files are found
-        if(markerUploadRequest.getInputFiles().size() == 0) {
-            throw new InvalidException("request: no input files");
-        }
 
-        // Check whether input file paths are valid
+         // Check whether input file paths are valid
         Utils.checkIfInputFilesAreValid(markerUploadRequest.getInputFiles());
 
         // Get user submitting the load
@@ -97,7 +92,7 @@ public class MarkerServiceImpl implements MarkerService {
         JobDTO job = jobService.createLoaderJob(jobDTO);
 
         String jobName = job.getJobName();
-        
+
         //Set output dir
         String outputFilesDir = Utils.getOutputDir(jobName, cropType);
         loaderInstruction.setOutputDir(outputFilesDir);

@@ -43,7 +43,7 @@ public class DnaRunController {
      * Submits a upload job for dna runs
      * @param cropType              crop to load dna runs into
      * @param dnaRunUploadRequest   {@link DnaRunUploadRequest}
-     * @return  {@link JobDTO} when successfully submitted the job. 
+     * @return  {@link JobDTO} when successfully submitted the job.
      * @throws Exception
      */
     @CropAuth(CURATOR)
