@@ -1,0 +1,271 @@
+package org.gobiiproject.gobiiprocess;
+
+import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter;
+
+import java.io.*;
+import java.util.*;
+
+public class HDF5AllelicEncoderV2 {
+    private final String elementSeparator;
+    private String alleleSeparator = null;
+    private static final int HIGH_ASCII = 129;
+    private static final String lookupSeparator = ";";
+    private static final Set<String> unencodedAlleles = Set.of(
+            "A", "C", "G", "T", "N",
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "+", "-",
+            ".", "?", " "
+    );
+
+    public HDF5AllelicEncoderV2(String elementSeparator, String alleleSeparator) {
+        this.elementSeparator = elementSeparator;
+        this.alleleSeparator = alleleSeparator;
+    }
+
+    public HDF5AllelicEncoderV2(String elementSeparator) {
+        this.elementSeparator = elementSeparator;
+    }
+
+    public void createEncodedFile(File inputFile, File encodedFile, File lookupFile) {
+
+        int rowIndex = 0;
+        try (
+            BufferedWriter encodedFileWriter = new BufferedWriter(new FileWriter(encodedFile));
+            BufferedWriter lookupFileWriter = new BufferedWriter(new FileWriter(lookupFile));
+            BufferedReader inputFileReader = new BufferedReader(new FileReader(inputFile))
+        ) {
+            String inputLine = inputFileReader.readLine();
+            if (inputLine != null) {
+                if (alleleSeparator == null) {
+                    String firstElement = inputLine.split(elementSeparator)[0];
+                    alleleSeparator = NucleotideSeparatorSplitter.findSeparator(firstElement);
+                }
+                do {
+                    EncodedValues encodedValues = encodeRow(inputLine, rowIndex);
+                    encodedFileWriter.write(encodedValues.encodedRow);
+                    lookupFileWriter.write(encodedValues.lookupRow);
+                    rowIndex++;
+                } while ((inputLine = inputFileReader.readLine()) != null);
+            }
+        } catch (Exception e) {
+            StringJoiner message = new StringJoiner("\n");
+            message.add("Error encoding file.")
+                    .add("Line:\t" + rowIndex)
+                    .add("Input file:\t" + inputFile)
+                    .add("Encoded file:\t" + encodedFile)
+                    .add("Lookup filet:\t" + lookupFile);
+            Logger.logError("HDF5AllelicEncoderV2", message.toString(), e);
+        }
+
+    }
+
+    public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile) {
+        createDecodedFile(encodedFile, lookupFile, decodedFile, true);
+    }
+
+    private EncodedValues encodeRow(String inputRow, int rowIndex) {
+        List<String> encodings = new ArrayList<>();
+        StringJoiner joiner = new StringJoiner(elementSeparator);
+        for (String a : inputRow.split(elementSeparator)) {
+            String s = encodeGenotype(a, encodings);
+            joiner.add(s);
+        }
+        String encodedRow = joiner + System.lineSeparator();
+        String lookupRow = "";
+        if (!encodings.isEmpty()) {
+            StringJoiner result = new StringJoiner(lookupSeparator);
+            for (String encoding : encodings) {
+                String s = encodeLookup(encoding);
+                result.add(s);
+            }
+            lookupRow = rowIndex + "\t" + result + System.lineSeparator();
+        }
+        return new EncodedValues(encodedRow, lookupRow);
+    }
+
+    private String encodeGenotype(String genotype, List<String> encodings) {
+        StringJoiner joiner = new StringJoiner("");
+        for (String a : genotype.split(alleleSeparator)) {
+            String s = encodeAllele(a, encodings);
+            joiner.add(s);
+        }
+        return joiner.toString();
+    }
+
+    private String encodeAllele(String allele, List<String> encodings) {
+        String encoded = allele;
+        if (!unencodedAlleles.contains(allele)) {
+            if (!encodings.contains(allele)) encodings.add(allele);
+            encoded = String.valueOf((char)(encodings.indexOf(allele) + HIGH_ASCII));
+        }
+        return encoded;
+    }
+
+    private static String encodeLookup(String e) {
+        if (e.isEmpty()) return "D";
+        return "I" + e;
+    }
+
+    public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile, boolean markerFast) {
+        HashMap<Integer, String[]> alleleEncodings = readLookupFile(lookupFile);
+        int rowIndex = 0;
+        try (
+            BufferedReader encodedFileReader = new BufferedReader(new FileReader(encodedFile));
+            BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(decodedFile))
+        ) {
+            String inputLine = encodedFileReader.readLine();
+            if (inputLine != null) {
+                if (alleleSeparator == null) {
+                    String firstElement = inputLine.split(elementSeparator)[0];
+                    alleleSeparator = NucleotideSeparatorSplitter.findSeparator(firstElement);
+                }
+                do {
+                    String decodedRow;
+                    if (markerFast) {
+                        decodedRow = decodeRowMarkerFast(inputLine, alleleEncodings, rowIndex);
+                    } else {
+                        decodedRow = decodeRowSampleFast(inputLine, alleleEncodings);
+                    }
+                    decodedFileWriter.append(decodedRow);
+                    decodedFileWriter.append(System.lineSeparator());
+                    rowIndex++;
+                } while ((inputLine = encodedFileReader.readLine()) != null);
+            }
+        } catch (Exception e) {
+            StringJoiner message = new StringJoiner("\n");
+            message.add("Error decoding file.")
+                    .add("Line:\t" + rowIndex)
+                    .add("Encoded file:\t" + encodedFile)
+                    .add("Lookup filet:\t" + lookupFile)
+                    .add("Decoded file:\t" + decodedFile);
+            Logger.logError("HDF5AllelicEncoderV2", message.toString(), e);
+        }
+    }
+
+    public void createDecodedFileFromList(File encodedFile, File lookupFile, String posList, File decodedFile, boolean markerFast) {
+        HashMap<Integer, String[]> alleleEncodings = readLookupFile(lookupFile);
+        Iterator<Integer> positions = Arrays.stream(posList.split("\n"))
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .iterator();
+        int nextRow = -1;
+        int rowIndex = -1;
+        try (
+                BufferedReader encodedFileReader = new BufferedReader(new FileReader(encodedFile));
+                BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(decodedFile))
+        ) {
+            String inputLine;
+            rowIndex = 0;
+            while ((inputLine = encodedFileReader.readLine()) != null && positions.hasNext()) {
+                nextRow = positions.next();
+                if (rowIndex != nextRow) continue;
+                String decodedRow;
+                if (markerFast) {
+                    decodedRow = decodeRowMarkerFast(inputLine, alleleEncodings, rowIndex);
+                } else {
+                    decodedRow = decodeRowSampleFast(inputLine, alleleEncodings);
+                }
+                decodedFileWriter.append(decodedRow);
+                decodedFileWriter.append(System.lineSeparator());
+                rowIndex++;
+            }
+        } catch (Exception e) {
+            String message = "Error decoding encoded HDF5 file from marker list. Line " + rowIndex + "; Lookup " + nextRow;
+            Logger.logError("HDF5AllelicEncoder", message, e);
+        }
+    }
+
+    private String decodeRowMarkerFast(String inputLine, HashMap<Integer, String[]> alleleEncodings, int rowIndex) {
+        StringJoiner joiner = new StringJoiner(elementSeparator);
+        for (String genotype : inputLine.split(elementSeparator)) {
+            String s;
+            String[] encodings;
+            if ((encodings = alleleEncodings.get(rowIndex)) != null) {
+                s = decodeGenotype(genotype, encodings);
+            } else {
+                s = decodeGenotype(genotype);
+            }
+            joiner.add(s);
+        }
+        return joiner.toString();
+    }
+
+    private String decodeRowSampleFast(String inputLine, HashMap<Integer,String[]> alleleEncodings) {
+        StringJoiner joiner = new StringJoiner(elementSeparator);
+        String[] genotypes = inputLine.split(elementSeparator);
+        for (int i = 0; i < genotypes.length; i++) {
+            String s;
+            String[] encodings;
+            if ((encodings = alleleEncodings.get(i)) != null) {
+                s = decodeGenotype(genotypes[i], encodings);
+            } else {
+                s = decodeGenotype(genotypes[i]);
+            }
+            joiner.add(s);
+        }
+        return joiner.toString();
+    }
+
+    private String decodeGenotype(String genotype, String[] encodings) {
+        StringJoiner joiner = new StringJoiner(alleleSeparator);
+        for (char c: genotype.toCharArray()) {
+            if (c >= HIGH_ASCII) {
+                String lookup = encodings[c - HIGH_ASCII];
+                joiner.add(lookup);
+            } else {
+                joiner.add(String.valueOf(c));
+            }
+        }
+        return joiner.toString();
+    }
+
+    private String decodeGenotype(String genotype) {
+        StringJoiner joiner = new StringJoiner(alleleSeparator);
+        for (char c: genotype.toCharArray()) {
+            joiner.add(String.valueOf(c));
+        }
+        return joiner.toString();
+    }
+
+    private HashMap<Integer, String[]> readLookupFile(File lookupFile) {
+        HashMap<Integer, String[]> alleleEncodings = new HashMap<>();
+        try (
+            BufferedReader lookupFileReader = new BufferedReader(new FileReader(lookupFile))
+        ) {
+            String lookupLine;
+            int rowIndex = 0;
+            while ((lookupLine = lookupFileReader.readLine()) != null) {
+                try {
+                    String[] splitLine = lookupLine.split("\t");
+                    Integer lookupIndex = Integer.parseInt(splitLine[0]);
+                    String[] encodings = Arrays.stream(splitLine[1].split(lookupSeparator))
+                            .map((e) -> e.substring(1))
+                            .toArray(String[]::new);
+                    alleleEncodings.put(lookupIndex, encodings);
+                } catch (Exception e) {
+                    StringJoiner message = new StringJoiner("\n");
+                    message.add("Error parsing lookup table.")
+                            .add("Line: " + rowIndex)
+                            .add("File: " + lookupFile);
+                    Logger.logError("HDF5AllelicEncoderV2", message.toString(), e);
+                }
+                rowIndex++;
+            }
+        } catch (Exception e) {
+            String message = "Error reading lookup file " + lookupFile;
+            Logger.logError("HDF5AllelicEncoder", message, e);
+        }
+        return alleleEncodings;
+    }
+
+    static class EncodedValues {
+        String encodedRow;
+        String lookupRow;
+        public EncodedValues(String encodedRow, String lookupRow) {
+            this.encodedRow = encodedRow;
+            this.lookupRow = lookupRow;
+        }
+    }
+
+}
