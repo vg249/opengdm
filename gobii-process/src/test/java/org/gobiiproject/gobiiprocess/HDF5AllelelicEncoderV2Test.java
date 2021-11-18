@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Random;
 import java.util.StringJoiner;
 
 public class HDF5AllelelicEncoderV2Test {
@@ -12,18 +14,10 @@ public class HDF5AllelelicEncoderV2Test {
     private final String alleleSeparator = "/";
 
     @Test
-    public void testEncodeDecode() throws IOException {
-        File input = new File("encodeinput");
-        File encoded = new File("encodeddata");
-        File lookup = new File("lookupfile");
-        File output = new File("decodedinput");
+    public void testEncodeDecode() throws Exception {
+        TempFiles tempFiles = new TempFiles();
 
-        input.deleteOnExit();
-        encoded.deleteOnExit();
-        lookup.deleteOnExit();
-        output.deleteOnExit();
-
-        try (FileWriter inputwriter = new FileWriter(input)) {
+        try (FileWriter inputwriter = new FileWriter(tempFiles.inputFile)) {
             inputwriter.write("A/C\tG/T\tN/N");
             inputwriter.write(System.lineSeparator());
             inputwriter.write("ACAT/GAG\t/\tA/A");
@@ -39,19 +33,18 @@ public class HDF5AllelelicEncoderV2Test {
         }
 
         HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator, alleleSeparator);
-        encoder.createEncodedFile(input, encoded, lookup);
-        encoder.createDecodedFile(encoded, lookup, output);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
 
-
-        BufferedReader encodedReader = new BufferedReader(new FileReader(encoded));
-        BufferedReader outReader = new BufferedReader(new FileReader(output));
+        BufferedReader encodedReader = new BufferedReader(new FileReader(tempFiles.encodedFile));
+        BufferedReader outReader = new BufferedReader(new FileReader(tempFiles.decodedFile));
         String line1 = outReader.readLine();
         String line2 = outReader.readLine();
         String line3 = outReader.readLine();
         String line4 = outReader.readLine();
         String line5 = outReader.readLine();
 
-        BufferedReader lookupReader = new BufferedReader(new FileReader(lookup));
+        BufferedReader lookupReader = new BufferedReader(new FileReader(tempFiles.lookupFile));
 
         Assert.assertEquals("1\tIACAT;IGAG",lookupReader.readLine());
         Assert.assertEquals("3\tIGAG;IGAGA",lookupReader.readLine());
@@ -68,18 +61,113 @@ public class HDF5AllelelicEncoderV2Test {
     }
 
     @Test
-    public void testEncodeDecode4letRWExample() throws IOException {
-        File input = new File("encodeinput2");
-        File encoded = new File("encodeddata2");
-        File lookup = new File("lookupfile2");
-        File output = new File("decodedinput2");
+    // 75 encoded alleles - this is as many as we can handle.
+    public void testLotsOfAlleles() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        String[] alleles = {
+                "AAA", "AAC", "AAG", "AAT", "ACA", "ACC", "ACG", "ACT", "AGA", "AGC", "AGG", "AGT", "ATA", "ATC", "ATG", "ATT",
+                "CAA", "CAC", "CAG", "CAT", "CCA", "CCC", "CCG", "CCT", "CGA", "CGC", "CGG", "CGT", "CTA", "CTC", "CTG", "CTT",
+                "GAA", "GAC", "GAG", "GAT", "GCA", "GCC", "GCG", "GCT", "GGA", "GGC", "GGG", "GGT", "GTA", "GTC", "GTG", "GTT",
+                "TAA", "TAC", "TAG", "TAT", "TCA", "TCC", "TCG", "TCT", "TGA", "TGC", "TGG", "TGT", "TTA", "TTC", "TTG", "TTT",
+                "AAAA", "AAAC", "AAAG", "AAAT", "AACA", "AACC", "AACG", "AACT", "AAGA", "AAGC", "AAGG"
+        };
+        tempFiles.createRandomInputFile(100, 100, 2, alleles);
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
+        assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
+    }
 
-        input.deleteOnExit();
-        encoded.deleteOnExit();
-        lookup.deleteOnExit();
-        output.deleteOnExit();
+    @Test(expected = Exception.class)
+    // 76 alleles should fail
+    public void testTooManyAlleles() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        String[] alleles = {
+                "AAA", "AAC", "AAG", "AAT", "ACA", "ACC", "ACG", "ACT", "AGA", "AGC", "AGG", "AGT", "ATA", "ATC", "ATG", "ATT",
+                "CAA", "CAC", "CAG", "CAT", "CCA", "CCC", "CCG", "CCT", "CGA", "CGC", "CGG", "CGT", "CTA", "CTC", "CTG", "CTT",
+                "GAA", "GAC", "GAG", "GAT", "GCA", "GCC", "GCG", "GCT", "GGA", "GGC", "GGG", "GGT", "GTA", "GTC", "GTG", "GTT",
+                "TAA", "TAC", "TAG", "TAT", "TCA", "TCC", "TCG", "TCT", "TGA", "TGC", "TGG", "TGT", "TTA", "TTC", "TTG", "TTT",
+                "AAAA", "AAAC", "AAAG", "AAAT", "AACA", "AACC", "AACG", "AACT", "AAGA", "AAGC", "AAGG", "AAGT", "AATA",
+        };
 
-        try (FileWriter inputwriter = new FileWriter(input)) {
+        tempFiles.createRandomInputFile(10, 10000, 2, alleles);
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
+        assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
+    }
+
+    @Test
+    // all alleles should be encoded into a single byte character
+    public void testSingleByteEncoding() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        String[] alleles = {
+                "AAA", "AAC", "AAG", "AAT", "ACA", "ACC", "ACG", "ACT", "AGA", "AGC", "AGG", "AGT", "ATA", "ATC", "ATG", "ATT",
+                "CAA", "CAC", "CAG", "CAT", "CCA", "CCC", "CCG", "CCT", "CGA", "CGC", "CGG", "CGT", "CTA", "CTC", "CTG", "CTT",
+                "GAA", "GAC", "GAG", "GAT", "GCA", "GCC", "GCG", "GCT", "GGA", "GGC", "GGG", "GGT", "GTA", "GTC", "GTG", "GTT",
+                "TAA", "TAC", "TAG", "TAT", "TCA", "TCC", "TCG", "TCT", "TGA", "TGC", "TGG", "TGT", "TTA", "TTC", "TTG", "TTT",
+                "AAAA", "AAAC", "AAAG", "AAAT", "AACA", "AACC", "AACG", "AACT", "AAGA", "AAGC", "AAGG"
+        };
+        int ploidy = 2;
+        tempFiles.createRandomInputFile(1, 10000, ploidy, alleles);
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        BufferedReader br = new BufferedReader(new FileReader(tempFiles.encodedFile));
+        String line = br.readLine();
+        String[] lineSplit = line.split(elementSeparator);
+        int i = 0;
+        int j = 0;
+//        int maxSb = 0;
+        for (String gt : lineSplit) {
+            String[] splitAlleles = gt.split("");
+            for (String allele : splitAlleles) {
+//                maxSb = Math.max(maxSb, allele.charAt(0));
+                if (!(allele.getBytes().length == 1)) {
+                    System.err.println("row " + i + ", column " + j);
+                    System.err.println(lineSplit[i]);
+                    System.err.println(splitAlleles[j]);
+                    System.err.println(allele);
+                    System.err.println(Arrays.toString(allele.getBytes()));
+                }
+                assert allele.getBytes().length == 1;
+                j++;
+            }
+            i++;
+        }
+        BufferedReader lookupReader = new BufferedReader(new FileReader(tempFiles.lookupFile));
+        String lookupLine = lookupReader.readLine();
+        String[] lookupLineSplit = lookupLine.split("\t");
+        String[] lookupValues = lookupLineSplit[1].split(";");
+        System.err.println(lookupValues.length);
+        // highly improbable that we will not get collision for sampling 75 elements 10k times.
+        assert lookupValues.length == 75;
+    }
+
+    @Test
+    public void testNullSeparator() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        tempFiles.createRandomInputFile(100, 100, 2);
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
+        assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
+    }
+
+    @Test
+    public void testPloidy() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        tempFiles.createRandomInputFile(100, 100, 4);
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
+        assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
+    }
+
+    @Test
+    public void testEncodeDecode4letRWExample() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+
+        try (FileWriter inputwriter = new FileWriter(tempFiles.inputFile)) {
             inputwriter.write("A/A/A/A\tA/A/C/T");
             inputwriter.write(System.lineSeparator());
             inputwriter.write("A/C/G/T\tUncallable");
@@ -91,12 +179,11 @@ public class HDF5AllelelicEncoderV2Test {
         }
 
         HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator, alleleSeparator);
-        encoder.createEncodedFile(input, encoded, lookup);
-        encoder.createDecodedFile(encoded, lookup, output);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
 
-
-        BufferedReader encodedReader = new BufferedReader(new FileReader(encoded));
-        BufferedReader outReader = new BufferedReader(new FileReader(output));
+        BufferedReader encodedReader = new BufferedReader(new FileReader(tempFiles.encodedFile));
+        BufferedReader outReader = new BufferedReader(new FileReader(tempFiles.decodedFile));
         String line1 = outReader.readLine();
         String line2 = outReader.readLine();
         String line3 = outReader.readLine();
@@ -105,29 +192,24 @@ public class HDF5AllelelicEncoderV2Test {
     }
 
     @Test
-    public void testEncodeLargeFiles() throws IOException {
-        testEncodeLargeFile(100, 100);
-        testEncodeLargeFile(1000, 1000);
-        testEncodeLargeFile(1000, 10000);
-        testEncodeLargeFile(10000, 1000);
-    }
-
-    @Test
-    public void testLargeFileEncoding() throws IOException {
-        long startTime = System.currentTimeMillis();
+    // should be able to encode + decode 1M data points in under a minute
+    public void testLargeFileEncoding() throws Exception {
         TempFiles tempFiles = new TempFiles();
         int rows = 20000;
         int cols = 5000;
         tempFiles.createLargeInputFile(rows, cols);
+
+        long startTime = System.currentTimeMillis();
         HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator, alleleSeparator);
         encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
         encoder.createDecodedFile(tempFiles.encodedFile, tempFiles.lookupFile, tempFiles.decodedFile);
         assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
         long totalTime = System.currentTimeMillis() - startTime;
-        assert totalTime < 60000; // should be able to encode + decode 1M data points in under a minute
+        assert totalTime < 60000;
     }
 
-    public void timeLargeFileEncoding() throws IOException {
+    // Purely informational.
+    public void timeLargeFileEncoding() throws Exception {
         long startTime = System.currentTimeMillis();
         long lastTime = startTime;
         long stepTime;
@@ -154,7 +236,7 @@ public class HDF5AllelelicEncoderV2Test {
         System.err.println("Total time was " + ((stepTime - startTime) / 1000.0) + "s");
     }
 
-    private void testEncodeLargeFile(int rows, int cols) throws IOException {
+    private void testEncodeLargeFile(int rows, int cols) throws Exception {
         TempFiles tempFiles = new TempFiles();
         tempFiles.createLargeInputFile(rows, cols);
         HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator, alleleSeparator);
@@ -185,22 +267,25 @@ public class HDF5AllelelicEncoderV2Test {
         public File lookupFile;
         public File encodedFile;
         public File decodedFile;
-        public String encodedRow;
-        public String decodedRow;
-        public String lookupRow;
 
         TempFiles() throws IOException {
-            inputFile = File.createTempFile("input", ".temp");
-            lookupFile = File.createTempFile("lookup", ".temp");
-            encodedFile = File.createTempFile("encoded", ".temp");
-            decodedFile = File.createTempFile("decoded", ".temp");
-            inputFile.deleteOnExit();
-            lookupFile.deleteOnExit();
-            encodedFile.deleteOnExit();
-            decodedFile.deleteOnExit();
+            inputFile = File.createTempFile("input.", ".temp");
+            lookupFile = File.createTempFile("lookup.", ".temp");
+            encodedFile = File.createTempFile("encoded.", ".temp");
+            decodedFile = File.createTempFile("decoded.", ".temp");
+            System.err.println(
+                "Input file: " + inputFile + "\n" +
+                "Lookup file: " + lookupFile + "\n" +
+                "Encoded file: " + encodedFile + "\n" +
+                "Decoded file: " + decodedFile
+            );
+//            inputFile.deleteOnExit();
+//            lookupFile.deleteOnExit();
+//            encodedFile.deleteOnExit();
+//            decodedFile.deleteOnExit();
         }
 
-        public void createLargeInputFile(int rows, int cols) throws IOException {
+        private void createLargeInputFile(int rows, int cols) throws IOException {
             BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
             int j = 0;
             int i = 0;
@@ -222,27 +307,45 @@ public class HDF5AllelelicEncoderV2Test {
                 i++;
             }
             writer.close();
-            this.decodedRow = sameLine;
-            this.lookupRow = Math.min(10, rows) + "\t" + "IACGT;IACGTA;IACG;ITTTT";
         }
+
+        private void createRandomInputFile(int rows, int cols) throws IOException {
+            String[] alleles = {"A", "C", "AC", "ACG"};
+            createRandomInputFile(rows, cols, 2, alleles);
+        }
+
+        private void createRandomInputFile(int rows, int cols, int ploidy) throws IOException {
+            String[] alleles = {"A", "C", "AC", "ACG"};
+            createRandomInputFile(rows, cols, ploidy, alleles);
+        }
+
+        private void createRandomInputFile(int rows, int cols, int ploidy, String[] alleles) throws IOException {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
+            for (int i = 0; i < rows; i++) {
+                String row = createRandomRow(cols, alleles, ploidy, "\t", "/");
+                writer.append(row);
+                writer.append(System.lineSeparator());
+            }
+            writer.close();
+        }
+
+
+        String createRandomRow(int length, String[] alleles, int ploidy, String elementSeparator, String alleleSeparator) {
+            StringJoiner row = new StringJoiner(elementSeparator);
+            Random random = new Random();
+            int n = alleles.length;
+            for (int i = 0; i < length; i++) {
+                StringJoiner gt = new StringJoiner(alleleSeparator);
+                for (int j = 0; j < ploidy; j++) {
+                    gt.add(alleles[random.nextInt(n)]);
+                }
+                row.merge(gt);
+            }
+            return row.toString();
+        }
+
     }
 
-    static class TempFileAndRow {
-        public File inputFile;
-        public File lookupFile;
-        public File encodedFile;
-        public File decodedFile;
-        public String[] row;
-
-
-        public TempFileAndRow(File inputFile, File lookupFile, File encodedFile, File decodedFile, String[] row) {
-            this.inputFile = inputFile;
-            this.lookupFile = lookupFile;
-            this.encodedFile = encodedFile;
-            this.decodedFile = decodedFile;
-            this.row = row;
-        }
-    }
 
 }
 

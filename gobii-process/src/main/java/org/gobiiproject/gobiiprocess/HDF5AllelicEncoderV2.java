@@ -5,18 +5,49 @@ import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSep
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HDF5AllelicEncoderV2 {
     private final String elementSeparator;
     private String alleleSeparator = null;
-    private static final int HIGH_ASCII = 129;
+    private static final int MAX_LOOKUP = 126;
     private static final String lookupSeparator = ";";
-    private static final Set<String> unencodedAlleles = Set.of(
+    private static final Set<String> reservedAlleles = Set.of(
             "A", "C", "G", "T", "N",
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
             "+", "-",
             ".", "?", " "
     );
+    // Counting 20 reserved alleles and 32 reserved command characters, we can support up to 75 alternate alleles with this scheme.
+    private final List<Integer> reservedIndices = reservedAlleles.stream()
+            .map((s) -> (int) s.charAt(0))
+            .sorted()
+            .collect(Collectors.toList());
+    {
+        // Add command characters to reserved indices
+        for (int i = 0; i <= 0x1f; i++) reservedIndices.add(i);
+    }
+    //
+    private final HashMap<Integer, Integer> charToLookupIndex;
+    {
+        int charVal = 0;
+        int indexPos = 0;
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        while (charVal <= MAX_LOOKUP && indexPos <= (MAX_LOOKUP - reservedAlleles.size())) {
+            if (reservedIndices.contains(charVal)) charVal++;
+            else hashMap.put(charVal++, indexPos++);
+        }
+        charToLookupIndex = hashMap;
+    }
+    private final HashMap<Integer, Integer> lookupIndexToChar;
+    {
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        for (Map.Entry<Integer, Integer> kv:
+            charToLookupIndex.entrySet()) {
+            hashMap.put(kv.getValue(), kv.getKey());
+        }
+        lookupIndexToChar = hashMap;
+    }
 
     public HDF5AllelicEncoderV2(String elementSeparator, String alleleSeparator) {
         this.elementSeparator = elementSeparator;
@@ -27,8 +58,7 @@ public class HDF5AllelicEncoderV2 {
         this.elementSeparator = elementSeparator;
     }
 
-    public void createEncodedFile(File inputFile, File encodedFile, File lookupFile) {
-
+    public void createEncodedFile(File inputFile, File encodedFile, File lookupFile) throws Exception {
         int rowIndex = 0;
         try (
             BufferedWriter encodedFileWriter = new BufferedWriter(new FileWriter(encodedFile));
@@ -56,6 +86,7 @@ public class HDF5AllelicEncoderV2 {
                     .add("Encoded file:\t" + encodedFile)
                     .add("Lookup filet:\t" + lookupFile);
             Logger.logError("HDF5AllelicEncoderV2", message.toString(), e);
+            throw e;
         }
 
     }
@@ -64,7 +95,7 @@ public class HDF5AllelicEncoderV2 {
         createDecodedFile(encodedFile, lookupFile, decodedFile, true);
     }
 
-    private EncodedValues encodeRow(String inputRow, int rowIndex) {
+    private EncodedValues encodeRow(String inputRow, int rowIndex) throws Exception {
         List<String> encodings = new ArrayList<>();
         StringJoiner joiner = new StringJoiner(elementSeparator);
         for (String a : inputRow.split(elementSeparator)) {
@@ -84,20 +115,39 @@ public class HDF5AllelicEncoderV2 {
         return new EncodedValues(encodedRow, lookupRow);
     }
 
-    private String encodeGenotype(String genotype, List<String> encodings) {
+    private String encodeGenotype(String genotype, List<String> encodings) throws Exception {
         StringJoiner joiner = new StringJoiner("");
         for (String a : genotype.split(alleleSeparator)) {
             String s = encodeAllele(a, encodings);
+            assert s.getBytes().length == 1;
             joiner.add(s);
         }
         return joiner.toString();
     }
 
-    private String encodeAllele(String allele, List<String> encodings) {
+    private String encodeAllele(String allele, List<String> encodings) throws Exception {
         String encoded = allele;
-        if (!unencodedAlleles.contains(allele)) {
-            if (!encodings.contains(allele)) encodings.add(allele);
-            encoded = String.valueOf((char)(encodings.indexOf(allele) + HIGH_ASCII));
+        if (!reservedAlleles.contains(allele)) {
+            int encodingIndex;
+            if (!encodings.contains(allele)) {
+                encodings.add(allele);
+                encodingIndex = encodings.size() - 1;
+            } else {
+                encodingIndex = encodings.indexOf(allele);
+            }
+            Integer encodedInteger = lookupIndexToChar.get(encodingIndex);
+            if (encodedInteger == null) {
+                StringJoiner message = new StringJoiner("\n");
+                message.add("Too many alternate alleles.");
+                message.add("encodingIndex = " + encodingIndex);
+                message.add("encodings = " + encodings);
+                message.add("lookupIndexToChar = " + lookupIndexToChar);
+                message.add("charToLookupIndex = " + charToLookupIndex);
+                message.add("reservedIndices = " + reservedIndices);
+                Logger.logError("HDF5AllelicEncoderV2", message.toString());
+                throw new Exception();
+            }
+            encoded = String.valueOf((char) (int) encodedInteger);
         }
         return encoded;
     }
@@ -150,7 +200,7 @@ public class HDF5AllelicEncoderV2 {
                 .map(Integer::parseInt)
                 .iterator();
         int nextRow = -1;
-        int rowIndex = -1;
+        int rowIndex = -1; // initialized here in case error is thrown before reading first line
         try (
                 BufferedReader encodedFileReader = new BufferedReader(new FileReader(encodedFile));
                 BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(decodedFile))
@@ -210,8 +260,8 @@ public class HDF5AllelicEncoderV2 {
     private String decodeGenotype(String genotype, String[] encodings) {
         StringJoiner joiner = new StringJoiner(alleleSeparator);
         for (char c: genotype.toCharArray()) {
-            if (c >= HIGH_ASCII) {
-                String lookup = encodings[c - HIGH_ASCII];
+            if (!reservedAlleles.contains(String.valueOf(c))) {
+                String lookup = encodings[charToLookupIndex.get((int) c)];
                 joiner.add(lookup);
             } else {
                 joiner.add(String.valueOf(c));
@@ -238,11 +288,11 @@ public class HDF5AllelicEncoderV2 {
             while ((lookupLine = lookupFileReader.readLine()) != null) {
                 try {
                     String[] splitLine = lookupLine.split("\t");
-                    Integer lookupIndex = Integer.parseInt(splitLine[0]);
+                    Integer lookupRowIndex = Integer.parseInt(splitLine[0]);
                     String[] encodings = Arrays.stream(splitLine[1].split(lookupSeparator))
                             .map((e) -> e.substring(1))
                             .toArray(String[]::new);
-                    alleleEncodings.put(lookupIndex, encodings);
+                    alleleEncodings.put(lookupRowIndex, encodings);
                 } catch (Exception e) {
                     StringJoiner message = new StringJoiner("\n");
                     message.add("Error parsing lookup table.")
