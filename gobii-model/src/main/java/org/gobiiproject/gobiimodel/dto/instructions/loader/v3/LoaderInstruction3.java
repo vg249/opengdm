@@ -22,7 +22,7 @@ public class LoaderInstruction3 {
     @NotNull(message = "Required Load Type")
     private String loadType;
 
-    @NotNull(message = "Output direcotory not defined")
+    @NotNull(message = "Output directory not defined")
     private String outputDir;
 
     private String contactEmail;

@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.gobiiproject.gobiidomain.GobiiDomainException;
+import org.gobiiproject.gobiidomain.services.rabbitmq.Send;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.RabbitMqConfig;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DnaRunUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
@@ -24,9 +25,14 @@ import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Transactional
 public class DnaRunServiceImpl implements DnaRunService {
+
+    @Autowired
+    RabbitMqConfig rabbitMqConfig;
 
     @Autowired
     private ContactDao contactDao;
@@ -60,7 +66,6 @@ public class DnaRunServiceImpl implements DnaRunService {
      * Uploads dnaruns in the file to the database.
      * Also, loads dna samples and germplasms when provided in the same file.
      *
-     * @param inputFileStream       Dnarun input file stream
      * @param dnaRunUploadRequest   Request object with meta data and template
      * @param cropType              Crop type to which the dnaruns need to uploaded
      * @return {@link JobDTO}   when dnarun loader job is successfully submitted.
@@ -97,19 +102,32 @@ public class DnaRunServiceImpl implements DnaRunService {
         loaderInstruction.setOutputDir(Utils.getOutputDir(jobName, cropType));
         loaderInstruction.setUserRequest(dnaRunUploadRequest);
 
-        // Write instruction file OR MAYBE SEND TO A RABBIT!
-        Utils.writeInstructionFile(loaderInstruction, jobName, cropType);
+        deliverInstructions(loaderInstruction, jobName, cropType);
 
         return jobDTO;
     }
 
-    /**
-     *
-     * @param dnaRunUploadRequest
-     */
+    private void deliverInstructions(LoaderInstruction3 instructions, String jobName, String cropType) throws GobiiException {
+        if (rabbitMqConfig.getHost().isEmpty()) {
+            Utils.writeInstructionFile(instructions, jobName, cropType);
+        } else {
+            String loaderInstructionJson = "";
+            try {
+                loaderInstructionJson = mapper.writeValueAsString(instructions);
+                Send rabbitMQ = new Send();
+                rabbitMQ.send("processNewLoaderInstructions", loaderInstructionJson);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                throw new GobiiException(e);
+            }
+        }
+    }
+
     private void validateProject(DnaRunUploadRequestDTO dnaRunUploadRequest) {
-        if (!IntegerUtils.isNullOrZero(dnaRunUploadRequest.getProjectId())) {
-            Project project = projectDao.getProject(dnaRunUploadRequest.getProjectId());
+        Integer projectId = dnaRunUploadRequest.getProjectId();
+        if (!IntegerUtils.isNullOrZero(projectId)) {
+            Project project = projectDao.getProject(projectId);
             if (project == null) {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.BAD_REQUEST, "Invalid Project");
@@ -117,15 +135,10 @@ public class DnaRunServiceImpl implements DnaRunService {
         }
     }
 
-    /**
-     *
-     * @param dnaRunUploadRequest
-     */
     private void validateExperiment(DnaRunUploadRequestDTO dnaRunUploadRequest) {
-        // Set Experiment Id in DnaRun Table Aspects
-        if (!IntegerUtils.isNullOrZero(dnaRunUploadRequest.getExperimentId())) {
-            Experiment experiment =
-                    experimentDao.getExperiment(dnaRunUploadRequest.getExperimentId());
+        Integer experimentId = dnaRunUploadRequest.getExperimentId();
+        if (!IntegerUtils.isNullOrZero(experimentId)) {
+            Experiment experiment = experimentDao.getExperiment(experimentId);
             if (experiment == null) {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.BAD_REQUEST, "Invalid Experiment");
