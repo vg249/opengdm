@@ -11,8 +11,10 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
+import org.hibernate.internal.util.xml.ErrorLogger;
 
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
@@ -27,6 +29,9 @@ public class ProcessMessage extends MailMessage {
     private String identifierLine;
     private String pathsLine;
     private String validationLine;
+    private String jobLinkLine;
+
+    private final String JOB_TEXT_STRING = "Job Status";
     //private String confidentialyMessage;
     File fPath;
     private String color;
@@ -101,6 +106,10 @@ public class ProcessMessage extends MailMessage {
         }
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
+        if(jobLinkLine!=null){
+            body.append(jobLinkLine);
+            body.append(line);
+        }
         if(identifierLine!=null)body.append(identifierLine+line);
         if(extractCriteriaLine!=null)body.append(extractCriteriaLine+line);
         if(entityLine!=null)body.append(entityLine+line);
@@ -206,17 +215,6 @@ public class ProcessMessage extends MailMessage {
 
     public ProcessMessage addFolderPath(String type, String path, ConfigSettings config) throws Exception {
         String pathLine=path;
-        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
-            try {
-                String urlpath= OCLinkHandler.getOwncloudURL(path, config);
-                if(urlpath!=null&&!urlpath.isEmpty()) {
-                    pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(OCLinkHandler.getOwncloudURL(path, config));
-                }
-            }catch (ConnectException e) {
-                Logger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
-                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
-            }
-        }
         paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
@@ -292,6 +290,27 @@ public class ProcessMessage extends MailMessage {
      */
     public ProcessMessage addPath(String type, String path, ConfigSettings config, boolean publicUrl) throws Exception {
         return addPath(type,path,false,config, publicUrl);
+    }
+
+    public ProcessMessage addJobLink(ConfigSettings cs, String jobName){
+        String cropName = cs.getCurrentGobiiCropType();
+        String cropString = "", jobString = "";
+        if(!LineUtils.isNullOrEmpty(cropName)){
+            cropString="&crop="+cropName;
+        }
+        if(!LineUtils.isNullOrEmpty(jobName)){
+            jobString = "&search="+jobName;
+        }
+        String basePath=null;
+        try {
+            basePath = cs.getGlobalServer(ServerType.GOBII_WEB).getHost();
+        } catch (Exception e) {
+            Logger.logWarning("ProcessMessage",e.getMessage());
+        }
+        String hyperLink = basePath!=null?basePath+"/jobs":null;
+        jobLinkLine = hyperLink!=null?"<a href=\""+hyperLink+cropString+jobString+"\">" + JOB_TEXT_STRING + "</a>":null;
+
+        return this;
     }
 
     

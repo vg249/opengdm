@@ -499,6 +499,7 @@ public class GobiiFileReader {
         }
 
         //Send Email
+        pm.addJobLink(configuration,jobFileName);
         finalizeProcessing(pm, configuration, mailInterface, instructionFile,
                 procedure, procedure.getMetadata().getGobiiCropType(), jobName, logFile);
 

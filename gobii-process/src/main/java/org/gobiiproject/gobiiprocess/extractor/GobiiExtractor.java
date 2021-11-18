@@ -644,6 +644,8 @@ public class GobiiExtractor {
 	            if (pm.getBody() == null) { //Make sure the PM body is set before we send it
 		            pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
 	            }
+
+	            pm.addJobLink(configuration,jobFileName);
 	            if (!inst.isQcCheck()) mailInterface.send(pm);//If it is QC - QC should send any success or failure emails.
             }
 
@@ -1205,7 +1207,7 @@ public class GobiiExtractor {
 
 	/**
 	 * In place file uniqueness. First implementation is a simple sort -u
-	 * @param inputFile input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
+	 * @param inputFilePath input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
 	 */
 	private static void makeFileUnique(String inputFilePath, String errorFile){
     	String tempPath = inputFilePath+".tmp";
