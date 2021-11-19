@@ -208,18 +208,21 @@ public class HDF5AllelicEncoderV2 {
         ) {
             String inputLine;
             rowIndex = 0;
-            while ((inputLine = encodedFileReader.readLine()) != null && positions.hasNext()) {
+            while (positions.hasNext()) {
                 nextRow = positions.next();
-                if (rowIndex != nextRow) continue;
-                String decodedRow;
-                if (markerFast) {
-                    decodedRow = decodeRowMarkerFast(inputLine, alleleEncodings, rowIndex);
-                } else {
-                    decodedRow = decodeRowSampleFast(inputLine, alleleEncodings);
+                while ((inputLine = encodedFileReader.readLine()) != null && rowIndex < nextRow) {
+                    rowIndex++; // this could be inlined in the 'while' condition but IntelliJ complains if the loop body is empty
                 }
-                decodedFileWriter.append(decodedRow);
-                decodedFileWriter.append(System.lineSeparator());
-                rowIndex++;
+                if (nextRow == rowIndex && inputLine != null) {
+                    String decodedRow;
+                    if (markerFast) {
+                        decodedRow = decodeRowMarkerFast(inputLine, alleleEncodings, rowIndex);
+                    } else {
+                        decodedRow = decodeRowSampleFast(inputLine, alleleEncodings);
+                    }
+                    decodedFileWriter.append(decodedRow);
+                    decodedFileWriter.append(System.lineSeparator());
+                }
             }
         } catch (Exception e) {
             String message = "Error decoding encoded HDF5 file from marker list. Line " + rowIndex + "; Lookup " + nextRow;
