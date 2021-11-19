@@ -207,12 +207,9 @@ public class HDF5AllelicEncoderV2 {
             BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(decodedFile))
         ) {
             String inputLine;
-            rowIndex = 0;
             while (positions.hasNext()) {
                 nextRow = positions.next();
-                while ((inputLine = encodedFileReader.readLine()) != null && rowIndex < nextRow) {
-                    rowIndex++; // this could be inlined in the 'while' condition but IntelliJ complains if the loop body is empty
-                }
+                while ((inputLine = encodedFileReader.readLine()) != null && ++rowIndex < nextRow); // skip lines until we encounter one in the list
                 if (nextRow == rowIndex && inputLine != null) {
                     String decodedRow;
                     if (markerFast) {
