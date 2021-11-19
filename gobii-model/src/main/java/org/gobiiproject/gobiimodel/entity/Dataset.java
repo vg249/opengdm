@@ -1,7 +1,19 @@
 package org.gobiiproject.gobiimodel.entity;
 
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedSubgraph;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -32,7 +44,8 @@ import lombok.EqualsAndHashCode;
         @NamedSubgraph(
             name = "graph.dataset.experiment",
             attributeNodes = {
-                @NamedAttributeNode(value = "project", subgraph = "graph.dataset.experiment.project")
+                @NamedAttributeNode(value = "project", subgraph = "graph.dataset.experiment.project"),
+                @NamedAttributeNode(value = "vendorProtocol", subgraph = "graph.dataset.experiment.vendorProtocol")
             }
         ),
         @NamedSubgraph(
@@ -41,6 +54,18 @@ import lombok.EqualsAndHashCode;
                 @NamedAttributeNode(value = "contact")
             }
         ),
+        @NamedSubgraph(
+            name = "graph.dataset.experiment.vendorProtocol",
+            attributeNodes = {
+                @NamedAttributeNode(value = "protocol", subgraph = "graph.dataset.experiment.vendorProtocol.protocol")
+            }
+        ),
+        @NamedSubgraph(
+            name = "graph.dataset.experiment.vendorProtocol.protocol",
+            attributeNodes = {
+                @NamedAttributeNode(value = "platform")
+            }
+        )
     }
 )
 public class Dataset extends BaseEntity {

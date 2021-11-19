@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.gdmv3.GenotypeUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.DigesterResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.MasticatorResult;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.v3.ArrayColumnAspect;
@@ -55,7 +54,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         "FORMAT",
     };
 
-    private final Map<String, String> aspectTableColumnsToHapmapColumns = 
+    private final Map<String, String> aspectTableColumnsToVcfColumns = 
         Map.of("markerName", "ID",
                "markerRef", "REF",
                "markerAlt", "ALT",
@@ -66,8 +65,6 @@ public class VcfDigest extends GenotypeMatrixDigest {
     private final String[] markerTableColumns = {
         "markerName", "markerRef", "markerAlt"
     };
-
-    private GenotypeUploadRequestDTO uploadRequest;
 
     public VcfDigest(LoaderInstruction3 loaderInstruction, 
               ConfigSettings configSettings) throws GobiiException {
@@ -83,7 +80,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
 
         Map<String, Table> aspects = new HashMap<>();
 
-        filesToDigest = getFilesToDigest(uploadRequest.getInputFiles());
+        filesToDigest = getFilesToDigest(this.uploadRequest.getInputFiles());
 
         // To keep track of files having uniform dnarun names columsn across files
         String[] previousFileHeaders = {};
@@ -106,8 +103,8 @@ public class VcfDigest extends GenotypeMatrixDigest {
                     Arrays.copyOfRange(fileHeader.getHeaders(), 0, fileFormatRequiredColumns.length))
                 ) {
                     throw new GobiiException(String.format(
-                        "Invalid hapmap file %s with header columns not matching " +
-                        "required hapmap columns", fileToDigest.getAbsolutePath()));
+                        "Invalid vcf file %s with header columns not matching " +
+                        "required vcf columns", fileToDigest.getAbsolutePath()));
                 }
 
                 if(fileHeader.getHeaders().length == fileFormatRequiredColumns.length) {
@@ -223,7 +220,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         datasetMarkerTable.setPlatformId(this.platform.getPlatformId().toString());
 
         // Set column aspect for marker name.
-        int markerNameColumnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToHapmapColumns.get("markerName"));
+        int markerNameColumnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToVcfColumns.get("markerName"));
 
         // data lines starts after header line
         ColumnAspect markerNameColumn = new ColumnAspect(headerLineNumber+1, markerNameColumnIndex);
@@ -265,7 +262,7 @@ public class VcfDigest extends GenotypeMatrixDigest {
         // Set column aspect for marker name, ref and alt.
         for(String markerTableColumn : markerTableColumns) {
             
-            int columnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToHapmapColumns.get(markerTableColumn));
+            int columnIndex = ArrayUtils.indexOf(headers, aspectTableColumnsToVcfColumns.get(markerTableColumn));
 
             // data lines starts after header line
             Aspect columnAspect;
