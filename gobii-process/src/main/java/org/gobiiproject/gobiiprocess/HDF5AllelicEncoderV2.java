@@ -91,10 +91,6 @@ public class HDF5AllelicEncoderV2 {
 
     }
 
-    public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile) {
-        createDecodedFile(encodedFile, lookupFile, decodedFile, true);
-    }
-
     private EncodedValues encodeRow(String inputRow, int rowIndex) throws Exception {
         List<String> encodings = new ArrayList<>();
         StringJoiner joiner = new StringJoiner(elementSeparator);
@@ -155,6 +151,10 @@ public class HDF5AllelicEncoderV2 {
     private static String encodeLookup(String e) {
         if (e.isEmpty()) return "D";
         return "I" + e;
+    }
+
+    public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile) {
+        createDecodedFile(encodedFile, lookupFile, decodedFile, true);
     }
 
     public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile, boolean markerFast) {
