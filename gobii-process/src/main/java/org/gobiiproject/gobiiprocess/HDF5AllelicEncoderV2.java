@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiiprocess;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter;
 
@@ -24,29 +26,18 @@ public class HDF5AllelicEncoderV2 {
             .sorted()
             .collect(Collectors.toList());
     {
-        // Add command characters to reserved indices
+        // Add control characters to reserved indices
         for (int i = 0; i <= 0x1f; i++) reservedIndices.add(i);
     }
-    //
-    private final HashMap<Integer, Integer> charToLookupIndex;
+    // Maps character values to lookup indices and vice-versa.
+    private final BiMap<Integer, Integer> lookupIndexMap = HashBiMap.create();
     {
         int charVal = 0;
         int indexPos = 0;
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
         while (charVal <= MAX_LOOKUP && indexPos <= (MAX_LOOKUP - reservedAlleles.size())) {
             if (reservedIndices.contains(charVal)) charVal++;
-            else hashMap.put(charVal++, indexPos++);
+            else lookupIndexMap.put(charVal++, indexPos++);
         }
-        charToLookupIndex = hashMap;
-    }
-    private final HashMap<Integer, Integer> lookupIndexToChar;
-    {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (Map.Entry<Integer, Integer> kv:
-            charToLookupIndex.entrySet()) {
-            hashMap.put(kv.getValue(), kv.getKey());
-        }
-        lookupIndexToChar = hashMap;
     }
 
     public HDF5AllelicEncoderV2(String elementSeparator, String alleleSeparator) {
@@ -131,14 +122,13 @@ public class HDF5AllelicEncoderV2 {
             } else {
                 encodingIndex = encodings.indexOf(allele);
             }
-            Integer encodedInteger = lookupIndexToChar.get(encodingIndex);
+            Integer encodedInteger = lookupIndexMap.inverse().get(encodingIndex);
             if (encodedInteger == null) {
                 StringJoiner message = new StringJoiner("\n");
                 message.add("Too many alternate alleles.");
                 message.add("encodingIndex = " + encodingIndex);
                 message.add("encodings = " + encodings);
-                message.add("lookupIndexToChar = " + lookupIndexToChar);
-                message.add("charToLookupIndex = " + charToLookupIndex);
+                message.add("lookupIndexMap = " + lookupIndexMap);
                 message.add("reservedIndices = " + reservedIndices);
                 Logger.logError("HDF5AllelicEncoderV2", message.toString());
                 throw new Exception();
@@ -263,7 +253,7 @@ public class HDF5AllelicEncoderV2 {
         StringJoiner joiner = new StringJoiner(alleleSeparator);
         for (char c: genotype.toCharArray()) {
             if (!reservedAlleles.contains(String.valueOf(c))) {
-                String lookup = encodings[charToLookupIndex.get((int) c)];
+                String lookup = encodings[lookupIndexMap.get((int) c)];
                 joiner.add(lookup);
             } else {
                 joiner.add(String.valueOf(c));
