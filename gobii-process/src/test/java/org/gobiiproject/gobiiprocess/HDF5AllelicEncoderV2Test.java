@@ -1,14 +1,20 @@
 package org.gobiiproject.gobiiprocess;
 
+import com.google.common.io.Files;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class HDF5AllelelicEncoderV2Test {
+public class HDF5AllelicEncoderV2Test {
 
     private final String elementSeparator = "\t";
     private final String alleleSeparator = "/";
@@ -58,6 +64,29 @@ public class HDF5AllelelicEncoderV2Test {
         Assert.assertEquals("A/GAG\tG/GAGA\tA/C",line4);
         Assert.assertEquals("A/C\tG/T\tN/N",line5);
 
+    }
+
+    @Test
+    public void testCreateDecodedFileFromList() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        tempFiles.createRandomInputFile(10, 10, 2);
+        Integer[] positions = {1, 2, 3, 5};
+        String posList = Arrays.stream(positions).map(String::valueOf).collect(Collectors.joining("\n"));
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        encoder.createDecodedFileFromList(tempFiles.encodedFile, tempFiles.lookupFile, posList, tempFiles.decodedFile, true);
+        BufferedReader r1 = new BufferedReader(new FileReader(tempFiles.decodedFile));
+        BufferedReader r2 = new BufferedReader(new FileReader(tempFiles.inputFile));
+        List<String> decodedLines = r1.lines().collect(Collectors.toList());
+        List<String> originalLines = r2.lines().collect(Collectors.toList());
+//        assert decodedLines.size() == positions.length;
+        List<String> originalPositions = Arrays.stream(positions).map(originalLines::get).collect(Collectors.toList());
+        assert decodedLines.containsAll(originalPositions);
+        assert originalPositions.containsAll(decodedLines);
+        r1.close();
+        r2.close();
+
+//        assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
     }
 
     @Test
@@ -141,6 +170,18 @@ public class HDF5AllelelicEncoderV2Test {
         System.err.println(lookupValues.length);
         // highly improbable that we will not get collision for sampling 75 elements 10k times.
         assert lookupValues.length == 75;
+    }
+
+    @Test
+    public void testSampleFastDecoding() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        tempFiles.createRandomInputFile(100, 100, 2);
+        tempFiles.createSampleFastInputFile();
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        tempFiles.createSampleFastEncodedFile();
+        encoder.createDecodedFile(tempFiles.sampleFastEncodedFile, tempFiles.lookupFile, tempFiles.decodedFile, false);
+        assertFilesAreEqual(tempFiles.sampleFastInputFile, tempFiles.decodedFile);
     }
 
     @Test
@@ -267,22 +308,36 @@ public class HDF5AllelelicEncoderV2Test {
         public File lookupFile;
         public File encodedFile;
         public File decodedFile;
+        public File sampleFastEncodedFile;
+        public File sampleFastInputFile;
+        private final String timestamp;
 
-        TempFiles() throws IOException {
-            inputFile = File.createTempFile("input.", ".temp");
-            lookupFile = File.createTempFile("lookup.", ".temp");
-            encodedFile = File.createTempFile("encoded.", ".temp");
-            decodedFile = File.createTempFile("decoded.", ".temp");
+        TempFiles() {
+            timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd-HHmmssnnnnnn"));
+            inputFile             = createTempFile("input-mf");
+            lookupFile            = createTempFile("lookup");
+            encodedFile           = createTempFile("encoded-mf");
+            decodedFile           = createTempFile("decoded");
+            sampleFastEncodedFile = createTempFile("encoded-sf");
+            sampleFastInputFile   = createTempFile("input-sf");
             System.err.println(
-                "Input file: " + inputFile + "\n" +
-                "Lookup file: " + lookupFile + "\n" +
-                "Encoded file: " + encodedFile + "\n" +
-                "Decoded file: " + decodedFile
+                "Input file: "        + inputFile             + "\n" +
+                "Input file (sf): "   + sampleFastInputFile   + "\n" +
+                "Lookup file: "       + lookupFile            + "\n" +
+                "Encoded file: "      + encodedFile           + "\n" +
+                "Encoded file (sf): " + sampleFastEncodedFile + "\n" +
+                "Decoded file: "      + decodedFile
             );
 //            inputFile.deleteOnExit();
 //            lookupFile.deleteOnExit();
 //            encodedFile.deleteOnExit();
 //            decodedFile.deleteOnExit();
+        }
+
+        private File createTempFile(String prefix) {
+            String tmpDir = System.getProperty("java.io.tmpdir");
+            String path = tmpDir + "/" + timestamp + "_" + prefix + ".tmp";
+            return new File(path);
         }
 
         private void createLargeInputFile(int rows, int cols) throws IOException {
@@ -329,6 +384,85 @@ public class HDF5AllelelicEncoderV2Test {
             writer.close();
         }
 
+        public Stream<String> getTransposedFileStream(File file) throws IOException {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            int nRow = reader.readLine().split("\t").length;
+            int nCol = (int) reader.lines().count() + 1;
+            String[][] transposed = new String[nRow][nCol];
+            reader.close();
+            reader = new BufferedReader(new FileReader(file));
+            String inputLine;
+            for (int j = 0; j < nCol; j++) {
+                inputLine = reader.readLine();
+                if (inputLine == null) throw new IOException("Unexpected end of file.");
+                String[] splitLine = inputLine.split("\t");
+                for (int i = 0; i < nRow; i++) {
+                    transposed[i][j] = splitLine[i];
+                }
+            }
+            reader.close();
+            return Arrays.stream(transposed)
+                    .map((line) -> String.join("\t", line));
+//                    .collect(Collectors.toList());
+        }
+
+        private void createSampleFastInputFile() throws Exception {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(sampleFastInputFile));
+            getTransposedFileStream(inputFile).forEach(line -> {
+                try {
+                    writer.append(line);
+                    writer.append(System.lineSeparator());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            writer.close();
+        }
+
+        private void createSampleFastEncodedFile() throws Exception {
+//            BufferedReader reader = new BufferedReader(new FileReader(encodedFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(sampleFastEncodedFile));
+//            int nRow = reader.readLine().split("\t").length;
+//            int nCol = (int) reader.lines().count() + 1;
+//            String[][] transposed = new String[nRow][nCol];
+//            reader.close();
+//            reader = new BufferedReader(new FileReader(encodedFile));
+//            String inputLine;
+//            for (int j = 0; j < nCol; j++) {
+//                inputLine = reader.readLine();
+//                if (inputLine == null) throw new IOException("Unexpected end of file.");
+//                String[] splitLine = inputLine.split("\t");
+//                for (int i = 0; i < nRow; i++) {
+//                    transposed[i][j] = splitLine[i];
+//                }
+//            }
+
+            getTransposedFileStream(encodedFile).forEach(line -> {
+                try {
+                    writer.append(line);
+                    writer.append(System.lineSeparator());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+//            reader.close();
+//            for (int i = 0; i < nRow; i++) {
+//                String joined = String.join("\t", transposed[i]);
+//                writer.append(joined);
+//                writer.append(System.lineSeparator());
+//            }
+            writer.close();
+//            reader.lines().map((line) -> line.split("\t")).map((line) -> {
+//                int i = 0;
+//                for (String s :
+//                        line) {
+//                    transposed[i++][j] = s;
+//                }
+//                j++;
+//            });
+
+        }
 
         String createRandomRow(int length, String[] alleles, int ploidy, String elementSeparator, String alleleSeparator) {
             StringJoiner row = new StringJoiner(elementSeparator);
