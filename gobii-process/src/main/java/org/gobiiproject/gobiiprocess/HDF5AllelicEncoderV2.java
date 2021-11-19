@@ -190,6 +190,7 @@ public class HDF5AllelicEncoderV2 {
                     .add("Lookup filet:\t" + lookupFile)
                     .add("Decoded file:\t" + decodedFile);
             Logger.logError("HDF5AllelicEncoderV2", message.toString(), e);
+            System.err.println(message);
         }
     }
 
@@ -223,6 +224,7 @@ public class HDF5AllelicEncoderV2 {
         } catch (Exception e) {
             String message = "Error decoding encoded HDF5 file from marker list. Line " + rowIndex + "; Lookup " + nextRow;
             Logger.logError("HDF5AllelicEncoder", message, e);
+            System.err.println(message);
         }
     }
 
