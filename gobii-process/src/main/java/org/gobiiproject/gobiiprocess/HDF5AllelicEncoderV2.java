@@ -203,8 +203,8 @@ public class HDF5AllelicEncoderV2 {
         int nextRow = -1;
         int rowIndex = -1; // initialized here in case error is thrown before reading first line
         try (
-                BufferedReader encodedFileReader = new BufferedReader(new FileReader(encodedFile));
-                BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(decodedFile))
+            BufferedReader encodedFileReader = new BufferedReader(new FileReader(encodedFile));
+            BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(decodedFile))
         ) {
             String inputLine;
             rowIndex = 0;
