@@ -79,14 +79,33 @@ public class HDF5AllelicEncoderV2Test {
         BufferedReader r2 = new BufferedReader(new FileReader(tempFiles.inputFile));
         List<String> decodedLines = r1.lines().collect(Collectors.toList());
         List<String> originalLines = r2.lines().collect(Collectors.toList());
-//        assert decodedLines.size() == positions.length;
         List<String> originalPositions = Arrays.stream(positions).map(originalLines::get).collect(Collectors.toList());
         assert decodedLines.containsAll(originalPositions);
         assert originalPositions.containsAll(decodedLines);
         r1.close();
         r2.close();
+    }
 
-//        assertFilesAreEqual(tempFiles.inputFile, tempFiles.decodedFile);
+    @Test
+    public void testCreateDecodedFileFromListSampleFast() throws Exception {
+        TempFiles tempFiles = new TempFiles();
+        tempFiles.createRandomInputFile(10, 10, 2);
+        tempFiles.createSampleFastInputFile();
+        Integer[] positions = {1, 2, 3, 5};
+        String posList = Arrays.stream(positions).map(String::valueOf).collect(Collectors.joining("\n"));
+        HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2(elementSeparator);
+        encoder.createEncodedFile(tempFiles.inputFile, tempFiles.encodedFile, tempFiles.lookupFile);
+        tempFiles.createSampleFastEncodedFile();
+        encoder.createDecodedFileFromList(tempFiles.sampleFastEncodedFile, tempFiles.lookupFile, posList, tempFiles.decodedFile, false);
+        BufferedReader r1 = new BufferedReader(new FileReader(tempFiles.decodedFile));
+        BufferedReader r2 = new BufferedReader(new FileReader(tempFiles.sampleFastInputFile));
+        List<String> decodedLines = r1.lines().collect(Collectors.toList());
+        List<String> originalLines = r2.lines().collect(Collectors.toList());
+        List<String> originalPositions = Arrays.stream(positions).map(originalLines::get).collect(Collectors.toList());
+        assert decodedLines.containsAll(originalPositions);
+        assert originalPositions.containsAll(decodedLines);
+        r1.close();
+        r2.close();
     }
 
     @Test
