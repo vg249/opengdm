@@ -100,7 +100,9 @@ public class HDF5Interface {
         || dst.toUpperCase().equals("VCF")) {
             finalMatrixFilePath = matrixFilePath+".enc";
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
-            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(finalMatrixFilePath), new File(hdf5MapFile),"/","\t");
+//            HDF5AllelicEncoder.createEncodedFile(new File(tempMatrixFilePath), new File(finalMatrixFilePath), new File(hdf5MapFile),"/","\t");
+            HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2("\t", "/");
+            encoder.createEncodedFile(new File(tempMatrixFilePath), new File(finalMatrixFilePath), new File(hdf5MapFile));
         }
 
 
@@ -357,8 +359,9 @@ public class HDF5Interface {
 
             //decode in marker list
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), positionList, new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
-
+//            HDF5AllelicEncoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), positionList, new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
+            HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2("\t", "/");
+            encoder.createDecodedFileFromList(new File(tmpGenoFile), new File(HDF5MapFile), positionList, new File(newGenoFile), markerFast);
         }
         else {
             String hdf5Extractor=pathToHDF5+"dumpdataset";
@@ -371,7 +374,9 @@ public class HDF5Interface {
 
             //decode in dumpdataset
             mv(genoFile, tmpGenoFile);
-            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
+//            HDF5AllelicEncoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(newGenoFile), "/","\t", markerFast); //TODO- separator is always tab
+            HDF5AllelicEncoderV2 encoder = new HDF5AllelicEncoderV2("\t", "/");
+            encoder.createDecodedFile(new File(tmpGenoFile), new File(HDF5MapFile), new File(newGenoFile), markerFast);
         }
         if(sampleList!=null){
             filterDirectional(newGenoFile,sampleList,markerFast);
