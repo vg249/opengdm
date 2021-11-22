@@ -7,9 +7,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.gobiiproject.gobiidomain.GobiiDomainException;
-import org.gobiiproject.gobiidomain.services.rabbitmq.Send;
+import org.gobiiproject.gobiidomain.services.rabbitmq.Sender;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.config.RabbitMqConfig;
 import org.gobiiproject.gobiimodel.cvnames.CvGroupTerm;
 import org.gobiiproject.gobiimodel.dto.gdmv3.DnaRunUploadRequestDTO;
 import org.gobiiproject.gobiimodel.dto.gdmv3.JobDTO;
@@ -24,15 +23,13 @@ import org.gobiiproject.gobiisampletrackingdao.ContactDao;
 import org.gobiiproject.gobiisampletrackingdao.ExperimentDao;
 import org.gobiiproject.gobiisampletrackingdao.ProjectDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Transactional
 public class DnaRunServiceImpl implements DnaRunService {
-
-    @Autowired
-    RabbitMqConfig rabbitMqConfig;
 
     @Autowired
     private ContactDao contactDao;
@@ -61,6 +58,12 @@ public class DnaRunServiceImpl implements DnaRunService {
         "dnaRunProperties", CvGroupTerm.CVGROUP_DNARUN_PROP,
         "dnaSampleProperties", CvGroupTerm.CVGROUP_DNASAMPLE_PROP,
         "germplasmProperties", CvGroupTerm.CVGROUP_GERMPLASM_PROP);
+
+    @Value("${rabbitmq.sender.enabled}")
+    private boolean rabbitSenderIsEnabled;
+
+    @Value("${rabbitmq.sender.queueName}")
+    private String rabbitSenderQueueName;
 
     /**
      * Uploads dnaruns in the file to the database.
@@ -108,19 +111,19 @@ public class DnaRunServiceImpl implements DnaRunService {
     }
 
     private void deliverInstructions(LoaderInstruction3 instructions, String jobName, String cropType) throws GobiiException {
-        if (rabbitMqConfig.getHost().isEmpty()) {
-            Utils.writeInstructionFile(instructions, jobName, cropType);
-        } else {
+        if (rabbitSenderIsEnabled) {
             String loaderInstructionJson = "";
             try {
                 loaderInstructionJson = mapper.writeValueAsString(instructions);
-                Send rabbitMQ = new Send();
-                rabbitMQ.send("processNewLoaderInstructions", loaderInstructionJson);
+                Sender rabbitMQ = new Sender();
+                rabbitMQ.send(rabbitSenderQueueName, loaderInstructionJson);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 e.printStackTrace();
                 throw new GobiiException(e);
             }
+        } else {
+            Utils.writeInstructionFile(instructions, jobName, cropType);
         }
     }
 
