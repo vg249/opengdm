@@ -31,6 +31,7 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.encoder.HDF5AllelicEncoderV2;
 import org.gobiiproject.gobiiprocess.services.DatasetService;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess;
+package org.gobiiproject.gobiiprocess.encoder;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -9,9 +9,15 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class designed to work with @HDF5Interface to encode and then decode insertions, deletions, and other non-standard or
+ * non-allelic data, cleaning it to an allele and encoded-non-standard only HDF5 and a lookup table with a row for each
+ * marker to the dataset.
+ */
 public class HDF5AllelicEncoderV2 {
     private final String elementSeparator;
     private String alleleSeparator = null;
+    int ploidy = -1;
     private static final int MAX_LOOKUP = 126;
     private static final String lookupSeparator = ";";
     private static final Set<String> reservedAlleles = Set.of(
@@ -40,15 +46,34 @@ public class HDF5AllelicEncoderV2 {
         }
     }
 
+    /**
+     * Instantiates a new HDF5AllelicEncoderV2.
+     *
+     * @param elementSeparator Character separating elements in a line.
+     * @param alleleSeparator  Character separating alleles in an element.
+     */
     public HDF5AllelicEncoderV2(String elementSeparator, String alleleSeparator) {
         this.elementSeparator = elementSeparator;
         this.alleleSeparator = alleleSeparator;
     }
 
+    /**
+     * Instantiates a new HDF5AllelicEncoderV2
+     *
+     * @param elementSeparator Character separating elements in a line.
+     */
     public HDF5AllelicEncoderV2(String elementSeparator) {
         this.elementSeparator = elementSeparator;
     }
 
+    /**
+     * Create encoded file.
+     *
+     * @param inputFile   File to encode.
+     * @param encodedFile Output file.
+     * @param lookupFile  File in which to store lookup information.
+     * @throws Exception the exception
+     */
     public void createEncodedFile(File inputFile, File encodedFile, File lookupFile) throws Exception {
         int rowIndex = 0;
         try (
@@ -58,9 +83,12 @@ public class HDF5AllelicEncoderV2 {
         ) {
             String inputLine = inputFileReader.readLine();
             if (inputLine != null) {
-                if (alleleSeparator == null) {
-                    String firstElement = inputLine.split(elementSeparator)[0];
+                if (alleleSeparator == null || ploidy == -1) {
+                    String[] firstLine = inputLine.split(elementSeparator);
+                    String firstElement = firstLine[0];
                     alleleSeparator = NucleotideSeparatorSplitter.findSeparator(firstElement);
+                    List<Integer> lengths = Arrays.stream(firstLine).map(String::length).collect(Collectors.toList());
+
                 }
                 do {
                     EncodedValues encodedValues = encodeRow(inputLine, rowIndex);
@@ -143,10 +171,25 @@ public class HDF5AllelicEncoderV2 {
         return "I" + e;
     }
 
+    /**
+     * Create decoded file.
+     *
+     * @param encodedFile the encoded file
+     * @param lookupFile  the lookup file
+     * @param decodedFile the decoded file
+     */
     public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile) {
         createDecodedFile(encodedFile, lookupFile, decodedFile, true);
     }
 
+    /**
+     * Create decoded file.
+     *
+     * @param encodedFile the encoded file
+     * @param lookupFile  the lookup file
+     * @param decodedFile the decoded file
+     * @param markerFast  the marker fast
+     */
     public void createDecodedFile(File encodedFile, File lookupFile, File decodedFile, boolean markerFast) {
         HashMap<Integer, String[]> alleleEncodings = readLookupFile(lookupFile);
         int rowIndex = 0;
@@ -184,6 +227,15 @@ public class HDF5AllelicEncoderV2 {
         }
     }
 
+    /**
+     * Create decoded file from list.
+     *
+     * @param encodedFile the encoded file
+     * @param lookupFile  the lookup file
+     * @param posList     the pos list
+     * @param decodedFile the decoded file
+     * @param markerFast  the marker fast
+     */
     public void createDecodedFileFromList(File encodedFile, File lookupFile, String posList, File decodedFile, boolean markerFast) {
         HashMap<Integer, String[]> alleleEncodings = readLookupFile(lookupFile);
         Iterator<Integer> positions = Arrays.stream(posList.split("\n"))
@@ -301,9 +353,25 @@ public class HDF5AllelicEncoderV2 {
         return alleleEncodings;
     }
 
+    /**
+     * The type Encoded values.
+     */
     static class EncodedValues {
+        /**
+         * The Encoded row.
+         */
         String encodedRow;
+        /**
+         * The Lookup row.
+         */
         String lookupRow;
+
+        /**
+         * Instantiates a new Encoded values.
+         *
+         * @param encodedRow the encoded row
+         * @param lookupRow  the lookup row
+         */
         public EncodedValues(String encodedRow, String lookupRow) {
             this.encodedRow = encodedRow;
             this.lookupRow = lookupRow;

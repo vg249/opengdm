@@ -1,6 +1,6 @@
-package org.gobiiproject.gobiiprocess;
+package org.gobiiproject.gobiiprocess.encoder;
 
-import com.google.common.io.Files;
+import org.gobiiproject.gobiiprocess.encoder.HDF5AllelicEncoderV2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -269,13 +269,14 @@ public class HDF5AllelicEncoderV2Test {
     }
 
     // Purely informational.
+    @Test
     public void timeLargeFileEncoding() throws Exception {
         long startTime = System.currentTimeMillis();
         long lastTime = startTime;
         long stepTime;
         TempFiles tempFiles = new TempFiles();
-        int rows = 200000;
-        int cols = 5000;
+        int rows = 100000;
+        int cols = 140;
         System.err.print("Creating input file (" + rows + " * " + cols + ")...");
         tempFiles.createLargeInputFile(rows, cols);
         stepTime = System.currentTimeMillis();
@@ -347,10 +348,6 @@ public class HDF5AllelicEncoderV2Test {
                 "Encoded file (sf): " + sampleFastEncodedFile + "\n" +
                 "Decoded file: "      + decodedFile
             );
-//            inputFile.deleteOnExit();
-//            lookupFile.deleteOnExit();
-//            encodedFile.deleteOnExit();
-//            decodedFile.deleteOnExit();
         }
 
         private File createTempFile(String prefix) {
@@ -439,23 +436,7 @@ public class HDF5AllelicEncoderV2Test {
         }
 
         private void createSampleFastEncodedFile() throws Exception {
-//            BufferedReader reader = new BufferedReader(new FileReader(encodedFile));
             BufferedWriter writer = new BufferedWriter(new FileWriter(sampleFastEncodedFile));
-//            int nRow = reader.readLine().split("\t").length;
-//            int nCol = (int) reader.lines().count() + 1;
-//            String[][] transposed = new String[nRow][nCol];
-//            reader.close();
-//            reader = new BufferedReader(new FileReader(encodedFile));
-//            String inputLine;
-//            for (int j = 0; j < nCol; j++) {
-//                inputLine = reader.readLine();
-//                if (inputLine == null) throw new IOException("Unexpected end of file.");
-//                String[] splitLine = inputLine.split("\t");
-//                for (int i = 0; i < nRow; i++) {
-//                    transposed[i][j] = splitLine[i];
-//                }
-//            }
-
             getTransposedFileStream(encodedFile).forEach(line -> {
                 try {
                     writer.append(line);
@@ -464,23 +445,7 @@ public class HDF5AllelicEncoderV2Test {
                     e.printStackTrace();
                 }
             });
-
-//            reader.close();
-//            for (int i = 0; i < nRow; i++) {
-//                String joined = String.join("\t", transposed[i]);
-//                writer.append(joined);
-//                writer.append(System.lineSeparator());
-//            }
             writer.close();
-//            reader.lines().map((line) -> line.split("\t")).map((line) -> {
-//                int i = 0;
-//                for (String s :
-//                        line) {
-//                    transposed[i++][j] = s;
-//                }
-//                j++;
-//            });
-
         }
 
         String createRandomRow(int length, String[] alleles, int ploidy, String elementSeparator, String alleleSeparator) {
@@ -496,10 +461,7 @@ public class HDF5AllelicEncoderV2Test {
             }
             return row.toString();
         }
-
     }
-
-
 }
 
 

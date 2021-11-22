@@ -145,7 +145,7 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
      */
     public static String findSeparator(String separatedString){
         for(String character:separatedString.split("")){
-            if(validSeparators.contains(character))return character;
+            if(validSeparators.contains(character)) return character;
         }
         return null;
     }
