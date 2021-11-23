@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -302,12 +303,19 @@ public class ProcessMessage extends MailMessage {
             jobString = "&search="+jobName;
         }
         String basePath=null;
+        String contextPath="/jobs"; //sane default
         try {
-            basePath = cs.getGlobalServer(ServerType.GOBII_WEB).getHost();
+            ServerConfig jobStatusServer = cs.getGlobalServer(ServerType.JOB_STATUS);
+            if(jobStatusServer==null || !jobStatusServer.isActive()){
+                jobStatusServer = cs.getGlobalServer(ServerType.GOBII_WEB);//Fall back to Web node as sane default
+            }
+            basePath = jobStatusServer ==null?null:jobStatusServer.getHost();
+            String configContextPath = jobStatusServer.getContextPath(false);
+            if(!LineUtils.isNullOrEmpty(configContextPath))contextPath=configContextPath;
         } catch (Exception e) {
             Logger.logWarning("ProcessMessage",e.getMessage());
         }
-        String hyperLink = basePath!=null?basePath+"/jobs":null;
+        String hyperLink = basePath!=null?basePath+"/"+contextPath:null;
         jobLinkLine = hyperLink!=null?"<a href=\""+hyperLink+cropString+jobString+"\">" + JOB_TEXT_STRING + "</a>":null;
 
         return this;
