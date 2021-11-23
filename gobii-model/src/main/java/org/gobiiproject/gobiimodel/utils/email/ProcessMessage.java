@@ -293,8 +293,8 @@ public class ProcessMessage extends MailMessage {
         return addPath(type,path,false,config, publicUrl);
     }
 
-    public ProcessMessage addJobLink(ConfigSettings cs, String jobName){
-        String cropName = cs.getCurrentGobiiCropType();
+    public ProcessMessage addJobLink(ConfigSettings cs, String jobName, String cropName){
+        //FYI: ConfigSettings can't get a reliable crop name
         String cropString = "", jobString = "";
         if(!LineUtils.isNullOrEmpty(cropName)){
             cropString="&crop="+cropName;
@@ -306,16 +306,25 @@ public class ProcessMessage extends MailMessage {
         String contextPath="/jobs"; //sane default
         try {
             ServerConfig jobStatusServer = cs.getGlobalServer(ServerType.JOB_STATUS);
-            if(jobStatusServer==null || !jobStatusServer.isActive()){
+
+            if(jobStatusServer==null){
                 jobStatusServer = cs.getGlobalServer(ServerType.GOBII_WEB);//Fall back to Web node as sane default
             }
-            basePath = jobStatusServer ==null?null:jobStatusServer.getHost();
-            String configContextPath = jobStatusServer.getContextPath(false);
+            else if(!jobStatusServer.isActive()){ //If it's there and explicitly disabled, lets just not hyperlink it
+                jobStatusServer=null;
+            }
+            basePath = jobStatusServer !=null?jobStatusServer.getHost():null;
+            String configContextPath = jobStatusServer!=null?jobStatusServer.getContextPath(false):null;
             if(!LineUtils.isNullOrEmpty(configContextPath))contextPath=configContextPath;
         } catch (Exception e) {
             Logger.logWarning("ProcessMessage",e.getMessage());
         }
         String hyperLink = basePath!=null?basePath+"/"+contextPath:null;
+        if(hyperLink != null &&
+                ! (hyperLink.contains("http:") || hyperLink.contains("https:"))
+        ){
+            hyperLink = "http:" + "/" + "/" + hyperLink; //Outlook won't show links in <a> tags unless they're http or https...
+        }
         jobLinkLine = hyperLink!=null?"<a href=\""+hyperLink+cropString+jobString+"\">" + JOB_TEXT_STRING + "</a>":null;
 
         return this;
