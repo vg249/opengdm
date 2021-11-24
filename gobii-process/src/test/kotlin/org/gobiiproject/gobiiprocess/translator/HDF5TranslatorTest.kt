@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.translator
 
 import junit.framework.TestCase
+import org.gobiiproject.gobiiprocess.translator.utils.TempFiles2
 import org.junit.Assert
 import java.io.File
 import java.io.FileWriter
@@ -86,14 +87,14 @@ class HDF5TranslatorTest : TestCase() {
             inputFile        = tf.inputFile,
             outputFile       = tf.encodedFile,
             lookupFile       = tf.lookupFile,
-            elementSeparator = "\t",
+            genotypeSeparator = "\t",
             alleleSeparator  = "/"
         )
         HDF5Translator.decodeFile(
             inputFile        = tf.encodedFile,
             outputFile       = tf.decodedFile,
             lookupFile       = tf.lookupFile,
-            elementSeparator = "\t",
+            genotypeSeparator = "\t",
             alleleSeparator  = "/"
         )
         tf.inputFile.bufferedReader().useLines { f1 ->
@@ -112,7 +113,7 @@ class HDF5TranslatorTest : TestCase() {
             inputFile        = tf.inputFile,
             outputFile       = tf.encodedFile,
             lookupFile       = tf.lookupFile,
-            elementSeparator = "\t",
+            genotypeSeparator = "\t",
             alleleSeparator  = "/"
         )
 
@@ -122,7 +123,7 @@ class HDF5TranslatorTest : TestCase() {
             inputFile        = tf.sampleFastEncodedFile,
             outputFile       = tf.decodedFile,
             lookupFile       = tf.lookupFile,
-            elementSeparator = "\t",
+            genotypeSeparator = "\t",
             alleleSeparator  = "/",
             markerFast       = false
         )
@@ -135,12 +136,109 @@ class HDF5TranslatorTest : TestCase() {
         }
     }
 
-    data class Timing(val enc: Double, val dec: Double, val rows: Int, val cols: Int) {
-        override fun toString(): String {
-            return "%10d\t%10d\t%10.2f\t%10.2f".format(rows, cols, enc, dec)
+    fun testWorstCase() {
+        // tests a potential worst-case runtime scenario:
+        //      sample-fast
+        //      pool of 127 encoded alleles
+        //      all alleles are encoded
+        //      markerList includes every line
+        //      100M data points
+
+        fun timeWorstCase(numMarkers: Int, numSamples: Int, ploidy: Int): Timing {
+            val markerList = (0 until numMarkers).toSet()
+            val tf = TempFiles2()
+            tf.worstCaseInputFile(
+                numMarkers = numMarkers,
+                numSamples = numSamples,
+                ploidy     = ploidy
+            )
+            val enc = measureTimeMillis {
+                HDF5Translator.encodeFile(
+                    inputFile         = tf.inputFile,
+                    outputFile        = tf.encodedFile,
+                    lookupFile        = tf.lookupFile,
+                    genotypeSeparator = "\t",
+                    alleleSeparator   = "/"
+                )
+            }
+            tf.createSampleFastEncodedFile()
+            val dec = measureTimeMillis {
+                HDF5Translator.decodeFile(
+                    inputFile         = tf.sampleFastEncodedFile,
+                    outputFile        = tf.decodedFile,
+                    lookupFile        = tf.lookupFile,
+                    genotypeSeparator = "\t",
+                    alleleSeparator   = "/",
+                    markerFast        = false,
+                    markerList        = markerList
+                )
+            }
+            val timing = Timing(
+                enc = enc,
+                dec = dec,
+                rows = numSamples,
+                cols = numMarkers,
+                markerFast = false,
+                filterSize = numMarkers,
+                ploidy = ploidy
+            )
+            assertFilesAreEqual(tf.sampleFastInputFile, tf.decodedFile)
+            return timing
         }
+
+        println(Timing.header)
+        println(timeWorstCase(400, 250, 2))
+        println(timeWorstCase(4_000, 250, 2))
+        println(timeWorstCase(400, 2_500, 2))
+        println(timeWorstCase(4_000, 2_500, 2))
+        println(timeWorstCase(40_000, 2_500, 2))
+        println(timeWorstCase(20_000, 5_000, 2))
+        println(timeWorstCase(10_000, 10_000, 2))
+
+    }
+
+    data class Timing(
+        val enc:        Double,
+        val dec:        Double,
+        val rows:       Int,
+        val cols:       Int,
+        val markerFast: Boolean = true,
+        val filterSize: Int = 0,
+        val ploidy:     Int = 2
+    ) {
+        constructor(
+            enc:        Long,
+            dec:        Long,
+            rows:       Int,
+            cols:       Int,
+            markerFast: Boolean = true,
+            filterSize: Int     = 0,
+            ploidy:     Int     = 2
+        ) : this(
+            enc        = enc.toDouble(),
+            dec        = dec.toDouble(),
+            rows       = rows,
+            cols       = cols,
+            markerFast = markerFast,
+            filterSize = filterSize,
+            ploidy     = ploidy
+        )
+
+        val stringRep = "%12d\t%12d\t%12d\t%12s\t%12d\t%12.2f\t%12.2f"
+            .format(
+                if (markerFast) rows else cols,
+                if (markerFast) cols else rows,
+                rows * cols,
+                if (markerFast) "marker" else "sample",
+                filterSize,
+                enc,
+                dec
+            )
+
+        override fun toString() = stringRep
         companion object {
-            val header = "%10s\t%10s\t%10s\t%10s".format("rows", "cols", "enc(ms)", "dec(ms)")
+            val header = "%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s"
+                .format("markers", "samples", "datapoints", "orientation", "filtered", "enc(ms)", "dec(ms)")
         }
     }
 
@@ -161,7 +259,7 @@ class HDF5TranslatorTest : TestCase() {
                     inputFile        = tf.inputFile,
                     outputFile       = tf.encodedFile,
                     lookupFile       = tf.lookupFile,
-                    elementSeparator = "\t",
+                    genotypeSeparator = "\t",
                     alleleSeparator  = "/"
                 )
             }
@@ -172,7 +270,7 @@ class HDF5TranslatorTest : TestCase() {
                     inputFile        = tf.encodedFile,
                     outputFile       = tf.decodedFile,
                     lookupFile       = tf.lookupFile,
-                    elementSeparator = "\t",
+                    genotypeSeparator = "\t",
                     alleleSeparator  = "/",
                     markerFast       = markerFast,
                     markerList       = markerList
@@ -185,10 +283,10 @@ class HDF5TranslatorTest : TestCase() {
 
     fun testEncodingGrid() {
         testEncodingGrid(
-            maxPow     = 6,
+            maxPow     = 7,
             check      = true,
-            reps       = 10,
-            burn       = 3,
+            reps       = 3,
+            burn       = 2,
             markerFast = true,
             markerList = null
         )
@@ -245,7 +343,7 @@ class HDF5TranslatorTest : TestCase() {
             val r2 = file2.bufferedReader()
             r1.useLines { lines1 ->
                 r2.useLines { lines2 ->
-                    lines1.zip(lines2).forEach { (a, b) -> kotlin.test.assertEquals(a, b) }
+                    lines1.zip(lines2).forEach { (a, b) -> assertEquals(a, b) }
                 }
             }
         }
