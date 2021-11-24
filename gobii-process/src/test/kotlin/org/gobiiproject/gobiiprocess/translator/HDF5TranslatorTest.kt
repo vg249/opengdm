@@ -1,18 +1,20 @@
 package org.gobiiproject.gobiiprocess.translator
 
-import junit.framework.TestCase
 import org.gobiiproject.gobiiprocess.translator.utils.TempFiles2
-import org.junit.Assert
+import org.junit.Assert.*
+import org.junit.Ignore
+import org.junit.Test
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import kotlin.math.pow
 import kotlin.system.measureTimeMillis
 
-class HDF5TranslatorTest : TestCase() {
+class HDF5TranslatorTest {
 
+    @Test
     fun testEncodeDecode() {
-        val tf = TempFiles()
+        val tf = TempFiles2()
         try {
             FileWriter(tf.inputFile).use { inputwriter ->
                 inputwriter.write("A/C\tG/T\tN/N")
@@ -39,24 +41,25 @@ class HDF5TranslatorTest : TestCase() {
         val line4 = outReader.readLine()
         val line5 = outReader.readLine()
         val lookupReader = tf.lookupFile.bufferedReader()
-        Assert.assertEquals("1\tIACAT;IGAG;D", lookupReader.readLine())
-        Assert.assertEquals("3\tIGAG;IGAGA", lookupReader.readLine())
-        Assert.assertEquals("AC\tGT\tNN", encodedReader.readLine())
-        //Assert.assertEquals((char)128 + ""+(char)129+"\t"+"\t"+"AA",encodedReader.readLine());
-        Assert.assertEquals("A/C\tG/T\tN/N", line1)
-        //        Assert.assertEquals("ACAT/GAG\t/\tA/A",line2);//given there's no 'length' to the missing data, there is no separator
-        Assert.assertEquals("ACAT/GAG\t/\tA/A", line2) //Should be a separator, no?
-        Assert.assertEquals("A/C\tG/T\tN/N", line3)
-        Assert.assertEquals("A/GAG\tG/GAGA\tA/C", line4)
-        Assert.assertEquals("A/C\tG/T\tN/N", line5)
+        assertEquals("1\tIACAT;IGAG;D", lookupReader.readLine())
+        assertEquals("3\tIGAG;IGAGA", lookupReader.readLine())
+        assertEquals("AC\tGT\tNN", encodedReader.readLine())
+        //assertEquals((char)128 + ""+(char)129+"\t"+"\t"+"AA",encodedReader.readLine());
+        assertEquals("A/C\tG/T\tN/N", line1)
+        //        assertEquals("ACAT/GAG\t/\tA/A",line2);//given there's no 'length' to the missing data, there is no separator
+        assertEquals("ACAT/GAG\t/\tA/A", line2) //Should be a separator, no?
+        assertEquals("A/C\tG/T\tN/N", line3)
+        assertEquals("A/GAG\tG/GAGA\tA/C", line4)
+        assertEquals("A/C\tG/T\tN/N", line5)
         encodedReader.close()
         outReader.close()
         lookupReader.close()
         assertFilesAreEqual(tf.inputFile, tf.decodedFile)
     }
 
+    @Test
     fun testEncodeDecode4letRWExample() {
-        val tf = TempFiles()
+        val tf = TempFiles2()
         try {
             FileWriter(tf.inputFile).use { inputwriter ->
                 inputwriter.write("A/A/A/A\tA/A/C/T")
@@ -76,13 +79,40 @@ class HDF5TranslatorTest : TestCase() {
         val line1 = outReader.readLine()
         val line2 = outReader.readLine()
         val line3 = outReader.readLine()
-        Assert.assertEquals("A/A/A/A\tA/A/C/T", line1)
+        assertEquals("A/A/A/A\tA/A/C/T", line1)
         assertFilesAreEqual(tf.inputFile, tf.decodedFile)
     }
 
-    fun testEncodeDecodeFile() {
-        val tf = TempFiles()
-        tf.createRandomInputFile(1, 1000000)
+    @Test
+    fun testWeirdAlleles() {
+        val tf = TempFiles2()
+        val testLines = listOf(
+            "A/A\t01230123\t00000000\tC/T",     //TODO: why are SSRs required to be encoded this way?
+            "A/C\t99999999\tG/C\tT/T",
+            "A/A\t10091099\tG/G\t09100910",
+            "./.\t+/-\t /?"
+        )
+
+        val outputLines = sequenceOf(
+            "A/A\t0123/0123\t0000/0000\tC/T",   //TODO: seems weird that SSRs are meant to decode to a different format
+            "A/C\t9999/9999\tG/C\tT/T",
+            "A/A\t1009/1099\tG/G\t0910/0910",
+            "./.\t+/-\t /?"
+        )
+
+        tf.inputFile.bufferedWriter().use { testLines.forEach(it::appendLine) }
+        HDF5Translator.encodeFile(tf.inputFile, tf.encodedFile, tf.lookupFile, "\t", "/")
+        HDF5Translator.decodeFile(tf.encodedFile, tf.decodedFile, tf.lookupFile, "\t", "/")
+//        assertFilesAreEqual(tf.inputFile, tf.decodedFile)
+        tf.decodedFile.useLines { decoded ->
+            decoded.zip(outputLines).forEach { (a, b) -> assertEquals(a, b) }
+        }
+    }
+
+    @Test
+    fun testEncodeDecodeRandom() {
+        val tf = TempFiles2()
+        tf.createRandomInputFile(100, 100)
         HDF5Translator.encodeFile(
             inputFile        = tf.inputFile,
             outputFile       = tf.encodedFile,
@@ -106,8 +136,9 @@ class HDF5TranslatorTest : TestCase() {
         }
     }
 
+    @Test
     fun testSampleFastDecode() {
-        val tf = TempFiles()
+        val tf = TempFiles2()
         tf.createRandomInputFile(100, 100)
         HDF5Translator.encodeFile(
             inputFile        = tf.inputFile,
@@ -136,13 +167,56 @@ class HDF5TranslatorTest : TestCase() {
         }
     }
 
+    @Test
+    fun testTooManyAlleles() {
+        val tf = TempFiles2()
+
+        val row = arrayOf("A", "C", "G", "T").run {
+            flatMap { i -> flatMap { j -> flatMap { k -> listOf("$i$j$k", "N$i$j$k") } } }
+        }.joinToString("\t")
+
+        tf.inputFile.bufferedWriter().use { it.appendLine(row) }
+        try {
+            HDF5Translator.encodeFile(
+                inputFile        = tf.inputFile,
+                outputFile       = tf.encodedFile,
+                lookupFile       = tf.lookupFile,
+                genotypeSeparator = "\t",
+                alleleSeparator  = "/"
+            )
+        } catch (e: Exception) {
+            return
+        }
+        fail("No exception was thrown.")
+    }
+    
+    @Test
+    @Ignore
+    fun test10M() {
+        println(Timing.header)
+        println(timeEncoding(10000, 1000, check = true))
+        println(timeEncoding(1000, 10000, check = true))
+    }
+
+    @Test
+    @Ignore
+    fun test100M() {
+        println(Timing.header)
+        println(timeEncoding(20000, 5000, check = true, reps = 1, burn = 0))
+        println(timeEncoding(10000, 10000, true, reps = 1, burn = 0))
+    }
+
+    @Test
+    @Ignore
     fun testWorstCase() {
-        // tests a potential worst-case runtime scenario:
-        //      sample-fast
-        //      pool of 127 encoded alleles
-        //      all alleles are encoded
-        //      markerList includes every line
-        //      100M data points
+        /*
+        tests a potential worst-case runtime scenario:
+        sample-fast
+        pool of 127 encoded alleles
+        all alleles are encoded
+        markerList includes every line
+        100M data points
+        */
 
         fun timeWorstCase(numMarkers: Int, numSamples: Int, ploidy: Int): Timing {
             val markerList = (0 until numMarkers).toSet()
@@ -251,7 +325,7 @@ class HDF5TranslatorTest : TestCase() {
         reps:       Int       = 3,
         burn:       Int       = 1
     ): Timing {
-        val tf = TempFiles()
+        val tf = TempFiles2()
         tf.createRandomInputFile(rows, cols)
         val enc = (1..(reps + burn)).map {
             measureTimeMillis {
@@ -281,12 +355,12 @@ class HDF5TranslatorTest : TestCase() {
         return Timing(enc, dec, rows, cols)
     }
 
-    fun testEncodingGrid() {
+    private fun testEncodingGrid() {
         testEncodingGrid(
-            maxPow     = 7,
+            maxPow     = 6,
             check      = true,
-            reps       = 3,
-            burn       = 2,
+            reps       = 9,
+            burn       = 3,
             markerFast = true,
             markerList = null
         )
@@ -315,26 +389,6 @@ class HDF5TranslatorTest : TestCase() {
             )
             println(timing)
         }
-    }
-
-    fun testEncodeFile() {
-        val tf = TempFiles()
-    }
-
-    fun testDecodeFile() {
-        val tf = TempFiles()
-    }
-
-    fun test10M() {
-        println(Timing.header)
-        println(timeEncoding(10000, 1000))
-        println(timeEncoding(1000, 10000))
-    }
-
-    fun test100M() {
-        println(Timing.header)
-        println(timeEncoding(20000, 5000, check = true, reps = 1, burn = 0))
-        println(timeEncoding(10000, 10000, true, reps = 1, burn = 0))
     }
 
     companion object {
