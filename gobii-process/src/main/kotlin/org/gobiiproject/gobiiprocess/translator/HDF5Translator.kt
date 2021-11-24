@@ -30,29 +30,29 @@ object HDF5Translator {
      * @param alleleSeparator    Separator between alleles in each element (genotype) in [inputFile]
      */
     fun encodeFile(
-        inputFile:        File,
-        outputFile:       File,
-        lookupFile:       File,
-        elementSeparator: String,
-        alleleSeparator:  String
+        inputFile:         File,
+        outputFile:        File,
+        lookupFile:        File,
+        genotypeSeparator: String,
+        alleleSeparator:   String
     ) {
-        val outputStream = outputFile.outputStream().buffered()
-        val lookupWriter = lookupFile.bufferedWriter()
-        inputFile.bufferedReader().useLines { lines ->
-            lines.map { it.split(elementSeparator) }
+        outputFile.outputStream().buffered().use { outputStream ->
+        lookupFile.bufferedWriter().use          { lookupWriter ->
+        inputFile.bufferedReader().useLines      { lines ->
+            lines.map { it.split(genotypeSeparator) }
                 .forEachIndexed { rowIndex, row ->
                     if (rowIndex > 0) outputStream.write(hdf5newline)
-                    val encodings = mutableListOf<String>()     // list of allele encodings
+                    val encodings = mutableListOf<String>()                 // list of allele encodings
                     row.forEachIndexed { genotypeIndex, genotype ->
                         if (genotypeIndex > 0) outputStream.write(hdf5delimiter)
                         genotype.split(alleleSeparator)
-                            // here is the actual encoding step
-                            .forEach { allele ->
+                            .forEach { allele ->                            // this is the actual encoding step
                                 when {
-                                    // write character as-is
-                                    reservedAlleles.contains(allele) -> allele[0].code
-                                    encodings.contains(allele)       -> encodings.indexOf(allele) + offset
-                                    else -> {
+                                    reservedAlleles.contains(allele) ->     // write character as-is
+                                        allele[0].code
+                                    encodings.contains(allele)       ->     // previously encoded
+                                        encodings.indexOf(allele) + offset
+                                    else                             -> {   // new encoding
                                         encodings.add(allele)
                                         encodings.lastIndex + offset
                                     }
@@ -64,16 +64,16 @@ object HDF5Translator {
                         throw Exception(
                             "Too many alleles to encode on line $rowIndex. (${encodings.size} > $encodingLimit)"
                         )
-                    } else if (encodings.isNotEmpty()) {
+                    } else if (encodings.isNotEmpty()) {    //
                         lookupWriter.appendLine(
                             "$rowIndex\t${encodings.joinToString(";") { if (it.isEmpty()) "D" else "I$it" }}"
                         )
                     }
                 }
         }
-        outputStream.write(hdf5newline)
-        outputStream.close()
-        lookupWriter.close()
+        }
+        outputStream.write(hdf5newline) // not sure if this is necessary, but an extra newline shouldn't hurt???
+        }
     }
 
     /**
@@ -88,76 +88,80 @@ object HDF5Translator {
      * @param markerList        Set of markers to include in [outputFile].
      */
     fun decodeFile(
-        inputFile:        File,
-        outputFile:       File,
-        lookupFile:       File,
-        elementSeparator: String,
-        alleleSeparator:  String,
-        markerFast:       Boolean = true,
-        markerList:       Set<Int>? = null
+        inputFile:         File,
+        outputFile:        File,
+        lookupFile:        File,
+        genotypeSeparator: String,
+        alleleSeparator:   String,
+        markerFast:        Boolean = true,
+        markerList:        Set<Int>? = null
     ) {
-        val inputStream     = inputFile.inputStream().buffered()
-        var rowIndex = 0                    // row in file
-        var colIndex = 0                    // column (genotype) in file
-        var alleleIndex = 0                 // index of allele in column (genotype)
-        val markerIndex: () -> Int =        // gets to rowIndex if markerFast, colIndex if sampleFast
-            if (markerFast) { { rowIndex } } else { { colIndex } }
-        val filtering = markerList != null  // whether we are filtering on a markerList
-        if (filtering && markerList!!.isEmpty()) throw Exception("Argument to 'markerList' is empty.")
+
+        val filtering = markerList != null          // null markerlist indicates no filtering
+        if (filtering && markerList!!.isEmpty())    // empty markerlist indicates something went wrong
+            throw Exception("Argument to 'markerList' is empty.")
+        // read encodings into a map of { rowIndex: [ allele1, allele2, ... ] }
         val markerEncodings = lookupFile.bufferedReader().useLines { lines ->
-            lines.filterIndexed { idx, _ -> !filtering || idx in markerList!! }
+            lines
+                // can reduce the size of the map and lookup complexity if we are filtering
+                .filterIndexed { idx, _ -> !filtering || idx in markerList!! }
                 .associate { line ->
-                val (k, v) = line.split("\t")
-                k.toInt() to v.split(";").map { it.substring(1) }
-            }
+                    val (k, v) = line.split("\t")
+                    k.toInt() to v.split(";").map { it.substring(1) }
+                }
         }
 
-        outputFile.bufferedWriter().use { writer ->
-            inputStream.use { encodedBytes ->
-                encodedBytes.iterator().forEachRemaining { byte ->
-                    val int = byte.toInt() and 0xff
-                    if (filtering) {
-                        if (markerIndex() !in markerList!!) {
-                            if (int == hdf5delimiter) {
-                                colIndex++
-                                alleleIndex = 0
-                            } else if (int == hdf5newline) {
-                                rowIndex++
-                                colIndex    = 0
-                                alleleIndex = 0
-                            }
-                            return@forEachRemaining // TODO: check if this proceeds to next element of iterator or returns entirely
-                        }
-                    }
-                    // this whole logic chain assumes file is correctly encoded
-                    when (int) {
-                        hdf5delimiter -> {
-                            writer.append(elementSeparator)
-                            colIndex++
+        var rowIndex               = 0                              // row in file
+        var colIndex               = 0                              // column (genotype) in file
+        var alleleIndex            = 0                              // index of allele in column (genotype)
+        val markerIndex: () -> Int =                                // getter for rowIndex if markerFast, colIndex if sampleFast
+            if (markerFast) { { rowIndex } } else { { colIndex } }  // used for filtering and encoding lookup
+
+        outputFile.bufferedWriter().use        { writer ->
+        inputFile.inputStream().buffered().use { encodedBytes ->
+            encodedBytes.iterator().forEachRemaining { byte ->
+                val int = byte.toInt() and 0xff             // effectively an unsigned byte
+                if (filtering) {
+                    if (markerIndex() !in markerList!!) {   // not null assertion is safe where filtering == true
+                        if (int == hdf5delimiter) {
+                            colIndex++                      // needed in case of sample-fast
                             alleleIndex = 0
-                        }
-                        hdf5newline -> {
-                            writer.newLine()
+                        } else if (int == hdf5newline) {
                             rowIndex++
                             colIndex    = 0
                             alleleIndex = 0
                         }
-                        else -> {
-                            if (alleleIndex++ > 0) writer.append(alleleSeparator)
-                            if (int >= offset) {
-                                val encodings = markerEncodings[markerIndex()]
-                                    ?: throw Exception("No lookup row found at row $rowIndex")
-                                encodings.elementAtOrNull(int - offset)
-                                    ?: throw Exception("No encoding for element ${int - offset} on row $rowIndex")
-                            } else {
-                                int.toChar().toString()
-                            }.let { writer.append(it) }
-                        }
+                        return@forEachRemaining             // can skip processing the rest of the row
+                    }
+                }
+                // this whole logic chain assumes file is correctly encoded
+                when (int) {
+                    hdf5delimiter -> {
+                        writer.append(genotypeSeparator)
+                        colIndex++
+                        alleleIndex = 0
+                    }
+                    hdf5newline -> {
+                        writer.newLine()
+                        rowIndex++
+                        colIndex    = 0
+                        alleleIndex = 0
+                    }
+                    else -> {
+                        if (alleleIndex++ > 0) writer.append(alleleSeparator)
+                        if (int >= offset) {
+                            val encodings = markerEncodings[markerIndex()]
+                                ?: throw Exception("No lookup row found at row $rowIndex")
+                            encodings.elementAtOrNull(int - offset)
+                                ?: throw Exception("No encoding for element ${int - offset} on row $rowIndex")
+                        } else {
+                            int.toChar().toString()
+                        }.let { writer.append(it) }
                     }
                 }
             }
-            writer.appendLine()
-            return@use
+        }
+        writer.appendLine()
         }
     }
 }
