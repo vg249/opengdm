@@ -2,7 +2,13 @@ package org.gobiiproject.gobiiprocess.translator
 
 import java.io.File
 
+/**
+ * HDF5translator
+ *
+ * TODO
+ */
 object HDF5Translator {
+    //TODO: create custom exceptions
     private val reservedAlleles = setOf(
         "A", "C", "G", "T", "N",
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -14,6 +20,15 @@ object HDF5Translator {
     private const val hdf5newline   = 10  // delimiter between hdf5 rows
     private const val encodingLimit = 127 // max number of alleles we can encode
 
+    /**
+     * Transform a temporary genotype matrix into a fixed-width, ubyte encoded file suitable for conversion to HDF5 format.
+     *
+     * @param inputFile          Temporary genotype matrix to encode
+     * @param outputFile         Where to write encoded file
+     * @param lookupFile         Where to write lookup table
+     * @param genotypeSeparator  Separator between line elements (genotypes) in [inputFile]
+     * @param alleleSeparator    Separator between alleles in each element (genotype) in [inputFile]
+     */
     fun encodeFile(
         inputFile:        File,
         outputFile:       File,
@@ -61,6 +76,17 @@ object HDF5Translator {
         lookupWriter.close()
     }
 
+    /**
+     * Decode a fixed-width, ubyte encoded genotype matrix output from HDF5 format to standard UTF-8.
+     *
+     * @param inputFile         File to decode. Fixed width, ubyte-encoded.
+     * @param outputFile        Where to write decoded file.
+     * @param lookupFile        Lookup file for encoded [inputFile].
+     * @param genotypeSeparator Separator to append between elements (genotypes) in [outputFile].
+     * @param alleleSeparator   Separator to append between alleles in [outputFile].
+     * @param markerFast        Whether [inputFile] is marker-oriented.
+     * @param markerList        Set of markers to include in [outputFile].
+     */
     fun decodeFile(
         inputFile:        File,
         outputFile:       File,
