@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 
-class TempFiles {
+public class TempFiles {
     public File inputFile;
     public File lookupFile;
     public File encodedFile;

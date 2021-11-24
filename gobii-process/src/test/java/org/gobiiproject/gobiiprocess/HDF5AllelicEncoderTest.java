@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.encoder;
+package org.gobiiproject.gobiiprocess;
 
 import org.junit.Assert;
 import org.junit.Test;

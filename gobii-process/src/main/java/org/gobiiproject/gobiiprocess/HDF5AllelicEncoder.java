@@ -1,19 +1,16 @@
-package org.gobiiproject.gobiiprocess.encoder;
+package org.gobiiproject.gobiiprocess;
 
 import htsjdk.variant.variantcontext.Allele;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter;
-import org.gobiiproject.gobiiprocess.encoder.utils.ByteJoiner;
-import org.gobiiproject.gobiiprocess.encoder.utils.ByteLineReader;
+import org.gobiiproject.gobiiprocess.translator.utils.ByteJoiner;
+import org.gobiiproject.gobiiprocess.translator.utils.ByteLineReader;
 
-import javax.xml.bind.annotation.XmlType;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Class designed to work with @HDF5Interface to encode and then decode insertions, deletions, and other non-standard or

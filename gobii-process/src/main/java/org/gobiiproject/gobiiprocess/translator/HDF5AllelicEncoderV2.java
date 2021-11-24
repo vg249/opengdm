@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.encoder;
+package org.gobiiproject.gobiiprocess.translator;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

@@ -1,6 +1,6 @@
-package org.gobiiproject.gobiiprocess.encoder.utils;
+package org.gobiiproject.gobiiprocess.translator.utils;
 
-import org.gobiiproject.gobiiprocess.encoder.HDF5AllelicEncoder;
+import org.gobiiproject.gobiiprocess.HDF5AllelicEncoder;
 import org.junit.Test;
 
 import java.io.*;
