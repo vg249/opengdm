@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess.translator
 
 import java.io.File
 
+
 /**
  * HDF5translator
  *
@@ -20,6 +21,8 @@ object HDF5Translator {
     private const val hdf5newline   = 10  // delimiter between hdf5 rows
     private const val encodingLimit = 127 // max number of alleles we can encode
 
+
+
     /**
      * Transform a temporary genotype matrix into a fixed-width, ubyte encoded file suitable for conversion to HDF5 format.
      *
@@ -36,10 +39,18 @@ object HDF5Translator {
         genotypeSeparator: String,
         alleleSeparator:   String
     ) {
+
+        fun encodeAllele(allele: String, encodings: MutableList<String>) = when {
+            reservedAlleles.contains(allele) -> allele[0].code                      // write character as-is
+            encodings.contains(allele)       -> encodings.indexOf(allele) + offset  // previously encoded
+            else                             ->                                     // new encoding
+                encodings.apply { add(allele) }.lastIndex + offset
+        }
+
         outputFile.outputStream().buffered().use { outputStream ->
         lookupFile.bufferedWriter().use          { lookupWriter ->
-        inputFile.bufferedReader().useLines      { lines ->
-            lines.map { it.split(genotypeSeparator) }
+        inputFile.bufferedReader().useLines      { lines        ->
+            lines.map { it.splitToSequence(genotypeSeparator) }
                 .forEachIndexed { rowIndex, row ->
                     if (rowIndex > 0) outputStream.write(hdf5newline)
                     val encodings = mutableListOf<String>()                 // list of allele encodings
@@ -47,12 +58,38 @@ object HDF5Translator {
                         if (genotypeIndex > 0) outputStream.write(hdf5delimiter)
                         genotype.split(alleleSeparator)
                             .forEach { allele ->                            // this is the actual encoding step
+                                if (allele.length != 8 || allele.toIntOrNull() == null) encodeAllele(allele, encodings)
+                                else {
+                                    encodeAllele(allele.take(4), encodings)
+                                        .let(outputStream::write)
+                                    outputStream.write(hdf5delimiter)
+                                    encodeAllele(allele.takeLast(4), encodings)
+                                }
+                                    .let(outputStream::write)
                                 when {
                                     reservedAlleles.contains(allele) ->     // write character as-is
                                         allele[0].code
                                     encodings.contains(allele)       ->     // previously encoded
                                         encodings.indexOf(allele) + offset
+                                    allele.length == 8 && allele.all(Char::isDigit) -> {
+                                        val a1 = allele.take(4)
+                                        val a2 = allele.takeLast(4)
+                                        val i1 = encodings.indexOf(a1)
+                                        val i2 = encodings.indexOf(a2)
+                                        if (i1 != -1) outputStream.write(i1) else {
+                                            encodings.run { add(a1); lastIndex + offset }
+//                                            encodings.add(a1)
+//                                            outputStream.write(encodings.lastIndex + offset)
+                                        }
+                                        if (i2 != -1) i2
+                                        else {
+                                            encodings.run { add(a1); lastIndex + offset }
+//                                            encodings.add(a1)
+//                                            encodings.lastIndex + offset
+                                        }
+                                    }
                                     else                             -> {   // new encoding
+                                        encodings.run { add(allele); lastIndex + offset }
                                         encodings.add(allele)
                                         encodings.lastIndex + offset
                                     }
@@ -117,7 +154,7 @@ object HDF5Translator {
         val markerIndex: () -> Int =                                // getter for rowIndex if markerFast, colIndex if sampleFast
             if (markerFast) { { rowIndex } } else { { colIndex } }  // used for filtering and encoding lookup
 
-        outputFile.bufferedWriter().use        { writer ->
+        outputFile.bufferedWriter().use        { writer       ->
         inputFile.inputStream().buffered().use { encodedBytes ->
             encodedBytes.iterator().forEachRemaining { byte ->
                 val int = byte.toInt() and 0xff             // effectively an unsigned byte
@@ -161,7 +198,7 @@ object HDF5Translator {
                 }
             }
         }
-        writer.appendLine()
+        writer.newLine()
         }
     }
 }
