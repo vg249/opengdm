@@ -21,8 +21,6 @@ object HDF5Translator {
     private const val hdf5newline   = 10  // delimiter between hdf5 rows
     private const val encodingLimit = 127 // max number of alleles we can encode
 
-
-
     /**
      * Transform a temporary genotype matrix into a fixed-width, ubyte encoded file suitable for conversion to HDF5 format.
      *
@@ -39,41 +37,31 @@ object HDF5Translator {
         genotypeSeparator: String,
         alleleSeparator:   String
     ) {
-
-        fun encodeAllele(allele: String, encodings: MutableList<String>) = when {
-            reservedAlleles.contains(allele) -> allele[0].code                      // write character as-is
-            encodings.contains(allele)       -> encodings.indexOf(allele) + offset  // previously encoded
-            else                             ->                                     // new encoding
-                encodings.apply { add(allele) }.lastIndex + offset
-        }
-
+        val alleleFilter: (String) -> Boolean = if (alleleSeparator.isEmpty()) {{ it.isNotEmpty() }} else {{ true }}
         outputFile.outputStream().buffered().use { outputStream ->
         lookupFile.bufferedWriter().use          { lookupWriter ->
-        inputFile.bufferedReader().useLines      { lines        ->
-            lines.map { it.splitToSequence(genotypeSeparator) }
+        inputFile.bufferedReader().useLines      { lineSequence ->
+            lineSequence.map { it.splitToSequence(genotypeSeparator) }
                 .forEachIndexed { rowIndex, row ->
                     if (rowIndex > 0) outputStream.write(hdf5newline)
-                    val encodings = mutableListOf<String>()                 // list of allele encodings
+                    val encodings = mutableListOf<String>()                     // list of allele encodings
                     row.forEachIndexed { genotypeIndex, genotype ->
                         if (genotypeIndex > 0) outputStream.write(hdf5delimiter)
-                        genotype.split(alleleSeparator)
-                            .forEach { allele ->                            // this is the actual encoding step
+                        genotype.split(alleleSeparator).filter(alleleFilter)
+                            .forEach { allele ->     // this is the actual encoding step
                                 if (allele.length != 8 || allele.toIntOrNull() == null) encodeAllele(allele, encodings)
                                 else {
-                                    encodeAllele(allele.take(4), encodings)
-                                        .let(outputStream::write)
+                                    encodeAllele(allele.take(4), encodings).let(outputStream::write)
                                     encodeAllele(allele.takeLast(4), encodings)
                                 }
                                     .let(outputStream::write)
                         }
                     }
                     if (encodings.size > encodingLimit) {
-                        throw Exception(
-                            "Too many alleles to encode on line $rowIndex. (${encodings.size} > $encodingLimit)"
-                        )
-                    } else if (encodings.isNotEmpty()) {    //
+                        throw Exception("More than $encodingLimit alleles (${encodings.size}) on line $rowIndex")
+                    } else if (encodings.isNotEmpty()) {
                         lookupWriter.appendLine(
-                            "$rowIndex\t${encodings.joinToString(";") { if (it.isEmpty()) "D" else "I$it" }}"
+                            "$rowIndex\t${encodings.joinToString(";") { if (it.isNotEmpty()) "I$it" else "D" }}"
                         )
                     }
                 }
@@ -81,6 +69,14 @@ object HDF5Translator {
         }
         outputStream.write(hdf5newline) // not sure if this is necessary, but an extra newline shouldn't hurt???
         }
+        if (lookupFile.length() == 0L) lookupFile.delete()
+    }
+
+    fun encodeAllele(allele: String, encodings: MutableList<String>) = when {
+        reservedAlleles.contains(allele) -> allele[0].code                      // write character as-is
+        encodings.contains(allele)       -> encodings.indexOf(allele) + offset  // previously encoded
+        else                             ->                                     // new encoding
+            encodings.apply { add(allele) }.lastIndex + offset
     }
 
     /**
@@ -107,20 +103,19 @@ object HDF5Translator {
         val filtering = markerList != null          // null markerlist indicates no filtering
         if (filtering && markerList!!.isEmpty())    // empty markerlist indicates something went wrong
             throw Exception("Argument to 'markerList' is empty.")
+
         // read encodings into a map of { rowIndex: [ allele1, allele2, ... ] }
-        val markerEncodings: Map<Int, List<String>> =
-            try {
-                lookupFile.bufferedReader().useLines { lines ->
-                    // can reduce the size of the map and lookup complexity if we are filtering
-                    lines.filterIndexed { idx, _ -> !filtering || idx in markerList!! }
-                        .associate { line ->
-                            val (k, v) = line.split("\t")
+        val markerEncodings: Map<Int, List<String>> = try {
+            lookupFile.bufferedReader().useLines { lines ->
+                // can reduce the size of the map and lookup complexity if we are filtering
+                lines.filterIndexed { idx, _ -> !filtering || idx in markerList!! }
+                    .associate { line ->
+                        line.split("\t").let { (k, v) ->
                             k.toInt() to v.split(";").map { it.substring(1) }
                         }
-                }
-            } catch(e: Exception) {
-                emptyMap()
+                    }
             }
+        } catch(e: Exception) { emptyMap() }
 
         var rowIndex               = 0                              // row in file
         var colIndex               = 0                              // column (genotype) in file

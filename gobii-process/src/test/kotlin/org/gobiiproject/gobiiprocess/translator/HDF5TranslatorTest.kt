@@ -1,20 +1,59 @@
 package org.gobiiproject.gobiiprocess.translator
 
-import org.gobiiproject.gobiiprocess.translator.utils.TempFiles2
+import org.gobiiproject.gobiiprocess.translator.utils.TempFiles
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 import kotlin.system.measureTimeMillis
 
 class HDF5TranslatorTest {
 
     @Test
+    fun testGSD125() {
+        val inputFileSf = File("src/test/resources/gsd-125/biallelic-sample-fast.tsv")
+        val inputFileMf = File("src/test/resources/gsd-125/biallelic-marker-fast.tsv")
+        val tf = TempFiles()
+        tf.inputFile
+        System.err.println(tf)
+        HDF5Translator.encodeFile(
+            inputFile = inputFileMf,
+            outputFile = tf.encodedFile,
+            lookupFile = tf.lookupFile,
+            genotypeSeparator = "\t",
+            alleleSeparator = ""
+        )
+        HDF5Translator.decodeFile(
+            inputFile = tf.encodedFile,
+            outputFile = tf.decodedFile,
+            lookupFile = tf.lookupFile,
+            genotypeSeparator = "\t",
+            alleleSeparator = ""
+        )
+        assertFilesAreEqual(inputFileMf, tf.decodedFile)
+        assert(!tf.lookupFile.exists())
+        tf.createSampleFastInputFile(inputFileMf, inputFileSf)
+        tf.createSampleFastEncodedFile()
+        HDF5Translator.decodeFile(
+            inputFile = tf.sampleFastEncodedFile,
+            outputFile = tf.decodedFile,
+            lookupFile = tf.lookupFile,
+            genotypeSeparator = "\t",
+            alleleSeparator = "",
+            markerFast = false
+        )
+        assertFilesAreEqual(inputFileSf, tf.decodedFile)
+        assert(!tf.lookupFile.exists())
+    }
+
+    @Test
     fun testEncodeDecode() {
-        val tf = TempFiles2()
+        val tf = TempFiles()
         try {
             FileWriter(tf.inputFile).use { inputwriter ->
                 inputwriter.write("A/C\tG/T\tN/N")
@@ -59,7 +98,7 @@ class HDF5TranslatorTest {
 
     @Test
     fun testEncodeDecode4letRWExample() {
-        val tf = TempFiles2()
+        val tf = TempFiles()
         try {
             FileWriter(tf.inputFile).use { inputwriter ->
                 inputwriter.write("A/A/A/A\tA/A/C/T")
@@ -85,7 +124,7 @@ class HDF5TranslatorTest {
 
     @Test
     fun testWeirdAlleles() {
-        val tf = TempFiles2()
+        val tf = TempFiles()
         val testLines = listOf(
             "A/A\t01230123\t00000000\tC/T",     //TODO: why are SSRs required to be encoded this way?
             "A/C\t99999999\tG/C\tT/T",
@@ -111,7 +150,7 @@ class HDF5TranslatorTest {
 
     @Test
     fun testEncodeDecodeRandom() {
-        val tf = TempFiles2()
+        val tf = TempFiles()
         tf.createRandomInputFile(100, 100)
         HDF5Translator.encodeFile(
             inputFile        = tf.inputFile,
@@ -138,7 +177,7 @@ class HDF5TranslatorTest {
 
     @Test
     fun testSampleFastDecode() {
-        val tf = TempFiles2()
+        val tf = TempFiles()
         tf.createRandomInputFile(100, 100)
         HDF5Translator.encodeFile(
             inputFile        = tf.inputFile,
@@ -169,7 +208,7 @@ class HDF5TranslatorTest {
 
     @Test
     fun testTooManyAlleles() {
-        val tf = TempFiles2()
+        val tf = TempFiles()
 
         val row = arrayOf("A", "C", "G", "T").run {
             flatMap { i -> flatMap { j -> flatMap { k -> listOf("$i$j$k", "N$i$j$k") } } }
@@ -188,6 +227,27 @@ class HDF5TranslatorTest {
             return
         }
         fail("No exception was thrown.")
+    }
+
+    @Test
+    fun testNoEncodings() {
+        val tf = TempFiles()
+        tf.createRandomInputFile(rows = 10, cols = 10, ploidy = 2, alleles = arrayOf("A", "C", "T", "G"))
+        HDF5Translator.encodeFile(
+            inputFile        = tf.inputFile,
+            outputFile       = tf.encodedFile,
+            lookupFile       = tf.lookupFile,
+            genotypeSeparator = "\t",
+            alleleSeparator  = "/"
+        )
+        HDF5Translator.decodeFile(
+            inputFile        = tf.encodedFile,
+            outputFile       = tf.decodedFile,
+            lookupFile       = tf.lookupFile,
+            genotypeSeparator = "\t",
+            alleleSeparator  = "/"
+        )
+        assertFilesAreEqual(tf.inputFile, tf.decodedFile)
     }
     
     @Test
@@ -208,6 +268,15 @@ class HDF5TranslatorTest {
 
     @Test
     @Ignore
+    fun test1B() {
+//        val output = Timing.header
+        timeEncoding(200_000, 5_000, check = true, reps = 1, burn = 0, verbose = true)
+            .also { println(Timing.header) }
+            .let(::println)
+    }
+
+    @Test
+    @Ignore
     fun testWorstCase() {
         /*
         tests a potential worst-case runtime scenario:
@@ -220,7 +289,7 @@ class HDF5TranslatorTest {
 
         fun timeWorstCase(numMarkers: Int, numSamples: Int, ploidy: Int): Timing {
             val markerList = (0 until numMarkers).toSet()
-            val tf = TempFiles2()
+            val tf = TempFiles()
             tf.worstCaseInputFile(
                 numMarkers = numMarkers,
                 numSamples = numSamples,
@@ -319,14 +388,18 @@ class HDF5TranslatorTest {
     private fun timeEncoding(
         rows:       Int,
         cols:       Int,
-        markerFast: Boolean   = true,
-        markerList: Set<Int>? = null,
-        check:      Boolean   = false,
-        reps:       Int       = 3,
-        burn:       Int       = 1
+        markerFast: Boolean     = true,
+        markerList: Set<Int>?   = null,
+        check:      Boolean     = false,
+        reps:       Int         = 3,
+        burn:       Int         = 1,
+        verbose:    Boolean     = false,
     ): Timing {
-        val tf = TempFiles2()
+        val tf = TempFiles()
+        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        if (verbose) System.err.println("[${LocalDateTime.now().format(dtf)}] Creating input file.")
         tf.createRandomInputFile(rows, cols)
+        if (verbose) System.err.println("[${LocalDateTime.now().format(dtf)}] Encoding.")
         val enc = (1..(reps + burn)).map {
             measureTimeMillis {
                 HDF5Translator.encodeFile(
@@ -338,6 +411,7 @@ class HDF5TranslatorTest {
                 )
             }
         }.drop(burn).average()
+        if (verbose) System.err.println("[${LocalDateTime.now().format(dtf)}] Decoding.")
         val dec = (1..(reps + burn)).map {
             measureTimeMillis {
                 HDF5Translator.decodeFile(
@@ -351,7 +425,9 @@ class HDF5TranslatorTest {
                 )
             }
         }.drop(burn).average()
+        if (verbose) System.err.println("[${LocalDateTime.now().format(dtf)}] Checking.")
         if (check) assertFilesAreEqual(tf.inputFile, tf.decodedFile)
+        if (verbose) System.err.println("[${LocalDateTime.now().format(dtf)}] Done.")
         return Timing(enc, dec, rows, cols)
     }
 
