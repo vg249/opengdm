@@ -370,8 +370,8 @@ public class HDF5Interface {
 
             HDF5Translator.INSTANCE.decodeFile(
                     new File(tmpGenoFile),
-                    new File(HDF5MapFile),
                     new File(newGenoFile),
+                    new File(HDF5MapFile),
                     elementSeparator,
                     alleleSeparator,
                     markerFast,
@@ -391,8 +391,8 @@ public class HDF5Interface {
             mv(genoFile, tmpGenoFile);
             HDF5Translator.INSTANCE.decodeFile(
                     new File(tmpGenoFile),
-                    new File(HDF5MapFile),
                     new File(newGenoFile),
+                    new File(HDF5MapFile),
                     elementSeparator,
                     alleleSeparator,
                     markerFast,
