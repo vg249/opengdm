@@ -20,7 +20,6 @@ class HDF5TranslatorTest {
         val inputFileMf = File("src/test/resources/gsd-125/biallelic-marker-fast.tsv")
         val tf = TempFiles()
         tf.inputFile
-        System.err.println(tf)
         HDF5Translator.encodeFile(
             inputFile = inputFileMf,
             outputFile = tf.encodedFile,
@@ -166,13 +165,7 @@ class HDF5TranslatorTest {
             genotypeSeparator = "\t",
             alleleSeparator  = "/"
         )
-        tf.inputFile.bufferedReader().useLines { f1 ->
-            tf.decodedFile.bufferedReader().useLines { f2 ->
-                (f1 zip f2).forEach { (a, b) ->
-                    assertEquals(a, b)
-                }
-            }
-        }
+        assertFilesAreEqual(tf.inputFile, tf.decodedFile)
     }
 
     @Test
@@ -197,13 +190,7 @@ class HDF5TranslatorTest {
             alleleSeparator  = "/",
             markerFast       = false
         )
-        tf.sampleFastInputFile.bufferedReader().useLines { f1 ->
-            tf.decodedFile.bufferedReader().useLines { f2 ->
-                (f1 zip f2).forEach { (a, b) ->
-                    assertEquals(a, b)
-                }
-            }
-        }
+        assertFilesAreEqual(tf.sampleFastInputFile, tf.decodedFile)
     }
 
     @Test
@@ -431,7 +418,9 @@ class HDF5TranslatorTest {
         return Timing(enc, dec, rows, cols)
     }
 
-    private fun testEncodingGrid() {
+    @Test
+    @Ignore
+    fun testEncodingGrid() {
         testEncodingGrid(
             maxPow     = 6,
             check      = true,
