@@ -108,15 +108,19 @@ object HDF5Translator {
         if (filtering && markerList!!.isEmpty())    // empty markerlist indicates something went wrong
             throw Exception("Argument to 'markerList' is empty.")
         // read encodings into a map of { rowIndex: [ allele1, allele2, ... ] }
-        val markerEncodings = lookupFile.bufferedReader().useLines { lines ->
-            lines
-                // can reduce the size of the map and lookup complexity if we are filtering
-                .filterIndexed { idx, _ -> !filtering || idx in markerList!! }
-                .associate { line ->
-                    val (k, v) = line.split("\t")
-                    k.toInt() to v.split(";").map { it.substring(1) }
+        val markerEncodings: Map<Int, List<String>> =
+            try {
+                lookupFile.bufferedReader().useLines { lines ->
+                    // can reduce the size of the map and lookup complexity if we are filtering
+                    lines.filterIndexed { idx, _ -> !filtering || idx in markerList!! }
+                        .associate { line ->
+                            val (k, v) = line.split("\t")
+                            k.toInt() to v.split(";").map { it.substring(1) }
+                        }
                 }
-        }
+            } catch(e: Exception) {
+                emptyMap()
+            }
 
         var rowIndex               = 0                              // row in file
         var colIndex               = 0                              // column (genotype) in file
