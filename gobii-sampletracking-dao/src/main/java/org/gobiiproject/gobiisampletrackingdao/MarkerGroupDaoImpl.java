@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiisampletrackingdao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -37,12 +38,12 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
 	@Override
 	public List<MarkerGroup> getMarkerGroups(Integer offset, Integer pageSize) {
         List<MarkerGroup> markerGroups = new ArrayList<>();
-  
+
         try {
 
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
-  
+
             Root<MarkerGroup> root = criteriaQuery.from(MarkerGroup.class);
             criteriaQuery
                 .multiselect(
@@ -50,8 +51,9 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
                     root.get("name"),
                     root.get("code"),
                     root.get("germplasmGroup"),
-                    root.get("status"));
-  
+                    root.get("status"),
+                    root.get("createdDate"));
+
             List<Object[]> resultList = em
                 .createQuery(criteriaQuery)
                 .setFirstResult(offset)
@@ -65,21 +67,22 @@ public class MarkerGroupDaoImpl implements MarkerGroupDao {
                 markerGroup.setCode((String) result[2]);
                 markerGroup.setGermplasmGroup((String) result[3]);
                 markerGroup.setStatus((Cv) result[4]);
+                markerGroup.setCreatedDate((Date) result[5]);
                 markerGroups.add(markerGroup);
             });
 
         } catch (Exception e) {
           log.error(e.getMessage(), e);
-  
+
           throw new GobiiDaoException(
               GobiiStatusLevel.ERROR,
               GobiiValidationStatusType.UNKNOWN,
               e.getMessage() + " Cause Message: " + e.getCause().getMessage());
-  
+
         }
-        return markerGroups;  
-        
-		
+        return markerGroups;
+
+
 	}
 
 
