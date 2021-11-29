@@ -1201,10 +1201,6 @@ public class GobiiExtractor {
 
 	/**
 	 * In place file uniqueness. First implementation is a simple sort -u
-<<<<<<< HEAD
-=======
-	 * @param inputFilePath input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
->>>>>>> 1351457b080c55c12b6fc8d76377105ba0ff7485
 	 */
 	private static void makeFileUnique(String inputFilePath, String errorFile){
     	String tempPath = inputFilePath+".tmp";
