@@ -1,8 +1,11 @@
 package org.gobiiproject.gobiiprocess;
 
+import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.entity.Cv;
 import org.gobiiproject.gobiimodel.entity.Job;
@@ -10,8 +13,6 @@ import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiiprocess.services.JobService;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiisampletrackingdao.GobiiDaoException;
-
-import static org.gobiiproject.gobiimodel.utils.error.Logger.logError;
 
 
 public class JobStatus {
