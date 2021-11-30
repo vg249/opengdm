@@ -47,7 +47,6 @@ public class HDF5Interface {
      * @param dst DataSetType (obviously)
      * @param configuration configurations - for reading if a configruation is set correctly
      * @param dataSetId ID of dataset to create
-     * @param crop crop to create the dataset for
      * @param errorPath Place to store temporary files in case of needing temporary files
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
@@ -56,7 +55,6 @@ public class HDF5Interface {
                                                 String dst,
                                                 ConfigSettings configuration,
                                                 Integer dataSetId,
-                                                String crop,
                                                 String errorPath,
                                                 File variantFile) throws Exception {
         //HDF-5
@@ -69,15 +67,14 @@ public class HDF5Interface {
             case "NUCLEOTIDE_4_LETTER":
                 size = 4;
                 break;
-            case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
-                size=2;
+            case "NUCLEOTIDE_2_LETTER": case "IUPAC": case "VCF":
+                size = 2;
                 break;
             case "SSR_ALLELE_SIZE":
-                size=8;
+                size = 8;
                 break;
-            case "CO_DOMINANT_NON_NUCLEOTIDE":
-            case "DOMINANT_NON_NUCLEOTIDE":
-                size=1;
+            case "CO_DOMINANT_NON_NUCLEOTIDE": case "DOMINANT_NON_NUCLEOTIDE":
+                size = 1;
                 break;
             default:
                 logError("Digester","Unknown type " + dst);
@@ -87,8 +84,8 @@ public class HDF5Interface {
 
 
         String matrixFilePath = variantFile.getPath();
-        String tempMatrixFilePath = matrixFilePath+".temp";
-        String hdf5MapFile = HDF5File+".idl";
+        String tempMatrixFilePath = matrixFilePath + ".temp";
+        String hdf5MapFile = HDF5File + ".idl";
         String finalMatrixFilePath = matrixFilePath;
         String elementSeparator = "\t";
         String alleleSeparator = "/";
