@@ -158,7 +158,7 @@ public class HDF5Interface {
     }
 
     private static HashMap<String,String> getSamplePosFromFile(String inputFile) throws FileNotFoundException {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
         try{
             while (sampR.ready()) {
@@ -284,8 +284,8 @@ public class HDF5Interface {
                 .map(String::trim).filter(s -> !Strings.isNullOrEmpty(s)).toArray(String[]::new); //Trim whitespace, filter out empty references
                             //Surprisingly, easier than figuring out how these malformed entities are entering my trim
 
-        List<BufferedReader> readerList = new LinkedList<BufferedReader>();
-        List<BufferedReader> emptyList = new LinkedList<BufferedReader>();
+        List<BufferedReader> readerList = new LinkedList<>();
+        List<BufferedReader> emptyList = new LinkedList<>();
         try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
             for(String input:stringList){
                 try {
