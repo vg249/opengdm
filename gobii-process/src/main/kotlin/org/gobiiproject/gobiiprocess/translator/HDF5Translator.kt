@@ -49,15 +49,9 @@ object HDF5Translator {
                     val encodings = mutableListOf<String>()                     // list of allele encodings
                     row.forEachIndexed { genotypeIndex, genotype ->
                         if (genotypeIndex > 0) outputStream.write(hdf5delimiter)
-                        genotype.split(alleleSeparator).filter(alleleFilter)
-                            .forEach { allele ->     // this is the actual encoding step
-                                if (allele.length != 8 || allele.toIntOrNull() == null) encodeAllele(allele, encodings)
-                                else {
-                                    encodeAllele(allele.take(4), encodings).let(outputStream::write)
-                                    encodeAllele(allele.takeLast(4), encodings)
-                                }
-                                    .let(outputStream::write)
-                        }
+                        genotype.split(alleleSeparator)
+                            .filter(alleleFilter)
+                            .forEach { allele -> encodeAllele(allele, encodings).let(outputStream::write) }
                     }
                     if (encodings.size > encodingLimit) {
                         throw Exception("More than $encodingLimit alleles (${encodings.size}) on line $rowIndex")
