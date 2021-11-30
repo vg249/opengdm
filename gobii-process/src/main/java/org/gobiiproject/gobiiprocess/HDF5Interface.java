@@ -93,6 +93,10 @@ public class HDF5Interface {
         String elementSeparator = "\t";
         String alleleSeparator = "/";
 
+        if (dst.equalsIgnoreCase("IUPAC") || dst.equalsIgnoreCase("SSR_ALLELE_SIZE")) {
+            alleleSeparator = "";
+        }
+
         if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
         || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")
         || dst.toUpperCase().equals("IUPAC")
