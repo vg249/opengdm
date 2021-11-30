@@ -109,7 +109,6 @@ public class HDF5Interface {
 
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+ finalMatrixFilePath +" "+HDF5File,null,errorPath);
 
-        rmIfExist(tempMatrixFilePath);
         if(!success){
             //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
             rmIfExist(HDF5File);
@@ -381,7 +380,7 @@ public class HDF5Interface {
             Logger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
             boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
             if(!success){
-//                rmIfExist(genoFile);
+                rmIfExist(genoFile);
                 return null;
             }
 
