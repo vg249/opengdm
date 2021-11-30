@@ -147,8 +147,8 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
      * @return the determined separator, or null if none was found (as in SSR, domininant, and codominant dataset types).
      * @throws Exception if separators are inconsistent.
      */
-    public static String findSeparator(File tempMatrixFile, String genotypeSeparator) throws Exception {
-        return findSeparator(tempMatrixFile, genotypeSeparator, 100);
+    public static String findSeparator(String tempMatrixFile, String genotypeSeparator) throws Exception {
+        return findSeparator(new File(tempMatrixFile), genotypeSeparator, 100);
     }
 
     /**
