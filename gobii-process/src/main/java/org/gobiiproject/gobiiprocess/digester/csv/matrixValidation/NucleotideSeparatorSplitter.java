@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * undelimited N character string of alleles, with N being the number of alleles its looking for.
  */
 public class NucleotideSeparatorSplitter implements RowProcessor {
-    private static final String OUTPUT_SEPARATOR = "/";
+
     private int nucleotideCount;
     private static String UNKNOWN_ALLELE = "N";
     private String unknownSegment;
