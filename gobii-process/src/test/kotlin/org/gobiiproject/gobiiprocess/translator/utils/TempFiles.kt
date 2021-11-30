@@ -13,11 +13,12 @@ class TempFiles {
         .dropLastWhile { it == '0' }
     private val tmpDir          = Path.of("src/test/tmp/$timestamp").toFile().also(File::mkdir)
     val inputFile               = File("$tmpDir/input-mf.txt")
-    val lookupFile              = File("$tmpDir/lookup.txt")
+    val lookupFile              = File("$tmpDir/encoded.h5.idl")
     val encodedFile             = File("$tmpDir/encoded-mf.txt")
     val decodedFile             = File("$tmpDir/decoded.txt")
     val sampleFastEncodedFile   = File("$tmpDir/encoded-sf.txt")
     val sampleFastInputFile     = File("$tmpDir/input-sf.txt")
+    val hdf5File                = File("$tmpDir/encoded.h5")
 
     private val random = Random()
 
@@ -42,7 +43,7 @@ class TempFiles {
         alleleSeparator: String = "/",
         genotypeSeparator: String = "\t"
     ) {
-        val genotypes = Companion.alleles.windowed(ploidy) { it.joinToString(alleleSeparator) }
+        val genotypes = alleles.windowed(ploidy) { it.joinToString(alleleSeparator) }
         val colReps = numSamples / genotypes.size + 1
         inputFile.bufferedWriter().use { writer ->
             val genotypeString = genotypes
