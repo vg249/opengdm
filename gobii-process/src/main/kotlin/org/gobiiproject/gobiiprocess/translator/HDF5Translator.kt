@@ -115,11 +115,13 @@ object HDF5Translator {
             emptyMap()
         }
 
-        var rowIndex               = 0                              // row in file
-        var colIndex               = 0                              // column (genotype) in file
-        var alleleIndex            = 0                              // index of allele in column (genotype)
-        val markerIndex: () -> Int =                                // getter for rowIndex if markerFast, colIndex if sampleFast
+        var rowIndex                    = 0                         // row in file
+        var colIndex                    = 0                         // column (genotype) in file
+        var alleleIndex                 = 0                         // index of allele in column (genotype)
+        val markerIndex: () -> Int      =                           // getter for rowIndex if markerFast, colIndex if sampleFast
             if (markerFast) { { rowIndex } } else { { colIndex } }  // used for filtering and encoding lookup
+        val atSeparatorIndex: (Int) -> Boolean =                    // if SSR data, write delimiter after 4 bytes
+            if (fileIsSSR(inputFile, lookupFile)) {{ it == 3 }} else {{ it > 0 }}
 
         outputFile.bufferedWriter()     .use { writer       ->
         inputFile .bufferedInputStream().use { encodedBytes ->
@@ -152,7 +154,7 @@ object HDF5Translator {
                         alleleIndex = 0
                     }
                     else -> {
-                        if (alleleIndex++ > 0) writer.append(alleleSeparator)
+                        if (atSeparatorIndex(alleleIndex++)) writer.append(alleleSeparator)
                         if (int >= offset) {
                             val encodings = markerEncodings[markerIndex()]
                                 ?: throw Exception("No lookup row found at row $rowIndex")
@@ -167,6 +169,35 @@ object HDF5Translator {
         }
         writer.newLine()
         }
+    }
+
+    // TODO: we should know at runtime what type of dataset we are reading, so seems pointless to have to check.
+    /**
+     * Check the first row of [inputFile] to determine if it contains SSR data.
+     *
+     * @param inputFile encoded data file
+     * @param lookupFile lookup file
+     * @return true if file contains SSR data, false otherwise
+     */
+    fun fileIsSSR(inputFile: File, lookupFile: File): Boolean {
+        if (lookupFile.exists()) return false
+        inputFile.bufferedInputStream().use { inputStream ->
+            inputStream.iterator().run {
+                var alleleLength = 0
+                while (hasNext()) {
+                    when (next().toInt() and 0xff) {
+                        in 0..9       -> alleleLength++
+                        hdf5newline   -> if (alleleLength == 8) return true
+                        hdf5delimiter -> {
+                            if (alleleLength != 8)              return false
+                            alleleLength = 0
+                        }
+                        else          ->                        return false
+                    }
+                }
+            }
+        }
+        return false
     }
 
     private fun File.bufferedOutputStream() = outputStream().buffered()
