@@ -30,7 +30,7 @@ public class HDF5InterfaceTest {
             e.printStackTrace();
         }
 
-        HDF5Interface.coallateFiles("testfile1 testfile2 testfile3","\t","testfileout");
+        HDF5Interface.coallateFiles("testfile1 testfile2 testfile3", "testfileout");
 
         BufferedReader outReader = new BufferedReader(new FileReader(out));
         String line1 = outReader.readLine();

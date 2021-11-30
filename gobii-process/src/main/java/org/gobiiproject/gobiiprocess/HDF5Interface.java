@@ -260,7 +260,7 @@ public class HDF5Interface {
 
         if(markerFast) {
             //tryExec("paste" + genotypePartFileIdentifier, genoFile, errorFile);
-            coallateFiles(genotypePartFileIdentifier,"\t",genoFile);
+            coallateFiles(genotypePartFileIdentifier, genoFile);
         }
         else{
             tryExec("cat" + genotypePartFileIdentifier, genoFile, errorFile);
@@ -275,13 +275,14 @@ public class HDF5Interface {
      * Concatenates a list of input files to an output file, so that each sequential input file appears in order in the
      * output, much like the unix 'paste' command.
      * @param inputFileList Comma separated list of input files to read
-     * @param betweenFileSeparator Character to put between rows
      * @param outpufFilePath Output file to write to
      */
-    static void coallateFiles(String inputFileList, String betweenFileSeparator, String outpufFilePath){
+    static void coallateFiles(String inputFileList, String outpufFilePath){
         String[] stringList = Arrays.stream(inputFileList.split(Pattern.quote(" ")))
                 .map(String::trim).filter(s -> !Strings.isNullOrEmpty(s)).toArray(String[]::new); //Trim whitespace, filter out empty references
                             //Surprisingly, easier than figuring out how these malformed entities are entering my trim
+
+        String betweenFileSeparator = "\t";
 
         List<BufferedReader> readerList = new LinkedList<>();
         List<BufferedReader> emptyList = new LinkedList<>();
