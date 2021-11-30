@@ -238,9 +238,8 @@ public class HDF5Interface {
 
                     if(genoFile==null)return null;
                 }
-                else{
-                    //We have a marker position but not a sample position. Do not create a genotype file in the first place
-                }
+                //We have a marker position but not a sample position. Do not create a genotype file in the first place
+
                 if(genoFile!=null){
                     genoFileString.append(" "+genoFile);
                 }
