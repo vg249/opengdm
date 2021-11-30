@@ -16,10 +16,12 @@ object HDF5Translator {
         "+", "-",
         ".", "?", " "
     )
-    private const val offset        = 129 // offset for encoded values
-    private const val hdf5delimiter = 9   // delimiter between hdf5 columns
-    private const val hdf5newline   = 10  // delimiter between hdf5 rows
-    private const val encodingLimit = 127 // max number of alleles we can encode
+    private const val offset            = 129   // offset for encoded values
+    private const val hdf5delimiter     = 9     // delimiter between hdf5 columns
+    private const val hdf5newline       = 10    // delimiter between hdf5 rows
+    private const val encodingLimit     = 127   // max number of alleles we can encode
+    private const val encodingSeparator = "\t"  // between index and values in lookup table
+    private const val encodingDelimiter = ";"   // between values in lookup table
 
     /**
      * Transform a temporary genotype matrix into a fixed-width, ubyte encoded file suitable for conversion to HDF5 format.
