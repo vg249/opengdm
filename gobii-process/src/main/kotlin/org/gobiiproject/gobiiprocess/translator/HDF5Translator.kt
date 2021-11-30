@@ -101,17 +101,19 @@ object HDF5Translator {
             throw Exception("Argument to 'markerList' is empty.")
 
         // read encodings into a map of { rowIndex: [ allele1, allele2, ... ] }
-        val markerEncodings: Map<Int, List<String>> = try {
+        val markerEncodings = if (lookupFile.exists() && lookupFile.canRead()) {
             lookupFile.bufferedReader().useLines { lines ->
                 // can reduce the size of the map and lookup complexity if we are filtering
                 lines.filterIndexed { idx, _ -> !filtering || idx in markerList!! }
                     .associate { line ->
-                        line.split("\t").let { (k, v) ->
-                            k.toInt() to v.split(";").map { it.substring(1) }
+                        line.split(encodingSeparator).let { (k, v) ->
+                            k.toInt() to v.split(encodingDelimiter).map { it.substring(1) }
                         }
                     }
-            }
-        } catch(e: Exception) { emptyMap() }
+                }
+        } else {
+            emptyMap()
+        }
 
         var rowIndex               = 0                              // row in file
         var colIndex               = 0                              // column (genotype) in file
