@@ -80,7 +80,7 @@ public class HDF5Interface {
                 size=1;
                 break;
             default:
-                logError("Digester","Unknown type "+dst.toString());
+                logError("Digester","Unknown type " + dst);
                 return false;
         }
         Logger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
