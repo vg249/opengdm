@@ -45,7 +45,7 @@ public class HDF5Interface {
      * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false.
      * @param dm Email message object - for direct writing
      * @param dst DataSetType (obviously)
-     * @param configuration configurations - for reading if a configruation is set correctly
+     * @param configuration configurations - for reading if a configuration is set correctly
      * @param dataSetId ID of dataset to create
      * @param errorPath Place to store temporary files in case of needing temporary files
      * @param variantFile Location of the file to use for creating the dataset
