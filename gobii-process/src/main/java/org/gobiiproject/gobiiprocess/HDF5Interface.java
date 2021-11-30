@@ -481,9 +481,9 @@ public class HDF5Interface {
 
     /**
      * Projects a subset of rows onto the output file (cutting out vertical slices)
-     * @from source file
-     * @to destination of output projection
-     * @throws IOException
+     * @param from source file
+     * @param to destination of output projection
+     * @throws IOException if anything went wrong while reading or writing.
      */
     private static void projectRows(File from, File to, List<Integer> elements) throws IOException {
         try(BufferedReader in = new BufferedReader(new FileReader(from));
