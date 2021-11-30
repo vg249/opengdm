@@ -64,7 +64,7 @@ public class HDF5Interface {
         String loadHDF5= Paths.get(getPathToHDF5(), "loadHDF5").toString();
         dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
-        int size = 8;
+        int size;
         switch(dst.toUpperCase()){
             case "NUCLEOTIDE_4_LETTER":
                 size = 4;
