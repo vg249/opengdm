@@ -286,7 +286,7 @@ public class HDF5Interface {
 
         List<BufferedReader> readerList = new LinkedList<>();
         List<BufferedReader> emptyList = new LinkedList<>();
-        try(BufferedWriter output = new BufferedWriter(new FileWriter(new File(outpufFilePath)))) {
+        try(BufferedWriter output = new BufferedWriter(new FileWriter(outpufFilePath))) {
             for(String input:stringList){
                 try {
                     readerList.add(new BufferedReader(new FileReader(input)));
