@@ -53,3 +53,4 @@ gobii-web/package-lock.json
 
 gobii-web/src/main/resources/docs/generated/**
 gobii-web/src/main/extractor-ui/node
+/gobii-process/src/test/tmp/
