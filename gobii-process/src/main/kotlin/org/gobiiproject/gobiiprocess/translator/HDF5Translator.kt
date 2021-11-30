@@ -39,10 +39,10 @@ object HDF5Translator {
         genotypeSeparator: String,
         alleleSeparator:   String
     ) {
-        val alleleFilter: (String) -> Boolean = if (alleleSeparator.isEmpty()) {{ it.isNotEmpty() }} else {{ true }}
-        outputFile.outputStream().buffered().use { outputStream ->
-        lookupFile.bufferedWriter().use          { lookupWriter ->
-        inputFile.bufferedReader().useLines      { lineSequence ->
+        val alleleFilter: (String) -> Boolean = if (alleleSeparator.isEmpty()) { String::isNotEmpty } else {{ true }}
+        outputFile.bufferedOutputStream().use      { outputStream ->
+        lookupFile.bufferedWriter()      .use      { lookupWriter ->
+        inputFile .bufferedReader()      .useLines { lineSequence ->
             lineSequence.map { it.splitToSequence(genotypeSeparator) }
                 .forEachIndexed { rowIndex, row ->
                     if (rowIndex > 0) outputStream.write(hdf5newline)
