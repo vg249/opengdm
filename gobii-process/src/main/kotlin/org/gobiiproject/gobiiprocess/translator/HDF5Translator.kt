@@ -164,7 +164,7 @@ object HDF5Translator {
                                 ?: throw Exception("No encoding for element ${int - offset} on row $rowIndex")
                         } else {
                             int.toChar().toString()
-                        }.let { writer.append(it) }
+                        }.let(writer::append)
                     }
                 }
             }
