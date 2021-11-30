@@ -3,10 +3,11 @@ package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 
-import java.nio.CharBuffer;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * A separation routine for multi-allelic nucleotides for GDM-446. Takes a delimited string and converts it into an
@@ -136,6 +137,51 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
             return String.join(OUTPUT_SEPARATOR, element.split(""));
         }
         else return element;
+    }
+
+    /**
+     * Scan up to 100 lines of a file to determine allele separator.
+     *
+     * @param tempMatrixFile temporary matrix file, same as input for encoder.
+     * @param genotypeSeparator delimiter between genotypes on each row, usually "\t" or ","
+     * @return the determined separator, or null if none was found (as in SSR, domininant, and codominant dataset types).
+     * @throws Exception if separators are inconsistent.
+     */
+    public static String findSeparator(File tempMatrixFile, String genotypeSeparator) throws Exception {
+        return findSeparator(tempMatrixFile, genotypeSeparator, 100);
+    }
+
+    /**
+     * Scan a file to determine allele separator.
+     *
+     * @param tempMatrixFile temporary matrix file, same as input for encoder.
+     * @param genotypeSeparator delimiter between genotypes on each row, usually "\t" or ","
+     * @param maxRows maximum number of rows to scan
+     * @return the determined separator, or null if none was found (as in SSR, domininant, and codominant dataset types).
+     * @throws Exception if separators are inconsistent.
+     */
+    public static String findSeparator(File tempMatrixFile, String genotypeSeparator, int maxRows) throws Exception {
+        BufferedReader br = new BufferedReader(new FileReader(tempMatrixFile));
+        String nextLine;
+        String separator = null;
+        String nextSeparator;
+        int rowIndex = 0;
+        int colIndex;
+        while ((nextLine = br.readLine()) != null && rowIndex < maxRows) {
+            colIndex = 0;
+            for (String s : nextLine.split(genotypeSeparator)) {
+                nextSeparator = findSeparator(s);
+                if (rowIndex == 0 && colIndex == 0) {
+                    separator = nextSeparator;
+                } else if (!Objects.equals(nextSeparator, separator)) {
+                    throw new Exception(String.format("Invalid separator on line %d, column %d. Found %s, expected %s.",
+                            rowIndex, colIndex, nextSeparator, separator));
+                }
+                colIndex++;
+            }
+            rowIndex++;
+        }
+        return separator;
     }
 
     /**

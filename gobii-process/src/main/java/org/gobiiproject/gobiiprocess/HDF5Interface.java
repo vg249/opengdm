@@ -27,6 +27,7 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter;
 import org.gobiiproject.gobiiprocess.services.DatasetService;
 import org.gobiiproject.gobiiprocess.spring.SpringContextLoaderSingleton;
 import org.gobiiproject.gobiiprocess.translator.HDF5Translator;
@@ -88,11 +89,7 @@ public class HDF5Interface {
         String hdf5MapFile = HDF5File + ".idl";
         String finalMatrixFilePath = matrixFilePath;
         String elementSeparator = "\t";
-        String alleleSeparator = "/";
-
-        if (dst.equalsIgnoreCase("IUPAC") || dst.equalsIgnoreCase("SSR_ALLELE_SIZE")) {
-            alleleSeparator = "";
-        }
+        String alleleSeparator = NucleotideSeparatorSplitter.findSeparator(tempMatrixFilePath, elementSeparator);
 
         if(dst.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")
         || dst.equalsIgnoreCase("NUCLEOTIDE_2_LETTER")
@@ -105,7 +102,7 @@ public class HDF5Interface {
                     new File(finalMatrixFilePath),
                     new File(hdf5MapFile),
                     elementSeparator,
-                    alleleSeparator
+                    alleleSeparator == null ? "" : alleleSeparator
             );
         }
 
