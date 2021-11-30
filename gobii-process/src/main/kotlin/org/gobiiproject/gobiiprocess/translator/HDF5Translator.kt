@@ -96,8 +96,8 @@ object HDF5Translator {
         markerList:        Set<Int>? = null
     ) {
 
-        val filtering = markerList != null          // null markerlist indicates no filtering
-        if (filtering && markerList!!.isEmpty())    // empty markerlist indicates something went wrong
+        val filtering = markerList != null          // null markerList indicates no filtering
+        if (filtering && markerList!!.isEmpty())    // empty markerList indicates something went wrong
             throw Exception("Argument to 'markerList' is empty.")
 
         // read encodings into a map of { rowIndex: [ allele1, allele2, ... ] }
