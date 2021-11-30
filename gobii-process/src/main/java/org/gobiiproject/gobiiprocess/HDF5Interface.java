@@ -97,10 +97,10 @@ public class HDF5Interface {
             alleleSeparator = "";
         }
 
-        if(dst.toUpperCase().equals("NUCLEOTIDE_4_LETTER")
-        || dst.toUpperCase().equals("NUCLEOTIDE_2_LETTER")
-        || dst.toUpperCase().equals("IUPAC")
-        || dst.toUpperCase().equals("VCF")) {
+        if(dst.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")
+        || dst.equalsIgnoreCase("NUCLEOTIDE_2_LETTER")
+        || dst.equalsIgnoreCase("IUPAC")
+        || dst.equalsIgnoreCase("VCF")) {
             finalMatrixFilePath = matrixFilePath+".enc";
             FileSystemInterface.mv(matrixFilePath, tempMatrixFilePath);
             HDF5Translator.INSTANCE.encodeFile(
