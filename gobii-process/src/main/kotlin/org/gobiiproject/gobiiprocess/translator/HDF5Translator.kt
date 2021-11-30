@@ -172,4 +172,7 @@ object HDF5Translator {
         writer.newLine()
         }
     }
+
+    private fun File.bufferedOutputStream() = outputStream().buffered()
+    private fun File.bufferedInputStream() = inputStream().buffered()
 }
