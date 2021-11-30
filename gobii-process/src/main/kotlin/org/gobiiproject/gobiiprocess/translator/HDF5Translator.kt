@@ -125,8 +125,8 @@ object HDF5Translator {
         val markerIndex: () -> Int =                                // getter for rowIndex if markerFast, colIndex if sampleFast
             if (markerFast) { { rowIndex } } else { { colIndex } }  // used for filtering and encoding lookup
 
-        outputFile.bufferedWriter().use        { writer       ->
-        inputFile.inputStream().buffered().use { encodedBytes ->
+        outputFile.bufferedWriter()     .use { writer       ->
+        inputFile .bufferedInputStream().use { encodedBytes ->
             encodedBytes.iterator().forEachRemaining { byte ->
                 val int = byte.toInt() and 0xff             // effectively an unsigned byte
                 if (filtering) {
