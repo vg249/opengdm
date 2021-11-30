@@ -241,7 +241,7 @@ public class HDF5Interface {
                 //We have a marker position but not a sample position. Do not create a genotype file in the first place
 
                 if(genoFile!=null){
-                    genoFileString.append(" "+genoFile);
+                    genoFileString.append(" ").append(genoFile);
                 }
             }
             posR.close();
