@@ -112,7 +112,7 @@ public class HDF5Interface {
 
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+ finalMatrixFilePath +" "+HDF5File,null,errorPath);
 
-//        rmIfExist(tempMatrixFilePath);
+        rmIfExist(tempMatrixFilePath);
         if(!success){
             //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
             rmIfExist(HDF5File);
