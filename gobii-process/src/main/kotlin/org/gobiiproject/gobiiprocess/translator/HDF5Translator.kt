@@ -62,7 +62,7 @@ object HDF5Translator {
                     if (encodings.size > encodingLimit) {
                         throw Exception("More than $encodingLimit alleles (${encodings.size}) on line $rowIndex")
                     } else if (encodings.isNotEmpty()) {
-                        encodings.joinToString(separator = encodingSeparator, prefix = "$rowIndex$encodingDelimiter") {
+                        encodings.joinToString(separator = encodingDelimiter, prefix = "$rowIndex$encodingSeparator") {
                             if (it.isNotEmpty()) "I$it" else "D"
                         }.let(lookupWriter::appendLine)
                     }
