@@ -174,8 +174,11 @@ public class NucleotideSeparatorSplitter implements RowProcessor {
                 if (rowIndex == 0 && colIndex == 0) {
                     separator = nextSeparator;
                 } else if (!Objects.equals(nextSeparator, separator)) {
-                    throw new Exception(String.format("Invalid separator on line %d, column %d. Found %s, expected %s.",
-                            rowIndex, colIndex, nextSeparator, separator));
+                    String msg = String.format(
+                        "Inconsistent separator on line %d, column %d: %s. Found '%s', expected '%s.'",
+                        rowIndex, colIndex, s, nextSeparator, separator
+                    );
+                    throw new Exception(msg);
                 }
                 colIndex++;
             }
