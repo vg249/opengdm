@@ -89,7 +89,6 @@ public class HDF5Interface {
         String hdf5MapFile = HDF5File + ".idl";
         String finalMatrixFilePath = matrixFilePath;
         String elementSeparator = "\t";
-        String alleleSeparator = NucleotideSeparatorSplitter.findSeparator(tempMatrixFilePath, elementSeparator);
 
         if(dst.equalsIgnoreCase("NUCLEOTIDE_4_LETTER")
         || dst.equalsIgnoreCase("NUCLEOTIDE_2_LETTER")
@@ -101,8 +100,7 @@ public class HDF5Interface {
                     new File(tempMatrixFilePath),
                     new File(finalMatrixFilePath),
                     new File(hdf5MapFile),
-                    elementSeparator,
-                    alleleSeparator == null ? "" : alleleSeparator
+                    elementSeparator
             );
         }
 

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.translator
 
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.NucleotideSeparatorSplitter
 import java.io.File
 
 
@@ -30,15 +31,16 @@ object HDF5Translator {
      * @param outputFile         Where to write encoded file
      * @param lookupFile         Where to write lookup table
      * @param genotypeSeparator  Separator between line elements (genotypes) in [inputFile]
-     * @param alleleSeparator    Separator between alleles in each element (genotype) in [inputFile]
      */
     fun encodeFile(
-        inputFile:         File,
-        outputFile:        File,
-        lookupFile:        File,
-        genotypeSeparator: String,
-        alleleSeparator:   String
+        inputFile: File,
+        outputFile: File,
+        lookupFile: File,
+        genotypeSeparator: String
     ) {
+        /* TODO: If the inputFile is properly sanitized, alleleSeparator should be known ahead of time.
+            This check would then be unnecessary if alleleSeparator was passed as an argument. */
+        val alleleSeparator = NucleotideSeparatorSplitter.findSeparator(inputFile.absolutePath, genotypeSeparator) ?: ""
         val alleleFilter: (String) -> Boolean = if (alleleSeparator.isEmpty()) { String::isNotEmpty } else {{ true }}
         outputFile.bufferedOutputStream().use      { outputStream ->
         lookupFile.bufferedWriter()      .use      { lookupWriter ->
