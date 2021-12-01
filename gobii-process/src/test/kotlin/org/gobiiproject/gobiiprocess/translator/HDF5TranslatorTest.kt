@@ -13,8 +13,8 @@ import kotlin.system.measureTimeMillis
 
 class HDF5TranslatorTest {
 
-    @Test
-    @Ignore
+//    @Test
+//    @Ignore
     fun testGSD125() {
         /* BERT scenario GSD-125 is failing during Bamboo build for unknown reasons.
         Encoding / decoding seems to be correct.
