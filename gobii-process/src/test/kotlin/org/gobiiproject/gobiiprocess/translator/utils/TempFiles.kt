@@ -10,7 +10,7 @@ import java.util.stream.Stream
 class TempFiles {
     private val timestamp       = LocalDateTime.now()
         .format(DateTimeFormatter.ofPattern("yyMMdd-HHmmssnnnnnn"))
-        .dropLastWhile { it == '0' }
+        .take(17)
     private val tmpDir          = Path.of("src/test/tmp/$timestamp").toFile().also(File::mkdir)
     val inputFile               = File("$tmpDir/input-mf.txt")
     val lookupFile              = File("$tmpDir/encoded.h5.idl")
@@ -43,7 +43,7 @@ class TempFiles {
         alleleSeparator: String = "/",
         genotypeSeparator: String = "\t"
     ) {
-        val genotypes = alleles.windowed(ploidy) { it.joinToString(alleleSeparator) }
+        val genotypes = indelSequence.windowed(ploidy).take(127).map { it.joinToString(alleleSeparator) }.toList()
         val colReps = numSamples / genotypes.size + 1
         inputFile.bufferedWriter().use { writer ->
             val genotypeString = genotypes
@@ -65,14 +65,15 @@ class TempFiles {
     }
 
     fun createRandomInputFile(rows: Int, cols: Int, ploidy: Int) {
-        val alleles = arrayOf(
-            "A", "C", "G", "T", "N",
-            "A", "C", "G", "T", "N",
-            "A", "C", "G", "T", "N",
-            "A", "C", "G", "T", "N",
-            "", "", "",
-            "AC", "ACG", "ACGT", "ACGTA", "ACGTAC", "ACGTACG", "ACGTACGT"
-        )
+//        val alleles = arrayOf(
+//            "A", "C", "G", "T", "N",
+//            "A", "C", "G", "T", "N",
+//            "A", "C", "G", "T", "N",
+//            "A", "C", "G", "T", "N",
+//            "", "", "",
+//            "AC", "ACG", "ACGT", "ACGTA", "ACGTAC", "ACGTACG", "ACGTACGT"
+//        )
+        val alleles = (indelSequence + snpSequence.take(12)).toList().toTypedArray()
         createRandomInputFile(rows, cols, ploidy, alleles)
     }
 
@@ -86,16 +87,16 @@ class TempFiles {
         writer.close()
     }
 
-    fun createSimpleRandomInputFile(rows: Int, cols: Int, ploidy: Int) {
-        val alleles = arrayOf(
-            "A", "C", "G", "T", "N",
-            "A", "C", "G", "T", "N",
-            "A", "C", "G", "T", "N",
-            "A", "C", "G", "T", "N",
-            "", "", "",
-            "AC", "ACG", "ACGT", "ACGTA", "ACGTAC", "ACGTACG", "ACGTACGT"
-        )
-    }
+//    fun createSimpleRandomInputFile(rows: Int, cols: Int, ploidy: Int) {
+//        val alleles = arrayOf(
+//            "A", "C", "G", "T", "N",
+//            "A", "C", "G", "T", "N",
+//            "A", "C", "G", "T", "N",
+//            "A", "C", "G", "T", "N",
+//            "", "", "",
+//            "AC", "ACG", "ACGT", "ACGTA", "ACGTAC", "ACGTACG", "ACGTACGT"
+//        )
+//    }
 
     fun getTransposedFileStream(file: File): Stream<String> {
         var reader = BufferedReader(FileReader(file))
@@ -193,11 +194,19 @@ class TempFiles {
             }
         }
 
-        private val alleles         by lazy {
-            listOf("A", "C", "G", "T").run {
-                flatMap { i -> flatMap { j -> flatMap { k -> listOf("$i$j$k", "$i$j${k}N") } } }
-            }.dropLast(1)
+        val indelSequence = sequence {
+            val alleles = arrayOf("A", "C", "G", "T")
+            val mods = sequenceOf(0, 2, 4, 6)
+            val allele: (Int) -> String = { x -> mods.joinToString("") { alleles[(x shr it) % 4] } }
+            repeat(256) { yield(allele(it)) }
         }
+
+        val snpSequence = sequence {
+            val alleles = sequenceOf("A", "C", "G", "T", "N")
+            while (true) yieldAll(alleles)
+        }
+
     }
+
 
 }
