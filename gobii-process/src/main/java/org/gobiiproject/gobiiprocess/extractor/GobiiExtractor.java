@@ -639,6 +639,8 @@ public class GobiiExtractor {
 	            if (pm.getBody() == null) { //Make sure the PM body is set before we send it
 		            pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), Logger.getFirstErrorReason(), Logger.success(), Logger.getAllErrorStringsHTML());
 	            }
+
+	            pm.addJobLink(configuration,jobFileName,crop);
 	            if (!inst.isQcCheck()) mailInterface.send(pm);//If it is QC - QC should send any success or failure emails.
             }
 
