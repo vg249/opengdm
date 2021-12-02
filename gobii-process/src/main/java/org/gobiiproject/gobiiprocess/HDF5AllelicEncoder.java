@@ -27,7 +27,7 @@ public class HDF5AllelicEncoder {
      * @return A pair of values, the data entry, and the inner value of the lookup table entry
      */
     public static EncodedValues encodeRow(String inputRow, String alleleSeparator, String elementSeparator) throws Exception {
-        List<Byte> outBytes = new LinkedList<Byte>();
+        List<Byte> outBytes = new ArrayList<>();
         //StringBuilder outRow=new StringBuilder();
         RowTranslator currentRowTranslator = new RowTranslator();
 
@@ -212,7 +212,7 @@ public class HDF5AllelicEncoder {
     //ReadLine for FIS. Eww, but I need the raw bytes.
     private static byte[] getBytesTillNewline(FileInputStream fis) throws IOException {
         byte newline = '\n';
-        List<Byte> assemblyList = new LinkedList<Byte>();
+        List<Byte> assemblyList = new ArrayList<>();
         int nextByteI;
         while(true) {
             nextByteI=fis.read();
@@ -325,37 +325,38 @@ public class HDF5AllelicEncoder {
         }
     }
 
-
-
-
-    public static String decodeRow(byte[] inputRow, String lookupRow, String alleleSeparator, String elementSeparator) throws Exception{
-        StringBuilder outRow=new StringBuilder();
+    public static String decodeRow(byte[] inputRow, String lookupRow, String alleleSeparator, String elementSeparator) throws Exception {
+        StringBuilder outRow = new StringBuilder();
         RowTranslator currentRowTranslator = new RowTranslator(lookupRow);
-
         byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
-
-
-
-        boolean first=true;
-        int i = 0;
-
-        int j = 0;
-
-        while(i<inputRow.length) {
-            int segLen = 300;
-            byte[] segment = new byte[segLen];//Arbitrary Large Number
-            while ((i< inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
-                segment[j++] = inputRow[i++];
+        boolean first = true;
+//        int i = 0;
+//        int j = 0;
+        int offset = 0;
+        for (int k = 0; k <= inputRow.length; k++) {
+            if (k == inputRow.length || inputRow[k] == elementSeparatorAsByte) {
+                if (!first) outRow.append(elementSeparator); else first = false;
+                byte[] ba = new byte[k - offset];
+                System.arraycopy(inputRow, offset, ba, 0, ba.length);
+                outRow.append(currentRowTranslator.getDecodedString(ba, ba.length, alleleSeparator));
+                offset = k + 1;
             }
-            i++;
-            if(!first){
-                outRow.append(elementSeparator);
-            }
-            else{
-                first=false;
-            }
-            outRow.append(currentRowTranslator.getDecodedString(segment,j,alleleSeparator));
         }
+
+//        while (i < inputRow.length) {
+//            int segLen = 300;
+//            byte[] segment = new byte[segLen];//Arbitrary Large Number
+//            while ((i < inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
+//                segment[j++] = inputRow[i++];
+//            }
+//            i++;
+//            if (!first) {
+//                outRow.append(elementSeparator);
+//            } else {
+//                first = false;
+//            }
+//            outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
+//        }
         return outRow.toString();
     }
 
