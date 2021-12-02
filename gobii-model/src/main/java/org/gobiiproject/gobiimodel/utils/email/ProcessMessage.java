@@ -32,7 +32,7 @@ public class ProcessMessage extends MailMessage {
     private String validationLine;
     private String jobLinkLine;
 
-    private final String JOB_TEXT_STRING = "Job Status";
+    private final String JOB_TEXT_STRING = "View Details and Download Results";
     //private String confidentialyMessage;
     File fPath;
     private String color;
@@ -110,6 +110,7 @@ public class ProcessMessage extends MailMessage {
         if(jobLinkLine!=null){
             body.append(jobLinkLine);
             body.append(line);
+            body.append(line); // One BR didn't seem to add any spacing
         }
         if(identifierLine!=null)body.append(identifierLine+line);
         if(extractCriteriaLine!=null)body.append(extractCriteriaLine+line);
@@ -313,20 +314,25 @@ public class ProcessMessage extends MailMessage {
             else if(!jobStatusServer.isActive()){ //If it's there and explicitly disabled, lets just not hyperlink it
                 jobStatusServer=null;
             }
-            basePath = jobStatusServer !=null?jobStatusServer.getHost():null;
-            String configContextPath = jobStatusServer!=null?jobStatusServer.getContextPath(false):null;
+            if(jobStatusServer==null){
+                return this;
+            }
+            basePath = jobStatusServer.getHost();
+            if(basePath == null){
+                return this;
+            }
+            String configContextPath = jobStatusServer.getContextPath(false);
             if(!LineUtils.isNullOrEmpty(configContextPath))contextPath=configContextPath;
         } catch (Exception e) {
             Logger.logWarning("ProcessMessage",e.getMessage());
         }
-        String hyperLink = basePath!=null?basePath+"/"+contextPath:null;
-        if(hyperLink != null &&
-                ! (hyperLink.contains("http:") || hyperLink.contains("https:"))
+
+        String hyperLink = basePath+"/"+contextPath;
+        if(! (hyperLink.contains("http:") || hyperLink.contains("https:"))
         ){
             hyperLink = "http:" + "/" + "/" + hyperLink; //Outlook won't show links in <a> tags unless they're http or https...
         }
-        jobLinkLine = hyperLink!=null?"<a href=\""+hyperLink+cropString+jobString+"\">" + JOB_TEXT_STRING + "</a>":null;
-
+        jobLinkLine = "<font size=3><a href=\""+hyperLink+cropString+jobString+"\">" + JOB_TEXT_STRING + "</a></font>";
         return this;
     }
 
