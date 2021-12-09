@@ -246,6 +246,7 @@ public class GobiiDigester {
         }
 
         //Send Email
+        pm.addJobLink(configuration, digestResult.getJobName(), digestResult.getCropType());
         finalizeProcessing(
             digestResult,
             configuration,

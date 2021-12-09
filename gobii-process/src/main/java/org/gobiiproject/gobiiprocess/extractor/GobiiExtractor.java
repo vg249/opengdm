@@ -191,24 +191,24 @@ public class GobiiExtractor {
 		GobiiExtractorInstruction firstExtractInstruction=list.get(0);
 		String firstCrop = firstExtractInstruction.getGobiiCropType();
 		String firstContactEmail = firstExtractInstruction.getContactEmail();
+		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
+        JobStatus jobStatus = null;
+
         //Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename = new File(instructionFile).getName();
 		String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-		if (firstCrop == null) firstCrop = divineCrop(instructionFile);
-        SpringContextLoaderSingleton.init(firstCrop, configuration);
-        JobStatus jobStatus = null;
+
+		for (GobiiExtractorInstruction inst : list) {
+			String crop = inst.getGobiiCropType();
+			String extractType = "";
+			if (crop == null) crop = divineCrop(instructionFile);
+            SpringContextLoaderSingleton.init(crop, configuration);
             try {
                 jobStatus = new JobStatus(jobFileName);
             } catch (Exception e) {
                 Logger.logError("GobiiFileReader", "Error Checking Status", e);
             }
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
-
-
-		for (GobiiExtractorInstruction inst : list) {
-			String crop = inst.getGobiiCropType();
-			String extractType = "";
-			if (crop == null) crop = divineCrop(instructionFile);
 			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
@@ -674,21 +674,6 @@ public class GobiiExtractor {
 			handleCriticalException(configuration, jobStatus, firstContactEmail, e);
 		}
 	}
-
-	private static void updateFinalExtractStatus(boolean success, JobStatus jobStatus) {
-		if(success) {
-			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed Successfully");
-		}
-		else{
-			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),"Extract Failed");
-		}
-	}
-
-	private static void logAndUpdateStatus(JobStatus jobStatus, String errReason, JobProgressStatusType progressStatusType) {
-		Logger.logError("Extractor", errReason);
-		jobStatus.set(progressStatusType.getCvName(), errReason);
-	}
-
 
 	/**
 	 * Does three things - writes a final log message, sends an emergency 'help I've fallen and can't get up' email message,
@@ -1201,6 +1186,7 @@ public class GobiiExtractor {
 
 	/**
 	 * In place file uniqueness. First implementation is a simple sort -u
+	 * @param inputFilePath input file to be replaced with a unique line only version of itself. (Side effect, it's sorted now)
 	 */
 	private static void makeFileUnique(String inputFilePath, String errorFile){
     	String tempPath = inputFilePath+".tmp";

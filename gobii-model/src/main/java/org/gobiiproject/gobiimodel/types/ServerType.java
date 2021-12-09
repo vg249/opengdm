@@ -14,5 +14,6 @@ public enum ServerType {
     OWN_CLOUD,
     UNKNOWN,
     LDAP,
-    KEY_CLOAK
+    KEY_CLOAK,
+    JOB_STATUS
 }

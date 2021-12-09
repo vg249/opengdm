@@ -66,6 +66,7 @@ public class GobiiConfig {
     private static String CONFIG_SVR_CROP_WEB = "stW";
     private static String CONFIG_SVR_CROP_POSTGRES = "stP";
     private static String CONFIG_SVR_CROP_COMPUTE = "stC";
+    private static String CONFIG_SVR_JOB_STATUS = "stJS";
 
     private static String CONFIG_SVR_GLOBAL_AUTH_TYPE = "auT";
     private static String CONFIG_SVR_GLOBAL_LDAP_UDN = "ldUDN";
@@ -249,6 +250,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_CROP_WEB, false, "Server type: Web", "server: web");
             setOption(options, CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres", "server: pgsql");
             setOption(options, CONFIG_SVR_CROP_COMPUTE, false, "Server type: Compute Node", "server: compute");
+            setOption(options, CONFIG_SVR_JOB_STATUS, false, "Server type: Job Status", "server: compute");
 
 
             setOption(options, CONFIG_SVR_GLOBAL_AUTH_TYPE, true, "Authentication type (LDAP | LDAP_CONNECT_WITH_MANAGER | ACTIVE_DIRECTORY | ACTIVE_DIRECTORY_CONNECT_WITH_MANAGER | TEST)", "authentication type");
@@ -1214,7 +1216,8 @@ public class GobiiConfig {
                         gobiiCropConfig.getServer(serverType).setContextPath(contextRoot);
 
                     } else if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES) ||
-                            (commandLine.hasOption(CONFIG_SVR_CROP_COMPUTE))) {
+                            (commandLine.hasOption(CONFIG_SVR_CROP_COMPUTE)) ||
+                            (commandLine.hasOption(CONFIG_SVR_JOB_STATUS))) {
 
                         if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES)) {
                             serverType = ServerType.GOBII_PGSQL;
@@ -1223,6 +1226,11 @@ public class GobiiConfig {
                         } else if (commandLine.hasOption(CONFIG_SVR_CROP_COMPUTE)) {
                             serverType = ServerType.GOBII_COMPUTE;
                             argsSet.add(CONFIG_SVR_CROP_COMPUTE);
+                            valsSet.add("");
+                        }
+                        else if(commandLine.hasOption(CONFIG_SVR_JOB_STATUS)){
+                            serverType = ServerType.JOB_STATUS;
+                            argsSet.add(CONFIG_SVR_JOB_STATUS);
                             valsSet.add("");
                         }
 

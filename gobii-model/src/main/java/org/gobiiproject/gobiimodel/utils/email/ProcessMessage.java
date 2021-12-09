@@ -9,11 +9,14 @@ import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.error.Logger;
 import org.gobiiproject.gobiimodel.utils.links.OCLinkHandler;
+import org.hibernate.internal.util.xml.ErrorLogger;
 
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
@@ -28,6 +31,9 @@ public class ProcessMessage extends MailMessage {
     private String identifierLine;
     private String pathsLine;
     private String validationLine;
+    private String jobLinkLine;
+
+    private final String JOB_TEXT_STRING = "View Details and Download Results";
     //private String confidentialyMessage;
     File fPath;
     private String color;
@@ -102,6 +108,11 @@ public class ProcessMessage extends MailMessage {
         }
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
+        if(jobLinkLine!=null){
+            body.append(jobLinkLine);
+            body.append(line);
+            body.append(line); // One BR didn't seem to add any spacing
+        }
         if(identifierLine!=null)body.append(identifierLine+line);
         if(extractCriteriaLine!=null)body.append(extractCriteriaLine+line);
         if(entityLine!=null)body.append(entityLine+line);
@@ -207,17 +218,6 @@ public class ProcessMessage extends MailMessage {
 
     public ProcessMessage addFolderPath(String type, String path, ConfigSettings config) throws Exception {
         String pathLine=path;
-        if (config.getGlobalServer(ServerType.OWN_CLOUD).isActive()) {
-            try {
-                String urlpath= OCLinkHandler.getOwncloudURL(path, config);
-                if(urlpath!=null&&!urlpath.isEmpty()) {
-                    pathLine = path + "\n" + "<hr>" + "\n" + hyperlink(OCLinkHandler.getOwncloudURL(path, config));
-                }
-            }catch (ConnectException e) {
-                Logger.logWarning("ProcessMessage", "Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links", e);
-                //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
-            }
-        }
         paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
@@ -293,6 +293,48 @@ public class ProcessMessage extends MailMessage {
      */
     public ProcessMessage addPath(String type, String path, ConfigSettings config, boolean publicUrl) throws Exception {
         return addPath(type,path,false,config, publicUrl);
+    }
+
+    public ProcessMessage addJobLink(ConfigSettings cs, String jobName, String cropName){
+        //FYI: ConfigSettings can't get a reliable crop name
+        String cropString = "", jobString = "";
+        if(!LineUtils.isNullOrEmpty(cropName)){
+            cropString="&crop="+cropName;
+        }
+        if(!LineUtils.isNullOrEmpty(jobName)){
+            jobString = "&search="+jobName;
+        }
+        String basePath=null;
+        String contextPath="/jobs"; //sane default
+        try {
+            ServerConfig jobStatusServer = cs.getGlobalServer(ServerType.JOB_STATUS);
+
+            if(jobStatusServer==null){
+                jobStatusServer = cs.getGlobalServer(ServerType.GOBII_WEB);//Fall back to Web node as sane default
+            }
+            else if(!jobStatusServer.isActive()){ //If it's there and explicitly disabled, lets just not hyperlink it
+                jobStatusServer=null;
+            }
+            if(jobStatusServer==null){
+                return this;
+            }
+            basePath = jobStatusServer.getHost();
+            if(basePath == null){
+                return this;
+            }
+            String configContextPath = jobStatusServer.getContextPath(false);
+            if(!LineUtils.isNullOrEmpty(configContextPath))contextPath=configContextPath;
+        } catch (Exception e) {
+            Logger.logWarning("ProcessMessage",e.getMessage());
+        }
+
+        String hyperLink = basePath+"/"+contextPath;
+        if(! (hyperLink.contains("http:") || hyperLink.contains("https:"))
+        ){
+            hyperLink = "http:" + "/" + "/" + hyperLink; //Outlook won't show links in <a> tags unless they're http or https...
+        }
+        jobLinkLine = "<font size=3><a href=\""+hyperLink+cropString+jobString+"\">" + JOB_TEXT_STRING + "</a></font>";
+        return this;
     }
 
     
