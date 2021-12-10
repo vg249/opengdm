@@ -330,8 +330,6 @@ public class HDF5AllelicEncoder {
         RowTranslator currentRowTranslator = new RowTranslator(lookupRow);
         byte elementSeparatorAsByte = elementSeparator.getBytes()[0];
         boolean first = true;
-//        int i = 0;
-//        int j = 0;
         int offset = 0;
         for (int k = 0; k <= inputRow.length; k++) {
             if (k == inputRow.length || inputRow[k] == elementSeparatorAsByte) {
@@ -342,21 +340,6 @@ public class HDF5AllelicEncoder {
                 offset = k + 1;
             }
         }
-
-//        while (i < inputRow.length) {
-//            int segLen = 300;
-//            byte[] segment = new byte[segLen];//Arbitrary Large Number
-//            while ((i < inputRow.length) && (j < segLen) && (inputRow[i] != elementSeparatorAsByte)) {
-//                segment[j++] = inputRow[i++];
-//            }
-//            i++;
-//            if (!first) {
-//                outRow.append(elementSeparator);
-//            } else {
-//                first = false;
-//            }
-//            outRow.append(currentRowTranslator.getDecodedString(segment, j, alleleSeparator));
-//        }
         return outRow.toString();
     }
 
