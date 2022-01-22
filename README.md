@@ -13,10 +13,14 @@ gobii-process ---> |        |               |
                       gobii-model
 
 Setup instructions:
+
 1) Import the project at the parent pom level into your ide;
+
 2) Run Maven install and import the maven types into your IDE;
+
 3) The Maven compile configuration is set to Java 1.8, so you should have the JDK 1.8
    installed on your system, and configure your IDE to use JDK 1.8 for gobiiproject.
+
 3) Set up a tomcat 7.0 maven run configuration in your IDE:
     * Use conference of the conf directory in the gobiiproject-conf.zip in this
       project for the conf directory of the tomcat instance;
