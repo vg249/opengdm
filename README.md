@@ -1,5 +1,6 @@
 Project dependencies:
 
+
 gobii-web -------> |
                    | gobii-domain -----> gobii-dao
 gobii-process ---> |        |               |
