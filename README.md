@@ -1,19 +1,6 @@
-Project dependencies:
+#Project dependencies:
 
-
-gobii-web -------> |
-                   | gobii-domain -----> gobii-dao
-gobii-process ---> |        |               |
--------------------         |               |
-        |                   |               |
-        |                   |               |
-        |                   |               |
-        |                   |               |
-       \|/                 \|/             \|/
-       ---------------------------------------
-                      gobii-model
-
-Setup instructions:
+##Setup instructions:
 
 1) Import the project at the parent pom level into your ide;
 
